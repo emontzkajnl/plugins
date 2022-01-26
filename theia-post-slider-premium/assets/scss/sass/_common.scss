@@ -1,0 +1,339 @@
+@import "compass/utilities/sprites/base";
+@import "../../../node_modules/tiny-slider/src/tiny-slider";
+
+$transition-speed: 0.333s;
+
+.theiaPostSlider_nav {
+    position: relative;
+    overflow: hidden;
+    margin: 16px 0;
+    transition: opacity $transition-speed;
+    opacity: 1;
+
+    > * {
+        vertical-align: middle;
+    }
+
+    &.fontTheme {
+        ._1,
+        ._3 {
+            margin: 0 4px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        ._2 {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        svg {
+            height: auto;
+        }
+    }
+
+    ._title {
+        font-weight: bold;
+
+        * {
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
+
+        ._helper {
+            color: #888;
+        }
+    }
+
+    ._buttons {
+        user-select: none;
+        line-height: 1;
+
+        > * {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        ._text {
+            margin: 0 10px;
+        }
+    }
+
+    ._button {
+        overflow: hidden;
+        cursor: pointer;
+        -webkit-transition: none !important;
+        -moz-transition: none !important;
+        -o-transition: none !important;
+        // This is for compatibility with certain themes that define transitions.
+        transition: none !important;
+        text-decoration: none;
+    }
+
+    ._disabled {
+        cursor: default;
+    }
+
+    &._left,
+    &._right {
+        ._buttons {
+            display: inline-block;
+        }
+    }
+
+    &._left {
+        text-align: left;
+
+        ._buttons {
+            float: left;
+        }
+
+        ._title {
+            float: right;
+        }
+    }
+
+    &._center {
+        text-align: center;
+
+        ._title {
+            line-height: inherit !important;
+        }
+    }
+
+    &._center_full {
+        text-align: center;
+
+        ._prev {
+            float: left;
+        }
+
+        ._next {
+            float: right;
+        }
+
+        ._title {
+            line-height: inherit !important;
+        }
+    }
+
+    &._center_half_width,
+    &._center_full_width {
+        text-align: center;
+
+        * {
+            box-sizing: border-box;
+        }
+
+        ._buttons {
+            display: flex;
+            flex-wrap: wrap;
+            margin-left: -5px;
+            margin-right: -5px;
+        }
+
+        ._text {
+            order: 0;
+            width: 100%;
+        }
+
+        ._prev {
+            order: 10;
+            width: calc(50% - 10px);
+        }
+
+        ._next {
+            order: 20;
+            width: calc(50% - 10px);
+        }
+
+        ._disabled {
+            opacity: 0.5;
+        }
+
+        ._text,
+        ._prev,
+        ._next,
+        ._title {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    }
+
+    &._center_full_width {
+        &._first_slide {
+            ._prev {
+                display: none;
+            }
+
+            ._next {
+                width: 100%;
+            }
+        }
+
+        &._last_slide {
+            ._prev {
+                width: 100%;
+            }
+
+            ._next {
+                display: none;
+            }
+        }
+    }
+
+    &._right {
+        text-align: right;
+
+        ._buttons {
+            float: right;
+        }
+
+        ._title {
+            float: left;
+        }
+    }
+
+    &._hide_on_first_slide._slide_number_0 {
+        height: 0;
+
+        opacity: 0;
+    }
+
+    ._loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        background: url(../../assets/images/ajax-loader.gif) center center no-repeat;
+    }
+}
+
+.theiaPostSlider_dropdown {
+    text-align: center;
+
+    select {
+        padding: 6px 8px;
+        font-size: 16px;
+    }
+}
+
+.theiaPostSlider_slides {
+    position: relative;
+    clear: both;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    > div {
+        overflow: hidden;
+    }
+
+    iframe {
+        max-width: 100%;
+    }
+}
+
+.theiaPostSlider_header {
+    margin: 0 0 16px 0;
+}
+
+.theiaPostSlider_footer {
+    margin: 16px 0 0 0;
+}
+
+.entry-content .theiaPostSlider_nav a,
+.entry-summary .theiaPostSlider_nav a,
+.page-content .theiaPostSlider_nav a {
+    border-bottom: none;
+}
+
+#tps_carousel_container {
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    ._button {
+        user-select: none;
+        overflow: hidden;
+
+        cursor: pointer;
+        -webkit-transition: none !important;
+        -moz-transition: none !important;
+        -o-transition: none !important;
+        // This is for compatibility with certain themes that define transitions.
+        transition: none !important;
+        text-decoration: none;
+
+        &._disabled {
+            cursor: default;
+        }
+    }
+
+    ._prev {
+        float: left;
+    }
+
+    ._next {
+        float: right;
+    }
+
+    #tps_carousel {
+        .item {
+            > div {
+                width: 100%;
+                height: 100%;
+                position: relative;
+                cursor: pointer;
+
+                background-position: center center;
+                background-size: cover;
+
+                &:after {
+                    content: '';
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transition: background $transition-speed;
+                }
+            }
+
+            &.active,
+            &:hover {
+                > div {
+                    &:after {
+                        background: rgba(#fff, 0.5);
+                    }
+                }
+            }
+        }
+    }
+
+    .tns-nav {
+        text-align: center;
+
+        > button {
+            width: 9px;
+            height: 9px;
+            padding: 0;
+            margin: 0 5px;
+            border-radius: 50%;
+            background: #ddd;
+            border: 0;
+            transition: background $transition-speed;
+
+            &.tns-nav-active,
+            &:hover {
+                background: #888;
+            }
+        }
+    }
+}
