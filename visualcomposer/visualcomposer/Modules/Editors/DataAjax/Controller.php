@@ -92,14 +92,15 @@ class Controller extends Container implements Module
     protected function checkSourceId($sourceId)
     {
         $accessCheck = true;
-        if (!is_numeric($sourceId)) {
-            $sourceId = vcfilter('vcv:dataAjax:setData:sourceId', $sourceId);
-            if (is_array($sourceId) && $sourceId['status'] === true) {
-                if (isset($sourceId['accessCheck'])) {
-                    $accessCheck = $sourceId['accessCheck'];
-                }
-                $sourceId = $sourceId['sourceId'];
+        if (is_numeric($sourceId)) {
+            return [$accessCheck, $sourceId];
+        }
+
+        if (is_array($sourceId) && $sourceId['status'] === true) {
+            if (isset($sourceId['accessCheck'])) {
+                $accessCheck = $sourceId['accessCheck'];
             }
+            $sourceId = $sourceId['sourceId'];
         }
 
         return [$accessCheck, $sourceId];
@@ -167,7 +168,9 @@ class Controller extends Container implements Module
         if (!isset($payload['sourceId'])) {
             return ['status' => false]; // sourceId must be provided
         }
-        $sourceId = $payload['sourceId'];
+
+        $sourceId = vcfilter('vcv:dataAjax:setData:sourceId', $payload['sourceId']);
+
         list($accessCheck, $sourceId) = $this->checkSourceId($sourceId);
         if ($requestHelper->input('vcv-ready') !== '1') {
             return $response;
@@ -197,43 +200,6 @@ class Controller extends Container implements Module
         return $response;
     }
 
-    protected function createPreviewPost($post, $sourceId)
-    {
-        $previewPosts = get_posts(
-            [
-                'post_parent' => $sourceId,
-                'author' => $post->author,
-                'post_status' => 'inherit',
-                'post_type' => 'revision',
-                'orderby' => 'ID',
-                'order' => 'DESC',
-            ]
-        );
-        $previewPost = [];
-        // @codingStandardsIgnoreLine
-        if (in_array($post->post_status, ['publish', 'future', 'private'])) {
-            $previewPost[0]['post_name'] = $post->ID . '-autosave-v1';
-        } else {
-            $previewPost[0]['post_name'] = $post->ID . '-revision-v1';
-        }
-        // @codingStandardsIgnoreLine
-        $previewPost[0]['post_content'] = $post->post_content;
-        $previewPost[0]['post_status'] = 'inherit';
-        $previewPost[0]['post_type'] = 'revision';
-        $previewPost[0]['comment_status'] = 'closed';
-        $previewPost[0]['ping_status'] = 'closed';
-        $previewPost[0]['author'] = $post->author;
-        $previewPost[0]['post_parent'] = $post->ID;
-
-        if ($previewPosts) {
-            $previewPost[0]['ID'] = $previewPosts[0]->ID;
-        } else {
-            $previewPost[0]['ID'] = null;
-        }
-
-        return $previewPost;
-    }
-
     protected function updatePostData($post, $sourceId, $response)
     {
         ob_start();
@@ -243,8 +209,8 @@ class Controller extends Container implements Module
         $requestHelper = vchelper('Request');
         $assetsHelper = vchelper('Assets');
         $optionsHelper = vchelper('Options');
+        $previewHelper = vchelper('Preview');
 
-        $data = $requestHelper->input('vcv-data');
         $dataDecoded = $requestHelper->inputJson('vcv-data');
         $content = $requestHelper->input('vcv-content');
         $content = $filterHelper->fire('setData:updatePostData:content', $content);
@@ -276,10 +242,13 @@ class Controller extends Container implements Module
             $content
         );
         $post->post_content = $content;
-        if (isset($dataDecoded['draft']) && $post->post_status !== 'publish') {
+        $isDraftPost = isset($dataDecoded['draft']) && $post->post_status !== 'publish';
+        $isPreview = isset($dataDecoded['inherit']);
+
+        if ($isDraftPost) {
             $post->post_status = 'draft';
-        } elseif (isset($dataDecoded['inherit'])) {
-            $previewPost = $this->createPreviewPost($post, $sourceId);
+        } elseif ($isPreview) {
+            $previewPost = $previewHelper->generatePreview($post, $sourceId);
         } else {
             if ($currentUserAccessHelper->wpAll(
                 [get_post_type_object($post->post_type)->cap->publish_posts, $sourceId]
@@ -291,29 +260,30 @@ class Controller extends Container implements Module
                 $post->post_status = 'pending';
             }
         }
+
         // @codingStandardsIgnoreEnd
         //temporarily disable
         kses_remove_filters();
         remove_filter('content_save_pre', 'balanceTags', 50);
 
-        if (isset($dataDecoded['inherit']) && !empty($previewPost)) {
+        if ($isPreview && !empty($previewPost)) {
             // @codingStandardsIgnoreLine
             if ('draft' === $post->post_status || 'auto-draft' === $post->post_status) {
                 // @codingStandardsIgnoreLine
                 $post->post_status = 'draft';
                 // @codingStandardsIgnoreLine
                 wp_update_post($post);
-                update_metadata('post', $sourceId, VCV_PREFIX . 'pageContent', $data);
+                $this->updatePostMeta($sourceId);
 
                 $previewSourceId = wp_update_post($previewPost[0]);
-                update_metadata('post', $previewSourceId, VCV_PREFIX . 'pageContent', $data);
+                $this->updatePostMeta($previewSourceId);
             } else {
                 $previewSourceId = wp_update_post($previewPost[0]);
-                update_metadata('post', $previewSourceId, VCV_PREFIX . 'pageContent', $data);
+                $this->updatePostMeta($previewSourceId);
             }
         } else {
             wp_update_post($post);
-            update_post_meta($sourceId, VCV_PREFIX . 'pageContent', $data);
+            $this->updatePostMeta($sourceId);
         }
 
         $isAllowed = $optionsHelper->get('settings-itemdatacollection-enabled', false);
@@ -339,7 +309,7 @@ class Controller extends Container implements Module
             [
                 'sourceId' => $sourceId,
                 'post' => $post,
-                'data' => $data,
+                'data' => $requestHelper->input('vcv-data'),
             ]
         );
         // Clearing wp cache
@@ -354,5 +324,26 @@ class Controller extends Container implements Module
         ob_get_clean();
 
         return array_merge($response, $responseExtra);
+    }
+
+    protected function updatePostMeta($sourceId)
+    {
+        $requestHelper = vchelper('Request');
+        $data = $requestHelper->input('vcv-data');
+
+        update_metadata('post', $sourceId, VCV_PREFIX . 'pageContent', $data);
+
+        update_metadata(
+            'post',
+            $sourceId,
+            '_' . VCV_PREFIX . 'pageDesignOptionsData',
+            $requestHelper->input('vcv-settings-page-design-options')
+        );
+        update_metadata(
+            'post',
+            $sourceId,
+            '_' . VCV_PREFIX . 'pageDesignOptionsCompiledCss',
+            $requestHelper->input('vcv-settings-page-design-options-compiled')
+        );
     }
 }

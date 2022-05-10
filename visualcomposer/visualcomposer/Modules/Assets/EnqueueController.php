@@ -16,9 +16,9 @@ use VisualComposer\Helpers\AssetsEnqueue;
 use VisualComposer\Helpers\Frontend;
 use VisualComposer\Helpers\Options;
 use VisualComposer\Helpers\Request;
-use VisualComposer\Helpers\Str;
 use VisualComposer\Helpers\Traits\EventsFilters;
 use VisualComposer\Helpers\Traits\WpFiltersActions;
+use WP_Query;
 
 class EnqueueController extends Container implements Module
 {
@@ -29,9 +29,12 @@ class EnqueueController extends Container implements Module
 
     protected $globalCssAdded = false;
 
+    protected static $initialPostId = null;
+
+    protected static $initialEnqueue = null;
+
     public function __construct(Request $requestHelper)
     {
-        $this->wpAddAction('wp_enqueue_scripts', 'enqueueAssetsFromList', 40);
         $this->wpAddAction('wp_enqueue_scripts', 'enqueueAssets', 50);
         if (
             (defined('DOING_AJAX') && DOING_AJAX)
@@ -74,14 +77,17 @@ class EnqueueController extends Container implements Module
         );
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     protected function enqueueAssetsFromList($payload, AssetsEnqueue $assetsEnqueueHelper)
     {
-        // NOTE: This is not an feature toggler, it is local env to avoid recursion
+        // NOTE: This is not a feature toggle, it is local env to avoid recursion
         if (vcvenv('ENQUEUE_INNER_ASSETS')) {
             return;
         }
         VcvEnv::set('ENQUEUE_INNER_ASSETS', true);
-        $printJs = isset($payload['printJs']) ? $payload['printJs'] : true;
+        $printJs = !isset($payload['printJs']) || $payload['printJs'];
         $enqueueList = $assetsEnqueueHelper->getEnqueueList();
         if (!empty($enqueueList)) {
             foreach ($enqueueList as $sourceId) {
@@ -90,7 +96,7 @@ class EnqueueController extends Container implements Module
                 $backup = $wp_query;
                 $backupGlobal = $wp_the_query;
 
-                $tempPostQuery = new \WP_Query(
+                $tempPostQuery = new WP_Query(
                     [
                         'p' => $sourceId,
                         'post_status' => get_post_status($sourceId),
@@ -99,6 +105,9 @@ class EnqueueController extends Container implements Module
                     ]
                 );
                 $wp_query = $tempPostQuery;
+                if (is_null(self::$initialPostId)) {
+                    self::$initialPostId = get_the_ID();
+                }
                 $wp_the_query = $tempPostQuery;
                 if ($wp_query->have_posts()) {
                     $wp_query->the_post();
@@ -128,9 +137,15 @@ class EnqueueController extends Container implements Module
             }
             wp_reset_postdata();
         }
+
+        $assetsEnqueueHelper->enqueuePageSettingsCss(get_the_ID());
+
         VcvEnv::set('ENQUEUE_INNER_ASSETS', false);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     protected function callNonWordpressActionCallbacks($action)
     {
         global $wp_filter, $wp_current_filter;
@@ -139,7 +154,7 @@ class EnqueueController extends Container implements Module
         ksort($actions);
         // @codingStandardsIgnoreLine
         $wp_current_filter[] = $action;
-        foreach ($actions as $priority => $callbacks) {
+        foreach ($actions as $callbacks) {
             // Run over callbacks
             foreach ($callbacks as $callback) {
                 $closureInfo = $this->getCallReflector($callback['function']);
@@ -157,7 +172,7 @@ class EnqueueController extends Container implements Module
                 $fileName = $closureInfo->getFileName();
 
                 if (strpos($fileName, WPINC) !== false || strpos($fileName, 'wp-admin') !== false) {
-                    continue; // Skip wordpress callback
+                    continue; // Skip WordPress callback
                 }
 
                 // Call the callback
@@ -197,76 +212,93 @@ class EnqueueController extends Container implements Module
 
     /**
      * @param array $sourceIds // IDs to enqueue resources
-     *
-     * @throws \ReflectionException
-     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
      */
     protected function enqueueAssetsVendorListener($sourceIds)
     {
         if (empty($sourceIds)) {
             return;
         }
+
+        // @codingStandardsIgnoreStart
+        global $wp_query;
+        if (is_null(self::$initialPostId)) {
+            self::$initialPostId = get_the_ID();
+        }
+        // @codingStandardsIgnoreEnd
+
         $sourceIds = array_unique($sourceIds);
-        foreach ($sourceIds as $sourceId) {
-            if (in_array($sourceId, $this->lastEnqueueIdAssetsAll, true)) {
+        $this->enqueueAssetsBySourceList($sourceIds);
+    }
+
+    /**
+     * Process list ids by source stack enqueues.
+     *
+     * @param array $sourceIdList
+     */
+    protected function enqueueAssetsBySourceList($sourceIdList)
+    {
+        if (empty($sourceIdList) || !is_array($sourceIdList)) {
+            return;
+        }
+
+        foreach ($sourceIdList as $sourceId) {
+            $isCurrentIdAlreadyEnqueued = in_array($sourceId, $this->lastEnqueueIdAssetsAll, true);
+            if ($isCurrentIdAlreadyEnqueued) {
                 continue;
             }
+
+            $this->lastEnqueueIdAssetsAll[] = $sourceId;
+
             $this->call('enqueueAssetsBySourceId', ['sourceId' => $sourceId]);
             $this->call('enqueueSourceAssetsBySourceId', ['sourceId' => $sourceId]);
         }
     }
 
     /**
-     * @param \VisualComposer\Helpers\Frontend $frontendHelper
+     * @param \VisualComposer\Helpers\Assets $assetsHelper
      *
      * @throws \ReflectionException
      * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
      */
-    protected function enqueueAssets(Frontend $frontendHelper, Assets $assetsHelper)
+    protected function enqueueAssets(Assets $assetsHelper, Frontend $frontendHelper)
     {
-        $sourceId = get_the_ID();
-        wp_enqueue_style('vcv:assets:front:style');
-        wp_enqueue_script('vcv:assets:runtime:script');
-        wp_enqueue_script('vcv:assets:front:script');
-        if (
-            $frontendHelper->isPreview()
-            && (
-                !empty($this->lastEnqueueIdAssetsAll) || (in_array($sourceId, $this->lastEnqueueIdAssetsAll, true))
-            )
-        ) {
-            // To avoid enqueue assets inside preview page
-            $this->addEnqueuedId($sourceId);
-        } elseif (is_home() || is_archive() || is_category() || is_tag()) {
-            // @codingStandardsIgnoreLine
-            global $wp_query;
+        // Needed to keep proper ordering for layout styles rendering (background images)
+        if (is_null(self::$initialEnqueue)) {
+            self::$initialEnqueue = true;
+            $this->call('enqueueAssetsFromList');
+        }
+        // @codingStandardsIgnoreLine
+        global $wp_query;
+
+        if ($frontendHelper->isVcvFrontend()) {
+            wp_enqueue_style('vcv:assets:front:style');
+            wp_enqueue_script('vcv:assets:runtime:script');
+            wp_enqueue_script('vcv:assets:front:script');
+        }
+
+        if (is_home() || is_archive()) {
+            $idList = [];
             // @codingStandardsIgnoreLine
             foreach ($wp_query->posts as $post) {
-                $this->call('enqueueAssetsBySourceId', ['sourceId' => $post->ID]);
-                $this->call('enqueueSourceAssetsBySourceId', ['sourceId' => $post->ID]);
+                $idList[] = $post->ID;
             }
+
+            $this->enqueueAssetsBySourceList($idList);
         }
         vcevent('vcv:assets:enqueueVendorAssets');
 
+        $sourceId = get_the_ID();
         $idList = $assetsHelper->getTemplateIds($sourceId);
-        if (!empty($idList) && is_array($idList)) {
-            foreach ($idList as $sourceId) {
-                $this->call('enqueueAssetsBySourceId', ['sourceId' => $sourceId]);
-                $this->call('enqueueSourceAssetsBySourceId', ['sourceId' => $sourceId]);
-            }
-        }
+        $this->enqueueAssetsBySourceList($idList);
     }
 
     /**
-     * @param \VisualComposer\Helpers\Str $strHelper
-     * @param \VisualComposer\Helpers\Assets $assetsHelper
+     * @param \VisualComposer\Helpers\AssetsEnqueue $assetsEnqueueHelper
      * @param \VisualComposer\Helpers\Options $optionsHelper
      * @param $sourceId
      *
-     * @throws \ReflectionException
      */
     protected function enqueueSourceAssetsBySourceId(
-        Str $strHelper,
-        Assets $assetsHelper,
         AssetsEnqueue $assetsEnqueueHelper,
         Options $optionsHelper,
         $sourceId = null
@@ -286,11 +318,8 @@ class EnqueueController extends Container implements Module
             wp_add_inline_style(VCV_PREFIX . 'globalElementsCss', $optionsHelper->get('globalElementsCss'));
         }
 
-        $this->addEnqueuedId($sourceId);
         $bundleUrl = get_post_meta($sourceId, 'vcvSourceCssFileUrl', true);
         if ($bundleUrl) {
-            $version = get_post_meta($sourceId, '_' . VCV_PREFIX . 'sourceChecksum', true);
-
             if (strpos($bundleUrl, 'http') !== 0) {
                 if (strpos($bundleUrl, 'assets-bundles') === false) {
                     $bundleUrl = '/assets-bundles/' . $bundleUrl;
@@ -313,8 +342,19 @@ class EnqueueController extends Container implements Module
             );
         }
 
-
-        $assetsEnqueueHelper->enqueuePageSettingsCss($sourceId);
+        if (is_null(self::$initialPostId)) {
+            $enqueueList = $assetsEnqueueHelper->getEnqueueList();
+            $styles = get_post_meta(
+                self::$initialPostId,
+                '_' . VCV_PREFIX . 'pageDesignOptionsCompiledCss',
+                true
+            );
+            if (!$enqueueList || !$styles) {
+                $assetsEnqueueHelper->enqueuePageSettingsCss($sourceId);
+            }
+        } else {
+            $assetsEnqueueHelper->enqueuePageSettingsCss($sourceId);
+        }
     }
 
     /**
@@ -329,18 +369,7 @@ class EnqueueController extends Container implements Module
         if (!$sourceId) {
             $sourceId = get_the_ID();
         }
-        $this->addEnqueuedId($sourceId);
 
         $assetsEnqueueHelper->enqueueAssets($sourceId);
-    }
-
-    /**
-     * @param $sourceId
-     */
-    protected function addEnqueuedId($sourceId)
-    {
-        if (!in_array($sourceId, $this->lastEnqueueIdAssetsAll, true)) {
-            $this->lastEnqueueIdAssetsAll[] = $sourceId;
-        }
     }
 }

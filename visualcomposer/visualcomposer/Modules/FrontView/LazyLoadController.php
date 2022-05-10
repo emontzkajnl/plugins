@@ -26,16 +26,17 @@ class LazyLoadController extends Container implements Module
     /**
      * Controller constructor.
      */
-    public function __construct(Options $optionsHelper)
+    public function __construct()
     {
         $this->addFilter('vcv:editor:variables', 'addVariables');
 
-        if (!$optionsHelper->get('settings-lazy-load-enabled', true)) {
-            $this->wpAddFilter('the_content', 'globalOptionParser', 100);
-            $this->addFilter('vcv:frontend:content', 'globalOptionParser', 100);
-
-            $this->wpAddAction('wp_enqueue_scripts', 'dequeueLazyLoad', 100);
-        }
+        $this->wpAddAction('init', function () {
+            if ($this->isWpNativeLazyLoadFilterDisabled()) {
+                $this->wpAddFilter('the_content', 'globalOptionParser', 100);
+                $this->addFilter('vcv:frontend:content', 'globalOptionParser', 100);
+                $this->wpAddAction('wp_enqueue_scripts', 'dequeueLazyLoad', 100);
+            }
+        });
     }
 
     /**
@@ -48,9 +49,9 @@ class LazyLoadController extends Container implements Module
         $content = $this->removeFromDesignOptions($content);
         $content = $this->removeFromAdvancedDesignOptions($content);
         $content = $this->removeFromSingleImageElement($content);
-        $content = $this->removeFromVideoElement($content);
+        $content = $this->removeFromLayoutFeatureImageElement($content);
 
-        return $content;
+        return $this->removeFromVideoElement($content);
     }
 
     /**
@@ -65,15 +66,14 @@ class LazyLoadController extends Container implements Module
      * Add frontend variables.
      *
      * @param array $variables
-     * @param \VisualComposer\Helpers\Options $optionsHelper
      *
      * @return array
      */
-    protected function addVariables($variables, Options $optionsHelper)
+    protected function addVariables($variables)
     {
         $variables[] = [
-            'key' => 'VCV_GLOBAL_LAZY_LOAD_ENABLED',
-            'value' => $optionsHelper->get('settings-lazy-load-enabled', true),
+            'key' => 'VCV_IS_WP_NATIVE_LAZY_LOAD_EXIST',
+            'value' => $this->isWpNativeLazyLoadExist(),
             'type' => 'constant',
         ];
 
@@ -178,6 +178,20 @@ class LazyLoadController extends Container implements Module
     }
 
     /**
+     * Remove lazy load functionality from vc layout feature image element.
+     *
+     * @param null|string|string[] $content
+     *
+     * @return null|string|string[]
+     */
+    protected function removeFromLayoutFeatureImageElement($content)
+    {
+        $pattern = '/<img[^>]*class="vce-layout-post-featured-image vcv-lozad"(.*?)>/';
+
+        return $this->removeFromElement($pattern, $content);
+    }
+
+    /**
      * Remove lazy load functionality from vc video element.
      *
      * @param null|string|string[] $content
@@ -226,5 +240,34 @@ class LazyLoadController extends Container implements Module
             },
             $content
         );
+    }
+
+    /**
+     * Check if native wp_lazy_loading_enabled filter deactivated.
+     *
+     * @return bool
+     */
+    protected function isWpNativeLazyLoadFilterDisabled()
+    {
+        if (!$this->isWpNativeLazyLoadExist()) {
+            return false;
+        }
+
+        return !wp_lazy_loading_enabled('img', 'the_content');
+    }
+
+    /**
+     * Check if native wp lazy load option was enabled.
+     *
+     * @return bool
+     */
+    public function isWpNativeLazyLoadExist()
+    {
+        $exist = false;
+        if (function_exists('wp_lazy_loading_enabled')) {
+            $exist = true;
+        }
+
+        return $exist;
     }
 }

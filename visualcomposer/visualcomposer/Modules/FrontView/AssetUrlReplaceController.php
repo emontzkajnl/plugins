@@ -48,30 +48,9 @@ class AssetUrlReplaceController extends Container implements Module
         $uploadDir = wp_upload_dir();
         $uploadUrl = set_url_scheme($uploadDir['baseurl']);
 
-        // Assets Url
-        $content = str_replace(
-            [
-                '[vcvAssetsUploadUrl]',
-                'http://|!|vcvAssetsUploadUrl|!|',
-                'https://|!|vcvAssetsUploadUrl|!|',
-                '|!|vcvAssetsUploadUrl|!|',
-            ],
-            $assetUrl,
-            $content
-        );
+        $content = $assetsHelper->replaceAssetsUrl($content, $assetUrl);
+        $content = $assetsHelper->replaceUploadsUrl($content, $uploadUrl);
 
-        // Upload Url
-        $content = str_replace(
-            [
-                '[vcvUploadUrl]',
-                'http://|!|vcvUploadUrl|!|',
-                'https://|!|vcvUploadUrl|!|',
-                '|!|vcvUploadUrl|!|',
-            ],
-            $uploadUrl,
-            $content
-        );
-
-        return $content;
+        return vcfilter('vcv:frontView:replaceUrl:content', $content);
     }
 }

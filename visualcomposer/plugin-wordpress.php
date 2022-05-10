@@ -4,7 +4,7 @@
  * Plugin Name: Visual Composer
  * Plugin URI: https://visualcomposer.com/premium/?utm_source=vcwb&utm_medium=wpplugins&utm_campaign=vcbrand&utm_content=text
  * Description: Create your WordPress website with the fast and easy-to-use drag-and-drop builder for experts and beginners.
- * Version: 41.1
+ * Version: 44.0
  * Author: visualcomposer.com
  * Author URI: https://visualcomposer.com/?utm_source=vcwb&utm_medium=wpplugins&utm_campaign=vcbrand&utm_content=text
  * Copyright: (c) 2017 TechMill Ltd.
@@ -46,7 +46,7 @@ if (defined('VCV_VERSION')) {
 /**
  * Plugin version constant
  */
-define('VCV_VERSION', '41.1');
+define('VCV_VERSION', '44.0');
 /**
  * Plugin url: 'http://web/wp-content/plugins/plugin_dir/'
  */

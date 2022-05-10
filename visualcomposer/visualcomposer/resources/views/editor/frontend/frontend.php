@@ -34,7 +34,7 @@ wp_enqueue_media();
     <link rel="profile" href="http://gmpg.org/xfn/11" />
     <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0" />
-    <title><?php echo sprintf(__('Frontend editor: %s', 'visualcomposer'), get_the_title()); ?></title>
+    <title><?php echo sprintf(__('Visual Composer: %s', 'visualcomposer'), get_the_title()); ?></title>
     <link rel="stylesheet"
             href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic&subset=latin,greek,greek-ext,cyrillic-ext,latin-ext,cyrillic">
     <?php
@@ -94,7 +94,12 @@ if (is_array($extraOutput)) {
                             ?>" id="vcv-editor-iframe"
                             frameborder="0" scrolling="auto"></iframe>
                 </div>
-                <div class="vcv-layout-iframe-overlay" id="vcv-editor-iframe-overlay"></div>
+                <div class="vcv-layout-iframe-overlay" id="vcv-editor-iframe-overlay">
+                    <div class="vcv-ui-outline-controls-wrapper"></div>
+                    <div class="vcv-ui-append-control-wrapper"></div>
+                    <div class="vcv-ui-element-resize-control-wrapper"></div>
+                    <div class="vcv-ui-element-outline-container"></div>
+                </div>
                 <div class="vcv-layout-iframe-content" id="vcv-layout-iframe-content">
                     <div class="vcv-loading-overlay">
                         <div class="vcv-loading-overlay-inner">
@@ -111,8 +116,6 @@ if (is_array($extraOutput)) {
     <div class="vcv-layout-overlay"></div>
 
 </div>
-<script src="<?php echo get_site_url(null, '?vcv-script=vendor'); ?>"></script>
-<script src="<?php echo get_site_url(null, '?vcv-script=wp'); ?>"></script>
 
 <?php
 vcevent('vcv:frontend:render:footer', ['sourceId' => $sourceId]);
