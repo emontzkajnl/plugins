@@ -1,0 +1,14 @@
+{
+  "name": "jci-ff-recipe-manager",
+  "version": "1.0.0",
+  "description": "Handles the importing and displaying of Farm Flavor Recipes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Journal Communications",
+  "license": "ISC",
+  "dependencies": {
+    "wpapi": "^1.2.2"
+  }
+}

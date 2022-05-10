@@ -1,20 +1,5 @@
 <?php 
-/**
- * Plugin Name: FF Recipe Manager
- * Description: Custom Gutenberg blocks 
- * 
- * register recipe post type? (recipes are normal posts)
- * query posts from the last 24 hours and add to database
- */
-
-
-
- if( ! defined( 'ABSPATH')) {
-     exit;
- }
-
-
- function recipe_post_type() {
+function recipe_post_type() {
 
     $labels = array(
 		'name'                  => _x( 'Recipes', 'Post Type General Name', 'text_domain' ),
@@ -69,18 +54,3 @@
 }
 
 add_action( 'init', 'recipe_post_type');
-
-function maximum_api_filter($query_params) {
-    $query_params['per_page']["maximum"]=1000;
-    return $query_params;
-}
-add_filter('rest_post_collection_params', 'maximum_api_filter');
-
-$response = wp_remote_get('https://farmflavor.com/wp-json/wp/v2/posts?per_page=100&after=2021-11-07T00:00:00&categories=5,6,19,24,28,25,7,417,8,27,17,18,34,13,31,32,22,14,26,20,9,16,10,11,23,21,35,12');
-$body     = json_decode(wp_remote_retrieve_body( $response ), true);
-// echo 'start echo<br />';
-// foreach($body as $b) {
-//     echo 'name is '.$b['title']['rendered'].'<br />';
-//     // var_dump($b);
-// }
-// var_dump(count($body));
