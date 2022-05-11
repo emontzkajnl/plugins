@@ -1,0 +1,15 @@
+@import "_common";
+
+$pack: sprite-map("buttons-yellow/*.png",
+$buttons-yellow-prev-normal-2-repeat: repeat-x,
+$buttons-yellow-prev-hover-2-repeat: repeat-x,
+$buttons-yellow-prev-active-2-repeat: repeat-x,
+$buttons-yellow-prev-disabled-2-repeat: repeat-x,
+$buttons-yellow-next-normal-2-repeat: repeat-x,
+$buttons-yellow-next-hover-2-repeat: repeat-x,
+$buttons-yellow-next-active-2-repeat: repeat-x,
+$buttons-yellow-next-disabled-2-repeat: repeat-x
+);
+
+@import "_buttons";
+@import "_buttons_light";

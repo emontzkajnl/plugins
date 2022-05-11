@@ -1,0 +1,149 @@
+body .site-content {
+    .wp-block-columns.has-2-columns {
+        .col-md-8 {
+            .container {
+                padding: 0;
+            }
+
+            .stm-grid-view-block {
+
+            }
+
+            .stm-list-view-block {
+                .container {
+                    .block-title {
+                        padding-bottom: 20px;
+                        letter-spacing: 1.7px;
+                        line-height: 18px;
+
+                        &.block_header_2 {
+                            padding-bottom: 33px;
+                            margin-bottom: 38px;
+                            letter-spacing: 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        .stmt-sticky-sidebar {
+            will-change: min-height;
+            .inner-wrapper-sticky {
+                transform: translate(0, 0); /* For browsers don't support translate3d. */
+                will-change: position, transform;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .col-md-8 {
+                padding: 0;
+            }
+        }
+    }
+}
+
+.editor-inner-blocks > .editor-block-list__layout > .editor-block-list__block > .editor-block-list__block-edit {
+    .wp-block-columns.has-2-columns.row {
+        max-width: 1110px;
+        margin: 0 auto;
+
+        >.editor-inner-blocks {
+            >.editor-block-list__layout {
+                display: flex;
+                flex-direction: row;
+
+                >.editor-block-list__block {
+                    flex: inherit;
+
+                    &:first-child {
+                        width: 66.666666%;
+
+                        .stm-grid-view-block {
+                            .headTabsWrap {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                justify-content: space-between;
+                                position: relative;
+                                padding-bottom: 21px;
+                                margin-bottom: 43px;
+
+                                &:before {
+                                    content: '';
+                                    display: block;
+                                    width: 6.3%;
+                                    height: 3px;
+                                    position: absolute;
+                                    bottom: 0;
+                                    left: 0;
+                                }
+
+                                &:after {
+                                    content: '';
+                                    display: block;
+                                    width: 92%;
+                                    height: 1px;
+                                    position: absolute;
+                                    bottom: 0;
+                                    right: 0;
+                                }
+
+                                .block-title {
+                                    margin: 0;
+                                    padding: 0;
+
+                                    &:before, &:after {
+                                        display: none;
+                                    }
+                                }
+
+                                ul {
+                                    display: flex;
+                                    flex-direction: row;
+                                    flex-wrap: nowrap;
+
+                                    li {
+                                        text-transform: uppercase;
+                                        padding: 0 15px;
+                                        line-height: 20px;
+                                        font-size: 14px;
+                                        font-weight: 400;
+
+                                        a {
+                                        }
+
+                                        &.active {
+                                            a {
+                                            }
+                                        }
+
+                                        &:last-child {
+                                            padding-right: 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    &:last-child {
+                        width: 33.333333%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.stmt-template-demo_two {
+    .site-content {
+        .wp-block-columns.has-2-columns {
+            .col-md-8 {
+                .stm-grid-view-block {
+                    .headTabsWrap {
+                        padding-bottom: 16px;
+                    }
+                }
+            }
+        }
+    }
+}

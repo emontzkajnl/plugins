@@ -1,0 +1,209 @@
+{
+  "bottom_bar_bg": "",
+  "bottom_bar_bottom": "0",
+  "bottom_bar_color": "",
+  "bottom_bar_link_color_hover": "",
+  "bottom_bar_text_color": "",
+  "bottom_bar_top": "0",
+  "header_builder": {
+    "center": {
+      "left": [
+        {
+          "$$hashKey": "object:787",
+          "data": {
+            "font": "hf",
+            "hoverColor": "#273044",
+            "id": "7",
+            "style": "default"
+          },
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-menu",
+          "label": "Menu",
+          "order": {
+            "mobile": "2100",
+            "tablet": "2100"
+          },
+          "position": [
+            "center",
+            "left",
+            "0"
+          ],
+          "type": "menu"
+        }
+      ],
+      "right": [
+        {
+          "$$hashKey": "object:1219",
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-search",
+          "label": "Search",
+          "order": {
+            "mobile": "2300",
+            "tablet": "2300"
+          },
+          "position": [
+            "center",
+            "right",
+            "0"
+          ],
+          "type": "search",
+          "value": "style_1"
+        }
+      ]
+    },
+    "top": {
+      "left": [
+        {
+          "$$hashKey": "object:749",
+          "data": {
+            "uselogo": "true",
+            "width": "190px"
+          },
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-image",
+          "label": "Image",
+          "margins": {
+            "default": {
+              "top": "4"
+            }
+          },
+          "order": {
+            "mobile": "1100",
+            "tablet": "1100"
+          },
+          "position": [
+            "top",
+            "left",
+            "0"
+          ],
+          "type": "image",
+          "value": "151"
+        }
+      ],
+      "right": [
+        {
+          "$$hashKey": "object:265",
+          "data": {
+            "font": "hf",
+            "id": "11",
+            "style": "default"
+          },
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-menu",
+          "label": "Menu",
+          "order": {
+            "mobile": "1320",
+            "tablet": "1320"
+          },
+          "position": [
+            "top",
+            "right",
+            "2"
+          ],
+          "type": "menu"
+        },
+        {
+          "$$hashKey": "object:269",
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-twitter",
+          "label": "Socials",
+          "order": {
+            "mobile": "1300",
+            "tablet": "1300"
+          },
+          "position": [
+            "top",
+            "right",
+            "0"
+          ],
+          "type": "socials"
+        },
+        {
+          "$$hashKey": "object:235",
+          "data": {
+            "font_size": "0.5",
+            "url": "0.5"
+          },
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm-gm-icon-Aa",
+          "label": "Enlarge Font Size",
+          "order": {
+            "mobile": "1310",
+            "tablet": "1310"
+          },
+          "position": [
+            "top",
+            "right",
+            "1"
+          ],
+          "settings_template": "hb_templates\/modals\/font-size",
+          "type": "text",
+          "view_template": "font-size"
+        }
+      ]
+    }
+  },
+  "header_bg": "",
+  "header_bottom": "32",
+  "header_color": "",
+  "header_text_color": "",
+  "header_text_color_hover": "",
+  "header_top": "36",
+  "all_bg": "",
+  "all_bg_color": "",
+  "divider_h_socials_0": "",
+  "divider_h_socials_1": "",
+  "header_container_width": "0",
+  "header_content_width": "0",
+  "header_socials": [
+    {
+      "social": "fa fa-twitter",
+      "url": "#"
+    },
+    {
+      "social": "fa fa-facebook",
+      "url": "#"
+    },
+    {
+      "social": "fa fa-instagram",
+      "url": "#"
+    }
+  ],
+  "header_sticky": "",
+  "logo": "216",
+  "main_color": "#297ee8",
+  "secondary_color": "#222222",
+  "third_color": "#297ee8",
+  "top_bar_bg": "",
+  "top_bar_bottom": "14",
+  "top_bar_color": "#ff1f59",
+  "top_bar_link_color_hover": "#ff1f59",
+  "top_bar_text_color": "#fffefe",
+  "top_bar_top": "16",
+  "stm_hb_slug": "stm_hb_settings",
+  "stm_hb_name": "Default Header"
+}

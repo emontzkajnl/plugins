@@ -1,0 +1,49 @@
+body .site-content .widget_instagram_feed_wrapper, .editor-block-list__block .widget_instagram_feed_wrapper {
+    background: #ffffff;
+    padding: 20px 25px 37px 28px;
+}
+
+body .site-content .widget_instagram_feed_wrapper .block-title, .editor-block-list__block .widget_instagram_feed_wrapper .block-title {
+    padding-left: 3px;
+    margin: 0 0 7px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+body .site-content .widget_instagram_feed_wrapper #sb_instagram, .editor-block-list__block .widget_instagram_feed_wrapper #sb_instagram {
+    min-height: 216px;
+}
+
+body .site-content .widget_instagram_feed_wrapper #sb_instagram #sbi_images, .editor-block-list__block .widget_instagram_feed_wrapper #sb_instagram #sbi_images {
+    background: #f5f5f5;
+}
+
+body .site-content .widget_instagram_feed_wrapper.alignwide, body .site-content .widget_instagram_feed_wrapper.alignfull, .editor-block-list__block .widget_instagram_feed_wrapper.alignwide, .editor-block-list__block .widget_instagram_feed_wrapper.alignfull {
+    width: 100vw !important;
+    padding: 0;
+    margin: 0;
+}
+
+body .site-content .widget_instagram_feed_wrapper.alignwide #sb_instagram, body .site-content .widget_instagram_feed_wrapper.alignfull #sb_instagram, .editor-block-list__block .widget_instagram_feed_wrapper.alignwide #sb_instagram, .editor-block-list__block .widget_instagram_feed_wrapper.alignfull #sb_instagram {
+    padding: 0;
+    min-height: inherit;
+}
+
+body .site-content .widget_instagram_feed_wrapper.alignwide #sb_instagram #sbi_images, body .site-content .widget_instagram_feed_wrapper.alignfull #sb_instagram #sbi_images, .editor-block-list__block .widget_instagram_feed_wrapper.alignwide #sb_instagram #sbi_images, .editor-block-list__block .widget_instagram_feed_wrapper.alignfull #sb_instagram #sbi_images {
+    padding: 0;
+}
+
+.editor-block-list__block .widget_instagram_feed_wrapper {
+    background: #cccccc;
+    position: relative;
+    height: 200px;
+}
+
+.editor-block-list__block .widget_instagram_feed_wrapper:before {
+    content: 'Instagram Feed';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}

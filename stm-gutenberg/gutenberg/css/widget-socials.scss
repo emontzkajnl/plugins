@@ -1,0 +1,425 @@
+@import "../../assets/css/mixins";
+@import '../../assets/css/colors';
+
+body .site-content {
+    .socials_widget_wrapper {
+        display: block;
+        position: relative;
+        margin-top: 3px;
+        padding: 24px 29px;
+        background: $white;
+
+        .block-title {
+            text-transform: uppercase;
+            letter-spacing: 1.7px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .widget_socials {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-top: 13px;
+            justify-content: flex-start;
+
+            li {
+                width: 23%;
+                border-radius: 5px;
+                overflow: hidden;
+                margin-right: 8px;
+                padding: 0;
+
+                &:nth-child(4n) {
+                    margin-right: 0;
+                }
+
+                &.facebook {
+                    a {
+                        background: $facebook;
+                    }
+                }
+                &.twitter {
+                    a {
+                        background: $twitter;
+                    }
+                }
+                &.youtube {
+                    a {
+                        background: $youtube;
+                    }
+                }
+                &.instagram {
+                    a {
+                        background: $instagram;
+                    }
+                }
+                &.pinterest {
+                    a {
+                        background: $pinterest;
+                    }
+                }
+                &.linkedin {
+                    a {
+                        background: $linkedin;
+                    }
+                }
+                &.google_plus {
+                    a {
+                        background: $google_plus;
+                    }
+                }
+                &.google {
+                    a {
+                        background: $google;
+                    }
+                }
+                &.behance {
+                    a {
+                        background: $behance;
+                    }
+                }
+                &.dribbble {
+                    a {
+                        background: $dribbble;
+                    }
+                }
+                &.flickr {
+                    a {
+                        background: $flickr;
+                    }
+                }
+                &.git {
+                    a {
+                        background: $git;
+                    }
+                }
+                &.linkedin {
+                    a {
+                        background: $linkedin;
+                    }
+                }
+                &.yahoo {
+                    a {
+                        background: $yahoo;
+                    }
+                }
+                &.delicious {
+                    a {
+                        background: $delicious;
+                    }
+                }
+                &.dropbox {
+                    a {
+                        background: $dropbox;
+                    }
+                }
+                &.reddit {
+                    a {
+                        background: $reddit;
+                    }
+                }
+                &.soundcloud {
+                    a {
+                        background: $soundcloud;
+                    }
+                }
+                &.skype {
+                    a {
+                        background: $skype;
+                    }
+                }
+                &.youtube-play {
+                    a {
+                        background: $youtube-play;
+                    }
+                }
+                &.tumblr {
+                    a {
+                        background: $tumblr;
+                    }
+                }
+                &.whatsapp {
+                    a {
+                        background: $whatsapp;
+                    }
+                }
+
+                a {
+                    display: block;
+                    line-height: 32px;
+                    text-align: center;
+
+                    i {
+                        color: $white;
+                        margin-right: 0 !important;
+                    }
+                }
+            }
+        }
+
+        &.sww_style_2 {
+            padding: 0;
+
+            .block-title {
+                line-height: 18px;
+                margin-bottom: 36px;
+                letter-spacing: 1px;
+            }
+
+            .widget_socials {
+                li {
+                    border-radius: 0;
+                    width: 22%;
+                    a {
+                        line-height: 85px;
+                    }
+                }
+            }
+        }
+
+        &.sww_style_3 {
+            padding-top: 32px;
+
+            .block-title {
+                line-height: 30px;
+                font-weight: 400;
+                text-transform: capitalize;
+                letter-spacing: 0;
+                margin-top: 0;
+            }
+
+            .widget_socials {
+                padding: 0 15px;
+
+                li {
+                    width: 25%;
+                    margin: 0;
+                    padding: 0 5px;
+                    a {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: center;
+                        background: transparent;
+                        border-radius: 50%;
+                        width: 100%;
+                        min-height: 50px;
+                        border: 1px solid $black;
+
+                        i {
+                            color: $black;
+                            font-size: 20px;
+                        }
+                    }
+                }
+            }
+        }
+
+        @media (max-width: 1024px) {
+            &.sww_style_3 {
+                .widget_socials {
+                    padding: 0;
+
+                    li {
+                        a {
+                            min-height: 45px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.stmt-template-demo_two .site-content{
+    .socials_widget_wrapper {
+        .block_header_1 {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.editor-block-list__block {
+    .socials_widget_wrapper {
+        display: block;
+        position: relative;
+        margin-top: 3px;
+        padding: 24px 29px;
+        background: $white;
+
+        .block-title {
+            text-transform: uppercase;
+            letter-spacing: 1.7px;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .widget_socials {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-top: 17px;
+            justify-content: flex-start;
+
+            li {
+                width: 23%;
+                border-radius: 5px;
+                overflow: hidden;
+                margin-right: 8px;
+
+                &:nth-child(4n) {
+                    margin-right: 0;
+                }
+
+                &.facebook {
+                    a {
+                        background: $facebook;
+                    }
+                }
+                &.twitter {
+                    a {
+                        background: $twitter;
+                    }
+                }
+                &.youtube {
+                    a {
+                        background: $youtube;
+                    }
+                }
+                &.instagram {
+                    a {
+                        background: $instagram;
+                    }
+                }
+                &.pinterest {
+                    a {
+                        background: $pinterest;
+                    }
+                }
+                &.linkedin {
+                    a {
+                        background: $linkedin;
+                    }
+                }
+                &.google_plus {
+                    a {
+                        background: $google_plus;
+                    }
+                }
+                &.google {
+                    a {
+                        background: $google;
+                    }
+                }
+                &.behance {
+                    a {
+                        background: $behance;
+                    }
+                }
+                &.dribbble {
+                    a {
+                        background: $dribbble;
+                    }
+                }
+                &.flickr {
+                    a {
+                        background: $flickr;
+                    }
+                }
+                &.git {
+                    a {
+                        background: $git;
+                    }
+                }
+                &.linkedin {
+                    a {
+                        background: $linkedin;
+                    }
+                }
+                &.yahoo {
+                    a {
+                        background: $yahoo;
+                    }
+                }
+                &.delicious {
+                    a {
+                        background: $delicious;
+                    }
+                }
+                &.dropbox {
+                    a {
+                        background: $dropbox;
+                    }
+                }
+                &.reddit {
+                    a {
+                        background: $reddit;
+                    }
+                }
+                &.soundcloud {
+                    a {
+                        background: $soundcloud;
+                    }
+                }
+                &.skype {
+                    a {
+                        background: $skype;
+                    }
+                }
+                &.youtube-play {
+                    a {
+                        background: $youtube-play;
+                    }
+                }
+                &.tumblr {
+                    a {
+                        background: $tumblr;
+                    }
+                }
+                &.whatsapp {
+                    a {
+                        background: $whatsapp;
+                    }
+                }
+
+                a {
+                    display: block;
+                    line-height: 32px;
+                    text-align: center;
+
+                    i {
+                        color: $white;
+                    }
+                }
+            }
+        }
+
+        &.sww_style_2 {
+            padding: 0 !important;
+            border-top: none !important;
+
+            .block-title {
+                line-height: 18px;
+                margin-bottom: 36px;
+                letter-spacing: 1px;
+            }
+
+            .widget_socials {
+                li {
+                    border-radius: 0;
+                    width: 22%;
+                    a {
+                        line-height: 85px;
+                    }
+                }
+            }
+        }
+
+        &.sww_style_3 {
+            border-top: none !important;
+        }
+    }
+}

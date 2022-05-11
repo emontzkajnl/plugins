@@ -1,0 +1,129 @@
+body .site-content .widget_search_wrapper .search_container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search {
+    margin: 35px 30px 10px 30px;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search button {
+    border: 0;
+    background: transparent;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search button:hover {
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search .searchContainer {
+    padding: 5px 0 5px 10px;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search .searchIcon {
+    padding: 0.5rem;
+    font-size: 24px;
+    color: #222222;
+    -webkit-text-stroke: 1px white;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search .searchBox {
+    font-size: 20px;
+    color: gray;
+    background: #f5f5f5;
+    border: 0;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search .searchBox::-webkit-input-placeholder {
+    font-size: 16px;
+}
+
+body .site-content .widget_search_wrapper .search_container .beauty_search input:focus {
+    outline: none !important;
+}
+
+.editor-block-list__block .widget_search_wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    background-color: #fff;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search {
+    margin: 35px 30px 10px 30px;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search button {
+    border: 0;
+    background: transparent;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search button:hover {
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search .searchContainer {
+    padding: 5px 0 5px 10px;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search .searchIcon {
+    padding: 0.5rem;
+    font-size: 24px;
+    color: #222222;
+    -webkit-text-stroke: 1px white;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search .searchBox {
+    font-size: 20px;
+    color: gray;
+    background: #f5f5f5;
+    border: 0;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search .searchBox::-webkit-input-placeholder {
+    font-size: 16px;
+}
+
+.editor-block-list__block .widget_search_wrapper .beauty_search input:focus {
+    outline: none !important;
+}

@@ -1,0 +1,154 @@
+{
+  "bottom_bar_bg": "",
+  "bottom_bar_bottom": "0",
+  "bottom_bar_color": "",
+  "bottom_bar_link_color_hover": "",
+  "bottom_bar_text_color": "",
+  "bottom_bar_top": "0",
+  "header_builder": {
+    "center": {
+      "center": [
+        {
+          "$$hashKey": "object:200",
+          "data": {
+            "font": "hf",
+            "hoverColor": "#4fbe6e",
+            "id": "27",
+            "innerColor": "#1c1c1c",
+            "innerHoverColor": "#4fbe6e",
+            "style": "default"
+          },
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-menu",
+          "label": "Menu",
+          "order": {
+            "mobile": "1200",
+            "tablet": "1200"
+          },
+          "position": [
+            "center",
+            "center",
+            "0"
+          ],
+          "type": "menu"
+        }
+      ],
+      "left": [
+        {
+          "$$hashKey": "object:231",
+          "data": {
+            "uselogo": "true",
+            "width": "172px"
+          },
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-image",
+          "label": "Image",
+          "order": {
+            "mobile": "2100",
+            "tablet": "2100"
+          },
+          "position": [
+            "center",
+            "left",
+            "0"
+          ],
+          "type": "image"
+        }
+      ],
+      "right": [
+        {
+          "$$hashKey": "object:202",
+          "data": {
+            "style": "icon_only"
+          },
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "stm_hb-twitter",
+          "label": "Socials",
+          "order": {
+            "mobile": "1300",
+            "tablet": "1300"
+          },
+          "position": [
+            "center",
+            "right",
+            "0"
+          ],
+          "type": "socials"
+        },
+        {
+          "$$hashKey": "object:245",
+          "disabled": {
+            "default": "",
+            "mobile": "",
+            "tablet": ""
+          },
+          "icon": "icon-magnifier",
+          "label": "Search Button",
+          "order": {
+            "mobile": "2310",
+            "tablet": "2310"
+          },
+          "position": [
+            "center",
+            "right",
+            "1"
+          ],
+          "settings_template": "hb_templates\/modals\/search-popup",
+          "type": "text",
+          "view_template": "search-popup"
+        }
+      ]
+    }
+  },
+  "header_bg": "",
+  "header_bottom": "36",
+  "header_color": "#ffffff",
+  "header_text_color": "rgb(28, 28, 28)",
+  "header_text_color_hover": "rgb(79, 190, 110)",
+  "header_top": "46",
+  "all_bg": "",
+  "all_bg_color": "",
+  "divider_h_socials_0": "",
+  "divider_h_socials_1": "",
+  "header_container_width": "0",
+  "header_content_width": "0",
+  "header_socials": [
+    {
+      "social": "fa fa-twitter",
+      "url": "https:\/\/twitter.com"
+    },
+    {
+      "social": "fa fa-facebook",
+      "url": "https:\/\/facebook.com"
+    },
+    {
+      "social": "fa fa-youtube-play",
+      "url": "https:\/\/youtubeplay.com"
+    }
+  ],
+  "header_sticky": "",
+  "logo": "247",
+  "main_color": "#297ee8",
+  "secondary_color": "#222222",
+  "third_color": "#297ee8",
+  "top_bar_bg": "",
+  "top_bar_bottom": "0",
+  "top_bar_color": "#ffffff",
+  "top_bar_link_color_hover": "#4fbe6e",
+  "top_bar_text_color": "#1c1c1c",
+  "top_bar_top": "0",
+  "stm_hb_slug": "stm_hb_settings",
+  "stm_hb_name": "Default Header"
+}

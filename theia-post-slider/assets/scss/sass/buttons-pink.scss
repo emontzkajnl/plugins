@@ -1,0 +1,14 @@
+@import "_common";
+
+$pack: sprite-map("buttons-pink/*.png",
+$buttons-pink-prev-normal-2-repeat: repeat-x,
+$buttons-pink-prev-hover-2-repeat: repeat-x,
+$buttons-pink-prev-active-2-repeat: repeat-x,
+$buttons-pink-prev-disabled-2-repeat: repeat-x,
+$buttons-pink-next-normal-2-repeat: repeat-x,
+$buttons-pink-next-hover-2-repeat: repeat-x,
+$buttons-pink-next-active-2-repeat: repeat-x,
+$buttons-pink-next-disabled-2-repeat: repeat-x
+);
+
+@import "_buttons";

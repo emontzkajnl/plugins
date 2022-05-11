@@ -1,0 +1,15 @@
+@import "_common";
+
+$pack: sprite-map("buttons-white/*.png",
+$buttons-white-prev-normal-2-repeat: repeat-x,
+$buttons-white-prev-hover-2-repeat: repeat-x,
+$buttons-white-prev-active-2-repeat: repeat-x,
+$buttons-white-prev-disabled-2-repeat: repeat-x,
+$buttons-white-next-normal-2-repeat: repeat-x,
+$buttons-white-next-hover-2-repeat: repeat-x,
+$buttons-white-next-active-2-repeat: repeat-x,
+$buttons-white-next-disabled-2-repeat: repeat-x
+);
+
+@import "_buttons";
+@import "_buttons_light";

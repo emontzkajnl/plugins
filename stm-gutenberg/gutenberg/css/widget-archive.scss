@@ -1,0 +1,42 @@
+@import "../../assets/css/mixins";
+body .site-content, .editor-block-list__block {
+    .widget_archive_wrapper {
+
+        .select-wrap {
+            position: relative;
+
+            select {
+                display: block;
+                border-radius: 0;
+                height: 50px;
+                line-height: 24px;
+                width: 100%;
+                border: 1px solid #000000;
+                background: transparent;
+                font-size: 14px;
+                font-weight: 400;
+                -webkit-appearance: none;
+                padding: 10px 20px;
+
+                option {
+                }
+            }
+
+            &:before {
+                border-style: solid;
+                border-width: 1px 1px 0 0;
+                border-color: #000;
+                content: '';
+                display: block;
+                height: 8px;
+                right: 20px;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%) rotate(135deg);
+                width: 0.65em;
+                z-index: 10;
+            }
+        }
+
+    }
+}

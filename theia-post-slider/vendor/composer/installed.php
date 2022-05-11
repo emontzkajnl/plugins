@@ -1,0 +1,52 @@
+<?php return array(
+    'root' => array(
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'type' => 'wordpress-plugin',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'reference' => '581dc4982eee6549522a3bccaf0559fbd33b7b7e',
+        'name' => 'wecodepixels/theia-post-slider',
+        'dev' => true,
+    ),
+    'versions' => array(
+        'ezyang/htmlpurifier' => array(
+            'pretty_version' => 'v4.14.0',
+            'version' => '4.14.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../ezyang/htmlpurifier',
+            'aliases' => array(),
+            'reference' => '12ab42bd6e742c70c0a52f7b82477fcd44e64b75',
+            'dev_requirement' => false,
+        ),
+        'freemius/wordpress-sdk' => array(
+            'pretty_version' => '2.4.2',
+            'version' => '2.4.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../freemius/wordpress-sdk',
+            'aliases' => array(),
+            'reference' => '84a9be4717effd7697a217e0d931f48ae0d2ecc6',
+            'dev_requirement' => false,
+        ),
+        'wecodepixels/theia-post-slider' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => '581dc4982eee6549522a3bccaf0559fbd33b7b7e',
+            'dev_requirement' => false,
+        ),
+        'wecodepixels/wordpress-plugin' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../wecodepixels/wordpress-plugin',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '1a9b3ed5342bcaf19adcb43d67e51f05bc648bc8',
+            'dev_requirement' => false,
+        ),
+    ),
+);

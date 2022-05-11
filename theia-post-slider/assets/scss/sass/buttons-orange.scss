@@ -1,0 +1,14 @@
+@import "_common";
+
+$pack: sprite-map("buttons-orange/*.png",
+$buttons-orange-prev-normal-2-repeat: repeat-x,
+$buttons-orange-prev-hover-2-repeat: repeat-x,
+$buttons-orange-prev-active-2-repeat: repeat-x,
+$buttons-orange-prev-disabled-2-repeat: repeat-x,
+$buttons-orange-next-normal-2-repeat: repeat-x,
+$buttons-orange-next-hover-2-repeat: repeat-x,
+$buttons-orange-next-active-2-repeat: repeat-x,
+$buttons-orange-next-disabled-2-repeat: repeat-x
+);
+
+@import "_buttons";
