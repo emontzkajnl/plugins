@@ -18,27 +18,21 @@ if( !empty($block['className']) ) {
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <div class="col-12 m-col-9">
-    <a href="<?php echo get_the_permalink($featured_image->ID); ?>">
+    <a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>">
         <div class="faps-featured" style="background-image: url('<?php echo get_the_post_thumbnail_url( $featured_image->ID, 'large' ); ?>');">
-            <h3 class="faps-title"><?php echo $featured_image->post_title; ?></h3>
+            <h2 class="faps-title title-link"><?php echo $featured_image->post_title; ?></h2>
         </div>
     </a>
     </div>
 <div class="col-12 m-col-3">
-    <a href="<?php echo get_the_permalink($side_article_one->ID); ?>">
-        <div class="faps-sideblock" style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_one->ID, 'large' ); ?>');">
-            <h3 class="faps-title"><?php echo $side_article_one->post_title; ?></h3>
-        </div>
+    <a class="title-link faps-sideblock" href="<?php echo get_the_permalink($side_article_one->ID); ?>" style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_one->ID, 'large' ); ?>');">
+        <h3 class="faps-title title-link"><?php echo $side_article_one->post_title; ?></h3>
     </a>
-    <a href="<?php echo get_the_permalink($side_article_two->ID); ?>">
-        <div class="faps-sideblock" style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_two->ID, 'large' ); ?>');">
-            <h3 class="faps-title"><?php echo $side_article_two->post_title; ?></h3>
-        </div>
+    <a class="title-link faps-sideblock" href="<?php echo get_the_permalink($side_article_two->ID); ?>"  style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_two->ID, 'large' ); ?>');">
+        <h3 class="faps-title title-link"><?php echo $side_article_two->post_title; ?></h3>
     </a>
-    <a href="<?php echo get_the_permalink($side_article_three->ID); ?>">
-        <div class="faps-sideblock" style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_three->ID, 'large' ); ?>');">
-            <h3 class="faps-title"><?php echo $side_article_three->post_title; ?></h3>
-        </div>
+    <a class="title-link faps-sideblock" href="<?php echo get_the_permalink($side_article_three->ID); ?>" style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_three->ID, 'large' ); ?>');">
+        <h3 class="faps-title title-link"><?php echo $side_article_three->post_title; ?></h3>
     </a>
 </div>
 </div>

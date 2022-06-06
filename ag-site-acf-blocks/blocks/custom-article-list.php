@@ -19,16 +19,22 @@ if( !empty($block['className']) ) {
 } ?>
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-<h3><?php _e($title, 'acf-blocks'); ?></h3>
+<h3 class="section-heading"><?php _e($title, 'acf-blocks'); ?></h3>
 <div class="row">
 <?php foreach($articles as $a) {
     $article = $a['article'];
+    $categories = wp_get_post_categories( $article->ID);
+    // $category = $categories[0];
     
 // echo '<div class="row">';
 echo '<div class="'.$grid_class.'">'; ?>
-<a href="<?php echo get_the_permalink( $article->ID ); ?>">
-<?php echo get_the_post_thumbnail( $article->ID, 'medium_large'); ?>
-<h3><?php _e($article->post_title, 'acf-blocks'); ?></h3>
+<a class="title-link" href="<?php echo get_the_permalink( $article->ID ); ?>">
+<?php echo get_the_post_thumbnail( $article->ID, 'medium_large'); 
+// print_r($categories); 
+$yoast_primary_key = get_post_meta( $article->ID, '_yoast_wpseo_primary_category', TRUE ); 
+if ($yoast_primary_key) { echo '<p class="cat-text">'.get_cat_name($yoast_primary_key).'</p>'; } ?>
+
+<h2><?php _e($article->post_title, 'acf-blocks'); ?></h2>
 </a></div>
 <?php 
 if ($counter == $num_articles) {

@@ -31,5 +31,14 @@ function my_acf_init_block_types() {
             'icon'              => 'layout', 
             'keywords'          => array('article', 'list')
         ));
+        acf_register_block_type(array(
+            'name'              => 'read_the_magazine',
+            'title'             => __('Read The Magazine', 'acf-blocks'),
+            'description'       => __('Features current magazine', 'acf-blocks'),
+            'mode'              => 'preview',
+            'render_template'   => plugin_dir_path(__FILE__) . 'blocks/read-the-magazine.php',
+            'icon'              => 'layout', 
+            'keywords'          => array('magazine')
+        ));
     }
 } ?>
