@@ -7,7 +7,7 @@
  $columns = get_field('columns');
  $articles = get_field('articles');
  $num_articles = count($articles);
- $grid_class = $columns == 'two' ? 'col-12 m-col-6' : 'col-12 m-col-4';
+ $grid_class = $columns == 'two' ? 'col-12 m-col-12 l-col-6' : 'col-12 m-col-12 l-col-4 ';
  $counter = 1;
 
 
@@ -37,13 +37,14 @@ if ($yoast_primary_key) { echo '<p class="cat-text">'.get_cat_name($yoast_primar
 <h2><?php _e($article->post_title, 'acf-blocks'); ?></h2>
 </a></div>
 <?php 
-if ($counter == $num_articles) {
-    echo '</div>'; // close row
-} elseif ($columns == 'two') {
-    echo $counter % 2 == 0 ? '</div><div class="row">' : '';
-} else {
-    echo $counter % 3 == 0 ? '</div><div class="row">' : '';
-}
+// echo '</div>';
+// if ($counter == $num_articles) {
+//     echo '</div>'; // close row
+// } elseif ($columns == 'two') {
+//     echo $counter % 2 == 0 ? '</div><div class="row">' : '';
+// } else {
+//     echo $counter % 3 == 0 ? '</div><div class="row">' : '';
+// }
 $counter++;
 } ?>
-</div>
+</div></div>

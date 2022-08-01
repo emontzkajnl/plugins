@@ -34,7 +34,7 @@ $btntext = get_field('button_text');
         </div>
     </div>
     <div class="col-12 m-col-3">
-        <div class="social-cube" style="width: 100%; padding-top: 100%; background: #e8f4d8;">
+        <div class="social-cube" >
         <?php $facebook = get_field('facebook', 'options');
         $pinterest = get_field('pinterest', 'options');
         $instagram = get_field('instagram', 'options');
@@ -47,7 +47,7 @@ $btntext = get_field('button_text');
             echo $instagram ? '<li><a href="'.esc_url($instagram).'" target="_blank"><i class="fab fa-instagram"></i></a></li>' : '';
             ?>
         </ul>
-        <?php echo 'facebook: '.get_field('facebook', 'options'); ?>
+        
         </div>
     </div>
 </div>
