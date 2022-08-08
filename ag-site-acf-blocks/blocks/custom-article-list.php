@@ -29,8 +29,11 @@ if( !empty($block['className']) ) {
 // echo '<div class="row">';
 echo '<div class="'.$grid_class.'">'; ?>
 <a class="title-link" href="<?php echo get_the_permalink( $article->ID ); ?>">
-<?php echo get_the_post_thumbnail( $article->ID, 'medium_large'); 
-// print_r($categories); 
+<div class="two-thirds-container">
+<?php echo get_the_post_thumbnail( $article->ID, 'medium_large'); ?>
+</div>
+
+<?php // print_r($categories); 
 $yoast_primary_key = get_post_meta( $article->ID, '_yoast_wpseo_primary_category', TRUE ); 
 if ($yoast_primary_key) { echo '<p class="cat-text">'.get_cat_name($yoast_primary_key).'</p>'; } ?>
 
