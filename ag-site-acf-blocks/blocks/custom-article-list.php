@@ -29,16 +29,17 @@ if( !empty($block['className']) ) {
 // echo '<div class="row">';
 echo '<div class="'.$grid_class.'">'; ?>
 <a class="title-link" href="<?php echo get_the_permalink( $article->ID ); ?>">
-<div class="two-thirds-container">
-<?php echo get_the_post_thumbnail( $article->ID, 'medium_large'); ?>
-</div>
-
+    <div class="two-thirds-container">
+        <?php echo get_the_post_thumbnail( $article->ID, 'medium_large'); ?>
+    </div>
+</a>
 <?php // print_r($categories); 
 $yoast_primary_key = get_post_meta( $article->ID, '_yoast_wpseo_primary_category', TRUE ); 
-if ($yoast_primary_key) { echo '<p class="cat-text">'.get_cat_name($yoast_primary_key).'</p>'; } ?>
+// print_r($yoast_primary_key);
+if ($yoast_primary_key) { echo '<p class="cat-text"><a href="'.get_category_link( $yoast_primary_key ).'">'.get_cat_name($yoast_primary_key).'</a></p>'; } ?>
 
-<h2><?php _e($article->post_title, 'acf-blocks'); ?></h2>
-</a></div>
+<h2><a class="title-link" href="<?php echo get_the_permalink( $article->ID ); ?>"><?php _e($article->post_title, 'acf-blocks'); ?></a></h2>
+</div>
 <?php 
 // echo '</div>';
 // if ($counter == $num_articles) {
