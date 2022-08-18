@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/ad-area-one/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/ad-area-one/index.js",
     _this = undefined;
 
 
@@ -94,7 +94,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/ad-area-three/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/ad-area-three/index.js",
     _this = undefined;
 
 
@@ -174,7 +174,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/ad-area-two/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/ad-area-two/index.js",
     _this = undefined;
 
 
@@ -255,7 +255,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/bp-sponsor/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/bp-sponsor/index.js",
     _this = undefined;
 
 
@@ -302,7 +302,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/city-301/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/city-301/index.js",
     _this = undefined;
 
 
@@ -364,7 +364,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/city-list/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/city-list/index.js",
     _this = undefined;
 
 
@@ -426,7 +426,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/city-map/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/city-map/index.js",
     _this = undefined;
 
 
@@ -542,7 +542,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/excerpt-and-post-author/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/excerpt-and-post-author/index.js",
     _this = undefined;
 
 
@@ -603,7 +603,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/featured-image/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/featured-image/index.js",
     _this = undefined;
 
 
@@ -669,7 +669,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/info-box-with-button/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/info-box-with-button/index.js",
     _this = undefined;
 
 
@@ -948,7 +948,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/info-box/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/info-box/index.js",
     _this = undefined;
 
 
@@ -1296,7 +1296,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/link-place-to-top-100/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/link-place-to-top-100/index.js",
     _this = undefined;
 
 
@@ -1343,7 +1343,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/mag-sponsor/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/mag-sponsor/index.js",
     _this = undefined;
 
 
@@ -1404,7 +1404,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/magazine-articles/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/magazine-articles/index.js",
     _this = undefined;
 
 
@@ -1466,7 +1466,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/magazine/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/magazine/index.js",
     _this = undefined;
 
 
@@ -1528,7 +1528,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/scroll-load-posts/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/scroll-load-posts/index.js",
     _this = undefined;
 
 
@@ -1591,7 +1591,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/section-header/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/section-header/index.js",
     _this = undefined;
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -1662,7 +1662,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/sponsored-by/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/sponsored-by/index.js",
     _this = undefined;
 
 
@@ -1723,7 +1723,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/ag-wp-blocks/src/blocks/suggested-posts-404/index.js",
+var _jsxFileName = "/Users/emontzka/New Ag Sites/msfarmcountry2022/html/wp-content/plugins/ag-wp-blocks/src/blocks/suggested-posts-404/index.js",
     _this = undefined;
 
 
