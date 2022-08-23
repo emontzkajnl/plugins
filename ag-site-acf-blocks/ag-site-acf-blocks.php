@@ -40,5 +40,14 @@ function my_acf_init_block_types() {
             'icon'              => 'layout', 
             'keywords'          => array('magazine')
         ));
+        acf_register_block_type(array(
+            'name'              => 'social_cube',
+            'title'             => __('Social Cube', 'acf-blocks'),
+            'description'       => __('Displays social icons in cube', 'acf-blocks'),
+            'mode'              => 'preview',
+            'render_template'   => plugin_dir_path(__FILE__) . 'blocks/social-cube.php',
+            'icon'              => 'layout', 
+            'keywords'          => array('social, facebook, twitter, pinterest, instagram')
+        ));
     }
 } ?>
