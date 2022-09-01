@@ -1,0 +1,1270 @@
+# Translation of Ad Tracking in Italian
+# This file is distributed under the same license as the Ad Tracking package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2021-07-04 18:35:13+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.3.1\n"
+"Language: it\n"
+"Project-Id-Version: Ad Tracking\n"
+
+#. 1: is an example id for Universal Analytics <code>UA-123456-1</code>, 2: is
+#. an example id for GA4 '<code>G-A12BC3D456</code>'
+#: admin/views/setting_ga.php:17
+msgid "%1$s for Universal Analytics or %2$s for Google Analytics 4."
+msgstr ""
+
+#: classes/db-operations.php:86 admin/views/db-operations.php:201
+msgid "The debug log file can't be written."
+msgstr "Impossibile scrivere il file di registro di debug."
+
+#: admin/views/db-operations.php:250
+msgid "Successfully deleted debug log file."
+msgstr "File di registro di debug eliminato con successo."
+
+#. placeholder is path to WP_CONTENT_DIR
+#: classes/db-operations.php:89 admin/views/db-operations.php:204
+msgid " Please make sure the directory %s is writable"
+msgstr "Assicurati che la directory %s sia scrivibile"
+
+#: classes/db-operations.php:80
+msgid "Can't delete debugging option"
+msgstr "Impossibile eliminare opzione di debug"
+
+#: classes/db-operations.php:103
+msgid "Can't save debugging option"
+msgstr "Impossibile salvare opzione di debug"
+
+#: admin/views/ad_tracking_options.php:80
+msgid "ID of the ad"
+msgstr "ID dell'annuncio"
+
+#: admin/views/ad_tracking_options.php:79
+msgid "a comma-separated list of category slugs"
+msgstr "un elenco separato da virgole di slug di categoria"
+
+#: admin/views/ad_tracking_options.php:78
+msgid "post slug"
+msgstr "slug del post"
+
+#: admin/views/ad_tracking_options.php:77
+msgid "post ID"
+msgstr "ID del post"
+
+#. 1: opening a-tag with link to settings page 2: closing a-tag
+#: classes/plugin.php:135
+msgid "You have selected to track ads with Google Analytics but not provided a tracking ID. Please add the Google Analytics UID %1$shere%2$s"
+msgstr "Hai scelto di monitorare gli annunci con Google Analytics ma non hai fornito un ID di monitoraggio. Aggiungi l'UID di Google Analytics %1$squi%2$s"
+
+#: admin/admin.php:1036
+msgid "Use the <code>URL field</code> or remove <code>%link%</code> parameter from your editor."
+msgstr "Utilizza il <code>campo URL</code> o rimuovi <code>%link%</code> il parametro dal tuo editor."
+
+#: admin/views/setting_method.php:33
+msgid "Track impressions when the ad is requested from the database."
+msgstr "Tieni traccia delle impressioni quando l'annuncio viene richiesto dal database."
+
+#: admin/views/setting_method.php:17
+msgid "Track impressions after the ad was loaded in the frontend."
+msgstr "Tieni traccia delle impressioni dopo che l'annuncio è stato caricato nel frontend."
+
+#: admin/views/metabox-limiter.php:24
+msgid "this hour"
+msgstr "quest'ora"
+
+#. %s is the filter name wrapped in <code> tags.
+#: admin/views/ad_tracking_options.php:125
+msgid "The value for link cloaking is defined for all ads by the %s filter."
+msgstr "Il valore per il cloaking dellink è definito per tutti gli annunci dal filtro %s."
+
+#: admin/views/metabox-limiter.php:83
+msgid "The overall goals for impressions and clicks have been reached."
+msgstr "Gli obiettivi complessivi per impressioni e clic sono stati raggiunti."
+
+#: admin/views/metabox-limiter.php:87
+msgid "The overall goal for impressions has been reached."
+msgstr "L'obiettivo generale per le impressioni è stato raggiunto."
+
+#: admin/views/metabox-limiter.php:85
+msgid "The overall goal for clicks has been reached."
+msgstr "L'obiettivo generale per i clic è stato raggiunto."
+
+#. %$s is the tracking documentation url.
+#: admin/admin.php:652
+msgid "The number of impressions and clicks can vary from those in your AdSense account."
+msgstr "Il numero di impressioni e clic può variare rispetto a quelli del tuo account AdSense."
+
+#. ADVANCED_ADS_TRACKING_NO_HOURLY_LIMIT constant name in <code> tag
+#: admin/views/metabox-limiter.php:100
+msgid "The constant %s is set to true."
+msgstr "La costante %s è impostata su vero."
+
+#: admin/views/setting_method.php:72
+msgid "The advanced-ads-tracking-load-header-scripts filter is set to false which removes any tracking scripts in the frontend. Only the Database tracking method is working now."
+msgstr "Il filtro advanced-ads-tracking-load-header-scripts è impostato su false, il che rimuove qualsiasi script di tracciamento nel frontend. Ora funziona solo il metodo di monitoraggio del database."
+
+#. impressions, clicks, or impressions or clicks
+#: admin/views/metabox-limiter.php:91
+msgid "The ad %s will be delivered as soon as possible."
+msgstr "L'annuncio %s verrà consegnato il prima possibile."
+
+#. %1$s is a starting a tag, %2$s the closing one.
+#: admin/views/setting_method.php:38
+msgid "Should only be used by experienced users after reading the %1$smanual%2$s."
+msgstr "Dovrebbe essere utilizzato solo da utenti esperti dopo aver letto il %1$smanuale%2$s."
+
+#: addon-init.php:119
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: admin/views/metabox-limiter.php:105
+msgid "Set an expiry date in the <em>Publish</em> meta box to spread impressions over a period."
+msgstr "Imposta una data di scadenza nel meta box <em>Pubblica</em> per distribuire le impressioni su un periodo."
+
+#: admin/views/metabox.php:101
+msgid "Reports"
+msgstr "Rapporti"
+
+#: admin/views/setting_sponsored.php:19
+msgid "Read Google's recommendation on Google Webmaster Central Blog."
+msgstr "Leggi i consigli di Google sul blog di Google Webmaster Central."
+
+#. %$s is the plugin url.
+#: admin/views/ad_tracking_options.php:26
+msgid "Please visit the %1$smanual%2$s to learn more about click tracking."
+msgstr "Visita il %1$smanuale%2$s per ulteriori informazioni sul monitoraggio dei clic."
+
+#. 1: WP_CONTENT_DIR 2: <code>wp-config.php</code> 3: <code>define(
+#. 'ADVANCED_ADS_TRACKING_LEGACY_AJAX', true )</code>
+#: classes/installer.php:125
+msgid "Please make sure the directory %1$s is writable or add the following to your %2$s: %3$s."
+msgstr "Assicurati che la directory %1$s è scrivibile o aggiungi quanto segue al tuo %2$s: %3$s."
+
+#. 1: <code>wp-config.php</code> 2: <code>define(
+#. 'ADVANCED_ADS_TRACKING_LEGACY_AJAX', true )</code>
+#: classes/installer.php:304
+msgid "Please check your server setup or add the following to your %1$s: %2$s."
+msgstr "Controlla la configurazione del tuo server o aggiungi quanto segue al tuo %1$s: %2$s."
+
+#: admin/views/metabox.php:148
+#: admin/views/setting_email_report_stats_period.php:6
+msgid "Period used in the report"
+msgstr "Periodo utilizzato nel rapporto"
+
+#: admin/admin.php:480
+msgid "per date"
+msgstr "per data"
+
+#: admin/admin.php:481
+msgid "per ad"
+msgstr "per annuncio"
+
+#: admin/views/setting_linkbase.php:10
+msgid "Pattern of the click-tracking URL if link cloaking is used. Should not collide with any posts or pages. Use chars: a-z/-"
+msgstr "Pattern dell'URL di tracciamento dei clic se viene utilizzato il cloaking del link. Non deve entrare in conflitto con nessun post o pagina. Usa i caratteri: a-z/-"
+
+#: admin/views/metabox-limiter.php:21
+msgid "overall"
+msgstr "complessivamente"
+
+#. %d is the ad_id
+#: classes/db-operations.php:149
+msgid "No stats for ad ID %d removed."
+msgstr "Nessuna statistica per l'ID annuncio %d rimossa."
+
+#: admin/views/setting_method.php:22
+msgid "Manual"
+msgstr "Manuale"
+
+#: admin/views/db-operations.php:234
+msgid "Logs more information about tracked data for %d hours starting now."
+msgstr "Registra ulteriori informazioni sui dati tracciati per %d ore a partire da adesso."
+
+#: admin/admin.php:405
+msgid "Install Now"
+msgstr "Installa ora"
+
+#: admin/views/setting_method.php:54
+msgid "Impression tracking is not working on AMP sites without ssl encryption."
+msgstr "Il monitoraggio delle impressioni non funziona sui siti AMP senza crittografia SSL."
+
+#: admin/views/metabox-limiter.php:23
+msgid "hourly limit"
+msgstr "limite orario"
+
+#: admin/admin.php:657
+msgid "Further information"
+msgstr "Ulteriori informazioni"
+
+#: admin/views/setting_method.php:14
+msgid "Frontend"
+msgstr "Frontend"
+
+#: admin/views/setting_method.php:30
+msgid "experienced users"
+msgstr "utenti esperti"
+
+#. <code>ADVANCED_ADS_TRACKING_DEBUG</code>
+#: admin/views/db-operations.php:174
+msgid "Debugging is prohibited through the constant %s"
+msgstr "Il debug è vietato tramite la costante %s"
+
+#. 1: name of the add (or all ads), 2: amount of hours, 3: amount of minutes
+#: admin/views/db-operations.php:212
+msgid "Debugging %1$s for another %2$s and %3$s."
+msgstr "Debug %1$s per un altro %2$s e %3$s."
+
+#. %s is the URL displayed in the frontend, wrapped in <code> tags.
+#: admin/views/ad_tracking_options.php:112
+msgid "Cloak your link. The link will be displayed as %s."
+msgstr "Maschera il tuo link. Il link verrà visualizzato come %s."
+
+#: admin/admin.php:782 admin/views/ad_tracking_options.php:160
+msgid "Add “sponsored”"
+msgstr "Aggiungi \"sponsorizzato\""
+
+#: admin/views/ad_tracking_options.php:157
+msgid "Add <code>rel=\"nofollow\"</code> to tracking links."
+msgstr "Aggiungi <code>rel=\"nofollow\"</code> ai link di tracciamento."
+
+#. %s is <code>rel="nofollow"</code>
+#. %s is <code>rel="sponsored"</code>
+#: admin/views/setting_nofollow.php:13 admin/views/setting_sponsored.php:13
+msgid "Add %s to programatically created links."
+msgstr "Aggiungi %s ai link creati programmaticamente."
+
+#: admin/admin.php:398
+msgid "Activate Now"
+msgstr "Attiva ora"
+
+#. %s is name of the ad.
+#: admin/views/db-operations.php:197
+msgid "<code>ADVANCED_ADS_TRACKING_DEBUG</code> constant is set: Debugging %s."
+msgstr "<code>ADVANCED_ADS_TRACKING_DEBUG</code> la costante è impostata: Debug %s."
+
+#: admin/views/db-operations.php:215
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minuto"
+msgstr[1] "%d minuti"
+
+#: admin/views/db-operations.php:214
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d ora"
+msgstr[1] "%d ore"
+
+#. 1: this plugins' name, 2: link to main plugin
+#: admin/admin.php:412
+msgid "%1$s requires the %2$s plugin to be installed and activated on your site."
+msgstr "%1$s richiede il plugin %2$s da installare e attivare sul tuo sito."
+
+#: admin/views/setting_method.php:64
+msgid "Please choose either the Frontend or Google Analytics method."
+msgstr "Scegli il metodo Frontend o Google Analytics."
+
+#: admin/admin.php:1970
+msgid "The selected tracking method is not compatible with the TCF 2.0 integration."
+msgstr "Il metodo di tracciamento selezionato non è compatibile con l'integrazione TCF 2.0."
+
+#. Author of the plugin
+msgid "Advanced Ads GmbH"
+msgstr "Advanced Ads GmbH"
+
+#: admin/admin.php:792
+msgid "Database Management"
+msgstr "Gestione del database"
+
+#: admin/admin.php:729
+msgid "Advanced"
+msgstr "Avanzate"
+
+#: admin/views/deleted-ads-form.php:48
+msgid "Failing to delete the log file."
+msgstr "Impossibile eliminare il file di registro."
+
+#: admin/views/db-operations.php:270
+msgid "delete the file"
+msgstr "elimina il file"
+
+#: admin/views/db-operations.php:258
+msgid "View the tracking %1$sdebug log file%2$s"
+msgstr "Visualizza il %1$sfile di registro di debug%2$s del tracciamento"
+
+#: admin/views/db-operations.php:233
+msgid "enable"
+msgstr "abilita"
+
+#: admin/views/db-operations.php:222
+msgid "disable"
+msgstr "disabilita"
+
+#: admin/views/db-operations.php:166
+msgid "Debug mode"
+msgstr "Modalità di debug"
+
+#: admin/views/db-operations.php:143
+msgid "--deleted ads--"
+msgstr "--annunci eliminati--"
+
+#: admin/views/metabox-limiter.php:116
+msgid "The impressions goal for the current hour has been reached."
+msgstr "L'obiettivo delle impressioni per l'ora corrente è stato raggiunto."
+
+#: admin/views/metabox-limiter.php:72
+msgid "impressions or clicks"
+msgstr "impressioni o clic"
+
+#: admin/views/metabox.php:108
+msgid "Save the ad to confirm the change"
+msgstr "Salva l'annuncio per confermare la modifica"
+
+#: admin/views/metabox.php:107
+msgid "Generate a new sharable link"
+msgstr "Genera un nuovo link condivisibile"
+
+#. %1$s is a list of placeholder like [POST_ID] and %2$s the appropriate names
+#. like "post ID"
+#: admin/views/ad_tracking_options.php:91
+msgid "You can use %1$s in the url to insert %2$s into the url."
+msgstr "Puoi usare %1$s nell'url per inserire %2$s nell'url."
+
+#: admin/admin.php:1006
+msgid "enabled"
+msgstr "abilitato"
+
+#. Author URI of the plugin
+msgid "https://wpadvancedads.com"
+msgstr "https://wpadvancedads.com"
+
+#. URI of the plugin
+msgid "https://wpadvancedads.com/add-ons/tracking/"
+msgstr "http://wpadvancedads.com/add-ons/tracking/"
+
+#. Description of the plugin
+msgid "Track ad impressions and clicks."
+msgstr "Traccia impressioni e clic."
+
+#. Name of the plugin
+msgid "Advanced Ads – Tracking"
+msgstr "Advanced Ads – Tracking"
+
+#: public/views/ad-stats.php:63
+msgid "Load"
+msgstr "Carica"
+
+#: public/views/ad-stats.php:52
+msgid "Statistics for %s"
+msgstr "Statistiche per %s"
+
+#: public/views/ad-stats.php:19
+msgid "Ad Statistics"
+msgstr "Statistiche degli annunci"
+
+#: admin/views/stats_clear.php:27
+msgid "clear stats"
+msgstr "svuota statistiche"
+
+#: admin/views/stats_clear.php:4
+msgid "show/hide reset form"
+msgstr "mostra/nascondi modulo di ripristino"
+
+#: admin/views/stats.php:202
+msgid "current filters"
+msgstr "filtri attuali"
+
+#: admin/views/stats.php:192
+msgid "Filter by group"
+msgstr "Filtra per gruppo"
+
+#: admin/views/stats.php:181
+msgid "Filter by ad"
+msgstr "Filtra per annuncio"
+
+#: admin/views/stats.php:163
+msgid "next period"
+msgstr "prossimo periodo"
+
+#: admin/views/stats.php:161
+msgid "previous period"
+msgstr "periodo precedente"
+
+#: admin/views/stats.php:159
+msgid "Compare with"
+msgstr "Confronta con"
+
+#: admin/views/stats.php:151 admin/views/setting_advanced_db_mgmt.php:7
+msgid "Open database management"
+msgstr "Apri database di gestione"
+
+#: admin/views/stats.php:140
+msgid "select file"
+msgstr "seleziona file"
+
+#: admin/views/stats.php:135
+msgid "File"
+msgstr "File"
+
+#: admin/views/stats.php:133 admin/views/setting_method.php:30
+msgid "Database"
+msgstr "Database"
+
+#: admin/views/stats.php:109
+msgid "first month"
+msgstr "primo mese"
+
+#: admin/views/stats.php:108
+msgid "latest month"
+msgstr "ultimo mese"
+
+#: admin/views/stats.php:101 admin/views/stats.php:117
+msgid "load stats"
+msgstr "carica statistiche"
+
+#: admin/views/stats.php:83
+msgid "Data source:"
+msgstr "Fonte di dati:"
+
+#: admin/views/stats.php:78
+msgid "Group by:"
+msgstr "Raggruppa per:"
+
+#: admin/views/stats.php:77 public/views/ad-stats.php:56
+msgid "Period"
+msgstr "Periodo"
+
+#. Google Analytics URL
+#: admin/views/stats.php:19
+msgid "You are currently tracking ads with Google Analytics. The statistics can be viewed only within your <a href=\"%s\" target=\"_blank\">Analytics account</a>."
+msgstr "Al momento stai monitorando gli annunci con Google Analytics.Le statistiche possono essere visualizzate solo all'interno del tuo <a href=\"%s\" target=\"_blank\">account Analytics</a>."
+
+#: admin/views/setting_uninstall.php:2
+msgid "Clean up all database entries related to tracking when removing the Tracking add-on."
+msgstr "Pulisce tutte le voci del database relative al monitoraggio quando rimuovi il Tracking add-on."
+
+#: admin/views/setting_uninstall.php:1
+msgid "delete data"
+msgstr "elimina i dati"
+
+#: admin/views/setting_tracking_bots.php:2
+msgid "Activate to also count impressions and clicks for crawlers, bots and empty user agents"
+msgstr "Attiva per contare anche impressioni e clic di crawler, bot e user agent vuoti"
+
+#: admin/views/setting_method.php:21
+msgid "Track impressions and clicks in Google Analytics."
+msgstr "Traccia impressioni e clic in Google Analytics."
+
+#: admin/views/setting_ga.php:12
+msgid "The Google Analytics property you want the data to be sent to."
+msgstr ""
+
+#: admin/views/setting_ga.php:8
+msgid "Your Tracking ID"
+msgstr "Il tuo ID di tracciamento"
+
+#: admin/views/setting_everything.php:7
+msgid "You can change this setting individually for each ad on the ad edit page."
+msgstr "Puoi modificare questa impostazione singolarmente per ogni annuncio nella pagina di modifica degli annunci."
+
+#: admin/views/setting_everything.php:3
+msgid "don’t track anything"
+msgstr "non tracciare nulla"
+
+#: admin/views/setting_email_test_email.php:21
+msgid "Add and save a recipient before sending a test email."
+msgstr "Aggiungi e salva un destinatario prima di inviare un'email di prova."
+
+#. 1: cron job schedule (e.g. 'daily'), 2: current timezone
+#: admin/views/setting_email_test_email.php:17
+msgid "Email will be sent %1$s at 00:15 %2$s"
+msgstr "L'email sarà inviata %1$s alle 00:15 %2$s"
+
+#: admin/views/setting_email_test_email.php:12
+msgid "Send a report immediately to the listed email addresses"
+msgstr "Invia immediatamente un resoconto agli indirizzi email elencati"
+
+#: admin/views/setting_email_test_email.php:11
+msgid "send email"
+msgstr "invia email"
+
+#: admin/views/setting_email_test_email.php:7
+msgid "first day of the month"
+msgstr "primo giorno del mese"
+
+#: admin/views/setting_email_test_email.php:5
+msgid "every Monday"
+msgstr "ogni lunedi"
+
+#: admin/views/setting_email_test_email.php:3
+msgid "every day"
+msgstr "ogni giorno"
+
+#: admin/views/metabox.php:159
+#: admin/views/setting_email_report_frequency.php:13
+msgid "How often to send email reports"
+msgstr "Quanto spesso inviare resoconti per posta elettronica"
+
+#: admin/views/metabox.php:157
+#: admin/views/setting_email_report_frequency.php:11
+msgid "monthly"
+msgstr "mensilmente"
+
+#: admin/views/metabox.php:156 admin/views/setting_email_report_frequency.php:7
+msgid "weekly"
+msgstr "settimanalmente"
+
+#: admin/views/metabox.php:155 admin/views/setting_email_report_frequency.php:3
+msgid "daily"
+msgstr "quotidianamente"
+
+#: admin/views/metabox.php:154
+msgid "never"
+msgstr "mai"
+
+#: admin/views/metabox.php:151
+msgid "report frequency"
+msgstr "frequenza resoconto"
+
+#: admin/views/metabox.php:141
+msgid "report period"
+msgstr "periodo resoconto"
+
+#: admin/views/metabox.php:138 admin/views/setting_email_report_recip.php:3
+msgid "Separate multiple emails with commas"
+msgstr "Separa più email con virgole"
+
+#: admin/views/metabox.php:138
+msgid "Email address to send the performance report for this ad"
+msgstr "Indirizzo email cui inviare il resoconto sul rendimento per questo annuncio"
+
+#: admin/views/metabox.php:129
+msgid "report recipient"
+msgstr "destinatario resoconto"
+
+#. Ad has already expired.
+#: admin/views/metabox-limiter.php:156
+msgid "This ad expired already."
+msgstr "Questo annuncio è già scaduto."
+
+#. 1: "impressions and clicks", 2: the remaining time string 3: the current
+#. impression pace, 4: the current click pace
+#: admin/views/metabox-limiter.php:146
+msgid "The %1$s are spread equally through %2$s currently with a limit of %3$s impressions or %4$s clicks per hour."
+msgstr "Le %1$s sono diffuse ugualmente attraverso %2$s attualmente con un limite di %3$d impressioni o %4$d clic all'ora."
+
+#. 1: "impressions" or "clicks", 2: the remaining time string 3: the current
+#. pace
+#: admin/views/metabox-limiter.php:138
+msgid "The %1$s are spread equally through %2$s currently with a limit of %3$d %1$s per hour."
+msgstr "%1$s sono distribuiti equamente attraverso %2$s attualmente con un limite di %3$d %1$s per ora."
+
+#: admin/views/metabox-limiter.php:122
+msgid "The clicks goal for the current hour has been reached."
+msgstr "L'obiettivo dei clic per l'ora corrente è stato raggiunto."
+
+#: admin/views/metabox-limiter.php:117 admin/views/metabox-limiter.php:123
+msgid "Impressions will resume in the next hour"
+msgstr "Le impressioni riprenderanno la prossima ora"
+
+#: admin/views/metabox-limiter.php:55
+msgid "Set a limit if you want to expire the ad after a specific amount of impressions or clicks."
+msgstr "Imposta un limite se desideri che l'annuncio scada dopo una quantità specifica di impressioni o clic."
+
+#: admin/views/metabox-limiter.php:26
+msgid "limit"
+msgstr "limite"
+
+#: admin/views/metabox-limiter.php:15
+msgid "limits"
+msgstr "limiti"
+
+#: admin/views/metabox.php:119
+msgid "Will be used as ad name instead of the internal ad title"
+msgstr "Verrà utilizzato come nome dell'annuncio al posto del titolo dell'annuncio interno"
+
+#: admin/views/metabox.php:115
+msgid "Public name"
+msgstr "Nome pubblico"
+
+#: admin/views/metabox.php:110
+msgid "The public report URL for this ad will be generated the next time it is saved."
+msgstr "L'url del rapporto pubblico per questo annuncio verrà generato al successivo salvataggio."
+
+#: admin/views/metabox.php:106
+msgid "Shareable Link"
+msgstr "Link condivisibile"
+
+#: admin/views/metabox.php:104
+msgid "Dashboard"
+msgstr "Bacheca"
+
+#: admin/views/db-operations.php:287
+msgid "If you notice a shift between your own time and stats, please check if the highlighted time is your local time. If not, please check if your <a href=\"%s\">time zone</a> is set correctly."
+msgstr "Se noti uno spostamento tra il tuo orario e le tue statistiche, controlla se l'ora evidenziata è la tua ora locale. In caso contrario, controlla se il tuo <a href=\"%s\">fuso orario</a> è impostato correttamente."
+
+#: admin/views/db-operations.php:286
+msgid "Time setup"
+msgstr "Impostazione tempo"
+
+#: admin/views/db-operations.php:280
+msgctxt "current time format on stats page"
+msgid "Y-m-d H:i:s"
+msgstr "d-m-Y H:i:s"
+
+#: admin/views/db-operations.php:151 admin/views/stats_clear.php:2
+msgid "Use this form to remove the stats for one or all ads."
+msgstr "Utilizza questo modulo per rimuovere le statistiche per uno o tutti gli annunci."
+
+#: admin/views/db-operations.php:149
+msgid "reset"
+msgstr "reimposta"
+
+#: admin/views/db-operations.php:141 admin/views/db-operations.php:187
+#: admin/views/db-operations.php:228 admin/views/stats_clear.php:16
+msgid "--all ads--"
+msgstr "--tutti gli annunci--"
+
+#: admin/views/db-operations.php:139 admin/views/stats_clear.php:8
+msgid "(please choose the ad)"
+msgstr "(scegli l'annuncio)"
+
+#: admin/views/db-operations.php:127 admin/views/stats_clear.php:1
+msgid "Reset Stats"
+msgstr "Reimposta statistiche"
+
+#: admin/views/db-operations.php:122
+msgid "Remove old stats to reduce the size of the database."
+msgstr "Rimuovi le vecchie statistiche per ridurre le dimensioni del database."
+
+#: admin/views/db-operations.php:120
+msgid "remove"
+msgstr "rimuovi"
+
+#: admin/views/db-operations.php:117
+msgid "Remove old stats"
+msgstr "Rimuovi vecchie statistiche"
+
+#: admin/views/db-operations.php:105
+msgid "Export stats as CSV so you can review them later by uploading the file."
+msgstr "Esporta le statistiche come CSV in modo da poterle rivedere in seguito caricando il file."
+
+#: admin/views/db-operations.php:103
+msgid "download"
+msgstr "scarica"
+
+#: admin/views/db-operations.php:99
+msgid "Export stats"
+msgstr "Esporta statistiche"
+
+#: admin/views/db-operations.php:71
+msgid "Always perform a backup of your stats tables before performing any of the operations on this page."
+msgstr "Esegui sempre un backup delle tabelle delle statistiche prima di eseguire qualsiasi operazione su questa pagina."
+
+#: admin/views/db-operations.php:65
+msgid "Oldest record"
+msgstr "Record più vecchi"
+
+#: admin/views/db-operations.php:64
+msgid "Data size ( in kilobytes )"
+msgstr "Dimensione dei dati (in kilobyte)"
+
+#: admin/views/db-operations.php:63
+msgid "Row count"
+msgstr "Numero di righe"
+
+#: admin/views/db-operations.php:62
+msgid "Table"
+msgstr "Tabella"
+
+#. %s <code>rel="sponsored"</code>
+#: admin/views/ad_tracking_options.php:177
+msgid "Add %s to tracking links."
+msgstr "Aggiungi %s ai link di tracciamento."
+
+#: admin/views/ad_tracking_options.php:155
+#: admin/views/ad_tracking_options.php:172
+msgid "no"
+msgstr "no"
+
+#: admin/views/ad_tracking_options.php:152
+#: admin/views/ad_tracking_options.php:168
+msgid "yes"
+msgstr "si"
+
+#: admin/admin.php:774 admin/views/ad_tracking_options.php:146
+msgid "Add “nofollow”"
+msgstr "Aggiungi “nofollow”"
+
+#: admin/views/ad_tracking_options.php:143
+msgid "Where to open the link (if present)."
+msgstr "Dove aprire il link (se presente)."
+
+#: admin/views/ad_tracking_options.php:141
+msgid "new window"
+msgstr "nuova finestra"
+
+#: admin/views/ad_tracking_options.php:138
+msgid "same window"
+msgstr "stessa finestra"
+
+#: admin/views/ad_tracking_options.php:132
+msgid "target window"
+msgstr "finestra di destinazione"
+
+#: admin/views/ad_tracking_options.php:68
+msgid "Don’t use this field on JavaScript ad tags (like from Google AdSense). If you are using your own <code>&lt;a&gt;</code> tag, use <code>href=\"%link%\"</code> to insert the tracking link."
+msgstr "Non utilizzare questo campo sui tag annuncio JavaScript (come Google AdSense). Se stai usando il tuo <code>&lt;a&gt;</code> tag, usa <code>href=\"%link%\"</code> per inserire il link di tracciamento."
+
+#: admin/views/ad_tracking_options.php:48
+msgid "url"
+msgstr "url"
+
+#: admin/views/ad_tracking_options.php:14
+msgid "tracking"
+msgstr "tracciamento"
+
+#: admin/views/ad-list-stats-column.php:52
+msgid "Statistics for the last 30 days"
+msgstr "Statistiche per gli ultimi 30 giorni"
+
+#: admin/views/ad-list-stats-column.php:44
+msgid "show"
+msgstr "mostra"
+
+#: admin/views/ad-list-stats-column.php:39
+msgid "Target url"
+msgstr "URL di destinazione"
+
+#: public/public.php:1375
+msgid "Ad statistics for %s"
+msgstr "Statistiche annuncio per %s"
+
+#: classes/ajax.php:72
+msgid "unable to read file"
+msgstr "impossibile leggere il file"
+
+#: public/public.php:1430
+msgid "the last month"
+msgstr "il mese scorso"
+
+#: public/public.php:1429 admin/views/metabox.php:144
+#: admin/views/setting_email_report_stats_period.php:2
+#: public/views/ad-stats.php:58
+msgid "last 30 days"
+msgstr "ultimi 30 giorni"
+
+#: classes/util.php:756
+msgid "View the live statistics"
+msgstr "Guarda le statistiche dal vivo"
+
+#: classes/util.php:748 public/views/ad-stats.php:285
+msgid "Total"
+msgstr "Totale"
+
+#: classes/util.php:707
+msgid "CTR"
+msgstr "CTR"
+
+#: classes/util.php:707
+msgid "click through rate"
+msgstr "percentuale di clic"
+
+#: classes/util.php:697
+msgid "There is no data for the given period, yet."
+msgstr "Non ci sono ancora dati per il periodo indicato."
+
+#. %s is a period string.
+#: classes/util.php:691
+msgid "Ads statistics for %s"
+msgstr "Statistiche annunci per %s"
+
+#. %1$s is the ad name; %2$s a period string.
+#: classes/util.php:688
+msgid "%1$s statistics for %2$s"
+msgstr "%1$s statistiche per %2$s"
+
+#: classes/util.php:592
+msgid " the last 12 months"
+msgstr "gli ultimi 12 mesi"
+
+#: classes/util.php:591
+msgid " the last month"
+msgstr "il mese scorso"
+
+#: classes/util.php:590
+msgid " the last 30 days"
+msgstr "gli ultimi 30 giorni"
+
+#: classes/db-operations.php:655 admin/views/stats.php:100
+msgid "to"
+msgstr "a"
+
+#: classes/db-operations.php:654 admin/views/stats.php:99
+msgid "from"
+msgstr "da"
+
+#: public/public.php:1431 classes/db-operations.php:48
+#: classes/db-operations.php:635 admin/views/metabox.php:146
+#: admin/views/setting_email_report_stats_period.php:4
+#: public/views/ad-stats.php:60
+msgid "last 12 months"
+msgstr "ultimi 12 mesi"
+
+#: classes/db-operations.php:45 classes/db-operations.php:52
+msgid "first 6 months"
+msgstr "primi 6 mesi"
+
+#: classes/db-operations.php:44 classes/db-operations.php:51
+msgid "everything before this year"
+msgstr "tutto prima di quest'anno"
+
+#: classes/ajax.php:621
+msgid "This base name collides with an existing blog post category"
+msgstr "Questo nome di base entra in conflitto con una categoria di articoli del blog esistente"
+
+#: classes/ajax.php:619
+msgid "This base name collides with an existing blog post tag"
+msgstr "Questo nome di base entra in conflitto con un tag esistente degli articoli  del blog"
+
+#: classes/ajax.php:617
+msgid "This base name collides with an existing link category"
+msgstr "Questo nome di base entra in conflitto con una categoria di link esistente"
+
+#: classes/ajax.php:615
+msgid "This base name collides with an existing WordPress content (blog post, page or any public custom content)"
+msgstr "Questo nome di base entra in conflitto con un contenuto WordPress esistente (articolo de blog, pagina o qualsiasi contenuto pubblico personalizzato)"
+
+#: classes/ajax.php:376 classes/ajax.php:544
+msgctxt "format for week group in stats table"
+msgid "from %b&nbsp;%#d"
+msgstr "da %b&nbsp;%#d"
+
+#. %d is the ad_id
+#: classes/db-operations.php:156
+msgid "Impressions and clicks for ad ID %d removed."
+msgstr "Impressioni e clic per ID annuncio %d rimosse"
+
+#: classes/db-operations.php:147
+msgid "No stats removed."
+msgstr "Nessuna statistica rimossa"
+
+#: classes/db-operations.php:141
+msgid "All impressions and clicks removed."
+msgstr "Tutte le impressioni e i clic rimossi."
+
+#: admin/admin.php:1204 classes/ajax.php:424
+msgctxt "date format on stats page"
+msgid "Y-m"
+msgstr "m-Y"
+
+#: admin/admin.php:1204 classes/ajax.php:424
+msgid "month"
+msgstr "mese"
+
+#: admin/admin.php:1203 classes/ajax.php:423
+msgid "week"
+msgstr "settimana"
+
+#: admin/admin.php:1202 admin/admin.php:1203 classes/ajax.php:422
+#: classes/ajax.php:423
+msgctxt "date format on stats page"
+msgid "Y-m-d"
+msgstr "d-m-Y"
+
+#: admin/admin.php:1202 classes/ajax.php:422
+msgid "day"
+msgstr "giorno"
+
+#: admin/admin.php:1197 classes/db-operations.php:651
+msgid "custom"
+msgstr "personalizzato"
+
+#: admin/admin.php:1195 classes/db-operations.php:49
+#: classes/db-operations.php:636
+msgid "last year"
+msgstr "anno scorso"
+
+#: admin/admin.php:1194 classes/db-operations.php:50
+#: classes/db-operations.php:637
+msgid "this year"
+msgstr "quest'anno"
+
+#: admin/admin.php:1193 admin/views/metabox.php:145
+#: admin/views/setting_email_report_stats_period.php:3
+#: public/views/ad-stats.php:59
+msgid "last month"
+msgstr "scorso mese"
+
+#: admin/admin.php:1192
+msgid "this month"
+msgstr "questo mese"
+
+#: admin/admin.php:1191
+msgid "last 7 days"
+msgstr "ultimi 7 giorni"
+
+#: admin/admin.php:1190
+msgid "yesterday"
+msgstr "ieri"
+
+#: admin/admin.php:1189
+msgid "today"
+msgstr "oggi"
+
+#: admin/admin.php:1047
+msgid "Add <code>target=\"_blank\"</code> to the ad code in order to open it in a new window. E.g. <code>&lt;a href=\"%link%\" target=\"_blank\"&gt;</code>"
+msgstr "Aggiunge <code>target=\"_blank\"</code> al codice dell'annuncio per aprirlo in una nuova finestra. Per es <code>&lt;a href=\"%link%\" target=\"_blank\"&gt;</code>"
+
+#: admin/admin.php:1002 admin/views/setting_everything.php:5
+msgid "clicks only"
+msgstr "solo clic"
+
+#: admin/admin.php:1003 admin/views/setting_everything.php:4
+msgid "impressions only"
+msgstr "solo impressioni"
+
+#: admin/admin.php:1004 admin/views/setting_everything.php:2
+msgid "impressions & clicks"
+msgstr "impressioni e clic"
+
+#: admin/admin.php:998
+msgid "disabled"
+msgstr "disabilitato"
+
+#: admin/admin.php:997 admin/views/ad_tracking_options.php:135
+#: admin/views/ad_tracking_options.php:149
+#: admin/views/ad_tracking_options.php:164
+msgid "default"
+msgstr "predefinito"
+
+#: admin/admin.php:959 admin/admin.php:1742
+msgid "Ads Statistics"
+msgstr "Statistiche annunci"
+
+#: admin/admin.php:902
+msgid "Send test email"
+msgstr "Invia email di prova"
+
+#: admin/admin.php:892
+msgid "Email subject"
+msgstr "Oggetto dell'email"
+
+#: admin/admin.php:882
+msgid "From address"
+msgstr "Dall'indirizzo"
+
+#: admin/admin.php:872
+msgid "From name"
+msgstr "Da nome"
+
+#: admin/admin.php:862
+msgid "Statistics period"
+msgstr "Periodo di statistica"
+
+#: admin/admin.php:852
+msgid "Frequency"
+msgstr "Frequenza"
+
+#: admin/admin.php:842
+msgid "Recipients"
+msgstr "Destinatari"
+
+#: admin/admin.php:833
+msgid "Delete data on uninstall"
+msgstr "Elimina i dati alla disinstallazione"
+
+#: admin/admin.php:823
+msgid "Track bots"
+msgstr "Traccia i bot"
+
+#: admin/admin.php:810
+msgid "Link base for public reports"
+msgstr "Link base per i rapporti pubblici"
+
+#: admin/admin.php:801
+msgid "Click-link base"
+msgstr "Base clic-link"
+
+#: admin/admin.php:766
+msgid "What to track by default"
+msgstr "Cosa monitorare per impostazione predefinita"
+
+#: admin/admin.php:755 admin/views/setting_method.php:20
+msgid "Google Analytics"
+msgstr "Google Analytics"
+
+#: admin/admin.php:746
+msgid "Choose tracking method"
+msgstr "Scegli il metodo di monitoraggio"
+
+#: admin/admin.php:721
+msgid "Email Reports"
+msgstr "Email resoconti"
+
+#: admin/admin.php:713 admin/admin.php:737 admin/admin.php:1783
+msgid "Tracking"
+msgstr "Tracciamento"
+
+#: admin/admin.php:645 admin/admin.php:1532
+msgid "These features are not available with the Google Analytics tracking method."
+msgstr "Queste funzioni non sono disponibili con il metodo di monitoraggio di Google Analytics."
+
+#: admin/admin.php:560
+msgid "Data were compressed but the tracking tables can not be optimized automatically. Please ask the server&#39;s admin on how to proceed."
+msgstr "I dati sono stati compressi ma le tabelle di tracciamento non possono essere ottimizzate automaticamente. Chiedi all'amministratore del server come procedere."
+
+#: admin/admin.php:559
+msgid "The plugin was not able to perform some requests on the database"
+msgstr "Il plugin non è stato in grado di eseguire alcune richieste sul database"
+
+#: admin/admin.php:558 admin/views/stats_clear.php:43
+msgid "Are you sure you want to reset the stats for"
+msgstr "Sei sicuro di voler azzerare le statistiche per"
+
+#: admin/admin.php:557 admin/views/stats_clear.php:38
+msgid "Please choose an ad"
+msgstr "Scegli un annuncio"
+
+#: admin/admin.php:555
+msgid "The server failed to respond to your request."
+msgstr "Il server non è riuscito a rispondere alla tua richiesta."
+
+#: admin/admin.php:541
+msgid "email not sent. Please check your server configuration"
+msgstr "email non inviata. Si prega di verificare la configurazione del server"
+
+#: admin/admin.php:540
+msgid "email sent"
+msgstr "email inviata"
+
+#: admin/admin.php:539
+msgid "Link structure available."
+msgstr "Struttura link disponibile."
+
+#: admin/admin.php:538
+msgid "An unexpected error occurred. Link structure not available."
+msgstr "Si è verificato un errore imprevisto. Struttura link non disponibile."
+
+#: admin/admin.php:537
+msgid "The server failed to respond to your request. Link structure not available."
+msgstr "Il server non è riuscito a rispondere alla tua richiesta. Struttura link non disponibile."
+
+#: admin/admin.php:520
+msgid "No stats found in file"
+msgstr "Nessuna statistica trovata nel file"
+
+#: admin/admin.php:518
+msgid "stats from %1$s to %2$s"
+msgstr "statistiche da %1$s a %2$s"
+
+#: admin/admin.php:517 admin/admin.php:556
+msgid "An unexpected error occurred."
+msgstr "Si è verificato un errore imprevisto."
+
+#: admin/admin.php:510
+msgid "group"
+msgstr "gruppo"
+
+#: admin/admin.php:509 admin/views/stats.php:142
+msgid "no file selected"
+msgstr "nessun file selezionato"
+
+#: admin/admin.php:508
+msgid "One or more invalid records have been found in the database"
+msgstr "Uno o più record non validi sono stati trovati nel database"
+
+#: admin/admin.php:507
+msgid "Some fields are missing for the custom period"
+msgstr "Mancano alcuni campi per il periodo personalizzato"
+
+#: admin/admin.php:506 admin/admin.php:519 admin/views/db-operations.php:106
+msgid "The period you have chosen is not consistent"
+msgstr "Il periodo che hai scelto non è coerente"
+
+#: admin/admin.php:505
+msgid "There is no record for this period :("
+msgstr "Non ci sono dati per questo periodo :("
+
+#: admin/admin.php:504
+msgid "total"
+msgstr "totale"
+
+#: admin/admin.php:503
+msgid "%1$s to %2$s"
+msgstr "%1$s a %2$s"
+
+#: admin/admin.php:502 classes/util.php:703 public/views/ad-stats.php:236
+msgid "date"
+msgstr "data"
+
+#: admin/admin.php:501
+msgid "deleted ads"
+msgstr "annunci eliminati"
+
+#: admin/admin.php:500 public/views/ad-stats.php:239
+msgid "ctr"
+msgstr "ctr"
+
+#: admin/admin.php:499
+msgid "ad"
+msgstr "annuncio"
+
+#: admin/admin.php:498
+msgid "There is no data for %1$s to %2$s"
+msgstr "Non ci sono dati per %1$s a %2$s"
+
+#: admin/admin.php:497
+msgid "impressions from %1$s to %2$s"
+msgstr "impressioni da %1$s a %2$s"
+
+#: admin/admin.php:496
+msgid "clicks from %1$s to %2$s"
+msgstr "clic da %1$s a %2$s"
+
+#: admin/admin.php:495 admin/admin.php:522
+msgid "next %d days"
+msgstr "prossimi %d giorni"
+
+#: admin/admin.php:494 admin/admin.php:521
+msgid "previous %d days"
+msgstr "giorni %d precedenti"
+
+#: admin/admin.php:493
+msgid "next year"
+msgstr "anno prossimo"
+
+#: admin/admin.php:492
+msgid "previous year"
+msgstr "anno precedente"
+
+#: admin/admin.php:491 admin/admin.php:524
+msgid "next month"
+msgstr "mese prossimo"
+
+#: admin/admin.php:490 admin/admin.php:523
+msgid "previous month"
+msgstr "mese precedente"
+
+#: admin/admin.php:489
+msgid "next day"
+msgstr "prossimo giorno"
+
+#: admin/admin.php:488
+msgid "previous day"
+msgstr "giorno precedente"
+
+#: admin/admin.php:487 public/public.php:820 classes/amp.php:104
+#: admin/views/ad-list-stats-column.php:22
+msgid "Impressions"
+msgstr "Impressioni"
+
+#: admin/admin.php:486
+msgid "impressions for \"%s\""
+msgstr "impressioni per \"%s\""
+
+#: admin/admin.php:484 public/public.php:821
+#: admin/views/ad-list-stats-column.php:31
+msgid "Clicks"
+msgstr "Clic"
+
+#: admin/admin.php:483
+msgid "clicks for \"%s\""
+msgstr "clic per \"%s\""
+
+#: admin/admin.php:473
+msgid "invalid file type"
+msgstr "tipo di file non valido"
+
+#: admin/admin.php:471
+msgid "Select file"
+msgstr "Seleziona file"
+
+#: admin/admin.php:445 admin/admin.php:482 classes/util.php:705
+#: admin/views/stats.php:217 admin/views/db-operations.php:83
+#: admin/views/metabox-limiter.php:42 admin/views/metabox-limiter.php:69
+#: public/views/ad-stats.php:184 public/views/ad-stats.php:210
+#: public/views/ad-stats.php:216 public/views/ad-stats.php:230
+#: public/views/ad-stats.php:238
+msgid "clicks"
+msgstr "clic"
+
+#: admin/admin.php:444 admin/admin.php:485 classes/util.php:704
+#: admin/views/stats.php:212 admin/views/db-operations.php:77
+#: admin/views/metabox-limiter.php:31 admin/views/metabox-limiter.php:64
+#: public/views/ad-stats.php:178 public/views/ad-stats.php:200
+#: public/views/ad-stats.php:205 public/views/ad-stats.php:226
+#: public/views/ad-stats.php:237
+msgid "impressions"
+msgstr "impressioni"
+
+#: admin/admin.php:293 admin/admin.php:578 admin/admin.php:1131
+#: admin/admin.php:1132 admin/views/stats.php:69
+msgid "Statistics"
+msgstr "Statistiche"
+
+#: admin/admin.php:204
+msgid ": activate to sort column descending"
+msgstr ": attiva per ordinare la colonna in ordine decrescente"
+
+#: admin/admin.php:203
+msgid ": activate to sort column ascending"
+msgstr ": attiva per ordinare la colonna in ordine crescente"
+
+#: admin/admin.php:200
+msgid "last"
+msgstr "ultimo"
+
+#: admin/admin.php:199
+msgid "next"
+msgstr "prossimo"
+
+#: admin/admin.php:198
+msgid "previous"
+msgstr "precedente"
+
+#: admin/admin.php:197
+msgid "first"
+msgstr "primo"
+
+#: admin/admin.php:195
+msgid "no data available in table"
+msgstr "Nessun dato disponibile nella tabella"
+
+#: admin/admin.php:194
+msgid "no matching records found"
+msgstr "nessuna corrispondenza trovata"
+
+#: admin/admin.php:193
+msgid "Loading..."
+msgstr "Caricamento..."
+
+#: admin/admin.php:191
+msgid "filtered from _MAX_ total entries"
+msgstr "filtrato da _MAX_ voci totali"
+
+#: admin/admin.php:190
+msgid "no element to show"
+msgstr "nessun elemento da mostrare"
+
+#: admin/admin.php:189
+msgid "showing _START_ to _END_ of _TOTAL_ entries"
+msgstr "mostrando le voci _START_ a _END_ di _TOTAL_"
+
+#: admin/admin.php:188
+msgid "show _MENU_ entries"
+msgstr "mostra le voci _MENU_"
+
+#: admin/admin.php:187
+msgid "search:"
+msgstr "cerca:"
+
+#: admin/admin.php:186
+msgid "processing..."
+msgstr "elaborando..."
+
+#: admin/admin.php:1140 admin/views/db-operations.php:58
+msgid "Tracking database"
+msgstr "Database di tracciamento"

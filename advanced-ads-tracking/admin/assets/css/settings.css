@@ -1,0 +1,15 @@
+.advads-ga-uid {
+	display: none;
+}
+
+.advads-ga-uid.advads-is-visible {
+	display: table-row;
+}
+
+.advads-amp-warning {
+	display: none;
+}
+
+.advads-amp-warning.advads-amp-nossl[data-method="frontend"] {
+	display: block;
+}
