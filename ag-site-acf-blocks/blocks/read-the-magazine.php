@@ -11,7 +11,8 @@ if( !empty($block['className']) ) {
 } 
 $magPost = get_posts(array(
     'number_posts'      => 1,
-    'category'          => 86,
+    'post_type'         => 'magazine'
+    // 'category'          => 86,
 
 ));
 $magPost = $magPost[0];
