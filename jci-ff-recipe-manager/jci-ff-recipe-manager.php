@@ -2,6 +2,7 @@
 /**
  * Plugin Name: FF Recipe Manager
  * Description: Custom Gutenberg blocks 
+ * Text Domain: ff-recipe
  * 
  * register recipe post type? (recipes are normal posts)
  * query posts from the last 24 hours and add to database
@@ -17,37 +18,37 @@
  function recipe_post_type() {
 
     $labels = array(
-		'name'                  => _x( 'Recipes', 'Post Type General Name', 'text_domain' ),
-		'singular_name'         => _x( 'Recipe', 'Post Type Singular Name', 'text_domain' ),
-		'menu_name'             => __( 'Recipes', 'text_domain' ),
-		'name_admin_bar'        => __( 'Recipe', 'text_domain' ),
-		'archives'              => __( 'Recipe Archives', 'text_domain' ),
-		'attributes'            => __( 'Add a City to This State', 'text_domain' ),
-		'parent_item_colon'     => __( 'Select a state:', 'text_domain' ),
-		'all_items'             => __( 'All Recipes', 'text_domain' ),
-		'add_new_item'          => __( 'Add New Recipe', 'text_domain' ),
-		'add_new'               => __( 'Add New Recipe', 'text_domain' ),
-		'new_item'              => __( 'New Recipe', 'text_domain' ),
-		'edit_item'             => __( 'Edit Recipe', 'text_domain' ),
-		'update_item'           => __( 'Update Recipe', 'text_domain' ),
-		'view_item'             => __( 'View Recipe', 'text_domain' ),
-		'view_items'            => __( 'View Recipes', 'text_domain' ),
-		'search_items'          => __( 'Search Recipes', 'text_domain' ),
-		'not_found'             => __( 'Not found', 'text_domain' ),
-		'not_found_in_trash'    => __( 'Not found in Trash', 'text_domain' ),
-		'featured_image'        => __( 'Featured Image', 'text_domain' ),
-		'set_featured_image'    => __( 'Set featured image', 'text_domain' ),
-		'remove_featured_image' => __( 'Remove featured image', 'text_domain' ),
-		'use_featured_image'    => __( 'Use as featured image', 'text_domain' ),
-		'insert_into_item'      => __( 'Insert into Recipe', 'text_domain' ),
-		'uploaded_to_this_item' => __( 'Uploaded to this Recipe', 'text_domain' ),
-		'items_list'            => __( 'Recipes list', 'text_domain' ),
-		'items_list_navigation' => __( 'Recipes list navigation', 'text_domain' ),
-		'filter_items_list'     => __( 'Filter Recipe list', 'text_domain' ),
+		'name'                  => _x( 'Recipes', 'Post Type General Name', 'ff-recipe' ),
+		'singular_name'         => _x( 'Recipe', 'Post Type Singular Name', 'ff-recipe' ),
+		'menu_name'             => __( 'Recipes', 'ff-recipe' ),
+		'name_admin_bar'        => __( 'Recipe', 'ff-recipe' ),
+		'archives'              => __( 'Recipe Archives', 'ff-recipe' ),
+		'attributes'            => __( 'Add a City to This State', 'ff-recipe' ),
+		'parent_item_colon'     => __( 'Select a state:', 'ff-recipe' ),
+		'all_items'             => __( 'All Recipes', 'ff-recipe' ),
+		'add_new_item'          => __( 'Add New Recipe', 'ff-recipe' ),
+		'add_new'               => __( 'Add New Recipe', 'ff-recipe' ),
+		'new_item'              => __( 'New Recipe', 'ff-recipe' ),
+		'edit_item'             => __( 'Edit Recipe', 'ff-recipe' ),
+		'update_item'           => __( 'Update Recipe', 'ff-recipe' ),
+		'view_item'             => __( 'View Recipe', 'ff-recipe' ),
+		'view_items'            => __( 'View Recipes', 'ff-recipe' ),
+		'search_items'          => __( 'Search Recipes', 'ff-recipe' ),
+		'not_found'             => __( 'Not found', 'ff-recipe' ),
+		'not_found_in_trash'    => __( 'Not found in Trash', 'ff-recipe' ),
+		'featured_image'        => __( 'Featured Image', 'ff-recipe' ),
+		'set_featured_image'    => __( 'Set featured image', 'ff-recipe' ),
+		'remove_featured_image' => __( 'Remove featured image', 'ff-recipe' ),
+		'use_featured_image'    => __( 'Use as featured image', 'ff-recipe' ),
+		'insert_into_item'      => __( 'Insert into Recipe', 'ff-recipe' ),
+		'uploaded_to_this_item' => __( 'Uploaded to this Recipe', 'ff-recipe' ),
+		'items_list'            => __( 'Recipes list', 'ff-recipe' ),
+		'items_list_navigation' => __( 'Recipes list navigation', 'ff-recipe' ),
+		'filter_items_list'     => __( 'Filter Recipe list', 'ff-recipe' ),
 	);
     $args = array(
-		'label'                 => __( 'Recipe', 'text_domain' ),
-		'description'           => __( 'Recipe imported from Farm Flavor Site', 'text_domain' ),
+		'label'                 => __( 'Recipe', 'ff-recipe' ),
+		'description'           => __( 'Recipe imported from Farm Flavor Site', 'ff-recipe' ),
 		'labels'                => $labels,
 		'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 		// 'taxonomies'            => array( 'place_topic' ),
@@ -69,6 +70,22 @@
 }
 
 add_action( 'init', 'recipe_post_type');
+
+function register_recipe_block() {
+	if( function_exists('acf_register_block_type')) {
+		acf_register_block_type(array(
+			'name'			=> 'recipe_block',
+			'title'			=> __('Farm Flavor Recipe Block', 'ff-recipe'),
+			'mode'			=> 'preview',
+			'description'	=> __('Link out to Farm Flavor Recipe', 'ff-recipe'),
+			'render_template'	=> plugin_dir_path(__FILE__) . 'block/recipe-block.php',
+			'icon'              => 'layout', 
+			'keywords'		=> array()
+		));
+	}
+}
+
+add_action('acf/init', 'register_recipe_block');
 
 function maximum_api_filter($query_params) {
     $query_params['per_page']["maximum"]=1000;

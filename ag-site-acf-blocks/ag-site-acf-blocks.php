@@ -49,5 +49,14 @@ function my_acf_init_block_types() {
             'icon'              => 'layout', 
             'keywords'          => array('social, facebook, twitter, pinterest, instagram')
         ));
+        acf_register_block_type(array(
+            'name'              => 'article_callout',
+            'title'             => __('Article Callout', 'acf-blocks'),
+            'description'       => __('Displays box to link a single article', 'acf-blocks'),
+            'mode'              => 'preview',
+            'render_template'   => plugin_dir_path(__FILE__) . 'blocks/article-callout.php',
+            'icon'              => 'layout', 
+            'keywords'          => array('single, callout')
+        ));
     }
 } ?>
