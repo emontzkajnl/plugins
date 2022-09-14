@@ -58,5 +58,14 @@ function my_acf_init_block_types() {
             'icon'              => 'layout', 
             'keywords'          => array('single, callout')
         ));
+        acf_register_block_type(array(
+            'name'              => 'related_articles',
+            'title'             => __('Related Articles', 'acf-blocks'),
+            'description'       => __('Displays three related articles at random', 'acf-blocks'),
+            'mode'              => 'preview',
+            'render_template'   => plugin_dir_path(__FILE__) . 'blocks/related-articles.php',
+            'icon'              => 'layout', 
+            'keywords'          => array()
+        ));
     }
 } ?>
