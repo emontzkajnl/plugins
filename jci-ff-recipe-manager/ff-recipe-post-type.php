@@ -34,7 +34,7 @@ function recipe_post_type() {
 		'label'                 => __( 'Recipe', 'text_domain' ),
 		'description'           => __( 'Recipe imported from Farm Flavor Site', 'text_domain' ),
 		'labels'                => $labels,
-		'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+		'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
 		// 'taxonomies'            => array( 'place_topic' ),
 		'public'                => true,
 		'show_ui'               => true,

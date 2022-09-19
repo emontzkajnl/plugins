@@ -91,13 +91,75 @@ function maximum_api_filter($query_params) {
     $query_params['per_page']["maximum"]=1000;
     return $query_params;
 }
-add_filter('rest_post_collection_params', 'maximum_api_filter');
+// add_filter('rest_post_collection_params', 'maximum_api_filter');
 
-$response = wp_remote_get('https://farmflavor.com/wp-json/wp/v2/posts?per_page=100&after=2021-11-07T00:00:00&categories=5,6,19,24,28,25,7,417,8,27,17,18,34,13,31,32,22,14,26,20,9,16,10,11,23,21,35,12');
-$body     = json_decode(wp_remote_retrieve_body( $response ), true);
-// echo 'start echo<br />';
-// foreach($body as $b) {
-//     echo 'name is '.$b['title']['rendered'].'<br />';
-//     // var_dump($b);
-// }
+function update_recipes() {
+
+
+	$response = wp_remote_get('https://farmflavor.com/wp-json/wp/v2/posts?page=2&per_page=100&after=2021-11-07T00:00:00&categories=5,6,19,24,28,25,7,417,8,27,17,18,34,13,31,32,22,14,26,20,9,16,10,11,23,21,35,12');
+	$body     = json_decode(wp_remote_retrieve_body( $response ), true);
+	
+	// $this_post = get_posts(array(
+	// 	'posts_per_page'	=> 1,
+	// 	'post_type'			=> 'ff_recipe',
+	// 	'meta_key'			=> 'ff_id',
+	// 	// 'meta_value'		=> $b['id']
+	// 	'meta_value'		=> 2192
+	// ));
+	// print_r(
+	// 	$this_post
+	// );
+
+
+	// echo 'meta is '.get_post_meta(7341,'ff_id' );
+	// print_r(get_post_meta(7341,'ff_id' ));
+	foreach($body as $b) {
+		// echo 'name is '.$b['title']['rendered'].'<br />';
+		// echo 'link is '.$b['link'].'<br />';
+		// echo 'id is '.$b['id'].'<br />';
+		// echo 'excerpt is '.$b['excerpt']['rendered'].'<br />';
+		// echo 'modified on '.$b['modified'].'<br />'; // to determine if existing needs update
+		// echo 'thumb is '.$b['yoast_head_json']['og_image'][0]['url'];
+		// echo '<pre>';
+		// print_r($b);
+		// echo '</pre>';
+		// echo '<br />';
+		// check if existing recipe meta has this post id
+		// if not, create recipe
+		// if already exists, check modified date
+		// update meta for new post?
+		// handle thumbnail
+		// update with cron function
+
+
+		// $bid = $b['id'];
+		// print_r($bid );
+		// echo 'bid is '.$bid;
+		$this_post = get_posts(array(
+			'posts_per_page'	=> 1,
+			'post_type'			=> 'ff_recipe',
+			'meta_key'			=> 'ff_id',
+			'meta_value'		=> $b['id']
+		));
+		if (count($this_post) > 0) {
+			echo 'this is post '.$b['id'].'<br />';
+		}  else {
+			// echo 'not the post'.'<br />';
+		}
+
+		// $postarr = array(
+		// 	// 'ID'		=> $b['id'],
+		// 	'post_date'		=> $b['modified'],
+		// 	'post_title'	=>  $b['title']['rendered'],
+		// 	'post_status'	=> 'draft',
+		// 	'post_type'		=> 'recipe',
+		// 	'meta_input'   	=> array(
+		// 		'ff_id'			=> $b['id'],
+		// 		'recipe_link'	=> $b['link']
+		// 	),
+		// );
+		// wp_insert_post($postarr);
+	}
+}
+add_action('init', 'update_recipes');
 // var_dump(count($body));

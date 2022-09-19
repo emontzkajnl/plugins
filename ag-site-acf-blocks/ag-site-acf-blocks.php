@@ -67,5 +67,15 @@ function my_acf_init_block_types() {
             'icon'              => 'layout', 
             'keywords'          => array()
         ));
+        acf_register_block_type(array(
+            'name'              => 'callout_box',
+            'title'             => __('Callout Box', 'acf-blocks'),
+            'description'       => __('Display a callout box with any content you wish and optional icon', 'acf-blocks'),
+            'mode'              => 'preview',
+            'render_template'   => plugin_dir_path(__FILE__) . 'blocks/callout-box.php',
+            'icon'              => 'layout', 
+            'keywords'          => array()
+        ));
+
     }
 } ?>
