@@ -103,7 +103,7 @@ function update_recipes() {
 	
 	// $current_page = 1;
 	// function load_recipes($current_page = 1) {
-		$response = wp_remote_get('https://farmflavor.com/wp-json/wp/v2/posts?after=2020-11-07T00:00:00&categories=5,6,19,24,28,25,7,417,8,27,17,18,34,13,31,32,22,14,26,20,9,16,10,11,23,21,35,12');
+		$response = wp_remote_get('https://farmflavor.com/wp-json/wp/v2/posts?after=2015-11-07T00:00:00&categories=5,6,19,24,28,25,7,417,8,27,17,18,34,13,31,32,22,14,26,20,9,16,10,11,23,21,35,12');
 		// page=1&per_page=100&
 		$body     = json_decode(wp_remote_retrieve_body( $response ), true);
 		// echo 'current page is '.$current_page;
