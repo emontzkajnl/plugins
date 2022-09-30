@@ -110,7 +110,6 @@ function update_recipes() {
 
 		// if (! $body['data']): 
 			foreach($body as $b) {
-				// if ($b['id']):
 
 				$this_post = get_posts(array(
 					'numberposts'	=> 1,
@@ -156,6 +155,7 @@ register_activation_hook(__FILE__, 'ag_activate' );
 
 function ag_activate() {
 	add_action('init', 'update_recipes');
+	
 }
 
 register_deactivation_hook(__FILE__, 'ag_deactivate' );
