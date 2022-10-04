@@ -31,7 +31,7 @@ $btntext = get_field('button_text');
         <div class="read-the-magazine__text">
             <h4 class="read-the-magazine__title"><?php echo $heading; ?></h4>
             <p><?php echo $magPost->post_content; ?></p>
-            <a class="read-the-magazine__button" href="<?php echo get_the_permalink($magPost->ID ); ?>"><?php echo $btntext; ?></a>
+            <a class="read-the-magazine__button color__primary" href="<?php echo get_the_permalink($magPost->ID ); ?>"><?php echo $btntext; ?></a>
         </div>
     </div>
 <!-- </div> -->
