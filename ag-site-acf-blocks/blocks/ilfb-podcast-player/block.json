@@ -1,0 +1,9 @@
+{
+    "name":     "acf/podcast-player",
+    "title":    "ILFB Podcast Player",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ilfb-podcast-player.php"
+    }
+}
