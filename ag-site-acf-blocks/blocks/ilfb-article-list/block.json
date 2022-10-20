@@ -1,0 +1,9 @@
+{
+    "name":     "acf/ilfb-article-list",
+    "title":    "ILFB Article List",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ilfb-article-list.php"
+    }
+}

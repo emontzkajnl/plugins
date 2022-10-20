@@ -86,16 +86,9 @@ function my_acf_init_block_types() {
             'keywords'          => array()
         ));
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ilfb-podcast-player/block.json');
-        // acf_register_block_type(array(
-        //     'name'              => 'ilfb_podcast_player',
-        //     'title'             => __('ILFB Podcast Player', 'acf-blocks'),
-        //     'description'       => __('Display podcast player', 'acf-blocks'),
-        //     'mode'              => 'preview',
-        //     'render_template'   => plugin_dir_path(__FILE__) . 'blocks/ilfb-podcast-player/ilfb-podcast-player.php',
-        //     // 'enqueue_script'    => plugin_dir_path(__FILE__ ) . 'js/podcast.js',
-        //     'icon'              => 'layout', 
-        //     'keywords'          => array()
-        // ));
-
+        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ilfb-article-list/block.json');
+        // wp_register_script('podcast-block',plugin_dir_url(__FILE__) . '/blocks/ilfb-podcast-player/amplitude.js',array(), null, true);
     }
-} ?>
+} 
+
+?>
