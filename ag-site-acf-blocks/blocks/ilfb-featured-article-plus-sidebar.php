@@ -27,8 +27,8 @@ if( !empty($block['className']) ) {
     </a>
     <?php if ($fi_primary_key) { echo '<p class="cat-text color__primary font__sans-serif"><a href="'.get_category_link( $fi_primary_key).'">'.get_cat_name($fi_primary_key).'</a></p>'; } ?>
             
-                <h2 class="ilfb-afps__featured-title title-link font__serif "><a class="unstyle-link" href="<?php echo get_the_permalink($featured_image->ID); ?>"><?php echo $featured_image->post_title; ?></a></h2>
-            
+            <h2 class="ilfb-afps__featured-title title-link font__serif "><a class="unstyle-link" href="<?php echo get_the_permalink($featured_image->ID); ?>"><?php echo $featured_image->post_title; ?></a></h2>
+            <p class="ilfb-afps__excerpt font__serif"><?php echo get_the_excerpt( $featured_image->ID); ?></p>
     
     </div>
 <div class="col-12 m-col-3">
