@@ -208,58 +208,17 @@ if( !empty($block['className']) ) {
 </style>
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-<div class="podcast-player__left">
-    <h3 class="podcast-player__title">List To Our Partners Podcast</h3>
-    <p class="podcast-player__description">Farm, Family and food-related places, events and issues</p>
-    <button><a href="" class="podcast-player__button">Latest Episode</a></button>
+<div class="podcast-player__left font__sans-serif">
+    <div class="podcast-player__textarea">
+        <img class="podcast-player__img" src="<?php echo plugin_dir_url(__FILE__); ?>/green-ilfb-p.png" alt="">
+        <h3 class="podcast-player__title">Listen To Our Partners Podcast</h3>
+        <p class="podcast-player__description">Farm, Family and food-related places, events and issues</p>
+        <button class="background__primary"><a href="" class="podcast-player__button">Latest Episode</a></button>
+    </div>
 </div>
 <div class="podcast-player__right">
-<?php
-    $htmlaudio = "";
-    $htmlplaylst = "";
-    $url = "http://www.stretchinternet.com/rfd/podcasts/feed.php";
-    
-    if (simplexml_load_file($url) !== false):
-    $xml = simplexml_load_file($url);
-    $listnum = 0;
-    for ($i = 0; $i < 15; $i++) {
-        $title = $xml->channel->item[$i]->title;
-        $filename = $xml->channel->item[$i]->guid;
-        $episode = "-c.mp3";
-        $towncountry = strpos($filename, $episode);
-            if ($towncountry === FALSE) {
-            } else {
-            $toptitle = $xml->channel->item[0]->title;
-            $listnum++ ;
-                $htmlplaylist .= "<div class='playlist-song' id='song-". $listnum ."'><div class='amplitude-play-playlist' amplitude-song-id='". $listnum ."'> $title  </div></div>";
-                $htmlaudio .= "<audio id='". $listnum ."' amplitude-audio-type='song' amplitude-title='". $title ."' amplitude-visual-element-id='song-". $listnum ."' ><source src='" . $filename . "' type='audio/mpeg'></audio>";
-            }	
-    } ?>
-    <div id="player">
-    <img src="/wp-content/plugins/ilfb-podcast-player/images/ilfb-town-country-podcast-header.png">
-    <div id="player-top">
-        <div id="amplitude-play-pause" class="amplitude-paused"></div>
-        <div id="track-info-container">
-            <span id="amplitude-now-playing-title">Select an episode below</span>
-        </div>
-        <div id="amplitude-song-slider"><div id="amplitude-track-progress"></div></div>
-        <div id="time-info-container">
-            <span id="amplitude-current-time">0:00</span> / <span id="amplitude-audio-duration">0:00</span>
-        </div>
-    </div>
-    <div id="player-playlist">
-    <?php echo $htmlplaylist; ?>
-    </div>
-    <div id="player-bottom">
-        <a href="" class="button"  onclick="window.open('http://client.stretchinternet.com/client/rfd.portal#','',' scrollbars=no,menubar=no,width=500, resizable=yes,toolbar=no,location=no,status=no');" >Click to listen live | 2:30pm CT | M-Th</a>
-        Subscribe to this podcast:<a href="itpc://www.stretchinternet.com/rfd/podcasts/feed.php"><img src="/wp-content/plugins/ilfb-podcast-player/images/ilfbitunesicon.png" rel="bookmark" title="Subscribe via iTunes"></a><a href="http://www.stretchinternet.com/rfd/podcasts/feed.php"><img src="/wp-content/plugins/ilfb-podcast-player/images/ilfbrssicon.png" rel="bookmark" title="Subscribe via RSS"></a>
-    </div>
-</div>
-
-    <?php
-        echo '<div id="amplitude-playlist">' . $htmlaudio . '</div>';	
-endif;
-?>
+<p><a class="spreaker-player" href="https://www.spreaker.com/show/partners" data-resource="show_id=3663155" data-width="100%" data-height="200px" data-theme="light" data-playlist="show" data-playlist-continuous="false" data-autoplay="false" data-live-autoplay="false" data-chapters-image="true" data-episode-image-position="right" data-hide-logo="true" data-hide-likes="false" data-hide-comments="false" data-hide-sharing="false" data-hide-download="true" data-hide-playlist-images="true" data-hide-logo="true">Listen to "Partners Podcast" on Spreaker.</a></p>
+<p><script async="" src="https://widget.spreaker.com/widgets.js"></script></p>
     
 </div>
 </div>
