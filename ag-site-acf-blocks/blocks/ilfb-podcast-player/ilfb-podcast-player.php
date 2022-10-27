@@ -207,6 +207,7 @@ if( !empty($block['className']) ) {
 }
 </style>
 
+
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <div class="podcast-player__left font__sans-serif">
     <div class="podcast-player__textarea">

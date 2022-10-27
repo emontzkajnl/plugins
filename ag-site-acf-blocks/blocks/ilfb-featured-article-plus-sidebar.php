@@ -36,7 +36,7 @@ if( !empty($block['className']) ) {
         <?php echo get_the_post_thumbnail($side_article_one->ID); ?>
     </a>
     <?php if ($one_primary_key) { echo '<p class="cat-text color__primary font__sans-serif"><a href="'.get_category_link( $one_primary_key).'">'.get_cat_name($one_primary_key).'</a></p>'; } ?>
-    <a class="unstyle-link href="<?php echo get_the_permalink($side_article_one->ID); ?>">
+    <a class="unstyle-link" href="<?php echo get_the_permalink($side_article_one->ID); ?>">
         <h3 class="ilfb-afps__title title-link font__serif"><?php echo $side_article_one->post_title; ?></h3>
     </a>
 
@@ -44,7 +44,7 @@ if( !empty($block['className']) ) {
         <?php echo get_the_post_thumbnail($side_article_two->ID); ?>
     </a>
     <?php if ($two_primary_key) { echo '<p class="cat-text color__primary font__sans-serif"><a href="'.get_category_link( $two_primary_key).'">'.get_cat_name($two_primary_key).'</a></p>'; } ?>
-    <a class="unstyle-link href="<?php echo get_the_permalink($side_article_two->ID); ?>">
+    <a class="unstyle-link" href="<?php echo get_the_permalink($side_article_two->ID); ?>">
         <h3 class="ilfb-afps__title title-link font__serif"><?php echo $side_article_two->post_title; ?></h3>
     </a>
 </div>
