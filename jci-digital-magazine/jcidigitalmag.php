@@ -173,8 +173,8 @@ function magazine_template(){
 	global $wp;
 	if ($wp->query_vars["post_type"] == "magazine"){
 	    // If the theme provides a template, use it
-		if(file_exists(TEMPLATEPATH . "/single-digital_magazine.php")){
-			include(TEMPLATEPATH . "/single-digital_magazine.php");
+		if(file_exists(get_stylesheet_directory_uri(  ) . "/single-digital_magazine.php")){
+			include(get_stylesheet_directory_uri(  ) . "/single-digital_magazine.php");
 			die();
 		}
 		// otherwise use the default template
@@ -184,7 +184,7 @@ function magazine_template(){
 	}
 }
 
-add_action('template_redirect', 'magazine_template');
+// add_action('template_redirect', 'magazine_template');
 
 
 /*****

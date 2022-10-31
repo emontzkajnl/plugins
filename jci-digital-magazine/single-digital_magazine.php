@@ -21,9 +21,9 @@ get_header(); ?>
 								  //loading all fields of the magazine entry
 								$magazine = get_post_custom($post->ID); 
 								  //loading all fields of device detection entry
-							$args = array( 'numberposts' => 1, 'category' => 114, 'post_status' => 'publish' );
-							$dd = get_posts( $args );
-								$device_detection = get_post_custom($dd[0]->ID);
+							// $args = array( 'numberposts' => 1, 'category' => 114, 'post_status' => 'publish' );
+							// $dd = get_posts( $args );
+								// $device_detection = get_post_custom($dd[0]->ID);
 								  ?>
 						<div class="clear"></div>
 						<hr size="1px">
