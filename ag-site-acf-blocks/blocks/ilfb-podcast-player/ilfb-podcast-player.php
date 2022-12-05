@@ -214,12 +214,12 @@ if( !empty($block['className']) ) {
         <img class="podcast-player__img" src="<?php echo plugin_dir_url(__FILE__); ?>/green-ilfb-p.png" alt="">
         <h3 class="podcast-player__title">Listen To Our Partners Podcast</h3>
         <p class="podcast-player__description">Farm, Family and food-related places, events and issues</p>
-        <button class="background__primary"><a href="" class="podcast-player__button">Latest Episode</a></button>
+        <button class="background__primary"><a href="https://www.ilfb.org/PartnersPodcast" target="_blank" class="podcast-player__button">Latest Episode</a></button>
     </div>
 </div>
 <div class="podcast-player__right">
-<p><a class="spreaker-player" href="https://www.spreaker.com/show/partners" data-resource="show_id=3663155" data-width="100%" data-height="200px" data-theme="light" data-playlist="show" data-playlist-continuous="false" data-autoplay="false" data-live-autoplay="false" data-chapters-image="true" data-episode-image-position="right" data-hide-logo="true" data-hide-likes="false" data-hide-comments="false" data-hide-sharing="false" data-hide-download="true" data-hide-playlist-images="true" data-hide-logo="true">Listen to "Partners Podcast" on Spreaker.</a></p>
-<p><script async="" src="https://widget.spreaker.com/widgets.js"></script></p>
+<a class="spreaker-player" href="https://www.spreaker.com/show/partners" data-resource="show_id=3663155" data-width="100%" data-height="285px" data-theme="light" data-playlist="show" data-playlist-continuous="false" data-autoplay="false" data-live-autoplay="false" data-chapters-image="true" data-episode-image-position="right" data-hide-logo="true" data-hide-likes="false" data-hide-comments="false" data-hide-sharing="false" data-hide-download="true" data-hide-playlist-images="true" data-hide-logo="true">Listen to "Partners Podcast" on Spreaker.</a>
+<script async="" src="https://widget.spreaker.com/widgets.js"></script>
     
 </div>
 </div>
