@@ -213,7 +213,7 @@ if( !empty($block['className']) ) {
     <div class="podcast-player__textarea">
         <img class="podcast-player__img" src="<?php echo plugin_dir_url(__FILE__); ?>/green-ilfb-p.png" alt="">
         <h3 class="podcast-player__title">Listen To Our Partners Podcast</h3>
-        <p class="podcast-player__description">Farm, Family and food-related places, events and issues</p>
+        <p class="podcast-player__description">Farm, family and food-related places, events and issues</p>
         <button class="background__primary"><a href="https://www.ilfb.org/PartnersPodcast" target="_blank" class="podcast-player__button">Latest Episode</a></button>
     </div>
 </div>
