@@ -46,4 +46,4 @@ class ShortcodesUI extends WP_Widget {
 		return $instance;
 	}
 }
-add_action( 'widgets_init', create_function( '', 'register_widget( "ShortcodesUI" );' ) );
+// add_action( 'widgets_init', create_function( '', 'register_widget( "ShortcodesUI" );' ) );
