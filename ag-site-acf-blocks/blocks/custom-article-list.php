@@ -41,14 +41,6 @@ if ($yoast_primary_key) { echo '<p class="cat-text color__primary"><a href="'.ge
 <h2><a class="title-link" href="<?php echo get_the_permalink( $article->ID ); ?>"><?php _e($article->post_title, 'acf-blocks'); ?></a></h2>
 </div>
 <?php 
-// echo '</div>';
-// if ($counter == $num_articles) {
-//     echo '</div>'; // close row
-// } elseif ($columns == 'two') {
-//     echo $counter % 2 == 0 ? '</div><div class="row">' : '';
-// } else {
-//     echo $counter % 3 == 0 ? '</div><div class="row">' : '';
-// }
 $counter++;
 } ?>
 </div></div>
