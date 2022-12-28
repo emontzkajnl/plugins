@@ -202,9 +202,10 @@ if ( ! function_exists( 'stackable_block_assets_v2' ) ) {
 				STACKABLE_VERSION
 			);
 
-			wp_localize_script( 'ugb-block-frontend-js-v2', 'stackable', array(
+			$args = apply_filters( 'stackable_localize_frontend_script', array(
 				'restUrl' => get_rest_url(),
 			) );
+			wp_localize_script( 'ugb-block-frontend-js-v2', 'stackable', $args );
 		}
 	}
 
@@ -240,7 +241,7 @@ if ( ! function_exists( 'stackable_block_editor_assets_v2' ) ) {
 		}
 
 		// Backend editor scripts: blocks.
-		$dependencies = array( 'ugb-block-js', 'ugb-block-js-vendor', 'code-editor', 'wp-blocks', 'wp-element', 'wp-components', 'wp-util', 'wp-plugins', 'wp-i18n', 'wp-api' );
+		$dependencies = array( 'ugb-block-js', 'code-editor', 'wp-blocks', 'wp-element', 'wp-components', 'wp-util', 'wp-plugins', 'wp-i18n', 'wp-api' );
 		wp_register_script(
 			'ugb-block-js-v2',
 			plugins_url( 'dist/deprecated/editor_blocks_deprecated_v2.js', STACKABLE_FILE ),

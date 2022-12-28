@@ -10,7 +10,7 @@ class Advanced_Ads_Shortcode_Creator {
 	 *
 	 * @var array
 	 */
-	private $editors_with_buttons = array();
+	private $editors_with_buttons = [];
 
 	/**
 	 * Instance of this class.
@@ -23,7 +23,7 @@ class Advanced_Ads_Shortcode_Creator {
 	 * Advanced_Ads_Shortcode_Creator constructor.
 	 */
 	private function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', [ $this, 'init' ] );
 	}
 
 	/**
@@ -54,14 +54,14 @@ class Advanced_Ads_Shortcode_Creator {
 			return;
 		}
 
-		add_action( 'wp_ajax_advads_content_for_shortcode_creator', array( $this, 'get_content_for_shortcode_creator' ) );
+		add_action( 'wp_ajax_advads_content_for_shortcode_creator', [ $this, 'get_content_for_shortcode_creator' ] );
 
-		add_filter( 'mce_buttons', array( $this, 'register_buttons' ), 10, 2 );
-		add_filter( 'tiny_mce_plugins', array( $this, 'tiny_mce_plugins' ) );
-		add_filter( 'tiny_mce_before_init', array( $this, 'tiny_mce_before_init' ), 10, 2 );
+		add_filter( 'mce_buttons', [ $this, 'register_buttons' ], 10, 2 );
+		add_filter( 'tiny_mce_plugins', [ $this, 'tiny_mce_plugins' ] );
+		add_filter( 'tiny_mce_before_init', [ $this, 'tiny_mce_before_init' ], 10, 2 );
 
-		add_action( 'wp_tiny_mce_init', array( $this, 'print_shortcode_plugin' ) );
-		add_action( 'print_default_editor_scripts', array( $this, 'print_shortcode_plugin' ) );
+		add_action( 'wp_tiny_mce_init', [ $this, 'print_shortcode_plugin' ] );
+		add_action( 'print_default_editor_scripts', [ $this, 'print_shortcode_plugin' ] );
 	}
 
 	/**
@@ -71,8 +71,8 @@ class Advanced_Ads_Shortcode_Creator {
 	 */
 	private function hooks_exist() {
 		if (
-			has_action( 'wp_tiny_mce_init', array( $this, 'print_shortcode_plugin' ) )
-			|| has_action( 'print_default_editor_scripts', array( $this, 'print_shortcode_plugin' ) )
+			has_action( 'wp_tiny_mce_init', [ $this, 'print_shortcode_plugin' ] )
+			|| has_action( 'print_default_editor_scripts', [ $this, 'print_shortcode_plugin' ] )
 		) {
 			return true;
 		}
@@ -85,7 +85,7 @@ class Advanced_Ads_Shortcode_Creator {
 	 *
 	 * @param array|null $mce_settings TinyMCE settings array.
 	 */
-	public function print_shortcode_plugin( $mce_settings = array() ) {
+	public function print_shortcode_plugin( $mce_settings = [] ) {
 		static $printed = null;
 
 		if ( $printed !== null ) {
@@ -154,7 +154,7 @@ class Advanced_Ads_Shortcode_Creator {
 	 * @param string $editor_id Unique editor identifier.
 	 * @return array the TinyMCE config.
 	 */
-	public function tiny_mce_before_init( $mce_init, $editor_id ) {
+	public function tiny_mce_before_init( $mce_init, $editor_id = '' ) {
 		if (
 			! isset( $mce_init['plugins'] )
 			|| ! is_string( $mce_init['plugins'] )
@@ -165,7 +165,7 @@ class Advanced_Ads_Shortcode_Creator {
 		$plugins = explode( ',', $mce_init['plugins'] );
 		$found   = array_search( 'advads_shortcode', $plugins, true );
 
-		if ( ! $found || in_array( $editor_id, $this->editors_with_buttons, true ) ) {
+		if ( ! $found || ( $editor_id !== '' && in_array( $editor_id, $this->editors_with_buttons, true ) ) ) {
 			return $mce_init;
 		}
 
@@ -188,7 +188,7 @@ class Advanced_Ads_Shortcode_Creator {
 			return $buttons;
 		}
 		if ( ! is_array( $buttons ) ) {
-			$buttons = array();
+			$buttons = [];
 		}
 
 		$this->editors_with_buttons[] = $editor_id;
@@ -240,15 +240,15 @@ class Advanced_Ads_Shortcode_Creator {
 	 * @return array $select items for select field.
 	 */
 	public static function items_for_select() {
-		$select = array();
+		$select = [];
 		$model  = Advanced_Ads::get_instance()->get_model();
 
 		// load all ads.
 		$ads = $model->get_ads(
-			array(
+			[
 				'orderby' => 'title',
 				'order'   => 'ASC',
-			)
+			]
 		);
 		foreach ( $ads as $_ad ) {
 			$select['ads'][ 'ad_' . $_ad->ID ] = $_ad->post_title;

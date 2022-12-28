@@ -252,7 +252,7 @@ function qmn_question_type_text_block() {
 		'extra_inputs' => array(),
 		'function'     => '',
 	);
-	$mlwQuizMasterNext->pluginHelper->register_question_type( __( 'Text/HTML Section', 'quiz-master-next' ), 'qmn_text_block_display', false, null, $edit_args, null, 6 );
+	$mlwQuizMasterNext->pluginHelper->register_question_type( __( 'Text/HTML Section', 'quiz-master-next' ), 'qmn_text_block_display', false, 'qsm_text_html_review', $edit_args, null, 6 );
 	$mlwQuizMasterNext->pluginHelper->set_question_type_meta( 6, 'input_field', 'NA' );
 	$mlwQuizMasterNext->pluginHelper->set_question_type_meta( 6, 'category', 'Others' );
 }
@@ -283,11 +283,11 @@ add_action( 'plugins_loaded', 'qmn_extra_question_types' );
 function qmn_extra_question_types() {
 	global $mlwQuizMasterNext;
 	if ( ! class_exists( 'QSM_Advance_Question' ) ) {
-		$mlwQuizMasterNext->pluginHelper->register_question_type( __( 'Matching Pairs', 'quiz-master-next' ), 'qmn_matching_pair_display', false, null, null, null, 15 );
-		$mlwQuizMasterNext->pluginHelper->set_question_type_meta( 15, 'category', 'Advanced' );
-		$mlwQuizMasterNext->pluginHelper->register_question_type(__('Radio Grid', 'quiz-master-next'), 'qmn_radio_grid_display', false, null, null, null, 16);
-		$mlwQuizMasterNext->pluginHelper->set_question_type_meta( 16, 'category', 'Advanced' );
-		$mlwQuizMasterNext->pluginHelper->register_question_type(__('Checkbox Grid', 'quiz-master-next'), 'qmn_checkbox_grid_display', false, null, null, null, 17);
-		$mlwQuizMasterNext->pluginHelper->set_question_type_meta(17, 'category', 'Advanced');
+		$mlwQuizMasterNext->pluginHelper->register_question_type( __( 'Matching Pairs', 'quiz-master-next' ), '-', false, null, null, null, 15 );
+		$mlwQuizMasterNext->pluginHelper->set_question_type_meta( 15, 'category', 'Advanced (PRO)' );
+		$mlwQuizMasterNext->pluginHelper->register_question_type(__('Radio Grid', 'quiz-master-next'), '-', false, null, null, null, 16);
+		$mlwQuizMasterNext->pluginHelper->set_question_type_meta( 16, 'category', 'Advanced (PRO)' );
+		$mlwQuizMasterNext->pluginHelper->register_question_type(__('Checkbox Grid', 'quiz-master-next'), '-', false, null, null, null, 17);
+		$mlwQuizMasterNext->pluginHelper->set_question_type_meta(17, 'category', 'Advanced (PRO)');
 	}
 }

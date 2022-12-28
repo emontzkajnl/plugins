@@ -17,7 +17,7 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 		}
 
 		// Add settings section to allow module enabling.
-		add_action( 'advanced-ads-settings-init', array( $this, 'settings_init' ), 10, 1 );
+		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ], 10, 1 );
 
 		// Check if the module was enabled.
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
@@ -26,11 +26,11 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 		}
 
 		// Add server placement.
-		add_action( 'advanced-ads-placement-types', array( $this, 'add_placement' ) );
+		add_action( 'advanced-ads-placement-types', [ $this, 'add_placement' ] );
 		// Content of server placement.
-		add_action( 'advanced-ads-placement-options-after', array( $this, 'placement_options' ), 10, 2 );
+		add_action( 'advanced-ads-placement-options-after', [ $this, 'placement_options' ], 10, 2 );
 		// Show usage information under "show all options".
-		add_filter( 'advanced-ads-placement-options-after-advanced', array( $this, 'add_placement_setting' ), 10, 2 );
+		add_filter( 'advanced-ads-placement-options-after-advanced', [ $this, 'add_placement_setting' ], 10, 2 );
 	}
 
 	/**
@@ -41,7 +41,7 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 		add_settings_field(
 			'module-ad-server',
 			__( 'Ad Server', 'advanced-ads-pro' ),
-			array( $this, 'render_settings' ),
+			[ $this, 'render_settings' ],
 			Advanced_Ads_Pro::OPTION_KEY . '-settings',
 			Advanced_Ads_Pro::OPTION_KEY . '_modules-enable'
 		);
@@ -68,18 +68,18 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 	 * @return mixed
 	 */
 	public function add_placement( $types ) {
-		$types['server'] = array(
+		$types['server'] = [
 			'title'       => __( 'Ad Server', 'advanced-ads-pro' ),
 			'description' => __( 'Display ads on external websites.', 'advanced-ads-pro' ),
 			'image'       => AAP_BASE_URL . 'modules/ad-server/assets/img/server.png',
-			'options'     => array(
+			'options'     => [
 				'placement-cache-busting'      => false,
 				'placement-display-conditions' => false,
 				'placement-visitor-conditions' => false,
 				'placement-item-alternative'   => false,
 				'placement-tests'              => false,
-			),
-		);
+			],
+		];
 		return $types;
 	}
 
@@ -89,7 +89,7 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 	 * @param string $placement_slug placement ID.
 	 * @param array  $placement placement options.
 	 */
-	public function placement_options( $placement_slug = '', $placement = array() ) {
+	public function placement_options( $placement_slug = '', $placement = [] ) {
 		if ( 'server' !== $placement['type'] ) {
 			return;
 		}

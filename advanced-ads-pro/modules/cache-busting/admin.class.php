@@ -3,7 +3,7 @@
 class Advanced_Ads_Pro_Module_Cache_Busting_Admin {
 
     public function __construct() {
-        add_action( 'advanced-ads-settings-init', array( $this, 'settings_init'), 10, 1 );
+        add_action( 'advanced-ads-settings-init', [ $this, 'settings_init'], 10, 1 );
     }
 
     public function settings_init($hook) {
@@ -14,7 +14,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin {
         add_settings_field(
             'module-cache-busting',
             __( 'Cache Busting', 'advanced-ads-pro' ),
-            array( $this, 'render_settings' ),
+            [ $this, 'render_settings' ],
             Advanced_Ads_Pro::OPTION_KEY . '-settings',
             Advanced_Ads_Pro::OPTION_KEY . '_modules-enable'
         );

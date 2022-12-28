@@ -9,9 +9,9 @@
  * Plugin Name:   Advanced Custom Fields
  * Plugin URI:    https://www.advancedcustomfields.com
  * Description:   Customize WordPress with powerful, professional and intuitive fields.
- * Version:       6.0.2
+ * Version:       6.0.6
  * Author:        WP Engine
- * Author URI:    https://www.advancedcustomfields.com
+ * Author URI:    https://wpengine.com/?utm_source=wordpress.org&utm_medium=referral&utm_campaign=plugin_directory&utm_content=advanced_custom_fields
  * Text Domain:   acf
  * Domain Path:   /lang
  */
@@ -32,7 +32,7 @@ if ( ! class_exists( 'ACF' ) ) {
 		 *
 		 * @var string
 		 */
-		public $version = '6.0.2';
+		public $version = '6.0.6';
 
 		/**
 		 * The plugin settings array.
@@ -122,6 +122,7 @@ if ( ! class_exists( 'ACF' ) ) {
 				'rest_api_format'        => 'light',
 				'rest_api_embed_links'   => true,
 				'preload_blocks'         => true,
+				'enable_shortcode'       => true,
 			);
 
 			// Include utility functions.

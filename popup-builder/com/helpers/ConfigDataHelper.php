@@ -264,6 +264,18 @@ class ConfigDataHelper
 		}
 		return $allTags;
 	}
+	public static function getTagsBySlug($ids = [])
+	{
+		$allTags = array();
+		$tags = get_tags(array(
+			'hide_empty' => false,
+			'slug' => $ids
+		));
+		foreach ($tags as $tag) {
+			$allTags[$tag->slug] = $tag->name;
+		}
+		return $allTags;
+	}
 
 	public static function getTermsByIds($ids = array())
 	{

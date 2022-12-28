@@ -85,15 +85,15 @@ class Advanced_Ads_Model {
 	 * @param array $args WP_Query arguments that are more specific that default.
 	 * @return array $ads array with post objects.
 	 */
-	public function get_ads( $args = array() ) {
+	public function get_ads( $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'posts_per_page' => -1,
+			'post_status'    => [ 'publish', 'future' ],
+		] );
 		// add default WP_Query arguments.
-		$args['post_type']      = Advanced_Ads::POST_TYPE_SLUG;
-		$args['posts_per_page'] = -1;
-		if ( empty( $args['post_status'] ) ) {
-			$args['post_status'] = array( 'publish', 'future' ); }
-		$ads = new WP_Query( $args );
+		$args['post_type'] = Advanced_Ads::POST_TYPE_SLUG;
 
-		return $ads->posts;
+		return ( new WP_Query( $args ) )->posts;
 	}
 
 	/**
@@ -104,7 +104,7 @@ class Advanced_Ads_Model {
 	 * @return array array with ad groups
 	 * @link http://codex.wordpress.org/Function_Reference/get_terms
 	 */
-	public function get_ad_groups( $args = array() ) {
+	public function get_ad_groups( $args = [] ) {
 		$args['hide_empty'] = isset( $args['hide_empty'] ) ? $args['hide_empty'] : false; // display groups without any ads.
 
 		return get_terms( Advanced_Ads::AD_GROUP_TAXONOMY, $args );
@@ -119,11 +119,11 @@ class Advanced_Ads_Model {
 	public function get_ad_placements_array() {
 
 		if ( ! isset( $this->ad_placements ) ) {
-			$this->ad_placements = get_option( 'advads-ads-placements', array() );
+			$this->ad_placements = get_option( 'advads-ads-placements', [] );
 
 			// load default array if not saved yet.
 			if ( ! is_array( $this->ad_placements ) ) {
-				$this->ad_placements = array();
+				$this->ad_placements = [];
 			}
 
 			$this->ad_placements = apply_filters( 'advanced-ads-get-ad-placements-array', $this->ad_placements );

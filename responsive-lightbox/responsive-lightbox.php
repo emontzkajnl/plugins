@@ -2,7 +2,7 @@
 /*
 Plugin Name: Responsive Lightbox & Gallery
 Description: Responsive Lightbox & Gallery allows users to create galleries and view larger versions of images, galleries and videos in a lightbox (overlay) effect optimized for mobile devices.
-Version: 2.4.1
+Version: 2.4.3
 Author: dFactory
 Author URI: http://www.dfactory.eu/
 Plugin URI: http://www.dfactory.eu/plugins/responsive-lightbox/
@@ -43,7 +43,7 @@ include_once( RESPONSIVE_LIGHTBOX_PATH . 'includes' . DIRECTORY_SEPARATOR . 'fun
  * Responsive Lightbox class.
  *
  * @class Responsive_Lightbox
- * @version	2.4.1
+ * @version	2.4.3
  */
 class Responsive_Lightbox {
 
@@ -304,7 +304,7 @@ class Responsive_Lightbox {
 			'origin_left'		=> true,
 			'origin_top'		=> true
 		],
-		'version' => '2.4.1',
+		'version' => '2.4.3',
 		'activation_date' => ''
 	];
 	public $options = [];
@@ -734,7 +734,7 @@ class Responsive_Lightbox {
 		$current_time = time();
 
 		if ( $this->options['settings']['update_version'] < $current_update ) {
-			// check version, if update ver is lower than plugin ver, set update notice to true
+			// check version, if update version is lower than plugin version, set update notice to true
 			$this->options['settings'] = array_merge( $this->options['settings'], [ 'update_version' => $current_update, 'update_notice' => true ] );
 
 			update_option( 'responsive_lightbox_settings', $this->options['settings'] );
@@ -755,8 +755,8 @@ class Responsive_Lightbox {
 			$activation_date = get_option( 'responsive_lightbox_activation_date' );
 
 			if ( (int) $this->options['settings']['update_delay_date'] === 0 ) {
-				if ( $activation_date + 1209600 > $current_time )
-					$this->options['settings']['update_delay_date'] = $activation_date + 1209600;
+				if ( $activation_date + 2 * WEEK_IN_SECONDS > $current_time )
+					$this->options['settings']['update_delay_date'] = $activation_date + 2 * WEEK_IN_SECONDS;
 				else
 					$this->options['settings']['update_delay_date'] = $current_time;
 
@@ -764,7 +764,7 @@ class Responsive_Lightbox {
 			}
 
 			if ( ( ! empty( $this->options['settings']['update_delay_date'] ) ? (int) $this->options['settings']['update_delay_date'] : $current_time ) <= $current_time )
-				$this->add_notice( sprintf( __( "Hey, you've been using <strong>Responsive Lightbox & Gallery</strong> for more than %s", 'responsive-lightbox' ), human_time_diff( $activation_date, $current_time ) ) . '<br />' . __( 'Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation.', 'responsive-lightbox' ) . '<br /><br />' . __( 'Your help is much appreciated. Thank you very much', 'responsive-lightbox' ) . ' ~ <strong>Bartosz Arendt</strong>, ' . sprintf( __( 'founder of <a href="%s" target="_blank">dFactory</a> plugins.', 'responsive-lightbox' ), 'https://dfactory.eu/' ) . '<br /><br />' . sprintf( __( '<a href="%s" class="rl-dismissible-notice" target="_blank" rel="noopener">Ok, you deserve it</a><br /><a href="javascript:void(0);" class="rl-dismissible-notice rl-delay-notice" rel="noopener">Nope, maybe later</a><br /><a href="javascript:void(0);" class="rl-dismissible-notice" rel="noopener">I already did</a>', 'responsive-lightbox' ), 'https://wordpress.org/support/plugin/responsive-lightbox/reviews/?filter=5#new-post' ), 'notice notice-info is-dismissible rl-notice' );
+				$this->add_notice( sprintf( __( "Hey, you've been using <strong>Responsive Lightbox & Gallery</strong> for more than %s", 'responsive-lightbox' ), human_time_diff( $activation_date, $current_time ) ) . '<br />' . esc_html__( 'Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation.', 'responsive-lightbox' ) . '<br /><br />' . esc_html__( 'Your help is much appreciated. Thank you very much', 'responsive-lightbox' ) . ' ~ <strong>Bartosz Arendt</strong>, ' . sprintf( __( 'founder of <a href="%s" target="_blank">dFactory</a> plugins.', 'responsive-lightbox' ), 'https://dfactory.eu/' ) . '<br /><br />' . sprintf( __( '<a href="%s" class="rl-dismissible-notice" target="_blank" rel="noopener">Ok, you deserve it</a><br /><a href="javascript:void(0);" class="rl-dismissible-notice rl-delay-notice" rel="noopener">Nope, maybe later</a><br /><a href="javascript:void(0);" class="rl-dismissible-notice" rel="noopener">I already did</a>', 'responsive-lightbox' ), 'https://wordpress.org/support/plugin/responsive-lightbox/reviews/?filter=5#new-post' ), 'notice notice-info is-dismissible rl-notice' );
 		}
 	}
 
@@ -777,14 +777,17 @@ class Responsive_Lightbox {
 		if ( ! current_user_can( 'install_plugins' ) )
 			return;
 
-		if ( wp_verify_nonce( esc_attr( $_REQUEST['nonce'] ), 'rl_dismiss_notice' ) ) {
-			$notice_action = empty( $_REQUEST['notice_action'] ) || $_REQUEST['notice_action'] === 'hide' ? 'hide' : esc_attr( $_REQUEST['notice_action'] );
+		if ( isset( $_REQUEST['nonce'] ) && ctype_alnum( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'rl_dismiss_notice' ) ) {
+			$notice_action = isset( $_REQUEST['notice_action'] ) ? sanitize_key( $_REQUEST['notice_action'] ) : '';
+
+			if ( empty( $notice_action ) || $notice_action === 'hide' )
+				$notice_action = 'hide';
 
 			switch ( $notice_action ) {
 				// delay notice
 				case 'delay':
 					// set delay period to 1 week from now
-					$this->options['settings'] = array_merge( $this->options['settings'], [ 'update_delay_date' => time() + 1209600 ] );
+					$this->options['settings'] = array_merge( $this->options['settings'], [ 'update_delay_date' => time() + 2 * WEEK_IN_SECONDS ] );
 					update_option( 'responsive_lightbox_settings', $this->options['settings'] );
 					break;
 
@@ -830,7 +833,7 @@ class Responsive_Lightbox {
 	public function display_notice() {
 		foreach( $this->notices as $notice ) {
 			echo '
-			<div class="' . $notice['status'] . '">
+			<div class="' . esc_attr( $notice['status'] ) . '">
 				' . ( $notice['paragraph'] ? '<p>' : '' ) . '
 				' . $notice['html'] . '
 				' . ( $notice['paragraph'] ? '</p>' : '' ) . '
@@ -862,7 +865,7 @@ class Responsive_Lightbox {
 						$.post( ajaxurl, {
 							action: 'rl_dismiss_notice',
 							notice_action: notice_action,
-							url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
+							url: '<?php echo esc_url_raw( admin_url( 'admin-ajax.php' ) ); ?>',
 							nonce: '<?php echo wp_create_nonce( 'rl_dismiss_notice' ); ?>'
 						} );
 
@@ -927,10 +930,10 @@ class Responsive_Lightbox {
 			}
 
 			// put settings link at start
-			array_unshift( $links, sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php' ) . '?page=responsive-lightbox-settings', __( 'Settings', 'responsive-lightbox' ) ) );
+			array_unshift( $links, sprintf( '<a href="%s">%s</a>', esc_url_raw( admin_url( 'admin.php' ) ) . '?page=responsive-lightbox-settings', __( 'Settings', 'responsive-lightbox' ) ) );
 
 			// add add-ons link
-			$links[] = sprintf( '<a href="%s" style="color: green;">%s</a>', admin_url( 'admin.php' ) . '?page=responsive-lightbox-addons', __( 'Add-ons', 'responsive-lightbox' ) );
+			$links[] = sprintf( '<a href="%s" style="color: green;">%s</a>', esc_url_raw( admin_url( 'admin.php' ) ) . '?page=responsive-lightbox-addons', __( 'Add-ons', 'responsive-lightbox' ) );
 		}
 
 		return $links;
@@ -953,7 +956,7 @@ class Responsive_Lightbox {
 			<div id="rl-deactivation-container">
 				<div id="rl-deactivation-body">
 					<div class="rl-deactivation-options">
-						<p><em>' . __( "We're sorry to see you go. Could you please tell us what happened?", 'responsive-lightbox' ) . '</em></p>
+						<p><em>' . esc_html__( "We're sorry to see you go. Could you please tell us what happened?", 'responsive-lightbox' ) . '</em></p>
 						<ul>';
 
 			foreach ( [
@@ -965,7 +968,7 @@ class Responsive_Lightbox {
 				'6'	=> __( 'Other', 'responsive-lightbox' )
 			] as $option => $text ) {
 				echo '
-							<li><label><input type="radio" name="rl_deactivation_option" value="' . $option . '" ' . checked( '6', $option, false ) . ' />' . esc_html( $text ) . '</label></li>';
+							<li><label><input type="radio" name="rl_deactivation_option" value="' . (int) $option . '" ' . checked( '6', $option, false ) . ' />' . esc_html( $text ) . '</label></li>';
 			}
 
 			echo '
@@ -976,9 +979,9 @@ class Responsive_Lightbox {
 					</div>
 				</div>
 				<div id="rl-deactivation-footer">
-					<a href="" class="button rl-deactivate-plugin-cancel">' . __( 'Cancel', 'responsive-lightbox' ) . '</a>
-					<a href="' . $this->deactivaion_url . '" class="button button-secondary rl-deactivate-plugin-simple">' . __( 'Deactivate', 'responsive-lightbox' ) . '</a>
-					<a href="' . $this->deactivaion_url . '" class="button button-primary right rl-deactivate-plugin-data">' . __( 'Deactivate & Submit', 'responsive-lightbox' ) . '</a>
+					<a href="" class="button rl-deactivate-plugin-cancel">' . esc_html__( 'Cancel', 'responsive-lightbox' ) . '</a>
+					<a href="' . esc_url( $this->deactivaion_url ) . '" class="button button-secondary rl-deactivate-plugin-simple">' . esc_html__( 'Deactivate', 'responsive-lightbox' ) . '</a>
+					<a href="' . esc_url( $this->deactivaion_url ) . '" class="button button-primary right rl-deactivate-plugin-data">' . esc_html__( 'Deactivate & Submit', 'responsive-lightbox' ) . '</a>
 					<span class="spinner"></span>
 				</div>
 			</div>
@@ -991,13 +994,20 @@ class Responsive_Lightbox {
 	 * @return void
 	 */
 	public function deactivate_plugin() {
+		// no nonce?
+		if ( ! isset( $_POST['nonce'] ) )
+			return;
+
+		if ( ! ctype_alnum( $_POST['nonce'] ) )
+			return;
+
 		// check permissions
 		if ( ! current_user_can( 'install_plugins' ) || wp_verify_nonce( $_POST['nonce'], 'rl-deactivate-plugin' ) === false )
 			return;
 
 		if ( isset( $_POST['option_id'] ) ) {
 			$option_id = (int) $_POST['option_id'];
-			$other = esc_html( $_POST['other'] );
+			$other = sanitize_text_field( $_POST['other'] );
 
 			// avoid fake submissions
 			if ( $option_id == 6 && $other == '' )
@@ -1060,10 +1070,6 @@ class Responsive_Lightbox {
 		include_once( RESPONSIVE_LIGHTBOX_PATH . 'includes/class-remote-library-api.php' );
 
 		$this->remote_library = new Responsive_Lightbox_Remote_Library();
-
-		// simple html dom
-		if ( ! function_exists( 'file_get_html' ) )
-			include_once( RESPONSIVE_LIGHTBOX_PATH . 'library/simplehtmldom/simple_html_dom.php' );
 
 		// include providers
 		include_once( RESPONSIVE_LIGHTBOX_PATH . 'includes/providers/class-flickr.php' );
@@ -1257,10 +1263,13 @@ class Responsive_Lightbox {
 		// get settings
 		$settings = Responsive_Lightbox()->settings;
 
+		// get page
+		$page = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
+
 		// settings?
-		if ( isset( $_GET['page'] ) && preg_match( '/^responsive-lightbox-(' . implode( '|', array_keys( $settings->tabs ) ) . ')$/', $_GET['page'], $tabs ) === 1 ) {
+		if ( $page && preg_match( '/^responsive-lightbox-(' . implode( '|', array_keys( $settings->tabs ) ) . ')$/', $page, $tabs ) === 1 ) {
 			$tab_key = isset( $tabs[1] ) ? $tabs[1] : 'settings';
-			$section_key = isset( $_GET['section'] ) ? esc_attr( $_GET['section'] ) : ( ! empty( $settings->tabs[$tab_key]['default_section'] ) ? $settings->tabs[$tab_key]['default_section'] : '' );
+			$section_key = isset( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : ( ! empty( $settings->tabs[$tab_key]['default_section'] ) ? $settings->tabs[$tab_key]['default_section'] : '' );
 
 			$breadcrumbs[] = [
 				'url'	=> admin_url( 'admin.php?page=responsive-lightbox-settings' ),
@@ -1328,51 +1337,56 @@ class Responsive_Lightbox {
 				'name'	=> __( 'New gallery', 'responsive-lightbox' )
 			];
 		// gallery taxonomies
-		} elseif ( in_array( $pagenow, [ 'edit-tags.php', 'term.php' ], true ) && isset( $_GET['taxonomy'], $_GET['post_type'] ) && $_GET['post_type'] === 'rl_gallery' ) {
-			$breadcrumbs[] = [
-				'url'	=> admin_url( 'edit.php?post_type=rl_gallery' ),
-				'name'	=> __( 'Galleries', 'responsive-lightbox' )
-			];
+		} elseif ( in_array( $pagenow, [ 'edit-tags.php', 'term.php' ], true ) && isset( $_GET['taxonomy'], $_GET['post_type'] ) ) {
+			$post_type = sanitize_key( $_GET['post_type'] );
+			$taxonomy = sanitize_key( $_GET['taxonomy'] );
 
-			// categories
-			if ( $_GET['taxonomy'] === 'rl_category' ) {
-				// new category
-				if ( $pagenow === 'term.php' ) {
-					$breadcrumbs[] = [
-						'url'	=> admin_url( 'edit-tags.php?taxonomy=rl_category&post_type=rl_gallery' ),
-						'name'	=> __( 'Categories', 'responsive-lightbox' )
-					];
+			if ( $post_type === 'rl_gallery' ) {
+				$breadcrumbs[] = [
+					'url'	=> admin_url( 'edit.php?post_type=rl_gallery' ),
+					'name'	=> __( 'Galleries', 'responsive-lightbox' )
+				];
 
-					$breadcrumbs[] = [
-						'url'	=> '',
-						'name'	=> __( 'Edit category', 'responsive-lightbox' )
-					];
-				// categories listing
-				} else {
-					$breadcrumbs[] = [
-						'url'	=> '',
-						'name'	=> __( 'Categories', 'responsive-lightbox' )
-					];
-				}
-			// tags
-			} elseif ( $_GET['taxonomy'] === 'rl_tag' ) {
-				// new tag
-				if ( $pagenow === 'term.php' ) {
-					$breadcrumbs[] = [
-						'url'	=> admin_url( 'edit-tags.php?taxonomy=rl_category&post_type=rl_gallery' ),
-						'name'	=> __( 'Tags', 'responsive-lightbox' )
-					];
+				// categories
+				if ( $taxonomy === 'rl_category' ) {
+					// new category
+					if ( $pagenow === 'term.php' ) {
+						$breadcrumbs[] = [
+							'url'	=> admin_url( 'edit-tags.php?taxonomy=rl_category&post_type=rl_gallery' ),
+							'name'	=> __( 'Categories', 'responsive-lightbox' )
+						];
 
-					$breadcrumbs[] = [
-						'url'	=> '',
-						'name'	=> __( 'Edit tag', 'responsive-lightbox' )
-					];
-				// tags listing
-				} else {
-					$breadcrumbs[] = [
-						'url'	=> '',
-						'name'	=> __( 'Tags', 'responsive-lightbox' )
-					];
+						$breadcrumbs[] = [
+							'url'	=> '',
+							'name'	=> __( 'Edit category', 'responsive-lightbox' )
+						];
+					// categories listing
+					} else {
+						$breadcrumbs[] = [
+							'url'	=> '',
+							'name'	=> __( 'Categories', 'responsive-lightbox' )
+						];
+					}
+				// tags
+				} elseif ( $taxonomy === 'rl_tag' ) {
+					// new tag
+					if ( $pagenow === 'term.php' ) {
+						$breadcrumbs[] = [
+							'url'	=> admin_url( 'edit-tags.php?taxonomy=rl_category&post_type=rl_gallery' ),
+							'name'	=> __( 'Tags', 'responsive-lightbox' )
+						];
+
+						$breadcrumbs[] = [
+							'url'	=> '',
+							'name'	=> __( 'Edit tag', 'responsive-lightbox' )
+						];
+					// tags listing
+					} else {
+						$breadcrumbs[] = [
+							'url'	=> '',
+							'name'	=> __( 'Tags', 'responsive-lightbox' )
+						];
+					}
 				}
 			}
 		}
@@ -1417,9 +1431,9 @@ class Responsive_Lightbox {
 				[
 					'relation' => 'OR',
 					[
-						'taxonomy' => 'rl_category',
-						'field'    => 'slug',
-						'terms'    => $this->options['builder']['archives_category']
+						'taxonomy'	=> 'rl_category',
+						'field'		=> 'slug',
+						'terms'		=> $this->options['builder']['archives_category']
 					]
 				]
 			);
@@ -1683,8 +1697,12 @@ class Responsive_Lightbox {
 				]
 			);
 		// taxonomies?
-		} elseif ( in_array( $page, [ 'edit-tags.php', 'term.php' ], true ) && isset( $_GET['taxonomy'], $_GET['post_type'] ) && $_GET['post_type'] === 'rl_gallery' )
-			wp_enqueue_style( 'responsive-lightbox-admin', RESPONSIVE_LIGHTBOX_URL . '/css/admin.css', [], $this->defaults['version'] );
+		} elseif ( in_array( $page, [ 'edit-tags.php', 'term.php' ], true ) && isset( $_GET['taxonomy'], $_GET['post_type'] ) ) {
+			$post_type = sanitize_key( $_GET['post_type'] );
+
+			if ( $post_type === 'rl_gallery' )
+				wp_enqueue_style( 'responsive-lightbox-admin', RESPONSIVE_LIGHTBOX_URL . '/css/admin.css', [], $this->defaults['version'] );
+		}
 	}
 
 	/**
@@ -2159,7 +2177,7 @@ class Responsive_Lightbox {
 		}
 
 		// gallery style
-		wp_register_style( 'responsive-lightbox-gallery',  plugins_url( 'css/gallery.css', __FILE__ ), [], Responsive_Lightbox()->defaults['version'] );
+		wp_register_style( 'responsive-lightbox-gallery', plugins_url( 'css/gallery.css', __FILE__ ), [], Responsive_Lightbox()->defaults['version'] );
 	}
 
 	/**
@@ -2173,27 +2191,32 @@ class Responsive_Lightbox {
 	}
 
 	/**
-	 * Helper: convert hex color to rgb color.
+	 * Convert HEX to RGB color.
 	 *
-	 * @param type $color
-	 * @return array
+	 * @param string $color
+	 * @return bool|array
 	 */
 	public function hex2rgb( $color ) {
-		if ( $color[0] == '#' )
+		if ( ! is_string( $color ) )
+			return false;
+
+		// with hash?
+		if ( $color[0] === '#' )
 			$color = substr( $color, 1 );
 
-		if ( strlen( $color ) == 6 )
+		if ( sanitize_hex_color_no_hash( $color ) !== $color )
+			return false;
+
+		// 6 hex digits?
+		if ( strlen( $color ) === 6 )
 			list( $r, $g, $b ) = [ $color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5] ];
-		elseif ( strlen( $color ) == 3 )
+		// 3 hex digits?
+		elseif ( strlen( $color ) === 3 )
 			list( $r, $g, $b ) = [ $color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2] ];
 		else
 			return false;
 
-		$r = hexdec( $r );
-		$g = hexdec( $g );
-		$b = hexdec( $b );
-
-		return [ $r, $g, $b ];
+		return [ 'r' => hexdec( $r ), 'g' => hexdec( $g ), 'b' => hexdec( $b ) ];
 	}
 }
 

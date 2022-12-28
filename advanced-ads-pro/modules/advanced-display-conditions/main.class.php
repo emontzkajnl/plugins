@@ -6,18 +6,18 @@
  */
 class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 
-	protected $options = array();
+	protected $options = [];
 	protected $is_ajax;
 
 	public function __construct() {
 
-		add_filter( 'advanced-ads-display-conditions', array( $this, 'display_conditions' ) );
+		add_filter( 'advanced-ads-display-conditions', [ $this, 'display_conditions' ] );
 
 		$this->is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
 		if ( ! $this->is_ajax ) {
 			// attach more ad select values
-			add_filter( 'advanced-ads-ad-select-args', array( $this, 'additional_ad_select_args' ) );
+			add_filter( 'advanced-ads-ad-select-args', [ $this, 'additional_ad_select_args' ] );
 		}
 	}
 
@@ -31,12 +31,13 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 	public function display_conditions( $conditions ){
 
 		// current uri
-		$conditions['request_uri'] = array(
+		$conditions['request_uri'] = [
 			'label' => __( 'url parameters', 'advanced-ads-pro' ),
 			'description' => sprintf(__( 'Display ads based on the current URL parameters (everything following %s), except values following #.', 'advanced-ads-pro' ), ltrim( home_url(), '/' ) ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_string' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_request_uri' ) // callback for frontend check
-		);
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_string' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_request_uri' ], // callback for frontend check
+			'helplink'    => 'https://wpadvancedads.com/manual/ads-by-url-parameters/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-url-parameter',
+		];
 
 		/** page template, see https://developer.wordpress.org/themes/template-files-section/page-template-files/page-templates/
 		 * in WP 4.7, this logic was extended to also support templates
@@ -44,13 +45,13 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 		 * other post types with registered templates
 		 *
 		 */
-		$conditions['page_template'] = array(
+		$conditions['page_template'] = [
 			'label' => sprintf(__( '%s template', 'advanced-ads-pro' ), 'page' ),
 			'description' => sprintf(__( 'Display ads based on the template of the %s post type.', 'advanced-ads-pro' ), 'page' ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_page_template' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_page_template' ), // callback for frontend check
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_page_template' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_page_template' ], // callback for frontend check
 			'post-type' => 'page'
-		);
+		];
 		/**
 		 * load post templates
 		 * need to check, because only works with WP 4.7 and higher
@@ -63,53 +64,54 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 					if( 'page' === $_post_type ){
 					    continue;
 					}
-					$conditions['page_template_' . $_post_type ] = array(
+					$conditions['page_template_' . $_post_type ] = [
 						'label' => sprintf(__( '%s template', 'advanced-ads-pro' ), $_post_type ),
 						'description' => sprintf(__( 'Display ads based on the template of the %s post type.', 'advanced-ads-pro' ), $_post_type ),
-						'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_page_template' ), // callback to generate the metabox
-						'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_page_template' ), // callback for frontend check
+						'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_page_template' ], // callback to generate the metabox
+						'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_page_template' ], // callback for frontend check
 						'post-type' => $_post_type
-					);
+					];
 				}
 			}
 		}
 		// language set with the WPML plugin
 		if( defined( 'ICL_SITEPRESS_VERSION' ) ) {
-			$conditions['wpml_language'] = array(
-				'label' => __( 'WPML language', 'advanced-ads-pro' ),
-				'description' => sprintf(__( 'Display ads based on the page’s language set with WPML.', 'advanced-ads-pro' )),
-				'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_wpml_language' ), // callback to generate the metabox
-				'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_wpml_language' ) // callback for frontend check
-			);
+			$conditions['wpml_language'] = [
+				'label'       => __( 'WPML language', 'advanced-ads-pro' ),
+				'description' => __( 'Display ads based on the page language set by the WPML plugin.', 'advanced-ads-pro' ),
+				'metabox'     => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_wpml_language' ], // callback to generate the metabox
+				'check'       => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_wpml_language' ] // callback for frontend check
+			];
 		}
 
-		$conditions['sub_page'] = array(
+		$conditions['sub_page'] = [
 			'label' => __( 'parent page', 'advanced-ads-pro' ),
 			'description' => __( 'Display ads based on parent page.', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Display_Conditions', 'metabox_post_ids' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_parent_page' ) // callback for frontend check
-		);
+			'metabox' => [ 'Advanced_Ads_Display_Conditions', 'metabox_post_ids' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_parent_page' ] // callback for frontend check
+		];
 
-		$conditions['post_meta'] = array(
+		$conditions['post_meta'] = [
 			'label' => __( 'post meta', 'advanced-ads-pro' ),
 			'description' => __( 'Display ads based on post meta.', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_post_meta' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_post_meta' ) // callback for frontend check
-		);
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_post_meta' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_post_meta' ] // callback for frontend check
+		];
 
-		$conditions['paginated_post'] = array(
+		$conditions['paginated_post'] = [
 			'label' => __( 'pagination', 'advanced-ads-pro' ),
 			'description' => __( 'Display ads based on the index of a split page', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_paginated_post' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_paginated_post' ), // callback for frontend check
-		);
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_paginated_post' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_paginated_post' ], // callback for frontend check
+		];
 
-		$conditions['post_content'] = array(
+		$conditions['post_content'] = [
 			'label'       => __( 'post content', 'advanced-ads-pro' ),
 			'description' => __( 'Display ads based on words and phrases within the post or page content. Dynamically added text might not be considered.', 'advanced-ads-pro' ),
-			'metabox'     => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_string' ), // callback to generate the metabox.
-			'check'       => array( 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_post_content' ), // callback for frontend check.
-		);
+			'metabox'     => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'metabox_string' ], // callback to generate the metabox.
+			'check'       => [ 'Advanced_Ads_Pro_Module_Advanced_Display_Conditions', 'check_post_content' ], // callback for frontend check.
+			'helplink'    => 'https://wpadvancedads.com/manual/ads-based-on-keywords/?utm_source=advanced-ads&utm_medium=link?utm_campaign=condition-post-content',
+		];
 
 		return $conditions;
 	}
@@ -118,22 +120,32 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 	 * add ad select vars that can later be used by ajax
 	 *
 	 * @since untagged
-	 * @param array $args
-	 * @return array $args
+	 * @param array $args Arguments passed to ads and groups from top level placements/ads/groups.
+	 * @return array
 	 */
-	public function additional_ad_select_args( $args ){
+	public function additional_ad_select_args( $args ) {
+		if ( isset( $args['url_parameter'] ) ) {
+			return $args;
+		}
 
-	    // add referrer if this is an ajax placement
-	    if ( $args['method'] === Advanced_Ads_Select::PLACEMENT ) {
-		if ( isset( $_SERVER[ 'REQUEST_URI' ] ) && '' !== $_SERVER[ 'REQUEST_URI' ] ) {
-			$args['url_parameter'] = $_SERVER[ 'REQUEST_URI' ];
-
-			// only consider QUERY_STRING, if not already included in REQUEST_URI
+		if ( wp_doing_ajax() && isset( $_SERVER['HTTP_REFERER'] ) ) {
+			// An AJAX request to load content initiated by a third party plugin.
+			$args['url_parameter'] = $_SERVER['HTTP_REFERER'];
+		} else {
+			$args['url_parameter'] = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '';
+			// Only consider QUERY_STRING, if not already included in REQUEST_URI.
 			if ( !empty( $_SERVER[ 'QUERY_STRING' ] ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], $_SERVER[ 'QUERY_STRING' ] ) ) {
 				$args['url_parameter'] .= $_SERVER[ 'QUERY_STRING' ];
 			}
 		}
-	    }
+
+		/**
+		 * Allow other developers to manipulate the checked string dynamically.
+		 *
+		 * @param string $args['url_parameter'] Current URL parameter.
+		 * @return string
+		 */
+		$args['url_parameter'] = apply_filters( 'advanced-ads-pro-display-condition-url-string', $args['url_parameter'] );
 
 	    return $args;
 	}
@@ -147,23 +159,7 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 	 * @return bool
 	 */
 	public static function check_request_uri( $options, Advanced_Ads_Ad $ad ) {
-
-		// check if session variable is set
-		if ( isset( $ad->args['url_parameter'] ) ) {
-			$uri_string = $ad->args['url_parameter'];
-		} elseif ( wp_doing_ajax() && isset( $_SERVER['HTTP_REFERER'] ) ) {
-			// An AJAX request to load content initiated by a third party plugin.
-			$uri_string = $_SERVER['HTTP_REFERER'];
-		} else {
-			$uri_string = isset( $_SERVER[ 'REQUEST_URI' ] ) ? $_SERVER[ 'REQUEST_URI' ] : '';
-			// only consider QUERY_STRING, if not already included in REQUEST_URI
-			if ( !empty( $_SERVER[ 'QUERY_STRING' ] ) && false === strpos( $_SERVER[ 'REQUEST_URI' ], $_SERVER[ 'QUERY_STRING' ] ) ) {
-				$uri_string .= $_SERVER[ 'QUERY_STRING' ];
-			}
-		}
-
-		// allow other developers to manipulate the checked string dynamically
-		$uri_string = apply_filters( 'advanced-ads-pro-display-condition-url-string', $uri_string );
+		$uri_string = isset( $ad->args['url_parameter'] ) ? $ad->args['url_parameter'] : '';
 
 		// todo: implement this method into display conditions
 		return Advanced_Ads_Visitor_Conditions::helper_check_string( $uri_string, $options );
@@ -415,7 +411,7 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 		$name = self::get_form_name_with_index( $form_name, $index );
 
 	    // options
-	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : array();
+	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : [];
 	    $operator = ( isset($options['operator']) && $options['operator'] === 'is_not' ) ? 'is_not' : 'is';
 
 	    // get values and select operator based on previous settings
@@ -470,7 +466,7 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 		$name = self::get_form_name_with_index( $form_name, $index );
 
 	    // options
-	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : array();
+	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : [];
 	    $operator = ( isset($options['operator']) && $options['operator'] === 'is_not' ) ? 'is_not' : 'is';
 
 	    // get values and select operator based on previous settings
@@ -482,14 +478,14 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 	    </select><?php
 
 	    // get all languages
-	    $wpml_active_languages = apply_filters( 'wpml_active_languages', null, array() );
+	    $wpml_active_languages = apply_filters( 'wpml_active_languages', null, [] );
 		$rand = md5( $form_name );
 
 	    ?><div class="advads-conditions-single advads-buttonset"><?php
 	    if( is_array( $wpml_active_languages ) && count( $wpml_active_languages ) ){
 		foreach( $wpml_active_languages as $_language ) {
 			$field_id = 'advads-conditions-' . $_language['code'] . md5( $name );
-		    $value = ( $values === array() || in_array($_language['code'], $values) ) ? 1 : 0;
+		    $value = ( $values === [] || in_array($_language['code'], $values) ) ? 1 : 0;
 			?><label class="button ui-button" for="<?php echo $field_id;
 			?>"><?php echo $_language['native_name']; ?></label><input type="checkbox" id="<?php echo $field_id; ?>" name="<?php echo $name; ?>[value][]" <?php checked($value, 1); ?> value="<?php echo $_language['code']; ?>"><?php
 		}
@@ -497,8 +493,13 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 		_e( 'no languages set up in WPML', 'advanced-ads-pro' );
 	    }
 	    ?></div>
-
-	    <p class="description"><?php echo $type_options[ $options['type'] ]['description']; ?></p><?php
+		<p class="description">
+			<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>
+			<a href="https://wpadvancedads.com/translating-ads-wpml/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-wpml" class="advads-manual-link" target="_blank">
+				<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+			</a>
+		</p>
+		<?php
 	}
 
 	/**

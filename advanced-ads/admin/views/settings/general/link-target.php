@@ -3,4 +3,4 @@
 						checked( 1, $target );
 						?>
 	/>
-<p class="description"><?php echo wp_kses( __( 'Open programmatically created links in a new window (use <code>target="_blank"</code>)', 'advanced-ads' ), array( 'code' => array() ) ); ?></p>
+<p class="description"><?php echo wp_kses( __( 'Open programmatically created links in a new window (use <code>target="_blank"</code>)', 'advanced-ads' ), [ 'code' => [] ] ); ?></p>

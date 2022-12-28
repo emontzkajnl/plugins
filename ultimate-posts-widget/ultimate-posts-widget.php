@@ -3,11 +3,10 @@
 Plugin Name: Ultimate Posts Widget
 Plugin URI: http://wordpress.org/plugins/ultimate-posts-widget/
 Description: The ultimate widget for displaying posts, custom post types or sticky posts with an array of options.
-Version: 2.2.1
+Version: 2.2.4
 Author: Clever Widgets
 Author URI: https://themecheck.info
 Text Domain: ultimate-posts-widget
-Domain Path: /languages
 License: MIT
 */
 require_once 'analyst/main.php';
@@ -46,7 +45,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       add_action('deleted_post', array(&$this, 'flush_widget_cache'));
       add_action('switch_theme', array(&$this, 'flush_widget_cache'));
       add_action('admin_enqueue_scripts', array(&$this, 'enqueue_admin_scripts'));
-      
+
       /* Admin notice to check Classic Widgets Plugin is not already installed and WordPress version 5.8 or higher */
       add_action( 'admin_notices', array( &$this, 'flush_admin_notice__warning' ) );
 
@@ -54,13 +53,11 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_theme_scripts'));
       }
 
-      load_plugin_textdomain('ultimate-posts-widget', false, basename( dirname( __FILE__ ) ) . '/languages' );
-
     }
 
     function flush_admin_notice__warning() {
       global $wp_version;
-      
+
       if ( version_compare( $wp_version, '5.8' ) >= 0 && !is_plugin_active( 'classic-widgets/classic-widgets.php' ) ) {
 
         $upw_hide_admin_notification = get_option( 'upw_hide_admin_notification' );
@@ -91,7 +88,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       wp_enqueue_script('upw_admin_scripts');
 
       wp_localize_script( 'upw_admin_scripts', 'upw_admin_scripts_ajax_object',
-        array( 
+        array(
           'ajaxurl' => admin_url( 'admin-ajax.php' ),
         )
       );
@@ -825,4 +822,84 @@ function upw_hide_admin_notification_callback() {
   }
   wp_send_json_success();
   die;
+}
+
+// Activation of tryOutPlugins module
+add_action('plugins_loaded', function () {
+
+  if (!(class_exists('\Inisev\Subs\Inisev_Try_Out_Plugins') || class_exists('Inisev\Subs\Inisev_Try_Out_Plugins') || class_exists('Inisev_Try_Out_Plugins'))) {
+    require_once __DIR__ . '/modules/tryOutPlugins/tryOutPlugins.php';
+    $try_out_plugins = new \Inisev\Subs\Inisev_Try_Out_Plugins(__FILE__, __DIR__, 'Ultimate Posts Widget', 'plugins.php?s=Ultimate%20Posts%20Widget&plugin_status=all');
+  }
+
+});
+
+add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
+
+	$tifm_action = array('<a href="#!" id="upw_tifm_disable">' . __('Disable Plugin Test Feature', 'ultimate-posts-widget') . '</a>');
+	if (get_option('_tifm_feature_enabled') === 'disabled') {
+		$tifm_action = array('<a href="#!" id="upw_tifm_enable">' . __('Enable Plugin Test Feature', 'ultimate-posts-widget') . '</a>');
+	}
+
+	return array_merge($links, $tifm_action);
+
+});
+
+add_action('admin_footer', function () {
+
+	global $pagenow;
+	if ($pagenow === 'plugins.php') {
+		?>
+		<script type="text/javascript">
+			jQuery('#upw_tifm_enable').on('click', (e) => {
+				e.preventDefault();
+				jQuery.post(ajaxurl, { action: 'tifm_save_decision', decision: 'true' }).done(() => {
+					window.location.reload();
+				}).fail(() => {
+					alert('There was an error and we could not update this option.');
+				});
+			});
+			jQuery('#upw_tifm_disable').on('click', (e) => {
+				e.preventDefault();
+				jQuery.post(ajaxurl, { action: 'tifm_save_decision', decision: 'false' }).done(() => {
+					window.location.reload();
+				}).fail(() => {
+					alert('There was an error and we could not update this option.');
+				});
+			});
+		</script>
+		<?php
+	}
+
+});
+
+if (!has_action('wp_ajax_tifm_save_decision')) {
+  add_action('wp_ajax_tifm_save_decision', function () {
+
+    if (isset($_POST['decision'])) {
+
+      if ($_POST['decision'] == 'true') {
+        update_option('_tifm_feature_enabled', 'enabled');
+        delete_option('_tifm_disable_feature_forever', true);
+        wp_send_json_success();
+        exit;
+      } else if ($_POST['decision'] == 'false') {
+        update_option('_tifm_feature_enabled', 'disabled');
+        update_option('_tifm_disable_feature_forever', true);
+        wp_send_json_success();
+        exit;
+      } else if ($_POST['decision'] == 'reset') {
+        delete_option('_tifm_feature_enabled');
+        delete_option('_tifm_hide_notice_forever');
+        delete_option('_tifm_disable_feature_forever');
+        wp_send_json_success();
+        exit;
+      }
+
+      wp_send_json_error();
+      exit;
+
+    }
+
+  });
 }

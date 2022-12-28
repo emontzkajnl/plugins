@@ -6,5 +6,5 @@ if ( Advanced_Ads::get_instance()->is_bot() ) :
 	<?php
 endif;
 ?>
-<span class="description"><a href="<?php echo esc_url( ADVADS_URL . 'hide-ads-from-bots/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings' ); ?>" target="blank"><?php esc_html_e( 'Read this first', 'advanced-ads' ); ?></a></span>
+<span class="description"><a href="<?php echo esc_url( ADVADS_URL . 'hide-ads-from-bots/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings' ); ?>" target="blank" class="advads-external-link"><?php esc_html_e( 'Read this first', 'advanced-ads' ); ?></a></span>
 <p class="description"><?php esc_html_e( 'Hide ads from crawlers, bots and empty user agents.', 'advanced-ads' ); ?></p>

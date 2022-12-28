@@ -56,7 +56,7 @@ class Responsive_Lightbox_Remote_Library_Wikimedia extends Responsive_Lightbox_R
 	 */
 	public function render_field() {
 		echo '
-		<p><label><input id="rl_wikimedia_active" type="checkbox" name="responsive_lightbox_remote_library[wikimedia][active]" value="1" ' . checked( $this->rl->options['remote_library']['wikimedia']['active'], true, false ) . ' />' . __( 'Enable Wikimedia.', 'responsive-lightbox' ) . '</label></p>';
+		<p><label><input id="rl_wikimedia_active" type="checkbox" name="responsive_lightbox_remote_library[wikimedia][active]" value="1" ' . checked( $this->rl->options['remote_library']['wikimedia']['active'], true, false ) . ' />' . esc_html__( 'Enable Wikimedia.', 'responsive-lightbox' ) . '</label></p>';
 	}
 
 	/**
@@ -195,11 +195,11 @@ class Responsive_Lightbox_Remote_Library_Wikimedia extends Responsive_Lightbox_R
 	 * @return array|false
 	 */
 	public function sanitize_result( $result ) {
-		// allow only JPG, PNG and GIF images
+		// allow only jpg, png and gif images
 		if ( preg_match( '/\.(jpe?g|gif|png)$/i', $result['url'] ) !== 1 )
 			return false;
 
-		// get part of an URL
+		// get part of an url
 		$url = explode( 'https://upload.wikimedia.org/wikipedia/commons/', $result['url'] );
 
 		// set dimensions
@@ -243,22 +243,23 @@ class Responsive_Lightbox_Remote_Library_Wikimedia extends Responsive_Lightbox_R
 		$imagedata = [
 			'id'					=> 0,
 			'link'					=> '',
-			'source'				=> $result['descriptionshorturl'],
-			'title'					=> $result['title'],
+			'source'				=> esc_url_raw( $result['descriptionshorturl'] ),
+			'title'					=> sanitize_text_field( $result['title'] ),
 			'caption'				=> $this->get_attribution( 'Wikimedia', $result['descriptionshorturl'] ),
-			'description'			=> isset( $result['extmetadata']['ImageDescription']['value'] ) ? $result['extmetadata']['ImageDescription']['value'] : '',
-			'alt'					=> isset( $result['extmetadata']['Categories']['value'] ) ? str_replace( '|', ', ', $result['extmetadata']['Categories']['value'] ) : '',
-			'url'					=> $result['url'],
+			'description'			=> isset( $result['extmetadata']['ImageDescription']['value'] ) ? sanitize_text_field( $result['extmetadata']['ImageDescription']['value'] ) : '',
+			'alt'					=> isset( $result['extmetadata']['Categories']['value'] ) ? str_replace( '|', ', ', sanitize_text_field( $result['extmetadata']['Categories']['value'] ) ) : '',
+			'url'					=> esc_url_raw( $result['url'] ),
 			'width'					=> $width,
 			'height'				=> $height,
 			'orientation'			=> $height > $width ? 'portrait' : 'landscape',
-			'thumbnail_url'			=> $thumbnail_url,
+			'thumbnail_url'			=> esc_url_raw( $thumbnail_url ),
 			'thumbnail_width'		=> $thumbnail_width,
 			'thumbnail_height'		=> $thumbnail_height,
 			'thumbnail_orientation'	=> $thumbnail_height > $thumbnail_width ? 'portrait' : 'landscape',
 			'media_provider'		=> 'wikimedia',
-			'filename'				=> $result['name'],
+			'filename'				=> sanitize_file_name( $result['name'] ),
 			'dimensions'			=> $width . ' x ' . $height,
+			'type'					=> 'image'
 		];
 
 		// create thumbnail link

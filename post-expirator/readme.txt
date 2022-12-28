@@ -4,8 +4,8 @@ Author: publishpress
 Author URI: https://publishpress.com
 Tags: expire, posts, pages, schedule
 Requires at least: 5.3
-Tested up to: 6.0
-Stable tag: 2.7.8
+Tested up to: 6.1
+Stable tag: 2.8.2
 
 Add an expiration date to posts. When your post is automatically unpublished, you can delete the post, change the status, or update the post categories.
 
@@ -80,6 +80,38 @@ This section describes how to install the plugin and get it working.
 3. Settings screen
 
 == Changelog ==
+
+= [2.8.2] - 20 Dec, 2022 =
+
+* FIXED: Fix taxonomy expiration, #309;
+* FIXED: Fix TypeError in ExpirablePostModel.php: array_unique(): Argument #1 ($array) must be of type array, #318;
+
+= [2.8.1] - 08 Dec, 2022 =
+
+* FIXED: Fix PHP warning: attempt to read propertyu "ID" on null in the "the_content" filter, #313;
+* FIXED: Fix PHP warning: undefined array key "properties" in class-wp-rest-meta-fields.php, #311;
+* FIXED: Update language files to ES, FR and IT (thanks to @wocmultimedia), #308;
+
+= [2.8.0] - 08 Nov, 2022 =
+
+* ADDED: Add translations for ES, FR, IT languages, #297;
+* FIXED: Fix the expire date column in WooCommerce products list, #276;
+* CHANGED: Removed the "None" option from default expiration dates. If a site is using it, the default value is now "Custom" and set for "+1 week", #274;
+* FIXED: Improve output escaping on a few views, #235;
+* FIXED: Improve input sanitization, #235;
+* FIXED: Add argument swapping on strings with multiple arguments, #305;
+* FIXED: Expiration settings not working on Classic Editor, #274;
+* FIXED: Fixed remaining message "Cron event not found!" for expirations that run successfully, #288;
+* CHANGED: The code was partially refactored improving the code quality, applying DRY and other good practices;
+* CHANGED: Deprecated some internal functions: postexpirator_activate, postexpirator_autoload, postexpirator_schedule_event, postexpirator_unschedule_event, postexpirator_debug, _postexpirator_get_cat_names, postexpirator_register_expiration_meta, postexpirator_expire_post, expirationdate_deactivate;
+* CHANGED: Deprecated the constant: PostExpirator_Facade::PostExpirator_Facade => PublishPressFuture\Modules\Expirator\CapabilitiesAbstract::EXPIRE_POST;
+* CHANGED: Deprecated the constant POSTEXPIRATOR_DEBUG;
+* CHANGED: Deprecated the method PostExpirator_Facade::set_expire_principles;
+* CHANGED: Deprecated the method PostExpirator_Facade::current_user_can_expire_posts;
+* CHANGED: Deprecated the method PostExpirator_Facade::get_default_expiry;
+* CHANGED: Deprecated the method PostExpirator_Util::get_wp_date;
+* CHANGED: Deprecated the class PostExpiratorDebug;
+* CHANGED: Deprecated the constants: POSTEXPIRATOR_VERSION, POSTEXPIRATOR_DATEFORMAT, POSTEXPIRATOR_TIMEFORMAT, POSTEXPIRATOR_FOOTERCONTENTS, POSTEXPIRATOR_FOOTERSTYLE, POSTEXPIRATOR_FOOTERDISPLAY, POSTEXPIRATOR_EMAILNOTIFICATION, POSTEXPIRATOR_EMAILNOTIFICATIONADMINS, POSTEXPIRATOR_DEBUGDEFAULT, POSTEXPIRATOR_EXPIREDEFAULT, POSTEXPIRATOR_SLUG, POSTEXPIRATOR_BASEDIR, POSTEXPIRATOR_BASENAME, POSTEXPIRATOR_BASEURL, POSTEXPIRATOR_LOADED, POSTEXPIRATOR_LEGACYDIR;
 
 = [2.7.8] - 17 Oct, 2022 =
 

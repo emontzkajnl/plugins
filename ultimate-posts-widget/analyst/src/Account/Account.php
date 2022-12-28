@@ -243,8 +243,8 @@ class Account implements TrackerContract
 	{
 		if (!$this->isAllowingLogging()) return;
 
-		$question = isset($_POST['question']) ? stripslashes($_POST['question']) : null;
-        $reason = isset($_POST['reason']) ? stripslashes($_POST['reason']) : null;
+		$question = isset($_POST['question']) ? sanitize_text_field(stripslashes($_POST['question'])) : null;
+        $reason = isset($_POST['reason']) ? sanitize_text_field(stripslashes($_POST['reason'])) : null;
 
 		DeactivateRequest::make($this->collector, $this->id, $this->path, $question, $reason)
 			->execute($this->requestor);

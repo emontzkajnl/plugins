@@ -30,12 +30,12 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 
 		// initiate i18n notice.
 		new Yoast_I18n_WordPressOrg_v3(
-			array(
+			[
 				'textdomain'     => 'advanced-ads',
 				'plugin_name'    => 'Advanced Ads',
 				'hook'           => 'advanced-ads-overview-below-support',
 				'glotpress_logo' => false, // disables the plugin icon so we don’t need to keep up with potential changes.
-			)
+			]
 		);
 
 		// show errors.
@@ -84,7 +84,7 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 	 */
 	public static function add_meta_box( $id, $title, $position, $callback ) {
 		ob_start();
-		call_user_func( array( 'Advanced_Ads_Overview_Widgets_Callbacks', $callback ) );
+		call_user_func( [ 'Advanced_Ads_Overview_Widgets_Callbacks', $callback ] );
 		do_action( 'advanced-ads-overview-widget-content-' . $id, $id );
 		$content = ob_get_clean();
 
@@ -189,12 +189,12 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 				wp_kses(
 					// translators: %s is a URL.
 					__( 'Thank the developer with a &#9733;&#9733;&#9733;&#9733;&#9733; review on <a href="%s" target="_blank">wordpress.org</a>', 'advanced-ads' ),
-					array(
-						'a' => array(
-							'href'   => array(),
-							'target' => array(),
-						),
-					)
+					[
+						'a' => [
+							'href'   => [],
+							'target' => [],
+						],
+					]
 				),
 				'https://wordpress.org/support/plugin/advanced-ads/reviews/#new-post'
 			);
@@ -296,7 +296,7 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 		if ( wp_verify_nonce( $post_data['nonce'], 'advads-gadsense-dashboard' ) === false ) {
 			wp_send_json_error( 'Unauthorized request', 401 );
 		}
-		$report_type = in_array( $post_data['type'], array( 'domain', 'unit' ), true ) ? $post_data['type'] : false;
+		$report_type = in_array( $post_data['type'], [ 'domain', 'unit' ], true ) ? $post_data['type'] : false;
 
 		if ( ! $report_type ) {
 			wp_send_json_error( 'Invalid arguments', 400 );
@@ -307,17 +307,17 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 
 		if ( $report->get_data()->is_valid() ) {
 			// There is valid data
-			wp_send_json_success( array( 'html' => $report->get_markup() ) );
+			wp_send_json_success( [ 'html' => $report->get_markup() ] );
 		}
 
 		if ( $report->refresh_report() ) {
 			// we got new data from Google;
-			wp_send_json_success( array( 'html' => $report->get_markup() ) );
+			wp_send_json_success( [ 'html' => $report->get_markup() ] );
 		}
 
 		$error_message = $report->get_last_api_error();
 		// Send markup with error info.
-		wp_send_json_success( array( 'html' => '<div class="error"><p>' . wp_kses_post( $error_message ) . '</p></div>' ) );
+		wp_send_json_success( [ 'html' => '<div class="error"><p>' . wp_kses_post( $error_message ) . '</p></div>' ] );
 	}
 
 	/**
@@ -385,7 +385,7 @@ endif;
 			<?php
 			printf(
 				// translators: %s is the name of another plugin.
-				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), array( 'strong' => array() ) ),
+				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), [ 'strong' => [] ] ),
 				'bbPress'
 			);
 			?>
@@ -397,7 +397,7 @@ endif;
 			<?php
 			printf(
 			// translators: %s is the name of another plugin.
-				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), array( 'strong' => array() ) ),
+				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), [ 'strong' => [] ] ),
 				defined( 'BP_PLATFORM_VERSION' ) ? 'BuddyBoss' : 'BuddyPress'
 			);
 			?>
@@ -409,7 +409,7 @@ endif;
 			<?php
 			printf(
 			// translators: %s is the name of another plugin.
-				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), array( 'strong' => array() ) ),
+				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), [ 'strong' => [] ] ),
 				'Paid Memberships Pro'
 			);
 			?>
@@ -421,7 +421,7 @@ endif;
 			<?php
 			printf(
 			// translators: %s is the name of another plugin.
-				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), array( 'strong' => array() ) ),
+				wp_kses( __( 'integrates with <strong>%s</strong>', 'advanced-ads' ), [ 'strong' => [] ] ),
 				'WPML'
 			);
 			?>
@@ -430,76 +430,71 @@ endif;
 		<li><?php esc_html_e( '11 more display and visitor conditions', 'advanced-ads' ); ?></li>
 		<li><?php esc_html_e( '6 more placements', 'advanced-ads' ); ?></li>
 		<li><?php esc_html_e( 'placement tests for ad optimization', 'advanced-ads' ); ?></li>
+		<li><?php esc_html_e( 'Geo Targeting', 'advanced-ads' ); ?></li>
 		<li><?php esc_html_e( 'ad grids and many more advanced features', 'advanced-ads' ); ?></li>
 		</ul>
 		<?php
 		$pro_content = ob_get_clean();
 
-		$add_ons = array(
-			'pro'             => array(
+		$add_ons = [
+			'pro'             => [
 				'title' => 'Advanced Ads Pro',
 				'desc'  => $pro_content,
 				'link'  => ADVADS_URL . 'add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 4,
 				'class' => 'recommended',
-			),
-			'tracking'        => array(
+			],
+			'tracking'        => [
 				'title' => 'Tracking',
 				'desc'  => __( 'Analyze clicks and impressions of your ads locally or in Google Analytics, share reports, and limit ads to a specific number of impressions or clicks.', 'advanced-ads' ),
 				'link'  => ADVADS_URL . 'add-ons/tracking/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 4,
-			),
-			'responsive'      => array(
+			],
+			'responsive'      => [
 				'title' => 'Responsive, AMP and Mobile ads',
 				'desc'  => __( 'Display ads based on the device or the size of your visitor’s browser, and control ads on AMP pages.', 'advanced-ads' ),
 				'link'  => ADVADS_URL . 'add-ons/responsive-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 4,
-			),
-			'gam'             => array(
+			],
+			'gam'             => [
 				'title' => 'Google Ad Manager Integration',
 				'desc'  => __( 'A quick and error-free way of implementing ad units from your Google Ad Manager account.', 'advanced-ads' ),
 				'link'  => ADVADS_URL . 'add-ons/google-ad-manager/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 5,
-			),
-			'sticky'          => array(
+			],
+			'sticky'          => [
 				'title' => 'Sticky ads',
 				'desc'  => __( 'Increase click rates on your ads by placing them in sticky positions above, next or below your site.', 'advanced-ads' ),
 				'link'  => ADVADS_URL . 'add-ons/sticky-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 5,
-			),
-			'layer'           => array(
+			],
+			'layer'           => [
 				'title' => 'PopUps and Layers',
 				'desc'  => __( 'Users will never miss an ad or other information in a PopUp. Choose when it shows up and for how long a user can close it.', 'advanced-ads' ),
 				'link'  => ADVADS_URL . 'add-ons/popup-and-layer-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 5,
-			),
-			'geo'             => array(
-				'title' => 'Geo Targeting',
-				'desc'  => __( 'Target visitors with ads that match their geo location and make more money with regional campaigns.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/geo-targeting/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
-				'order' => 5,
-			),
-			'selling'         => array(
+			],
+			'selling'         => [
 				'title' => 'Selling Ads',
 				'desc'  => __( 'Earn more money and let advertisers pay for ad space directly on the frontend of your site.', 'advanced-ads' ),
 				'link'  => ADVADS_URL . 'add-ons/selling-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 6,
-			),
-			'slider'          => array(
+			],
+			'slider'          => [
 				'title' => 'Ad Slider',
 				'desc'  => __( 'Create a beautiful and simple slider from your ads to show more information on less space.', 'advanced-ads' ),
 				'link'  => ADVADS_URL . 'add-ons/slider/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 6,
-			),
-			'adsense-in-feed' => array(
+			],
+			'adsense-in-feed' => [
 				'title'      => 'AdSense In-feed',
 				'desc'       => __( 'Place AdSense In-feed ads between posts on homepage, category, and archive pages.', 'advanced-ads' ),
 				'class'      => 'free',
 				'link'       => wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=advanced-ads-adsense-in-feed' ), 'install-plugin_advanced-ads-adsense-in-feed' ),
 				'link_title' => __( 'Install now', 'advanced-ads' ),
 				'order'      => 9,
-			),
-		);
+			],
+		];
 
 		// get all installed plugins; installed is not activated.
 		$installed_plugins     = get_plugins();
@@ -561,7 +556,7 @@ endif;
 			$installed_pro_plugins++;
 		} elseif ( class_exists( 'Advanced_Ads_Responsive_Plugin' ) ) {
 			$add_ons['responsive']['link']      = ADVADS_URL . 'manual/responsive-ads-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
-			$add_ons['responsive']['desc']      = '<a href="' . admin_url( 'admin.php?page=responsive-ads-list' ) . '">' . __( 'List of responsive ads by browser width', 'advanced-ads-responsive' ) . '</a>';
+			$add_ons['responsive']['desc']      = '<a href="' . admin_url( 'admin.php?page=responsive-ads-list' ) . '">' . __( 'List of responsive ads by browser width', 'advanced-ads' ) . '</a>';
 			$add_ons['responsive']['installed'] = true;
 			$add_ons['responsive']['order']     = 20;
 			$installed_pro_plugins++;
@@ -644,24 +639,6 @@ endif;
 			}
 		}
 
-		// GEO TARGETING.
-		if ( isset( $installed_plugins['advanced-ads-geo/advanced-ads-geo.php'] ) && ! class_exists( 'Advanced_Ads_Geo_Plugin' ) ) { // is installed, but not active.
-			$add_ons['geo']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-geo/advanced-ads-geo.php&amp', 'activate-plugin_advanced-ads-geo/advanced-ads-geo.php' );
-			$add_ons['geo']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
-		} elseif ( class_exists( 'Advanced_Ads_Geo_Plugin' ) ) {
-			$add_ons['geo']['link']      = ADVADS_URL . 'manual/geo-targeting-condition/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
-			$add_ons['geo']['desc']      = '';
-			$add_ons['geo']['installed'] = true;
-			$add_ons['geo']['order']     = 20;
-			$installed_pro_plugins++;
-
-			// remove the add-on.
-			if ( $hide_activated ) {
-				unset( $add_ons['geo'] );
-			}
-		}
-
 		// SLIDER.
 		if ( isset( $installed_plugins['advanced-ads-slider/slider.php'] ) && ! class_exists( 'Advanced_Ads_Slider_Plugin' ) ) { // is installed, but not active.
 			$add_ons['slider']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-slider/slider.php&amp', 'activate-plugin_advanced-ads-slider/slider.php' );
@@ -680,14 +657,14 @@ endif;
 
 		// add Genesis Ads, if Genesis based theme was detected.
 		if ( defined( 'PARENT_THEME_NAME' ) && 'Genesis' === PARENT_THEME_NAME ) {
-			$add_ons['genesis'] = array(
+			$add_ons['genesis'] = [
 				'title'      => 'Genesis Ads',
 				'desc'       => __( 'Use Genesis specific ad positions.', 'advanced-ads' ),
 				'order'      => 2,
 				'class'      => 'free',
 				'link'       => wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=advanced-ads-genesis' ), 'install-plugin_advanced-ads-genesis' ),
 				'link_title' => __( 'Install now', 'advanced-ads' ),
-			);
+			];
 			// handle install link as long as we can not be sure this is done by the Genesis plugin itself.
 			if ( isset( $installed_plugins['advanced-ads-genesis/genesis-ads.php'] ) ) { // is installed (active or not).
 				unset( $add_ons['genesis'] );
@@ -696,14 +673,14 @@ endif;
 
 		// add Ads for WPBakery Page Builder (formerly Visual Composer), if VC was detected.
 		if ( defined( 'WPB_VC_VERSION' ) ) {
-			$add_ons['visual_composer'] = array(
+			$add_ons['visual_composer'] = [
 				'title'      => 'Ads for WPBakery Page Builder (formerly Visual Composer)',
 				'desc'       => __( 'Manage ad positions with WPBakery Page Builder (formerly Visual Composer).', 'advanced-ads' ),
 				'order'      => 2,
 				'class'      => 'free',
 				'link'       => wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=ads-for-visual-composer' ), 'install-plugin_ads-for-visual-composer' ),
 				'link_title' => __( 'Install now', 'advanced-ads' ),
-			);
+			];
 			// handle install link as long as we can not be sure this is done by the Genesis plugin itself.
 			if ( isset( $installed_plugins['ads-for-visual-composer/advanced-ads-vc.php'] ) ) { // is installed (active or not).
 				unset( $add_ons['visual_composer'] );
@@ -712,14 +689,14 @@ endif;
 
 		// show All Access Pitch if less than 2 add-ons exist.
 		if ( $installed_pro_plugins < 2 ) {
-			$add_ons['bundle'] = array(
+			$add_ons['bundle'] = [
 				'title'        => 'All Access',
 				'desc'         => __( 'Our best deal with all add-ons included.', 'advanced-ads' ),
 				'link'         => ADVADS_URL . 'add-ons/all-access/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'link_title'   => __( 'Get full access', 'advanced-ads' ),
 				'link_primary' => true,
 				'order'        => 0,
-			);
+			];
 		}
 
 		$all_access_expiry = Advanced_Ads_Admin_Licenses::get_instance()->get_probably_all_access_expiry();
@@ -728,20 +705,20 @@ endif;
 			$installed_pro_plugins < 2
 			|| ( $all_access_expiry && ( time() + YEAR_IN_SECONDS ) > strtotime( $all_access_expiry ) )
 		) {
-			$add_ons['long_term'] = array(
+			$add_ons['long_term'] = [
 				'title'        => 'All Access long-term',
 				'desc'         => __( 'A one-time payment for four years of support and updates. The package saves you up to 70% compared to individually purchasing our add-ons.', 'advanced-ads' ),
 				'link'         => ADVADS_URL . 'add-ons/all-access-long-term/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'link_title'   => __( 'Get full access', 'advanced-ads' ),
 				'link_primary' => true,
 				'order'        => 1,
-			);
+			];
 		}
 
 		// allow add-ons to manipulate the output.
 		$add_ons = apply_filters( 'advanced-ads-overview-add-ons', $add_ons );
 
-		uasort( $add_ons, array( 'self', 'sort_by_order' ) );
+		uasort( $add_ons, [ 'self', 'sort_by_order' ] );
 
 		?>
 		<table class="widefat striped">

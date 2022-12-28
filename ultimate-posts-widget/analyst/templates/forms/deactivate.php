@@ -3,12 +3,12 @@
 		<div class="analyst-disable-modal-mask" id="analyst-disable-deactivate-modal-mask" style="display: none"></div>
 		<div style="display: flex">
 			<div class="analyst-install-image-block" style="width: 80px">
-				<img src="<?=$pencilImage?>"/>
+				<img src="<?php echo $pencilImage; ?>"/>
 			</div>
 			<div class="analyst-install-description-block" style="padding-left: 20px">
 				<strong class="analyst-modal-header">Why do you deactivate?</strong>
 				<div class="analyst-install-description-text" style="padding-top: 2px">
-					Please let us know, so we can improve it! Thank you <img class="analyst-smile-image" src="<?=$smileImage?>" alt="">
+					Please let us know, so we can improve it! Thank you <img class="analyst-smile-image" src="<?php echo $smileImage; ?>" alt="">
 				</div>
 			</div>
 		</div>

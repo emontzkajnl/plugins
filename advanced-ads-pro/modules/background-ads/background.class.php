@@ -4,11 +4,14 @@
  */
 class Advanced_Ads_Pro_Module_Background_Ads {
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
-		add_action( 'wp_footer', array( $this, 'footer_injection' ), 20 );
+		add_action( 'wp_footer', [ $this, 'footer_injection' ], 20 );
 
 		// Register output change hook.
-		add_action( 'advanced-ads-output-final', array( $this, 'ad_output' ), 20, 3 );
+		add_filter( 'advanced-ads-output-final', [ $this, 'ad_output' ], 20, 3 );
 	}
 
 	public function footer_injection(){
@@ -18,12 +21,12 @@ class Advanced_Ads_Pro_Module_Background_Ads {
 		}
 
 		// get placements
-		$placements = get_option( 'advads-ads-placements', array() );
+		$placements = get_option( 'advads-ads-placements', [] );
 		if( is_array( $placements ) ){
 			foreach ( $placements as $_placement_id => $_placement ){
 				if ( isset($_placement['type']) && 'background' == $_placement['type'] ){
 					// display the placement content with placement options
-					$_options = isset( $_placement['options'] ) ? $_placement['options'] : array();
+					$_options = isset( $_placement['options'] ) ? $_placement['options'] : [];
 					echo Advanced_Ads_Select::get_instance()->get_ad_by_method( $_placement_id, 'placement', $_options );
 				}
 			}
@@ -50,27 +53,9 @@ class Advanced_Ads_Pro_Module_Background_Ads {
 		// get background color
 		$bg_color = isset( $ad->args['bg_color'] ) ? sanitize_text_field( $ad->args['bg_color'] ) : false;
 
-		// get tracking plugin
-		$click_tracking_active = false;
-		$plugin_active = class_exists( 'Advanced_Ads_Tracking_Plugin', false );
-		if ( $plugin_active ) {
-			$click_tracking_active = Advanced_Ads_Tracking_Plugin::get_instance()->check_ad_tracking_enabled( $ad, 'click' );
-		}
-
 		// get prefix and generate new body class
 		$prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
 		$class = $prefix . 'body-background';
-
-		// get correct link
-		if ( class_exists( 'Advanced_Ads_Tracking' ) && method_exists( 'Advanced_Ads_Tracking', 'build_click_tracking_url' ) ) {
-		    $link = Advanced_Ads_Tracking::build_click_tracking_url( $ad );
-		} elseif( !empty( $ad->url ) ) {
-		    $link = $ad->url;
-		} elseif( !empty( $ad->output['url'] ) ) { // might no longer be needed
-		    $link = $ad->output['url'];
-		} else {
-		    $link = false;
-		}
 
 		// get image
 		if( isset( $ad->output['image_id'] ) ){
@@ -85,6 +70,23 @@ class Advanced_Ads_Pro_Module_Background_Ads {
 		}
 
 		$selector = apply_filters( 'advanced-ads-pro-background-selector', 'body' );
+		$is_amp   = function_exists( 'advads_is_amp' ) && advads_is_amp();
+		$link     = ! empty( $ad->url ) ? $ad->url : '';
+		/**
+		 * Filter the background placement URL.
+		 *
+		 * @param string $link The URL.
+		 * @param Advanced_Ads_Ad $ad The current ad object.
+		 */
+		$link     = (string) apply_filters( 'advanced-ads-pro-background-url', $link, $ad );
+
+		if ( method_exists( 'Advanced_Ads_Tracking_Util', 'get_target' ) ) {
+			$target = Advanced_Ads_Tracking_Util::get_target( $ad, true );
+		} else {
+			$options = Advanced_Ads::get_instance()->options();
+			$target  = isset( $options['target-blank'] ) ? '_blank' : '';
+		}
+		$target = $target !== '' ? $target : '_self';
 
 		ob_start();
 		?><style><?php echo $selector; ?> {
@@ -94,54 +96,44 @@ class Advanced_Ads_Pro_Module_Background_Ads {
 			    background-color: <?php echo $bg_color; ?>;
 			<?php endif; ?>
 		    }
-		<?php if( $link && ( ! function_exists( 'advads_is_amp' ) || ! advads_is_amp() )) : ?>
+			<?php if ( $link && ! $is_amp ) : ?>
 		    <?php /**
 		    * We should not use links and other tags that should have cursor: pointer as direct childs of the $selector.
 		    * That is, we need a nested container (e.g. body > div > a) to make it work corretly. */
 		    echo $selector; ?> { cursor: pointer; } <?php echo $selector; ?> > * { cursor: default; }
 		<?php endif; ?>
 		</style>
-		<?php /**
+		<?php
+		/**
 		 * Don't load any javascript on amp.
 		 * Javascript output can be prevented by disabling click tracking and empty url field on ad level.
 		 */
-		if ( ( ! function_exists( 'advads_is_amp' ) || ! advads_is_amp() ) && ( $click_tracking_active || $link ) ) : ?>
+		if ( ! $is_amp ) :
+			?>
 			<script>
 				( window.advanced_ads_ready || document.readyState === 'complete' ).call( null, function () {
-					var pluginActive         = <?php echo( $plugin_active ? 'true' : 'false' ); ?>;
-					var clickTrackingActive = <?php echo( $click_tracking_active ? 'true' : 'false' ); ?>;
+					document.querySelector( '<?php echo esc_attr( $selector ); ?>' ).classList.add( '<?php echo esc_attr( $class ); ?>' );
 					<?php if ( $link ) : ?>
 					// Use event delegation because $selector may be not in the DOM yet.
 					document.addEventListener( 'click', function ( e ) {
-
 						if ( e.target.matches( '<?php echo $selector; ?>' ) ) {
-							var url = '<?php echo $ad->url; ?>';
-
-							if ( pluginActive ) {
-								var cloaking = <?php echo( (bool) $ad->options( 'tracking.cloaking' ) ? 'true' : 'false' ); ?>;
-
-								if ( cloaking || typeof AdvAdsClickTracker === 'undefined' ) {
-									// Fallback to redirect url if cloaking is activated or AdvAdsClickTracker is not defined, e.g. Tracking 1.x.
-									url = '<?php echo $link; ?>';
-									e.target.setAttribute( 'data-advadsredirect', Number( cloaking ) );
-								}
-
-								// Use ajax click tracking if available.
-								if ( typeof AdvAdsClickTracker !== 'undefined' && clickTrackingActive ) {
-									// Gather information for tracking call.
-									e.target.setAttribute( 'data-advadstrackid', <?php echo $ad->id; ?>);
-									e.target.setAttribute( 'data-advadstrackbid', <?php echo get_current_blog_id(); ?>);
-
-									AdvAdsClickTracker.ajaxSend( e.target );
-								}
-							}
-
+							<?php
+							$script = '';
+							/**
+							 * Add additional script output.
+							 *
+							 * @param string          $script The URL.
+							 * @param Advanced_Ads_Ad $ad     The current ad object.
+							 */
+							$script = (string) apply_filters( 'advanced-ads-pro-background-click-matches-script', $script, $ad );
+							// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- this is our own JS code, escaping will break it
+							echo $script;
+							?>
 							// Open url in new tab.
-							window.open( url, '_blank' );
+							window.open( '<?php echo esc_url( $link ); ?>', '<?php echo esc_attr( $target ); ?>' );
 						}
 					} );
 					<?php endif; ?>
-					document.querySelector( '<?php echo $selector; ?>' ).classList.add( '<?php echo $class; ?>' );
 				} );
 			</script>
 		<?php endif; ?>

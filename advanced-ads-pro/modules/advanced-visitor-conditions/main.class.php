@@ -6,7 +6,7 @@
  */
 class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 
-	protected $options = array();
+	protected $options = [];
 	protected $is_ajax;
 
 	// Note: hard-coded in JS
@@ -33,9 +33,9 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 		$is_admin = is_admin();
 		$this->is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
-		add_filter( 'advanced-ads-visitor-conditions', array( $this, 'visitor_conditions' ) );
+		add_filter( 'advanced-ads-visitor-conditions', [ $this, 'visitor_conditions' ] );
 		// action after ad output is created; used for js injection
-		add_filter( 'advanced-ads-ad-output', array( $this, 'after_ad_output' ), 10, 2 );
+		add_filter( 'advanced-ads-ad-output', [ $this, 'after_ad_output' ], 10, 2 );
 		if ( $is_admin ) {
 			// add referrer check to visitor conditions
 			// add_action( 'advanced-ads-visitor-conditions-after', array( $this, 'referrer_check_metabox' ), 10, 2 );
@@ -51,7 +51,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 			$this->count_page_impression();
 
 			// register js script to set cookie for cached pages
-			add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+			add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
 
 			// enable common frontend logic
 			// $this->init_common_frontend();
@@ -96,7 +96,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 		wp_register_script(
 			'advanced_ads_pro/visitor_conditions',
 			sprintf( '%sinc/conditions%s.js', plugin_dir_url( __FILE__ ), defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min' ),
-			array( ADVADS_SLUG . '-advanced-js' ),
+			[ ADVADS_SLUG . '-advanced-js' ],
 			AAP_VERSION
 		);
 
@@ -105,12 +105,12 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 		// 10 years by default
 		$page_impressions_exdays = ( defined( 'ADVANCED_ADS_PRO_PAGE_IMPR_EXDAYS' ) && absint( ADVANCED_ADS_PRO_PAGE_IMPR_EXDAYS ) > 0 ) ? absint( ADVANCED_ADS_PRO_PAGE_IMPR_EXDAYS ) : 3650;
 
-		wp_localize_script( 'advanced_ads_pro/visitor_conditions', 'advanced_ads_pro_visitor_conditions', array(
+		wp_localize_script( 'advanced_ads_pro/visitor_conditions', 'advanced_ads_pro_visitor_conditions', [
 			'referrer_cookie_name' => self::REFERRER_COOKIE_NAME,
 			'referrer_exdays' => $referrer_exdays,
 			'page_impr_cookie_name' => self::PAGE_IMPRESSIONS_COOKIE_NAME,
 			'page_impr_exdays' => $page_impressions_exdays
-		));
+		]);
 
 		wp_enqueue_script( 'advanced_ads_pro/visitor_conditions' );
 	}
@@ -125,75 +125,83 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	public function visitor_conditions( $conditions ){
 
 		// referrer url
-		$conditions['referrer_url'] = array(
-			'label' => __( 'referrer url', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads based on the referrer url.', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Visitor_Conditions', 'metabox_string' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_referrer_url' ) // callback for frontend check
-		);
+		$conditions['referrer_url'] = [
+			'label'       => __( 'referrer url', 'advanced-ads-pro' ),
+			'description' => __( 'Display ads based on the referrer URL.', 'advanced-ads-pro' ),
+			'metabox'     => [ 'Advanced_Ads_Visitor_Conditions', 'metabox_string' ], // callback to generate the metabox
+			'check'       => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_referrer_url' ], // callback for frontend check
+			'helplink'    => 'https://wpadvancedads.com/manual/referrer-url/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-referrer-url',
+		];
 
 		// user_agent
-		$conditions['user_agent'] = array(
-			'label' => __( 'user agent', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads based on the user agent.', 'advanced-ads-pro' ) . ' <a href="'. ADVADS_URL .'manual/display-ads-based-on-browser-or-device/#utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-user-agent" target="_blank">' . __( 'Manual', 'advanced-ads-pro' ) . '</a>',
-			'metabox' => array( 'Advanced_Ads_Visitor_Conditions', 'metabox_string' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_user_agent' ) // callback for frontend check
-		);
+		$conditions['user_agent'] = [
+			'label'       => __( 'user agent', 'advanced-ads-pro' ),
+			'description' => __( 'Display ads based on the user agent.', 'advanced-ads-pro' ),
+			'metabox'     => [ 'Advanced_Ads_Visitor_Conditions', 'metabox_string' ], // callback to generate the metabox
+			'check'       => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_user_agent' ], // callback for frontend check
+			'helplink'    => 'https://wpadvancedads.com/manual/display-ads-based-on-browser-or-device/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-user-agent',
+		];
 
 		// capabilities
-		$conditions['capability'] = array(
-			'label' => __( 'user can (capabilities)', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads based on the user’s capabilities.', 'advanced-ads-pro' ) . ' <a href="'. ADVADS_URL .'manual/display-ads-based-on-user-capabilities/#utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-user-capabilities" target="_blank">' . __( 'Manual', 'advanced-ads-pro' ) . '</a>',
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_capabilities' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_capabilities' ), // callback for frontend check
-			'passive_info' => array( 'hash_fields' => 'value', 'remove' => 'login', 'function' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'get_passive_capability' ) )
-		);
-		$conditions['role'] = array(
+		$conditions['capability'] = [
+			'label'        => __( 'user can (capabilities)', 'advanced-ads-pro' ),
+			'description'  => __( ' Display ads based on the user’s capabilities.', 'advanced-ads-pro' ),
+			'metabox'      => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_capabilities' ], // callback to generate the metabox
+			'check'        => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_capabilities' ], // callback for frontend check
+			'passive_info' => [
+				'hash_fields' => 'value',
+				'remove'      => 'login',
+				'function'    => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'get_passive_capability' ],
+			],
+		];
+		$conditions['role'] = [
 			'label' => __( 'user role', 'advanced-ads-pro' ),
 			'description' => sprintf( __( 'Display ads based on the user’s roles. See <a href="%s" target="_blank">List of roles in WordPress</a>.', 'advanced-ads-pro' ),
 				'https://codex.wordpress.org/Roles_and_Capabilities' ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_roles' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_roles' ), // callback for frontend check
-			'passive_info' => array( 'hash_fields' => 'value', 'remove' => 'login', 'function' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'get_passive_role' ) )
-		);
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_roles' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_roles' ], // callback for frontend check
+			'passive_info' => [ 'hash_fields' => 'value', 'remove' => 'login', 'function' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'get_passive_role' ] ]
+		];
 
 		// browser lang
-		$conditions['browser_lang'] = array(
+		$conditions['browser_lang'] = [
 			'label' => __( 'browser language', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads based on the visitors browser language.', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_browser_lang' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_browser_lang' ) // callback for frontend check
-		);
+			'description' => __( "Display ads based on the visitor's browser language.", 'advanced-ads-pro' ),
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_browser_lang' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_browser_lang' ] // callback for frontend check
+		];
 
 		// has cookie
-		$conditions['cookie'] = array(
+		$conditions['cookie'] = [
 			'label' => __( 'cookie', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads based on the value of a cookie.', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_cookie' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_cookie' ) // callback for frontend check
-		);
+			'description' => __( 'Display ads based on the value of a cookie. Set the operator to “matches/does not match” and leave the value empty to check only the existence of the cookie.', 'advanced-ads-pro' ),
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_cookie' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_cookie' ] // callback for frontend check
+		];
 
 		// page impressions
-		$conditions['page_impressions'] = array(
-			'label' => __( 'page impressions', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads based on the number of page impressions the user already made (before the current on).', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Visitor_Conditions', 'metabox_number' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_page_impressions' ) // callback for frontend check
-		);
+		$conditions['page_impressions'] = [
+			'label'       => __( 'page impressions', 'advanced-ads-pro' ),
+			'description' => __( 'Display ads based on the number of page impressions the user already made before the current one.', 'advanced-ads-pro' ),
+			'metabox'     => [ 'Advanced_Ads_Visitor_Conditions', 'metabox_number' ], // callback to generate the metabox
+			'check'       => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_page_impressions' ], // callback for frontend check
+			'helplink'    => 'https://wpadvancedads.com/manual/ads-by-page-impressions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-page-impressions',
+		];
 		// page impressions in given time frame
-		$conditions['ad_impressions'] = array(
+		$conditions['ad_impressions'] = [
 			'label' => __( 'max. ad impressions', 'advanced-ads-pro' ),
 			'description' => __( 'Display the ad only for a few impressions in a given period per user.', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_ad_impressions' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_ad_impressions' ) // callback for frontend check
-		);
+			'metabox' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'metabox_ad_impressions' ], // callback to generate the metabox
+			'check' => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_ad_impressions' ] // callback for frontend check
+		];
 		// new visitor
-		$conditions['new_visitor'] = array(
-			'label' => __( 'new visitor', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads to new or returning visitors only.', 'advanced-ads-pro' ),
-			'metabox' => array( 'Advanced_Ads_Visitor_Conditions', 'metabox_is_or_not' ), // callback to generate the metabox
-			'check' => array( 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_new_visitor' ) // callback for frontend check
-		);
+		$conditions['new_visitor'] = [
+			'label'       => __( 'new visitor', 'advanced-ads-pro' ),
+			'description' => __( 'Display or hide ads for new visitors.', 'advanced-ads-pro' ),
+			'metabox'     => [ 'Advanced_Ads_Visitor_Conditions', 'metabox_is_or_not' ], // callback to generate the metabox
+			'check'       => [ 'Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions', 'check_new_visitor' ], // callback for frontend check
+			'helplink'    => 'https://wpadvancedads.com/manual/ads-for-new-visitors/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-new-visitors',
+		];
 
 		return $conditions;
 	}
@@ -258,7 +266,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	    $roles = $wp_roles->roles;
 
 	    // loop through all roles in order to get registered capabilities
-	    $capabilities = array();
+	    $capabilities = [];
 	    foreach ( $roles as $_role ){
 		    if( isset( $_role['capabilities'] )){
 			$capabilities += $_role['capabilities'];
@@ -279,7 +287,13 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 				<option value="<?php echo $cap; ?>" <?php selected( $cap, $value ); ?>><?php echo $cap; ?></option>
 			<?php endforeach; ?>
 		</select></div>
-	    <p class="description"><?php echo $type_options[ $options['type'] ]['description']; ?></p><?php
+		<p class="description">
+			<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>
+			<a href="https://wpadvancedads.com/manual/display-ads-based-on-user-capabilities/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-user-can" class="advads-manual-link" target="_blank">
+				<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+			</a>
+		</p>
+		<?php
 	}
 
 	/**
@@ -364,7 +378,13 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 			<?php endforeach;
 			endif; ?>
 		</select>
-	    <p class="description"><?php echo $type_options[ $options['type'] ]['description']; ?></p><?php
+		<p class="description">
+			<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>
+			<a href="https://wpadvancedads.com/manual/browser-language/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-browser-language" class="advads-manual-link" target="_blank">
+				<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+			</a>
+		</p>
+		<?php
 	}
 
 
@@ -415,7 +435,13 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 		?>
 		</div>
 		<div class="clear"></div>
-		<p class="description"><?php echo $type_options[ $options['type'] ]['description']; ?> <?php esc_html_e( 'Set the operator to “match/does not match” and leave the value empty to check only the existence of the cookie.', 'advanced-ads-pro' ); ?></p><?php
+		<p class="description">
+			<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>
+			<a href="https://wpadvancedads.com/manual/cookie-condition/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-cookie" class="advads-manual-link" target="_blank">
+				<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+			</a>
+		</p>
+		<?php
 	}
 
 	/**
@@ -446,7 +472,13 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 		<?php
 		$impressions_field = '<input type="number" required="required" min="0" name="' . $name . '[timeout]" value="' . $timeout . '"/>';
 		printf( __( 'within %s seconds', 'advanced-ads-pro' ), $impressions_field ); ?>
-	    <p class="description"><?php echo $type_options[ $options['type'] ]['description']; ?></p><?php
+		<p class="description">
+			<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>
+			<a href="https://wpadvancedads.com/manual/max-ad-impressions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-max-ad-impressions" class="advads-manual-link" target="_blank">
+				<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+			</a>
+		</p>
+		<?php
 	}
 
 
@@ -457,7 +489,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param array $options Options of the condition.
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_referrer_url( $options = array() ){
+	static function check_referrer_url( $options = [] ){
 
 		// check if session variable is set
 		if ( ! isset( $_COOKIE[ self::REFERRER_COOKIE_NAME ] ) ) {
@@ -475,7 +507,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param arr $options options of the condition
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_user_agent( $options = array() ){
+	static function check_user_agent( $options = [] ){
 
 		// check if session variable is set
 		$user_agent = isset( $_SERVER[ 'HTTP_USER_AGENT' ] ) ? $_SERVER[ 'HTTP_USER_AGENT' ] : '';
@@ -490,7 +522,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param arr $options options of the condition
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_capabilities( $options = array() ){
+	static function check_capabilities( $options = [] ){
 
 		if ( ! isset( $options['value'] ) || '' === $options['value'] || ! isset( $options['operator'] ) ){
 			return true;
@@ -513,7 +545,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param arr $options options of the condition
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_roles( $options = array() ){
+	static function check_roles( $options = [] ){
 		if ( ! isset( $options['value'] ) || '' === $options['value'] || ! isset( $options['operator'] ) ){
 			return true;
 		}
@@ -541,7 +573,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param arr $options options of the condition
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_browser_lang( $options = array() ){
+	static function check_browser_lang( $options = [] ){
 
 		if ( ! isset( $options['value'] ) || '' === $options['value'] ){
 			return true;
@@ -570,13 +602,13 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @return bool true if ad can be displayed
 	 * @since 1.1.1
 	 */
-	public static function check_cookie( $options = array() ) {
+	public static function check_cookie( $options = [] ) {
 		if ( isset( $options['operator'] ) ) {
 			$options['operator'] = self::maybe_replace_cookie_operator( $options['operator'] );
 		}
 
 		// do not manipulate the cookie values and the comparison for RegEx.
-		$encode = ! in_array($options['operator'], array('regex', 'regex_not'), true);
+		$encode = ! in_array($options['operator'], ['regex', 'regex_not'], true);
 
 		$must_be_set = ! isset( $options['operator'] ) || 'match_not' !== $options['operator'];
 
@@ -623,7 +655,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param array $options Options of the condition.
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_page_impressions( $options = array() ){
+	static function check_page_impressions( $options = [] ){
 	    if ( ! isset( $options['operator'] ) || ! isset( $options['value'] ) ) {
 			return true;
 	    }
@@ -660,7 +692,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param obj $ad Advanced_Ads_Ad
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_ad_impressions( $options = array(), $ad = false ){
+	static function check_ad_impressions( $options = [], $ad = false ){
 
 	    if ( ! $ad instanceof Advanced_Ads_Ad || ! isset( $options['value'] ) || ! isset( $options['timeout'] ) ) {
 			return true;
@@ -686,7 +718,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @param array $options Options of the condition.
 	 * @return bool true if ad can be displayed
 	 */
-	static function check_new_visitor( $options = array() ){
+	static function check_new_visitor( $options = [] ){
 	    if ( ! isset( $options['operator'] ) ) {
 			return true;
 	    }
@@ -711,7 +743,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	/**
 	 * Get capability information to use in passive cache-busting.
 	 */
-	static function get_passive_capability( $options = array() ) {
+	static function get_passive_capability( $options = [] ) {
 		if ( ! isset( $options['value'] ) ) {
 			return;
 		}
@@ -724,7 +756,7 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	/**
 	 * Get role information to use in passive cache-busting.
 	 */
-	static function get_passive_role( $options = array() ) {
+	static function get_passive_role( $options = [] ) {
 		if ( ! isset( $options['value'] ) ) {
 			return;
 		}
@@ -806,10 +838,10 @@ class Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions {
 	 * @return string $operator Operator name.
 	 */
 	private static function maybe_replace_cookie_operator( $operator ) {
-		$replace = array(
+		$replace = [
 			'show' => 'match',
 			'hide' => 'match_not'
-		);
+		];
 		return isset( $replace[ $operator ] ) ? $replace[ $operator ] : $operator;
 	}
 

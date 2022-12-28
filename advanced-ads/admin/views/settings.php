@@ -6,14 +6,14 @@
 // array with setting tabs for frontend.
 $setting_tabs = apply_filters(
 	'advanced-ads-setting-tabs',
-	array(
-		'general' => array(
+	[
+		'general' => [
 			'page'  => Advanced_Ads_Admin::get_instance()->plugin_screen_hook_suffix,
 			'group' => ADVADS_SLUG,
 			'tabid' => 'general',
 			'title' => __( 'General', 'advanced-ads' ),
-		),
-	)
+		],
+	]
 );
 ?><div class="wrap">
 	<h2 style="display: none;"><!-- There needs to be an empty H2 headline at the top of the page so that WordPress can properly position admin notifications --></h2>
@@ -131,7 +131,7 @@ jQuery( '.advads-tab-sub-menu' ).each( function( key, e ){
 	advads_settings_parent_tab = jQuery( e ).parent( '.advads-tab');
 	var headlines = advads_settings_parent_tab.find( 'h2' );
 	// create list
-	if( headlines.length ){
+	if( headlines.length > 1 ){
 	advads_submenu_list = jQuery('<ul>');
 	headlines.each( function( key, h ){
 		// create anchor for this headline

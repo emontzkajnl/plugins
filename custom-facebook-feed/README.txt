@@ -1,10 +1,10 @@
 === Smash Balloon Social Post Feed ===
-Contributors: smashballoon, craig-at-smash-balloon, am, smub
+Contributors: smashballoon
 Tags: Facebook, Facebook feed, Facebook posts, Facebook group, Facebook page
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 6.0
-Stable tag: 4.1.5
+Tested up to: 6.1
+Stable tag: 4.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -262,6 +262,12 @@ The most common reason for this is that an add-on or extension you have installe
 9. It's super easy to display your Facebook feed in any page or post
 
 == Changelog ==
+= 4.1.6 =
+* Tweak: Vue.js code is now loaded from a local file shipped with the plugin rather than an external CDN for use with the customizer in the admin area.
+* Fix: Fixed a compatibility issue with the Complianz Cookie Consent plugin integration.
+* Fix: Added additional plugin hardening.
+* Fix: Fixed PHP error that would occur with group feeds when using PHP 8+.
+
 = 4.1.5 =
 * Fix: An error message will now display if there was a problem connecting an account.
 * Fix: The Post Date could not be disabled.

@@ -6,14 +6,14 @@ class Advanced_Ads_Pro_Group_Refresh {
 	 *
 	 * @var array
 	 */
-	private $state_groups = array();
+	private $state_groups = [];
 
 	/**
 	 * Caches shown group ids.
 	 *
 	 * @var array
 	 */
-	private $shown_group_ids = array();
+	private $shown_group_ids = [];
 
 	public function __construct() {
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
@@ -33,14 +33,14 @@ class Advanced_Ads_Pro_Group_Refresh {
 	* Init group refresh.
 	*/
 	private function init_group_refresh() {
-		add_filter( 'advanced-ads-ad-select-args', array( $this, 'additional_ad_select_args' ), 10, 3 );
-		add_filter( 'advanced-ads-group-output-ad-ids', array( $this, 'group_output_ad_ids' ), 10, 5 );
-		add_filter( 'advanced-ads-group-output', array($this, 'group_output'), 10, 2 );
-		add_filter( 'advanced-ads-can-display', array( $this, 'can_display' ), 10, 2 );
-		add_action( 'advanced-ads-output', array($this, 'ad_output'), 10, 2 );
+		add_filter( 'advanced-ads-ad-select-args', [ $this, 'additional_ad_select_args' ], 10, 3 );
+		add_filter( 'advanced-ads-group-output-ad-ids', [ $this, 'group_output_ad_ids' ], 10, 5 );
+		add_filter( 'advanced-ads-group-output', [$this, 'group_output'], 10, 2 );
+		add_filter( 'advanced-ads-can-display', [ $this, 'can_display' ], 10, 2 );
+		add_action( 'advanced-ads-output', [$this, 'ad_output'], 10, 2 );
 
 		// manipulate number of ads that should be displayed in a group
-		add_filter( 'advanced-ads-group-ad-count', array($this, 'adjust_ad_group_number'), 10, 2 );
+		add_filter( 'advanced-ads-group-ad-count', [$this, 'adjust_ad_group_number'], 10, 2 );
 	}
 
 	/**
@@ -107,7 +107,7 @@ class Advanced_Ads_Pro_Group_Refresh {
 
 		$el_group_id = $group->ad_args['cache_busting_elementid'] . '_' . $group->id;
 
-		$this->state_groups[ $el_group_id ]['shown_ad_ids'] = isset( $group->ad_args['group_refresh']['shown_ad_ids'] ) ? $group->ad_args['group_refresh']['shown_ad_ids'] : array();
+		$this->state_groups[ $el_group_id ]['shown_ad_ids'] = isset( $group->ad_args['group_refresh']['shown_ad_ids'] ) ? $group->ad_args['group_refresh']['shown_ad_ids'] : [];
 		$this->state_groups[ $el_group_id ]['ad_label'] = isset( $group->ad_args['ad_label'] ) ? $group->ad_args['ad_label'] : 'default';
 
 
@@ -190,9 +190,9 @@ class Advanced_Ads_Pro_Group_Refresh {
 			}
 
 			$prev_ad_id = ! empty( $this->state_groups[ $el_group_id ]['prev_ad_id'] ) ? $this->state_groups[ $el_group_id ]['prev_ad_id'] : '';
-			$shown_ad_ids = ! empty( $this->state_groups[ $el_group_id ]['shown_ad_ids'] ) ? $this->state_groups[ $el_group_id ]['shown_ad_ids'] : array();
+			$shown_ad_ids = ! empty( $this->state_groups[ $el_group_id ]['shown_ad_ids'] ) ? $this->state_groups[ $el_group_id ]['shown_ad_ids'] : [];
 			$shown_group_ids = ! empty( $this->state_groups[ $el_group_id ]['shown_group_ids'] ) ? array_merge( $this->state_groups[ $el_group_id ]['shown_group_ids'], $this->shown_group_ids ) : $this->shown_group_ids;
-			$this->shown_group_ids = array();
+			$this->shown_group_ids = [];
 
 
 			$query = Advanced_Ads_Pro_Module_Cache_Busting::build_js_query( $group->ad_args);
@@ -243,7 +243,7 @@ class Advanced_Ads_Pro_Group_Refresh {
 
 
 			if ( $is_first_impression ) {
-				$style = in_array( $position, array( 'left', 'right' ) ) ? 'float:' . $float . ';' : '';
+				$style = in_array( $position, [ 'left', 'right' ] ) ? 'float:' . $float . ';' : '';
 				// Create wrapper around group. The following AJAX requests will insert group content into this wrapper.
 				$output_string = $js . '<div style="' . $style . '" class="' . $element_id .  '" id="' . $element_id .  '">' . $output_string . '</div>';
 			} else {
@@ -338,7 +338,7 @@ class Advanced_Ads_Pro_Group_Refresh {
 	 * @return bool
 	 */
 	public static function is_enabled( Advanced_Ads_Group $group ) {
-		$result = ! empty( $group->options['refresh']['enabled'] ) && in_array( $group->type , array( 'default', 'ordered' ) )
+		$result = ! empty( $group->options['refresh']['enabled'] ) && in_array( $group->type , [ 'default', 'ordered' ] )
 			&& empty( $group->ad_args['adblocker_active'] );
 		return $result;
 	}
@@ -353,10 +353,10 @@ class Advanced_Ads_Pro_Group_Refresh {
 		$group_interval = ! empty( $group->options['refresh']['interval'] ) ? absint( $group->options['refresh']['interval'] ) : 2000;
 
 		// An array with ad ids as keys, duration (in ms) as values.
-		$ad_intervals = apply_filters( 'advanced-ads-group-refresh-intervals', array() );
+		$ad_intervals = apply_filters( 'advanced-ads-group-refresh-intervals', [] );
 
 		$group_ad_ids = $group->get_ordered_ad_ids();
-		$group_ad_intervals = array();
+		$group_ad_intervals = [];
 		foreach( $group_ad_ids as $ad_id ) {
 			$group_ad_intervals[ $ad_id] = ! empty( $ad_intervals[ $ad_id] ) ? absint( $ad_intervals[ $ad_id] ) : $group_interval;
 		}

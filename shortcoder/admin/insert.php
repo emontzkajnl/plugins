@@ -17,9 +17,9 @@
         <span class="promo_link">
 <?php
     $promo_links = array(
-        array('super-rss-reader/?utm_source=wp-socializer&utm_medium=insert&utm_campaign=srr-pro', 'Super RSS Reader', 'super-rss-reader.png'),
-        array('ultimate-floating-widgets/?utm_source=wp-socializer&utm_medium=insert&utm_campaign=ufw-pro', 'Ultimate Floating Widgets', 'ultimate-floating-widgets.png'),
-        array('announcer/?utm_source=wp-socializer&utm_medium=sidebar&utm_campaign=announcer-pro', 'Announcer', 'announcer.png'),
+        array('super-rss-reader/?utm_source=shortcoder&utm_medium=insert&utm_campaign=srr-pro', 'Super RSS Reader', 'super-rss-reader.png'),
+        array('ultimate-floating-widgets/?utm_source=shortcoder&utm_medium=insert&utm_campaign=ufw-pro', 'Ultimate Floating Widgets', 'ultimate-floating-widgets.png'),
+        array('announcer/?utm_source=shortcoder&utm_medium=sidebar&utm_campaign=announcer-pro', 'Announcer', 'announcer.png'),
     );
     $promo_link_id = array_rand( $promo_links, 1 );
     $promo_link = $promo_links[$promo_link_id ];

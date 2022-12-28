@@ -835,7 +835,7 @@ class CFF_Global_Settings {
 		wp_enqueue_script(
 			'settings-app',
 			CFF_PLUGIN_URL.'admin/assets/js/settings.js',
-			null,
+			array( 'sb-vue' ),
 			CFFVER,
 			true
 		);

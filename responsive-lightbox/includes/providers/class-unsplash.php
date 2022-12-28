@@ -49,11 +49,13 @@ class Responsive_Lightbox_Remote_Library_Unsplash extends Responsive_Lightbox_Re
 	 */
 	public function render_field() {
 		echo '
-		<p><label><input id="rl_unsplash_active" class="rl-media-provider-expandable" type="checkbox" name="responsive_lightbox_remote_library[unsplash][active]" value="1" ' . checked( $this->rl->options['remote_library']['unsplash']['active'], true, false ) . ' />' . __( 'Enable Unsplash.', 'responsive-lightbox' ) . '</label></p>
+		<p><label><input id="rl_unsplash_active" class="rl-media-provider-expandable" type="checkbox" name="responsive_lightbox_remote_library[unsplash][active]" value="1" ' . checked( $this->rl->options['remote_library']['unsplash']['active'], true, false ) . ' />' . esc_html__( 'Enable Unsplash.', 'responsive-lightbox' ) . '</label></p>
 		<div class="rl-media-provider-options"' . ( $this->rl->options['remote_library']['unsplash']['active'] ? '' : ' style="display: none;"' ) . '>
-			<p><input id="rl_unsplash_api_key" class="large-text" placeholder="' . __( 'Access key', 'responsive-lightbox' ) . '" type="text" value="' . $this->rl->options['remote_library']['unsplash']['api_key'] . '" name="responsive_lightbox_remote_library[unsplash][api_key]"></p>
-			<p class="description">' . sprintf( __( 'Provide your <a href="%s">Unsplash API key</a>.', 'responsive-lightbox' ), 'https://unsplash.com/oauth/applications/new' ) . '</p>
+			<p><input id="rl_unsplash_api_key" class="large-text" placeholder="' . esc_attr__( 'Access key', 'responsive-lightbox' ) . '" type="text" value="' . esc_attr( $this->rl->options['remote_library']['unsplash']['api_key'] ) . '" name="responsive_lightbox_remote_library[unsplash][api_key]"></p>
+			<p class="description">' . sprintf( esc_html__( 'Provide your %s key.', 'responsive-lightbox' ), '<a href="https://unsplash.com/oauth/applications/new">Unsplash API</a>' ) . '</p>
 		</div>';
+		
+		
 	}
 
 	/**
@@ -70,7 +72,12 @@ class Responsive_Lightbox_Remote_Library_Unsplash extends Responsive_Lightbox_Re
 			$input['unsplash']['active'] = isset( $_POST['responsive_lightbox_remote_library']['unsplash']['active'] );
 
 			// api key
-			$input['unsplash']['api_key'] = preg_replace( '/[^0-9a-zA-Z\-.]/', '', $_POST['responsive_lightbox_remote_library']['unsplash']['api_key'] );
+			if ( isset( $_POST['responsive_lightbox_remote_library']['unsplash']['api_key'] ) )
+				$api_key = preg_replace( '/[^0-9a-zA-Z\-.]/', '', $_POST['responsive_lightbox_remote_library']['unsplash']['api_key'] );
+			else
+				$api_key = '';
+
+			$input['unsplash']['api_key'] = $api_key;
 		}
 
 		return $input;
@@ -195,22 +202,23 @@ class Responsive_Lightbox_Remote_Library_Unsplash extends Responsive_Lightbox_Re
 		$imagedata = [
 			'id'					=> 0,
 			'link'					=> '',
-			'source'				=> $result['links']['html'],
-			'title'					=> $result['id'],
+			'source'				=> esc_url_raw( $result['links']['html'] ),
+			'title'					=> sanitize_text_field( $result['id'] ),
 			'caption'				=> $this->get_attribution( 'Unsplash', $result['links']['html'], $result['user']['name'], $result['user']['links']['html'] ),
-			'description'			=> ! empty( $result['description'] ) ? $result['description'] : '',
+			'description'			=> ! empty( $result['description'] ) ? sanitize_text_field( $result['description'] ) : '',
 			'alt'					=> '',
-			'url'					=> $result['urls']['raw'],
+			'url'					=> esc_url_raw( $result['urls']['raw'] ),
 			'width'					=> $width,
 			'height'				=> $height,
 			'orientation'			=> $height > $width ? 'portrait' : 'landscape',
-			'thumbnail_url'			=> $result['urls']['small'],
+			'thumbnail_url'			=> esc_url_raw( $result['urls']['small'] ),
 			'thumbnail_width'		=> $thumbnail_width,
 			'thumbnail_height'		=> $thumbnail_height,
 			'thumbnail_orientation'	=> $thumbnail_height > $thumbnail_width ? 'portrait' : 'landscape',
 			'media_provider'		=> 'unsplash',
-			'filename'				=> basename( $result['urls']['raw'] ),
-			'dimensions'			=> $width . ' x ' . $height
+			'filename'				=> basename( sanitize_file_name( $result['urls']['raw'] ) ),
+			'dimensions'			=> $width . ' x ' . $height,
+			'type'					=> 'image'
 		];
 
 		// create thumbnail link

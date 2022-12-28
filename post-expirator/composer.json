@@ -25,9 +25,9 @@
   },
   "minimum-stability": "stable",
   "autoload": {
-    "files": [
-      "classes/DummyForAutoloadDetection.php"
-    ]
+    "psr-4": {
+      "PublishPressFuture\\": "./src"
+    }
   },
   "repositories": [
     {
@@ -42,7 +42,9 @@
   "require": {
     "php": ">=5.6.20",
     "publishpress/wordpress-reviews": "^1.1",
-    "publishpress/publishpress-instance-protection": "^1.0"
+    "publishpress/publishpress-instance-protection": "^1.0",
+    "psr/container": "1.0.0",
+    "ext-json": "*"
   },
   "require-dev": {
     "lucatume/wp-browser": "^3",
@@ -58,7 +60,6 @@
     "dealerdirect/phpcodesniffer-composer-installer": "*",
     "phpcompatibility/php-compatibility": "*",
     "wp-coding-standards/wpcs": "*",
-    "publishpress/publishpress-plugin-builder": "^1.4",
     "phpmd/phpmd": "^2.8",
     "squizlabs/php_codesniffer": "^3.5",
     "sebastian/phpcpd": "^5.0",
@@ -71,15 +72,12 @@
     "automattic/vipwpcs": "^2.3",
     "publishpress/publishpress-phpcs-standards": "dev-main",
     "spatie/ray": "*",
-    "spatie/wordpress-ray": "dev-patch-1",
-    "permafrost-dev/ray-cli": "^1.12"
+    "realcodelab/wordpress-ray": "dev-patch-1",
+    "permafrost-dev/ray-cli": "^1.12",
+    "ext-pdo": "*",
+    "ext-yaml": "*"
   },
   "scripts": {
-    "tests": "tests/bin/tests $1 $2",
-    "tests-php": "tests/bin/get-php-versions",
-    "build-dir": "builder/docker/scripts/build build-dir",
-    "build": "builder/docker/scripts/build build",
-    "build-clean": "builder/docker/scripts/build clean",
     "post-install-cmd": [
       "[ $COMPOSER_DEV_MODE -eq 0 ] || vendor/bin/phpcs --config-set installed_paths \"../../automattic/vipwpcs,../../phpcompatibility/php-compatibility,../../sirbrillig/phpcs-variable-analysis,../../wp-coding-standards/wpcs,../../publishpress/publishpress-phpcs-standards/standards/PublishPressStandards\""
     ],
@@ -88,11 +86,11 @@
     ]
   },
   "scripts-descriptions": {
-    "tests": "Manage tests on Docker a container. You need to pass the PHP version as the first argument. Check versions available running 'composer test-php'.",
     "tests-php": "Show the available PHP versions for running tests."
   },
   "extra": {
     "plugin-slug": "post-expirator",
-    "plugin-name": "publishpress-future"
+    "plugin-name": "publishpress-future",
+    "plugin-folder": "post-expirator"
   }
 }

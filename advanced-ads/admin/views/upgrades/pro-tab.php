@@ -5,6 +5,7 @@
 	<li><span class="dashicons dashicons-yes"></span><?php esc_html_e( 'Click Fraud Protection', 'advanced-ads' ); ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php esc_html_e( 'Lazy Loading', 'advanced-ads' ); ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php esc_html_e( 'support for cached sites', 'advanced-ads' ); ?></li>
+	<li><span class="dashicons dashicons-yes"></span><?php esc_html_e( 'Geo Targeting', 'advanced-ads' ); ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php esc_html_e( '11 more display and visitor conditions', 'advanced-ads' ); ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php esc_html_e( '6 more placements', 'advanced-ads' ); ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php esc_html_e( 'placement tests for ad optimization', 'advanced-ads' ); ?></li>

@@ -23,9 +23,8 @@ class Advanced_Ads_Ad_Type_Dummy extends Advanced_Ads_Ad_Type_Abstract{
 	 * Set basic attributes
 	 */
 	public function __construct() {
-		$this->title = __( 'Dummy', 'advanced-ads' );
+		$this->title       = __( 'Dummy', 'advanced-ads' );
 		$this->description = __( 'Uses a simple placeholder ad for quick testing.', 'advanced-ads' );
-
 	}
 
 	/**
@@ -61,7 +60,7 @@ class Advanced_Ads_Ad_Type_Dummy extends Advanced_Ads_Ad_Type_Abstract{
 	 */
 	public function prepare_output( $ad ) {
 		$style = '';
-		if ( isset( $ad->output['position'] ) && 'center' === $ad->output['position'] ) {
+		if ( isset( $ad->output['position'] ) && strpos( $ad->output['position'], 'center' ) === 0 ) {
 			$style .= 'display: inline-block;';
 		}
 		$style = '' !== $style ? 'style="' . $style . '"' : '';

@@ -3,8 +3,8 @@ Contributors: WebFactory
 Tags: links, external links, target blank, new window, new tab, target new, blank window, blank tab, tabs, SEO
 Requires at least: 4.0
 Requires PHP: 5.2
-Tested up to: 6.0
-Stable tag: 1.43
+Tested up to: 6.1
+Stable tag: 1.44
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,10 @@ Kristian Risager Larsen - <a href="http://kezze.dk">kezze.dk</a>
 
 
 == Changelog ==
+= 1.44 =
+* 2022-11-22
+* minor security fixes
+
 = 1.43 =
 * 2022-05-06
 * security fix reported by Automattic

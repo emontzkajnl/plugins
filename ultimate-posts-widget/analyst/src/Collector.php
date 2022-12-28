@@ -153,7 +153,7 @@ class Collector
 	 */
 	public function getServerIp()
 	{
-		return $_SERVER['SERVER_ADDR'];
+		return sanitize_text_field($_SERVER['SERVER_ADDR']);
 	}
 
 	/**

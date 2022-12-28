@@ -7,12 +7,12 @@
  */
 class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 
-	protected $options = array();
+	protected $options = [];
 
 	public function __construct() {
 
-		add_filter( 'advanced-ads-display-conditions', array( $this, 'display_conditions' ) );
-		add_filter( 'advanced-ads-visitor-conditions', array( $this, 'visitor_conditions' ) );
+		add_filter( 'advanced-ads-display-conditions', [ $this, 'display_conditions' ] );
+		add_filter( 'advanced-ads-visitor-conditions', [ $this, 'visitor_conditions' ] );
 	}
 
 	/**
@@ -25,12 +25,12 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 
 		if( defined( 'PMPRO_VERSION' ) ){
 			// language set with the WPML plugin
-			$conditions['pmp_membership_level'] = array(
+			$conditions['pmp_membership_level'] = [
 				'label' => __( 'PMP page level', 'advanced-ads-pro' ),
-				'description' => __( 'Display ads only on pages that need a specific membership level set with PaidMembershipsPro.', 'advanced-ads-pro' ),
-				'metabox' => array( 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'metabox_pmp_membership_level_display_condition' ), // callback to generate the metabox
-				'check' => array( 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'check_pmp_membership_level_display_condition' ) // callback for frontend check
-			);
+				'description' => __( 'Display ads only on pages that require a specific membership level set of PaidMembershipsPro.', 'advanced-ads-pro' ),
+				'metabox' => [ 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'metabox_pmp_membership_level_display_condition' ], // callback to generate the metabox
+				'check' => [ 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'check_pmp_membership_level_display_condition' ] // callback for frontend check
+			];
 		}
 
 
@@ -101,7 +101,7 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 		$name = Advanced_Ads_Display_Conditions::get_form_name_with_index( $form_name, $index );
 
 	    // options
-	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : array();
+	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : [];
 	    $operator = ( isset($options['operator']) && $options['operator'] === 'is_not' ) ? 'is_not' : 'is';
 
 	    // get values and select operator based on previous settings
@@ -118,7 +118,7 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 		$rand = md5( $form_name );
 	    if( is_array( $levels ) && count( $levels ) ){
 		foreach( $levels as $_level ) {
-		    $value = ( $values === array() || in_array($_level->id, $values) ) ? 1 : 0;
+		    $value = ( $values === [] || in_array($_level->id, $values) ) ? 1 : 0;
 			$field_id = 'advads-visitor-conditions-' . sanitize_title( $_level->id ) . $rand;
 			?><label class="button ui-button" for="<?php echo $field_id;
 				?>"><?php echo $_level->name; ?></label><input type="checkbox" id="<?php echo $field_id; ?>" name="<?php echo $name; ?>[value][]" <?php checked($value, 1); ?> value="<?php echo $_level->id; ?>"><?php
@@ -128,7 +128,12 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 	    }
 	    ?></div>
 
-	    <p class="description"><?php echo $type_options[ $options['type'] ]['description']; ?></p><?php
+		<p class="description">
+		<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>
+		<a href="https://wpadvancedads.com/paid-memberships-pro/?utm_source=advanced-ads&utm_medium=link?utm_campaign=condition-pmp-page-level" class="advads-manual-link" target="_blank">
+			<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+		</a>
+		</p><?php
 	}
 
 	/**
@@ -141,12 +146,12 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 
 		if( defined( 'PMPRO_VERSION' ) ){
 			// language set with the WPML plugin
-			$conditions['pmp_user_level'] = array(
+			$conditions['pmp_user_level'] = [
 				'label' => __( 'PMP user level', 'advanced-ads-pro' ),
 				'description' => __( 'Display ads only to users with a specific membership level set with PaidMembershipsPro.', 'advanced-ads-pro' ),
-				'metabox' => array( 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'metabox_pmp_membership_level_visitor_condition' ), // callback to generate the metabox
-				'check' => array( 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'check_pmp_membership_level_visitor_condition' ) // callback for frontend check
-			);
+				'metabox' => [ 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'metabox_pmp_membership_level_visitor_condition' ], // callback to generate the metabox
+				'check' => [ 'Advanced_Ads_Pro_Module_PaidMembershipsPro', 'check_pmp_membership_level_visitor_condition' ] // callback for frontend check
+			];
 		}
 
 		return $conditions;
@@ -215,7 +220,7 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 		$name = Advanced_Ads_Pro_Module_Advanced_Visitor_Conditions::get_form_name_with_index( $form_name, $index );
 
 	    // options
-	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : array();
+	    $values = ( isset($options['value']) && is_array($options['value']) ) ? $options['value'] : [];
 	    $operator = ( isset($options['operator']) && $options['operator'] === 'is_not' ) ? 'is_not' : 'is';
 
 	    // get values and select operator based on previous settings
@@ -232,7 +237,7 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 	    ?><div class="advads-conditions-single advads-buttonset"><?php
 	    if( is_array( $levels ) && count( $levels ) ){
 		foreach( $levels as $_level ) {
-		    $value = ( $values === array() || in_array($_level->id, $values) ) ? 1 : 0;
+		    $value = ( $values === [] || in_array($_level->id, $values) ) ? 1 : 0;
 			$field_id = 'advads-visitor-conditions-' . sanitize_title( $_level->id ) . $rand;
 			?><label class="button ui-button" for="<?php echo $field_id
 				?>"><?php echo $_level->name; ?></label><input type="checkbox" id="<?php echo $field_id; ?>" name="<?php echo $name; ?>[value][]" <?php checked($value, 1); ?> value="<?php echo $_level->id; ?>"><?php
@@ -242,7 +247,13 @@ class Advanced_Ads_Pro_Module_PaidMembershipsPro {
 	    }
 	    ?></div>
 
-	    <p class="description"><?php echo $type_options[ $options['type'] ]['description']; ?></p><?php
+		<p class="description">
+			<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>
+			<a href="https://wpadvancedads.com/paid-memberships-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-PMP-user-level" class="advads-manual-link" target="_blank">
+				<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+			</a>
+		</p>
+		<?php
 	}
 
 }

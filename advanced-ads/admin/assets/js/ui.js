@@ -115,8 +115,9 @@
 			var content = options.content.call( $target )
 			if ( content ) {
 				tooltip = $( '<div>' ).addClass( 'advads-tooltip' );
+				const parent = typeof options.parent === 'function' ? options.parent.call( this, $target ) : 'body';
 				$( '<div>' ).addClass( 'advads-tooltip-content' ).appendTo( tooltip );
-				tooltip.appendTo( 'body' );
+				tooltip.appendTo( parent );
 				tooltip.find( '.advads-tooltip-content' ).html( content );
 
 				position = $target.offset();

@@ -49,10 +49,10 @@ class Responsive_Lightbox_Remote_Library_Flickr extends Responsive_Lightbox_Remo
 	 */
 	public function render_field() {
 		echo '
-		<p><label><input id="rl_flickr_active" class="rl-media-provider-expandable" type="checkbox" name="responsive_lightbox_remote_library[flickr][active]" value="1" ' . checked( $this->rl->options['remote_library']['flickr']['active'], true, false ) . ' />' . __( 'Enable Flickr.', 'responsive-lightbox' ) . '</label></p>
+		<p><label><input id="rl_flickr_active" class="rl-media-provider-expandable" type="checkbox" name="responsive_lightbox_remote_library[flickr][active]" value="1" ' . checked( $this->rl->options['remote_library']['flickr']['active'], true, false ) . ' />' . esc_html__( 'Enable Flickr.', 'responsive-lightbox' ) . '</label></p>
 		<div class="rl-media-provider-options"' . ( $this->rl->options['remote_library']['flickr']['active'] ? '' : ' style="display: none;"' ) . '>
-			<p><input id="rl_flickr_api_key" class="large-text" placeholder="' . __( 'API key', 'responsive-lightbox' ) . '" type="text" value="' . $this->rl->options['remote_library']['flickr']['api_key'] . '" name="responsive_lightbox_remote_library[flickr][api_key]"></p>
-			<p class="description">' . sprintf( __( 'Provide your <a href="%s">Flickr API key</a>.', 'responsive-lightbox' ), 'https://www.flickr.com/services/apps/create/' ) . '</p>
+			<p><input id="rl_flickr_api_key" class="large-text" placeholder="' . esc_attr__( 'API key', 'responsive-lightbox' ) . '" type="text" value="' . esc_attr( $this->rl->options['remote_library']['flickr']['api_key'] ) . '" name="responsive_lightbox_remote_library[flickr][api_key]"></p>
+			<p class="description">' . sprintf( esc_html__( 'Provide your %s key.', 'responsive-lightbox' ), '<a href="https://www.flickr.com/services/apps/create/">Flickr API</a>' ) . '</p>
 		</div>';
 	}
 
@@ -70,7 +70,12 @@ class Responsive_Lightbox_Remote_Library_Flickr extends Responsive_Lightbox_Remo
 			$input['flickr']['active'] = isset( $_POST['responsive_lightbox_remote_library']['flickr']['active'] );
 
 			// api key
-			$input['flickr']['api_key'] = preg_replace( '/[^0-9a-zA-Z\-.]/', '', $_POST['responsive_lightbox_remote_library']['flickr']['api_key'] );
+			if ( isset( $_POST['responsive_lightbox_remote_library']['flickr']['api_key'] ) )
+				$api_key = preg_replace( '/[^0-9a-zA-Z\-.]/', '', $_POST['responsive_lightbox_remote_library']['flickr']['api_key'] );
+			else
+				$api_key = '';
+
+			$input['flickr']['api_key'] = $api_key;
 		}
 
 		return $input;
@@ -241,22 +246,23 @@ class Responsive_Lightbox_Remote_Library_Flickr extends Responsive_Lightbox_Remo
 		$imagedata = [
 			'id'					=> 0,
 			'link'					=> '',
-			'source'				=> $source,
-			'title'					=> $result['title'],
+			'source'				=> esc_url_raw( $source ),
+			'title'					=> sanitize_text_field( $result['title'] ),
 			'caption'				=> $this->get_attribution( 'Flickr', $source, $result['ownername'], 'https://www.flickr.com/photos/' . $result['owner'] ),
-			'description'			=> $result['description']['_content'],
-			'alt'					=> $result['tags'],
-			'url'					=> $large[0],
-			'width'					=> $large[1],
-			'height'				=> $large[2],
-			'orientation'			=> $large[2] > $large[1] ? 'portrait' : 'landscape',
-			'thumbnail_url'			=> $small[0],
-			'thumbnail_width'		=> $small[1],
-			'thumbnail_height'		=> $small[2],
-			'thumbnail_orientation'	=> $small[2] > $small[1] ? 'portrait' : 'landscape',
+			'description'			=> ! empty( $result['description']['_content'] ) ? sanitize_text_field( $result['description']['_content'] ) : '',
+			'alt'					=> sanitize_text_field( $result['tags'] ),
+			'url'					=> esc_url_raw( $large[0] ),
+			'width'					=> (int) $large[1],
+			'height'				=> (int) $large[2],
+			'orientation'			=> (int) $large[2] > (int) $large[1] ? 'portrait' : 'landscape',
+			'thumbnail_url'			=> esc_url_raw( $small[0] ),
+			'thumbnail_width'		=> (int) $small[1],
+			'thumbnail_height'		=> (int) $small[2],
+			'thumbnail_orientation'	=> (int) $small[2] > (int) $small[1] ? 'portrait' : 'landscape',
 			'media_provider'		=> 'flickr',
-			'filename'				=> basename( $large[0] ),
-			'dimensions'			=> $large[1] . ' x ' . $large[2]
+			'filename'				=> basename( sanitize_file_name( $large[0] ) ),
+			'dimensions'			=> (int) $large[1] . ' x ' . (int) $large[2],
+			'type'					=> 'image'
 		];
 
 		// create thumbnail link

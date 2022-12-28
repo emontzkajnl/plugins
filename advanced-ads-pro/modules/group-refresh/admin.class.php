@@ -2,7 +2,7 @@
 class Advanced_Ads_Pro_Group_Refresh_Admin {
 
 	public function __construct() {
-		add_action( 'advanced-ads-group-form-options', array( $this, 'add_group_refresh_options' ) );
+		add_action( 'advanced-ads-group-form-options', [ $this, 'add_group_refresh_options' ] );
 	}
 
 	/**

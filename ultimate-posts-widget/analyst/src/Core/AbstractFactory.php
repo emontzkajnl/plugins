@@ -12,7 +12,7 @@ abstract class AbstractFactory
 	 */
 	protected static function unserialize($raw)
 	{
-		$instance = @unserialize($raw);
+		$instance = maybe_unserialize($raw);
 
 		$isProperObject = is_object($instance) && $instance instanceof static;
 

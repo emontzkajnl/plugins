@@ -841,13 +841,13 @@ class CFF_Feed_Builder {
 	   		CFFVER
 	   	);
 
-	   	wp_enqueue_script(
-			'feed-builder-vue',
-			'https://cdn.jsdelivr.net/npm/vue@2.6.12',
-			null,
-			"2.6.12",
-			true
-		);
+	   wp_enqueue_script(
+		   'sb-vue',
+		   CFF_PLUGIN_URL . 'admin/assets/js/vue.min.js',
+		   null,
+		   '2.6.12',
+		   true
+	   );
 		wp_enqueue_script(
 			'feed-colorpicker-vue',
 			CFF_PLUGIN_URL.'admin/builder/assets/js/vue-color.min.js',

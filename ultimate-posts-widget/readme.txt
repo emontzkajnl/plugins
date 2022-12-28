@@ -5,14 +5,15 @@ License: MIT
 License URI: http://opensource.org/licenses/MIT
 Tags: widget, recent posts, custom post types, sticky posts, featured image, post thumbnail, excerpts, category, custom fields, list pages, widget query, microformats, customizable widget,  categories widget, tags widget, excerpt, widget templates, post author, post date, custom query, ultimate posts, comments, orderby, comment count
 Requires at least: 3.5
-Tested up to: 6.0
-Stable tag: 2.2.1
+Tested up to: 6.1
+Stable tag: 2.2.4
 
 The ultimate widget for displaying posts, custom post types or sticky posts with an array of options.
 
 == Description ==
 
-**Try it out on your free dummy site: Click here => [https://tastewp.com/plugins/ultimate-posts-widget](https://tastewp.com/plugins/ultimate-posts-widget)**
+**Try it out on your free dummy site: Click here => [https://tastewp.com/plugins/ultimate-posts-widget](https://demo.tastewp.com/ultimate-posts-widget).**
+(this trick works for all plugins in the WP repo - just replace "wordpress" with "tastewp" in the URL)
 
 UPDATE: Plugin ownership changed for this plugin. We are currently evaluating possible enhancements for it. Stay tuned! If you have any suggestions yourself, please let us know in the Support Forum.
 
@@ -125,6 +126,17 @@ This plugin uses the [timthumb library](http://www.binarymoon.co.uk/projects/tim
 5. Order options tab
 
 == Changelog ==
+
+= 2.2.4 =
+* Adjusted PHP compatibility
+
+= 2.2.3 =
+* Added try it out module
+
+= 2.2.2 =
+* Tested up to WordPress 6.1-RC5
+* Adjusted carrousel module
+* Updated try it out URL in readme to properly setup demo site
 
 = 2.2.1 =
 * Tested up to WordPress 6.0
@@ -303,10 +315,8 @@ This plugin uses the [timthumb library](http://www.binarymoon.co.uk/projects/tim
 * First release.
 
 == Upgrade Notice ==
-
-= 2.2.1 =
-* Tested up to WordPress 6.0
-* Tested with PHP 8.1
+= 2.2.4 =
+* Adjusted PHP compatibility
 
 == Installation ==
 

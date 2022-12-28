@@ -4,15 +4,18 @@ class Advanced_Ads_Pro_Module_Grids {
 
 	public function __construct() {
 		// add group type
-		add_filter( 'advanced-ads-group-types', array( $this, 'add_group_type' ) );
+		add_filter( 'advanced-ads-group-types', [ $this, 'add_group_type' ] );
 
-		add_filter( 'advanced-ads-group-output-ad-ids', array( $this, 'output_ad_ids' ), 10, 5 );
+		add_filter( 'advanced-ads-group-output-ad-ids', [ $this, 'output_ad_ids' ], 10, 5 );
+
+		// Adjust displayed ad count in group page.
+		add_filter( 'advanced-ads-group-displayed-ad-count', [ $this, 'adjust_ad_group_displayed_ad_count' ], 10, 2 );
 		// manipulate number of ads that should be displayed in a group
-		add_filter( 'advanced-ads-group-ad-count', array($this, 'adjust_ad_group_number'), 10, 2 );
+		add_filter( 'advanced-ads-group-ad-count', [$this, 'adjust_ad_group_number'], 10, 2 );
 		// frontend output
-		add_filter( 'advanced-ads-group-output-array', array( $this, 'output_markup'), 10, 2 );
+		add_filter( 'advanced-ads-group-output-array', [ $this, 'output_markup'], 10, 2 );
 		// add grid markup to passive cache-busting.
-		add_filter( 'advanced-ads-pro-passive-cb-group-data', array( $this, 'add_grid_markup_passive' ), 10, 3 );
+		add_filter( 'advanced-ads-pro-passive-cb-group-data', [ $this, 'add_grid_markup_passive' ], 10, 3 );
 
 	}
 
@@ -24,10 +27,10 @@ class Advanced_Ads_Pro_Module_Grids {
 	 */
 	public function add_group_type( array $group_types ){
 
-	    $group_types['grid'] = array(
+	    $group_types['grid'] = [
 		    'title' => __( 'Grid', 'advanced-ads-pro' ),
 		    'description' => __( 'Display multiple ads in a grid', 'advanced-ads-pro' ),
-	    );
+	    ];
 	    return $group_types;
 	}
 
@@ -75,6 +78,22 @@ class Advanced_Ads_Pro_Module_Grids {
 	    }
 
 	    return $ad_count;
+	}
+
+	/**
+	 * Adjust ad count in group page for grid groups
+	 *
+	 * @param int                $displayed_ad_count displayed ad count from the base plugin.
+	 * @param Advanced_Ads_Group $group              the current ad group.
+	 *
+	 * @return int
+	 */
+	public function adjust_ad_group_displayed_ad_count( $displayed_ad_count, $group ) {
+		if ( $group->type !== 'grid' ) {
+			return $displayed_ad_count;
+		}
+
+		return (int) $group->options['grid']['columns'] * (int) $group->options['grid']['rows'];
 	}
 
 	/**
@@ -167,15 +186,15 @@ class Advanced_Ads_Pro_Module_Grids {
 
 		$css .= "</style>";
 
-		$result = array(
+		$result = [
 			'before' => '<ul id="' . $grid_id . '">',
 			'after' => '</ul>' . $css,
-			'each' => array(
+			'each' => [
 				$columns => '<li class="last">%s</li>',
 				'all' => '<li>%s</li>',
-			),
+			],
 			'min_ads' => 2,
-		);
+		];
 
 		return $result;
 	}

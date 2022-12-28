@@ -12,12 +12,12 @@ printf(
 	wp_kses(
 		// translators: %s is a URL.
 		__( 'Enable advanced JavaScript functions (<a href="%s" target="_blank">here</a>). Some features and add-ons might override this setting if they need features from this file.', 'advanced-ads' ),
-		array(
-			'a' => array(
-				'href'   => array(),
-				'target' => array(),
-			),
-		)
+		[
+			'a' => [
+				'href'   => [],
+				'target' => [],
+			],
+		]
 	),
 	esc_url( ADVADS_URL . 'javascript-functions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings' )
 );

@@ -19,12 +19,12 @@ $is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type 
 		// translators: %s is a URL.
 
 			__( 'Ad not showing up? Take a look <a href="%s" target="_blank">here</a>', 'advanced-ads' ),
-			array(
-				'a' => array(
-					'href'   => array(),
-					'target' => array(),
-				),
-			)
+			[
+				'a' => [
+					'href'   => [],
+					'target' => [],
+				],
+			]
 		),
 		esc_url( ADVADS_URL ) . 'manual/ads-not-showing-up/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-not-visible'
 	);
@@ -44,11 +44,11 @@ $is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type 
 									wp_kses(
 										// translators: %s is a URL.
 										__( 'The AdSense verification and Auto ads code is already activated in the <a href="%s">AdSense settings</a>.', 'advanced-ads' ),
-										array(
-											'a' => array(
-												'href' => array(),
-											),
-										)
+										[
+											'a' => [
+												'href' => [],
+											],
+										]
 									),
 									admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' )
 								);

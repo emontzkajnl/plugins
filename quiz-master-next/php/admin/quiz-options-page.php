@@ -23,8 +23,10 @@ function qsm_generate_quiz_options() {
 	}
 	global $wpdb;
 	global $mlwQuizMasterNext;
-
+	//user role addon is active
+	apply_filters('qsm_user_role_permission_page',true);
 	// Check user capability
+	if ( ! class_exists('QSM_User_Role') ) {
 	$user = wp_get_current_user();
 	if ( in_array( 'author', (array) $user->roles, true ) ) {
 		$user_id        = sanitize_text_field( $user->ID );
@@ -33,6 +35,7 @@ function qsm_generate_quiz_options() {
 		if ( ! $quiz_author_id ) {
 			wp_die( 'You are not allow to edit this quiz, You need higher permission!' );
 		}
+	}
 	}
 
 	$quiz_name = '';
@@ -129,14 +132,14 @@ function qsm_generate_quiz_options() {
 					</a>
 					<div class="qsm-help-tab-dropdown-list">
 						<h3><?php esc_html_e( 'Useful Resources', 'quiz-master-next' ); ?></h3>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('contact-support', 'quiz-help-box', 'contact_us') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><img class="qsm-help-tab-icon" alt="" src="<?php echo esc_url( QSM_PLUGIN_URL.'assets/Support.svg' ) ?>"> <?php esc_html_e( 'Get support', 'quiz-master-next' ); ?></a>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('docs/about-quiz-survey-master', 'quiz-help-box', 'overview') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Overview', 'quiz-master-next' ); ?></a>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('docs/creating-quizzes-and-surveys', 'quiz-help-box', 'creating-quizzes') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Creating Quizzes', 'quiz-master-next' ); ?></a>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('docs/question-types', 'quiz-help-box', 'question-types') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Question Types', 'quiz-master-next' ); ?></a>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('docs/advanced-topics', 'quiz-help-box', 'advanced-topics') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Advanced Topics', 'quiz-master-next' ); ?></a>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('docs/qsm-themes', 'quiz-help-box', 'qsm-themes') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'QSM Themes', 'quiz-master-next' ); ?></a>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('docs/add-ons', 'quiz-help-box', 'add-ons') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Add-ons', 'quiz-master-next' ); ?></a>
-						<a href="<?php echo esc_url( qsm_get_plugin_link('docs', 'quiz-help-box', 'all-docs') );?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'All Docs', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'contact-support', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_support' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><img class="qsm-help-tab-icon" alt="" src="<?php echo esc_url( QSM_PLUGIN_URL . 'assets/Support.svg' ) ?>"> <?php esc_html_e( 'Get support', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'docs/about-quiz-survey-master', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_overview' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Overview', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'docs/creating-quizzes-and-surveys', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_create_quiz' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Creating Quizzes', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'docs/question-types', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_que_type' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Question Types', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'docs/advanced-topics', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_adv_topic' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Advanced Topics', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'docs/qsm-themes', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_themes' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'QSM Themes', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'docs/add-ons', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_addons' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Add-ons', 'quiz-master-next' ); ?></a>
+						<a href="<?php echo esc_url( qsm_get_plugin_link( 'docs', 'quiz_editor', 'help_box', 'quizsurvey-helpbox_all_doc' ) ); ?>" rel="noopener" target="_black" class="qsm-help-tab-item "><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'All Docs', 'quiz-master-next' ); ?></a>
 					</div>
 				</div>
 			</div>
@@ -147,6 +150,23 @@ function qsm_generate_quiz_options() {
 			<div class="qsm-alerts">
 				<?php $mlwQuizMasterNext->alertManager->showAlerts(); ?>
 			</div>
+			<?php $user_id = get_current_user_id();
+			if ( isset( $_POST['nonce_validation_notification'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce_validation_notification'] ) ), 'nonce_validation_notification' ) ) {
+				update_user_meta( $user_id, 'nonce_validation_notification' ,true);
+			}
+				if ( ! get_user_meta( $user_id, 'nonce_validation_notification' ) ) { ?>
+				<div class="qsm-nonce-validation">
+					<img src="<?php echo esc_url( QSM_PLUGIN_URL . 'php/images/info-yellow.png' ); ?>" alt="information">
+					<div class="qsm-nonce-text">
+						<span> <strong><?php  echo esc_html__( "Your quiz has been created, you can now start adding questions.", 'quiz-master-next' ) ?></strong></span>
+						<br><span> <?php  echo esc_html__( "Please note: If you are using any cache plugins, please remember to exclude your quiz pages from cache to prevent", 'quiz-master-next' ) ?><a><?php  echo esc_html__( " Nonce validation issue.", 'quiz-master-next' ) ?></a></span>
+					</div>
+					<form method="POST" action="">
+						<?php wp_nonce_field( 'nonce_validation_notification', 'nonce_validation_notification' ); ?>
+						<button type="submit"  style="float:right;"   id="nonce_validation_notification" class="button-secondary"><?php echo esc_html__( 'Thanks I undertsand!', 'quiz-master-next' ) ?></a>
+					</form>
+					</div>
+					<?php  } ?>
 			<?php if ( $quiz_id ) {
 				$active_class_aadon = true;
 				?>
@@ -274,18 +294,34 @@ function qsm_generate_quiz_options() {
 	add_action('admin_footer', 'qsm_quiz_options_notice_template');?>
 	<!--Div for the upgrade popup of advanced question type -->
 	<?php
+	$style_tags = array();
 		if ( ! class_exists('QSM_Advance_Question') ) {
 			$qsm_pop_up_arguments = array(
-				"popup_id"          => 'modal-advanced-question-type',
-				"popup_title"       => __('Advanced Question Types', 'quiz-master-next'),
-				"popup_description" => __('Create better quizzes and surveys with the Advanced Questions addon. Incorporate precise question types like Matching Pairs, Radio Grid, and Checkbox Grid questions in your quizzes and surveys.', 'quiz-master-next'),
-				"popup_doc_link"    => "question-types/",
-				"popup_chart_image" => plugins_url('', dirname(__FILE__)) . '/images/advanced_question_type.png',
-				"popup_information" => __('QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today OR you can buy Advanced Question Addon separately.', 'quiz-master-next'),
-				"popup_addon_name"  => __('Buy Advanced Questions Addon', 'quiz-master-next'),
-				"popup_addon_link"  => qsm_get_plugin_link( 'downloads/advanced-question-types', 'quiz-upgrade-box' ),
+				"id"           => 'modal-advanced-question-type',
+				"title"        => __('Advanced Question Types', 'quiz-master-next'),
+				"description"  => __('Create better quizzes and surveys with the Advanced Questions addon. Incorporate precise question types like Matching Pairs, Radio Grid, and Checkbox Grid questions in your quizzes and surveys.', 'quiz-master-next'),
+				"chart_image"  => plugins_url('', dirname(__FILE__)) . '/images/advanced_question_type.png',
+				"information"  => __('QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today OR you can buy Advanced Question Addon separately.', 'quiz-master-next'),
+				"buy_btn_text" => __('Buy Advanced Questions Addon', 'quiz-master-next'),
+				"doc_link"     => qsm_get_plugin_link( 'docs/question-types', 'qsm_list', 'advance-question_type', 'advance-question-upsell_read_documentation', 'qsm_plugin_upsell' ),
+				"upgrade_link" => qsm_get_plugin_link( 'pricing', 'qsm_list', 'advance-question_type', 'advance-question-upsell_upgrade', 'qsm_plugin_upsell' ),
+				"addon_link"   => qsm_get_plugin_link( 'downloads/advanced-question-types', 'qsm_list', 'advance-question_type', 'advance-question-upsell_buy_addon', 'qsm_plugin_upsell' ),
 			);
 			qsm_admin_upgrade_popup($qsm_pop_up_arguments);
+			$style_tags[] = '.question[data-question-type="15"]';
+			$style_tags[] = '.question[data-question-type="16"]';
+			$style_tags[] = '.question[data-question-type="17"]';
+		}
+		if ( ! class_exists('QSM_Flashcards') ) {
+			$style_tags[] = '.question[data-question-type="18"]';
+		}
+		if ( ! empty($style_tags) ) {
+			?>
+			<style type="text/css">
+				<?php echo implode( ', ', $style_tags ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped?>
+				{border-color: red;}
+				</style>
+			<?php
 		}
 	?>
 <?php

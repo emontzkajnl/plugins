@@ -5,7 +5,7 @@
  * @package  FWP
  * @category WordPress Library
  * @version  1.0.0
- 
+
  * @link     https://www.webfactoryltd.com/
  */
 abstract class FWP_Plugin_Base_1x0x0 extends WPRun_Base_1x0x0
@@ -61,11 +61,11 @@ abstract class FWP_Plugin_Base_1x0x0 extends WPRun_Base_1x0x0
       update_option( 'wpel-notice-dismissed-rate', true );
 
       if ( !empty( $_GET['redirect'] ) ) {
-        wp_safe_redirect( $_GET['redirect'] );
+        wp_safe_redirect( sanitize_url($_GET['redirect']) );
       } else {
         wp_safe_redirect( admin_url() );
       }
-  
+
       exit;
     }
 
@@ -103,5 +103,3 @@ abstract class FWP_Plugin_Base_1x0x0 extends WPRun_Base_1x0x0
     }
 
 }
-
-/*?>*/

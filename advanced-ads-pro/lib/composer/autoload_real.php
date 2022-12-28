@@ -27,7 +27,7 @@ class ComposerAutoloaderInit_advanced_ads_pro
         spl_autoload_unregister(array('ComposerAutoloaderInit_advanced_ads_pro', 'loadClassLoader'));
 
         require __DIR__ . '/autoload_static.php';
-        \AdvancedAdsPro\Composer\Autoload\ComposerStaticInit_advanced_ads_pro::getInitializer($loader)();
+        call_user_func(\AdvancedAdsPro\Composer\Autoload\ComposerStaticInit_advanced_ads_pro::getInitializer($loader));
 
         $loader->setClassMapAuthoritative(true);
         $loader->register(true);

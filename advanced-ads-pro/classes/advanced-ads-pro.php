@@ -26,6 +26,13 @@ class Advanced_Ads_Pro {
 	const OPTION_KEY = 'advanced-ads-pro';
 
 	/**
+	 * Name of the frontend script.
+	 *
+	 * @var string
+	 */
+	const FRONTEND_SCRIPT_HANDLE = 'advanced-ads-pro/front';
+
+	/**
 	 * Instance of Advanced_Ads_Pro
 	 *
 	 * @var Advanced_Ads_Pro
@@ -37,7 +44,7 @@ class Advanced_Ads_Pro {
 	 */
 	private function __construct() {
 		// Setup plugin once base plugin that is initialized at priority `20` is available.
-		add_action( 'plugins_loaded', array( $this, 'init' ), 30 );
+		add_action( 'plugins_loaded', [ $this, 'init' ], 30 );
 	}
 
 	/**
@@ -59,7 +66,7 @@ class Advanced_Ads_Pro {
 	public function init() {
 
 		if ( ! class_exists( 'Advanced_Ads', false ) ) {
-			add_action( 'admin_notices', array( $this, 'missing_plugin_notice' ) );
+			add_action( 'admin_notices', [ $this, 'missing_plugin_notice' ] );
 			return;
 		}
 
@@ -68,23 +75,23 @@ class Advanced_Ads_Pro {
 
 		// Load config and modules.
 		$options = $this->get_options();
-		Advanced_Ads_ModuleLoader::loadModules( AAP_PATH . '/modules/', isset( $options['modules'] ) ? $options['modules'] : array() );
+		Advanced_Ads_ModuleLoader::loadModules( AAP_PATH . '/modules/', isset( $options['modules'] ) ? $options['modules'] : [] );
 
 		// Load admin on demand.
 		if ( is_admin() ) {
 			new Advanced_Ads_Pro_Admin();
 			// Run after the internal Advanced Ads version has been updated by the `Advanced_Ads_Upgrades`, because.
 			// The `Advanced_Ads_Admin_Notices` can update this version, and the `Advanced_Ads_Upgrades` will not be called.
-			add_action( 'init', array( $this, 'maybe_update_capabilities' ) );
+			add_action( 'init', [ $this, 'maybe_update_capabilities' ] );
 
-			add_filter( 'advanced-ads-notices', array( $this, 'add_notices' ) );
-			add_filter( 'advanced-ads-add-ons', array( $this, 'register_auto_updater' ), 10 );
+			add_filter( 'advanced-ads-notices', [ $this, 'add_notices' ] );
+			add_filter( 'advanced-ads-add-ons', [ $this, 'register_auto_updater' ], 10 );
 		} else {
 			// Force advanced js file to be attached.
 			add_filter( 'advanced-ads-activate-advanced-js', '__return_true' );
 			// Check autoptimize.
 			if ( method_exists( 'Advanced_Ads_Checks', 'requires_noptimize_wrapping' ) && Advanced_Ads_Checks::requires_noptimize_wrapping() && ! isset( $options['autoptimize-support-disabled'] ) ) {
-				add_filter( 'advanced-ads-output-inside-wrapper', array( $this, 'autoptimize_support' ) );
+				add_filter( 'advanced-ads-output-inside-wrapper', [ $this, 'autoptimize_support' ] );
 			}
 		}
 		new Advanced_Ads_Pro_Compatibility();
@@ -93,17 +100,17 @@ class Advanced_Ads_Pro {
 		remove_shortcode( 'the_ad' );
 		remove_shortcode( 'the_ad_group' );
 		remove_shortcode( 'the_ad_placement' );
-		add_shortcode( 'the_ad', array( $this, 'shortcode_display_ad' ) );
-		add_shortcode( 'the_ad_group', array( $this, 'shortcode_display_ad_group' ) );
-		add_shortcode( 'the_ad_placement', array( $this, 'shortcode_display_ad_placement' ) );
+		add_shortcode( 'the_ad', [ $this, 'shortcode_display_ad' ] );
+		add_shortcode( 'the_ad_group', [ $this, 'shortcode_display_ad_group' ] );
+		add_shortcode( 'the_ad_placement', [ $this, 'shortcode_display_ad_placement' ] );
 
-		add_filter( 'advanced-ads-can-display', array( $this, 'can_display_by_display_limit' ), 10, 3 );
-		add_filter( 'advanced-ads-ad-output', array( $this, 'add_custom_code' ), 30, 2 );
-		add_filter( 'advanced-ads-output-final', array( $this, 'encode_ad_custom_code' ), 20, 2 );
-		add_filter( 'advanced-ads-placement-content-offsets', array( $this, 'placement_content_offsets' ), 10, 6 );
+		add_filter( 'advanced-ads-can-display', [ $this, 'can_display_by_display_limit' ], 10, 3 );
+		add_filter( 'advanced-ads-ad-output', [ $this, 'add_custom_code' ], 30, 2 );
+		add_filter( 'advanced-ads-output-final', [ $this, 'encode_ad_custom_code' ], 20, 2 );
+		add_filter( 'advanced-ads-placement-content-offsets', [ $this, 'placement_content_offsets' ], 10, 6 );
 
-		add_action( 'wp_head', array( $this, 'wp_head' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
+		add_action( 'wp_head', [ $this, 'wp_head' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'wp_enqueue_scripts' ] );
 	}
 
 	/**
@@ -117,9 +124,9 @@ class Advanced_Ads_Pro {
 		}
 
 		wp_enqueue_script(
-			'advanced-ads-pro/front',
+			self::FRONTEND_SCRIPT_HANDLE,
 			sprintf( '%sassets/js/advanced-ads-pro%s.js', AAP_BASE_URL, defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min' ),
-			array( 'jquery', ADVADS_SLUG . '-advanced-js' ),
+			[ 'jquery', ADVADS_SLUG . '-advanced-js' ],
 			AAP_VERSION,
 			true
 		);
@@ -233,7 +240,7 @@ class Advanced_Ads_Pro {
 		add_role(
 			'advanced_ads_admin',
 			__( 'Ad Admin', 'advanced-ads-pro' ),
-			array(
+			[
 				'read'                           => true,
 				'advanced_ads_manage_options'    => true,
 				'advanced_ads_see_interface'     => true,
@@ -242,12 +249,12 @@ class Advanced_Ads_Pro {
 				'advanced_ads_place_ads'         => true,
 				'upload_files'                   => true,
 				'unfiltered_html'                => true,
-			)
+			]
 		);
 		add_role(
 			'advanced_ads_manager',
 			__( 'Ad Manager', 'advanced-ads-pro' ),
-			array(
+			[
 				'read'                           => true,
 				'advanced_ads_see_interface'     => true,
 				'advanced_ads_edit_ads'          => true,
@@ -255,15 +262,15 @@ class Advanced_Ads_Pro {
 				'advanced_ads_place_ads'         => true,
 				'upload_files'                   => true,
 				'unfiltered_html'                => true,
-			)
+			]
 		);
 		add_role(
 			'advanced_ads_user',
 			__( 'Ad User', 'advanced-ads-pro' ),
-			array(
+			[
 				'read'                   => true,
 				'advanced_ads_place_ads' => true,
-			)
+			]
 		);
 
 		self::enable_placement_test_emails();
@@ -291,13 +298,13 @@ class Advanced_Ads_Pro {
 			wp_kses(
 				// Translators: %s is the plugin’s name.
 				__( '<strong>%s</strong> requires the <strong><a href="https://wpadvancedads.com" target="_blank">Advanced Ads</a></strong> plugin to be installed and activated on your site.', 'advanced-ads-pro' ),
-				array(
-					'strong' => array(),
-					'a'      => array(
-						'href'   => array(),
-						'target' => array(),
-					),
-				)
+				[
+					'strong' => [],
+					'a'      => [
+						'href'   => [],
+						'target' => [],
+					],
+				]
 			),
 			'Advanced Ads Pro'
 		) . '&nbsp;';
@@ -317,10 +324,10 @@ class Advanced_Ads_Pro {
 	 */
 	public function get_options() {
 		if ( ! isset( $this->options ) ) {
-			$default_options = array();
+			$default_options = [];
 			$this->options   = get_option( self::OPTION_KEY, $default_options );
 			// Handle previous option key.
-			if ( $this->options === array() ) {
+			if ( $this->options === [] ) {
 				$old_options = get_option( self::OPTION_KEY . '-modules', false );
 				if ( $old_options ) {
 					// Update old options.
@@ -375,14 +382,14 @@ class Advanced_Ads_Pro {
 	 * @param array $plugins plugin that are already registered for auto updates.
 	 * @return array $plugins
 	 */
-	public function register_auto_updater( array $plugins = array() ) {
+	public function register_auto_updater( array $plugins = [] ) {
 
-		$plugins['pro'] = array(
+		$plugins['pro'] = [
 			'name'         => AAP_PLUGIN_NAME,
 			'version'      => AAP_VERSION,
 			'path'         => AAP_BASE_PATH . 'advanced-ads-pro.php',
 			'options_slug' => self::OPTION_KEY,
-		);
+		];
 		return $plugins;
 	}
 
@@ -404,16 +411,16 @@ class Advanced_Ads_Pro {
 	 */
 	public function internal_options( $set_defaults = true ) {
 		if ( ! $set_defaults ) {
-			return get_option( AAP_PLUGIN_NAME . '-internal', array() );
+			return get_option( AAP_PLUGIN_NAME . '-internal', [] );
 		}
 
 		if ( ! isset( $this->internal_options ) ) {
-			$defaults               = array(
+			$defaults               = [
 				'version' => AAP_VERSION,
-			);
-			$this->internal_options = get_option( AAP_PLUGIN_NAME . '-internal', array() );
+			];
+			$this->internal_options = get_option( AAP_PLUGIN_NAME . '-internal', [] );
 			// Save defaults.
-			if ( $this->internal_options === array() ) {
+			if ( $this->internal_options === [] ) {
 				$this->internal_options = $defaults;
 				$this->update_internal_options( $this->internal_options );
 			}
@@ -438,15 +445,15 @@ class Advanced_Ads_Pro {
 	public function maybe_update_capabilities() {
 		$internal_options = $this->internal_options( false );
 		if ( ! isset( $internal_options['version'] ) ) {
-			$roles = array( 'advanced_ads_admin', 'advanced_ads_manager' );
+			$roles = [ 'advanced_ads_admin', 'advanced_ads_manager' ];
 			// Add notice if there is at least 1 user with that role.
 			foreach ( $roles as $role ) {
 				$users_query = new WP_User_Query(
-					array(
+					[
 						'fields' => 'ID',
 						'number' => 1,
 						'role'   => $role,
-					)
+					]
 				);
 				if ( count( $users_query->get_results() ) ) {
 					Advanced_Ads_Admin_Notices::get_instance()->add_to_queue( 'pro_changed_caps' );
@@ -478,11 +485,11 @@ class Advanced_Ads_Pro {
 	 * @return mixed
 	 */
 	public function add_notices( $notices ) {
-		$notices['pro_changed_caps'] = array(
+		$notices['pro_changed_caps'] = [
 			'type'   => 'update',
 			'text'   => __( 'Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities', 'advanced-ads-pro' ),
 			'global' => true,
-		);
+		];
 		return $notices;
 	}
 
@@ -535,13 +542,13 @@ class Advanced_Ads_Pro {
 				// Skip if have only one paragraph since `wp_rand( 0, 0)` generates large number.
 				if ( $max > 0 ) {
 					$rand    = wp_rand( 0, $max );
-					$offsets = array( $rand );
+					$offsets = [ $rand ];
 				}
 			}
 
 			if ( 'post_content_middle' === $placement_opts['placement']['type'] ) {
 				$middle  = absint( ( $options['paragraph_count'] - 1 ) / 2 );
-				$offsets = array( $middle );
+				$offsets = [ $middle ];
 			}
 		}
 
@@ -550,7 +557,7 @@ class Advanced_Ads_Pro {
 			&& isset( $options['paragraph_id'] )
 			&& isset( $options['paragraph_select_from_bottom'] ) ) {
 
-			$offsets = array();
+			$offsets = [];
 			for ( $i = $options['paragraph_id'] - 1; $i < $options['paragraph_count']; $i++ ) {
 				// Select every X number.
 				if ( ( $i + 1 ) % $options['paragraph_id'] === 0 ) {
@@ -701,7 +708,7 @@ class Advanced_Ads_Pro {
 			}
 
 			// Use the public available function here.
-			$result = call_user_func( array( Advanced_Ads_Plugin::get_instance(), $function_name ), $atts );
+			$result = call_user_func( [ Advanced_Ads_Plugin::get_instance(), $function_name ], $atts );
 
 			if ( method_exists( Advanced_Ads::get_instance(), 'restore_current_blog' ) ) {
 				Advanced_Ads::get_instance()->restore_current_blog();
@@ -710,7 +717,7 @@ class Advanced_Ads_Pro {
 		}
 
 		// Use the public available function here.
-		return call_user_func( array( Advanced_Ads_Plugin::get_instance(), $function_name ), $atts );
+		return call_user_func( [ Advanced_Ads_Plugin::get_instance(), $function_name ], $atts );
 	}
 
 }

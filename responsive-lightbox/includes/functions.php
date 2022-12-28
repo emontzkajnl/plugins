@@ -15,15 +15,15 @@ if ( ! defined( 'ABSPATH' ) )
  * @param array $args Shortcode arguments
  * @return void
  */
-function rl_gallery( $args = array() ) {
-	$defaults = array(
+function rl_gallery( $args = [] ) {
+	$defaults = [
 		'id' => 0
-	);
+	];
 
 	// merge defaults with arguments
 	$args = array_merge( $defaults, $args );
 
-	// parse ID
+	// parse id
 	$args['id'] = (int) $args['id'];
 
 	// is it gallery?
@@ -37,7 +37,7 @@ function rl_gallery( $args = array() ) {
  * Get gallery shortcode images - wrapper.
  *
  * @param array $args Gallery arguments
- * @return array Gallery images
+ * @return array
  */
 function rl_get_gallery_shortcode_images( $args ) {
 	return Responsive_Lightbox()->frontend->get_gallery_shortcode_images( $args );
@@ -47,7 +47,7 @@ function rl_get_gallery_shortcode_images( $args ) {
  * Get gallery fields - wrapper.
  *
  * @param string $type Gallery type
- * @return array Gallery fields
+ * @return array
  */
 function rl_get_gallery_fields( $type ) {
 	return Responsive_Lightbox()->frontend->get_gallery_fields( $type );
@@ -59,7 +59,7 @@ function rl_get_gallery_fields( $type ) {
  * @param array $fields Gallery fields
  * @param array $shortcode_atts Gallery shortcode attributes
  * @param bool $gallery Whether is it rl_gallery shortcode
- * @return array All combined field attributes
+ * @return array
  */
 function rl_get_gallery_fields_atts( $fields, $shortcode_atts, $gallery = true ) {
 	return Responsive_Lightbox()->frontend->get_gallery_fields_atts( $fields, $shortcode_atts, $gallery );
@@ -70,7 +70,7 @@ function rl_get_gallery_fields_atts( $fields, $shortcode_atts, $gallery = true )
  *
  * @param int $gallery_id Gallery ID
  * @param array $args Gellery args
- * @return array Gallery images
+ * @return array
  */
 function rl_get_gallery_images( $gallery_id, $args ) {
 	if ( did_action( 'init' ) )
@@ -90,9 +90,9 @@ function rl_add_lightbox( $content ) {
 }
 
 /**
- * Get attachment id by url.
+ * Get attachment id by URL.
  * 
- * @param string $url
+ * @param string $url Image URL
  * @return int
  */
 function rl_get_attachment_id_by_url( $url ) {
@@ -100,10 +100,10 @@ function rl_get_attachment_id_by_url( $url ) {
 }
 
 /**
- * Get image size by url.
+ * Get image size by URL.
  *
- * @param string $url Image url
- * @return string
+ * @param string $url Image URL
+ * @return array
  */
 function rl_get_image_size_by_url( $url ) {
 	return Responsive_Lightbox()->frontend->get_image_size_by_url( $url );

@@ -15,7 +15,7 @@ if (!function_exists('analyst_init')) {
 		try {
 			analyst_resolve_sdk($options['base-dir']);
 		} catch (Exception $exception) {
-			error_log('[ANALYST] Cannot resolve any supported SDK');
+			// error_log('[ANALYST] Cannot resolve any supported SDK');
 			return;
 		}
 
@@ -30,7 +30,7 @@ if (!function_exists('analyst_init')) {
 
 			$analyst->registerAccount(new Account\Account($options['client-id'], $options['client-secret'], $options['base-dir']));
 		} catch (Exception $e) {
-			error_log('Analyst SDK receive an error: [' . $e->getMessage() . '] Please contact our support at support@analyst.com');
+			// error_log('Analyst SDK receive an error: [' . $e->getMessage() . '] Please contact our support at support@analyst.com');
 		}
 	}
 }

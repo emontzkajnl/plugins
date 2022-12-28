@@ -10,8 +10,9 @@ new Responsive_Lightbox_Multilang();
  * @class Responsive_Lightbox_Multilang
  */
 class Responsive_Lightbox_Multilang {
+
 	public $multilang = false;
-	public $languages = array();
+	public $languages = [];
 	public $default_lang = '';
 	public $current_lang = '';
 	public $active_plugin = '';
@@ -47,7 +48,7 @@ class Responsive_Lightbox_Multilang {
 			$this->default_lang = pll_default_language();
 
 			// filters
-			add_filter( 'rl_count_attachments', array( $this, 'count_attachments' ), 9 );
+			add_filter( 'rl_count_attachments', [ $this, 'count_attachments' ], 9 );
 		// WPML support
 		} elseif ( is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' ) && class_exists( 'SitePress' ) ) {
 			$this->multilang = true;
@@ -66,22 +67,23 @@ class Responsive_Lightbox_Multilang {
 			// get default language
 			$this->default_lang = $sitepress->get_default_language();
 
-			// actions
-			add_action( 'admin_init', array( $this, 'hide_thumbnail' ) );
+			// if galleries enabled
+			if ( Responsive_Lightbox()->options['builder']['gallery_builder'] )
+				add_action( 'admin_init', [ $this, 'hide_thumbnail' ] );
 		}
 
 		// multilang?
 		if ( $this->multilang ) {
 			// ations
-			add_action( 'admin_init', array( $this, 'media_url_redirect' ) );
+			add_action( 'admin_init', [ $this, 'media_url_redirect' ] );
 
 			// filters
-			add_filter( 'setup_theme', array( $this, 'get_current_admin_language' ), 11 );
-			add_filter( 'rl_root_folder_query_args', array( $this, 'root_folder_query_args' ) );
-			add_filter( 'rl_gallery_query_args', array( $this, 'gallery_featured_query_args' ) );
-			add_filter( 'rl_folders_query_args', array( $this, 'gallery_folders_query_args' ) );
-			add_filter( 'rl_get_gallery_images_attachments', array( $this, 'update_gallery_images_attachments' ) );
-			add_filter( 'rl_folders_media_folder_url', array( $this, 'media_folder_url' ) );
+			add_filter( 'setup_theme', [ $this, 'get_current_admin_language' ], 11 );
+			add_filter( 'rl_root_folder_query_args', [ $this, 'root_folder_query_args' ] );
+			add_filter( 'rl_gallery_query_args', [ $this, 'gallery_featured_query_args' ] );
+			add_filter( 'rl_folders_query_args', [ $this, 'gallery_folders_query_args' ] );
+			add_filter( 'rl_get_gallery_images_attachments', [ $this, 'update_gallery_images_attachments' ] );
+			add_filter( 'rl_folders_media_folder_url', [ $this, 'media_folder_url' ] );
 		}
 	}
 
@@ -116,7 +118,7 @@ class Responsive_Lightbox_Multilang {
 	 * @return array
 	 */
 	public function update_gallery_images_attachments( $attachments ) {
-		$new_attachments = array();
+		$new_attachments = [];
 
 		foreach ( $attachments as $attachment_id ) {
 			if ( $this->active_plugin === 'polylang' )
@@ -153,7 +155,7 @@ class Responsive_Lightbox_Multilang {
 		// active language?
 		if ( $this->current_lang !== '' ) {
 			// remove internal WP counter to avoid unwanted query
-			remove_filter( 'rl_count_attachments', array( Responsive_Lightbox()->folders, 'count_attachments' ), 10 );
+			remove_filter( 'rl_count_attachments', [ Responsive_Lightbox()->folders, 'count_attachments' ], 10 );
 		// if not let internal WP counter do the job
 		} else
 			return $number;
@@ -162,14 +164,14 @@ class Responsive_Lightbox_Multilang {
 		$taxonomies = PLL()->model->get_filtered_taxonomies_query_vars();
 
 		// prepare defaults
-		$defaults = array(
+		$defaults = [
 			'author'		=> '',
 			'author_name'	=> '',
 			'monthnum'		=> '',
 			'day'			=> '',
 			'year'			=> '',
 			'm'				=> ''
-		);
+		];
 
 		// add additional taxonomies
 		foreach ( $taxonomies as $tax ) {

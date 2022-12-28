@@ -7,12 +7,21 @@
 class Advanced_Ads_Pro_Module_BuddyPress {
 
 	/**
+	 * Member Types xprofile field type.
+	 */
+	const FIELD_MEMBERTYPES = 'membertypes';
+	/**
+	 * Textbox xprofile field type.
+	 */
+	const FIELD_TEXTBOX = 'textbox';
+
+	/**
 	 * Advanced_Ads_Pro_Module_BuddyPress constructor.
 	 */
 	public function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'wp_plugins_loaded_ad_actions' ), 31 );
-		add_filter( 'advanced-ads-visitor-conditions', array( $this, 'visitor_conditions' ) );
-		add_filter( 'advanced-ads-display-conditions', array( $this, 'display_conditions' ) );
+		add_action( 'plugins_loaded', [ $this, 'wp_plugins_loaded_ad_actions' ], 31 );
+		add_filter( 'advanced-ads-visitor-conditions', [ $this, 'visitor_conditions' ] );
+		add_filter( 'advanced-ads-display-conditions', [ $this, 'display_conditions' ] );
 	}
 
 	/**
@@ -32,13 +41,13 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 		// load BuddyPress hooks
 
 		// get placements
-		$placements = get_option( 'advads-ads-placements', array() );
+		$placements = get_option( 'advads-ads-placements', [] );
 
 		if ( is_array( $placements ) ) {
 			foreach ( $placements as $_placement_id => $_placement ) {
 				if ( isset( $_placement['type'] ) && 'buddypress' === $_placement['type'] ) {
 					$hook = self::get_hook_from_placement_options( $_placement );
-					add_action( $hook, array( $this, 'execute_hook' ) );
+					add_action( $hook, [ $this, 'execute_hook' ] );
 				}
 			}
 		}
@@ -49,7 +58,7 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 	 */
 	public function execute_hook() {
 		// get placements
-		$placements = get_option( 'advads-ads-placements', array() );
+		$placements = get_option( 'advads-ads-placements', [] );
 		// look for the current hook in the placements
 		$hook = current_filter();
 		if ( is_array( $placements ) ) {
@@ -92,22 +101,22 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 			return $conditions;
 		}
 
-		$conditions['buddypress_profile_field'] = array(
+		$conditions['buddypress_profile_field'] = [
 			'label'        => __( 'BuddyPress profile field', 'advanced-ads-pro' ),
-			'description'  => __( 'Display ads based on BuddyPress profile fields', 'advanced-ads-pro' ),
-			'metabox'      => array( 'Advanced_Ads_Pro_Module_BuddyPress', 'xprofile_metabox' ),
-			'check'        => array( 'Advanced_Ads_Pro_Module_BuddyPress', 'check_xprofile' ),
-			'passive_info' => array(
+			'description'  => __( 'Display ads based on BuddyPress profile fields.', 'advanced-ads-pro' ),
+			'metabox'      => [ 'Advanced_Ads_Pro_Module_BuddyPress', 'xprofile_metabox' ],
+			'check'        => [ 'Advanced_Ads_Pro_Module_BuddyPress', 'check_xprofile' ],
+			'passive_info' => [
 				'hash_fields' => 'field',
 				'remove'      => 'login',
-				'function'    => array( 'Advanced_Ads_Pro_Module_BuddyPress', 'get_passive' ),
-			),
-		);
+				'function'    => [ 'Advanced_Ads_Pro_Module_BuddyPress', 'get_passive' ],
+			],
+		];
 
 		// update condition labels when BuddyBoss is used
 		if ( self::is_buddyboss() ) {
 			$conditions['buddypress_profile_field']['label']       = __( 'BuddyBoss profile field', 'advanced-ads-pro' );
-			$conditions['buddypress_profile_field']['description'] = __( 'Display ads based on BuddyBoss profile fields', 'advanced-ads-pro' );
+			$conditions['buddypress_profile_field']['description'] = __( 'Display ads based on BuddyBoss profile fields.', 'advanced-ads-pro' );
 		}
 
 		return $conditions;
@@ -120,31 +129,51 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 	 *
 	 * @return bool
 	 */
-	public static function check_xprofile( $options = array() ) {
+	public static function check_xprofile( $options = [] ) {
 		if ( ! isset( $options['operator'] ) || ! isset( $options['value'] ) || ! isset( $options['field'] ) ) {
 				return true;
 		}
-		$user     = wp_get_current_user();
+		$user_id  = get_current_user_id();
 		$operator = $options['operator'];
 		$value    = trim( $options['value'] );
-		$field    = trim( $options['field'] );
-		if ( ! $user ) {
+		$field    = (int) $options['field'];
+		if ( ! $user_id ) {
 			return true;
 		}
 
-		$args    = array(
-			'field'   => $field, // should be field ID
-			'user_id' => $user->ID,
-		);
-		$profile = bp_get_profile_field_data( $args );
+		$profile = self::get_profile_field_data( $field, $user_id );
 
-		$trimmed_options = array(
+		$trimmed_options = [
 			'operator' => $operator,
 			'value'    => $value,
-		);
+		];
 
-		$condition = Advanced_Ads_Visitor_Conditions::helper_check_string( $profile, $trimmed_options );
-		return $condition;
+
+		if ( is_array( $profile ) ) {
+			// Multi fields (checkboxes, dropdowns, etc).
+			$positive_operator = in_array( $options['operator'], [ 'contain', 'start', 'end', 'match', 'regex' ], true );
+
+			if ( ! $profile ) {
+				return ! $positive_operator;
+			}
+
+			foreach ( $profile as $profile_item ) {
+				$condition = Advanced_Ads_Visitor_Conditions::helper_check_string( $profile_item, $trimmed_options );
+				if (
+					// If operator is positive, check if at least one string returns `true`
+					( $positive_operator && $condition )
+					// If operator is negative, check if all strings return `true`
+					|| ( ! $positive_operator && ! $condition )
+				) {
+					break;
+				}
+			}
+
+			return $condition;
+		}
+
+		// Single fields.
+		return Advanced_Ads_Visitor_Conditions::helper_check_string( $profile, $trimmed_options );
 	}
 
 	/**
@@ -152,25 +181,62 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 	 *
 	 * @param array $options condition options.
 	 */
-	public static function get_passive( $options = array() ) {
-		$user_id = get_current_user_id();
+	public static function get_passive( $options = [] ) {
 		if ( ! isset( $options['field'] ) ) {
 			return;
 		}
-		$field = trim( $options['field'] );
+		$field = (int) $options['field'];
+
+		$user_id = get_current_user_id();
 		if ( ! $user_id ) {
 			return;
 		}
 
-		$args    = array(
-			'field'   => $field, // should be field ID
-			'user_id' => $user_id,
-		);
-		$profile = bp_get_profile_field_data( $args );
+		$profile = self::get_profile_field_data( $field, $user_id );
 
-		return array(
+		return [
 			'field' => $options['field'],
 			'data'  => $profile,
+		];
+	}
+
+	/**
+	 * Get profile field data.
+	 *
+	 * @param int $field Field ID.
+	 * @param int $user_id ID of the user to get field data for.
+	 * @return string[]|string
+	 */
+	private static function get_profile_field_data( $field, $user_id ) {
+		if (
+			! function_exists( 'bp_get_member_type' )
+			|| ! function_exists( 'bp_get_profile_field_data' )
+		) {
+			return [];
+		};
+
+		// Process the "membertypes" field (BuddyBoss)
+		if ( function_exists( 'bp_get_xprofile_member_type_field_id' )
+			&& bp_get_xprofile_member_type_field_id() === $field
+			&& function_exists( 'bp_member_type_post_by_type' )
+		) {
+			$member_types = bp_get_member_type( $user_id, false );
+
+			if ( ! is_array( $member_types ) ) {
+				return [];
+			}
+
+			return array_map( function( $member_type ) {
+				return bp_member_type_post_by_type( $member_type );
+			}, $member_types );
+		}
+
+		// Process fields other then the "membertypes"
+		return bp_get_profile_field_data(
+			[
+				'field'   => $field,
+				'user_id' => $user_id,
+			]
 		);
 	}
 
@@ -199,11 +265,31 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 		$value = isset( $options['value'] ) ? $options['value'] : '';
 
 		// options
-		$field    = isset( $options['field'] ) ? $options['field'] : '';
-		$value    = isset( $options['value'] ) ? $options['value'] : '';
-		$operator = isset( $options['operator'] ) ? $options['operator'] : 'is_equal';
+		$field              = isset( $options['field'] ) ? (int) $options['field'] : -1;
+		$value              = isset( $options['value'] ) ? $options['value'] : '';
+		$operator           = isset( $options['operator'] ) ? $options['operator'] : 'is_equal';
+		$current_field_type = self::get_current_field_type( $field );
 
 		require AAP_BASE_PATH . 'modules/buddypress/views/xprofile-condition.php';
+	}
+
+	/**
+	 * Get current field type.
+	 *
+	 * @param int $field Field ID.
+	 * @return string
+	 */
+	private static function get_current_field_type( $field ) {
+		if ( ! function_exists( 'bp_get_xprofile_member_type_field_id' ) ) {
+			return self::FIELD_TEXTBOX;
+		}
+
+		if ( $field === bp_get_xprofile_member_type_field_id() ) {
+			return self::FIELD_MEMBERTYPES;
+		}
+
+		$groups = bp_profile_get_field_groups();
+		return isset( $groups[0]->fields[0]->type ) ? $groups[0]->fields[0]->type : self::FIELD_TEXTBOX;
 	}
 
 	/**
@@ -218,15 +304,16 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 			return $conditions;
 		}
 
-		$conditions['buddypress_group'] = array(
+		$conditions['buddypress_group'] = [
 			'label'       => __( 'BuddyBoss group', 'advanced-ads-pro' ),
-			'description' => __( 'BuddyBoss group', 'advanced-ads-pro' ),
-			'metabox'     => array( 'Advanced_Ads_Pro_Module_BuddyPress', 'group_metabox' ),
-			'check'       => array( 'Advanced_Ads_Pro_Module_BuddyPress', 'group_check' ),
-			'options'     => array(
+			'description' => __( 'Display ads based on existing BuddyBoss groups.', 'advanced-ads-pro' ),
+			'metabox'     => [ 'Advanced_Ads_Pro_Module_BuddyPress', 'group_metabox' ],
+			'check'       => [ 'Advanced_Ads_Pro_Module_BuddyPress', 'group_check' ],
+			'options'     => [
 				'global' => false,
-			),
-		);
+			],
+			'helplink' => 'https://wpadvancedads.com/manual/buddyboss-ads/?utm_source=advanced-ads?utm_medium=link&utm_campaign=condition-buddyboss-group',
+		];
 		return $conditions;
 	}
 
@@ -250,7 +337,7 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 
 		// get values and select operator based on previous settings.
 		$operator = ( isset( $options['operator'] ) && 'is_not' === $options['operator'] ) ? 'is_not' : 'is';
-		$values   = ( isset( $options['value'] ) && is_array( $options['value'] ) ) ? array_map( 'absint', $options['value'] ) : array();
+		$values   = ( isset( $options['value'] ) && is_array( $options['value'] ) ) ? array_map( 'absint', $options['value'] ) : [];
 
 		// form name basis.
 		$name = Advanced_Ads_Display_Conditions::get_form_name_with_index( $form_name, $index );
@@ -264,6 +351,12 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 
 		include ADVADS_BASE_PATH . 'admin/views/conditions/not-selected.php';
 		?>
+			<p class="description">
+				<?php esc_html_e( 'Display ads based on existing BuddyBoss groups.', 'advanced-ads-pro' ); ?>
+				<a href="https://wpadvancedads.com/manual/buddyboss-ads/?utm_source=advanced-ads?utm_medium=link&utm_campaign=condition-buddyboss-group" class="advads-manual-link" target="_blank">
+					<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+				</a>
+			</p>
 		</div>
 		<?php
 	}
@@ -274,8 +367,8 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 	 * @return array.
 	 */
 	public static function get_buddypress_group_list() {
-		$list   = array();
-		$groups = groups_get_groups( array( 'per_page' => -1 ) );
+		$list   = [];
+		$groups = groups_get_groups( [ 'per_page' => -1 ] );
 
 		if ( ! isset( $groups['groups'] ) || ! is_array( $groups['groups'] ) ) {
 			return $list;
@@ -296,7 +389,7 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 	 * @param array $options options of the condition.
 	 * @return bool True if can be displayed.
 	 */
-	public static function group_check( $options = array() ) {
+	public static function group_check( $options = [] ) {
 		if ( ! isset( $options['value'] ) || ! is_array( $options['value'] ) || ! function_exists( 'bp_get_current_group_id' ) ) {
 			return true;
 		}

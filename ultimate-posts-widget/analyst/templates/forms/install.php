@@ -1,20 +1,20 @@
-<div id="analyst-install-modal" class="analyst-modal" style="display: none" analyst-plugin-id="<?=$pluginToInstall?>">
+<div id="analyst-install-modal" class="analyst-modal" style="display: none" analyst-plugin-id="<?php echo $pluginToInstall; ?>">
 	<div class="analyst-modal-content" style="width: 450px">
 		<div class="analyst-disable-modal-mask" id="analyst-disable-install-modal-mask" style="display: none"></div>
 		<div style="display: flex">
 			<div class="analyst-install-image-block">
-				<img src="<?=$shieldImage?>"/>
+				<img src="<?php echo $shieldImage; ?>"/>
 			</div>
 			<div class="analyst-install-description-block">
 				<strong class="analyst-modal-header">Stay on the safe side</strong>
 				<p class="analyst-install-description-text">Receive our plugin’s alerts in
-					case of <strong>critical security</strong> & feature
+					case of <strong>critical security</strong>, feature & special deal
 					updates and allow non-sensitive
 					diagnostic tracking.</p>
 			</div>
 		</div>
 		<div class="analyst-modal-def-top-padding">
-			<button class="analyst-btn-success" id="analyst-install-action">Allow & Continue ></button>
+			<button class="analyst-btn-success" id="analyst-install-action">Allow & Continue &gt;</button>
 		</div>
 		<div class="analyst-modal-def-top-padding" id="analyst-permissions-block" style="display: none">
 			<span>You’re granting these permissions:</span>

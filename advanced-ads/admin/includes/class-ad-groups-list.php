@@ -13,14 +13,14 @@ class Advanced_Ads_Groups_List {
 	 *
 	 * @var $groups
 	 */
-	public $groups = array();
+	public $groups = [];
 
 	/**
 	 * Array with all ad group types
 	 *
 	 * @var $types
 	 */
-	public $types = array();
+	public $types = [];
 
 	/**
 	 * Construct the current list
@@ -44,11 +44,11 @@ class Advanced_Ads_Groups_List {
 		// load all groups.
 		$search = ! empty( $_REQUEST['s'] ) ? trim( wp_unslash( $_REQUEST['s'] ) ) : '';
 
-		$args = array(
+		$args = [
 			'taxonomy'   => $this->taxonomy,
 			'search'     => $search,
 			'hide_empty' => 0,
-		);
+		];
 		// get wp term objects.
 		$terms = Advanced_Ads::get_ad_groups( $args );
 
@@ -65,7 +65,7 @@ class Advanced_Ads_Groups_List {
 	 */
 	protected function load_groups_objects_from_terms( array $terms ) {
 
-		$groups = array();
+		$groups = [];
 		foreach ( $terms as $_group ) {
 			$groups[] = new Advanced_Ads_Group( $_group );
 		}
@@ -87,7 +87,6 @@ class Advanced_Ads_Groups_List {
 	public function render_rows() {
 		foreach ( $this->groups as $_group ) {
 			$this->render_row( $_group );
-			$this->render_form_row( $_group );
 		}
 	}
 
@@ -98,22 +97,23 @@ class Advanced_Ads_Groups_List {
 	 * @param Advanced_Ads_Group $group the ad group object.
 	 */
 	public function render_row( Advanced_Ads_Group $group ) {
-		$file = ADVADS_BASE_PATH . 'admin/views/ad-group-list-row.php';
-		require $file;
-	}
-
-	/**
-	 * Render the form row of a group
-	 *
-	 * @param Advanced_Ads_Group $group the ad group object.
-	 */
-	public function render_form_row( Advanced_Ads_Group $group ) {
 		// query ads.
-		$ads          = $this->get_ads( $group );
-		$weights      = $group->get_ad_weights( wp_list_pluck( $ads->posts, 'ID' ) );
-		$ad_form_rows = $weights;
-		arsort( $ad_form_rows );
-		$max_weight = Advanced_Ads_Group::get_max_ad_weight( $ads->post_count );
+		$ads                = $this->get_ads( $group );
+		$weights            = $group->get_ad_weights( wp_list_pluck( $ads->posts, 'ID' ) );
+		$ad_form_rows       = $this->get_weighted_ad_order( $weights );
+		$max_weight         = Advanced_Ads_Group::get_max_ad_weight( $ads->post_count );
+		$type_name          = isset( $this->types[ $group->type ]['title'] ) ? $this->types[ $group->type ]['title'] : 'default';
+		$missing_type_error = '';
+
+		// set the group to behave as default, if the original type is not available
+		if ( ! array_key_exists( $group->type, $this->types ) ) {
+			$missing_type_error = sprintf(
+			/* translators: %s is the group type string */
+				__( 'The originally selected group type “%s” is not enabled.', 'advanced-ads' ),
+				$group->type
+			);
+			$group->type = 'default';
+		}
 
 		// The Loop.
 		if ( $ads->post_count ) {
@@ -141,7 +141,12 @@ class Advanced_Ads_Groups_List {
 		}
 		$new_ad_weights .= '</select>';
 
-		require ADVADS_BASE_PATH . 'admin/views/ad-group-list-form-row.php';
+		ob_start();
+		$hints = ! Advanced_Ads_Placements::get_placements_by( 'group', $group->id ) ? Advanced_Ads_Group::get_hints( $group ) : [];
+		require ADVADS_BASE_PATH . 'admin/views/group-hints.php';
+		$hints_html = ob_get_clean();
+
+		require ADVADS_BASE_PATH . 'admin/views/ad-group-list-row.php';
 	}
 
 	/**
@@ -158,8 +163,7 @@ class Advanced_Ads_Groups_List {
 			return get_post_status( $post ) === 'publish';
 		} ) );
 		$weight_sum    = array_sum( array_intersect_key( $weights, array_flip( $published_ads ) ) );
-		$ads_output    = $weights;
-		arsort( $ads_output );
+		$ads_output    = $this->get_weighted_ad_order( $weights );
 
 		// The Loop.
 		if ( $ads->have_posts() ) {
@@ -229,20 +233,39 @@ class Advanced_Ads_Groups_List {
 				     sprintf( __( 'show %d more ads', 'advanced-ads' ), $hidden_ads ) . '</a></p>';
 			}
 
-			if ( 'all' === $group->ad_count ) {
-				echo '<p>' . esc_html__( 'all published ads are displayed', 'advanced-ads' ) . '</p>';
-			} elseif ( $group->ad_count > 1 ) {
-				// translators: %d is a number.
-				echo '<p>' . sprintf( esc_html__( 'up to %d ads displayed', 'advanced-ads' ), absint( $group->ad_count ) ) . '</p>';
-			}
+			echo '<p>' . esc_html( $this->get_ad_count_string( $group, $ads ) ) . '</p>';
 		} else {
 			esc_html_e( 'No ads assigned', 'advanced-ads' );
 			?>
-			<br/><a class="edit">+ <?php esc_html_e( 'Add some', 'advanced-ads' ); ?></a>
+			<br/><a href="#modal-group-edit-<?php echo esc_attr( $group->id ); ?>">+ <?php esc_html_e( 'Add some', 'advanced-ads' ); ?></a>
 			<?php
 		}
 		// Restore original Post Data.
 		wp_reset_postdata();
+	}
+
+	/**
+	 * Return the displayed ad count string
+	 *
+	 * @param Advanced_Ads_Group $group     the ad group.
+	 * @param WP_Query           $ads_query list of ads in group.
+	 *
+	 * @return string
+	 */
+	private function get_ad_count_string( $group, $ads_query ) {
+		// Amount of displayed ads.
+		$ad_count = $group->ad_count === 'all' ? $ads_query->post_count : $group->ad_count;
+
+		/**
+		 * Filters the displayed ad count on the ad groups page.
+		 *
+		 * @param int                $ad_count the amount of displayed ads.
+		 * @param Advanced_Ads_Group $group    the current ad group.
+		 */
+		$ad_count = (int) apply_filters( 'advanced-ads-group-displayed-ad-count', $ad_count, $group );
+
+		/* translators: amount of ads displayed */
+		return sprintf( _n( 'Up to %d ad displayed.', 'Up to %d ads displayed', $ad_count, 'advanced-ads' ), $ad_count );
 	}
 
 	/**
@@ -272,13 +295,13 @@ class Advanced_Ads_Groups_List {
 	 * @return WP_Query
 	 */
 	public function get_ads( $group ) {
-		return new WP_Query( array(
+		return new WP_Query( [
 			'post_type'      => $this->post_type,
-			'post_status'    => array( 'publish', 'pending', 'future', 'private' ),
+			'post_status'    => [ 'publish', 'pending', 'future', 'private' ],
 			'taxonomy'       => $group->taxonomy,
 			'term'           => $group->slug,
 			'posts_per_page' => - 1,
-		) );
+		] );
 	}
 
 	/**
@@ -287,15 +310,15 @@ class Advanced_Ads_Groups_List {
 	 * @return array
 	 */
 	public function ads_for_select() {
-		$select = array();
+		$select = [];
 		$model  = Advanced_Ads::get_instance()->get_model();
 
 		// load all ads.
 		$ads = $model->get_ads(
-			array(
+			[
 				'orderby' => 'title',
 				'order'   => 'ASC',
-			)
+			]
 		);
 		foreach ( $ads as $_ad ) {
 			$select[ $_ad->ID ] = esc_html( $_ad->post_title );
@@ -305,23 +328,66 @@ class Advanced_Ads_Groups_List {
 	}
 
 	/**
+	 * Return all ad group types from premium products.
+	 *
+	 * @return array
+	 */
+	public function get_ad_group_types_premium() {
+		$group_types_premium = [];
+		if ( ! defined( 'AAP_VERSION' ) ) {
+			$group_types_premium['grid'] = [
+				'title'       => __( 'Grid', 'advanced-ads' ),
+				'description' => '',
+				'image'       => ADVADS_BASE_URL . 'admin/assets/img/groups/grid.svg',
+			];
+		}
+		// Slider
+		if ( ! defined( 'AAS_VERSION' ) ) {
+			$group_types_premium['slider'] = [
+				'title'       => __( 'Ad Slider', 'advanced-ads' ),
+				'description' => '',
+				'image'       => ADVADS_BASE_URL . 'admin/assets/img/groups/slider.svg',
+			];
+		}
+
+		return $group_types_premium;
+	}
+
+	/**
 	 * Return ad group types
 	 *
 	 * @return array $types ad group information
 	 */
 	public function get_ad_group_types() {
-		$types = array(
-			'default' => array(
+		$types = [
+			'default' => [
 				'title'       => __( 'Random ads', 'advanced-ads' ),
 				'description' => __( 'Display random ads based on ad weight', 'advanced-ads' ),
-			),
-			'ordered' => array(
+				'image'       => ADVADS_BASE_URL . 'admin/assets/img/groups/random.svg',
+			],
+			'ordered' => [
 				'title'       => __( 'Ordered ads', 'advanced-ads' ),
 				'description' => __( 'Display ads with the highest ad weight first', 'advanced-ads' ),
-			),
-		);
+				'image'       => ADVADS_BASE_URL . 'admin/assets/img/groups/ordered.svg',
+			],
+		];
 
-		return apply_filters( 'advanced-ads-group-types', $types );
+		/**
+		 * Add, change, or remove group types.
+		 *
+		 * @param array[] $types Group types.
+		 */
+		$types = apply_filters( 'advanced-ads-group-types', $types );
+
+		// fallback if the add-ons don’t contain type images, yet.
+		if ( isset( $types['grid'] ) && empty( $types['grid']['image'] ) ) {
+			$types['grid']['image'] = ADVADS_BASE_URL . 'admin/assets/img/groups/grid.svg';
+		}
+		if ( isset( $types['slider'] ) && empty( $types['slider']['image'] ) ) {
+			$types['slider']['image'] = ADVADS_BASE_URL . 'admin/assets/img/groups/slider.svg';
+		}
+
+		return $types;
 	}
 
 	/**
@@ -334,17 +400,17 @@ class Advanced_Ads_Groups_List {
 
 		$tax = get_taxonomy( $this->taxonomy );
 
-		$actions = array();
+		$actions = [];
 		if ( current_user_can( $tax->cap->edit_terms ) ) {
-			$actions['edit']  = '<a class="edit">' . __( 'Edit', 'advanced-ads' ) . '</a>';
-			$actions['usage'] = '<a class="usage">' . __( 'Usage', 'advanced-ads' ) . '</a>';
+			$actions['edit']  = '<a href="#modal-group-edit-' . $group->id . '" class="edits">' . esc_html__( 'Edit', 'advanced-ads' ) . '</a>';
+			$actions['usage'] = '<a href="#modal-' . (int) $group->id . '-usage" class="usage-modal-link">' . esc_html__( 'show usage', 'advanced-ads' ) . '</a>';
 		}
 
 		if ( current_user_can( $tax->cap->delete_terms ) ) {
-			$args              = array(
+			$args              = [
 				'action'   => 'delete',
 				'group_id' => $group->id,
-			);
+			];
 			$delete_link       = self::group_page_url( $args );
 			$actions['delete'] = "<a class='delete-tag' href='" . wp_nonce_url( $delete_link, 'delete-tag_' . $group->id ) . "'>" . __( 'Delete', 'advanced-ads' ) . '</a>';
 		}
@@ -355,7 +421,7 @@ class Advanced_Ads_Groups_List {
 
 		echo '<div class="row-actions">';
 		foreach ( $actions as $action => $link ) {
-			echo "<span class='" . esc_attr( $action ) . "'>" . wp_kses( $link, array( 'a' => array( 'class' => array(), 'href' => array() ) ) ) . '</span>';
+			echo "<span class='" . esc_attr( $action ) . "'>" . wp_kses( $link, [ 'a' => [ 'class' => [], 'href' => [] ] ] ) . '</span>';
 		}
 		echo '</div>';
 	}
@@ -385,6 +451,15 @@ class Advanced_Ads_Groups_List {
 				return $new_group;
 			}
 
+			// set the ad group
+			$type = 'default';
+			if ( ! empty( $_POST['advads-group-type'] ) ) {
+				$posted_type = sanitize_text_field( $_POST['advads-group-type'] );
+				if ( array_key_exists( $posted_type, $this->get_ad_group_types() ) ) {
+					$type = $posted_type;
+				}
+			}
+
 			// save default values.
 			if ( is_array( $new_group ) ) {
 				$group = new Advanced_Ads_Group( $new_group['term_id'] );
@@ -392,11 +467,11 @@ class Advanced_Ads_Groups_List {
 				// allow other add-ons to save their own group attributes.
 				$atts = apply_filters(
 					'advanced-ads-group-save-atts',
-					array(
-						'type'     => 'default',
+					[
+						'type'     => $type,
 						'ad_count' => 1,
-						'options'  => array(),
-					),
+						'options'  => [],
+					],
 					$group
 				);
 
@@ -421,7 +496,7 @@ class Advanced_Ads_Groups_List {
 	 * @return array
 	 */
 	private function get_groups_by_ad_id( $ad_id ) {
-		$ids   = array();
+		$ids   = [];
 		$terms = wp_get_object_terms( $ad_id, $this->taxonomy );
 		foreach ( $terms as $term ) {
 			$ids[] = $term->term_id;
@@ -453,16 +528,16 @@ class Advanced_Ads_Groups_List {
 		// empty weights.
 		// update_option( 'advads-ad-weights', array() );
 
-		$all_weights = get_option( 'advads-ad-weights', array() );
+		$all_weights = get_option( 'advads-ad-weights', [] );
 
-		$ad_groups_assoc = array();
+		$ad_groups_assoc = [];
 
 		if ( isset( $_POST['advads-groups-removed-ads'] ) && is_array( $_POST['advads-groups-removed-ads'] ) && isset( $_POST['advads-groups-removed-ads-gid'] ) ) {
 			$len = count( $_POST['advads-groups-removed-ads'] );
 			for ( $i = 0; $i < $len; $i ++ ) {
 				$ad_id                     = absint( wp_unslash( $_POST['advads-groups-removed-ads'][ $i ] ) );
 				$group_id                  = absint( wp_unslash( $_POST['advads-groups-removed-ads-gid'][ $i ] ) );
-				$ad_groups_assoc[ $ad_id ] = array();
+				$ad_groups_assoc[ $ad_id ] = [];
 				// remove it from the weights.
 				if ( isset( $all_weights[ $group_id ] ) && isset( $all_weights[ $group_id ][ $ad_id ] ) ) {
 					unset( $all_weights[ $group_id ][ $ad_id ] );
@@ -479,7 +554,7 @@ class Advanced_Ads_Groups_List {
 
 
 		// iterate through groups.
-		$post_ad_groups = isset( $_POST['advads-groups'] ) ? wp_unslash( $_POST['advads-groups'] ) : array();
+		$post_ad_groups = isset( $_POST['advads-groups'] ) ? wp_unslash( $_POST['advads-groups'] ) : [];
 
 		if ( count( $post_ad_groups ) ) {
 
@@ -521,15 +596,15 @@ class Advanced_Ads_Groups_List {
 				// save other attributes.
 				$type     = isset( $_group['type'] ) ? $_group['type'] : 'default';
 				$ad_count = isset( $_group['ad_count'] ) ? $_group['ad_count'] : 1;
-				$options  = isset( $_group['options'] ) ? $_group['options'] : array();
+				$options  = isset( $_group['options'] ) ? $_group['options'] : [];
 
 				// allow other add-ons to save their own group attributes.
 				$atts = apply_filters( 'advanced-ads-group-save-atts',
-					array(
+					[
 						'type'     => $type,
 						'ad_count' => $ad_count,
 						'options'  => $options,
-					),
+					],
 					$_group
 				);
 
@@ -558,12 +633,12 @@ class Advanced_Ads_Groups_List {
 	 * @return string admin url
 	 * @since 1.0.0
 	 */
-	public static function group_page_url( $args = array() ) {
+	public static function group_page_url( $args = [] ) {
 		$plugin = Advanced_Ads::get_instance();
 
-		$default_args = array(
+		$default_args = [
 			'page' => 'advanced-ads-groups',
-		);
+		];
 		$args         = $args + $default_args;
 
 		return add_query_arg( $args, admin_url( 'admin.php' ) );
@@ -578,7 +653,7 @@ class Advanced_Ads_Groups_List {
 	 * @return array
 	 */
 	private function sanitize_ad_weights( array $weights ) {
-		$sanitized_weights = array();
+		$sanitized_weights = [];
 		foreach ( $weights as $ad_id => $weight ) {
 			$ad_id_int = absint( $ad_id );
 			if ( $ad_id_int === 0 || array_key_exists( $ad_id_int, $sanitized_weights ) ) {
@@ -588,6 +663,36 @@ class Advanced_Ads_Groups_List {
 		}
 
 		return $sanitized_weights;
+	}
+
+	/**
+	 * Order the ad list by weight first and then by title.
+	 *
+	 * @param array<int, int> $weights indexed by ad_id, weight as value.
+	 *
+	 * @return array<int, int>
+	 */
+	private function get_weighted_ad_order( array $weights ) {
+		arsort( $weights );
+		$ad_title_weights = [];
+
+		// index ads with the same weight by weight.
+		foreach ( $weights as $ad_id => $weight ) {
+			$ad_title_weights[ $weight ][ $ad_id ] = get_the_title( $ad_id );
+		}
+
+		// order them by title
+		array_walk( $ad_title_weights, static function( &$weight_group ) {
+			natsort( $weight_group );
+		} );
+
+		// flatten the array with the ad_id as key and the weight as value
+		$ad_order = [];
+		foreach ( $ad_title_weights as $weight => $ad_array ) {
+			$ad_order += array_fill_keys( array_keys( $ad_array ), $weight );
+		}
+
+		return $ad_order;
 	}
 
 }

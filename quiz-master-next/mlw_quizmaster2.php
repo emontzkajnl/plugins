@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Quiz And Survey Master
  * Description: Easily and quickly add quizzes and surveys to your website.
- * Version: 8.0.4
+ * Version: 8.0.8
  * Author: ExpressTech
  * Author URI: https://quizandsurveymaster.com/
  * Plugin URI: https://expresstech.io/
@@ -21,7 +21,7 @@ define( 'QSM_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'QSM_SUBMENU', __FILE__ );
 define( 'QSM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'hide_qsm_adv', true );
-define( 'QSM_THEME_PATH', plugin_dir_path( __DIR__ ) );
+define( 'QSM_THEME_PATH', WP_PLUGIN_DIR . '/' );
 define( 'QSM_THEME_SLUG', plugins_url( '/' ) );
 define( 'QSM_PLUGIN_CSS_URL', QSM_PLUGIN_URL . 'css' );
 define( 'QSM_PLUGIN_JS_URL', QSM_PLUGIN_URL . 'js' );
@@ -43,7 +43,7 @@ class MLWQuizMasterNext {
 	 * @var string
 	 * @since 4.0.0
 	 */
-	public $version = '8.0.4';
+	public $version = '8.0.8';
 
 	/**
 	 * QSM Alert Manager Object
@@ -392,6 +392,7 @@ class MLWQuizMasterNext {
 			'duplicating_question'       => __('Duplicating question...', 'quiz-master-next'),
 			'saving_question'            => __('Saving question...', 'quiz-master-next'),
 			'question_saved'             => __('Question was saved!', 'quiz-master-next'),
+			'load_more_quetions'         => __('Load more questions', 'quiz-master-next'),
 			'loading_question'           => __('Loading questions...', 'quiz-master-next'),
 			'no_question_selected'       => __('No question is selected.', 'quiz-master-next'),
 			'question_reset_message'     => __('All answer will be reset, Do you want to still continue?', 'quiz-master-next'),
@@ -572,6 +573,17 @@ class MLWQuizMasterNext {
 			global $qsm_quiz_list_page;
 			$enabled            = get_option( 'qsm_multiple_category_enabled' );
 			$menu_position = self::get_free_menu_position(26.1, 0.3);
+			if ( ! class_exists('QSM_User_Role') ) {
+				$user = wp_get_current_user();
+				if ( in_array( 'subscriber', (array) $user->roles, true ) ) {
+					$role_capabilities = get_role( 'subscriber' );
+					$role_capabilities->remove_cap('edit_posts');
+					$role_capabilities->remove_cap('moderate_comments');
+				}
+			}
+			else {
+				apply_filters('qsm_user_role_menu_for_subcriber',true);
+			}
 			$qsm_dashboard_page = add_menu_page( 'Quiz And Survey Master', __( 'QSM', 'quiz-master-next' ), 'edit_posts', 'qsm_dashboard', 'qsm_generate_dashboard_page', 'dashicons-feedback', $menu_position );
 			add_submenu_page( 'qsm_dashboard', __( 'Dashboard', 'quiz-master-next' ), __( 'Dashboard', 'quiz-master-next' ), 'edit_posts', 'qsm_dashboard', 'qsm_generate_dashboard_page', 0 );
 			if ( $enabled && 'cancelled' !== $enabled ) {

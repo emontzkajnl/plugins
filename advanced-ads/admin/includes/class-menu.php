@@ -24,8 +24,8 @@ class Advanced_Ads_Admin_Menu {
 	 */
 	private function __construct() {
 		// add menu items.
-		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
-		add_action( 'admin_head', array( $this, 'highlight_menu_item' ) );
+		add_action( 'admin_menu', [ $this, 'add_plugin_admin_menu' ] );
+		add_action( 'admin_head', [ $this, 'highlight_menu_item' ] );
 
 		$this->plugin_slug = Advanced_Ads::get_instance()->get_plugin_slug();
 		$this->post_type   = constant( 'Advanced_Ads::POST_TYPE_SLUG' );
@@ -53,7 +53,7 @@ class Advanced_Ads_Admin_Menu {
 	public function add_plugin_admin_menu() {
 
 		// get number of ads including those in trash.
-		$has_ads = Advanced_Ads::get_number_of_ads( array( 'any', 'trash' ) );
+		$has_ads = Advanced_Ads::get_number_of_ads( [ 'any', 'trash' ] );
 
 		// get number of Ad Health notices.
 		$notices = Advanced_Ads_Ad_Health_Notices::get_number_of_notices();
@@ -67,7 +67,7 @@ class Advanced_Ads_Admin_Menu {
 				'Advanced Ads',
 				Advanced_Ads_Plugin::user_cap( 'advanced_ads_see_interface' ),
 				$this->plugin_slug,
-				array( $this, 'display_overview_page' ),
+				[ $this, 'display_overview_page' ],
 				Advanced_Ads_Plugin::get_icon_svg(),
 				'58.74'
 			);
@@ -100,7 +100,7 @@ class Advanced_Ads_Admin_Menu {
 				'Advanced Ads',
 				Advanced_Ads_Plugin::user_cap( 'advanced_ads_see_interface' ),
 				$this->plugin_slug,
-				array( $this, 'display_overview_page' ),
+				[ $this, 'display_overview_page' ],
 				Advanced_Ads_Plugin::get_icon_svg(),
 				'58.74'
 			);
@@ -111,7 +111,7 @@ class Advanced_Ads_Admin_Menu {
 				__( 'Dashboard', 'advanced-ads' ),
 				Advanced_Ads_Plugin::user_cap( 'advanced_ads_see_interface' ),
 				$this->plugin_slug,
-				array( $this, 'display_overview_page' )
+				[ $this, 'display_overview_page' ]
 			);
 		}
 
@@ -132,7 +132,7 @@ class Advanced_Ads_Admin_Menu {
 			__( 'Groups & Rotation', 'advanced-ads' ),
 			Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ),
 			$this->plugin_slug . '-groups',
-			array( $this, 'ad_group_admin_page' )
+			[ $this, 'ad_group_admin_page' ]
 		);
 
 		// add placements page.
@@ -142,7 +142,7 @@ class Advanced_Ads_Admin_Menu {
 			__( 'Placements', 'advanced-ads' ),
 			Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_placements' ),
 			$this->plugin_slug . '-placements',
-			array( $this, 'display_placements_page' )
+			[ $this, 'display_placements_page' ]
 		);
 		// add settings page.
 		Advanced_Ads_Admin::get_instance()->plugin_screen_hook_suffix = add_submenu_page(
@@ -151,7 +151,7 @@ class Advanced_Ads_Admin_Menu {
 			__( 'Settings', 'advanced-ads' ),
 			Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ),
 			$this->plugin_slug . '-settings',
-			array( $this, 'display_plugin_settings_page' )
+			[ $this, 'display_plugin_settings_page' ]
 		);
 
 		/**
@@ -255,6 +255,27 @@ class Advanced_Ads_Admin_Menu {
 	}
 
 	/**
+	 * Render the date needed to sort placements using JS
+	 *
+	 * @param array $placement_types Placement types.
+	 * @param array $placement Current placement.
+	 */
+	public static function render_order_data( $placement_types, $placement ) {
+		printf(
+			" data-order='%s'",
+			wp_json_encode(
+				[
+					'order'                 => isset( $placement_types[ $placement['type'] ]['order'] ) ? (int) $placement_types[ $placement['type'] ]['order'] : 100,
+					'name'                  => esc_html( $placement['name'] ),
+					'type'                  => esc_html( $placement['type'] ),
+					'words-between-repeats' => ! empty( $placement['options']['words_between_repeats'] ) ? 1 : 0,
+					'post-content-index'    => isset( $placement['options']['index'] ) ? (int) $placement['options']['index'] : 0,
+				]
+			)
+		);
+	}
+
+	/**
 	 * Render the support page
 	 *
 	 * @since    1.6.8.1
@@ -274,7 +295,6 @@ class Advanced_Ads_Admin_Menu {
 		$taxonomy  = Advanced_Ads::AD_GROUP_TAXONOMY;
 		$post_type = Advanced_Ads::POST_TYPE_SLUG;
 		$tax       = get_taxonomy( $taxonomy );
-
 		$action = Advanced_Ads_Admin::get_instance()->current_action();
 
 		// handle new and updated groups.
@@ -333,9 +353,21 @@ class Advanced_Ads_Admin_Menu {
 				break;
 
 			default:
-				$title         = $tax->labels->name;
-				$wp_list_table = _get_list_table( 'WP_Terms_List_Table' );
+				$title  = $tax->labels->name;
+				$screen = get_current_screen();
 
+				if ( ! $screen ) {
+					return;
+				}
+
+				$screen->taxonomy = Advanced_Ads::AD_GROUP_TAXONOMY;
+				$wp_list_table    = _get_list_table( 'WP_Terms_List_Table' );
+				$wp_list_table->prepare_items();
+				// load the ad group list after groups might have been deleted
+				$ad_groups_list      = new Advanced_Ads_Groups_List();
+				$group_types         = $ad_groups_list->get_ad_group_types();
+				$group_types_premium = $ad_groups_list->get_ad_group_types_premium();
+				$is_search           = ! empty( $_GET['s'] );
 				// load template.
 				include ADVADS_BASE_PATH . 'admin/views/ad-group.php';
 		}
@@ -352,7 +384,7 @@ class Advanced_Ads_Admin_Menu {
 		$default = isset( $admin_settings['placement-orderby'] ) ? $admin_settings['placement-orderby'] : 'type';
 		$current = isset( $_GET['orderby'] ) ? $_GET['orderby'] : $default; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-		if ( ! in_array( $current, array( 'name', 'type' ) ) ) {
+		if ( ! in_array( $current, [ 'name', 'type' ] ) ) {
 			$current = 'type';
 		}
 
@@ -373,11 +405,11 @@ class Advanced_Ads_Admin_Menu {
 
 		if ( 'posts' === get_option( 'show_on_front' ) ) {
 			$recent_posts = wp_get_recent_posts(
-				array(
+				[
 					'numberposts' => 1,
 					'post_type'   => 'post',
 					'post_status' => 'publish',
-				),
+				],
 				'OBJECT'
 			);
 

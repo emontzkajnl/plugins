@@ -12,12 +12,12 @@ class Advanced_Ads_Pro_Module_Ad_Server {
 	 */
 	public function __construct() {
 		// Register frontend AJAX calls.
-		add_action( 'wp_ajax_aa-server-select', array( $this, 'get_placement' ) );
-		add_action( 'wp_ajax_nopriv_aa-server-select', array( $this, 'get_placement' ) );
+		add_action( 'wp_ajax_aa-server-select', [ $this, 'get_placement' ] );
+		add_action( 'wp_ajax_nopriv_aa-server-select', [ $this, 'get_placement' ] );
 
 		// Add allowed HTTP origins.
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			add_filter( 'allowed_http_origins', array( $this, 'add_allowed_origins' ) );
+			add_filter( 'allowed_http_origins', [ $this, 'add_allowed_origins' ] );
 		}
 	}
 
@@ -147,7 +147,7 @@ class Advanced_Ads_Pro_Module_Ad_Server {
 
 		$embedding_urls_raw = explode( ',', $embedding_url_option );
 
-		$embedding_urls = array();
+		$embedding_urls = [];
 		foreach ( $embedding_urls_raw as $_url ) {
 			$embedding_urls[] = esc_url_raw( $_url );
 		}

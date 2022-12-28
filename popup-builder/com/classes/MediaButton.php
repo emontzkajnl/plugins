@@ -85,15 +85,25 @@ class MediaButton
 			return $output;
 		}
 		$currentPostType = AdminHelper::getCurrentPostType();
+		$mediaButtonContent = '';
 		if (!empty($currentPostType) && $currentPostType == SG_POPUP_POST_TYPE) {
-			add_action('admin_footer', function() {
-				require_once(SG_POPUP_VIEWS_PATH.'htmlCustomButtonElement.php');
-			});
+			global $post;
+			$elementorContent = get_post_meta($post->ID, '_elementor_edit_mode', true);
+			if (!empty($elementorContent) && $elementorContent == 'builder'){
+				ob_start();
+					@include(SG_POPUP_VIEWS_PATH.'htmlCustomButtonElement.php');
+				$mediaButtonContent = ob_get_contents();
+				ob_end_clean();
+			}else {
+				add_action('admin_footer', function() {
+					require_once(SG_POPUP_VIEWS_PATH.'htmlCustomButtonElement.php');
+				});
+			}
 		}
 
 		ob_start();
 			@include(SG_POPUP_VIEWS_PATH.'mediaButton.php');
-		$mediaButtonContent = ob_get_contents();
+		$mediaButtonContent .= ob_get_contents();
 		ob_end_clean();
 
 		$showCurrentUser = AdminHelper::showMenuForCurrentUser();

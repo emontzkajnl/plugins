@@ -26,7 +26,7 @@ if ( $empty_options ) :
 <?php
 // display help when no conditions are given.
 if ( $empty_options ) :
-	$set_conditions = array();
+	$set_conditions = [];
 	?>
 	<p>
 		<button type="button" class="advads-video-link-inline button button-primary">

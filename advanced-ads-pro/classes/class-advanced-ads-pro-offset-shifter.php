@@ -8,7 +8,7 @@ class Advanced_Ads_Pro_Offset_Shifter {
 	 *
 	 * @var array
 	 */
-	protected $default_options = array(
+	protected $default_options = [
 		// Required amount of words between ads.
 		'words_between_repeats'        => 20,
 		// Whether to check the required amount of words before the first item.
@@ -18,14 +18,14 @@ class Advanced_Ads_Pro_Offset_Shifter {
 		'debug'                        => false,
 		'before'                       => false,
 		'paragraph_select_from_bottom' => false,
-	);
+	];
 
 	/**
 	 * Amount of words between items.
 	 *
 	 * @var array
 	 */
-	protected $words_between = array();
+	protected $words_between = [];
 
 	/**
 	 * Previous offset.
@@ -87,7 +87,7 @@ class Advanced_Ads_Pro_Offset_Shifter {
 		$expr     = $this->get_expression_for_existing_ads();
 		$existing = $this->xpath->query( $expr );
 
-		$created = array();
+		$created = [];
 		// Excel existing ads.
 		foreach ( $existing as $node ) {
 			$start = $this->dom->createTextNode( self::START_EXISTING_AD );
@@ -131,10 +131,10 @@ class Advanced_Ads_Pro_Offset_Shifter {
 	 * @return $r Word amounts between items.
 	 */
 	protected function prepare_words_between( $parts ) {
-		$r          = array();
+		$r          = [];
 		$prev_is_ad = false;
 		$doing_ad   = 0;
-		$prev_text  = array();
+		$prev_text  = [];
 		$prev_ip    = false;
 
 		foreach ( $parts as $part ) {
@@ -143,7 +143,7 @@ class Advanced_Ads_Pro_Offset_Shifter {
 					$r       = $this->add_after_insertion_point( $r, $prev_text, true );
 					$prev_ip = false;
 				}
-				$prev_text  = array();
+				$prev_text  = [];
 				$prev_is_ad = true;
 				$doing_ad++;
 				continue;
@@ -158,16 +158,16 @@ class Advanced_Ads_Pro_Offset_Shifter {
 					$prev_ip = false;
 				}
 
-				$data = array(
+				$data = [
 					self::PREV_NUMBER => self::calc_words( $prev_text ),
 					self::PREV_IS_AD  => $prev_is_ad,
-				);
+				];
 				if ( $this->options['debug'] ) {
 					$data[ self::PREV_WORDS ] = $prev_text;
 				}
 				$r[] = $data;
 
-				$prev_text  = array();
+				$prev_text  = [];
 				$prev_is_ad = false;
 				$prev_ip    = true;
 			} else {
@@ -243,7 +243,7 @@ class Advanced_Ads_Pro_Offset_Shifter {
 			sort( $offsets );
 		}
 
-		$new_offsets           = array();
+		$new_offsets           = [];
 		$this->previous_offset = false;
 
 		$this->debug( '///// debug start: ' . implode( ', ', $offsets ) . ' /////' );
@@ -418,12 +418,12 @@ class Advanced_Ads_Pro_Offset_Shifter {
 	 * @return string XPath expression.
 	 */
 	protected function get_expression_for_existing_ads() {
-		$expr = array(
+		$expr = [
 			// The assumption is that a `div` that has a class starting with the frontend prefix is ad.
 			"//div[@class and contains(concat(' ', normalize-space(@class), ' '), ' %s')]",
 			// Waiting for consent ads (Privacy module): `<script type="text/plain" data-tcf="waiting-for-consent" data-id="..." data-bid="..."`
 			"//comment()[contains(.,'data-tcf=\"waiting-for-consent')]"
-		);
+		];
 
 		return sprintf(
 			implode( ' | ', $expr ),

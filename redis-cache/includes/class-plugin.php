@@ -45,7 +45,7 @@ class Plugin {
     /**
      * Plugin instance property
      *
-     * @var Plugin
+     * @var Plugin|null
      */
     private static $instance;
 
@@ -208,6 +208,8 @@ class Plugin {
             'dashboard_rediscache',
             __( 'Redis Object Cache', 'redis-cache' ),
             [ $this, 'show_dashboard_widget' ],
+            null,
+            null,
             'normal',
             'high'
         );
@@ -239,25 +241,25 @@ class Plugin {
     }
 
     /**
-	 * Adds plugin meta links on the plugin page
-	 *
-	 * @param string[] $plugin_meta An array of the plugin's metadata.
-	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-	 * @return string[] An array of the plugin's metadata.
-	 */
-	public function add_plugin_row_meta( array $plugin_meta, $plugin_file ) {
-		if ( strpos( $plugin_file, 'redis-cache.php' ) === false ) {
-			return $plugin_meta;
-		}
+     * Adds plugin meta links on the plugin page
+     *
+     * @param string[] $plugin_meta An array of the plugin's metadata.
+     * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
+     * @return string[] An array of the plugin's metadata.
+     */
+    public function add_plugin_row_meta( array $plugin_meta, $plugin_file ) {
+        if ( strpos( $plugin_file, 'redis-cache.php' ) === false ) {
+            return $plugin_meta;
+        }
 
         $plugin_meta[] = sprintf(
-			'<a href="%1$s"><span class="dashicons dashicons-star-filled" aria-hidden="true" style="font-size: 14px; line-height: 1.3"></span>%2$s</a>',
-			'https://objectcache.pro/?ref=oss&amp;utm_source=wp-plugin&amp;utm_medium=meta-row',
-			esc_html_x( 'Upgrade to Pro', 'verb', 'redis-cache' )
-		);
+            '<a href="%1$s"><span class="dashicons dashicons-star-filled" aria-hidden="true" style="font-size: 14px; line-height: 1.3"></span>%2$s</a>',
+            'https://objectcache.pro/?ref=oss&amp;utm_source=wp-plugin&amp;utm_medium=meta-row',
+            esc_html_x( 'Upgrade to Pro', 'verb', 'redis-cache' )
+        );
 
-		return $plugin_meta;
-	}
+        return $plugin_meta;
+    }
 
     /**
      * Enqueues admin style resources
@@ -281,7 +283,7 @@ class Plugin {
             return;
         }
 
-        wp_enqueue_style( 'redis-cache', WP_REDIS_DIR . '/assets/css/admin.css', null, WP_REDIS_VERSION );
+        wp_enqueue_style( 'redis-cache', WP_REDIS_PLUGIN_DIR . '/assets/css/admin.css', [ ], WP_REDIS_VERSION );
     }
 
     /**
@@ -362,7 +364,7 @@ class Plugin {
         wp_enqueue_script(
             'redis-cache-charts',
             plugins_url( 'assets/js/apexcharts.min.js', WP_REDIS_FILE ),
-            null,
+            [ ],
             WP_REDIS_VERSION,
             true
         );
@@ -507,15 +509,15 @@ class Plugin {
         global $wp_object_cache;
 
         if ( defined( 'WP_REDIS_DISABLED' ) && WP_REDIS_DISABLED ) {
-            return;
+            return null;
         }
 
         if ( ! $this->validate_object_cache_dropin() ) {
-            return;
+            return null;
         }
 
         if ( ! method_exists( $wp_object_cache, 'redis_status' ) ) {
-            return;
+            return null;
         }
 
         return $wp_object_cache->redis_status();
@@ -531,12 +533,14 @@ class Plugin {
         global $wp_object_cache;
 
         if ( defined( 'WP_REDIS_DISABLED' ) && WP_REDIS_DISABLED ) {
-            return;
+            return null;
         }
 
-        if ( $this->validate_object_cache_dropin() && method_exists( $wp_object_cache, 'redis_version' ) ) {
-            return $wp_object_cache->redis_version();
+        if ( ! $this->validate_object_cache_dropin() || ! method_exists( $wp_object_cache, 'redis_version' ) ) {
+            return null;
         }
+
+        return $wp_object_cache->redis_version();
     }
 
     /**
@@ -551,9 +555,11 @@ class Plugin {
             return $wp_object_cache->diagnostics[ 'client' ];
         }
 
-        if ( defined( 'WP_REDIS_CLIENT' ) ) {
-            return WP_REDIS_CLIENT;
+        if ( ! defined( 'WP_REDIS_CLIENT' ) ) {
+            return null;
         }
+
+        return WP_REDIS_CLIENT;
     }
 
     /**
@@ -564,9 +570,11 @@ class Plugin {
     public function get_diagnostics() {
         global $wp_object_cache;
 
-        if ( $this->validate_object_cache_dropin() && property_exists( $wp_object_cache, 'diagnostics' ) ) {
-            return $wp_object_cache->diagnostics;
+        if ( ! $this->validate_object_cache_dropin() || ! property_exists( $wp_object_cache, 'diagnostics' ) ) {
+            return null;
         }
+
+        return $wp_object_cache->diagnostics;
     }
 
     /**
@@ -593,6 +601,10 @@ class Plugin {
      * @return void
      */
     public function show_admin_notices() {
+        if ( defined( '\RedisCachePro\Version' ) || defined( '\ObjectCachePro\Version' ) ) {
+            return;
+        }
+
         if ( ! defined( 'WP_REDIS_DISABLE_BANNERS' ) || ! WP_REDIS_DISABLE_BANNERS ) {
             $this->pro_notice();
             $this->wc_pro_notice();
@@ -611,15 +623,15 @@ class Plugin {
         if ( $this->object_cache_dropin_exists() ) {
             if ( $this->validate_object_cache_dropin() ) {
                 if ( $this->object_cache_dropin_outdated() ) {
-                    // translators: %s = Action link to update the drop-in.
                     $message = sprintf(
+                        // translators: %s = Action link to update the drop-in.
                         __( 'The Redis object cache drop-in is outdated. Please <a href="%s">update the drop-in</a>.', 'redis-cache' ),
                         $this->action_link( 'update-dropin' )
                     );
                 }
             } else {
-                // translators: %s = Link to settings page.
                 $message = sprintf(
+                    // translators: %s = Link to settings page.
                     __( 'A foreign object cache drop-in was found. To use Redis for object caching, please <a href="%s">enable the drop-in</a>.', 'redis-cache' ),
                     esc_url( network_admin_url( $this->page ) )
                 );
@@ -763,7 +775,7 @@ class Plugin {
 
                 $messages = get_settings_errors( 'redis-cache' );
 
-                if ( ! empty( $messages ) ) {
+                if ( count( $messages ) !== 0 ) {
                     set_transient( 'settings_errors', $messages, 30 );
 
                     wp_safe_redirect(
@@ -888,6 +900,7 @@ class Plugin {
      * @return void
      */
     public function maybe_print_comment() {
+        /** @var \WP_Object_Cache $wp_object_cache */
         global $wp_object_cache;
 
         if (
@@ -908,7 +921,6 @@ class Plugin {
         }
 
         if (
-            ! isset( $wp_object_cache->cache_hits ) ||
             ! isset( $wp_object_cache->diagnostics ) ||
             ! is_array( $wp_object_cache->cache )
         ) {

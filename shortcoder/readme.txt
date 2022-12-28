@@ -7,8 +7,8 @@ Donate link: https://www.paypal.me/vaakash/
 License: GPLv2 or later
 Requires PHP: 5.3
 Requires at least: 4.9.0
-Tested up to: 6.0.1
-Stable tag: 6.0
+Tested up to: 6.1
+Stable tag: 6.1
 
 Create custom "Shortcodes" easily for HTML, JavaScript, CSS code snippets and use the shortcodes within posts, pages & widgets
 
@@ -129,6 +129,11 @@ Yes, this feature is available in the PRO version. You can upgrade to the [PRO v
 
 
 ## Changelog
+
+### 6.1
+* New: Enhancements to shortcode edit screen meta boxes.
+* Fix: HTML is escaped in the editor sometimes.
+* Fix: Support for WordPress 6.1
 
 ### 6.0
 * New: PRO version is introduced.

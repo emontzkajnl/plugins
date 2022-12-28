@@ -8,7 +8,7 @@ class Advanced_Ads_AdSense_Data {
 
     private function __construct() {
 
-	$options = get_option(GADSENSE_OPT_NAME, array());
+	$options = get_option(GADSENSE_OPT_NAME, []);
 
 	// set defaults
 	if (!isset($options['adsense-id'])) {
@@ -36,9 +36,9 @@ class Advanced_Ads_AdSense_Data {
 	$this->options = $options;
 
 	// Resizing method for responsive ads
-	$this->resizing = array(
+	$this->resizing = [
 	    'auto' => __('Auto', 'advanced-ads'),
-	);
+	];
     }
 
     /**

@@ -34,27 +34,28 @@ class Advanced_Ads_Visitor_Conditions {
 		// register conditions.
 		$this->conditions = apply_filters(
 			'advanced-ads-visitor-conditions',
-			array(
-				'mobile'   => array(
+			[
+				'mobile'   => [
 					// type of the condition.
 					'label'       => __( 'device', 'advanced-ads' ),
 					'description' => __( 'Display ads only on mobile devices or hide them.', 'advanced-ads' ),
-					'metabox'     => array( 'Advanced_Ads_Visitor_Conditions', 'mobile_is_or_not' ), // callback to generate the metabox.
-					'check'       => array( 'Advanced_Ads_Visitor_Conditions', 'check_mobile' ), // callback for frontend check.
-					'helplink'    => ADVADS_URL . 'manual/display-ads-either-on-mobile-or-desktop/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor-mobile', // link to help section.
-				),
-				'loggedin' => array(
+					'metabox'     => [ 'Advanced_Ads_Visitor_Conditions', 'mobile_is_or_not' ], // callback to generate the metabox.
+					'check'       => [ 'Advanced_Ads_Visitor_Conditions', 'check_mobile' ], // callback for frontend check.
+					'helplink'    => ADVADS_URL . 'manual/display-ads-either-on-mobile-or-desktop/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-device',
+				],
+				'loggedin' => [
 					'label'        => __( 'logged-in visitor', 'advanced-ads' ),
-					'description'  => __( 'Whether the visitor has to be logged in or not in order to see the ads.', 'advanced-ads' ),
-					'metabox'      => array( 'Advanced_Ads_Visitor_Conditions', 'metabox_is_or_not' ), // callback to generate the metabox.
-					'check'        => array( 'Advanced_Ads_Visitor_Conditions', 'check_logged_in' ), // callback for frontend check.
-					'passive_info' => array(
+					'description'  => __( 'Whether the visitor has to be logged in or not in order to see the ad.', 'advanced-ads' ),
+					'metabox'      => [ 'Advanced_Ads_Visitor_Conditions', 'metabox_is_or_not' ], // callback to generate the metabox.
+					'check'        => [ 'Advanced_Ads_Visitor_Conditions', 'check_logged_in' ], // callback for frontend check.
+					'helplink'     => ADVADS_URL . 'manual/logged-in-visitors/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-logged-in-visitors',
+					'passive_info' => [
 						'hash_fields' => null,
 						'remove'      => 'login',
 						'function'    => 'is_user_logged_in',
-					),
-				),
-			)
+					],
+				],
+			]
 		);
 	}
 
@@ -117,12 +118,12 @@ class Advanced_Ads_Visitor_Conditions {
 				wp_kses(
 				// translators: %s is a URL. Please don’t change it.
 					__( 'Display ads by the available space on the device or target tablets with the <a href="%s" target="_blank">Responsive add-on</a>', 'advanced-ads' ),
-					array(
-						'a' => array(
-							'href'   => array(),
-							'target' => array(),
-						),
-					)
+					[
+						'a' => [
+							'href'   => [],
+							'target' => [],
+						],
+					]
 				),
 				ADVADS_URL . 'add-ons/responsive-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor-responsive'
 			);
@@ -224,7 +225,7 @@ class Advanced_Ads_Visitor_Conditions {
 	 *
 	 * @return bool false, if ad can’t be delivered
 	 */
-	public static function frontend_check( $options = array(), $ad = false ) {
+	public static function frontend_check( $options = [], $ad = false ) {
 		$visitor_conditions = self::get_instance()->conditions;
 
 		if ( is_array( $options ) && isset( $visitor_conditions[ $options['type'] ]['check'] ) ) {
@@ -235,7 +236,7 @@ class Advanced_Ads_Visitor_Conditions {
 
 		// call frontend check callback.
 		if ( method_exists( $check[0], $check[1] ) ) {
-			return call_user_func( array( $check[0], $check[1] ), $options, $ad );
+			return call_user_func( [ $check[0], $check[1] ], $options, $ad );
 		}
 
 		return true;
@@ -265,7 +266,7 @@ class Advanced_Ads_Visitor_Conditions {
 		 */
 
 		// add mockup conditions if add-ons are missing.
-		$pro_conditions = array();
+		$pro_conditions = [];
 		if ( ! defined( 'AAP_VERSION' ) ) {
 			$pro_conditions[] = __( 'browser language', 'advanced-ads' );
 			$pro_conditions[] = __( 'cookie', 'advanced-ads' );
@@ -273,13 +274,11 @@ class Advanced_Ads_Visitor_Conditions {
 			$pro_conditions[] = __( 'max. ad impressions', 'advanced-ads' );
 			$pro_conditions[] = __( 'new visitor', 'advanced-ads' );
 			$pro_conditions[] = __( 'page impressions', 'advanced-ads' );
+			$pro_conditions[] = __( 'geo location', 'advanced-ads' );
 			$pro_conditions[] = __( 'referrer url', 'advanced-ads' );
 			$pro_conditions[] = __( 'user agent', 'advanced-ads' );
 			$pro_conditions[] = __( 'user can (capabilities)', 'advanced-ads' );
 			$pro_conditions[] = __( 'user role', 'advanced-ads' );
-		}
-		if ( ! defined( 'AAGT_VERSION' ) ) {
-			$pro_conditions[] = __( 'geo location', 'advanced-ads' );
 		}
 		if ( ! defined( 'AAR_VERSION' ) ) {
 			$pro_conditions[] = __( 'browser width', 'advanced-ads' );
@@ -341,7 +340,7 @@ class Advanced_Ads_Visitor_Conditions {
 	 *
 	 * @return bool true if can be displayed
 	 */
-	public static function check_mobile( $options = array() ) {
+	public static function check_mobile( $options = [] ) {
 
 		if ( ! isset( $options['operator'] ) ) {
 			return true;
@@ -371,7 +370,7 @@ class Advanced_Ads_Visitor_Conditions {
 	 * @return bool true if can be displayed
 	 * @since 1.6.3
 	 */
-	public static function check_logged_in( $options = array() ) {
+	public static function check_logged_in( $options = [] ) {
 
 		if ( ! isset( $options['operator'] ) ) {
 			return true;
@@ -402,14 +401,14 @@ class Advanced_Ads_Visitor_Conditions {
 	 * @return bool true if ad can be displayed
 	 * @since 1.6.3
 	 */
-	public static function helper_check_string( $string = '', $options = array() ) {
-
-		if ( ! isset( $options['operator'] ) || ! isset( $options['value'] ) || '' === $options['value'] ) {
+	public static function helper_check_string( $string = '', $options = [] ) {
+		if ( ! isset( $options['operator'] ) || empty( $options['value'] ) ) {
 			return true;
 		}
 
 		$operator = $options['operator'];
-		$value    = $options['value'];
+		$string   = (string) maybe_serialize( $string );
+		$value    = (string) maybe_serialize( $options['value'] );
 
 		// check the condition by mode and bool.
 		$condition = true;
@@ -448,21 +447,17 @@ class Advanced_Ads_Visitor_Conditions {
 				// strings do match, but should not or not match but should.
 				$condition = strcasecmp( $value, $string ) !== 0;
 				break;
-			// string is a regular expression.
 			case 'regex':
-				// check regular expression first.
-				if ( @preg_match( $value, null ) === false ) {
-					Advanced_Ads::log( "Advanced Ads: regular expression '$value' in visitor condition is broken." );
-				} else {
-					$condition = preg_match( $value, $string );
-				}
-				break;
-			// string is not a regular expression.
 			case 'regex_not':
-				if ( @preg_match( $value, null ) === false ) {
+				$condition = @preg_match( sprintf( '/%s/', $value ), $string );
+				// if the return value is `false`, the regex is incorrect.
+				if ( $condition === false ) {
 					Advanced_Ads::log( "Advanced Ads: regular expression '$value' in visitor condition is broken." );
-				} else {
-					$condition = ! preg_match( $value, $string );
+					break;
+				}
+
+				if ( $operator === 'regex_not' ) {
+					$condition = ! $condition;
 				}
 				break;
 		}

@@ -3,7 +3,7 @@
 		<div class="analyst-disable-modal-mask" id="analyst-disable-opt-out-modal-mask" style="display: none"></div>
 		<div style="display: flex">
 			<div class="analyst-install-image-block" style="width: 120px">
-				<img src="<?=$shieldImage?>"/>
+				<img src="<?php echo $shieldImage; ?>"/>
 			</div>
 			<div class="analyst-install-description-block">
 				<strong class="analyst-modal-header">By opting out, we cannot alert you anymore  in case of important security updates.</strong>

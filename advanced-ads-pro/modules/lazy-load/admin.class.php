@@ -3,14 +3,14 @@
 class Advanced_Ads_Pro_Module_Lazy_Load_Admin {
 
 	public function __construct() {
-		add_action( 'advanced-ads-settings-init', array( $this, 'settings_init'), 10, 1 );
+		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init'], 10, 1 );
 
 		// Render lazy load option.
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
 		if ( empty( $options['lazy-load']['enabled'] ) ) {
 			return;
 		}
-		add_action( 'advanced-ads-placement-options-after', array( $this, 'render_lazy_load_option' ), 10, 2 );
+		add_action( 'advanced-ads-placement-options-after', [ $this, 'render_lazy_load_option' ], 10, 2 );
 	}
 
 	public function settings_init($hook) {
@@ -20,8 +20,8 @@ class Advanced_Ads_Pro_Module_Lazy_Load_Admin {
 		// add new section
 		add_settings_field(
 			'module-lazy-load',
-			__( 'Lazy Load', 'advanced-ads-pro' ),
-			array( $this, 'render_settings' ),
+			__( 'Lazy Loading', 'advanced-ads-pro' ),
+			[ $this, 'render_settings' ],
 			Advanced_Ads_Pro::OPTION_KEY . '-settings',
 			Advanced_Ads_Pro::OPTION_KEY . '_modules-enable'
 		);
@@ -43,7 +43,7 @@ class Advanced_Ads_Pro_Module_Lazy_Load_Admin {
 
 		if ( ! empty( $placement_types[ $placement['type'] ]['options']['show_lazy_load'] ) ) {
 			$checked = ( isset( $placement['options']['lazy_load'] ) && $placement['options']['lazy_load'] === 'enabled' ) ? 'enabled' : 'disabled';
-			$cb_off = empty( $options['cache-busting']['enabled'] ) 
+			$cb_off = empty( $options['cache-busting']['enabled'] )
 			|| ( isset( $placement['options']['cache-busting'] ) && $placement['options']['cache-busting'] === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF );
 
 			ob_start();
@@ -53,7 +53,7 @@ class Advanced_Ads_Pro_Module_Lazy_Load_Admin {
 			if ( class_exists( 'Advanced_Ads_Admin_Options' ) ) {
 				Advanced_Ads_Admin_Options::render_option(
 					'placement-lazy-load',
-					__( 'lazy load', 'advanced-ads-pro' ),
+					__( 'Lazy Loading', 'advanced-ads-pro' ),
 					$option_content
 				);
 			}

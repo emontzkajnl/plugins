@@ -265,7 +265,7 @@ class SC_Admin{
 
     public static function action_links( $links ){
         array_unshift( $links, '<a href="'. esc_url( admin_url( 'edit.php?post_type=shortcoder') ) .'">' . esc_html__( 'View shortcodes', 'shortcoder' ) . '</a>' );
-        array_unshift( $links, '<a href="https://www.aakashweb.com/wordpress-plugins/shortcoder/?utm_source=admin&utm_medium=menu&utm_campaign=sc-pro#pro" target="_blank"><span style="font-weight: bold">' . esc_html__( 'Upgrade to PRO', 'shortcoder' ) . '</span></a>' );
+        array_unshift( $links, '<a href="https://www.aakashweb.com/wordpress-plugins/shortcoder/?utm_source=admin&utm_medium=menu&utm_campaign=sc-pro#pro" target="_blank"><b>' . esc_html__( 'Upgrade to PRO', 'shortcoder' ) . '</b></a>' );
         return $links;
     }
 

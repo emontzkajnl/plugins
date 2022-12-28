@@ -269,11 +269,16 @@ if (!advanced_ads_pro) {
 					}
 				}
 			}
+
+			// Convert ampersand in script src to prevent the "remote script failed" error.
+			if ( tok.type === 'atomicTag' && tok.src ) {
+				tok.src = tok.src.replace( /&amp;/g, '&' );
+			}
+
 			return tok;
 		},
 
-
-        loadAjaxAds: function() {
+		loadAjaxAds: function() {
             "use strict";
 
 			if ( ! this.deferedAds.length ) {
@@ -282,13 +287,16 @@ if (!advanced_ads_pro) {
 				return;
 			}
 
-            var data = {
+			var data = {
 				action: "advads_ad_select",
 				ad_ids: this.ads,
 				deferedAds: this.deferedAds,
 				consent: typeof advads === 'undefined' ? 'not_needed' : advads.privacy.get_state(),
 			};
-            this.deferedAds = [];
+
+			document.dispatchEvent( new CustomEvent( 'advads_ajax_ad_select', {detail: data} ) );
+
+			this.deferedAds = [];
 
             jQuery
 				.ajax({ url: advanced_ads_pro_ajax_object.ajax_url, method: "POST", data: data, dataType: "json"})
@@ -1372,7 +1380,33 @@ var Advads_passive_cb_Conditions = {
 			if ( stored_condition.field !== options.field ) {
 				return false;
 			}
-			return this.helper_check_string( stored_condition.data, options );
+
+			var profile = stored_condition.data;
+
+			// Multi fields (checkboxes, dropdowns, etc).
+			if ( Array.isArray( profile ) ) {
+				const positive_operator = [ 'contain', 'start', 'end', 'match', 'regex' ].indexOf( options.operator ) !== -1;
+
+				if ( ! profile.length ) {
+					return ! positive_operator;
+				}
+
+				if ( positive_operator ) {
+					// If operator is positive, check if at least one string returns `true`
+					return profile.some( function( profile_item ) {
+						return Advads_passive_cb_Conditions.helper_check_string( profile_item, options );
+					} );
+
+				}
+
+				// If operator is negative, check if all strings return `true`
+				return profile.every( function( profile_item ) {
+					return Advads_passive_cb_Conditions.helper_check_string( profile_item, options );
+				} );
+			}
+
+			// Single fields.
+			return Advads_passive_cb_Conditions.helper_check_string( stored_condition.data, options );
 		}, this );
 
 		return r;
@@ -1908,6 +1942,14 @@ Advads_passive_cb_Ad.prototype.can_display_by_display_limit = function() {
  * @return {bool}
  */
 Advads_passive_cb_Ad.prototype.can_display_by_cfp = function() {
+	// Check if the global setting is ignored.
+	for ( const visitor of this.visitors ) {
+		if ( visitor['type'] === 'ad_clicks' && visitor['exclude-from-global'] ) {
+			return true;
+		}
+	}
+
+	// Check if the user is banned
 	return ! advads.get_cookie( 'advads_pro_cfp_ban' );
 }
 

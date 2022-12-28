@@ -12,12 +12,12 @@ elseif ( Advanced_Ads_Checks::cache() && ! defined( 'AAP_VERSION' ) ) :
 			wp_kses(
 			// translators: %s is a URL.
 				__( 'Check out cache-busting in <a href="%s" target="_blank">Advanced Ads Pro</a> if dynamic features get cached.', 'advanced-ads' ),
-				array(
-					'a' => array(
-						'href'   => array(),
-						'target' => array(),
-					),
-				)
+				[
+					'a' => [
+						'href'   => [],
+						'target' => [],
+					],
+				]
 			),
 			esc_url( ADVADS_URL ) . 'add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor'
 		);

@@ -10,6 +10,23 @@ class Aaabs_Adsense_Admin
 	 */
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'wp_admin_plugins_loaded' ) );
+		add_filter( 'advanced-ads-ad-settings-pre-save', array( $this, 'pre_save_post'), 20 );
+	}
+
+	/**
+	 * Pass the default width and height to be saved in ad options.
+	 *
+	 * @param array $advanced_ads_vars Variables of `$_POST['advanced_ads`]` prepared to save in the database.
+	 *
+	 * @return array
+	 */
+	public function pre_save_post( $advanced_ads_vars ) {
+		if ($_POST['ad-resize-type'] === 'manual') {
+			$advanced_ads_vars['width']  = (int) $_POST['default-width'];
+			$advanced_ads_vars['height'] = (int) $_POST['default-height'];
+		}
+
+		return $advanced_ads_vars;
 	}
 
 	/**

@@ -43,14 +43,14 @@ abstract class Responsive_Lightbox_Remote_Library_API {
 		$this->rl = Responsive_Lightbox();
 
 		// add provider
-		$this->rl->providers[$provider->slug] = array(
+		$this->rl->providers[$provider->slug] = [
 			'instance'		=> $provider,
 			'slug'			=> ! empty( $provider->slug ) ? sanitize_title( $provider->slug ) : '',
 			'name'			=> ! empty( $provider->name ) ? esc_html( $provider->name ) : '',
 			'defaults'		=> ! empty( $provider->defaults ) && is_array( $provider->defaults ) ? $provider->defaults : [],
 			'fields'		=> ! empty( $provider->fields ) && is_array( $provider->fields ) ? $provider->fields : [],
 			'response_args'	=> ! empty( $provider->response_data_args ) && is_array( $provider->response_data_args ) ? $provider->response_data_args : []
-		);
+		];
 
 		// add provider default values
 		$this->rl->defaults['remote_library'][$provider->slug] = $this->rl->providers[$provider->slug]['defaults'];
@@ -59,10 +59,10 @@ abstract class Responsive_Lightbox_Remote_Library_API {
 		$this->rl->settings->settings['remote_library']['fields'][$provider->slug] = $this->rl->providers[$provider->slug]['fields'];
 
 		// validate provider settings
-		add_filter( 'rl_remote_library_settings', array( $this, 'validate_settings' ) );
+		add_filter( 'rl_remote_library_settings', [ $this, 'validate_settings' ] );
 
 		// provider query
-		add_filter( 'rl_remote_library_query', array( $this, 'get_images' ), 10, 4 );
+		add_filter( 'rl_remote_library_query', [ $this, 'get_images' ], 10, 4 );
 	}
 
 	/**
@@ -170,7 +170,7 @@ abstract class Responsive_Lightbox_Remote_Library_API {
 	 * @return array
 	 */
 	public function sanitize_results( $results ) {
-		return is_array( $results ) ? array_filter( array_map( array( $this, 'sanitize_result' ), $results ) ) : [];
+		return is_array( $results ) ? array_filter( array_map( [ $this, 'sanitize_result' ], $results ) ) : [];
 	}
 
 	/**

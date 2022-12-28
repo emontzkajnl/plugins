@@ -48,24 +48,14 @@ class Advanced_Ads_Ad_Type_Abstract {
 	 *
 	 * defaults are set in construct
 	 */
-	public $parameters = array();
-
-	/**
-	 * Set basic attributes
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct() {
-		// initiall
-	}
+	public $parameters = [];
 
 	/**
 	 * Output for the ad parameters metabox
 	 *
-	 * @param obj $ad ad object
-	 * @since 1.0.0
+	 * @param Advanced_Ads_Ad $ad ad object.
 	 */
-	public function render_parameters($ad){
+	public function render_parameters( Advanced_Ads_Ad $ad ) {
 		/**
 		* This will be loaded by default or using ajax when changing the ad type radio buttons
 		* echo the output right away here
@@ -74,13 +64,42 @@ class Advanced_Ads_Ad_Type_Abstract {
 	}
 
 	/**
+	 * Render icon on the ad overview list.
+	 *
+	 * @param Advanced_Ads_Ad $ad ad object.
+	 *
+	 * @return void
+	 */
+	public function render_icon( Advanced_Ads_Ad $ad ) {
+		$icon_path = sprintf( 'admin/assets/img/ad-types/%s.svg', esc_attr( $ad->type ) );
+		if ( ! file_exists( ADVADS_BASE_PATH . $icon_path ) ) {
+			$icon_path = 'admin/assets/img/ad-types/empty.svg';
+		}
+		printf( '<img src="%s" width="50" height="50"/>', esc_url( ADVADS_BASE_URL . $icon_path ) );
+	}
+
+	/**
+	 * Render preview on the ad overview list
+	 *
+	 * @param Advanced_Ads_Ad $ad ad object.
+	 */
+	public function render_preview( Advanced_Ads_Ad $ad ) {}
+
+	/**
+	 * Render additional information in the ad type tooltip on the ad overview page
+	 *
+	 * @param Advanced_Ads_Ad $ad ad object.
+	 */
+	public function render_ad_type_tooltip( Advanced_Ads_Ad $ad ) {}
+
+	/**
 	 * Sanitize ad options on save
 	 *
 	 * @param array $options all ad options.
 	 * @return array sanitized ad options.
 	 * @since 1.0.0
 	 */
-	public function sanitize_options( $options = array() ) {
+	public function sanitize_options( $options = [] ) {
 		return $options;
 	}
 
@@ -92,8 +111,6 @@ class Advanced_Ads_Ad_Type_Abstract {
 	 * @since 1.0.0
 	 */
 	public function sanitize_content($content = ''){
-
-		// remove slashes from content
 		return $content = wp_unslash( $content );
 	}
 
@@ -105,27 +122,28 @@ class Advanced_Ads_Ad_Type_Abstract {
 	 * @since 1.0.0
 	 */
 	public function load_content($post){
-
 		return $post->post_content;
 	}
 
 	/**
 	 * Prepare the ads frontend output
 	 *
-	 * @param obj $ad ad object
-	 * @return str $content ad content prepared for frontend output
+	 * @param Advanced_Ads_Ad $ad The current ad object.
+	 *
+	 * @return string $content ad content prepared for frontend output
 	 * @since 1.0.0
 	 */
-	public function prepare_output($ad){
+	public function prepare_output( $ad ) {
 		return $ad->content;
 	}
 
 	/**
 	 * Process shortcodes.
 	 *
-	 * @param str $output Ad content.
-	 * @return obj Advanced_Ads_Ad
-	 * @return bool force_aa Whether to force Advanced ads shortcodes processing.
+	 * @param string          $output Ad content.
+	 * @param Advanced_Ads_Ad $ad     The current ad object.
+	 *
+	 * @return string
 	 */
 	protected function do_shortcode( $output, Advanced_Ads_Ad $ad ) {
 		$ad_options = $ad->options();
@@ -137,8 +155,6 @@ class Advanced_Ads_Ad_Type_Abstract {
 			$output = preg_replace( '/\[(the_ad_group|the_ad_placement|the_ad)/', '[$1 ad_args="' . urlencode( json_encode( $ad_args ) )  . '"', $output );
 		}
 
-		$output = do_shortcode( $output );
-		return $output;
+		return do_shortcode( $output );
 	}
-
 }

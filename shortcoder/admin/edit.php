@@ -51,9 +51,9 @@ class SC_Admin_Edit{
 
         add_meta_box( 'sc_mb_settings', __( 'Shortcode settings', 'shortcoder' ), array( __CLASS__, 'settings_form' ), SC_POST_TYPE, 'normal', 'default' );
 
-        add_meta_box( 'sc_mb_links', __( 'WordPress News', 'shortcoder' ), array( __CLASS__, 'feedback' ), SC_POST_TYPE, 'side', 'default' );
+        add_meta_box( 'sc_mb_more_plugins', __( 'Support', 'shortcoder' ), array( __CLASS__, 'more_plugins' ), SC_POST_TYPE, 'side', 'default' );
 
-        add_meta_box( 'sc_mb_more_plugins', __( 'More plugins from us', 'shortcoder' ), array( __CLASS__, 'more_plugins' ), SC_POST_TYPE, 'side', 'default' );
+        add_meta_box( 'sc_mb_links', __( 'WordPress News', 'shortcoder' ), array( __CLASS__, 'feedback' ), SC_POST_TYPE, 'side', 'default' );
 
         remove_meta_box( 'slugdiv', SC_POST_TYPE, 'normal' );
 
@@ -213,18 +213,21 @@ class SC_Admin_Edit{
         echo '</div>';
         echo '</div>';
 
+        $post_data = get_post( $post->ID );
+        $post_content = $post_data->post_content;
+
         if( SC_Admin::is_edit_page( 'new' ) ){
             $general_settings = Shortcoder::get_settings();
-            $post->post_content = $general_settings[ 'default_content' ];
+            $post_content = $general_settings[ 'default_content' ];
         }
 
         if( $editor[ 'active' ] == 'code' ){
             echo '<div class="sc_cm_menu"></div>';
-            echo '<textarea name="sc_content" id="sc_content" class="sc_cm_content">' . esc_textarea( $post->post_content ) . '</textarea>';
+            echo '<textarea name="sc_content" id="sc_content" class="sc_cm_content">' . esc_textarea( $post_content ) . '</textarea>';
         }
 
         if( in_array( $editor[ 'active' ], array( 'text', 'visual' ) ) ){
-            wp_editor( $post->post_content, 'sc_content', array(
+            wp_editor( $post_content, 'sc_content', array(
                 'wpautop'=> false,
                 'textarea_rows'=> 20,
                 'tinymce' => ( $editor[ 'active' ] == 'visual' )
@@ -324,40 +327,28 @@ class SC_Admin_Edit{
         <button class="button subscribe_btn"><span class="dashicons dashicons-email"></span> Subscribe</button>
         </div>';
 
-        echo '<p>';
-        echo '<a href="https://twitter.com/intent/follow?screen_name=aakashweb" target="_blank" class="button twitter_btn"><span class="dashicons dashicons-twitter"></span> Follow us on Twitter</a>';
-        echo '<a href="https://www.facebook.com/aakashweb/" target="_blank" class="button facebook_btn"><span class="dashicons dashicons-facebook-alt"></span> on Facebook</a>';
-        echo '</p>';
-
         echo '</div>';
     }
 
     public static function more_plugins( $post ){
 
         echo '<div class="feedback">';
-        echo '<div class="promo_slides">';
-        echo '<div class="promo_slide">';
-        echo '<a class="side_banner" href="https://www.aakashweb.com/wordpress-plugins/super-rss-reader/?utm_source=wp-socializer&utm_medium=sidebar&utm_campaign=srr-pro" target="_blank"><img src="' . esc_url( SC_ADMIN_URL ) . 'images/super-rss-reader.png" /></a>';
-        echo '</div>';
 
-        echo '<div class="promo_slide">';
-        echo '<a class="side_banner" href="https://www.aakashweb.com/wordpress-plugins/ultimate-floating-widgets/?utm_source=wp-socializer&utm_medium=sidebar&utm_campaign=ufw-pro" target="_blank"><img src="' . esc_url( SC_ADMIN_URL ) . 'images/ultimate-floating-widgets.png" /></a>';
-        echo '</div>';
+        echo '<ul>';
+            echo '<li><a href="https://twitter.com/intent/follow?screen_name=aakashweb" target="_blank"><span class="dashicons dashicons-twitter"></span> Follow on Twitter</a></li>';
+            echo '<li><a href="https://www.facebook.com/aakashweb/" target="_blank"><span class="dashicons dashicons-facebook-alt"></span> Follow on Facebook</a></li>';
+            echo '<li><a href="https://www.aakashweb.com/forum/discuss/wordpress-plugins/shortcoder/" target="_blank"><span class="dashicons dashicons-format-chat"></span> Support Forum</a></li>';
+            echo '<li><a href="https://wordpress.org/support/plugin/shortcoder/reviews/?rate=5#new-post" target="_blank"><span class="dashicons dashicons-star-filled"></span> Rate plugin</a></li>';
+        echo '</ul>';
 
-        echo '<div class="promo_slide">';
-        echo '<a class="side_banner" href="https://www.aakashweb.com/wordpress-plugins/announcer/?utm_source=wp-socializer&utm_medium=sidebar&utm_campaign=announcer-pro" target="_blank"><img src="' . esc_url( SC_ADMIN_URL ) . 'images/announcer.png" /></a>';
-        echo '</div>';
-        echo '</div>';
-
-        echo '<p class="promo_btns">
-        <a href="#" onclick="sc_next_promo_slide(-1, event)" class="promo_btn"><span class="dashicons dashicons-arrow-left-alt2"></span> Prev</a>
-        <a href="#" onclick="sc_next_promo_slide(1, event)" class="promo_btn right">Next <span class="dashicons dashicons-arrow-right-alt2"></span></a>
-        </p>';
-
-        echo '<p>';
-        echo '<a href="https://wordpress.org/support/plugin/shortcoder/reviews/?rate=5#new-post" target="_blank" class="button"><span class="dashicons dashicons-star-filled"></span> Rate this plugin</a>';
-        echo '<a href="https://www.aakashweb.com/forum/discuss/wordpress-plugins/shortcoder/" target="_blank" class="button"><span class="dashicons dashicons-format-chat"></span> Support forum</a>';
-        echo '</p>';
+        echo '<h3>More WordPress plugins from us</h3>';
+        echo '<ul>';
+            echo '<li><a href="https://www.aakashweb.com/wordpress-plugins/super-rss-reader/?utm_source=shortcoder&utm_medium=sidebar&utm_campaign=srr-pro" target="_blank">Super RSS Reader</a> - Display RSS feeds</li>';
+            echo '<li><a href="https://www.aakashweb.com/wordpress-plugins/announcer/?utm_source=shortcoder&utm_medium=sidebar&utm_campaign=announcer-pro" target="_blank">Announcer</a> - Add notification message bars easily</li>';
+            echo '<li><a href="https://www.aakashweb.com/wordpress-plugins/ultimate-floating-widgets/?utm_source=shortcoder&utm_medium=sidebar&utm_campaign=ufw-pro" target="_blank">Ultimate Floating Widget</a> - Create floating sidebar popup and add widgets inside</li>';
+            echo '<li><a href="https://www.aakashweb.com/wordpress-plugins/wp-socializer/?utm_source=shortcoder&utm_medium=sidebar&utm_campaign=wpsr-pro" target="_blank">WP Socializer</a> - Add beautiful social media share icons</li>';
+            echo '<li><a href="https://www.aakashweb.com/wordpress-plugins/?utm_source=shortcoder&utm_medium=sidebar&utm_campaign=aw" target="_blank">More</a> <span class="dashicons dashicons-arrow-right-alt"></span></li>';
+        echo '</ul>';
 
         echo '</div>';
 

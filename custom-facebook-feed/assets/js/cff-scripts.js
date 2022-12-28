@@ -419,8 +419,8 @@ if(!cff_js_exists){
                     var val = parts.pop().split( ';' ).shift();
                     consentGiven = (val === 'true');
                 }
-            } else if (typeof window.cookieconsent !== 'undefined') { // Complianz by Really Simple Plugins
-                consentGiven = cffCmplzGetCookie('cmplz_consent_status') === 'allow';
+            } else if (typeof window.complianz !== 'undefined' || typeof window.cookieconsent !== 'undefined') { // Complianz by Really Simple Plugins
+                consentGiven = cffCmplzGetCookie('cmplz_marketing') === 'allow';
             } else if (typeof window.Cookiebot !== "undefined") { // Cookiebot by Cybot A/S
                 consentGiven = Cookiebot.consented;
             } else if (typeof window.BorlabsCookie !== 'undefined') { // Borlabs Cookie by Borlabs
@@ -556,7 +556,19 @@ if(!cff_js_exists){
                 	afterConsentToggled( true, jQuery(this) );
                 });
             });
-
+    // Complianz by Really Simple Plugins
+    $('.cmplz-btn').on('click', function() {
+      if ( typeof cmplz_accepted_categories === 'function' ) {
+        setTimeout(function() {
+          var accepted = cmplz_accepted_categories();
+          if ( accepted.indexOf('marketing') > -1 ) {
+            jQuery('.cff-wrapper').each(function(index){
+              afterConsentToggled( true, jQuery(this) );
+            });
+          }
+        },1000);
+      }
+    });
             // Complianz by Really Simple Plugins
 			$(document).on('cmplzEnableScripts', function (event) {
 				if ( event.detail === 'marketing' ) {

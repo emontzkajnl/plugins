@@ -35,10 +35,10 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 		}
 
 		if ( ! is_array( $ads ) ) {
-			$ads = array( $ads );
+			$ads = [ $ads ];
 		}
 
-		$server_c = array();
+		$server_c = [];
 		foreach ( $ads as $ad ) {
 			$ad_server_c = $this->get_server_conditions( $ad );
 			if ( $ad_server_c ) {
@@ -50,14 +50,14 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 
 		$query = Advanced_Ads_Pro_Module_Cache_Busting::build_js_query( $args);
 
-		return array(
-			'ajax_query' => Advanced_Ads_Pro_Module_Cache_Busting::get_instance()->get_ajax_query( array_merge( $query, array(
+		return [
+			'ajax_query' => Advanced_Ads_Pro_Module_Cache_Busting::get_instance()->get_ajax_query( array_merge( $query, [
 				'elementid' => $elementid,
 				'server_conditions' => $server_c
-			) ) ),
+			] ) ),
 			'server_info_duration' => $this->server_info_duration,
 			'server_conditions' => $server_c,
-		);
+		];
 
 	}
 
@@ -69,11 +69,11 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 	 */
 	private function get_server_conditions( Advanced_Ads_Ad $ad ) {
 		$ad_options = $ad->options();
-		$visitors = ( ! empty( $ad_options['visitors'] ) && is_array( $ad_options['visitors'] ) ) ? array_values( $ad_options['visitors'] ) : array();
-		$result = array();
+		$visitors = ( ! empty( $ad_options['visitors'] ) && is_array( $ad_options['visitors'] ) ) ? array_values( $ad_options['visitors'] ) : [];
+		$result = [];
 		foreach ( $visitors as $k => $visitor ) {
 			if ( $info = $this->get_server_condition_info( $visitor ) ) {
-				$visitor_to_add = array_intersect_key( $visitor, array( 'type' => true, $info['hash_fields'] => true ) );
+				$visitor_to_add = array_intersect_key( $visitor, [ 'type' => true, $info['hash_fields'] => true ] );
 				$result[ $info['hash'] ] = $visitor_to_add;
 			}
 
@@ -110,7 +110,7 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 		$hash .= '_' . $this->vc_cache_reset;
 
 		$hash = substr( md5( $hash ), 0, 10 );
-		return array( 'hash' => $hash, 'function' => $info['function'], 'hash_fields' => $info['hash_fields'] );
+		return [ 'hash' => $hash, 'function' => $info['function'], 'hash_fields' => $info['hash_fields'] ];
 	}
 
 	/**
@@ -118,13 +118,13 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 	 */
 	public function get_all_server_conditions() {
 		if ( ! $this->server_info_duration ) {
-			return array();
+			return [];
 		}
 		if ( ! did_action( 'init' ) ) {
 			// All conditions should be ready.
 			trigger_error( sprintf( '%1$s was called incorrectly', 'Advanced_Ads_Pro_Cache_Busting_Server_Info::get_all_server_conditions' ) );
 		}
-		$r = array();
+		$r = [];
 		foreach ( Advanced_Ads_Visitor_Conditions::get_instance()->conditions as $name => $condition ) {
 			if ( isset( $condition['passive_info'] ) ) {
 				$r[ $name ] = $condition;
@@ -151,12 +151,12 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie {
 		}
 
 		if ( $this->server_info->is_ajax ) {
-			add_action( 'init', array( $this, 'add_server_info' ) );
+			add_action( 'init', [ $this, 'add_server_info' ] );
 		}
 
 		if ( ! empty( $this->server_info->options['vc_cache_reset_actions']['login'] ) ) {
-			add_action( 'wp_logout', array( $this, 'log_in_out' ) );
-			add_action( 'set_auth_cookie', array( $this, 'log_in_out' ) );
+			add_action( 'wp_logout', [ $this, 'log_in_out' ] );
+			add_action( 'set_auth_cookie', [ $this, 'log_in_out' ] );
 		}
 	}
 
@@ -193,7 +193,7 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie {
 	 * Get correct and not obsolete conditions.
 	 */
 	private function parse_existing_cookies() {
-		$n_cookie = array();
+		$n_cookie = [];
 
 		if ( isset( $_COOKIE[ self::SERVER_INFO_COOKIE_NAME ] ) ) {
 			$e_cookie = $_COOKIE[ self::SERVER_INFO_COOKIE_NAME ];
@@ -227,16 +227,16 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie {
 	 * @param array $n_cookie Existing visitor conditions from cookie.
 	 * @return array $n_cookie New cookie.
 	 */
-	public function prepare_new_cookies( $visitors, $n_cookie = array() ) {
+	public function prepare_new_cookies( $visitors, $n_cookie = [] ) {
 		foreach ( (array) $visitors as $visitor ) {
 			$info = $this->server_info->get_server_condition_info( $visitor );
 			if ( ! $info ) { continue; }
 			if ( isset( $n_cookie['conditions'][ $visitor['type'] ][ $info['hash'] ] ) ) { continue; }
 
-			$n_cookie['conditions'][ $visitor['type'] ][ $info['hash'] ] = array(
+			$n_cookie['conditions'][ $visitor['type'] ][ $info['hash'] ] = [
 				'data' => call_user_func( $info['function'], $visitor ),
 				'time' => time(),
-			);
+			];
 		}
 		return $n_cookie;
 	}

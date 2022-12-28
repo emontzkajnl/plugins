@@ -29,7 +29,7 @@ endif;
 	<?php
 	// display help when no conditions are given
 	if ( $empty_options ) :
-		$set_conditions = array();
+		$set_conditions = [];
 		?>
 		<p><a class="button button-primary"
 			  href="<?php echo esc_url( ADVADS_URL ); ?>manual/visitor-conditions?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor"

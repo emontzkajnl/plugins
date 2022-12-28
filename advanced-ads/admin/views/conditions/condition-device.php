@@ -14,11 +14,10 @@
 	<option
 		value="is_not" <?php selected( 'is_not', $operator ); ?>><?php esc_html_e( 'Desktop', 'advanced-ads' ); ?></option>
 </select>
-<p class="description">
-	<?php
-	echo $type_options[ $options['type'] ]['description'];
-	if ( isset( $type_options[ $options['type'] ]['helplink'] ) ) :
-		?>
-	<a href="<?php echo esc_url( $type_options[ $options['type'] ]['helplink'] ); ?>" target="_blank">
-		<?php esc_html_e( 'Manual and Troubleshooting', 'advanced-ads' ); ?>
-		</a><?php endif; ?></p>
+<?php
+printf(
+	'<p class="description">%1$s <a href="%2$s" class="advads-manual-link" target="_blank">%3$s</a></p>',
+	esc_html( $type_options[ $options['type'] ]['description'] ),
+	esc_url( $type_options[ $options['type'] ]['helplink'] ),
+	esc_html__( 'Manual', 'advanced-ads' )
+);

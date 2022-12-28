@@ -14,7 +14,7 @@ class PostmanMandrillTransport extends PostmanAbstractModuleTransport implements
 	const SLUG = 'mandrill_api';
 	const PORT = 443;
 	const HOST = 'mandrillapp.com';
-	const PRIORITY = 9000;
+	const PRIORITY = 46000;
 	const MANDRILL_AUTH_OPTIONS = 'postman_mandrill_auth_options';
 	const MANDRILL_AUTH_SECTION = 'postman_mandrill_auth_section';
 	public function __construct($rootPluginFilenameAndPath) {
@@ -179,6 +179,8 @@ class PostmanMandrillTransport extends PostmanAbstractModuleTransport implements
 		$recommendation ['transport'] = self::SLUG;
 		$recommendation ['hostname'] = null; // scribe looks this
 		$recommendation ['label'] = $this->getName ();
+		$recommendation['logo_url'] = $this->getLogoURL();
+		
 		if ($hostData->hostname == self::HOST && $hostData->port == self::PORT) {
 			$recommendation ['priority'] = self::PRIORITY;
 			/* translators: where variables are (1) transport name (2) host and (3) port */
@@ -245,7 +247,7 @@ class PostmanMandrillTransport extends PostmanAbstractModuleTransport implements
 	/**
 	 */
 	public function mandrill_api_key_callback() {
-		printf ( '<input type="password" autocomplete="off" id="mandrill_api_key" name="postman_options[mandrill_api_key]" value="%s" size="60" class="required" placeholder="%s"/>', null !== $this->options->getMandrillApiKey () ? esc_attr ( PostmanUtils::obfuscatePassword ( $this->options->getMandrillApiKey () ) ) : '', __ ( 'Required', 'post-smtp' ) );
+		printf ( '<input type="password" autocomplete="off" id="mandrill_api_key" name="postman_options[mandrill_api_key]" value="%s" size="60" class="required ps-input ps-w-75" placeholder="%s"/>', null !== $this->options->getMandrillApiKey () ? esc_attr ( PostmanUtils::obfuscatePassword ( $this->options->getMandrillApiKey () ) ) : '', __ ( 'Required', 'post-smtp' ) );
 		print ' <input type="button" id="toggleMandrillApiKey" value="Show Password" class="button button-secondary" style="visibility:hidden" />';
 	}
 	
@@ -276,5 +278,29 @@ class PostmanMandrillTransport extends PostmanAbstractModuleTransport implements
 		print '<br />';
 		print $this->mandrill_api_key_callback ();
 		print '</section>';
+	}
+
+	/**
+	 * Get Socket's logo
+	 * 
+	 * @since 2.1
+	 * @version 1.0
+	 */
+	public function getLogoURL() {
+
+		return POST_SMTP_ASSETS . "images/logos/mandrill.png";
+
+	}
+
+	/**
+	 * Returns true, to prevent from errors because it's default Module Transport.
+	 * 
+	 * @since 2.1.8
+	 * @version 1.0
+	 */
+	public function has_granted() {
+
+		return true;
+
 	}
 }

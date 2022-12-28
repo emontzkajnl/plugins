@@ -71,14 +71,3 @@ if (! function_exists('analyst_require_template')) {
 		require analyst_templates_path($file);
 	}
 }
-
-if (! function_exists('dd')) {
-	/**
-	 * Dump some data
-	 */
-	function dd ()
-	{
-		var_dump(func_get_args());
-		die();
-	}
-}

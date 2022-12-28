@@ -1,5 +1,123 @@
 == Changelog ==
 
+= 1.39.1 (December 19, 2022) =
+
+- Fix: check the validity of the form before saving the modal
+- Fix: correct "Show Usage" modal on placements page
+
+= 1.39.0 (December 14, 2022) =
+
+- Improvement: add PeepSo ad type image
+- Improvement: add fallback ad type image for unknown ad types
+- Fix: remove unused jQuery UI assets
+- Fix: prevent uncaught `TypeError` on Placements search
+- Fix: add the site URL to the export filename
+- Fix: prevent duplicate queries due to circular functions calls in capability checks
+
+= 1.38.0 (November 22, 2022) =
+
+- Improvement: add support for multibyte cookies in "advads.get/set_cookie" functions
+- Improvement: update routine to remove all data on uninstall
+- Improvement: unify the behavior and look of the group and placement lists
+- Fix: serialize post meta in conditions to do string comparisons
+- Fix: ensure the filters for placements work
+
+= 1.37.2 (November 2, 2022) =
+
+- Improvement: add manual links to display and visitor conditions
+- Improvement: sanitize the frontend prefix according to W3C valid class names
+- Improvement: update Black Friday / Cyber Monday promotion
+- Fix: remove the ad width and height before saving for responsive AdSense ads
+
+= 1.37.1 (October 25, 2022) =
+
+- Improvement: align the ad image preview in the Ad Parameters with other options
+- Improvement: order ads on the groups page by weight first and then by ad title
+- Fix: remove superfluous output above hints about cache-busting
+- Fix: ensure "Expired" and "Expiring" view stay active, when posts list is filtered or searched
+- Fix: allow saving an ad with an invalid user if the user was already the author of this ad
+- Fix: show a notice if positioning is used with responsive AdSense ads
+
+= 1.37.0 (October 11, 2022) =
+
+- Feature: bump minimum required PHP version to 7.2
+- Improvement: cleanup of the header items on list pages in the admin and unified layout elements
+- Improvement: show filters and search options on the ad, group, and placement list pages with the new Filters button in the page header
+- Improvement: show filters on the ad overview list permanently using the new Show Filters Permanently screen option
+- Improvement: unify the links and buttons in the header of admin pages related to Advanced Ads
+- Improvement: show the bulk options only when items in the ad list are selected
+- Improvement: hide the following columns on the ad list view by default: notes, size, author
+- Improvement: remove the background color for some ad status, like draft
+- Improvement: add a new "Type" column to the beginning of the ad list with a tooltip with more details
+- Improvement: add a new "Size" column for the ad size only
+- Improvement: add a "Notes" column for the ad description
+- Improvement: rename the "Title" Column into "Name"
+- Improvement: rename the Ad Details column into "Preview", showing only image ad previews
+- Improvement: search ad by post ID on the ad overview page
+- Fix: "All" view on the ad list not highlighted
+- Fix: show proper message for empty AdSense account
+- Fix: prevent undefined index notice on Ad Blocker setting in multisite
+
+= 1.36.3 (September 30, 2022) =
+
+- Fix: getting values for container ID and class
+
+= 1.36.2 (September 29, 2022) =
+
+- Fix: ensure well formed positioning array
+
+= 1.36.1 (September 29, 2022) =
+
+- Fix: centering for dummy and image ads
+- Fix: positioning migration if ads are centered
+- Fix: remove additional clearfix `br` if ad is centered
+
+= 1.36.0 (September 27, 2022) =
+
+- Feature: add a Usage box to the ad edit screen with notes, shortcode and PHP function information
+- Improvement: move the 'create a placement' form into a modal
+- Improvement: reset certain features with URL parameters
+- Improvement: sanitize the positioning options and make the margin inputs more user-friendly
+- Improvement: show helpful hints about displaying ad groups using cache busting
+- Improvement: unify the layout of outgoing links that lead to the Advanced Ads manual or another external source
+- Fix: clear ad sizes when an AdSense ad is to be responsive
+- Fix: correct order of placements on the Placement page
+- Fix: ensure admins can edit an ad, even if the original author can't anymore
+- Fix: hook into the current `WP_Query` instead of setting `$_GET` parameters to order the ad list
+
+= 1.35.1 (August 22, 2022) =
+
+- Fix: ensure administrators can edit all plain text ads on single site installs
+- Fix: ensure administrators can edit plain text ads on single site installs created by a now-deleted user
+
+= 1.35.0 (August 9, 2022) =
+
+- Improvement: remove frontend picker functionality from the frontend `advanced.js` JavaScript file
+- Improvement: save the Advanced Ads version as postmeta when saving an ad
+- Fix: make AdSense ad unit list ordering case-insensitive
+- Fix: hide widget types that should not be offered by the Legacy Widget block
+- Fix: respect unfiltered_html capabilities and constant for plain text ads
+
+= 1.34.0 (May 24, 2022) =
+
+- Improvement: add a nofollow attribute to the manual link in the ad debug output
+- Improvement: add `advanced-ads-group-displayed-ad-count` filter to allow add-ons to show the right amount of displayed ads on the group screen
+- Improvement: add authors for ads
+- Improvement: always register the Advanced JavaScript file
+- Fix: prevent possible PHP error happening when using UpSolution Core plugin
+- Fix: display link to AdSense account that contains warnings correctly
+- Fix: restore the group search form
+- Fix: ensure that the AdSense revenues can be shown separately by domain on the Advanced Ads dashboard
+
+= 1.33.2 (April 21, 2022) =
+
+- Fix: disable external XML entity loading only when libxml is less than 2.9.0
+- Fix: correct Composer autoloader for PHP 5.6
+
+= 1.33.1 (April 11, 2022) =
+
+- Fix: rename remaining instances of "Matched Content" AdSense ad type to "Multiplex"
+
 = 1.33.0 =
 
 - Improvement: introduce new header on plugin-related pages in WP Admin

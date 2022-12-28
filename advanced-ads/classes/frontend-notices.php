@@ -32,7 +32,7 @@ class Advanced_Ads_Frontend_Notices {
 	 *
 	 * @var    array
 	 */
-	public $notices = array();
+	public $notices = [];
 
 	/**
 	 * Advanced_Ads_Ad_Health_Notices constructor.
@@ -70,18 +70,18 @@ class Advanced_Ads_Frontend_Notices {
 	 * attributes:
 	 * - append_text – text added to the default message
 	 */
-	public function update( $notice_key, $atts = array() ) {
+	public function update( $notice_key, $atts = [] ) {
 
 		// check if the notice already exists.
 		$notice_key     = esc_attr( $notice_key );
 		$options_before = $options = $this->options();
 
 		// load notices from "queue".
-		$notices = isset( $options['notices'] ) ? $options['notices'] : array();
+		$notices = isset( $options['notices'] ) ? $options['notices'] : [];
 
 		// check if notice_key was already saved, this prevents the same notice from showing up in different forms.
 		if ( ! isset( $notices[ $notice_key ] ) ) {
-			$notices[ $notice_key ] = array();
+			$notices[ $notice_key ] = [];
 		} else {
 			// add `closed` marker, if given.
 			if ( ! empty( $atts['closed'] ) ) {
@@ -106,10 +106,10 @@ class Advanced_Ads_Frontend_Notices {
 	 */
 	public function options() {
 		if ( ! isset( $this->options ) ) {
-			$this->options = get_option( ADVADS_SLUG . '-frontend-notices', array() );
+			$this->options = get_option( ADVADS_SLUG . '-frontend-notices', [] );
 		}
 		if ( ! is_array( $this->options ) ) {
-			$this->options = array();
+			$this->options = [];
 		}
 
 		return $this->options;
@@ -122,7 +122,7 @@ class Advanced_Ads_Frontend_Notices {
 	 */
 	public function update_options( array $options ) {
 		// do not allow to clear options.
-		if ( array() === $options ) {
+		if ( [] === $options ) {
 			return;
 		}
 

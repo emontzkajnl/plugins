@@ -9,40 +9,40 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 	 */
 	public function __construct() {
 		// add placement types
-		add_filter( 'advanced-ads-placement-types', array( $this, 'add_placement_types' ) );
+		add_filter( 'advanced-ads-placement-types', [ $this, 'add_placement_types' ] );
 		// TODO load options
-		add_filter( 'the_content', array( $this, 'inject_content' ), 100 );
+		add_filter( 'the_content', [ $this, 'inject_content' ], 100 );
 		// action after ad output is created; used for js injection
-		add_filter( 'advanced-ads-ad-output', array( $this, 'after_ad_output' ), 10, 2 );
+		add_filter( 'advanced-ads-ad-output', [ $this, 'after_ad_output' ], 10, 2 );
 		// action after group output is created; used for js injection
-		add_filter( 'advanced-ads-group-output', array( $this, 'after_group_output' ), 10, 2 );
+		add_filter( 'advanced-ads-group-output', [ $this, 'after_group_output' ], 10, 2 );
 		// check if content injection is limited for longer texts only
-		add_filter( 'advanced-ads-can-inject-into-content', array( $this, 'check_content_length' ), 10, 3 );
+		add_filter( 'advanced-ads-can-inject-into-content', [ $this, 'check_content_length' ], 10, 3 );
 		// Allow to prevent injection inside `the_content`.
-		add_action( 'advanced-ads-can-inject-into-content', array( $this, 'prevent_injection_the_content' ), 10, 3 );
+		add_action( 'advanced-ads-can-inject-into-content', [ $this, 'prevent_injection_the_content' ], 10, 3 );
 		// inject ad into footer
-		add_action( 'wp_footer', array( $this, 'inject_footer' ), 20 );
+		add_action( 'wp_footer', [ $this, 'inject_footer' ], 20 );
 		// inject ads into archive pages
-		add_action( 'the_post', array( $this, 'inject_loop_post' ), 20, 2 );
+		add_action( 'the_post', [ $this, 'inject_loop_post' ], 20, 2 );
 		// add ads into AMP archive pages created by the AMP for WP plugin.
-		add_action( 'ampforwp_between_loop', array( $this, 'inject_loop_post_amp_for_wp') );
+		add_action( 'ampforwp_between_loop', [ $this, 'inject_loop_post_amp_for_wp'] );
 
 		// support custom hook for content injections
 		if( defined( 'ADVANCED_ADS_PRO_CUSTOM_CONTENT_FILTER' ) ){
 			// run Advanced Ads content filter
-			add_filter( ADVANCED_ADS_PRO_CUSTOM_CONTENT_FILTER, array( Advanced_Ads::get_instance(), 'inject_content' ) );
+			add_filter( ADVANCED_ADS_PRO_CUSTOM_CONTENT_FILTER, [ Advanced_Ads::get_instance(), 'inject_content' ] );
 			// run Advanced Ads Pro content filter
-			add_filter( ADVANCED_ADS_PRO_CUSTOM_CONTENT_FILTER, array( $this, 'inject_content' ) );
+			add_filter( ADVANCED_ADS_PRO_CUSTOM_CONTENT_FILTER, [ $this, 'inject_content' ] );
 		}
 
-		add_filter( 'advanced-ads-cache-busting-item', array( $this, 'inject_js_before_cache_busting_output' ), 10, 2 );
+		add_filter( 'advanced-ads-cache-busting-item', [ $this, 'inject_js_before_cache_busting_output' ], 10, 2 );
 		$this->add_skip_paragraph_filters();
 
 		// Check if ads can be displayed by post type.
-		add_filter( 'advanced-ads-can-display', array( $this, 'can_display_by_post_type' ), 10, 2 );
+		add_filter( 'advanced-ads-can-display', [ $this, 'can_display_by_post_type' ], 10, 2 );
 		// Check if Verification code & Auto ads ads can be displayed by post type.
-		add_filter( 'advanced-ads-can-display-ads-in-header', array( $this, 'can_display_in_header_by_post_type' ), 10 );
-		add_action( 'advanced-ads-body-classes', array( $this, 'body_class' ) );
+		add_filter( 'advanced-ads-can-display-ads-in-header', [ $this, 'can_display_in_header_by_post_type' ], 10 );
+		add_action( 'advanced-ads-body-classes', [ $this, 'body_class' ] );
 	}
 
 	/**
@@ -56,52 +56,52 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 	public function add_placement_types($types) {
 		$placement_positioning_is_php = Advanced_Ads_Pro::get_instance()->get_options()['placement-positioning'] === 'php';
 		// ad injection on random position
-		$types['post_content_random'] = array(
+		$types['post_content_random'] = [
 			'title' => __( 'Random Paragraph', 'advanced-ads-pro' ),
 			'description' => __( 'After a random paragraph in the main content.', 'advanced-ads-pro' ),
 			'image' => AAP_BASE_URL . 'modules/inject-content/assets/img/content-random.png',
 			'order'       => 22,
-			'options' => array( 'show_position' => true, 'uses_the_content' => true, 'amp' => true )
-		);
+			'options' => [ 'show_position' => true, 'uses_the_content' => true, 'amp' => true ]
+		];
 		// ad injection above the post headline
-		$types['post_above_headline'] = array(
+		$types['post_above_headline'] = [
 			'title' => __( 'Above Headline', 'advanced-ads-pro' ),
 			'description' => __( 'Above the main headline on the page (&lt;h1&gt;).', 'advanced-ads-pro' ),
 			'image' => AAP_BASE_URL . 'modules/inject-content/assets/img/content-above-headline.png',
 			'order'       => 7,
-			'options' => array(
+			'options' => [
 				'show_position'    => true,
 				'uses_the_content' => true,
 				'show_lazy_load'   => $placement_positioning_is_php,
-			),
-		);
+			],
+		];
 		// ad injection in the middle of a post
-		$types['post_content_middle'] = array(
+		$types['post_content_middle'] = [
 			'title' => __( 'Content Middle', 'advanced-ads-pro' ),
 			'description' => __( 'In the middle of the main content based on the number of paragraphs.', 'advanced-ads-pro' ),
 			'image' => AAP_BASE_URL . 'modules/inject-content/assets/img/content-middle.png',
 			'order' => 23,
-			'options' => array( 'show_position' => true, 'uses_the_content' => true, 'amp' => true ),
-		);
+			'options' => [ 'show_position' => true, 'uses_the_content' => true, 'amp' => true ],
+		];
 		// ad injection at a hand selected element in the frontend
-		$types['custom_position'] = array(
+		$types['custom_position'] = [
 			'title' => __( 'Custom Position', 'advanced-ads-pro' ),
 			'description' => __( 'Attach the ad to any element in the frontend.', 'advanced-ads-pro' ),
 			'image' => AAP_BASE_URL . 'modules/inject-content/assets/img/custom-position.png',
 			'order'       => 60,
-			'options' => array(
+			'options' => [
 				'show_position'  => true,
 				'show_lazy_load' => $placement_positioning_is_php,
-			),
-		);
+			],
+		];
 		// ad injection at a hand selected element in the frontend
-		$types['archive_pages'] = array(
+		$types['archive_pages'] = [
 			'title' => __( 'Post Lists', 'advanced-ads-pro' ),
 			'description' => __( 'Display the ad between posts on post lists, e.g. home, archives, search etc.', 'advanced-ads-pro' ),
 			'image' => AAP_BASE_URL . 'modules/inject-content/assets/img/post-list.png',
 			'order'       => 40,
-			'options' => array( 'show_position' => true, 'show_lazy_load' => true  )
-		);
+			'options' => [ 'show_position' => true, 'show_lazy_load' => true  ]
+		];
 		return $types;
 	}
 
@@ -142,7 +142,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 		}
 
 		// run only within the loop on single pages of public post types
-		$public_post_types = get_post_types( array( 'public' => true, 'publicly_queryable' => true ), 'names', 'or' );
+		$public_post_types = get_post_types( [ 'public' => true, 'publicly_queryable' => true ], 'names', 'or' );
 
 		// make sure that no ad is injected into another ad
 		if ( get_post_type() == Advanced_Ads::POST_TYPE_SLUG ){
@@ -161,7 +161,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
                     if ( ( ! is_singular( $public_post_types ) && ! is_feed() ) || ( ! $is_amp && ! in_the_loop() ) ) { return $content; }
 		}
 
-		$placements = get_option( 'advads-ads-placements', array() );
+		$placements = get_option( 'advads-ads-placements', [] );
 
 		if( ! apply_filters( 'advanced-ads-can-inject-into-content', true, $content, $placements )){
 			return $content;
@@ -175,9 +175,9 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 
 				if ( isset($_placement['type'])
 					&& in_array( $_placement['type'],
-						array('post_content_random',
+						['post_content_random',
 						    'post_above_headline',
-						    'post_content_middle')) ){
+						    'post_content_middle']) ){
 
 					// don’t inject above headline on non-singular pages
 					if( 'post_above_headline' === $_placement['type'] && ! is_singular( $public_post_types ) ){
@@ -189,7 +189,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 						continue;
 					}
 
-					$_options = isset( $_placement['options'] ) ? $_placement['options'] : array();
+					$_options = isset( $_placement['options'] ) ? $_placement['options'] : [];
 					$_options['placement']['type'] = $_placement['type'];
 
 					switch ( $_placement['type'] ) {
@@ -227,14 +227,14 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 			return;
 		}
 
-		$placements = get_option( 'advads-ads-placements', array() );
+		$placements = get_option( 'advads-ads-placements', [] );
 		if( is_array( $placements ) ){
 			foreach ( $placements as $_placement_id => $_placement ){
 				if ( isset($_placement['type']) && 'custom_position' == $_placement['type'] ){
 					// Do not inject on AMP pages.
 					if ( function_exists( 'advads_is_amp' ) && advads_is_amp() ) { continue; }
 
-					$_options = isset( $_placement['options'] ) ? $_placement['options'] : array();
+					$_options = isset( $_placement['options'] ) ? $_placement['options'] : [];
 					$_options['placement']['type'] = $_placement['type'];
 					if ( isset( $_options['lazy_load'] ) ) {
 						$_options['lazy_load'] = 'disabled';
@@ -410,7 +410,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 	 *
 	 * @return bool true, if injection is ok
 	 */
-	public function check_content_length( $inject = true, $content = '', $placements = array() ){
+	public function check_content_length( $inject = true, $content = '', $placements = [] ){
 		if ( ! $inject ) {
 			return false;
 		}
@@ -420,7 +420,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 		}
 
 	    // content injection placements
-	    $cj_placements = array( 'post_top', 'post_bottom', 'post_content', 'post_content_random', 'post_content_middle' );
+	    $cj_placements = [ 'post_top', 'post_bottom', 'post_content', 'post_content_random', 'post_content_middle' ];
 
 	    // find out of content injection placements are defined at all
 	    $has_content_placements = false;
@@ -429,7 +429,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 			    $has_content_placements = true;
 
 			    // register filter for placement specific length check
-			    add_filter( 'advanced-ads-can-inject-into-content-' . $_placement_id, array( $this, 'check_placement_minimum_length' ), 10, 3 );
+			    add_filter( 'advanced-ads-can-inject-into-content-' . $_placement_id, [ $this, 'check_placement_minimum_length' ], 10, 3 );
 			}
 		}
 
@@ -450,7 +450,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 	 * @param arr $placements array with all placements
 	 * @return bool true, if injection is ok
 	 */
-	public function prevent_injection_the_content( $inject = true, $content = '', $placements = array() ) {
+	public function prevent_injection_the_content( $inject = true, $content = '', $placements = [] ) {
 		if ( ! $inject ) {
 			return false;
 		}
@@ -527,7 +527,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 
 		// 'wp_reset_postdata()' does 'the_post' action.
 		// handle the situation when wp_reset_postdata() is used after secondary query inside main query.
-		static $handled_indexes = array();
+		static $handled_indexes = [];
 		if ( $wp_query->is_main_query() ) {
 			if ( in_array( $curr_index, $handled_indexes ) ) {
 				return;
@@ -535,7 +535,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 			$handled_indexes[] = $curr_index;
 		}
 
-		$placements = get_option( 'advads-ads-placements', array() );
+		$placements = get_option( 'advads-ads-placements', [] );
 		if( is_array( $placements ) ){
 			foreach ( $placements as $_placement_id => $_placement ){
 				if ( empty($_placement['item']) ) {
@@ -543,7 +543,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 				}
 
 				if ( isset($_placement['type']) && 'archive_pages' === $_placement['type'] ){
-					$_options = isset( $_placement['options'] ) ? $_placement['options'] : array();
+					$_options = isset( $_placement['options'] ) ? $_placement['options'] : [];
 
 					if ( empty( $_options['in_any_loop'] )
 						&& ( $wp_query->is_singular() || ! $wp_query->in_the_loop || ! $wp_query->is_main_query() ) ) {
@@ -583,7 +583,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 	 */
 	public function inject_loop_post_amp_for_wp( $count ) {
 
-		$placements = get_option( 'advads-ads-placements', array() );
+		$placements = get_option( 'advads-ads-placements', [] );
 		if ( is_array( $placements ) ) {
 			foreach ( $placements as $_placement_id => $_placement ) {
 				if ( empty( $_placement['item'] ) ) {
@@ -591,7 +591,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 				}
 
 				if ( isset( $_placement['type'] ) && 'archive_pages' === $_placement['type'] ) {
-					$_options = isset( $_placement['options'] ) ? $_placement['options'] : array();
+					$_options = isset( $_placement['options'] ) ? $_placement['options'] : [];
 
 					if ( isset( $_options['pro_archive_pages_index'] ) ) {
 						$ad_index = absint( $_options['pro_archive_pages_index'] );
@@ -681,7 +681,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 
 		foreach ( $placements as $placement_id => $placement ) {
 			if ( ! empty( $placement['options']['words_between_repeats'] ) ) {
-				add_filter( 'advanced-ads-can-inject-into-content-' . $placement_id, array( $this, 'maybe_skip_content_placement' ), 10, 3 );
+				add_filter( 'advanced-ads-can-inject-into-content-' . $placement_id, [ $this, 'maybe_skip_content_placement' ], 10, 3 );
 			}
 		}
 	}
@@ -703,7 +703,7 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 		$placements = Advanced_Ads::get_ad_placements_array();
 
 		if ( empty( $placements[ $placement_id ]['type'] )
-			|| ! in_array( $placements[ $placement_id ]['type'], array( 'post_top', 'post_bottom' ) ) ) {
+			|| ! in_array( $placements[ $placement_id ]['type'], [ 'post_top', 'post_bottom' ] ) ) {
 			return $return;
 		}
 

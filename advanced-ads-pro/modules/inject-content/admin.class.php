@@ -6,17 +6,17 @@ class Advanced_Ads_Pro_Module_Inject_Content_Admin {
 
 	public function __construct() {
 		// options for custom position placement
-		add_action( 'advanced-ads-placement-options-after', array( $this, 'custom_position_placement_options' ), 11, 2 );
+		add_action( 'advanced-ads-placement-options-after', [ $this, 'custom_position_placement_options' ], 11, 2 );
 		// load frontend picker script
-		add_action( 'advanced-ads-placements-list-after', array( $this, 'frontend_picker_script' ) );
+		add_action( 'advanced-ads-placements-list-after', [ $this, 'frontend_picker_script' ] );
 		// add minimum length setting for content injection placements
-		add_action( 'advanced-ads-placement-options-after-advanced', array( $this, 'minimum_content_length_option' ), 10, 2 );
-		add_action( 'advanced-ads-placement-options-after-advanced', array( $this, 'in_any_loop_archive_pages_option' ), 10, 2 );
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'minimum_content_length_option' ], 10, 2 );
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'in_any_loop_archive_pages_option' ], 10, 2 );
 		// Render setting that allow to prevent injection inside `the_content`
-		add_action( 'advanced_ads_render_post_meta_box', array( $this, 'render_post_meta_box' ), 10, 2 );
+		add_action( 'advanced_ads_render_post_meta_box', [ $this, 'render_post_meta_box' ], 10, 2 );
 		// Save setting that allow to prevent injection inside `the_content`.
-		add_filter( 'advanced_ads_save_post_meta_box', array( $this, 'save_post_meta_box' ) );
-		add_action( 'advanced-ads-placement-options-after-advanced', array( $this, 'render_option_to_skip_paragraph' ), 10, 2 );
+		add_filter( 'advanced_ads_save_post_meta_box', [ $this, 'save_post_meta_box' ] );
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'render_option_to_skip_paragraph' ], 10, 2 );
 	}
 
 	/**
@@ -30,12 +30,12 @@ class Advanced_Ads_Pro_Module_Inject_Content_Admin {
 	public function custom_position_placement_options( $placement_slug, $placement ){
 	    switch ( $placement['type'] ){
 		    case 'custom_position' :
-			$positions = array(
+			$positions = [
 			    'insertBefore' => __( 'above', 'advanced-ads-pro' ),
 			    'prependTo' => __( 'inside, before other content', 'advanced-ads-pro' ),
 			    'appendTo' => __( 'inside, after other content', 'advanced-ads-pro' ),
 			    'insertAfter' => __( 'below', 'advanced-ads-pro' )
-			);
+			];
 			$curr_position = isset($placement['options']['pro_custom_position']) ? $placement['options']['pro_custom_position'] : '';
 			$inject_by = isset( $placement['options']['inject_by'] ) ? $placement['options']['inject_by'] : 'pro_custom_element';
 			$container_id = ! empty( $placement['options']['container_id'] ) ? $placement['options']['container_id'] :  '#c' . md5( $placement_slug );
@@ -232,7 +232,7 @@ class Advanced_Ads_Pro_Module_Inject_Content_Admin {
 	* @param array $_data data sent by user
 	* @return $_data sanitized data
 	*/
-	public function save_post_meta_box( $_data = array() ) {
+	public function save_post_meta_box( $_data = [] ) {
 		$_data['disable_the_content'] = isset( $_POST['advanced_ads']['disable_the_content'] ) ? absint( $_POST['advanced_ads']['disable_the_content'] ) : 0;
 
 		return $_data;
@@ -245,7 +245,7 @@ class Advanced_Ads_Pro_Module_Inject_Content_Admin {
 	 * @param array  $placement Placement params.
 	 */
 	public function render_option_to_skip_paragraph( $placement_slug, $placement ) {
-		if ( ! in_array( $placement['type'], array( 'post_content_middle', 'post_top', 'post_bottom', 'post_content' ), true ) ) {
+		if ( ! in_array( $placement['type'], [ 'post_content_middle', 'post_top', 'post_bottom', 'post_content' ], true ) ) {
 			return;
 		}
 

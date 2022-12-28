@@ -315,17 +315,26 @@
 }
 .feedback ul li{
     margin: 0;
-    padding: 12px;
+    padding: 10px;
     border-bottom: 1px solid #eee;
 }
 .feedback ul li:last-child{
     border-bottom: none;
+}
+.feedback li .dashicons {
+    width: 15px;
+    height: 15px;
+    font-size: 15px;
+    margin: 3px 5px 0 0;
 }
 .feedback a{
     text-decoration: none;
 }
 .feedback a:hover{
     text-decoration: underline;
+}
+.feedback a:hover .dashicons{
+    text-decoration: none;
 }
 .feedback .button{
     display: block;
@@ -344,34 +353,9 @@
 .feedback > *:last-child{
     margin-bottom: 0;
 }
-.feedback .twitter_btn.button{
-    background: #1b95e0;
-    color: #fff;
-    border-color: transparent;
-}
-.feedback .facebook_btn.button{
-    background: #4080ff;
-    color: #fff;
-    border-color: transparent;
-}
-.promo_slides > .promo_slide{
-    display: none;
-}
-.promo_slides > .promo_slide:first-child{
-    display: block;
-}
-.promo_slide img {
-    width: 100%;
-    border-radius: 5px;
-    margin: 7px 0 0 0;
-}
-.promo_btn{
-    text-decoration: none;
-}
-.promo_btns{
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.feedback h3 {
+    font-size: 1.125em;
+    margin: 1em 0 1em 0.5em;
 }
 
 .stars {

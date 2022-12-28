@@ -22,7 +22,7 @@ class Advanced_Ads_Pro_Utils {
 	 */
 	public static function blog_exists( $blog_id, $site_id = 0 ) {
 		global $wpdb;
-		static $cache = array();
+		static $cache = [];
 
 		$site_id = absint( $site_id );
 
@@ -40,7 +40,7 @@ class Advanced_Ads_Pro_Utils {
 
 			// Make sure the array is always filled with something.
 			if ( empty ( $result ) )
-				$cache[ $site_id ] = array( 'checked' );
+				$cache[ $site_id ] = [ 'checked' ];
 			else
 				$cache[ $site_id ] = $result;
 		}

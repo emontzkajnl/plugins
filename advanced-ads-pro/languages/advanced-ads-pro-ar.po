@@ -2,22 +2,72 @@
 # This file is distributed under the same license as the Advanced Ads Pro package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-24 14:00:30+0000\n"
+"Project-Id-Version: Advanced Ads Pro\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-09-26 11:45+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
-"X-Generator: GlotPress/2.3.1\n"
-"Language: ar\n"
-"Project-Id-Version: Advanced Ads Pro\n"
+"Plural-Forms: nplurals=6; plural=(n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? "
+"2 : ((n % 100 >= 3 && n % 100 <= 10) ? 3 : ((n % 100 >= 11 && n % 100 <= 99) ? "
+"4 : 5))));\n"
+"X-Generator: Poedit 3.1.1\n"
+
+#: modules/lazy-load/admin.class.php:23 modules/lazy-load/admin.class.php:56
+msgid "Lazy Loading"
+msgstr "تحميل مؤجل"
+
+#: modules/ad-server/views/module-settings.php:13
+#: modules/ads-for-adblockers/views/settings.php:7
+#: modules/cache-busting/views/settings.php:12
+#: modules/click-fraud-protection/views/settings.php:10
+#: modules/lazy-load/views/settings.php:8
+msgid "Activate module. Manual"
+msgstr "تنشيط الوحدة. الدليل"
+
+#: views/setting-placement-positioning.php:29
+msgid ""
+"This method also works on AMP pages and causes fewer conflicts with website "
+"optimization features. However, it can cause critical issues with a few other "
+"plugins that use a similar technique (i.e., output buffering). We recommend "
+"less technical users test it carefully."
+msgstr ""
+"تعمل هذه الطريقة أيضًا على صفحات AMP وتسبب تعارض أقل مع ميزات تحسين موقع الويب. "
+"ومع ذلك ، يمكن أن يتسبب ذلك في مشاكل حرجة مع عدد قليل من المكونات الإضافية "
+"الأخرى التي تستخدم أسلوبًا مشابهًا (مثل التخزين المؤقت للإخراج). نوصي المستخدمين "
+"الأقل تقنيًا باختباره بعناية."
+
+#: classes/advanced-ads-pro-admin.php:144
+msgid "Placement positioning"
+msgstr "تحديد المواقع"
+
+#. %s: Names of placement types
+#: views/setting-placement-positioning.php:13
+msgid "Choose when Advanced Ads will add the following placement types: %s"
+msgstr "اختر متى ستضيف \"الإعلانات المتقدمة\" أنواع المواضع التالية: %s"
+
+#: views/setting-placement-positioning.php:24
+msgid "Before page load using PHP."
+msgstr "قبل تحميل الصفحة باستخدام PHP."
+
+#: views/setting-placement-positioning.php:19
+msgid "After page load using JavaScript"
+msgstr "بعد تحميل الصفحة باستخدام JavaScript"
 
 #: modules/advanced-display-conditions/main.class.php:108
 msgid "post content"
 msgstr "محتوى المنشور"
 
 #: modules/advanced-display-conditions/main.class.php:109
-msgid "Display ads based on words and phrases within the post or page content. Dynamically added text might not be considered."
-msgstr "عرض الإعلانات بناءً على الكلمات والعبارات داخل المنشور أو محتوى الصفحة. قد لا يتم اعتبار النص المضاف ديناميكيًا."
+msgid ""
+"Display ads based on words and phrases within the post or page content. "
+"Dynamically added text might not be considered."
+msgstr ""
+"عرض الإعلانات بناءً على الكلمات والعبارات داخل المنشور أو محتوى الصفحة. قد لا "
+"يتم اعتبار النص المضاف ديناميكيًا."
 
 #: modules/gamipress/views/visitor-condition-rank.php:28
 msgid "Choose rank"
@@ -60,8 +110,16 @@ msgid "You can use the text below as a template for your own privacy policy."
 msgstr "يمكنك استخدام النص أدناه كنموذج لسياسة الخصوصية الخاصة بك."
 
 #: views/privacy-policy-content.php:13
-msgid "This website uses Advanced Ads Pro to place advertisements. The WordPress plugin may use multiple first-party cookies to ensure the correct integration of ads. These cookies store technical information but not IP addresses. Their use is linked to specific features and options when embedding ads."
-msgstr "يستخدم هذا الموقع برنامج Advanced Ads Pro لوضع الإعلانات. قد يستخدم المكون الإضافي لـ WordPress ملفات تعريف ارتباط متعددة للطرف الأول لضمان التكامل الصحيح للإعلانات. تخزن ملفات تعريف الارتباط هذه المعلومات الفنية ولكن ليس عناوين IP. يرتبط استخدامها بميزات وخيارات محددة عند تضمين الإعلانات."
+msgid ""
+"This website uses Advanced Ads Pro to place advertisements. The WordPress "
+"plugin may use multiple first-party cookies to ensure the correct integration "
+"of ads. These cookies store technical information but not IP addresses. Their "
+"use is linked to specific features and options when embedding ads."
+msgstr ""
+"يستخدم هذا الموقع برنامج Advanced Ads Pro لوضع الإعلانات. قد يستخدم المكون "
+"الإضافي لـ WordPress ملفات تعريف ارتباط متعددة للطرف الأول لضمان التكامل "
+"الصحيح للإعلانات. تخزن ملفات تعريف الارتباط هذه المعلومات الفنية ولكن ليس "
+"عناوين IP. يرتبط استخدامها بميزات وخيارات محددة عند تضمين الإعلانات."
 
 #: views/privacy-policy-content.php:12
 msgid "Suggested Text:"
@@ -70,13 +128,21 @@ msgstr "النص المقترح:"
 #. %1$s is an opening a tag, %2$s is the corresponding closing one
 #: views/privacy-policy-content.php:19
 msgid "Please, see the %1$sAdvanced Ads cookie information%2$s for more details."
-msgstr "من فضلك ، راجع  %2$sمعلومات ملف تعريف ارتباط الإعلانات المتقدمة%1$s لمزيد من التفاصيل."
+msgstr ""
+"من فضلك ، راجع  %2$sمعلومات ملف تعريف ارتباط الإعلانات المتقدمة%1$s لمزيد من "
+"التفاصيل."
 
 #: views/privacy-policy-content.php:7
-msgid "Depending on the setup, Advanced Ads Pro and other add-ons use cookies to control which user sees which ad. They also help to reduce expensive server requests."
-msgstr "اعتمادًا على الإعداد ، تستخدم Advanced Ads Pro والوظائف الإضافية الأخرى ملفات تعريف الارتباط للتحكم في تحديد المستخدم الذي يرى الإعلان. كما أنها تساعد في تقليل طلبات الخادم باهظة الثمن."
+msgid ""
+"Depending on the setup, Advanced Ads Pro and other add-ons use cookies to "
+"control which user sees which ad. They also help to reduce expensive server "
+"requests."
+msgstr ""
+"اعتمادًا على الإعداد ، تستخدم Advanced Ads Pro والوظائف الإضافية الأخرى ملفات "
+"تعريف الارتباط للتحكم في تحديد المستخدم الذي يرى الإعلان. كما أنها تساعد في "
+"تقليل طلبات الخادم باهظة الثمن."
 
-#: classes/advanced-ads-pro-admin.php:522
+#: classes/advanced-ads-pro-admin.php:551
 msgid "Select a Sidebar placement to enable cache-busting."
 msgstr "حدد موضع الشريط الجانبي لتمكين كسر ذاكرة التخزين المؤقت."
 
@@ -84,7 +150,7 @@ msgstr "حدد موضع الشريط الجانبي لتمكين كسر ذاكر
 msgid "member timeline"
 msgstr "الجدول الزمني للعضو"
 
-#: classes/advanced-ads-pro-admin.php:524
+#: classes/advanced-ads-pro-admin.php:553
 msgid "Learn more"
 msgstr "لمعرفة المزيد"
 
@@ -92,8 +158,8 @@ msgstr "لمعرفة المزيد"
 msgid "group feed"
 msgstr "تغذية المجموعة"
 
-#: modules/buddypress/buddypress.class.php:222
-#: modules/buddypress/buddypress.class.php:223
+#: modules/buddypress/buddypress.class.php:246
+#: modules/buddypress/buddypress.class.php:247
 msgid "BuddyBoss group"
 msgstr "مجموعة BuddyBoss"
 
@@ -110,21 +176,24 @@ msgctxt "setting label"
 msgid "AJAX"
 msgstr "AJAX"
 
-#: modules/cache-busting/views/settings.php:35
-msgid "Force passive cache-busting"
+#: modules/cache-busting/views/settings.php:38
+msgid "Force passive cache busting"
 msgstr "فرض التفريغ السلبي لذاكرة التخزين المؤقت"
 
-#: modules/cache-busting/views/settings.php:45
+#: modules/cache-busting/views/settings.php:48
 msgid "Fallback option"
 msgstr "الخيار الاحتياطي"
 
-#: modules/cache-busting/views/settings.php:14
+#: modules/cache-busting/views/settings.php:17
 msgid "Default option"
 msgstr "الخيار الافتراضي"
 
-#: modules/cache-busting/views/settings.php:15
-msgid "Choose which method to use when cache-busting for a placement is set to “auto”."
-msgstr "اختر الطريقة التي يجب استخدامها عندما  يتم ضبط تفريغ ذاكرة التخزين المؤقت لأحد المواضع  على \"تلقائي\"."
+#: modules/cache-busting/views/settings.php:18
+msgid ""
+"Choose which method to use when cache busting for a placement is set to “auto”."
+msgstr ""
+"اختر الطريقة التي يجب استخدامها عندما  يتم ضبط تفريغ ذاكرة التخزين المؤقت لأحد "
+"المواضع على \"تلقائي\"."
 
 #: modules/buddypress/buddypress.class.php:110
 msgid "Display ads based on BuddyBoss profile fields"
@@ -146,17 +215,22 @@ msgstr "عرض الإعلانات على صفحات ذات صلة BuddyBoss."
 msgid "BuddyBoss Content"
 msgstr "محتوى BuddyBoss"
 
-#: modules/cache-busting/views/settings.php:39
-msgid "By default, cache-busting only works through placements."
-msgstr "بشكل افتراضي ، لا تعمل عملية تفريغ ذاكرة التخزين المؤقت إلا من خلال المواضع."
+#: modules/cache-busting/views/settings.php:42
+msgid "By default, cache busting only works through placements."
+msgstr ""
+"بشكل افتراضي ، لا تعمل عملية تفريغ ذاكرة التخزين المؤقت إلا من خلال المواضع."
 
-#: modules/cache-busting/views/settings.php:90
+#: modules/cache-busting/views/settings.php:77
 msgid "Update visitor profile"
 msgstr "تحديث ملف الزائر"
 
 #: modules/advanced-visitor-conditions/main.class.php:418
-msgid "Set the operator to “match/does not match” and leave the value empty to check only the existence of the cookie."
-msgstr "اضبط عامل التشغيل على \"match / not match\" واترك القيمة فارغة للتحقق فقط من وجود ملف تعريف الارتباط."
+msgid ""
+"Set the operator to “match/does not match” and leave the value empty to check "
+"only the existence of the cookie."
+msgstr ""
+"اضبط عامل التشغيل على \"match / not match\" واترك القيمة فارغة للتحقق فقط من "
+"وجود ملف تعريف الارتباط."
 
 #: modules/ad-server/views/placement-usage.php:10
 msgid "Direct URL"
@@ -186,8 +260,7 @@ msgstr "افصل بين القيم المتعددة بفاصلة."
 msgid "Top level domains on which the ads will be loaded."
 msgstr "نطاقات المستوى الأعلى التي سيتم تحميل الإعلانات عليها."
 
-#: modules/cache-busting/views/settings.php:11
-#: modules/ad-server/views/module-settings.php:13
+#: modules/advanced-visitor-conditions/views/settings.php:6
 msgid "Activate module."
 msgstr "تنشيط الوحدة."
 
@@ -208,7 +281,7 @@ msgid "Ad Server"
 msgstr "خادم الإعلانات"
 
 #. %1$s is the opening link tag, %2$s is closing link tag.
-#: classes/advanced-ads-pro-admin.php:443
+#: classes/advanced-ads-pro-admin.php:472
 msgid "This feature is deprecated. Please find the removal schedule %1$shere%2$s"
 msgstr "تم إهمال هذه الميزة. الرجاء العثور على جدول الإزالة  s %1$sهنا%2$s"
 
@@ -242,8 +315,14 @@ msgid "copy"
 msgstr "نسخ"
 
 #: modules/inject-content/admin.class.php:128
-msgid "Minimum length of content (in words) before automatically injected ads are allowed in them. Set to zero or leave empty to always display ads, regardless of how long the content is."
-msgstr "الحد الأدنى لطول المحتوى (بالكلمات) قبل السماح بالإعلانات المحقونة تلقائيًا فيها. عيِّن على صفر أو اتركه فارغًا لعرض الإعلانات دائمًا ، بصرف النظر عن طول المحتوى."
+msgid ""
+"Minimum length of content (in words) before automatically injected ads are "
+"allowed in them. Set to zero or leave empty to always display ads, regardless "
+"of how long the content is."
+msgstr ""
+"الحد الأدنى لطول المحتوى (بالكلمات) قبل السماح بالإعلانات المحقونة تلقائيًا "
+"فيها. عيِّن على صفر أو اتركه فارغًا لعرض الإعلانات دائمًا ، بصرف النظر عن طول "
+"المحتوى."
 
 #: modules/duplicate-ads/admin.class.php:86
 msgid "Duplicate"
@@ -257,46 +336,53 @@ msgstr "قم بإنشاء نسخة من هذا الإعلان"
 msgid "Disable automatic ad injection into the content"
 msgstr "تعطيل الحقن التلقائي للإعلان في المحتوى"
 
-#: modules/cache-busting/views/settings.php:102
+#: modules/cache-busting/views/settings.php:89
 msgid "Update visitor profile when user logs in or out"
 msgstr "تحديث ملف تعريف الزائر عندما يقوم المستخدم بتسجيل الدخول أو الخروج"
 
-#: modules/cache-busting/views/settings.php:92
+#: modules/cache-busting/views/settings.php:79
 msgid "You might need to update the page cache if you are using one."
 msgstr "قد تحتاج إلى تحديث ذاكرة التخزين المؤقت للصفحة إذا كنت تستخدم واحدة."
 
-#. $1%s is an opening a tag; $2%s is the closing one
-#: modules/cache-busting/views/settings.php:77
-msgid "Learn more about this %1$shere%2$s."
-msgstr "تعلم المزيد عن هذا %1$sهنا%2$s."
+#: modules/cache-busting/views/settings.php:73
+msgid ""
+"Advanced Ads stores some user information in the user’s browser to limit the "
+"number of AJAX requests for cache busting. Manual"
+msgstr ""
+"تخزن الإعلانات المتقدمة بعض معلومات المستخدم في متصفح المستخدم للحد من عدد "
+"طلبات AJAX لتفريغ ذاكرة التخزين المؤقت."
 
 #: modules/cache-busting/views/settings.php:70
-msgid "Advanced Ads stores some user information in the user’s browser to limit the number of AJAX requests for cache-busting."
-msgstr "تخزن الإعلانات المتقدمة بعض معلومات المستخدم في متصفح المستخدم للحد من عدد طلبات AJAX لتفريغ ذاكرة التخزين المؤقت."
-
-#: modules/cache-busting/views/settings.php:67
 msgid "Visitor profile"
 msgstr "ملف تعريف الزائر"
 
 #: modules/advanced-display-conditions/main.class.php:36
-msgid "Display ads based on the current URL parameters (everything following %s), except values following #."
-msgstr "عرض الإعلانات استنادًا إلى معلمات عنوان URL الحالية (كل ما يلي %s) ، باستثناء القيم التالية #."
+msgid ""
+"Display ads based on the current URL parameters (everything following %s), "
+"except values following #."
+msgstr ""
+"عرض الإعلانات استنادًا إلى معلمات عنوان URL الحالية (كل ما يلي %s) ، باستثناء "
+"القيم التالية #."
 
-#: classes/advanced-ads-pro-admin.php:144
+#: classes/advanced-ads-pro-admin.php:152
 msgid "Disable ads for post types"
 msgstr "تعطيل الإعلانات لأنواع المنشورات"
 
-#: modules/cache-busting/views/settings.php:94
-msgid "An error occured"
+#: modules/cache-busting/views/settings.php:81
+msgid "An error occurred"
 msgstr "حدث خطأ"
 
-#: modules/cache-busting/views/settings.php:91
+#: modules/cache-busting/views/settings.php:78
 msgid "Updated"
 msgstr "محدث"
 
 #: modules/advanced-visitor-conditions/main.class.php:153
-msgid "Display ads based on the user’s roles. See <a href=\"%s\" target=\"_blank\">List of roles in WordPress</a>."
-msgstr "عرض الإعلانات على أساس أدوار المستخدم. راجع <a href=\"%s\" target=\"_blank\"> قائمة الأدوار في WordPress </a>."
+msgid ""
+"Display ads based on the user’s roles. See <a href=\"%s\" target=\"_blank"
+"\">List of roles in WordPress</a>."
+msgstr ""
+"عرض الإعلانات على أساس أدوار المستخدم. راجع <a href=\"%s\" target=\"_blank\"> "
+"قائمة الأدوار في WordPress </a>."
 
 #: modules/advanced-visitor-conditions/main.class.php:152
 msgid "user role"
@@ -304,14 +390,20 @@ msgstr "دور المستخدم"
 
 #. %s is a list of supported optimizer plugins
 #: views/setting_autoptimize.php:7
-msgid "Advanced Ads Pro disables optimizers ( %s ) for displaying ads per default. Enable this option to allow optimizers to change the ad code. Especially JavaScript ads might stop working then."
-msgstr "يقوم Advanced Ads Pro بتعطيل المُحسِنين (%s) لعرض الإعلانات بشكل افتراضي. قم بتمكين هذا الخيار للسماح للمحسّنين بتغيير رمز الإعلان. قد تتوقف إعلانات جافا سكريبت بشكل خاص عن العمل بعد ذلك."
+msgid ""
+"Advanced Ads Pro disables optimizers ( %s ) for displaying ads per default. "
+"Enable this option to allow optimizers to change the ad code. Especially "
+"JavaScript ads might stop working then."
+msgstr ""
+"يقوم Advanced Ads Pro بتعطيل المُحسِنين (%s) لعرض الإعلانات بشكل افتراضي. قم "
+"بتمكين هذا الخيار للسماح للمحسّنين بتغيير رمز الإعلان. قد تتوقف إعلانات جافا "
+"سكريبت بشكل خاص عن العمل بعد ذلك."
 
 #: classes/advanced-ads-pro-admin.php:135
 msgid "Allow optimizers to modify ad codes"
 msgstr "السماح للمحسّنين بتعديل شفرات الإعلانات"
 
-#: modules/lazy-load/views/settings.php:13
+#: modules/lazy-load/views/settings.php:15
 msgid "Start loading the ads %s pixels before they are visible on the screen."
 msgstr "ابدأ في تحميل الإعلانات %s بكسل قبل ظهورها على الشاشة."
 
@@ -320,7 +412,8 @@ msgid "Set to 0 to disable this feature."
 msgstr "اضبط على 0 لتعطيل هذه الميزة."
 
 #: modules/grids/admin.class.php:60
-msgid "On browsers smaller than this, the columns show in full width below each other."
+msgid ""
+"On browsers smaller than this, the columns show in full width below each other."
 msgstr "في المتصفحات الأصغر من ذلك ، تظهر الأعمدة بعرض كامل أسفل بعضها البعض."
 
 #: modules/grids/admin.class.php:58
@@ -377,7 +470,8 @@ msgid "Set specific days"
 msgstr "اختر أيامًا محددة"
 
 #: modules/placement-tests/views/settings_test_expiry_date.php:26
-msgctxt "order of expiry date fields 1: month, 2: day, 3: year, 4: hour, 5: minute"
+msgctxt ""
+"order of expiry date fields 1: month, 2: day, 3: year, 4: hour, 5: minute"
 msgid "%1$s %2$s, %3$s @ %4$s %5$s"
 msgstr "%1$s %2$s, %3$s @ %4$s %5$s"
 
@@ -421,8 +515,12 @@ msgid "Testing"
 msgstr "اختبار"
 
 #: modules/placement-tests/views/placement_tests.php:56
-msgid "Due to technical restrictions, when testing AdSense units, the limit in the plugin settings does not work. Please disable it <a href=\"%s\">here</a>."
-msgstr "نظرًا للقيود الفنية ، عند اختبار وحدات AdSense ، لا يعمل الحد في إعدادات المكون الإضافي. يرجى تعطيله <a href=\"%s\"> هنا </a>."
+msgid ""
+"Due to technical restrictions, when testing AdSense units, the limit in the "
+"plugin settings does not work. Please disable it <a href=\"%s\">here</a>."
+msgstr ""
+"نظرًا للقيود الفنية ، عند اختبار وحدات AdSense ، لا يعمل الحد في إعدادات المكون "
+"الإضافي. يرجى تعطيله <a href=\"%s\"> هنا </a>."
 
 #: modules/placement-tests/views/placement_tests.php:52
 msgid "Save Tests"
@@ -454,10 +552,6 @@ msgstr "مؤلف"
 msgid "Placement tests"
 msgstr "اختبارات الموضع"
 
-#: modules/lazy-load/views/settings.php:7
-msgid "Activate <em>lazy load</em> module."
-msgstr "تنشيط وحدة <em> التحميل البطيء </em>."
-
 #: modules/lazy-load/views/setting_lazy_load.php:6
 #: modules/lazy-load/views/setting_lazy_load.php:8
 msgid "disabled"
@@ -470,7 +564,8 @@ msgstr "ممكّن"
 
 #: modules/group-refresh/views/settings_group_refresh.php:9
 msgid "Please use a placement to deliver this group using cache-busting."
-msgstr "الرجاء استخدام موضع لتسليم هذه المجموعة باستخدام تفريغ ذاكرة التخزين المؤقت."
+msgstr ""
+"الرجاء استخدام موضع لتسليم هذه المجموعة باستخدام تفريغ ذاكرة التخزين المؤقت."
 
 #: modules/group-refresh/views/settings_group_refresh.php:6
 msgid "Refresh ads on the same spot. Works when cache-busting is used."
@@ -506,82 +601,77 @@ msgstr "النقرات المسموح بها على إعلان واحد قبل �
 
 #: modules/advanced-visitor-conditions/main.class.php:138
 #: modules/advanced-visitor-conditions/main.class.php:146
-#: modules/ad-server/views/module-settings.php:14
-#: modules/click-fraud-protection/views/settings.php:11
 msgid "Manual"
 msgstr "الدليل"
 
-#: modules/click-fraud-protection/views/settings.php:10
-msgid "Activate <em>click fraud protection</em> module"
-msgstr "تنشيط وحدة <em> الحماية من النقرات الاحتيالية </em>"
-
 #: modules/cache-busting/views/settings_check_ad.php:3
-msgid "The code of this ad might not work properly with activated cache-busting. <a href=\"%s\" target=\"_blank\">Manual</a>"
-msgstr "قد لا تعمل شفرة هذا الإعلان بشكل صحيح مع تنشيط ذاكرة التخزين المؤقت. <a href=\"%s\" target=\"_blank\">الدليل</a>"
+msgid ""
+"The code of this ad might not work properly with activated cache-busting. <a "
+"href=\"%s\" target=\"_blank\">Manual</a>"
+msgstr ""
+"قد لا تعمل شفرة هذا الإعلان بشكل صحيح مع تنشيط ذاكرة التخزين المؤقت. <a href="
+"\"%s\" target=\"_blank\">الدليل</a>"
 
-#: modules/cache-busting/views/settings.php:41
-msgid "Enable passive cache-busting for all ads and groups which are not delivered through a placement, if possible."
-msgstr "قم بتمكين الخرق السلبي لذاكرة التخزين المؤقت لجميع الإعلانات والمجموعات التي لا يتم تسليمها من خلال أحد المواضع ، إن أمكن."
+#: modules/cache-busting/views/settings.php:44
+msgid ""
+"Enable passive cache busting for all ads and groups which are not delivered "
+"through a placement, if possible."
+msgstr ""
+"قم بتمكين الخرق السلبي لذاكرة التخزين المؤقت لجميع الإعلانات والمجموعات التي "
+"لا يتم تسليمها من خلال أحد المواضع ، إن أمكن."
 
-#: modules/cache-busting/views/settings.php:59
-msgid "No cache-busting"
+#: modules/cache-busting/views/settings.php:62
+msgid "No cache busting"
 msgstr "لا يتم تطبيق تفريغ ذاكرة التخزين المؤقت"
 
-#: modules/cache-busting/views/settings.php:52
+#: modules/cache-busting/views/settings.php:55
 msgid "Use AJAX"
 msgstr "استخدم AJAX"
 
-#: modules/cache-busting/views/settings.php:46
-msgid "Choose the fallback if “passive“ cache-busting is not possible."
-msgstr "اختر الخيار الاحتياطي إذا لم يكن التحكُّم \"السلبي\" في ذاكرة التخزين المؤقت ممكنًا."
+#: modules/cache-busting/views/settings.php:49
+msgid "Choose the fallback if “passive“ cache busting is not possible."
+msgstr ""
+"اختر الخيار الاحتياطي إذا لم يكن التحكُّم \"السلبي\" في ذاكرة التخزين المؤقت "
+"ممكنًا."
 
-#: modules/cache-busting/views/settings.php:28
+#: modules/cache-busting/views/settings.php:31
 msgid "AJAX"
 msgstr "AJAX"
 
-#: modules/advanced-visitor-conditions/views/settings.php:6
-msgid "Activate <em>advanced visitor conditions</em> module."
-msgstr "تنشيط وحدة <em> شروط الزائر المتقدمة </em>."
-
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:15
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:15
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:15
 msgid "url of the referrer"
 msgstr "رابط المحيل"
 
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:5
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:5
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:5
 msgid "URL"
 msgstr "URL"
 
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:3
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:3
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:3
 msgid "Display ad depending on the external url the user comes from."
 msgstr "عرض الإعلان اعتمادًا على عنوان url الخارجي الذي يأتي منه المستخدم."
 
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:1
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:1
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:1
 msgid "Display by referrer url"
 msgstr "عرض حسب عنوان url المحيل"
-
-#: modules/ads-for-adblockers/views/settings.php:6
-msgid "Activate <em>ads for ad blockers</em> module."
-msgstr "تنشيط وحدة <em> إعلانات أدوات منع الإعلانات </em>."
 
 #: modules/ads-for-adblockers/views/placement-item.php:21
 #: modules/lazy-load/views/setting_lazy_load.php:11
 msgid "Works only with cache-busting enabled"
 msgstr "يعمل فقط مع تمكين تفريغ ذاكرة التخزين المؤقت"
 
-#: modules/weekdays/weekdays.class.php:146
+#: modules/weekdays/weekdays.class.php:149
 msgid "Never shows up"
 msgstr "لا يظهر ابدا"
 
-#: modules/weekdays/weekdays.class.php:144
+#: modules/weekdays/weekdays.class.php:147
 msgid "Shows up on: %s"
 msgstr "يظهر في: %s"
 
-#: modules/weekdays/weekdays.class.php:82
-#: modules/weekdays/weekdays.class.php:97
+#: modules/weekdays/weekdays.class.php:85 modules/weekdays/weekdays.class.php:100
 msgid "specific days"
 msgstr "أيام محددة"
 
@@ -611,72 +701,75 @@ msgstr "اختبارات الموضع منتهية الصلاحية"
 msgid "Save New Test"
 msgstr "حفظ الاختبار الجديد"
 
-#: modules/paid-memberships-pro/main.class.php:147
-msgid "Display ads only to users with a specific membership level set with PaidMembershipsPro."
-msgstr "عرض الإعلانات فقط للمستخدمين الذين لديهم مستوى عضوية محدد تم تعيينه باستخدام PaidMembershipsPro."
-
 #: modules/paid-memberships-pro/main.class.php:146
+msgid ""
+"Display ads only to users with a specific membership level set with "
+"PaidMembershipsPro."
+msgstr ""
+"عرض الإعلانات فقط للمستخدمين الذين لديهم مستوى عضوية محدد تم تعيينه باستخدام "
+"PaidMembershipsPro."
+
+#: modules/paid-memberships-pro/main.class.php:145
 msgid "PMP user level"
 msgstr "مستوى المستخدم PMP"
 
-#: modules/paid-memberships-pro/main.class.php:128
-#: modules/paid-memberships-pro/main.class.php:243
+#: modules/paid-memberships-pro/main.class.php:127
+#: modules/paid-memberships-pro/main.class.php:241
 msgid "No membership levels set up yet."
 msgstr "لم يتم إعداد مستويات العضوية حتى الآن."
 
 #: modules/paid-memberships-pro/main.class.php:30
-msgid "Display ads only on pages that need a specific membership level set with PaidMembershipsPro."
-msgstr "عرض الإعلانات فقط على الصفحات التي تحتاج إلى مستوى عضوية محدد تم تعيينه مع PaidMembershipsPro."
+msgid ""
+"Display ads only on pages that need a specific membership level set with "
+"PaidMembershipsPro."
+msgstr ""
+"عرض الإعلانات فقط على الصفحات التي تحتاج إلى مستوى عضوية محدد تم تعيينه مع "
+"PaidMembershipsPro."
 
 #: modules/paid-memberships-pro/main.class.php:29
 msgid "PMP page level"
 msgstr "مستوى الصفحة PMP"
 
-#: modules/lazy-load/admin.class.php:56
-msgid "lazy load"
-msgstr "تحميل بطيء "
+#: modules/inject-content/inject-content.class.php:100
+msgid ""
+"Display the ad between posts on post lists, e.g. home, archives, search etc."
+msgstr ""
+"عرض الإعلان بين المشاركات في قوائم المشاركات ، على سبيل المثال الصفحة الرئيسية "
+"والمحفوظات والبحث وما إلى ذلك."
 
-#: modules/lazy-load/admin.class.php:23
-msgid "Lazy Load"
-msgstr "تحميل بطيء "
-
-#: modules/inject-content/inject-content.class.php:87
-msgid "Display the ad between posts on post lists, e.g. home, archives, search etc."
-msgstr "عرض الإعلان بين المشاركات في قوائم المشاركات ، على سبيل المثال الصفحة الرئيسية والمحفوظات والبحث وما إلى ذلك."
-
-#: modules/inject-content/inject-content.class.php:86
+#: modules/inject-content/inject-content.class.php:99
 msgid "Post Lists"
 msgstr "قائمة المقالات"
 
-#: modules/inject-content/inject-content.class.php:79
+#: modules/inject-content/inject-content.class.php:89
 msgid "Attach the ad to any element in the frontend."
 msgstr "إرفاق الإعلان بأي عنصر في الواجهة الأمامية."
 
-#: modules/inject-content/inject-content.class.php:78
+#: modules/inject-content/inject-content.class.php:88
 msgid "Custom Position"
 msgstr "موقف مخصص"
 
-#: modules/inject-content/inject-content.class.php:71
+#: modules/inject-content/inject-content.class.php:81
 msgid "In the middle of the main content based on the number of paragraphs."
 msgstr "في منتصف المحتوى الرئيسي بناءً على عدد الفقرات."
 
-#: modules/inject-content/inject-content.class.php:70
+#: modules/inject-content/inject-content.class.php:80
 msgid "Content Middle"
 msgstr "وسط المحتوى"
 
-#: modules/inject-content/inject-content.class.php:63
+#: modules/inject-content/inject-content.class.php:69
 msgid "Above the main headline on the page (&lt;h1&gt;)."
 msgstr "فوق العنوان الرئيسي على الصفحة (&lt;h1&gt;)."
 
-#: modules/inject-content/inject-content.class.php:62
+#: modules/inject-content/inject-content.class.php:68
 msgid "Above Headline"
 msgstr "فوق العنوان"
 
-#: modules/inject-content/inject-content.class.php:55
+#: modules/inject-content/inject-content.class.php:61
 msgid "After a random paragraph in the main content."
 msgstr "بعد فقرة عشوائية في المحتوى الرئيسي."
 
-#: modules/inject-content/inject-content.class.php:54
+#: modules/inject-content/inject-content.class.php:60
 msgid "Random Paragraph"
 msgstr "فقرة عشوائية"
 
@@ -717,9 +810,12 @@ msgid "Position"
 msgstr "موضع"
 
 #: modules/inject-content/admin.class.php:54
-msgid "Uses <a href=\"https://api.jquery.com/category/selectors/\" target=\"_blank\">jQuery selectors</a>, e.g. #container_id, .container_class"
+msgid ""
+"Uses <a href=\"https://api.jquery.com/category/selectors/\" target=\"_blank"
+"\">jQuery selectors</a>, e.g. #container_id, .container_class"
 msgstr ""
-"يستخدم <a href=\"https://api.jquery.com/category/selectors/\" target=\"_blank\">محددات jQuery</a> مثال: #container_id, .container_class\n"
+"يستخدم <a href=\"https://api.jquery.com/category/selectors/\" target=\"_blank"
+"\">محددات jQuery</a> مثال: #container_id, .container_class\n"
 " "
 
 #: modules/inject-content/admin.class.php:51
@@ -763,11 +859,11 @@ msgstr "فوق"
 msgid "Refresh interval"
 msgstr "الفاصل الزمني للتحديث"
 
-#: modules/grids/grids.class.php:29
+#: modules/grids/grids.class.php:32
 msgid "Display multiple ads in a grid"
 msgstr "عرض إعلانات متعددة في شبكة"
 
-#: modules/grids/grids.class.php:28
+#: modules/grids/grids.class.php:31
 msgid "Grid"
 msgstr "جريد"
 
@@ -815,29 +911,29 @@ msgstr "الحد الأقصى لعدد نقرات الإعلان"
 msgid "Click Fraud Protection"
 msgstr "الحماية من الاحتيال"
 
-#: modules/cache-busting/cache-busting.class.php:1658
+#: modules/cache-busting/cache-busting.class.php:1677
 msgctxt "placement admin label"
 msgid "Cache-busting:"
 msgstr "تفريغ ذاكرة التخزين المؤقت:"
 
-#: modules/cache-busting/cache-busting.class.php:1652
+#: modules/cache-busting/cache-busting.class.php:1671
 msgid "The ad is not displayed on the page"
 msgstr "لا يتم عرض الإعلان على الصفحة"
 
-#: modules/cache-busting/cache-busting.class.php:1651
+#: modules/cache-busting/cache-busting.class.php:1670
 msgid "The ad is displayed on the page"
 msgstr "يتم عرض الإعلان على الصفحة"
 
-#: modules/cache-busting/cache-busting.class.php:1648
-#: modules/cache-busting/views/settings.php:21
+#: modules/cache-busting/cache-busting.class.php:1667
+#: modules/cache-busting/views/settings.php:24
 msgid "passive"
 msgstr "سلبي"
 
-#: modules/cache-busting/cache-busting.class.php:1642
+#: modules/cache-busting/cache-busting.class.php:1661
 msgid "The ad can work with passive cache-busting"
 msgstr "يمكن أن يعمل الإعلان مع التفريغ السلبي لذاكرة التخزين المؤقت"
 
-#: modules/cache-busting/cache-busting.class.php:1640
+#: modules/cache-busting/cache-busting.class.php:1659
 msgid "The ad can not work with passive cache-busting"
 msgstr "لا يمكن أن يعمل الإعلان مع التفريغ السلبي لذاكرة التخزين المؤقت"
 
@@ -846,8 +942,13 @@ msgid "Cache Busting"
 msgstr "تفريغ ذاكرة التخزين المؤقت"
 
 #: modules/cache-busting/admin-ui.class.php:120
-msgid "The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not passive cache-busting."
-msgstr "يمكن لنوع إعلان <em> المجموعة الإعلانية </em> فقط استخدام  AJAX أو عدم استخدام تفريغ ذاكرة التخزين المؤقت ، ولكن لا يمكنه استخدام التفريغ السلبي لذاكرة التخزين المؤقت."
+msgid ""
+"The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not "
+"passive cache-busting."
+msgstr ""
+"يمكن لنوع إعلان <em> المجموعة الإعلانية </em> فقط استخدام  AJAX أو عدم استخدام "
+"تفريغ ذاكرة التخزين المؤقت ، ولكن لا يمكنه استخدام التفريغ السلبي لذاكرة "
+"التخزين المؤقت."
 
 #: modules/cache-busting/admin-ui.class.php:67
 msgctxt "placement admin label"
@@ -860,12 +961,12 @@ msgid "auto"
 msgstr "تلقاءي"
 
 #: modules/cache-busting/admin-ui.class.php:47
-#: modules/cache-busting/cache-busting.class.php:1655
+#: modules/cache-busting/cache-busting.class.php:1674
 msgctxt "setting label"
 msgid "off"
 msgstr "إيقاف"
 
-#: modules/cache-busting/cache-busting.class.php:1646
+#: modules/cache-busting/cache-busting.class.php:1665
 msgctxt "setting label"
 msgid "ajax"
 msgstr "ajax"
@@ -911,9 +1012,9 @@ msgstr "صفحة موضوع المنتدى"
 msgid "Inject at %s. post"
 msgstr "حقن في %s. مقال"
 
+#: modules/bbpress/admin.class.php:44 modules/bbpress/admin.class.php:60
 #: modules/inject-content/admin.class.php:78
-#: modules/inject-content/admin.class.php:93 modules/bbpress/admin.class.php:44
-#: modules/bbpress/admin.class.php:60
+#: modules/inject-content/admin.class.php:93
 #: modules/buddypress/views/position-option.php:13
 msgid "position"
 msgstr "موضع"
@@ -939,8 +1040,12 @@ msgid "background"
 msgstr "خلفية"
 
 #: modules/background-ads/admin.class.php:36
-msgid "Select a background color in case the background image is not high enough to cover the whole screen."
-msgstr "حدد لون الخلفية في حالة عدم ارتفاع صورة الخلفية بدرجة كافية لتغطية الشاشة بأكملها."
+msgid ""
+"Select a background color in case the background image is not high enough to "
+"cover the whole screen."
+msgstr ""
+"حدد لون الخلفية في حالة عدم ارتفاع صورة الخلفية بدرجة كافية لتغطية الشاشة "
+"بأكملها."
 
 #: modules/background-ads/admin.class.php:25
 msgid "Background of the website behind the main wrapper."
@@ -993,8 +1098,12 @@ msgid "max. ad impressions"
 msgstr "الحد الأقصى لعدد مرات ظهور الإعلان"
 
 #: modules/advanced-visitor-conditions/main.class.php:179
-msgid "Display ads based on the number of page impressions the user already made (before the current on)."
-msgstr "عرض الإعلانات استنادًا إلى عدد مرات ظهور الصفحة التي حققها المستخدم بالفعل (قبل اليوم الحالي)."
+msgid ""
+"Display ads based on the number of page impressions the user already made "
+"(before the current on)."
+msgstr ""
+"عرض الإعلانات استنادًا إلى عدد مرات ظهور الصفحة التي حققها المستخدم بالفعل (قبل "
+"اليوم الحالي)."
 
 #: modules/advanced-visitor-conditions/main.class.php:178
 msgid "page impressions"
@@ -1036,46 +1145,46 @@ msgstr "عنوان url المُحيل"
 msgid "Advanced visitor conditions"
 msgstr "شروط الزائر المتقدمة"
 
-#: modules/advanced-display-conditions/main.class.php:559
+#: modules/advanced-display-conditions/main.class.php:557
 msgid "count from end"
 msgstr "العد من النهاية"
 
-#: modules/advanced-display-conditions/main.class.php:556
+#: modules/advanced-display-conditions/main.class.php:554
 msgid "from %s to %s"
 msgstr "من %s إلى %s"
 
-#: modules/advanced-display-conditions/main.class.php:526
+#: modules/advanced-display-conditions/main.class.php:524
 msgid "meta key"
 msgstr "مفتاح التعريف"
 
-#: modules/advanced-display-conditions/main.class.php:525
+#: modules/advanced-display-conditions/main.class.php:523
 msgid "all of"
 msgstr "كل"
 
-#: modules/advanced-display-conditions/main.class.php:524
+#: modules/advanced-display-conditions/main.class.php:522
 msgid "any of"
 msgstr "اي من"
 
-#: modules/advanced-display-conditions/main.class.php:493
+#: modules/advanced-display-conditions/main.class.php:491
 msgid "no languages set up in WPML"
 msgstr "لا توجد لغات معدة في WPML"
 
-#: modules/paid-memberships-pro/main.class.php:113
-#: modules/paid-memberships-pro/main.class.php:228
+#: modules/advanced-display-conditions/main.class.php:420
+#: modules/advanced-display-conditions/main.class.php:475
 #: modules/advanced-visitor-conditions/main.class.php:314
 #: modules/advanced-visitor-conditions/main.class.php:357
-#: modules/advanced-display-conditions/main.class.php:422
-#: modules/advanced-display-conditions/main.class.php:477
+#: modules/paid-memberships-pro/main.class.php:112
+#: modules/paid-memberships-pro/main.class.php:226
 #: modules/gamipress/views/visitor-condition-achievement.php:17
 msgid "is not"
 msgstr "ليس"
 
-#: modules/paid-memberships-pro/main.class.php:112
-#: modules/paid-memberships-pro/main.class.php:227
+#: modules/advanced-display-conditions/main.class.php:419
+#: modules/advanced-display-conditions/main.class.php:474
 #: modules/advanced-visitor-conditions/main.class.php:313
 #: modules/advanced-visitor-conditions/main.class.php:356
-#: modules/advanced-display-conditions/main.class.php:421
-#: modules/advanced-display-conditions/main.class.php:476
+#: modules/paid-memberships-pro/main.class.php:111
+#: modules/paid-memberships-pro/main.class.php:225
 #: modules/gamipress/views/visitor-condition-achievement.php:16
 msgid "is"
 msgstr "يكون"
@@ -1170,14 +1279,24 @@ msgstr "عرض الإعلان مرة واحدة فقط في كل صفحة"
 msgid "Display only once"
 msgstr "عرض مرة واحدة فقط"
 
-#: classes/advanced-ads-pro.php:480
-msgid "Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities"
-msgstr "يرجى ملاحظة أن أدوار \"مسؤول الإعلانات\" و \"مدير الإعلانات\" تتمتعان بإمكانيات \"upload_files\" و \"uniltered_html\""
+#: classes/advanced-ads-pro.php:483
+msgid ""
+"Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ "
+"and the “unfiltered_html“ capabilities"
+msgstr ""
+"يرجى ملاحظة أن أدوار \"مسؤول الإعلانات\" و \"مدير الإعلانات\" تتمتعان "
+"بإمكانيات \"upload_files\" و \"uniltered_html\""
 
 #. %s is the plugin’s name.
 #: classes/advanced-ads-pro.php:293
-msgid "<strong>%s</strong> requires the <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> plugin to be installed and activated on your site."
-msgstr "يتطلب <strong> %s </strong> تثبيت وتفعيل المكوّن الإضافي <strong> <a href=\"https://wpadvancedads.com\" target=\"_blank\"> Advanced Ads </a> </strong> على موقعك."
+msgid ""
+"<strong>%s</strong> requires the <strong><a href=\"https://wpadvancedads.com\" "
+"target=\"_blank\">Advanced Ads</a></strong> plugin to be installed and "
+"activated on your site."
+msgstr ""
+"يتطلب <strong> %s </strong> تثبيت وتفعيل المكوّن الإضافي <strong> <a href="
+"\"https://wpadvancedads.com\" target=\"_blank\"> Advanced Ads </a> </strong> "
+"على موقعك."
 
 #: classes/advanced-ads-pro.php:308
 msgid "Install Now"
@@ -1188,19 +1307,27 @@ msgid "Activate Now"
 msgstr " التفعيل الآن"
 
 #. %s is a URL.
-#: classes/advanced-ads-pro-admin.php:359
-msgid "Enable the Advanced Visitor Conditions <a href=\"%s\" target=\"_blank\">in the settings</a>."
-msgstr "قم بتمكين شروط الزائر المتقدمة <a href=\"%s\" target=\"_blank\"> في الإعدادات </a>."
+#: classes/advanced-ads-pro-admin.php:388
+msgid ""
+"Enable the Advanced Visitor Conditions <a href=\"%s\" target=\"_blank\">in the "
+"settings</a>."
+msgstr ""
+"قم بتمكين شروط الزائر المتقدمة <a href=\"%s\" target=\"_blank\"> في الإعدادات "
+"</a>."
 
-#: classes/advanced-ads-pro-admin.php:303
-msgid "Please note, with the last update, the “Ad Admin“ and “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities."
-msgstr "يرجى ملاحظة أنه مع التحديث الأخير ، فإن أدوار \"مدير الإعلانات\" و \"مدير الإعلانات\" تتمتعان بإمكانيات \"تحميل_الملفات\" و \"html_ uniltered\"."
+#: classes/advanced-ads-pro-admin.php:332
+msgid ""
+"Please note, with the last update, the “Ad Admin“ and “Ad Manager“ roles have "
+"the “upload_files“ and the “unfiltered_html“ capabilities."
+msgstr ""
+"يرجى ملاحظة أنه مع التحديث الأخير ، فإن أدوار \"مدير الإعلانات\" و \"مدير "
+"الإعلانات\" تتمتعان بإمكانيات \"تحميل_الملفات\" و \"html_ uniltered\"."
 
-#: classes/advanced-ads-pro-admin.php:293
+#: classes/advanced-ads-pro-admin.php:322
 msgid "Ad User Role"
 msgstr "دور مستخدم الإعلان"
 
-#: classes/advanced-ads-pro-admin.php:290
+#: classes/advanced-ads-pro-admin.php:319
 msgid "Advanced Ads User Role"
 msgstr "دور مستخدم الإعلانات المتقدم"
 
@@ -1208,14 +1335,1292 @@ msgstr "دور مستخدم الإعلانات المتقدم"
 msgid "--no role--"
 msgstr "--لا دور--"
 
-#: classes/advanced-ads-pro.php:262 classes/advanced-ads-pro-admin.php:41
+#: classes/advanced-ads-pro-admin.php:41 classes/advanced-ads-pro.php:262
 msgid "Ad User"
 msgstr "مستخدم إعلان"
 
-#: classes/advanced-ads-pro.php:249 classes/advanced-ads-pro-admin.php:40
+#: classes/advanced-ads-pro-admin.php:40 classes/advanced-ads-pro.php:249
 msgid "Ad Manager"
 msgstr "مدير الإعلانات"
 
-#: classes/advanced-ads-pro.php:235 classes/advanced-ads-pro-admin.php:39
+#: classes/advanced-ads-pro-admin.php:39 classes/advanced-ads-pro.php:235
 msgid "Ad Admin"
 msgstr "مشرف الإعلان"
+
+#: modules/geo/admin/views/setting-download.php:7
+msgid "Geo Database found."
+msgstr "تم العثور على قاعدة البيانات الجغرافية."
+
+#: modules/geo/admin/admin.php:531
+msgid "Could not access filesystem"
+msgstr "تعذر الوصول إلى نظام الملفات"
+
+#: modules/geo/admin/admin.php:414
+msgid "The upload dir is not available"
+msgstr "دليل التحميل غير متوفر"
+
+#: modules/geo/admin/admin.php:274 modules/geo/admin/views/setting-download.php:4
+msgid "Geo Database not found."
+msgstr "لم يتم العثور على قاعدة البيانات الجغرافية."
+
+#: modules/geo/admin/admin.php:174 modules/geo/admin/admin.php:274
+msgid "Please read the %1$sinstallation instructions%2$s."
+msgstr "الرجاء قراءة %1$sإرشادات التثبيت%2$s"
+
+#: modules/geo/admin/admin.php:174
+msgid "The MaxMind license key is missing."
+msgstr "مفتاح ترخيص MaxMind مفقود."
+
+#: modules/geo/admin/admin.php:127
+msgid "MaxMind Database"
+msgstr "قاعدة بيانات MaxMind"
+
+#: modules/geo/admin/admin.php:123
+msgid "MaxMind license key"
+msgstr "مفتاح ترخيص MaxMind"
+
+#: modules/geo/classes/api.php:127
+msgid "Oceania"
+msgstr "أوقيانوسيا"
+
+#: modules/geo/admin/admin.php:394
+msgid "Your location"
+msgstr "موقعك"
+
+#: modules/geo/admin/admin.php:389
+msgid ""
+"Enter the name of the city, click the search button and pick one of the "
+"results to set the coordinates of the center."
+msgstr ""
+"أدخل اسم المدينة ، وانقر فوق زر البحث واختر إحدى النتائج لتعيين إحداثيات "
+"المركز."
+
+#: modules/geo/admin/admin.php:388
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: modules/geo/admin/admin.php:387
+msgid "Search"
+msgstr "بحث"
+
+#: modules/geo/admin/admin.php:379
+msgid "Distance to center"
+msgstr "المسافة إلى المركز"
+
+#: modules/geo/admin/admin.php:374
+msgid "Longitude"
+msgstr "خط الطول"
+
+#: modules/geo/admin/admin.php:373
+msgid "Latitude"
+msgstr "خط العرض"
+
+#: modules/geo/admin/admin.php:372
+msgid "get coordinates"
+msgstr "الحصول على الإحداثيات"
+
+#: modules/geo/admin/admin.php:371
+msgid "from"
+msgstr "من"
+
+#: modules/geo/admin/admin.php:367
+msgid "Distance"
+msgstr "المسافة"
+
+#: modules/geo/admin/admin.php:365
+msgid "Distance is greater than"
+msgstr "المسافة أكبر من"
+
+#: modules/geo/admin/admin.php:364
+msgid "Distance is less than or equal to"
+msgstr "المسافة أقل من أو تساوي"
+
+#: modules/geo/admin/admin.php:355
+msgid "This option can’t be used if your site is using sucuri.net."
+msgstr "لا يمكن استخدام هذا الخيار إذا كان موقعك يستخدم Sucuri.net."
+
+#: modules/geo/admin/admin.php:317
+msgid "by radius"
+msgstr "حسب نصف القطر"
+
+#: modules/geo/admin/admin.php:313
+msgid "by specific location"
+msgstr "حسب موقع معين"
+
+#: modules/geo/admin/admin.php:289
+msgid "Coordinates"
+msgstr "إحداثيات"
+
+#. URI of the plugin
+msgid "https://wpadvancedads.com/add-ons/geo-targeting/"
+msgstr "https://wpadvancedads.com/add-ons/geo-targeting/"
+
+#. Description of the plugin
+msgid "Display ads based on the geo location of the visitor."
+msgstr "عرض الإعلانات على أساس الموقع الجغرافي للزائر."
+
+#. Name of the plugin
+msgid "Advanced Ads – Geo Targeting"
+msgstr "الإعلانات المتقدمة - الاستهداف الجغرافي"
+
+#: modules/geo/admin/views/setting-locale.php:6
+msgid ""
+"Choose the language of the state/region or city entered. If the language is "
+"not available in the geo location database, it will check against the English "
+"version."
+msgstr ""
+"اختر لغة الولاية / المنطقة أو المدينة التي تم إدخالها. إذا لم تكن اللغة متاحة "
+"في قاعدة بيانات الموقع الجغرافي ، فستتحقق من النسخة الإنجليزية."
+
+#: modules/geo/admin/views/setting-download.php:61
+msgid ""
+"The databases are updated on the first Tuesday (midnight, GMT) of each month."
+msgstr ""
+"يتم تحديث قواعد البيانات في أول يوم ثلاثاء (منتصف الليل بتوقيت جرينتش) من كل "
+"شهر."
+
+#: modules/geo/admin/views/setting-download.php:60
+msgid "Next possible update on %s."
+msgstr "التحديث التالي المحتمل : %s"
+
+#: modules/geo/admin/admin.php:492
+msgid "Database update failed"
+msgstr "فشل تحديث قاعدة البيانات"
+
+#: modules/geo/admin/views/setting-download.php:15
+msgid "Update geo location database"
+msgstr "تحديث قاعدة بيانات الموقع الجغرافي"
+
+#: modules/geo/admin/views/setting-download.php:5
+msgid ""
+"In order to use Geo Targeting, please download the geo location database by "
+"clicking on the button below."
+msgstr ""
+"من أجل استخدام الاستهداف الجغرافي ، يرجى تنزيل قاعدة بيانات الموقع الجغرافي "
+"بالنقر فوق الزر أدناه."
+
+#: modules/geo/admin/views/setting-download.php:9
+msgid "Last update: %s"
+msgstr "التحديث الأخير: %s"
+
+#: modules/geo/public/public.php:228
+msgid "Address not found: %s"
+msgstr "لم يتم العثور على العنوان: %s"
+
+#: modules/geo/public/public.php:223
+msgid "Geo Database not found"
+msgstr "لم يتم العثور على قاعدة البيانات الجغرافية"
+
+#: modules/geo/classes/plugin.php:151
+msgid "Sucuri Header (country only)"
+msgstr "رأس Sucuri (الدولة فقط)"
+
+#: modules/geo/classes/plugin.php:145
+msgid "MaxMind database (default)"
+msgstr "قاعدة بيانات MaxMind (افتراضي)"
+
+#: modules/geo/classes/plugin.php:112
+msgid "Display ads based on geo location."
+msgstr "عرض الإعلانات على أساس الموقع الجغرافي."
+
+#: modules/geo/classes/plugin.php:111
+msgid "geo location"
+msgstr "الموقع الجغرافي"
+
+#: modules/geo/classes/api.php:378
+msgid "Zimbabwe"
+msgstr "زيمبابوي"
+
+#: modules/geo/classes/api.php:377
+msgid "Zambia"
+msgstr "زامبيا"
+
+#: modules/geo/classes/api.php:376
+msgid "Yemen"
+msgstr "اليمن"
+
+#: modules/geo/classes/api.php:375
+msgid "Western Samoa"
+msgstr "ساموا الغربية"
+
+#: modules/geo/classes/api.php:374
+msgid "Western Sahara"
+msgstr "الصحراء الغربية"
+
+#: modules/geo/classes/api.php:373
+msgid "Wallis and Futuna Islands"
+msgstr "جزر واليس وفوتونا"
+
+#: modules/geo/classes/api.php:372
+msgid "Virgin Islands (USA)"
+msgstr "جزر فيرجن (الولايات المتحدة الأمريكية)"
+
+#: modules/geo/classes/api.php:371
+msgid "Virgin Islands (British)"
+msgstr "جزر العذراء البريطانية"
+
+#: modules/geo/classes/api.php:370
+msgid "Vietnam"
+msgstr "فيتنام"
+
+#: modules/geo/classes/api.php:369
+msgid "Venezuela"
+msgstr "فنزويلا"
+
+#: modules/geo/classes/api.php:368
+msgid "Vanuatu"
+msgstr "فانواتو\t"
+
+#: modules/geo/classes/api.php:367
+msgid "Uzbekistan"
+msgstr "أوزبكستان\t"
+
+#: modules/geo/classes/api.php:366
+msgid "US Minor Outlying Islands"
+msgstr "جزر الولايات المتحدة البعيدة الصغيرة"
+
+#: modules/geo/classes/api.php:365
+msgid "Uruguay"
+msgstr "أوروغواي"
+
+#: modules/geo/classes/api.php:364
+msgid "United Arab Emirates"
+msgstr "الإمارات العربية المتحدة\t"
+
+#: modules/geo/classes/api.php:363
+msgid "Ukraine"
+msgstr "أوكرانيا"
+
+#: modules/geo/classes/api.php:362
+msgid "Uganda"
+msgstr "أوغندا"
+
+#: modules/geo/classes/api.php:361
+msgid "Tuvalu"
+msgstr "توفالو"
+
+#: modules/geo/classes/api.php:360
+msgid "Turks and Caicos Islands"
+msgstr "جزر تركس وكايكوس"
+
+#: modules/geo/classes/api.php:359
+msgid "Turkmenistan"
+msgstr "تركمانستان"
+
+#: modules/geo/classes/api.php:358
+msgid "Turkey"
+msgstr "تركيا"
+
+#: modules/geo/classes/api.php:357
+msgid "Tunisia"
+msgstr "تونس"
+
+#: modules/geo/classes/api.php:356
+msgid "Trinidad and Tobago"
+msgstr "ترينيداد وتوباغو"
+
+#: modules/geo/classes/api.php:355
+msgid "Tonga"
+msgstr "تونغا"
+
+#: modules/geo/classes/api.php:354
+msgid "Tokelau"
+msgstr "توكيلاو"
+
+#: modules/geo/classes/api.php:353
+msgid "Togo"
+msgstr "توغو"
+
+#: modules/geo/classes/api.php:352
+msgid "Timor-Leste"
+msgstr "تيمور الشرقية"
+
+#: modules/geo/classes/api.php:351
+msgid "Thailand"
+msgstr "تايلاند"
+
+#: modules/geo/classes/api.php:350
+msgid "Tanzania"
+msgstr "تنزانيا"
+
+#: modules/geo/classes/api.php:349
+msgid "Tajikistan"
+msgstr "طاجيكستان"
+
+#: modules/geo/classes/api.php:348
+msgid "Taiwan"
+msgstr "تايوان"
+
+#: modules/geo/classes/api.php:347
+msgid "Syrian Arab Republic"
+msgstr "الجمهورية العربية السورية"
+
+#: modules/geo/classes/api.php:346
+msgid "Switzerland"
+msgstr "سويسرا"
+
+#: modules/geo/classes/api.php:345
+msgid "Sweden"
+msgstr "السويد"
+
+#: modules/geo/classes/api.php:344
+msgid "Swaziland"
+msgstr "سوازيلاند"
+
+#: modules/geo/classes/api.php:343
+msgid "Svalbard and Jan Mayen Islands"
+msgstr "جزر سفالبارد وجان ماين"
+
+#: modules/geo/classes/api.php:342
+msgid "Suriname"
+msgstr "سورينام"
+
+#: modules/geo/classes/api.php:341
+msgid "Sudan"
+msgstr "السودان"
+
+#: modules/geo/classes/api.php:340
+msgid "Sri Lanka"
+msgstr "سريلانكا"
+
+#: modules/geo/classes/api.php:339
+msgid "Spain"
+msgstr "إسبانيا"
+
+#: modules/geo/classes/api.php:338
+msgid "South Sudan"
+msgstr "جنوب السودان"
+
+#: modules/geo/classes/api.php:337
+msgid "South Korea"
+msgstr "كوريا الجنوبية"
+
+#: modules/geo/classes/api.php:336
+msgid "South Georgia"
+msgstr "جورجيا الجنوبية"
+
+#: modules/geo/classes/api.php:335
+msgid "South Africa"
+msgstr "جنوب أفريقيا"
+
+#: modules/geo/classes/api.php:334
+msgid "Somalia"
+msgstr "الصومال"
+
+#: modules/geo/classes/api.php:333
+msgid "Solomon Islands"
+msgstr "جزر سليمان"
+
+#: modules/geo/classes/api.php:332
+msgid "Slovenia"
+msgstr "سلوفينيا\t"
+
+#: modules/geo/classes/api.php:331
+msgid "Slovak Republic"
+msgstr "سلوفاكيا\t"
+
+#: modules/geo/classes/api.php:330
+msgid "Singapore"
+msgstr "سنغافورة"
+
+#: modules/geo/classes/api.php:329
+msgid "Sierra Leone"
+msgstr "سيراليون"
+
+#: modules/geo/classes/api.php:328
+msgid "Seychelles"
+msgstr "سيشل"
+
+#: modules/geo/classes/api.php:327
+msgid "Serbia"
+msgstr "صربيا\t"
+
+#: modules/geo/classes/api.php:326
+msgid "Senegal"
+msgstr "السنغال\t"
+
+#: modules/geo/classes/api.php:325
+msgid "Saudi Arabia"
+msgstr "المملكة العربية السعودية"
+
+#: modules/geo/classes/api.php:324
+msgid "S&atilde;o Tom&eacute; and Pr&iacute;ncipe"
+msgstr "ساو تومي وبرينسيبي"
+
+#: modules/geo/classes/api.php:323
+msgid "San Marino"
+msgstr "سان مارينو\t"
+
+#: modules/geo/classes/api.php:322
+msgid "Saint Vincent and the Grenadines"
+msgstr "سانت فينسنت والغرينادين\t"
+
+#: modules/geo/classes/api.php:321
+msgid "Saint Pierre and Miquelon"
+msgstr "سانت بيير وميكلون"
+
+#: modules/geo/classes/api.php:320
+msgid "Saint Martin (Dutch)"
+msgstr "سانت مارتن (الهولندية)"
+
+#: modules/geo/classes/api.php:319
+msgid "Saint Martin (French)"
+msgstr "سانت مارتن (الفرنسية)"
+
+#: modules/geo/classes/api.php:318
+msgid "Saint Lucia"
+msgstr "سانت لوسيا\t"
+
+#: modules/geo/classes/api.php:317
+msgid "Saint Kitts and Nevis"
+msgstr "سانت كيتس ونيفيس\t"
+
+#: modules/geo/classes/api.php:316
+msgid "Saint Helena"
+msgstr "سانت هيلانة"
+
+#: modules/geo/classes/api.php:315
+msgid "Saint Barth&eacute;lemy"
+msgstr "سانت بارتيليمي"
+
+#: modules/geo/classes/api.php:314
+msgid "Rwanda"
+msgstr "رواندا\t"
+
+#: modules/geo/classes/api.php:313
+msgid "Russian Federation"
+msgstr "روسيا\t"
+
+#: modules/geo/classes/api.php:312
+msgid "Romania"
+msgstr "رومانيا\t"
+
+#: modules/geo/classes/api.php:311
+msgid "Reunion Island"
+msgstr "ريونيون"
+
+#: modules/geo/classes/api.php:310
+msgid "Republic of Kosovo"
+msgstr "جمهورية كوسوفو"
+
+#: modules/geo/classes/api.php:309
+msgid "Qatar"
+msgstr "قطر\t"
+
+#: modules/geo/classes/api.php:308
+msgid "Puerto Rico"
+msgstr "بورتوريكو\t"
+
+#: modules/geo/classes/api.php:307
+msgid "Portugal"
+msgstr "البرتغال\t"
+
+#: modules/geo/classes/api.php:306
+msgid "Poland"
+msgstr "بولندا"
+
+#: modules/geo/classes/api.php:305
+msgid "Pitcairn Island"
+msgstr "جزيرة بيتكيرن"
+
+#: modules/geo/classes/api.php:304
+msgid "Phillipines"
+msgstr "الفلبين"
+
+#: modules/geo/classes/api.php:303
+msgid "Peru"
+msgstr "بيرو"
+
+#: modules/geo/classes/api.php:302
+msgid "Paraguay"
+msgstr "باراغواي"
+
+#: modules/geo/classes/api.php:301
+msgid "Papua New Guinea"
+msgstr "بابوا غينيا الجديدة\t"
+
+#: modules/geo/classes/api.php:300
+msgid "Panama"
+msgstr "بنما\t"
+
+#: modules/geo/classes/api.php:299
+msgid "Palestinian Territories"
+msgstr "دولة فلسطين"
+
+#: modules/geo/classes/api.php:298
+msgid "Palau"
+msgstr "بالاو"
+
+#: modules/geo/classes/api.php:297
+msgid "Pakistan"
+msgstr "باكستان\t"
+
+#: modules/geo/classes/api.php:296
+msgid "Oman"
+msgstr "عُمان"
+
+#: modules/geo/classes/api.php:295
+msgid "Norway"
+msgstr "النرويج"
+
+#: modules/geo/classes/api.php:294
+msgid "Northern Mariana Islands"
+msgstr "جزر ماريانا الشمالية"
+
+#: modules/geo/classes/api.php:293
+msgid "North Korea"
+msgstr "كوريا الشمالية"
+
+#: modules/geo/classes/api.php:292
+msgid "Norfolk Island"
+msgstr "جزيرة نورفولك"
+
+#: modules/geo/classes/api.php:291
+msgid "Niue"
+msgstr "نيوي"
+
+#: modules/geo/classes/api.php:290
+msgid "Nigeria"
+msgstr "نيجيريا"
+
+#: modules/geo/classes/api.php:289
+msgid "Niger"
+msgstr "النيجر"
+
+#: modules/geo/classes/api.php:288
+msgid "Nicaragua"
+msgstr "نيكاراجوا\t"
+
+#: modules/geo/classes/api.php:287
+msgid "New Zealand"
+msgstr "نيوزيلندا\t"
+
+#: modules/geo/classes/api.php:286
+msgid "New Caledonia"
+msgstr "كاليدونيا الجديدة\t"
+
+#: modules/geo/classes/api.php:285
+msgid "Netherlands Antilles"
+msgstr "جزر الأنتيل الهولندية"
+
+#: modules/geo/classes/api.php:284
+msgid "Netherlands"
+msgstr "هولندا\t"
+
+#: modules/geo/classes/api.php:283
+msgid "Nepal"
+msgstr "نيبال"
+
+#: modules/geo/classes/api.php:282
+msgid "Nauru"
+msgstr "ناورو"
+
+#: modules/geo/classes/api.php:281
+msgid "Namibia"
+msgstr "ناميبيا"
+
+#: modules/geo/classes/api.php:280
+msgid "Myanmar"
+msgstr "ميانمار"
+
+#: modules/geo/classes/api.php:279
+msgid "Mozambique"
+msgstr "موزمبيق\t"
+
+#: modules/geo/classes/api.php:278
+msgid "Morocco"
+msgstr "المغرب"
+
+#: modules/geo/classes/api.php:277
+msgid "Montserrat"
+msgstr "مونتسرات"
+
+#: modules/geo/classes/api.php:276
+msgid "Montenegro"
+msgstr "الجبل الأسو"
+
+#: modules/geo/classes/api.php:275
+msgid "Mongolia"
+msgstr "منغوليا"
+
+#: modules/geo/classes/api.php:274
+msgid "Monaco"
+msgstr "موناكو\t"
+
+#: modules/geo/classes/api.php:273
+msgid "Moldova, Republic of"
+msgstr "مولدوفا\t"
+
+#: modules/geo/classes/api.php:272
+msgid "Micronesia"
+msgstr "ميكرونيزيا"
+
+#: modules/geo/classes/api.php:271
+msgid "Mexico"
+msgstr "المكسيك"
+
+#: modules/geo/classes/api.php:270
+msgid "Mayotte"
+msgstr "مايوت"
+
+#: modules/geo/classes/api.php:269
+msgid "Mauritius"
+msgstr "موريشيوس"
+
+#: modules/geo/classes/api.php:268
+msgid "Mauritania"
+msgstr "موريتانيا\t"
+
+#: modules/geo/classes/api.php:267
+msgid "Martinique"
+msgstr "مارتينيك"
+
+#: modules/geo/classes/api.php:266
+msgid "Marshall Islands"
+msgstr "جزر مارشال\t"
+
+#: modules/geo/classes/api.php:265
+msgid "Malta"
+msgstr "مالطا"
+
+#: modules/geo/classes/api.php:264
+msgid "Mali"
+msgstr "مالي"
+
+#: modules/geo/classes/api.php:263
+msgid "Maldives"
+msgstr "المالديف"
+
+#: modules/geo/classes/api.php:262
+msgid "Malaysia"
+msgstr "ماليزيا"
+
+#: modules/geo/classes/api.php:261
+msgid "Malawi"
+msgstr "مالاوي"
+
+#: modules/geo/classes/api.php:260
+msgid "Madagascar"
+msgstr "مدغشقر"
+
+#: modules/geo/classes/api.php:259
+msgid "Macedonia"
+msgstr "مقدونيا الشمالية\t"
+
+#: modules/geo/classes/api.php:258
+msgid "Macau"
+msgstr "ماكاو"
+
+#: modules/geo/classes/api.php:257
+msgid "Luxembourg"
+msgstr "لوكسمبورغ"
+
+#: modules/geo/classes/api.php:256
+msgid "Lithuania"
+msgstr "ليتوانيا\t"
+
+#: modules/geo/classes/api.php:255
+msgid "Liechtenstein"
+msgstr "ليختنشتاين\t"
+
+#: modules/geo/classes/api.php:254
+msgid "Libyan Arab Jamahiriya"
+msgstr "الجماهيرية العربية الليبية"
+
+#: modules/geo/classes/api.php:253
+msgid "Liberia"
+msgstr "ليبيريا\t"
+
+#: modules/geo/classes/api.php:252
+msgid "Lesotho"
+msgstr "ليسوتو"
+
+#: modules/geo/classes/api.php:251
+msgid "Lebanon"
+msgstr "لبنان"
+
+#: modules/geo/classes/api.php:250
+msgid "Latvia"
+msgstr "لاتفيا"
+
+#: modules/geo/classes/api.php:249
+msgid "Lao People's Democratic Republic"
+msgstr "جمهورية لاو الديمقراطية الشعبية"
+
+#: modules/geo/classes/api.php:248
+msgid "Kyrgyzstan"
+msgstr "قيرغيزستان"
+
+#: modules/geo/classes/api.php:247
+msgid "Kuwait"
+msgstr "الكويت\t"
+
+#: modules/geo/classes/api.php:246
+msgid "Kiribati"
+msgstr "كيريباتي"
+
+#: modules/geo/classes/api.php:245
+msgid "Kenya"
+msgstr "كينيا"
+
+#: modules/geo/classes/api.php:244
+msgid "Kazakhstan"
+msgstr "كازاخستان\t"
+
+#: modules/geo/classes/api.php:243
+msgid "Jordan"
+msgstr "الأردن"
+
+#: modules/geo/classes/api.php:242
+msgid "Jersey"
+msgstr "جيرسي"
+
+#: modules/geo/classes/api.php:241
+msgid "Japan"
+msgstr "اليابان"
+
+#: modules/geo/classes/api.php:240
+msgid "Jamaica"
+msgstr "جامايكا"
+
+#: modules/geo/classes/api.php:239
+msgid "Italy"
+msgstr "إيطاليا\t"
+
+#: modules/geo/classes/api.php:238
+msgid "Israel"
+msgstr "إسرائيل"
+
+#: modules/geo/classes/api.php:237
+msgid "Isle of Man"
+msgstr "جزيرة آيل أوف مان"
+
+#: modules/geo/classes/api.php:236
+msgid "Ireland"
+msgstr "أيرلندا"
+
+#: modules/geo/classes/api.php:235
+msgid "Iraq"
+msgstr "العراق"
+
+#: modules/geo/classes/api.php:234
+msgid "Iran"
+msgstr "إيران"
+
+#: modules/geo/classes/api.php:233
+msgid "Indonesia"
+msgstr "إندونيسيا"
+
+#: modules/geo/classes/api.php:232
+msgid "India"
+msgstr "الهند"
+
+#: modules/geo/classes/api.php:231
+msgid "Iceland"
+msgstr "أيسلندا"
+
+#: modules/geo/classes/api.php:230
+msgid "Hungary"
+msgstr "المجر"
+
+#: modules/geo/classes/api.php:229
+msgid "Hong Kong"
+msgstr "هونغ كونغ\t"
+
+#: modules/geo/classes/api.php:228
+msgid "Honduras"
+msgstr "هندوراس"
+
+#: modules/geo/classes/api.php:227
+msgid "Holy See (City Vatican State)"
+msgstr "الكرسي الرسولي (دولة الفاتيكان)"
+
+#: modules/geo/classes/api.php:226
+msgid "Heard and McDonald Islands"
+msgstr "جزر هيرد وماكدونالد"
+
+#: modules/geo/classes/api.php:225
+msgid "Haiti"
+msgstr "هايتي"
+
+#: modules/geo/classes/api.php:224
+msgid "Guyana"
+msgstr "غيانا"
+
+#: modules/geo/classes/api.php:223
+msgid "Guinea-Bissau"
+msgstr "غينيا بيساو\t"
+
+#: modules/geo/classes/api.php:222
+msgid "Guinea"
+msgstr "غينيا"
+
+#: modules/geo/classes/api.php:221
+msgid "Guernsey"
+msgstr "غيرنسي"
+
+#: modules/geo/classes/api.php:220
+msgid "Guatemala"
+msgstr "غواتيمال"
+
+#: modules/geo/classes/api.php:219
+msgid "Guam"
+msgstr "غوام"
+
+#: modules/geo/classes/api.php:218
+msgid "Guadeloupe"
+msgstr "غوادلوب"
+
+#: modules/geo/classes/api.php:217
+msgid "Grenada"
+msgstr "غرينادا"
+
+#: modules/geo/classes/api.php:216
+msgid "Greenland"
+msgstr "جرينلاند"
+
+#: modules/geo/classes/api.php:215
+msgid "Gibraltar"
+msgstr "جبل طارق"
+
+#: modules/geo/classes/api.php:214
+msgid "Ghana"
+msgstr "غانا"
+
+#: modules/geo/classes/api.php:213
+msgid "Greece"
+msgstr "اليونان"
+
+#: modules/geo/classes/api.php:211
+msgid "Georgia"
+msgstr "جورجيا"
+
+#: modules/geo/classes/api.php:210
+msgid "Gambia"
+msgstr "غامبيا"
+
+#: modules/geo/classes/api.php:209
+msgid "Gabon"
+msgstr "الجابون"
+
+#: modules/geo/classes/api.php:208
+msgid "French Southern Territories"
+msgstr "المناطق الجنوبية لفرنسا"
+
+#: modules/geo/classes/api.php:207
+msgid "French Polynesia"
+msgstr "بولينيزيا الفرنسية"
+
+#: modules/geo/classes/api.php:206
+msgid "French Guiana"
+msgstr "غينيا الفرنسية\t"
+
+#: modules/geo/classes/api.php:205
+msgid "France"
+msgstr "فرنسا"
+
+#: modules/geo/classes/api.php:204
+msgid "Finland"
+msgstr "فنلندا"
+
+#: modules/geo/classes/api.php:203
+msgid "Fiji"
+msgstr "فيجي"
+
+#: modules/geo/classes/api.php:202
+msgid "Faroe Islands"
+msgstr "جزر فارو"
+
+#: modules/geo/classes/api.php:201
+msgid "Falkland Islands"
+msgstr "جزر فوكلاند\t"
+
+#: modules/geo/classes/api.php:200
+msgid "Ethiopia"
+msgstr "أثيوبيا"
+
+#: modules/geo/classes/api.php:199
+msgid "Estonia"
+msgstr "إستونيا"
+
+#: modules/geo/classes/api.php:198
+msgid "Eritrea"
+msgstr "إريتريا"
+
+#: modules/geo/classes/api.php:197
+msgid "El Salvador"
+msgstr "السلفادور"
+
+#: modules/geo/classes/api.php:196
+msgid "Equatorial Guinea"
+msgstr "غينيا الإستوائية"
+
+#: modules/geo/classes/api.php:195
+msgid "Egypt"
+msgstr "مصر"
+
+#: modules/geo/classes/api.php:194
+msgid "Ecuador"
+msgstr "الاكوادور"
+
+#: modules/geo/classes/api.php:193
+msgid "East Timor"
+msgstr "تيمور الشرقية"
+
+#: modules/geo/classes/api.php:192
+msgid "Dominican Republic"
+msgstr "جمهورية الدومينيكان"
+
+#: modules/geo/classes/api.php:191
+msgid "Dominica"
+msgstr "دومينيكا"
+
+#: modules/geo/classes/api.php:190
+msgid "Djibouti"
+msgstr "جيبوتي"
+
+#: modules/geo/classes/api.php:189
+msgid "Denmark"
+msgstr "الدنمارك"
+
+#: modules/geo/classes/api.php:188
+msgid "Czech Republic"
+msgstr "الجمهورية التشيكية"
+
+#: modules/geo/classes/api.php:187
+msgid "Cyprus"
+msgstr "قبرص"
+
+#: modules/geo/classes/api.php:186
+msgid "Cura&Ccedil;ao"
+msgstr "كوراساو"
+
+#: modules/geo/classes/api.php:185
+msgid "Cuba"
+msgstr "كوبا"
+
+#: modules/geo/classes/api.php:184
+msgid "Croatia/Hrvatska"
+msgstr "كرواتيا / هرفاتسكا"
+
+#: modules/geo/classes/api.php:183
+msgid "Cote d'Ivoire"
+msgstr "كوت ديفوار"
+
+#: modules/geo/classes/api.php:182
+msgid "Costa Rica"
+msgstr "كوستا ريكا"
+
+#: modules/geo/classes/api.php:181
+msgid "Cook Islands"
+msgstr "جزر كوك"
+
+#: modules/geo/classes/api.php:180
+msgid "Congo, Republic of"
+msgstr "جمهورية الكونغو"
+
+#: modules/geo/classes/api.php:179
+msgid "Congo, Democratic People's Republic"
+msgstr "جمهورية الكونغو الديمقراطية الشعبية"
+
+#: modules/geo/classes/api.php:178
+msgid "Comoros"
+msgstr "جزر القمر"
+
+#: modules/geo/classes/api.php:177
+msgid "Colombia"
+msgstr "كولومبيا"
+
+#: modules/geo/classes/api.php:176
+msgid "Cocos Islands"
+msgstr "جزر كوكوس"
+
+#: modules/geo/classes/api.php:175
+msgid "Christmas Island"
+msgstr "جزيرة الكريسماس"
+
+#: modules/geo/classes/api.php:174
+msgid "China"
+msgstr "الصين"
+
+#: modules/geo/classes/api.php:173
+msgid "Chile"
+msgstr "تشيلي"
+
+#: modules/geo/classes/api.php:172
+msgid "Chad"
+msgstr "تشاد"
+
+#: modules/geo/classes/api.php:171
+msgid "Central African Republic"
+msgstr "جمهورية افريقيا الوسطى"
+
+#: modules/geo/classes/api.php:170
+msgid "Cayman Islands"
+msgstr "جزر كايمان"
+
+#: modules/geo/classes/api.php:169
+msgid "Cape Verde"
+msgstr "الرأس الأخضر"
+
+#: modules/geo/classes/api.php:168
+msgid "Canada"
+msgstr "كندا"
+
+#: modules/geo/classes/api.php:167
+msgid "Cameroon"
+msgstr "الكاميرون"
+
+#: modules/geo/classes/api.php:166
+msgid "Cambodia"
+msgstr "كمبوديا"
+
+#: modules/geo/classes/api.php:165
+msgid "Burundi"
+msgstr "بوروندي"
+
+#: modules/geo/classes/api.php:164
+msgid "Burkina Faso"
+msgstr "بوركينا فاسو"
+
+#: modules/geo/classes/api.php:163
+msgid "Bulgaria"
+msgstr "بلغاريا"
+
+#: modules/geo/classes/api.php:162
+msgid "Brunei Darrussalam"
+msgstr "بروناي دار السلام"
+
+#: modules/geo/classes/api.php:161
+msgid "British Indian Ocean Territory"
+msgstr "إقليم المحيط البريطاني الهندي"
+
+#: modules/geo/classes/api.php:160
+msgid "Brazil"
+msgstr "البرازيل"
+
+#: modules/geo/classes/api.php:159
+msgid "Bouvet Island"
+msgstr "جزيرة بوفيت"
+
+#: modules/geo/classes/api.php:158
+msgid "Botswana"
+msgstr "بوتسوانا"
+
+#: modules/geo/classes/api.php:157
+msgid "Bosnia and Herzegovina"
+msgstr "البوسنة والهرسك"
+
+#: modules/geo/classes/api.php:156
+msgid "Bonaire, Saint Eustatius and Saba"
+msgstr "بونير وسانت أوستاتيوس وسابا"
+
+#: modules/geo/classes/api.php:155
+msgid "Bolivia"
+msgstr "بوليفيا"
+
+#: modules/geo/classes/api.php:154
+msgid "Bhutan"
+msgstr "بوتان"
+
+#: modules/geo/classes/api.php:153
+msgid "Bermuda"
+msgstr "برمودا"
+
+#: modules/geo/classes/api.php:152
+msgid "Benin"
+msgstr "بنين"
+
+#: modules/geo/classes/api.php:151
+msgid "Belize"
+msgstr "بليز"
+
+#: modules/geo/classes/api.php:150
+msgid "Belgium"
+msgstr "بلجيكا"
+
+#: modules/geo/classes/api.php:149
+msgid "Belarus"
+msgstr "بيلاروسيا"
+
+#: modules/geo/classes/api.php:148
+msgid "Barbados"
+msgstr "بربادوس"
+
+#: modules/geo/classes/api.php:147
+msgid "Bangladesh"
+msgstr "بنغلاديش"
+
+#: modules/geo/classes/api.php:146
+msgid "Bahrain"
+msgstr "البحرين"
+
+#: modules/geo/classes/api.php:145
+msgid "Bahamas"
+msgstr "جزر البهاما"
+
+#: modules/geo/classes/api.php:144
+msgid "Azerbaijan"
+msgstr "أذربيجان"
+
+#: modules/geo/classes/api.php:143
+msgid "Austria"
+msgstr "النمسا"
+
+#: modules/geo/classes/api.php:141
+msgid "Aruba"
+msgstr "أروبا"
+
+#: modules/geo/classes/api.php:140
+msgid "Armenia"
+msgstr "أرمينيا"
+
+#: modules/geo/classes/api.php:139
+msgid "Argentina"
+msgstr "الأرجنتين"
+
+#: modules/geo/classes/api.php:138
+msgid "Antigua and Barbuda"
+msgstr "أنتيغوا وبربودا"
+
+#: modules/geo/classes/api.php:137
+msgid "Antarctica"
+msgstr "القارة القطبية الجنوبية"
+
+#: modules/geo/classes/api.php:136
+msgid "Anguilla"
+msgstr "أنغيلا"
+
+#: modules/geo/classes/api.php:135
+msgid "Angola"
+msgstr "أنغولا"
+
+#: modules/geo/classes/api.php:134
+msgid "Andorra"
+msgstr "أندورا"
+
+#: modules/geo/classes/api.php:133
+msgid "American Samoa"
+msgstr "ساموا الأمريكية"
+
+#: modules/geo/classes/api.php:132
+msgid "Algeria"
+msgstr "الجزائر"
+
+#: modules/geo/classes/api.php:131
+msgid "Albania"
+msgstr "ألبانيا"
+
+#: modules/geo/classes/api.php:130
+msgid "&#197;land Islands"
+msgstr "جزر آلاند"
+
+#: modules/geo/classes/api.php:129
+msgid "Afghanistan"
+msgstr "أفغانستان"
+
+#: modules/geo/classes/api.php:142
+msgid "Australia"
+msgstr "أستراليا"
+
+#: modules/geo/classes/api.php:126
+msgid "Asia"
+msgstr "آسيا"
+
+#: modules/geo/classes/api.php:125
+msgid "Africa"
+msgstr "أفريقيا"
+
+#: modules/geo/classes/api.php:124
+msgid "Europe"
+msgstr "أوروبا"
+
+#: modules/geo/classes/api.php:123
+msgid "South America"
+msgstr "امريكا الجنوبية"
+
+#: modules/geo/classes/api.php:122
+msgid "North America"
+msgstr "أمريكا الشمالية"
+
+#: modules/geo/classes/api.php:120 modules/geo/classes/api.php:212
+msgid "Germany"
+msgstr "ألمانيا"
+
+#: modules/geo/classes/api.php:119
+msgid "European Union"
+msgstr "الاتحاد الأوروبي"
+
+#: modules/geo/classes/api.php:118
+msgid "United Kingdom"
+msgstr "المملكة المتحدة"
+
+#: modules/geo/classes/api.php:117
+msgid "United States"
+msgstr "الولايات المتحدة"
+
+#: modules/geo/admin/admin.php:543
+msgid "Could not open database for writing %s"
+msgstr "تعذر فتح قاعدة البيانات لكتابة %s"
+
+#: modules/geo/admin/admin.php:518
+msgid "Could not open downloaded database for reading: %s"
+msgstr "تعذر فتح قاعدة البيانات التي تم تنزيلها لقراءة: %s"
+
+#: modules/geo/admin/admin.php:497
+msgid "Error downloading database from: %s - %s"
+msgstr "خطأ في تحميل قاعدة البيانات من: %s - %s"
+
+#: modules/geo/admin/admin.php:475
+msgid "Database updated successfully!"
+msgstr "تم تحديث قاعدة البيانات بنجاح!"
+
+#: modules/geo/admin/admin.php:346 modules/geo/admin/admin.php:386
+msgid "City"
+msgstr "مدينة"
+
+#: modules/geo/admin/admin.php:344
+msgid "State/Region"
+msgstr "الولاية / المنطقة"
+
+#: modules/geo/admin/admin.php:343 modules/geo/admin/admin.php:345
+msgid "or"
+msgstr "أو"
+
+#: modules/geo/admin/admin.php:282
+msgid "Your IP address format is incorrect"
+msgstr "تنسيق عنوان IP الخاص بك غير صحيح"
+
+#: modules/geo/admin/admin.php:278
+msgid "Maybe you are working on a local or secured environment."
+msgstr "ربما تعمل في بيئة محلية أو آمنة."
+
+#: modules/geo/admin/admin.php:264 modules/geo/public/public.php:212
+#: modules/geo/public/public.php:369
+msgid "(unknown region)"
+msgstr "(منطقة غير معروفة)"
+
+#: modules/geo/admin/admin.php:255 modules/geo/public/public.php:206
+#: modules/geo/public/public.php:365
+msgid "(unknown city)"
+msgstr "(مدينة غير معروفة)"
+
+#: modules/geo/admin/admin.php:138
+msgid "Language of names"
+msgstr "لغة الأسماء"
+
+#: modules/geo/admin/admin.php:132
+msgid "Method"
+msgstr "طريقة"
+
+#: modules/geo/admin/admin.php:113 modules/geo/admin/admin.php:118
+msgid "Geo Targeting"
+msgstr "استهداف جغرافي"
+
+#: modules/geo/admin/admin.php:77
+msgid ""
+"<strong>Advanced Ads – Geo Targeting</strong> is an extension for the free "
+"Advanced Ads plugin."
+msgstr ""
+" <strong>الإعلانات المتقدمة - الاستهداف الجغرافي</strong> هو امتداد للمكوِّن "
+"الإضافي المجاني للإعلانات المتقدمة."

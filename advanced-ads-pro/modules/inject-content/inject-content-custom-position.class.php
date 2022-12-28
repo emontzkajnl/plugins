@@ -17,9 +17,9 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 			return;
 		}
 
-		add_action( 'wp_head', array( $this, 'start_output_buffering' ), 20 );
+		add_action( 'wp_head', [ $this, 'start_output_buffering' ], 20 );
 		// We need to inject ads (collect Cache Busting output) earlier than Cache Busting outputs its scripts at priority `21`.
-		add_action( 'wp_footer', array( $this, 'stop_output_buffering' ), 20 );
+		add_action( 'wp_footer', [ $this, 'stop_output_buffering' ], 20 );
 	}
 
 	/**
@@ -53,12 +53,12 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 		foreach ( $placements as $placement_id => $placement ) {
 			if ( empty( $placement['item'] )
 				|| ! isset( $placement['type'] )
-				|| ! in_array( $placement['type'], array( 'custom_position', 'post_above_headline' ), true )
+				|| ! in_array( $placement['type'], [ 'custom_position', 'post_above_headline' ], true )
 			) {
 				continue;
 			}
 
-			$placement_options = isset( $placement['options'] ) ? $placement['options'] : array();
+			$placement_options = isset( $placement['options'] ) ? $placement['options'] : [];
 
 			if ( $placement['type'] === 'custom_position' ) {
 				$xpath_options = $this->get_custom_position_xpath_options( $placement_options );
@@ -68,24 +68,24 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 			}
 
 			if ( $placement['type'] === 'post_above_headline' ) {
-				$xpath_options = array(
+				$xpath_options = [
 					'tag'      => 'custom',
 					'xpath'    => '//h1',
 					'position' => 'before',
-				);
+				];
 			}
 
 			$content = Advanced_Ads_In_Content_Injector::inject_in_content(
 				$placement_id,
 				array_merge( $placement_options, $xpath_options ),
 				$content,
-				array(
+				[
 					'allowEmpty'   => true,
 					'alter_nodes'  => false,
 					'itemLimit'    => -1,
 					'repeat'       => true,
 					'paragraph_id' => 1,
-				)
+				]
 			);
 		}
 
@@ -111,31 +111,31 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 				return false;
 			}
 
-			$positions = array(
+			$positions = [
 				'insertBefore' => 'before',
 				'prependTo'    => 'prepend',
 				'appendTo'     => 'append',
 				'insertAfter'  => 'after',
-			);
+			];
 
-			return array(
+			return [
 				'tag'      => 'custom',
 				'xpath'    => $xpath,
 				'position' => isset( $placement_options['pro_custom_position'], $positions[ $placement_options['pro_custom_position'] ] )
 				? $positions[ $placement_options['pro_custom_position'] ]
 				: 'before',
-			);
+			];
 		} elseif ( isset( $placement_options['container_id'] ) ) {
 			// By HTML container.
 			$xpath = $this->css_to_xpath( $placement_options['container_id'] );
 			if ( ! $xpath ) {
 				return false;
 			}
-			return array(
+			return [
 				'tag'      => 'custom',
 				'xpath'    => $xpath,
 				'position' => 'append',
-			);
+			];
 		}
 
 		return false;
@@ -154,7 +154,7 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 
 		// Our "frontend picker" adds the `:eq` selector.
 		// Since the "css-selector" library does not support it, we replace it with an unique tag.
-		$css = preg_replace( '/:eq\((\d)\)/', ' > advads_eq_selector$1', $css );
+		$css = preg_replace( '/:eq\((\d+)\)/', ' > advads_eq_selector$1', $css );
 
 		try {
 			$query = ( new CssSelectorConverter() )->toXPath( $css );
@@ -164,7 +164,7 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 
 		// Remove the unique tag and implement the functionality of the `:eq` selector.
 		do {
-			$query = preg_replace_callback( '/(.*?)\/advads_eq_selector(\d)/', static function( $matches ) {
+			$query = preg_replace_callback( '/(.*?)\/advads_eq_selector(\d+)/', static function( $matches ) {
 				return sprintf( '(%s)[%s]', $matches[1], $matches[2] + 1 );
 			}, $query, 1, $count );
 		} while ( $count === 1 );

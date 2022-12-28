@@ -6,12 +6,29 @@ namespace AdvancedAds\Composer\Autoload;
 
 class ComposerStaticInit_advanced_ads
 {
+    public static $prefixLengthsPsr4 = array (
+        'A' => 
+        array (
+            'Advanced_Ads\\' => 13,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Advanced_Ads\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
+    );
+
     public static $classMap = array (
         'ADVADS_SL_Plugin_Updater' => __DIR__ . '/../..' . '/classes/EDD_SL_Plugin_Updater.php',
         'Advads_Ad' => __DIR__ . '/../..' . '/classes/ad.php',
         'Advanced_Ads' => __DIR__ . '/../..' . '/public/class-advanced-ads.php',
+        'Advanced_Ads\\Placement_Type' => __DIR__ . '/../..' . '/src/Placement_Type.php',
+        'Advanced_Ads\\Placement_Type_Options' => __DIR__ . '/../..' . '/src/Placement_Type_Options.php',
         'Advanced_Ads_Ad' => __DIR__ . '/../..' . '/classes/ad.php',
         'Advanced_Ads_Ad_Ajax_Callbacks' => __DIR__ . '/../..' . '/classes/ad_ajax_callbacks.php',
+        'Advanced_Ads_Ad_Authors' => __DIR__ . '/../..' . '/admin/includes/ad-authors.php',
         'Advanced_Ads_Ad_Debug' => __DIR__ . '/../..' . '/classes/ad-debug.php',
         'Advanced_Ads_Ad_Expiration' => __DIR__ . '/../..' . '/classes/ad-expiration.php',
         'Advanced_Ads_Ad_Health_Notices' => __DIR__ . '/../..' . '/classes/ad-health-notices.php',
@@ -19,6 +36,7 @@ class ComposerStaticInit_advanced_ads
         'Advanced_Ads_Ad_Network' => __DIR__ . '/../..' . '/admin/includes/class-ad-network.php',
         'Advanced_Ads_Ad_Network_Ad_Importer' => __DIR__ . '/../..' . '/admin/includes/class-ad-network-ad-importer.php',
         'Advanced_Ads_Ad_Network_Ad_Unit' => __DIR__ . '/../..' . '/admin/includes/class-ad-network-ad-unit.php',
+        'Advanced_Ads_Ad_Positioning' => __DIR__ . '/../..' . '/modules/ad-positioning/classes/ad-positioning.php',
         'Advanced_Ads_Ad_Type_Abstract' => __DIR__ . '/../..' . '/classes/ad_type_abstract.php',
         'Advanced_Ads_Ad_Type_Content' => __DIR__ . '/../..' . '/classes/ad_type_content.php',
         'Advanced_Ads_Ad_Type_Dummy' => __DIR__ . '/../..' . '/classes/ad_type_dummy.php',
@@ -45,6 +63,7 @@ class ComposerStaticInit_advanced_ads
         'Advanced_Ads_Groups_List' => __DIR__ . '/../..' . '/admin/includes/class-ad-groups-list.php',
         'Advanced_Ads_In_Content_Injector' => __DIR__ . '/../..' . '/classes/in-content-injector.php',
         'Advanced_Ads_Inline_Css' => __DIR__ . '/../..' . '/classes/inline-css.php',
+        'Advanced_Ads_Modal' => __DIR__ . '/../..' . '/classes/Advanced_Ads_Modal.php',
         'Advanced_Ads_Model' => __DIR__ . '/../..' . '/classes/ad-model.php',
         'Advanced_Ads_Overview_Widgets_Callbacks' => __DIR__ . '/../..' . '/admin/includes/class-overview-widgets.php',
         'Advanced_Ads_Placements' => __DIR__ . '/../..' . '/classes/ad_placements.php',
@@ -63,6 +82,8 @@ class ComposerStaticInit_advanced_ads
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit_advanced_ads::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit_advanced_ads::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit_advanced_ads::$classMap;
 
         }, null, ClassLoader::class);

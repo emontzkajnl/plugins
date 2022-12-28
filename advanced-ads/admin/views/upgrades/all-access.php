@@ -4,7 +4,6 @@
 	<li><span class="dashicons dashicons-yes"></span><?php echo 'Tracking'; ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php echo 'Responsive, AMP and Mobile ads'; ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php echo 'Google Ad Manager Integration'; ?></li>
-	<li><span class="dashicons dashicons-yes"></span><?php echo 'Geo Targeting'; ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php echo 'Sticky Ads'; ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php echo 'PopUp Ads'; ?></li>
 	<li><span class="dashicons dashicons-yes"></span><?php echo 'Selling Ads'; ?></li>
