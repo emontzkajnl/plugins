@@ -392,8 +392,9 @@ function featured_magazine_handler($atts) {
 function jcifeatureddm_function($atts) {
 
     // we want the default to be the latest 'featured' magazine (will grab the latest if none are 'featured')
-    $dm_query = new WP_Query(array('post_type' => 'magazine', 'meta_key' => 'featured_dm', 'meta_value' => 1, 'post_status' => 'publish', 'posts_per_page' => 1, 'order' => 'DESC', 'orderby' => 'meta_value date'));
-    if ($dm_query->post_count == 0){ $dm_query = new WP_Query(array('post_type' => 'magazine', 'post_status' => 'publish', 'posts_per_page' => 1, 'order' => 'DESC', 'orderby' => 'meta_value date'));}
+    // $dm_query = new WP_Query(array('post_type' => 'magazine', 'meta_key' => 'featured_dm', 'meta_value' => 1, 'post_status' => 'publish', 'posts_per_page' => 1, 'order' => 'DESC', 'orderby' => 'meta_value date'));
+    // if ($dm_query->post_count == 0){ $dm_query = new WP_Query(array('post_type' => 'magazine', 'post_status' => 'publish', 'posts_per_page' => 1, 'order' => 'DESC', 'orderby' => 'meta_value date'));}
+    $dm_query = new WP_Query(array('post_type' => 'magazine', 'post_status' => 'publish', 'posts_per_page' => 1, 'order' => 'DESC'));
     $dm_post = $dm_query->posts[0];
         
 	$custom_fields = get_post_custom($dm_post->ID); 
@@ -401,7 +402,8 @@ function jcifeatureddm_function($atts) {
     $content = $dm_post->post_content;
     $theme_path = get_template_directory_uri();
     
-    $args = array( 'numberposts' => 1, 'category' => 114, 'post_status' => 'publish' );
+    // $args = array( 'numberposts' => 1, 'category' => 114, 'post_status' => 'publish' );
+    $args = array( 'numberposts' => 1, 'post_type' => 'magazine', 'post_status' => 'publish' );
     $dd = get_posts( $args );
 		$device_detection = get_post_custom($dd[0]->ID);
    
@@ -418,7 +420,7 @@ function jcifeatureddm_function($atts) {
     $magazine_display .= '<div class="clear"></div>';
     $magazine_display .= '<hr size="1px">';
     $magazine_display .= '<div id="magazine">';
-    $magazine_display .= '<iframe style="margin: 0 auto;" src="//v.calameo.com/?bkcode=' . $custom_fields[calameo_id][0] . '&page=' . $page . '" width="100%" height="700" frameborder="0" scrolling="no" allowfullscreen="allowfullscreen"></iframe>';
+    $magazine_display .= '<iframe style="margin: 0 auto;" src="//v.calameo.com/?bkcode=' . $custom_fields['calameo_id'][0] . '&page=' . $page . '" width="100%" height="700" frameborder="0" scrolling="no" allowfullscreen="allowfullscreen"></iframe>';
     $magazine_display .= '</div>';
     $magazine_display .= '<hr size="1px">';
     error_log(print_r($magazine_display, true));
