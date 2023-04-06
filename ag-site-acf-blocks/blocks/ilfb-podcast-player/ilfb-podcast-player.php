@@ -218,7 +218,7 @@ if( !empty($block['className']) ) {
             <li><img src="<?php echo plugin_dir_url(__FILE__); ?>/question.svg" alt="" /></li>
         </ul>
     </div><!-- text-area-->
-    <p class="podcast-player__description">Farm, family and food-related places, events and issues</p>
+    <p class="podcast-player__description">Farm, family and food-related people, places and events.</p>
 </div><!-- top -->
 <div class="podcast-player__bottom">
 <a class="spreaker-player" href="https://www.spreaker.com/show/partners" data-resource="show_id=3663155" data-width="100%" data-height="370px" data-theme="light" data-playlist="show" data-playlist-continuous="false" data-autoplay="false" data-live-autoplay="false" data-chapters-image="true" data-episode-image-position="right" data-hide-logo="true" data-hide-likes="false" data-hide-comments="false" data-hide-sharing="false" data-hide-download="true" data-hide-playlist-images="true" data-hide-logo="true">Listen to "Partners Podcast" on Spreaker.</a>
