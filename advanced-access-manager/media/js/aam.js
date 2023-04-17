@@ -16,6 +16,50 @@
     let aam;
 
     /**
+     * Internal cache
+     */
+    const cache = {
+        roles: null
+    };
+
+    /**
+     * Reset cache value
+     *
+     * @param {string} ns
+     *
+     * @returns {void}
+     */
+    function ResetCache(ns) {
+        cache[ns] = null;
+    }
+
+    /**
+     * Get list of roles
+     *
+     * @param {callback} cb
+     *
+     * @returns {void}
+     */
+    function GetRoles(cb) {
+        if (cache.roles === null) {
+            $.ajax(`${getLocal().rest_base}aam/v2/roles`, {
+                type: 'GET',
+                headers: {
+                    'X-WP-Nonce': getLocal().rest_nonce
+                },
+                dataType: 'json',
+                success: function (response) {
+                    cache.roles = response; // cache the roles
+
+                    cb(response);
+                }
+            });
+        } else {
+            cb(cache.roles);
+        }
+    }
+
+    /**
      *
      * @returns {undefined}
      */
@@ -42,42 +86,39 @@
             }
 
             /**
+             * Load the list of roles
              *
              * @param {type} exclude
              */
-            function fetchRoleList(exclude) {
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Subject_Role.getList',
-                        _ajax_nonce: getLocal().nonce,
-                        exclude: exclude
-                    },
-                    beforeSend: function () {
-                        $('.inherit-role-list').html(
-                            '<option value="">' + getAAM().__('Loading...') + '</option>'
-                        );
-                    },
-                    success: function (response) {
-                        $('.inherit-role-list').html(
-                            '<option value="">' + getAAM().__('No role') + '</option>'
-                        );
-                        for (var i in response) {
+            function LoadRolesDropdown(exclude) {
+                // Display the indicator that the list of roles is loading
+                $('.inherit-role-list').html(
+                    '<option value="">' + getAAM().__('Loading...') + '</option>'
+                );
+
+                GetRoles((response) => {
+                    $('.inherit-role-list').html(
+                        '<option value="">' + getAAM().__('No role') + '</option>'
+                    );
+
+                    for (var i in response) {
+                        if (exclude !== response[i].slug) {
                             $('.inherit-role-list').append(
-                                '<option value="' + i + '">' + response[i].name + '</option>'
+                                '<option value="' + response[i].slug + '">' + response[i].name + '</option>'
                             );
                         }
-                        if ($.aamEditRole) {
-                            $('.inherit-role-list').val($.aamEditRole[0]);
-                        }
-                        getAAM().triggerHook('post-get-role-list', {
-                            list: response
-                        });
-                        //TODO - Rewrite JavaScript to support $.aam
-                        $.aamEditRole = null;
                     }
+
+                    if ($.aamEditRole) {
+                        $('.inherit-role-list').val($.aamEditRole[0]);
+                    }
+
+                    getAAM().triggerHook('post-get-role-list', {
+                        list: response
+                    });
+
+                    //TODO - Rewrite JavaScript to support $.aam
+                    $.aamEditRole = null;
                 });
             }
 
@@ -96,452 +137,552 @@
                 });
             }
 
-            //initialize the role list table
-            $('#role-list').DataTable({
-                autoWidth: false,
-                ordering: true,
-                dom: 'ftrip',
-                pagingType: 'simple',
-                processing: true,
-                stateSave: true,
-                serverSide: false,
-                ajax: {
-                    url: getLocal().ajaxurl,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Subject_Role.getTable',
-                        _ajax_nonce: getLocal().nonce,
-                        subject: getAAM().getSubject().type,
-                        subjectId: getAAM().getSubject().id,
-                        ui: getLocal().ui,
-                        policyId: $('#aam-policy-id').val()
-                    }
-                },
-                columnDefs: [
-                    { visible: false, targets: [0, 1, 4] },
-                    { orderable: false, targets: [0, 1, 3, 4] }
-                ],
-                language: {
-                    search: '_INPUT_',
-                    searchPlaceholder: getAAM().__('Search role'),
-                    info: getAAM().__('_TOTAL_ role(s)'),
-                    infoFiltered: ''
-                },
-                initComplete: function () {
-                    if (getAAM().isUI('main') && getLocal().caps.create_roles) {
-                        var create = $('<a/>', {
-                            'href': '#',
-                            'class': 'btn btn-primary'
-                        })
-                            .html('<i class="icon-plus"></i>')
-                            .bind('click', function () {
-                                resetForm('#add-role-modal .modal-body');
-                                $('#add-role-modal').modal('show');
-                            })
-                            .attr({
-                                'data-toggle': "tooltip",
-                                'title': getAAM().__('Create New Role')
-                            });
+            /**
+             *
+             */
+            function initialize() {
+                if (!$('#role-list').hasClass('dataTable')) {
+                    // Query params to the request
+                    let policyId;
 
-                        $('.dataTables_filter', '#role-list_wrapper').append(create);
+                    const fields = [
+                        'user_count',
+                        'permissions'
+                    ];
+
+                    if ($('#aam-policy-id').length > 0) {
+                        fields.push('applied_policy_ids');
+
+                        policyId = parseInt($('#aam-policy-id').val(), 10);
                     }
-                },
-                createdRow: function (row, data) {
-                    if (isCurrent(data[0])) {
-                        $('td:eq(0)', row).html(
-                            '<strong class="aam-highlight">' + data[2] + '</strong>'
-                        );
+
+                    getAAM().applyFilters('role-list-fields', fields);
+
+                    // Prepare the RESTful API endpoint
+                    let url = `${getLocal().rest_base}aam/v2/roles`;
+
+                    if (url.indexOf('rest_route') === -1) {
+                        url += `?fields=${fields.join(',')}`;
                     } else {
-                        $('td:eq(0)', row).html('<span>' + data[2] + '</span>');
+                        url += `&fields=${fields.join(',')}`;
                     }
 
-                    $(row).attr('data-id', data[0]);
+                    //initialize the role list table
+                    $('#role-list').DataTable({
+                        autoWidth: false,
+                        ordering: true,
+                        dom: 'ftrip',
+                        pagingType: 'simple',
+                        processing: true,
+                        stateSave: true,
+                        serverSide: false,
+                        ajax: {
+                            url,
+                            type: 'GET',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            dataType: 'json',
+                            dataSrc: function (json) {
+                                // Transform the received data into DT format
+                                const data = [];
 
-                    //add subtitle
-                    $('td:eq(0)', row).append(
-                        $('<i/>', { 'class': 'aam-row-subtitle' }).html(
-                            getAAM().applyFilters(
-                                'role-subtitle',
-                                getAAM().__('Users') + ': <b>' + parseInt(data[1]) + '</b>; ID: <b>' + data[0] + '</b>',
-                                data
-                            )
-                        )
-                    );
+                                $.each(json, (_, role) => {
+                                    const actions = [];
 
-                    var actions = data[3].split(',');
+                                    if (getLocal().ui === 'principal' && policyId) {
+                                        if (role.applied_policy_ids.includes(policyId)) {
+                                            actions.push('detach');
+                                        } else {
+                                            actions.push('attach');
+                                        }
+                                    } else {
+                                        if (role.permissions.includes('allow_manage')) {
+                                            actions.push('manage');
+                                        }
 
-                    var container = $('<div/>', { 'class': 'aam-row-actions' });
-                    $.each(actions, function (i, action) {
-                        switch (action) {
-                            case 'manage':
-                                $(container).append($('<i/>', {
-                                    'class': 'aam-row-action icon-cog ' + (isCurrent(data[0]) ? 'text-muted' : 'text-info')
-                                }).bind('click', function () {
-                                    if (!$(this).prop('disabled')) {
-                                        $(this).prop('disabled', true);
-                                        var title = $('td:eq(0) span', row).html();
-                                        getAAM().setSubject('role', data[0], title, data[4]);
-                                        $('td:eq(0) span', row).replaceWith(
-                                            '<strong class="aam-highlight">' + title + '</strong>'
-                                        );
+                                        if (role.permissions.includes('allow_edit')) {
+                                            actions.push('edit');
+                                        } else {
+                                            actions.push('no-edit');
+                                        }
 
-                                        $('i.icon-cog', container).attr(
-                                            'class', 'aam-row-action icon-spin4 animate-spin'
-                                        );
+                                        if (role.permissions.includes('allow_delete')) {
+                                            actions.push('delete');
+                                        } else {
+                                            actions.push('no-delete');
+                                        }
 
-                                        if (getAAM().isUI('main')) {
-                                            $('i.icon-cog', container).attr(
-                                                'class', 'aam-row-action icon-spin4 animate-spin'
-                                            );
-                                            getAAM().fetchContent('main');
-                                            $('i.icon-spin4', container).attr(
-                                                'class', 'aam-row-action icon-cog text-muted'
-                                            );
-                                        } else if (getAAM().isUI('post')) {
-                                            getAAM().fetchPartial('post-access-form', function (content) {
-                                                $('#metabox-post-access-form').html(content);
-                                                getAAM().triggerHook('load-access-form', [
-                                                    $('#content-object-type').val(),
-                                                    $('#content-object-id').val(),
-                                                    $(this)
-                                                ]);
-                                                $('i.icon-spin4', container).attr(
-                                                    'class', 'aam-row-action icon-cog text-muted'
-                                                );
-                                            });
+                                        if (role.permissions.includes('allow_clone')) {
+                                            actions.push('clone');
+                                        } else {
+                                            actions.push('no-clone');
                                         }
                                     }
-                                }).attr({
-                                    'data-toggle': "tooltip",
-                                    'title': getAAM().__('Manage role')
-                                }).prop('disabled', (isCurrent(data[0]) ? true : false)));
-                                break;
 
-                            case 'edit':
-                                if (getAAM().isUI('main')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-pencil text-warning'
-                                    }).bind('click', function () {
-                                        resetForm('#edit-role-modal .modal-body');
-                                        $('#edit-role-btn').data('role', data[0]);
-                                        $('#edit-role-name').val(data[2]);
-                                        $('#edit-role-slug').val(data[0]);
-                                        $('#edit-role-modal').modal('show');
-                                        fetchRoleList(data[0]);
+                                    data.push([
+                                        role.slug,
+                                        role.user_count,
+                                        role.name,
+                                        actions.join(','),
+                                        0,
+                                        role
+                                    ])
+                                });
 
-                                        if (data[1] > 0) {
-                                            $('#edit-role-slug').prop('disabled', true);
-                                        } else {
-                                            $('#edit-role-slug').prop('disabled', false);
-                                        }
-
-                                        //TODO - Rewrite JavaScript to support $.aam
-                                        $.aamEditRole = data;
-
-                                        getAAM().triggerHook('edit-role-modal', data);
-                                    }).attr({
-                                        'data-toggle': "tooltip",
-                                        'title': getAAM().__('Edit role')
-                                    }));
-                                }
-                                break;
-
-                            case 'no-edit':
-                                if (getAAM().isUI('main')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-pencil text-muted'
-                                    }));
-                                }
-                                break;
-
-                            case 'clone':
-                                if (getAAM().isUI('main')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-clone text-success'
-                                    }).bind('click', function () {
-                                        //TODO - Rewrite JavaScript to support $.aam
-                                        $.aamEditRole = data;
-                                        $('#clone-role').prop('checked', true);
+                                return data;
+                            },
+                        },
+                        columnDefs: [
+                            { visible: false, targets: [0, 1, 4] },
+                            { orderable: false, targets: [0, 1, 3, 4] }
+                        ],
+                        language: {
+                            search: '_INPUT_',
+                            searchPlaceholder: getAAM().__('Search role'),
+                            info: getAAM().__('_TOTAL_ role(s)'),
+                            infoFiltered: ''
+                        },
+                        initComplete: function () {
+                            if (getAAM().isUI('main') && getLocal().caps.create_roles) {
+                                var create = $('<a/>', {
+                                    'href': '#',
+                                    'class': 'btn btn-primary'
+                                })
+                                    .html('<i class="icon-plus"></i>')
+                                    .bind('click', function () {
+                                        resetForm('#add-role-modal .modal-body');
                                         $('#add-role-modal').modal('show');
-                                    }).attr({
+                                    })
+                                    .attr({
                                         'data-toggle': "tooltip",
-                                        'title': getAAM().__('Clone role')
-                                    }));
-                                }
-                                break;
-
-                            case 'no-clone':
-                                if (getAAM().isUI('main')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-clone text-muted'
-                                    }));
-                                }
-                                break;
-
-                            case 'delete':
-                                if (getAAM().isUI('main')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-trash-empty text-danger'
-                                    }).bind('click', { role: data }, function (event) {
-                                        $('#delete-role-btn').data('role', data[0]);
-                                        var message = $('#delete-role-modal .aam-confirm-message').data('message');
-                                        $('#delete-role-modal .aam-confirm-message').html(
-                                            message.replace(
-                                                '%s', '<strong>' + event.data.role[2] + '</strong>'
-                                            )
-                                        );
-
-                                        $('#delete-role-modal').modal('show');
-                                    }).attr({
-                                        'data-toggle': "tooltip",
-                                        'title': getAAM().__('Delete role')
-                                    }));
-                                }
-                                break;
-
-                            case 'no-delete':
-                                if (getAAM().isUI('main')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-trash-empty text-muted'
-                                    }));
-                                }
-                                break;
-
-                            case 'attach':
-                                if (getAAM().isUI('principal')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-check-empty'
-                                    }).bind('click', function () {
-                                        getAAM().applyPolicy(
-                                            {
-                                                type: 'role',
-                                                id: data[0]
-                                            },
-                                            $('#aam-policy-id').val(),
-                                            ($(this).hasClass('icon-check-empty') ? 1 : 0),
-                                            this
-                                        );
-                                    }));
-                                }
-                                break;
-
-                            case 'detach':
-                                if (getAAM().isUI('principal')) {
-                                    $(container).append($('<i/>', {
-                                        'class': 'aam-row-action icon-check text-success'
-                                    }).bind('click', function () {
-                                        getAAM().applyPolicy(
-                                            {
-                                                type: 'role',
-                                                id: data[0]
-                                            },
-                                            $('#aam-policy-id').val(),
-                                            ($(this).hasClass('icon-check') ? 0 : 1),
-                                            this
-                                        );
-                                    }));
-                                }
-                                break;
-
-                            default:
-                                if (getAAM().isUI('main')) {
-                                    getAAM().triggerHook('role-action', {
-                                        container: container,
-                                        action: action,
-                                        data: data
+                                        'title': getAAM().__('Create New Role')
                                     });
+
+                                $('.dataTables_filter', '#role-list_wrapper').append(create);
+                            }
+                        },
+                        createdRow: function (row, data) {
+                            if (isCurrent(data[0])) {
+                                $('td:eq(0)', row).html(
+                                    '<strong class="aam-highlight">' + data[2] + '</strong>'
+                                );
+                            } else {
+                                $('td:eq(0)', row).html('<span>' + data[2] + '</span>');
+                            }
+
+                            $(row).attr('data-id', data[0]);
+
+                            //add subtitle
+                            $('td:eq(0)', row).append(
+                                $('<i/>', { 'class': 'aam-row-subtitle' }).html(
+                                    getAAM().applyFilters(
+                                        'role-subtitle',
+                                        getAAM().__('Users') + ': <b>' + parseInt(data[1]) + '</b>; ID: <b>' + data[0] + '</b>',
+                                        data
+                                    )
+                                )
+                            );
+
+                            var actions = data[3].split(',');
+
+                            var container = $('<div/>', { 'class': 'aam-row-actions' });
+                            $.each(actions, function (i, action) {
+                                switch (action) {
+                                    case 'manage':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action icon-cog ' + (isCurrent(data[0]) ? 'text-muted' : 'text-info')
+                                        }).bind('click', function () {
+                                            if (!$(this).prop('disabled')) {
+                                                $(this).prop('disabled', true);
+                                                var title = $('td:eq(0) span', row).html();
+                                                getAAM().setSubject('role', data[0], title, data[4]);
+                                                $('td:eq(0) span', row).replaceWith(
+                                                    '<strong class="aam-highlight">' + title + '</strong>'
+                                                );
+
+                                                $('i.icon-cog', container).attr(
+                                                    'class', 'aam-row-action icon-spin4 animate-spin'
+                                                );
+
+                                                if (getAAM().isUI('main')) {
+                                                    $('i.icon-cog', container).attr(
+                                                        'class', 'aam-row-action icon-spin4 animate-spin'
+                                                    );
+                                                    getAAM().fetchContent('main');
+                                                    $('i.icon-spin4', container).attr(
+                                                        'class', 'aam-row-action icon-cog text-muted'
+                                                    );
+                                                } else if (getAAM().isUI('post')) {
+                                                    getAAM().fetchPartial('post-access-form', function (content) {
+                                                        $('#metabox-post-access-form').html(content);
+                                                        getAAM().triggerHook('load-access-form', [
+                                                            $('#content-object-type').val(),
+                                                            $('#content-object-id').val(),
+                                                            $(this)
+                                                        ]);
+                                                        $('i.icon-spin4', container).attr(
+                                                            'class', 'aam-row-action icon-cog text-muted'
+                                                        );
+                                                    });
+                                                }
+                                            }
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Manage role')
+                                        }).prop('disabled', (isCurrent(data[0]) ? true : false)));
+                                        break;
+
+                                    case 'edit':
+                                        if (getAAM().isUI('main')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-pencil text-warning'
+                                            }).bind('click', function () {
+                                                resetForm('#edit-role-modal .modal-body');
+
+                                                $('#edit-role-btn').data('role', data[0]);
+                                                $('#edit-role-name').val(data[2]);
+                                                $('#edit-role-slug').val(data[0]);
+                                                $('#edit-role-modal').modal('show');
+
+                                                LoadRolesDropdown(data[0]);
+
+                                                if (data[1] > 0) {
+                                                    $('#edit-role-slug').prop('disabled', true);
+                                                } else {
+                                                    $('#edit-role-slug').prop('disabled', false);
+                                                }
+
+                                                //TODO - Rewrite JavaScript to support $.aam
+                                                $.aamEditRole = data;
+
+                                                getAAM().triggerHook('edit-role-modal', data);
+                                            }).attr({
+                                                'data-toggle': "tooltip",
+                                                'title': getAAM().__('Edit role')
+                                            }));
+                                        }
+                                        break;
+
+                                    case 'no-edit':
+                                        if (getAAM().isUI('main')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-pencil text-muted'
+                                            }));
+                                        }
+                                        break;
+
+                                    case 'clone':
+                                        if (getAAM().isUI('main')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-clone text-success'
+                                            }).bind('click', function () {
+                                                //TODO - Rewrite JavaScript to support $.aam
+                                                $.aamEditRole = data;
+                                                $('#clone-role').prop('checked', true);
+                                                $('#add-role-modal').modal('show');
+                                            }).attr({
+                                                'data-toggle': "tooltip",
+                                                'title': getAAM().__('Clone role')
+                                            }));
+                                        }
+                                        break;
+
+                                    case 'no-clone':
+                                        if (getAAM().isUI('main')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-clone text-muted'
+                                            }));
+                                        }
+                                        break;
+
+                                    case 'delete':
+                                        if (getAAM().isUI('main')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-trash-empty text-danger'
+                                            }).bind('click', { role: data }, function (event) {
+                                                $('#delete-role-btn').data('role', data[0]);
+                                                var message = $('#delete-role-modal .aam-confirm-message').data('message');
+                                                $('#delete-role-modal .aam-confirm-message').html(
+                                                    message.replace(
+                                                        '%s', '<strong>' + event.data.role[2] + '</strong>'
+                                                    )
+                                                );
+
+                                                $('#delete-role-modal').modal('show');
+                                            }).attr({
+                                                'data-toggle': "tooltip",
+                                                'title': getAAM().__('Delete role')
+                                            }));
+                                        }
+                                        break;
+
+                                    case 'no-delete':
+                                        if (getAAM().isUI('main')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-trash-empty text-muted'
+                                            }));
+                                        }
+                                        break;
+
+                                    case 'attach':
+                                        if (getAAM().isUI('principal')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-check-empty'
+                                            }).bind('click', function () {
+                                                getAAM().applyPolicy(
+                                                    {
+                                                        type: 'role',
+                                                        id: data[0]
+                                                    },
+                                                    $('#aam-policy-id').val(),
+                                                    ($(this).hasClass('icon-check-empty') ? 1 : 0),
+                                                    this
+                                                );
+                                            }));
+                                        }
+                                        break;
+
+                                    case 'detach':
+                                        if (getAAM().isUI('principal')) {
+                                            $(container).append($('<i/>', {
+                                                'class': 'aam-row-action icon-check text-success'
+                                            }).bind('click', function () {
+                                                getAAM().applyPolicy(
+                                                    {
+                                                        type: 'role',
+                                                        id: data[0]
+                                                    },
+                                                    $('#aam-policy-id').val(),
+                                                    ($(this).hasClass('icon-check') ? 0 : 1),
+                                                    this
+                                                );
+                                            }));
+                                        }
+                                        break;
+
+                                    default:
+                                        if (getAAM().isUI('main')) {
+                                            getAAM().triggerHook('role-action', {
+                                                container: container,
+                                                action: action,
+                                                data: data
+                                            });
+                                        }
+                                        break;
                                 }
-                                break;
+                            });
+                            $('td:eq(1)', row).html(container);
+
+                            getAAM().triggerHook('decorate-role-row', {
+                                row: row,
+                                data: data
+                            });
                         }
                     });
-                    $('td:eq(1)', row).html(container);
 
-                    getAAM().triggerHook('decorate-role-row', {
-                        row: row,
-                        data: data
+                    $('#role-list').on('draw.dt', function () {
+                        $('tr', '#role-list tbody').each(function () {
+                            if (!isCurrent($(this).data('id'))) {
+                                $('td:eq(0) strong', this).replaceWith(
+                                    '<span>' + $('td:eq(0) strong', this).text() + '</span>'
+                                );
+                                $('.icon-cog.text-muted', this).attr('disabled', false);
+                                $('.icon-cog.text-muted', this).toggleClass('text-muted text-info');
+                            }
+                        });
                     });
-                }
-            });
 
-            $('#role-list').on('draw.dt', function () {
-                $('tr', '#role-list tbody').each(function () {
-                    if (!isCurrent($(this).data('id'))) {
-                        $('td:eq(0) strong', this).replaceWith(
-                            '<span>' + $('td:eq(0) strong', this).text() + '</span>'
+                    $('#add-role-modal').on('shown.bs.modal', function (e) {
+                        LoadRolesDropdown();
+
+                        //clear add role form first
+                        $('input', '#add-role-modal').val('').focus();
+                    });
+
+                    $('#edit-role-modal').on('shown.bs.modal', function (e) {
+                        $('input[name="name"]', '#edit-role-modal').focus();
+                    });
+
+                    //add role button
+                    $('#add-role-btn').bind('click', function () {
+                        var _this = this;
+
+                        ResetCache('roles');
+
+                        $('input[name="name"]', '#add-role-modal').parent().removeClass(
+                            'has-error'
                         );
-                        $('.icon-cog.text-muted', this).attr('disabled', false);
-                        $('.icon-cog.text-muted', this).toggleClass('text-muted text-info');
-                    }
-                });
-            });
 
-            $('#add-role-modal').on('shown.bs.modal', function (e) {
-                fetchRoleList();
-                //clear add role form first
-                $('input', '#add-role-modal').val('').focus();
-            });
+                        var data = {};
 
-            $('#edit-role-modal').on('shown.bs.modal', function (e) {
-                $('input[name="name"]', '#edit-role-modal').focus();
-            });
+                        $('input,select', '#add-role-modal .modal-body').each(function () {
+                            if ($(this).attr('name')) {
+                                if ($(this).attr('type') === 'checkbox') {
+                                    data[$(this).attr('name')] = $(this).is(':checked') ? true : false;
+                                } else {
+                                    const val = $.trim($(this).val());
 
-            //add role button
-            $('#add-role-btn').bind('click', function () {
-                var _this = this;
-
-                $('input[name="name"]', '#add-role-modal').parent().removeClass('has-error');
-
-                var data = {
-                    action: 'aam',
-                    sub_action: 'Subject_Role.create',
-                    _ajax_nonce: getLocal().nonce
-                };
-
-                $('input,select', '#add-role-modal .modal-body').each(function () {
-                    if ($(this).attr('name')) {
-                        if ($(this).attr('type') === 'checkbox') {
-                            data[$(this).attr('name')] = $(this).is(':checked') ? true : false;
-                        } else {
-                            data[$(this).attr('name')] = $.trim($(this).val());
-                        }
-                    }
-                });
-
-                if (data.name) {
-                    $.ajax(getLocal().ajaxurl, {
-                        type: 'POST',
-                        dataType: 'json',
-                        data: data,
-                        beforeSend: function () {
-                            $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
-                        },
-                        success: function (response) {
-                            if (response.status === 'success') {
-                                $('#role-list').DataTable().ajax.reload();
-                                getAAM().setSubject(
-                                    'role',
-                                    response.role.id,
-                                    response.role.name,
-                                    response.role.level
-                                );
-                                getAAM().fetchContent('main');
-                            } else {
-                                getAAM().notification(
-                                    'danger', response.reason
-                                );
+                                    if (val) {
+                                        data[$(this).attr('name')] = val;
+                                    }
+                                }
                             }
-                        },
-                        error: function () {
-                            getAAM().notification('danger');
-                        },
-                        complete: function () {
-                            $('#add-role-modal').modal('hide');
-                            $(_this).text(getAAM().__('Add role')).attr('disabled', false);
+                        });
+
+
+                        if (data.name) {
+                            $.ajax(`${getLocal().rest_base}aam/v2/role`, {
+                                type: 'POST',
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce
+                                },
+                                dataType: 'json',
+                                data: data,
+                                beforeSend: function () {
+                                    $('.error-container').addClass('hidden');
+                                    $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
+                                },
+                                success: function (response) {
+                                    getAAM().setSubject(
+                                        'role',
+                                        response.slug,
+                                        response.name
+                                    );
+
+                                    location.reload();
+
+                                    $('#add-role-modal').modal('hide');
+                                },
+                                error: function (err) {
+                                    $('.error-container').removeClass('hidden');
+
+                                    // Error summary
+                                    $('#role-error-summary').text(err.responseJSON.message);
+                                    $('#role-error-list').empty();
+
+                                    $.each(err.responseJSON.data.details, (p, e) => {
+                                        $('#role-error-list').append(`<li>${e.message}</li>`);
+                                    });
+                                },
+                                complete: function () {
+                                    $(_this).text(getAAM().__('Add role')).attr('disabled', false);
+                                }
+                            });
+                        } else {
+                            $('input[name="name"]', '#add-role-modal').focus().parent().addClass(
+                                'has-error'
+                            );
                         }
                     });
-                } else {
-                    $('input[name="name"]', '#add-role-modal').focus().parent().addClass('has-error');
-                }
-            });
 
-            //edit role button
-            $('#edit-role-btn').bind('click', function () {
-                var _this = this;
+                    //edit role button
+                    $('#edit-role-btn').bind('click', function () {
+                        var _this = this;
 
-                $('#edit-role-name').parent().removeClass('has-error');
-                $('#edit-role-slug').parent().removeClass('has-error');
+                        ResetCache('roles');
 
-                var data = {
-                    action: 'aam',
-                    sub_action: 'Subject_Role.edit',
-                    _ajax_nonce: getLocal().nonce,
-                    subject: 'role',
-                    subjectId: $(_this).data('role')
-                };
+                        $('#edit-role-name').parent().removeClass('has-error');
+                        $('#edit-role-slug').parent().removeClass('has-error');
 
-                $('input,select', '#edit-role-modal .modal-body').each(function () {
-                    if ($(this).attr('name')) {
-                        if ($(this).attr('type') === 'checkbox') {
-                            data[$(this).attr('name')] = $(this).is(':checked') ? 1 : 0;
-                        } else {
-                            data[$(this).attr('name')] = $.trim($(this).val());
-                        }
-                    }
-                });
+                        const data = {};
 
-                if (data.name) {
-                    $.ajax(getLocal().ajaxurl, {
-                        type: 'POST',
-                        dataType: 'json',
-                        data: data,
-                        beforeSend: function () {
-                            $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
-                        },
-                        success: function (response) {
-                            if (response.status === 'success') {
-                                location.reload();
-                            } else {
-                                getAAM().notification(
-                                    'danger', getAAM().__('Failed to update role')
-                                );
+                        $('input,select', '#edit-role-modal .modal-body').each(function () {
+                            if ($(this).attr('name')) {
+                                if ($(this).attr('type') === 'checkbox') {
+                                    data[$(this).attr('name')] = $(this).is(':checked') ? 1 : 0;
+                                } else {
+                                    const v = $.trim($(this).val());
+
+                                    if (v) {
+                                        data[$(this).attr('name')] = v;
+                                    }
+                                }
                             }
-                        },
-                        error: function () {
-                            getAAM().notification('danger');
-                        },
-                        complete: function () {
-                            $('#edit-role-modal').modal('hide');
-                            $(_this).text(getAAM().__('Update')).attr('disabled', false);
+                        });
+
+                        if (data.name) {
+                            $.ajax(`${getLocal().rest_base}aam/v2/role/${$(_this).data('role')}`, {
+                                type: 'POST',
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce,
+                                    'X-HTTP-Method-Override': 'PATCH'
+                                },
+                                dataType: 'json',
+                                data: data,
+                                beforeSend: function () {
+                                    $('.error-container').addClass('hidden');
+                                    $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
+                                },
+                                success: function (response) {
+                                    // If role's slug changed, update the current subject
+                                    if (data.new_slug && $(_this).data('role') !== data.new_slug) {
+                                        getAAM().setSubject(
+                                            'role',
+                                            response.slug,
+                                            response.name
+                                        );
+                                    }
+
+                                    location.reload();
+                                },
+                                error: function (err) {
+                                    $('.error-container').removeClass('hidden');
+
+                                    // Error summary
+                                    $('#edit-role-error-summary').text(err.responseJSON.message);
+                                    $('#edit-role-error-list').empty();
+
+                                    $.each(err.responseJSON.data.details, (p, e) => {
+                                        $('#edit-role-error-list').append(`<li>${e.message}</li>`);
+                                    });
+                                },
+                                complete: function () {
+                                    $(_this).text(getAAM().__('Update')).attr('disabled', false);
+                                }
+                            });
+                        } else {
+                            $('#edit-role-name').focus().parent().addClass('has-error');
                         }
                     });
-                } else {
-                    $('#edit-role-name').focus().parent().addClass('has-error');
-                }
-            });
 
-            //edit role button
-            $('#delete-role-btn').bind('click', function () {
-                var _this = this;
+                    //edit role button
+                    $('#delete-role-btn').bind('click', function () {
+                        var _this = this;
 
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Subject_Role.delete',
-                        _ajax_nonce: getLocal().nonce,
-                        subject: 'role',
-                        subjectId: $(_this).data('role')
-                    },
-                    beforeSend: function () {
-                        $(_this).text(getAAM().__('Deleting...')).attr('disabled', true);
-                    },
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            var subject = getAAM().getSubject();
+                        ResetCache('roles');
 
-                            // Bug fix https://github.com/aamplugin/advanced-access-manager/issues/102
-                            if (subject.type === 'role' && subject.id === $(_this).data('role')) {
-                                window.localStorage.removeItem('aam-subject');
-                                location.reload();
-                            } else {
-                                $('#role-list').DataTable().ajax.reload();
+                        $.ajax(`${getLocal().rest_base}aam/v2/role/${$(_this).data('role')}`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
+                            },
+                            beforeSend: function () {
+                                $(_this).text(getAAM().__('Deleting...')).attr('disabled', true);
+                            },
+                            success: function () {
+                                var subject = getAAM().getSubject();
+
+                                // Bug fix https://github.com/aamplugin/advanced-access-manager/issues/102
+                                if (subject.type === 'role' && subject.id === $(_this).data('role')) {
+                                    window.localStorage.removeItem('aam-subject');
+                                    location.reload();
+                                } else {
+                                    $('#role-list').DataTable().ajax.reload();
+                                }
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                $('#delete-role-modal').modal('hide');
+                                $(_this).text(getAAM().__('Delete role')).attr('disabled', false);
                             }
-                        } else {
-                            getAAM().notification('danger', getAAM().__('Failed to delete role'));
-                        }
-                    },
-                    error: function () {
-                        getAAM().notification('danger');
-                    },
-                    complete: function () {
-                        $('#delete-role-modal').modal('hide');
-                        $(_this).text(getAAM().__('Delete role')).attr('disabled', false);
-                    }
-                });
-            });
+                        });
+                    });
+                }
+            }
 
             //add setSubject hook
             getAAM().addHook('setSubject', function () {
@@ -561,6 +702,8 @@
                 $('#role-list').DataTable().ajax.url(getLocal().ajaxurl).load();
                 getAAM().fetchContent('main');
             });
+
+            getAAM().addHook('init', initialize);
 
         })(jQuery);
 
@@ -748,23 +891,19 @@
 
                         $('.dataTables_filter', '#user-list_wrapper').append(filter);
 
-                        $.ajax(getLocal().ajaxurl, {
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Subject_Role.getList',
-                                _ajax_nonce: getLocal().nonce
-                            },
-                            success: function (response) {
-                                $('#user-list-filter').html(
-                                    '<option value="">' + getAAM().__('Filter by role') + '</option>'
+                        $('.inherit-role-list').html(
+                            '<option value="">' + getAAM().__('Loading...') + '</option>'
+                        );
+
+                        GetRoles((response) => {
+                            $('#user-list-filter').html(
+                                '<option value="">' + getAAM().__('Filter by role') + '</option>'
+                            );
+
+                            for (var i in response) {
+                                $('#user-list-filter').append(
+                                    '<option value="' + response[i].slug + '">' + response[i].name + '</option>'
                                 );
-                                for (var i in response) {
-                                    $('#user-list-filter').append(
-                                        '<option value="' + i + '">' + response[i].name + '</option>'
-                                    );
-                                }
                             }
                         });
                     }
@@ -1424,13 +1563,13 @@
                                         window.open(getLocal().url.addPolicy, '_blank');
                                     });
 
-                                var install = $('<a/>', {
-                                    'href': '#modal-install-policy',
-                                    'class': 'btn btn-sm btn-success aam-outer-left-xxs',
-                                    'data-toggle': 'modal'
-                                }).html('<i class="icon-download-cloud"></i> ' + getAAM().__('Install'));
+                                // var install = $('<a/>', {
+                                //     'href': '#modal-install-policy',
+                                //     'class': 'btn btn-sm btn-success aam-outer-left-xxs',
+                                //     'data-toggle': 'modal'
+                                // }).html('<i class="icon-download-cloud"></i> ' + getAAM().__('Install'));
 
-                                $('.dataTables_filter', '#policy-list_wrapper').append(install);
+                                // $('.dataTables_filter', '#policy-list_wrapper').append(install);
                                 $('.dataTables_filter', '#policy-list_wrapper').append(create);
                             }
                         },
@@ -1740,7 +1879,7 @@
                             var items = new Array(_this.data('menu-id'));
 
                             $('input', target).each(function () {
-                                $(this).attr('checked', status ? true : false);
+                                $(this).prop('checked', status ? true : false);
                                 items.push($(this).data('menu-id'));
                             });
 
@@ -1768,7 +1907,7 @@
                                         $('.panel-title .icon-eye-off', target + '-heading').remove();
                                     }
                                 } else {
-                                    _this.attr('checked', !status);
+                                    _this.prop('checked', !status);
                                 }
                             });
                         });
@@ -1872,7 +2011,7 @@
                             var items = new Array(_this.data('toolbar'));
 
                             $('input', target).each(function () {
-                                $(this).attr('checked', status ? true : false);
+                                $(this).prop('checked', status ? true : false);
                                 items.push($(this).data('toolbar'));
                             });
 
@@ -1900,7 +2039,7 @@
                                         $('.panel-title .icon-eye-off', target + '-heading').remove();
                                     }
                                 } else {
-                                    _this.attr('checked', !status);
+                                    _this.prop('checked', !status);
                                 }
                             });
                         });
@@ -2249,7 +2388,7 @@
             function initialize() {
                 if ($('#capability-content').length) {
                     //initialize the role list table
-                    $('#capability-list').DataTable({
+                    const capTable = $('#capability-list').DataTable({
                         autoWidth: false,
                         ordering: false,
                         pagingType: 'simple',
@@ -2266,7 +2405,7 @@
                             }
                         },
                         columnDefs: [
-                            { visible: false, targets: [0] }
+                            { visible: false, targets: [0, 4] }
                         ],
                         language: {
                             search: '_INPUT_',
@@ -2276,7 +2415,7 @@
                             infoEmpty: getAAM().__('No capabilities'),
                             lengthMenu: '_MENU_'
                         },
-                        createdRow: function (row, data) {
+                        createdRow: function (row, data, index, cells) {
                             var actions = data[3].split(',');
 
                             var container = $('<div/>', { 'class': 'aam-row-actions' });
@@ -2286,6 +2425,7 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action text-muted icon-check-empty'
                                         }).bind('click', function () {
+                                            capTable.cell(cells[4]).data(true);
                                             toggle(data[0], this);
                                         }));
                                         break;
@@ -2294,6 +2434,7 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action text-success icon-check'
                                         }).bind('click', function () {
+                                            capTable.cell(cells[4]).data(false);
                                             toggle(data[0], this);
                                         }));
                                         break;
@@ -2378,17 +2519,21 @@
                     $('a', '#capability-groups').each(function () {
                         $(this).bind('click', function () {
                             var table = $('#capability-list').DataTable();
-                            if ($(this).data('clear') !== true) {
-                                table.column(1).search($(this).text()).draw();
-                            } else {
+                            if ($(this).data('assigned') === true) {
+                                table.column(4).search(true).draw();
+                            } else if ($(this).data('unassigned') === true) {
+                                table.column(4).search(false).draw();
+                            } else if ($(this).data('clear') === true) {
                                 table.column(1).search('').draw();
+                            } else {
+                                table.column(1).search($(this).text()).draw();
                             }
                         });
                     });
 
                     $('#add-capability-modal').on('shown.bs.modal', function (e) {
                         $('#new-capability-name').val('');
-                        $('#assign-new-capability').attr('checked', true);
+                        $('#assign-new-capability').prop('checked', true);
                         $('#new-capability-name').focus();
                     });
 
@@ -3752,8 +3897,34 @@
          * @returns {void}
          */
         (function ($) {
+
+            /**
+             *
+             * @returns
+             */
+            function prepareRequestSubjectData(mergeWith = {}) {
+                // Prepare the payload
+                const data = {
+                    access_level: getAAM().getSubject().type
+                };
+
+                if (data.access_level === 'role') {
+                    data.role_id = getAAM().getSubject().id;
+                } else if (data.access_level === 'user') {
+                    data.user_id = getAAM().getSubject().id;
+                }
+
+                return Object.assign({}, mergeWith, data);
+            }
+
+            /**
+             *
+             */
             function initialize() {
-                var container = '#uri-content';
+                const container = '#uri-content';
+
+                // Currently editing rule
+                let editingRule;
 
                 if ($(container).length) {
                     $('input[type="radio"]', container).each(function () {
@@ -3766,7 +3937,7 @@
                                 $(action).show();
                             }
 
-                            if ($(this).val() === 'page' || $(this).val() === 'url') {
+                            if (['page_redirect', 'url_redirect'].includes($(this).val())) {
                                 $('#uri-access-deny-redirect-code').show();
                             }
                         });
@@ -3774,48 +3945,89 @@
 
                     //reset button
                     $('#uri-reset').bind('click', function () {
-                        getAAM().reset('Main_Uri.reset', $(this));
+                        const _btn = $(this);
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/url/reset`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            data: prepareRequestSubjectData(),
+                            dataType: 'json',
+                            beforeSend: function () {
+                                var label = _btn.text();
+                                _btn.attr('data-original-label', label);
+                                _btn.text(getAAM().__('Resetting...'));
+                            },
+                            success: function () {
+                                getAAM().fetchContent('main');
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                _btn.text(_btn.attr('data-original-label'));
+                            }
+                        });
                     });
 
                     $('#uri-save-btn').bind('click', function (event) {
                         event.preventDefault();
 
-                        var uri  = $('#uri-rule').val();
-                        var original = $(this).attr('data-original-uri');
-                        var type = $('input[name="uri.access.type"]:checked').val();
-                        var val  = $('#uri-access-deny-' + type + '-value').val();
-                        var code = $('#uri-access-deny-redirect-code-value').val();
+                        const uri    = $('#uri-rule').val();
+                        const type   = $('input[name="uri.access.type"]:checked').val();
+                        const code   = $('#uri-access-deny-redirect-code-value').val();
 
                         if (uri && type) {
-                            $.ajax(getLocal().ajaxurl, {
+                            // Preparing the payload
+                            const payload = {
+                                url: uri,
+                                type: type
+                            }
+
+                            if (type === 'custom_message') {
+                                payload.message = $.trim(
+                                    $('#uri-access-custom_message-value').val()
+                                );
+                            } else if (type === 'page_redirect') {
+                                payload.redirect_page_id = parseInt(
+                                    $('#uri-access-page_redirect-value').val(), 10
+                                );
+                            } else if (type === 'url_redirect') {
+                                payload.redirect_url = $.trim(
+                                    $('#uri-access-url_redirect-value').val()
+                                );
+                            } else if (type === 'trigger_callback') {
+                                payload.callback = $.trim(
+                                    $('#uri-access-trigger_callback-value').val()
+                                );
+                            }
+
+                            if (code) {
+                                payload.http_redirect_code = parseInt(code, 10);
+                            }
+
+                            let endpoint = `${getLocal().rest_base}aam/v2/service/url`;
+
+                            if (editingRule !== null) {
+                                endpoint += '/' + editingRule[0];
+                            }
+
+                            $.ajax(endpoint, {
                                 type: 'POST',
                                 dataType: 'json',
-                                data: {
-                                    action: 'aam',
-                                    sub_action: 'Main_Uri.save',
-                                    _ajax_nonce: getLocal().nonce,
-                                    subject: getAAM().getSubject().type,
-                                    subjectId: getAAM().getSubject().id,
-                                    uri: uri,
-                                    edited_uri: original,
-                                    type: type,
-                                    value: val,
-                                    code: code
+                                data: prepareRequestSubjectData(payload),
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce,
                                 },
                                 beforeSend: function () {
                                     $('#uri-save-btn').text(
                                         getAAM().__('Saving...')
                                     ).attr('disabled', true);
                                 },
-                                success: function (response) {
-                                    if (response.status === 'success') {
-                                        $('#uri-list').DataTable().ajax.reload();
-                                        $('#aam-uri-overwrite').show();
-                                    } else {
-                                        getAAM().notification(
-                                            'danger', getAAM().__('Failed to save URI rule')
-                                        );
-                                    }
+                                success: function () {
+                                    $('#uri-list').DataTable().ajax.reload();
+                                    $('#aam-uri-overwrite').show();
                                 },
                                 error: function () {
                                     getAAM().notification('danger');
@@ -3831,31 +4043,23 @@
                     $('#uri-delete-btn').bind('click', function (event) {
                         event.preventDefault();
 
-                        $.ajax(getLocal().ajaxurl, {
+                        const id = $('#uri-delete-btn').attr('data-id');
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/url/${id}`, {
                             type: 'POST',
                             dataType: 'json',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Main_Uri.delete',
-                                _ajax_nonce: getLocal().nonce,
-                                subject: getAAM().getSubject().type,
-                                subjectId: getAAM().getSubject().id,
-                                uri: $('#uri-delete-btn').attr('data-uri')
+                            data: prepareRequestSubjectData(),
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
                             },
                             beforeSend: function () {
                                 $('#uri-delete-btn').text(
                                     getAAM().__('Deleting...')
                                 ).attr('disabled', true);
                             },
-                            success: function (response) {
-                                if (response.status === 'success') {
-                                    $('#uri-list').DataTable().ajax.reload();
-                                } else {
-                                    getAAM().notification(
-                                        'danger',
-                                        getAAM().__('Failed to delete URI rule')
-                                    );
-                                }
+                            success: function () {
+                                $('#uri-list').DataTable().ajax.reload();
                             },
                             error: function () {
                                 getAAM().notification('danger');
@@ -3876,16 +4080,50 @@
                         stateSave: true,
                         serverSide: false,
                         ajax: {
-                            url: getLocal().ajaxurl,
-                            type: 'POST',
+                            url: `${getLocal().rest_base}aam/v2/service/url`,
+                            type: 'GET',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            data: prepareRequestSubjectData(),
                             dataType: 'json',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Main_Uri.getTable',
-                                _ajax_nonce: getLocal().nonce,
-                                subject: getAAM().getSubject().type,
-                                subjectId: getAAM().getSubject().id
-                            }
+                            dataSrc: function (json) {
+                                // Transform the received data into DT format
+                                const data = [];
+
+                                $.each(json, (_, rule) => {
+                                    const actions = ['edit'];
+
+                                    if (rule.is_inherited) {
+                                        actions.push('no-delete');
+                                    } else {
+                                        actions.push('delete');
+                                    }
+
+                                    let action = null;
+
+                                    if (rule.type === 'custom_message') {
+                                        action = rule.message;
+                                    } else if (rule.type === 'trigger_callback') {
+                                        action = rule.callback;
+                                    } else if (rule.type === 'url_redirect') {
+                                        action = rule.redirect_url;
+                                    } else if (rule.type === 'page_redirect') {
+                                        action = rule.redirect_page_id;
+                                    }
+
+                                    data.push([
+                                        rule.id,
+                                        rule.url,
+                                        rule.type,
+                                        action,
+                                        rule.http_redirect_code || null,
+                                        actions.join(',')
+                                    ]);
+                                });
+
+                                return data;
+                            },
                         },
                         language: {
                             search: '_INPUT_',
@@ -3894,7 +4132,7 @@
                             infoFiltered: ''
                         },
                         columnDefs: [
-                            { visible: false, targets: [2, 3] }
+                            { visible: false, targets: [0, 3, 4] }
                         ],
                         initComplete: function () {
                             var create = $('<a/>', {
@@ -3902,6 +4140,8 @@
                                 'class': 'btn btn-primary'
                             }).html('<i class="icon-plus"></i> ' + getAAM().__('Create'))
                                 .bind('click', function () {
+                                    editingRule = null;
+
                                     $('.form-clearable', '#uri-model').val('');
                                     $('.aam-uri-access-action').hide();
                                     $('#uri-save-btn').removeAttr('data-original-uri');
@@ -3912,7 +4152,7 @@
                             $('.dataTables_filter', '#uri-list_wrapper').append(create);
                         },
                         createdRow: function (row, data) {
-                            var actions = data[4].split(',');
+                            var actions = data[5].split(',');
 
                             var container = $('<div/>', { 'class': 'aam-row-actions' });
                             $.each(actions, function (i, action) {
@@ -3921,13 +4161,14 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-pencil text-warning'
                                         }).bind('click', function () {
+                                            editingRule = data;
+
                                             $('.form-clearable', '#uri-model').val('');
                                             $('.aam-uri-access-action').hide();
-                                            $('#uri-rule').val(data[0]);
-                                            $('#uri-save-btn').attr('data-original-uri', data[0]);
-                                            $('input[value="' + data[1] + '"]', '#uri-model').prop('checked', true).trigger('click');
-                                            $('#uri-access-deny-' + data[1] + '-value').val(data[2]);
-                                            $('#uri-access-deny-redirect-code-value').val(data[3]);
+                                            $('#uri-rule').val(data[1]);
+                                            $('input[value="' + data[2] + '"]', '#uri-model').prop('checked', true).trigger('click');
+                                            $('#uri-access-' + data[2] + '-value').val(data[3]);
+                                            $('#uri-access-deny-redirect-code-value').val(data[4]);
                                             $('#uri-model').modal('show');
                                         }).attr({
                                             'data-toggle': "tooltip",
@@ -3948,7 +4189,7 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-trash-empty text-danger'
                                         }).bind('click', function () {
-                                            $('#uri-delete-btn').attr('data-uri', data[0]);
+                                            $('#uri-delete-btn').attr('data-id', data[0]);
                                             $('#uri-delete-model').modal('show');
                                         }).attr({
                                             'data-toggle': "tooltip",
@@ -3973,21 +4214,21 @@
                             // Decorate the type of access
                             var type = $('<span/>');
 
-                            switch(data[1]) {
-                                case 'default':
-                                case 'message':
+                            switch(data[2]) {
+                                case 'deny':
+                                case 'custom_message':
                                     type.html(getAAM().__('Denied'));
                                     type.attr('class', 'badge danger');
                                     break;
 
-                                case 'login':
-                                case 'page':
-                                case 'url':
+                                case 'login_redirect':
+                                case 'page_redirect':
+                                case 'url_redirect':
                                     type.html(getAAM().__('Redirected'));
                                     type.attr('class', 'badge redirect');
                                     break;
 
-                                case 'callback':
+                                case 'trigger_callback':
                                     type.html(getAAM().__('Callback'));
                                     type.attr('class', 'badge callback');
                                     break;
@@ -4290,123 +4531,6 @@
 
             /**
              *
-             * @param {*} license
-             * @param {*} slug
-             * @param {*} expire
-             */
-            function registerLicense(license, slug, expire) {
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Addons_Manager.registerLicense',
-                        _ajax_nonce: getLocal().nonce,
-                        license: license,
-                        slug: slug,
-                        expire: expire
-                    }
-                });
-            }
-
-            /**
-             *
-             * @param {type} data
-             * @param {type} cb
-             * @returns {undefined}
-             */
-            function validateLicense(license, cb, error) {
-                $.ajax(`${getLocal().system.apiEndpoint}/download/${license}`, {
-                    type: 'GET',
-                    dataType: 'json',
-                    headers: {
-                        "Accept": "application/json"
-                    },
-                    success: function (response) {
-                        cb(response);
-                    },
-                    error: function (response) {
-                        error(response.responseJSON);
-                    }
-                });
-            }
-
-            /**
-             *
-             * @param {*} license
-             * @param {*} type
-             * @param {*} cb
-             * @param {*} error
-             */
-            function registerDomain(license, type, cb, error) {
-                $.ajax(`${getLocal().system.apiEndpoint}/register/${license}`, {
-                    type: 'POST',
-                    dataType: 'json',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
-                    },
-                    data: JSON.stringify({
-                        is_dev: (type === 'dev')
-                    }),
-                    success: function (response) {
-                        cb(response);
-                    },
-                    error: function (response) {
-                        error(response.responseJSON);
-                    }
-                });
-            }
-
-            /**
-             *
-             * @param {*} cb
-             */
-            function checkForUpdates(cb) {
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Addons_Manager.getRegistry',
-                        _ajax_nonce: getLocal().nonce
-                    },
-                    success: function(response) {
-                        $.ajax(`${getLocal().system.apiEndpoint}/registry`, {
-                            type: 'POST',
-                            dataType: 'json',
-                            data: JSON.stringify(response),
-                            contentType: 'application/json',
-                            headers: {
-                                "Accept": "application/json"
-                            },
-                            success: function (response) {
-                                $.ajax(getLocal().ajaxurl, {
-                                    type: 'POST',
-                                    dataType: 'json',
-                                    data: {
-                                        action: 'aam',
-                                        sub_action: 'Addons_Manager.checkForPluginUpdates',
-                                        _ajax_nonce: getLocal().nonce,
-                                        payload: JSON.stringify(response)
-                                    },
-                                    success: function() {
-                                        cb();
-                                    }
-                                });
-                            },
-                            error: function (response) {
-                                getAAM().notification(
-                                    'danger', response.responseJSON.reason
-                                );
-                            }
-                        });
-                    }
-                });
-            }
-
-            /**
-             *
              * @returns {undefined}
              */
             function initialize() {
@@ -4415,73 +4539,14 @@
 
                     //init refresh list button
                     $('#download-extension').bind('click', function () {
-                        $('#extension-key').parent().removeClass('error');
+                        const license = $.trim($('#extension-key').val());
 
-                        var _this = $(this);
-                        var license = $.trim($('#extension-key').val());
-
-                        if (!license) {
-                            $('#extension-key').parent().addClass('error');
-                            $('#extension-key').focus();
-                            return;
+                        if (license) {
+                            window.open(
+                                `${getLocal().system.apiEndpoint}/download/${license}`,
+                                '_blank'
+                            );
                         }
-
-                        $('i', _this).attr('class', 'icon-spin4 animate-spin');
-                        validateLicense(license, function (response) {
-                            if (response) {
-                                getAAM().downloadFile(
-                                    response.content,
-                                    response.slug + '.zip',
-                                    'application/zip'
-                                );
-                                $('#downloaded-info-modal').modal('show');
-
-                                // Store the license in the internal add-ons registry
-                                registerLicense(license, response.slug, response.expire);
-                            }
-                            $('i', _this).attr('class', 'icon-download-cloud');
-                        }, function (response) {
-                            getAAM().notification('danger', response.reason);
-                            $('i', _this).attr('class', 'icon-download-cloud');
-                        });
-                    });
-
-                    $('.register-license').each(function() {
-                        $(this).bind('click', function () {
-                            $('#extension-key').parent().removeClass('error');
-
-                            var _this = $(this);
-                            var license = $.trim($('#extension-key').val());
-
-                            if (!license) {
-                                $('#extension-key').parent().addClass('error');
-                                $('#extension-key').focus();
-                                return;
-                            }
-
-                            $('i', _this).attr('class', 'icon-spin4 animate-spin');
-
-                            registerDomain(license, $(this).data('type'), function (response) {
-                                getAAM().notification(
-                                    'success',
-                                    'The website has been registered successfully'
-                                );
-                                // Store the license in the internal add-ons registry
-                                registerLicense(license, response.slug, response.expire);
-                                $('i', _this).attr('class', 'icon-check');
-                            }, function (response) {
-                                getAAM().notification('danger', response.reason);
-                                $('i', _this).attr('class', 'icon-check');
-                            });
-                        });
-                    });
-
-                    $('#check-for-updates').bind('click', function() {
-                        $('i', $(this)).attr('class', 'icon-spin4 animate-spin');
-                        checkForUpdates(function() {
-                            $('i', '#check-for-updates').attr('class', 'icon-arrows-cw');
-                            getAAM().fetchContent('extensions');
-                        });
                     });
                 }
             }
@@ -4621,9 +4686,9 @@
             // ConfigPress hook
             getAAM().addHook('menu-feature-click', function (feature) {
                 if (feature === 'configpress'
-                    && !$('#configpress-editor').next().hasClass('CodeMirror')) {
-                    var editor = CodeMirror.fromTextArea(
-                        document.getElementById("configpress-editor"), {}
+                    && !$('#aam-configpress-editor').next().hasClass('CodeMirror')) {
+                    var editor = wp.CodeMirror.fromTextArea(
+                        document.getElementById("aam-configpress-editor"), {}
                     );
 
                     editor.on("blur", function () {
@@ -4913,31 +4978,22 @@
      */
     AAM.prototype.loadRoleList = function (selected, target) {
         target = (typeof target === 'undefined' ? '#expiration-change-role' : target);
-        $.ajax(getLocal().ajaxurl, {
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                action: 'aam',
-                sub_action: 'Subject_Role.getList',
-                _ajax_nonce: getLocal().nonce
-            },
-            beforeSend: function () {
-                $(target).html(
-                    '<option value="">' + getAAM().__('Loading...') + '</option>'
-                );
-            },
-            success: function (response) {
-                $(target).html(
-                    '<option value="">' + getAAM().__('Select Role') + '</option>'
-                );
-                for (var i in response) {
-                    $(target).append(
-                        '<option value="' + i + '">' + response[i].name + '</option>'
-                    );
-                }
 
-                $(target).val(selected);
+        $(target).html(
+            '<option value="">' + getAAM().__('Loading...') + '</option>'
+        );
+
+        GetRoles((response) => {
+            $(target).html(
+                '<option value="">' + getAAM().__('Select Role') + '</option>'
+            );
+            for (var i in response) {
+                $(target).append(
+                    '<option value="' + response[i].slug + '">' + response[i].name + '</option>'
+                );
             }
+
+            $(target).val(selected);
         });
     }
 
@@ -4996,9 +5052,10 @@
             },
             success: function (response) {
                 $('#aam-content').html(response);
-                //init menu
+                // Init menu
                 _this.initializeMenu();
-                //trigger initialization hook
+
+                // Trigger initialization hook
                 _this.triggerHook('init');
 
                 // There is more than one Services available to manage
@@ -5227,17 +5284,17 @@
         var clipboard = new ClipboardJS('.aam-copy-clipboard');
 
         clipboard.on('success', function (e) {
-            getAAM().notification('success', getAAM().__('Data has been saved to clipboard'));
+            getAAM().notification(
+                'success',
+                getAAM().__('Data has been saved to clipboard')
+            );
         });
 
         clipboard.on('error', function (e) {
-            getAAM().notification('danger', getAAM().__('Failed to save data to clipboard'));
-        });
-
-        // Listen to page size change and update iframe height accordingly
-        const container = document.getElementById('aam-container');
-        new ResizeSensor(container, function() {
-            window.parent.postMessage({frameHeight: container.clientHeight}, '*');
+            getAAM().notification(
+                'danger',
+                getAAM().__('Failed to save data to clipboard')
+            );
         });
     };
 

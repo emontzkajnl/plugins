@@ -35,6 +35,15 @@ class Advanced_Ads_Placements {
 	];
 
 	/**
+	 * Return placement page description
+	 *
+	 * @return string
+	 */
+	public static function get_description() {
+		return __( 'Placements are customizable ad spots on your site. Use them to see and change all the assigned ads and groups on this page. Furthermore, you can set up exclusive features like Cache Busting, Lazy Loading, AdBlocker fallbacks, or Parallax effects.', 'advanced-ads' );
+	}
+
+	/**
 	 * Get placement types
 	 *
 	 * @return \Advanced_Ads\Placement_Type[] $types array with placement types
@@ -260,10 +269,10 @@ class Advanced_Ads_Placements {
 	}
 
 	/**
-	 * Get items for item select field
+	 * Get items for item select field.
+	 * Used for new placement form.
 	 *
 	 * @return array $select items for select field
-	 * @since 1.1
 	 */
 	public static function items_for_select() {
 		$select = [];
@@ -504,6 +513,96 @@ class Advanced_Ads_Placements {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get the markup for the group/ad selection for each placement.
+	 *
+	 * @param string $slug      Slug for current placement. This is passed to the view.
+	 * @param array  $placement The current placement.
+	 *
+	 * @return string
+	 */
+	public static function get_items_for_placement_markup( $slug, $placement ) {
+		$placement['item'] = $placement['item'] ?? '';
+		// Get the currently selected item.
+		$placement_item_array = explode( '_', $placement['item'] );
+		$placement_item_type  = $placement_item_array[0];
+		$placement_item_id    = (int) ( $placement_item_array[1] ?? 0 );
+
+		$items = self::get_items_for_placement( $placement['type'], $placement['item'] );
+
+		// check for missing items
+		if ( $placement_item_type && ! array_key_exists( $placement['item'], $items[ $placement_item_type . 's' ]['items'] ) ) {
+			$method = $placement_item_type === 'group' ? 'get_ad_groups' : 'get_ads';
+			$item   = \Advanced_Ads::get_instance()->get_model()->{$method}( [ 'include' => $placement_item_id ] )[0] ?? null;
+
+			$items[ $placement_item_type . 's' ]['items'][ $placement['item'] ] = [
+				'selected' => true,
+				'disabled' => true,
+			];
+
+			if ( $item instanceof WP_Post ) {
+				$items[ $placement_item_type . 's' ]['items'][ $placement['item'] ]['name'] = $item->post_title;
+			} elseif ( $item instanceof Advanced_Ads_Group ) {
+				$items[ $placement_item_type . 's' ]['items'][ $placement['item'] ]['name'] = $item->name;
+			} else {
+				unset( $items[ $placement_item_type . 's' ]['items'][ $placement['item'] ] );
+			}
+
+			if ( isset( $items[ $placement_item_type . 's' ]['items'][ $placement['item'] ] ) ) {
+				$items = array_map( static function( $items_group ) {
+					$keys = array_column( $items_group['items'], 'name' );
+					array_multisort( $keys, SORT_ASC, SORT_NATURAL, $items_group['items'] );
+
+					return $items_group;
+				}, $items );
+			}
+		}
+
+		$items = array_filter( $items, static function( $items_group ) {
+			return ! empty( $items_group['items'] );
+		} );
+
+		ob_start();
+
+		include ADVADS_BASE_PATH . 'admin/views/placements-item.php';
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Get the available items for the selected placement.
+	 *
+	 * @param string $type The current placement type.
+	 * @param string $item The ad/group id.
+	 *
+	 * @return array[]
+	 */
+	public static function get_items_for_placement( string $type, string $item = 'ad_0' ) : iterable {
+		$placement_type = self::get_placement_types()[ $type ];
+		$items          = [
+			'groups' => [
+				'label' => __( 'Ad Groups', 'advanced-ads' ),
+				'items' => $placement_type->get_allowed_groups(),
+			],
+			'ads'    => [
+				'label' => __( 'Ads', 'advanced-ads' ),
+				'items' => $placement_type->get_allowed_ads(),
+			],
+		];
+
+		return array_map( static function( $items_group ) use ( $item ) {
+			array_walk( $items_group['items'], static function( &$value, $key ) use ( $item ) {
+				$value = [
+					'name'     => $value,
+					'selected' => $key === $item,
+					'disabled' => false,
+				];
+			} );
+
+			return $items_group;
+		}, $items );
 	}
 
 	/**

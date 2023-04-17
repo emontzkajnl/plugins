@@ -3,7 +3,7 @@
  * Plugin Name: AddToAny Share Buttons
  * Plugin URI: https://www.addtoany.com/
  * Description: Share buttons for your pages including AddToAny's universal sharing button, Facebook, Twitter, LinkedIn, Pinterest, WhatsApp and many more.
- * Version: 1.8.5
+ * Version: 1.8.6
  * Author: AddToAny
  * Author URI: https://www.addtoany.com/
  * Text Domain: add-to-any
@@ -617,16 +617,17 @@ function ADDTOANY_SHARE_SAVE_FLOATING( $args = array() ) {
 	) ? $options['floating_vertical'] : false;
 	$horizontal_type = ( isset( $options['floating_horizontal'] ) && 'none' != $options['floating_horizontal'] ) ? $options['floating_horizontal'] : false;
 
+	$sharing_disabled = false;
 	if ( is_singular() ) {
 		// Sharing disabled for this singular post?
 		$sharing_disabled = get_post_meta( get_the_ID(), 'sharing_disabled', true );
-		$sharing_disabled = apply_filters( 'addtoany_sharing_disabled', $sharing_disabled );
-		
-		if ( ! empty( $sharing_disabled ) ) {
-			// Overridable by args below.
-			$vertical_type   = false;
-			$horizontal_type = false;
-		}
+	}
+	// Sharing disabled programmatically?
+	$sharing_disabled = apply_filters( 'addtoany_sharing_disabled', $sharing_disabled );	
+	if ( ! empty( $sharing_disabled ) ) {
+		// Overridable by args below.
+		$vertical_type   = false;
+		$horizontal_type = false;
 	}
 
 	// Args are passed on to ADDTOANY_SHARE_SAVE_KIT.
@@ -1013,11 +1014,13 @@ function A2A_SHARE_SAVE_enqueue_script() {
 	if ( is_admin() || is_feed() || $script_disabled || $is_amp )
 		return;
 
+	$sharing_disabled = false;
 	if ( is_singular() ) {
 		// Sharing disabled for this singular post?
 		$sharing_disabled = get_post_meta( get_the_ID(), 'sharing_disabled', true );
-		$sharing_disabled = apply_filters( 'addtoany_sharing_disabled', $sharing_disabled );
 	}
+	// Sharing disabled programmatically?
+	$sharing_disabled = apply_filters( 'addtoany_sharing_disabled', $sharing_disabled );
 		
 	$options = get_option( 'addtoany_options', array() );
 
@@ -1096,7 +1099,6 @@ function A2A_SHARE_SAVE_enqueue_script() {
 	$additional_js = ( isset( $options['additional_js_variables'] ) ) ? $options['additional_js_variables'] : '';
 	$script_configs_escaped = ( ( $cache ) ? "\n" . 'a2a_config.static_server=' . wp_json_encode( esc_url( $static_server ), JSON_UNESCAPED_SLASHES ) . ';' : '' )
 		. ( $icon_color ? "\n" . 'a2a_config.icon_color="' . $icon_color . '";' : '' )
-		. ( isset( $options['onclick'] ) && '1' == $options['onclick'] ? "\n" . 'a2a_config.onclick=1;' : '' )
 		. ( $additional_js ? "\n" . stripslashes( $additional_js ) : '' );
 	
 	$inline_javascript = "\n"

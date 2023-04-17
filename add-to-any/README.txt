@@ -2,9 +2,9 @@
 Contributors: micropat, addtoany
 Tags: buttons, share, icons, social media, share buttons, sharing, share button, media, social, marketing, links, email, seo, woocommerce, google, linkedin, reddit, facebook, twitter, pinterest, whatsapp, instagram, youtube, share this, sharethis, feed
 Requires at least: 4.5
-Tested up to: 6.1
+Tested up to: 6.2
 Requires PHP: 5.6
-Stable tag: 1.8.5
+Stable tag: 1.8.6
 
 Share buttons for WordPress including the AddToAny sharing button, Facebook, Twitter, WhatsApp, Pinterest, Reddit, many more, and follow icons too.
 
@@ -63,7 +63,7 @@ AddToAny is the home of universal sharing, and the AddToAny plugin is the most p
 = Wide Support =
 
 * Over 10 years of development
-* Over 14 million downloads
+* Over 15 million downloads
 * Translated into dozens of languages
 * Ongoing support from the community
 
@@ -304,21 +304,9 @@ add_filter( 'addtoany_sharing_disabled', 'addtoany_disable_sharing_on_my_custom_
 
 Go to Settings > AddToAny > Floating > select "Attach to content" then input the CSS selector(s) that match the HTML element you want to attach to.
 
-= Why does the Facebook Like Button or Pinterest Pin It Button have so much whitespace to the right of it? =
-
-The minimum width for the Facebook Like Button is 90 pixels. This is required to display the total number of Likes to the right of the button.  See Facebook's <a href="https://developers.facebook.com/docs/plugins/like-button">Like Button documentation</a> for details
-
-It's not recommended, but you can change the width of the Facebook Like Button using CSS code, for instance: `.a2a_button_facebook_like { width:50px !important; }`
-
-The Pinterest Pin It Button with 'show count' enabled is 76 pixels. You can change the width using CSS code, for instance: `.a2a_button_pinterest_pin { width:90px !important; }`
-
 = Is AddToAny GDPR compatible? =
 
 Yes, AddToAny is [GDPR compatible by default](https://www.addtoany.com/buttons/faq/#gdpr).
-
-= Does the plugin output W3C valid code? =
-
-Yes, this plugin outputs 100% W3C valid HTML5 and W3C valid CSS 3 by default.
 
 = How can I load the buttons after content insertion with Ajax and infinite scroll? =
 
@@ -345,6 +333,13 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 5. Settings for Floating Share Bars
 
 == Changelog ==
+
+= 1.8.6 =
+* Add Microsoft Teams share button
+* Apply the `addtoany_sharing_disabled` filter to apply to non-singular posts too
+* Remove deprecated option for displaying the universal menu on click instead of on mouse hover
+ * The new default is to display the menu on click
+ * You can [configure](https://www.addtoany.com/buttons/customize/wordpress/on_hover) the menu to display on hover like the old default
 
 = 1.8.5 =
 * The `addtoany_script_disabled` hook now additionally disables the plugin's local JS & CSS

@@ -77,7 +77,7 @@ class Advanced_Ads_Select {
 		$args = (array) $args;
 
 		$args['previous_method'] = isset( $args['method'] ) ? $args['method']  : null;
-		$args['previous_id'] = isset( $args['id'] ) ? $args['id'] : null;		
+		$args['previous_id'] = isset( $args['id'] ) ? $args['id'] : null;
 
 		if ( $id || ! isset( $args['id'] ) ) $args['id'] = $id;
 		$args['method'] = $method;
@@ -110,13 +110,13 @@ class Advanced_Ads_Select {
 			return ;
 		}
 
-		// get ad
+		// We can't get the ad from the repository, this is the only instance where the arguments are passed in the constructor.
 		$ad = new Advanced_Ads_Ad( (int) $args['id'], $args );
 
 		if ( false !== ( $override = apply_filters( 'advanced-ads-ad-select-override-by-ad', false, $ad, $args ) ) ) {
 			return $override;
 		}
-		
+
 		// check conditions
 		if ( $ad->can_display() ) {
 			return $ad->output();
@@ -137,7 +137,7 @@ class Advanced_Ads_Select {
 		$adgroup = new Advanced_Ads_Group( $id, $args );
 		$ordered_ad_ids = $adgroup->get_ordered_ad_ids();
 
-		if ( false !== ( $override = apply_filters( 'advanced-ads-ad-select-override-by-group', false, $adgroup, $ordered_ad_ids, $args ) ) ) {	
+		if ( false !== ( $override = apply_filters( 'advanced-ads-ad-select-override-by-group', false, $adgroup, $ordered_ad_ids, $args ) ) ) {
 			return $override;
 		}
 

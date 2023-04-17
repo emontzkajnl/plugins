@@ -37,6 +37,15 @@ class Advanced_Ads_Groups_List {
 	}
 
 	/**
+	 * Return group page description
+	 *
+	 * @return string
+	 */
+	public static function get_description() {
+		return __( 'Ad Groups are a flexible method to bundle ads. Use them to create ad rotations, run split tests, and organize your ads in the backend. An ad can belong to multiple ad groups.', 'advanced-ads' );
+	}
+
+	/**
 	 * Load ad groups
 	 */
 	public function load_groups() {
@@ -49,28 +58,9 @@ class Advanced_Ads_Groups_List {
 			'search'     => $search,
 			'hide_empty' => 0,
 		];
-		// get wp term objects.
-		$terms = Advanced_Ads::get_ad_groups( $args );
 
 		// add meta data to groups.
-		$this->groups = $this->load_groups_objects_from_terms( $terms );
-	}
-
-	/**
-	 * Load ad groups objects from wp term objects
-	 *
-	 * @param array $terms array of wp term objects.
-	 *
-	 * @return array
-	 */
-	protected function load_groups_objects_from_terms( array $terms ) {
-
-		$groups = [];
-		foreach ( $terms as $_group ) {
-			$groups[] = new Advanced_Ads_Group( $_group );
-		}
-
-		return $groups;
+		$this->groups = Advanced_Ads::get_instance()->get_model()->get_ad_groups( $args );
 	}
 
 	/**
@@ -180,7 +170,7 @@ class Advanced_Ads_Groups_List {
 					$line_output .= '<span class="ad-weight" title="' . __( 'Ad weight', 'advanced-ads' ) . '">' . number_format( ( $_weight / $weight_sum ) * 100 ) . '%</span>';
 				}
 
-				$ad                 = new Advanced_Ads_Ad( get_the_ID() );
+				$ad                 = \Advanced_Ads\Ad_Repository::get( get_the_ID() );
 				$expiry_date_format = get_option( 'date_format' ) . ', ' . get_option( 'time_format' );
 
 				$post_start = get_post_time( 'U', true, $ad->id );
@@ -427,13 +417,13 @@ class Advanced_Ads_Groups_List {
 	}
 
 	/**
-	 * Create a new group
+	 * Create a new group.
+	 *
+	 * @return Advanced_Ads_Group|WP_Error
 	 */
 	public function create_group() {
 		// check nonce.
-		if ( ! isset( $_POST['advads-group-add-nonce'] )
-		     || ! wp_verify_nonce( $_POST['advads-group-add-nonce'], 'add-advads-groups' ) ) {
-
+		if ( ! isset( $_POST['advads-group-add-nonce'] ) || ! wp_verify_nonce( $_POST['advads-group-add-nonce'], 'add-advads-groups' ) ) {
 			return new WP_Error( 'invalid_ad_group', __( 'Invalid Ad Group', 'advanced-ads' ) );
 		}
 
@@ -442,50 +432,46 @@ class Advanced_Ads_Groups_List {
 			return new WP_Error( 'invalid_ad_group_rights', __( 'You don’t have permission to change the ad groups', 'advanced-ads' ) );
 		}
 
-		if ( isset( $_POST['advads-group-name'] ) && '' !== $_POST['advads-group-name'] ) {
-
-			$title     = sanitize_text_field( wp_unslash( $_POST['advads-group-name'] ) );
-			$new_group = wp_create_term( $title, Advanced_Ads::AD_GROUP_TAXONOMY );
-
-			if ( is_wp_error( $new_group ) ) {
-				return $new_group;
-			}
-
-			// set the ad group
-			$type = 'default';
-			if ( ! empty( $_POST['advads-group-type'] ) ) {
-				$posted_type = sanitize_text_field( $_POST['advads-group-type'] );
-				if ( array_key_exists( $posted_type, $this->get_ad_group_types() ) ) {
-					$type = $posted_type;
-				}
-			}
-
-			// save default values.
-			if ( is_array( $new_group ) ) {
-				$group = new Advanced_Ads_Group( $new_group['term_id'] );
-
-				// allow other add-ons to save their own group attributes.
-				$atts = apply_filters(
-					'advanced-ads-group-save-atts',
-					[
-						'type'     => $type,
-						'ad_count' => 1,
-						'options'  => [],
-					],
-					$group
-				);
-
-				$group->save( $atts );
-			}
-
-			// reload groups.
-			$this->load_groups();
-
-		} else {
+		if ( empty( $_POST['advads-group-name'] ) ) {
 			return new WP_Error( 'no_ad_group_created', __( 'No ad group created', 'advanced-ads' ) );
 		}
 
-		return true;
+		$title     = sanitize_text_field( wp_unslash( $_POST['advads-group-name'] ) );
+		$new_group = wp_create_term( $title, Advanced_Ads::AD_GROUP_TAXONOMY );
+
+		if ( is_wp_error( $new_group ) ) {
+			return $new_group;
+		}
+
+		// set the ad group
+		$type = 'default';
+		if ( ! empty( $_POST['advads-group-type'] ) ) {
+			$posted_type = sanitize_text_field( $_POST['advads-group-type'] );
+			if ( array_key_exists( $posted_type, $this->get_ad_group_types() ) ) {
+				$type = $posted_type;
+			}
+		}
+
+		// save default values.
+		$group = new Advanced_Ads_Group( $new_group['term_id'] );
+
+		// allow other add-ons to save their own group attributes.
+		$attributes = apply_filters(
+			'advanced-ads-group-save-atts',
+			[
+				'type'     => $type,
+				'ad_count' => 1,
+				'options'  => [],
+			],
+			$group
+		);
+
+		$group->save( $attributes );
+
+		// reload groups.
+		$this->load_groups();
+
+		return $group;
 	}
 
 	/**
@@ -571,7 +557,7 @@ class Advanced_Ads_Groups_List {
 						 * could cause an infinite loop otherwise
 						 * see also /classes/ad_type_group.php::remove_from_ad_group()
 						 */
-						$ad = new Advanced_Ads_Ad( $_ad_id );
+						$ad = \Advanced_Ads\Ad_Repository::get( $_ad_id );
 
 						// we will have to load all the groups allocated to this ad.
 						if ( ! isset( $ad_groups_assoc[ $_ad_id ] ) ) {

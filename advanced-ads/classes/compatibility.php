@@ -214,7 +214,7 @@ class Advanced_Ads_Compatibility {
 				return '';
 			}
 
-			$ad = new Advanced_Ads_Ad( $ad_id );
+			$ad = \Advanced_Ads\Ad_Repository::get( $ad_id );
 			// only display if the ad type could work, i.e. plain text and image ads.
 			if ( isset( $ad->type ) && in_array( $ad->type, [ 'plain', 'image' ], true ) ) {
 				return get_ad( $ad_id );

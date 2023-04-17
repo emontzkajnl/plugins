@@ -1,20 +1,13 @@
 <?php
 
 /**
- * Advanced Ads
+ * An ad group object
  *
  * @package   Advanced_Ads_Group
  * @author    Thomas Maier <support@wpadvancedads.com>
  * @license   GPL-2.0+
  * @link      https://wpadvancedads.com
  * @copyright 2014 Thomas Maier, Advanced Ads GmbH
- */
-
-/**
- * An ad group object
- *
- * @package Advanced_Ads_Group
- * @author  Thomas Maier <support@wpadvancedads.com>
  */
 class Advanced_Ads_Group {
 
@@ -109,39 +102,42 @@ class Advanced_Ads_Group {
 	public $label = '';
 
 	/**
+	 * Whether this group is in a head placement.
+	 *
+	 * @var bool
+	 */
+	private $is_head_placement;
+
+	/**
+	 * The decorated WP_Term object.
+	 *
+	 * @var \WP_Term
+	 */
+	private $group;
+
+	/**
 	 * Init ad group object
 	 *
+	 * @param int|WP_Term $group   Either id of the ad group or term object.
+	 * @param iterable    $ad_args Optional arguments passed to ads.
+	 *
 	 * @since 1.0.0
-	 * @param int|obj $group   either id of the ad group (= taxonomy id) or term object
-	 * @param array   $ad_args optional arguments passed to ads
 	 */
-	public function __construct( $group, $ad_args = [] ) {
+	public function __construct( $group, iterable $ad_args = [] ) {
 		$this->taxonomy = Advanced_Ads::AD_GROUP_TAXONOMY;
 
-		$group = get_term( $group, $this->taxonomy );
-		if ( $group == null || is_wp_error( $group ) ) {
+		$this->group = get_term( $group, $this->taxonomy );
+		if ( $this->group === null || is_wp_error( $this->group ) ) {
 			return;
 		}
 
-		$this->load( $group, $ad_args );
-	}
-
-	/**
-	 * Load additional ad group properties
-	 *
-	 * @since 1.4.8
-	 * @param int   $id      group id
-	 * @param obj   $group   wp term object
-	 * @param array $ad_args optional arguments passed to ads
-	 */
-	private function load( $group, $ad_args ) {
-		$this->id = $group->term_id;
-		$this->name = $group->name;
-		$this->slug = $group->slug;
-		$this->description = $group->description;
-		$this->post_type = Advanced_Ads::POST_TYPE_SLUG;
-		$this->ad_args = $ad_args;
-		$this->is_head_placement = isset( $this->ad_args['placement_type'] ) && $this->ad_args['placement_type'] === 'header';
+		$this->id                      = $this->group->term_id;
+		$this->name                    = $this->group->name;
+		$this->slug                    = $this->group->slug;
+		$this->description             = $this->group->description;
+		$this->post_type               = Advanced_Ads::POST_TYPE_SLUG;
+		$this->ad_args                 = $ad_args;
+		$this->is_head_placement       = isset( $this->ad_args['placement_type'] ) && $this->ad_args['placement_type'] === 'header';
 		$this->ad_args['is_top_level'] = ! isset( $this->ad_args['is_top_level'] );
 
 		$this->load_additional_attributes();
@@ -149,6 +145,30 @@ class Advanced_Ads_Group {
 		if ( ! $this->is_head_placement ) {
 			$this->create_wrapper();
 		}
+	}
+
+	/**
+	 * If a property on the original WP_Term is requested, return it, otherwise null.
+	 *
+	 * @param string $name The requested property name.
+	 *
+	 * @return mixed|null
+	 * @noinspection MagicMethodsValidityInspection -- We don't want to allow setting of properties.
+	 */
+	public function __get( string $name ) {
+		return $this->group->$name ?? null;
+	}
+
+	/**
+	 * Whether a property is set.
+	 *
+	 * @param string $name The requested property name.
+	 *
+	 * @return bool
+	 * @noinspection MagicMethodsValidityInspection -- We don't want to allow setting of properties.
+	 */
+	public function __isset( string $name ): bool {
+		return isset( $this->group->$name );
 	}
 
 	/**
@@ -216,10 +236,10 @@ class Advanced_Ads_Group {
 			foreach ( $ordered_ad_ids as $_ad_id ) {
 				$this->ad_args['group_info']['ads_displayed'] = $ads_displayed;
 
-				// load the ad object
+				// load the ad output
 				$ad = $ad_select->get_ad_by_method( $_ad_id, Advanced_Ads_Select::AD, $this->ad_args );
 
-				if ( $ad !== null ) {
+				if ( ! empty( $ad ) ) {
 					$output[] = $ad;
 					$ads_displayed++;
 					// break the loop when maximum ads are reached

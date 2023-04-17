@@ -53,27 +53,35 @@ $alerts_advads_messages    = Advanced_Ads_Adsense_MAPI::get_adsense_alert_messag
 
 ?>
 <div id="mapi-account-alerts">
-    <?php if ( is_array( $alerts ) && isset( $alerts['items'] ) && is_array( $alerts['items'] ) && $alerts['items'] ) : ?>
-	<div class="card advads-notice-block advads-error">
+	<?php if ( is_array( $alerts ) && isset( $alerts['items'] ) && is_array( $alerts['items'] ) && $alerts['items'] ) : ?>
 		<h3>
 			<?php
 			//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped
 			echo $alerts_heading;
 			?>
 		</h3>
-		<ul>
 		<?php foreach ( $alerts['items'] as $alert_id => $alert ) : ?>
-			<?php $internal_id = isset( $alert['id'] ) ? $alert['id'] : str_replace( '-', '_', strtoupper( $alert['type'] ) ); ?>
-            <?php if ( isset( $alerts_advads_messages[ $internal_id ] ) ) : ?>
-                <li><?php echo wp_kses( $alerts_advads_messages[ $internal_id ], [ 'a' => [ 'href' => true, 'target' => true, 'class' => true ] ] ); ?>&nbsp;<a href="#" class="mapi-dismiss-alert" data-id="<?php echo esc_attr( $alert_id ); ?>"><?php echo esc_html( $alerts_dismiss ); ?></a></li>
-            <?php else : ?>
-                <li><?php echo wp_kses( $alert['message'], [ 'a' => [ 'href' => true, 'target' => true, 'class' => true ] ] ); ?>&nbsp;<a href="#" class="mapi-dismiss-alert" data-id="<?php echo esc_attr( $alert_id ); ?>"><?php echo esc_html( $alerts_dismiss ); ?></a></li>
-            <?php endif; ?>
+			<div class="card advads-notice-block advads-error">
+				<button type="button" class="mapi-dismiss-alert notice-dismiss" data-id="<?php echo esc_attr( $alert_id ); ?>">
+					<span class="screen-reader-text"><?php echo esc_html( $alerts_dismiss ); ?></span>
+				</button>
+				<?php
+				$internal_id = $alert['id'] ?? str_replace( '-', '_', strtoupper( $alert['type'] ) );
+				echo wp_kses(
+					$alerts_advads_messages[ $internal_id ] ?? $alert['message'],
+					[
+						'a' => [
+							'href'   => true,
+							'target' => true,
+							'class'  => true,
+						],
+					]
+				);
+				?>
+			</div>
 		<?php endforeach; ?>
-		</ul>
 		<?php /* translators: %s: date and time of last check in the format set in wp_options */ ?>
 		<p class="description alignright"><?php printf( __( 'last checked: %s', 'advanced-ads' ), $alerts['lastCheck'] ? esc_html( ( new DateTime( '@' . $alerts['lastCheck'], Advanced_Ads_Utils::get_wp_timezone() ) )->format( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) ) : '-' ); ?></p>
-	</div>
 	<?php endif; ?>
 	<?php
 	if ( ! empty( $mapi_options['connect_error'] ) ) {

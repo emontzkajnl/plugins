@@ -102,7 +102,7 @@ class Advanced_Ads_AdSense_Data {
 		global $post;
 
 		if ( $post instanceof WP_Post && Advanced_Ads::POST_TYPE_SLUG === $post->post_type ) {
-			$the_ad = new Advanced_Ads_Ad( $post->ID );
+			$the_ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 			if ( $the_ad->type !== 'adsense' ) {
 				return true;
 			}

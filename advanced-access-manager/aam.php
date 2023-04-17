@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Advanced Access Manager
  * Description: Collection of features to manage your WordPress website authentication, authorization and monitoring
- * Version: 6.8.1
+ * Version: 6.9.9
  * Author: Vasyl Martyniuk <vasyl@vasyltech.com>
  * Author URI: https://vasyltech.com
  * Text Domain: advanced-access-manager
@@ -18,9 +18,12 @@
 /**
  * Main plugin's class
  *
+ * @since 6.9.4 https://github.com/aamplugin/advanced-access-manager/issues/238
+ * @since 6.0.0 Initial implementation of the class
+ *
  * @package AAM
  * @author Vasyl Martyniuk <vasyl@vasyltech.com>
- * @version 6.0.0
+ * @version 6.9.4
  */
 class AAM
 {
@@ -157,8 +160,11 @@ class AAM
      *
      * @return void
      *
+     * @since 6.9.4 https://github.com/aamplugin/advanced-access-manager/issues/238
+     * @since 6.0.0 Initial implementation of the method
+     *
      * @access public
-     * @version 6.0.0
+     * @version 6.9.4
      */
     public static function onPluginsLoaded()
     {
@@ -174,6 +180,8 @@ class AAM
                 require_once $service->getPathname();
             }
         }
+
+        do_action('aam_services_loaded');
 
         // Load AAM
         AAM::getInstance();
@@ -261,27 +269,27 @@ class AAM
 }
 
 if (defined('ABSPATH')) {
-    //define few common constants
+    // Define few common constants
     define('AAM_MEDIA', plugins_url('/media', __FILE__));
     define('AAM_KEY', 'advanced-access-manager');
-    define('AAM_VERSION', '6.8.1');
+    define('AAM_VERSION', '6.9.9');
     define('AAM_BASEDIR', __DIR__);
 
-    //load vendor
+    // Load vendor
     require __DIR__ . '/vendor/autoload.php';
 
-    //register autoloader
+    // Register autoloader
     require(__DIR__ . '/autoloader.php');
     AAM_Autoloader::register();
 
     // Keep this as the lowest priority
     add_action('plugins_loaded', 'AAM::onPluginsLoaded', -999);
 
-    //the highest priority (higher the core)
-    //this is important to have to catch events like register core post types
+    // The highest priority (higher the core)
+    // this is important to have to catch events like register core post types
     add_action('init', 'AAM::onInit', -1);
 
-    //activation & deactivation hooks
+    // Activation & deactivation hooks
     register_activation_hook(__FILE__, array('AAM', 'activate'));
     register_uninstall_hook(__FILE__, array('AAM', 'uninstall'));
 }

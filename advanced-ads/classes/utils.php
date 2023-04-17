@@ -118,7 +118,7 @@ class Advanced_Ads_Utils {
 					}
 				}
 			case 'ad':
-				$ad       = new Advanced_Ads_Ad( $id );
+				$ad       = \Advanced_Ads\Ad_Repository::get( $id );
 				$result[] = $ad;
 				if ( 'group' === $ad->type && ! empty( $ad->output['group_id'] ) ) {
 					$result = array_merge( $result, self::get_nested_ads( $ad->output['group_id'], 'group' ) );
@@ -279,4 +279,3 @@ class Advanced_Ads_Utils {
 		return sprintf( __( 'time of %s', 'advanced-ads' ), $time_zone );
 	}
 }
-

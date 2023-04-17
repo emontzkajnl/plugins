@@ -9,6 +9,9 @@ return array(
     'ADVADS_SL_Plugin_Updater' => $baseDir . '/classes/EDD_SL_Plugin_Updater.php',
     'Advads_Ad' => $baseDir . '/classes/ad.php',
     'Advanced_Ads' => $baseDir . '/public/class-advanced-ads.php',
+    'Advanced_Ads\\Abstract_Repository' => $baseDir . '/src/Abstract_Repository.php',
+    'Advanced_Ads\\Ad_Repository' => $baseDir . '/src/Ad_Repository.php',
+    'Advanced_Ads\\Admin\\Post_List' => $baseDir . '/admin/includes/class-post-list.php',
     'Advanced_Ads\\Placement_Type' => $baseDir . '/src/Placement_Type.php',
     'Advanced_Ads\\Placement_Type_Options' => $baseDir . '/src/Placement_Type_Options.php',
     'Advanced_Ads_Ad' => $baseDir . '/classes/ad.php',
@@ -60,6 +63,8 @@ return array(
     'Advanced_Ads_Visitor_Conditions' => $baseDir . '/classes/visitor-conditions.php',
     'Advanced_Ads_Widget' => $baseDir . '/classes/widget.php',
 
+    'Detection\\MobileDetect' => $vendorDir . '/mobiledetect/mobiledetectlib/namespaced/Detection/MobileDetect.php',
+    'Mobile_Detect' => $vendorDir . '/mobiledetect/mobiledetectlib/Mobile_Detect.php',
     'Yoast_I18n_WordPressOrg_v3' => $vendorDir . '/yoast/i18n-module/src/i18n-wordpressorg-v3.php',
     'Yoast_I18n_v3' => $vendorDir . '/yoast/i18n-module/src/i18n-v3.php',
 );

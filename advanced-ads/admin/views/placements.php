@@ -3,7 +3,10 @@ defined( 'ABSPATH' ) || exit;
 /**
  * The view for the placements page
  *
- * @var array $placement_types placement types.
+ * @var array   $placement_types placement types.
+ * @var array[] $placements user-defined placements.
+ * @var string  $orderby how to order placements.
+ * @var bool    $has_placements there are use-defined placements.
  */
 
 $quick_actions           = [];
@@ -19,19 +22,23 @@ $quick_actions['delete'] = '<a style="cursor: pointer;" class="advads-delete-tag
 			<div id="message" class="notice notice-error advads-admin-notice inline"><p><?php esc_html_e( 'Couldn’t create the new placement. Please check your form field and whether the name is already in use.', 'advanced-ads' ); ?></p></div>
 		<?php elseif ( $_GET['message'] === 'updated' ) : ?>
 			<div id="message" class="notice updated advads-admin-notice inline"><p><?php esc_html_e( 'Placements updated', 'advanced-ads' ); ?></p></div>
-		<?php endif; ?>
-	<?php endif; ?>
-	<p class="description">
-		<?php
-		esc_html_e( 'Placements are physically places in your theme and posts. You can use them if you plan to change ads and ad groups on the same place without the need to change your templates.', 'advanced-ads' );
-		?>
-		<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/placements/?utm_source=advanced-ads&utm_medium=link&utm_campaign=placements'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads' ); ?></a>
-	</p>
-	<?php
+			<?php
+		endif;
+	endif;
 
 	// Add placement form.
 	$modal_slug = 'placement-new';
 	ob_start();
+	if ( ! $has_placements ) :
+		?>
+		<p class="description">
+			<?php
+			echo esc_html( Advanced_Ads_Placements::get_description() );
+			?>
+			<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/placements/?utm_source=advanced-ads&utm_medium=link&utm_campaign=placements'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads' ); ?></a>
+		</p>
+		<?php
+	endif;
 	include ADVADS_BASE_PATH . 'admin/views/placement-form.php';
 
 	new Advanced_Ads_Modal( array(
@@ -43,7 +50,7 @@ $quick_actions['delete'] = '<a style="cursor: pointer;" class="advads-delete-tag
 		'close_validation' => 'advads_validate_new_form',
 	) );
 
-	if ( isset( $placements ) && is_array( $placements ) && count( $placements ) ) :
+	if ( $has_placements ) :
 		$existing_types = array_unique( array_column( $placements, 'type' ) );
 		do_action( 'advanced-ads-placements-list-before', $placements );
 		?>
@@ -328,16 +335,6 @@ $quick_actions['delete'] = '<a style="cursor: pointer;" class="advads-delete-tag
 							<?php do_action( 'advanced-ads-placement-options-before', $_placement_slug, $_placement ); ?>
 
 							<?php
-							ob_start();
-
-							// Get the currently selected item.
-							$placement_item_array = explode( '_', $_placement['item'] );
-							$placement_item_type  = is_array( $placement_item_array ) && isset( $placement_item_array[0] ) ? $placement_item_array[0] : null;
-							$placement_item_id    = is_array( $placement_item_array ) && isset( $placement_item_array[1] ) ? $placement_item_array[1] : null;
-
-							include ADVADS_BASE_PATH . 'admin/views/placements-item.php';
-							$item_option_content = ob_get_clean();
-
 							Advanced_Ads_Admin_Options::render_option(
 								'placement-item',
 								// translators: 1: "Ad", 2: "Group"
@@ -346,7 +343,7 @@ $quick_actions['delete'] = '<a style="cursor: pointer;" class="advads-delete-tag
 									__( 'Ad', 'advanced-ads' ),
 									__( 'Group', 'advanced-ads' )
 								),
-								$item_option_content
+								Advanced_Ads_Placements::get_items_for_placement_markup( $_placement_slug, $_placement )
 							);
 							switch ( $_placement['type'] ) :
 								case 'post_content':

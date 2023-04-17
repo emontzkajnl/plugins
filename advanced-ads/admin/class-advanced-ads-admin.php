@@ -133,6 +133,7 @@ class Advanced_Ads_Admin {
 		Advanced_Ads_Admin_Settings::get_instance();
 		Advanced_Ads_Ad_Authors::get_instance();
 		new Advanced_Ads_Admin_Upgrades();
+		new Advanced_Ads\Admin\Post_List();
 	}
 
 	/**
@@ -241,6 +242,11 @@ class Advanced_Ads_Admin {
 				'delete_placement_confirmation' => __( 'Permanently delete this placement?', 'advanced-ads' ),
 				'close'                         => __( 'Close', 'advanced-ads' ),
 				'confirmation'                  => __( 'Data you have entered has not been saved. Are you sure you want to discard your changes?', 'advanced-ads' ),
+				'admin_page'                    => self::get_advanced_ads_admin_screen(),
+				'placements_allowed_ads'        => [
+					'action' => 'advads-placements-allowed-ads',
+					'nonce'  => wp_create_nonce( 'advads-placements-allowed-ads' ),
+				],
 			];
 
 			wp_localize_script( $this->plugin_slug . '-admin-script', 'advadstxt', $translation_array );
@@ -283,10 +289,15 @@ class Advanced_Ads_Admin {
 	 * @return void
 	 */
 	private function enqueue_main_admin_script() {
-		$dependencies = array( 'jquery', $this->plugin_slug . '-ui-scripts', 'jquery-ui-autocomplete' );
+		$dependencies = [ 'jquery', $this->plugin_slug . '-ui-scripts', 'jquery-ui-autocomplete', 'wp-util' ];
 
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', __FILE__ ), $dependencies, ADVADS_VERSION, false );
+			$dependencies[] = $this->plugin_slug . '-admin-script';
+
+			wp_enqueue_script( $this->plugin_slug . '-admin-script-termination', plugins_url( 'assets/js/termination.js', __FILE__ ), $dependencies, ADVADS_VERSION, false );
+			$dependencies[] = $this->plugin_slug . '-admin-script-termination';
+
 			wp_enqueue_script( $this->plugin_slug . '-admin-script-dialog', plugins_url( 'assets/js/dialog-advads-modal.js', __FILE__ ), $dependencies, ADVADS_VERSION, false );
 
 			return;
@@ -298,16 +309,25 @@ class Advanced_Ads_Admin {
 	/**
 	 * Check if the current screen belongs to Advanced Ads
 	 *
-	 * @return bool true if screen belongs to Advanced Ads
+	 * @return bool
 	 */
 	public static function screen_belongs_to_advanced_ads() {
+		return self::get_advanced_ads_admin_screen() !== '';
+	}
+
+	/**
+	 * Get the current screen id if the page belongs to AA, otherwise empty string.
+	 *
+	 * @return string
+	 */
+	private static function get_advanced_ads_admin_screen() {
 		if ( ! function_exists( 'get_current_screen' ) ) {
-			return false;
+			return '';
 		}
 
 		$screen = get_current_screen();
 		if ( ! isset( $screen->id ) ) {
-			return false;
+			return '';
 		}
 
 		$advads_pages = apply_filters(
@@ -325,11 +345,11 @@ class Advanced_Ads_Admin {
 			]
 		);
 
-		if ( in_array( $screen->id, $advads_pages, true ) ) {
-			return true;
+		if ( ! in_array( $screen->id, $advads_pages, true ) ) {
+			return '';
 		}
 
-		return false;
+		return $screen->id;
 	}
 
 	/**
@@ -395,6 +415,15 @@ class Advanced_Ads_Admin {
 		// display ad block warning to everyone who can edit ads.
 		if ( current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
 			if ( $this->screen_belongs_to_advanced_ads() ) {
+				$ad_blocker_notice_id = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix() . 'abcheck-' . md5( microtime() );
+				wp_register_script( $ad_blocker_notice_id . '-adblocker-notice', false, [], ADVADS_VERSION, true );
+				wp_enqueue_script( $ad_blocker_notice_id . '-adblocker-notice' );
+				wp_add_inline_script( $ad_blocker_notice_id . '-adblocker-notice', "
+				jQuery( document ).ready( function () {
+							if ( typeof advanced_ads_adblocker_test === 'undefined' ) {
+								jQuery( '#" . esc_attr( $ad_blocker_notice_id ) . ".message' ).show();
+							}
+						} );" );
 				include ADVADS_BASE_PATH . 'admin/views/notices/adblock.php';
 			}
 		}
@@ -809,6 +838,7 @@ class Advanced_Ads_Admin {
 		$filter_disabled     = '';
 		$show_screen_options = false;
 		$title               = get_admin_page_title();
+		$tooltip             = '';
 
 		switch ( $screen->id ) {
 			// ad overview
@@ -835,6 +865,7 @@ class Advanced_Ads_Admin {
 				$manual_url         = 'manual/ad-groups/';
 				$show_filter_button = empty( $_GET['s'] );
 				$reset_href         = ! $show_filter_button ? esc_url( admin_url( 'admin.php?page=advanced-ads-groups' ) ) : '';
+				$tooltip            = Advanced_Ads_Groups_List::get_description();
 				break;
 			case 'advanced-ads_page_advanced-ads-placements':
 				$title              = __( 'Your Placements', 'advanced-ads' );
@@ -842,6 +873,7 @@ class Advanced_Ads_Admin {
 				$new_button_href    = '#modal-placement-new';
 				$manual_url         = 'manual/placements/';
 				$show_filter_button = true;
+				$tooltip            = Advanced_Ads_Placements::get_description();
 				break;
 			case 'advanced-ads_page_advanced-ads-settings':
 				$title            = __( 'Advanced Ads Settings', 'advanced-ads' );

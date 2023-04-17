@@ -504,11 +504,13 @@ advads = {
 
 					// If using the cookie method, fire an initial event, regardless if cookie set or not.
 					if ( window.advads_options.privacy['consent-method'] === 'custom' ) {
-						var cookie_regex = new RegExp( window.advads_options.privacy['custom-cookie-name'] + '=.*?' + window.advads_options.privacy['custom-cookie-value'] + '[^;]*' );
+						var cookie_regex = new RegExp( '.*?' + window.advads_options.privacy['custom-cookie-value'] + '[^;]*?' );
+						let cookie       = advads.get_cookie( window.advads_options.privacy['custom-cookie-name'] ) || '';
+
 						// Force the event, if we haven't yet fired one.
 						if ( ! advads.privacy.state_executed ) {
 							advads.privacy.state_executed = true;
-							advads.privacy.dispatch_event( document.cookie.match( cookie_regex ) !== null ? 'accepted' : 'unknown', true );
+							advads.privacy.dispatch_event( cookie.match( cookie_regex ) ? 'accepted' : 'unknown', true );
 						}
 					}
 
@@ -524,8 +526,10 @@ advads = {
 							}
 							switch ( window.advads_options.privacy['consent-method'] ) {
 								case 'custom' :
+									let cookie = advads.get_cookie( window.advads_options.privacy['custom-cookie-name'] ) || '';
+
 									// check if custom cookie is set and matches value.
-									if ( document.cookie.match( cookie_regex ) !== null ) {
+									if ( cookie.match( cookie_regex ) ) {
 										clearInterval( consentSetInterval );
 										if ( advads.privacy.state !== 'accepted' ) {
 											advads.privacy.dispatch_event( 'accepted', true );

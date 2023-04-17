@@ -12,6 +12,7 @@
  * @var string    $new_button_id       id of the New button
  * @var string    $show_screen_options if to show the Screen Options button
  * @var string    $manual_url          target of the manual link
+ * @var string    $tooltip             description that will show in a tooltip
  */
 ?>
 <div id="advads-header">
@@ -21,14 +22,17 @@
 			<h1><?php echo esc_html( $title ); ?></h1>
 		</div>
 		<div id="advads-header-actions">
-			<?php if ( $new_button_label ) : ?>
+			<?php if ( $new_button_label !== '' ) : ?>
 				<a href="<?php echo esc_url( $new_button_href ); ?>" class="header-action button advads-button-primary" id="<?php echo esc_attr( $new_button_id ); ?>">
 					<span class="dashicons dashicons-plus"></span><?php echo esc_html( $new_button_label ); ?>
 				</a>
 			<?php endif; ?>
+			<?php if ( $tooltip !== '' ) : ?>
+				<span class="advads-help"><span class="advads-tooltip"><?php echo esc_html( $tooltip ); ?></span></span>
+			<?php endif; ?>
 		</div>
 		<div id="advads-header-links">
-			<?php if ( $reset_href ) : ?>
+			<?php if ( $reset_href !== '' ) : ?>
 				<a href="<?php echo esc_url( $reset_href ); ?>" class="button advads-button-secondary advads-button-icon-right">
 					<?php esc_html_e( 'Reset', 'advanced-ads' ); ?><span class="dashicons dashicons-undo"></span>
 				</a>

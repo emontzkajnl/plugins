@@ -97,7 +97,7 @@ class Advanced_Ads_Admin_Upgrades {
 	public function ad_notices( $notices, $box, $post ) {
 		// Show notice when someone uses an Ad Manager ad in the plain text code field.
 		if ( ! defined( 'AAGAM_VERSION' ) && 'ad-parameters-box' === $box['id'] ) {
-			$ad = new Advanced_Ads_Ad( $post->ID );
+			$ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 			if ( 'plain' === $ad->type && strpos( $ad->content, 'div-gpt-ad-' ) ) {
 				$notices[] = [
 					'text' => sprintf(

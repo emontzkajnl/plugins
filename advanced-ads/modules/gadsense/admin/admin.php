@@ -183,7 +183,7 @@ class Advanced_Ads_AdSense_Admin {
 	 */
 	public function ad_notices( $notices, $box, $post ) {
 
-		$ad = new Advanced_Ads_Ad( $post->ID );
+		$ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 
 		// $content = json_decode( stripslashes( $ad->content ) );
 

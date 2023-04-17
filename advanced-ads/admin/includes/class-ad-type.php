@@ -176,7 +176,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	 * @return void
 	 */
 	public function ad_list_columns( $column_name, $ad_id ) {
-		$ad = new Advanced_Ads_Ad( $ad_id );
+		$ad = \Advanced_Ads\Ad_Repository::get( $ad_id );
 
 		switch ( $column_name ) {
 			case 'ad_type':
@@ -210,7 +210,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	 * @see Advanced_Ads_Admin_Ad_Type::ad_list_columns_preview()
 	 */
 	public function ad_list_columns_content( $column_name, $ad_id ) {
-		$ad = new Advanced_Ads_Ad( $ad_id );
+		$ad = \Advanced_Ads\Ad_Repository::get( $ad_id );
 		$this->ad_list_columns_preview( $ad );
 	}
 
@@ -488,7 +488,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		}
 
 		// get ad object.
-		$ad = new Advanced_Ads_Ad( $post_id );
+		$ad = \Advanced_Ads\Ad_Repository::get( $post_id );
 		if ( ! $ad instanceof Advanced_Ads_Ad ) {
 			return;
 		}
@@ -679,7 +679,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			<?php
 		}
 
-		$ad = new Advanced_Ads_Ad( $post->ID );
+		$ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 
 		$placement_types = Advanced_Ads_Placements::get_placement_types();
 		$placements      = Advanced_Ads::get_ad_placements_array(); // -TODO use model
@@ -741,7 +741,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			return;
 		}
 
-		$ad = new Advanced_Ads_Ad( $post->ID );
+		$ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 
 		// get time set for ad or current timestamp (both GMT).
 		$utc_ts    = $ad->expiry_date ? $ad->expiry_date : time();

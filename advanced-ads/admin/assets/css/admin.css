@@ -72,6 +72,7 @@
 .post-type-advanced_ads .wp-list-table thead tr .dashicons-edit { float: right; visibility: hidden; cursor: pointer; }
 .post-type-advanced_ads .wp-list-table thead tr:hover .dashicons-edit { visibility: visible; }
 .post-type-advanced_ads .column-ad_type { width: 50px; }
+.post-type-advanced_ads .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.column-primary)::before { content: none; }
 
 /**
 * AD EDIT PAGE
@@ -357,7 +358,8 @@ body.rtl .aa-select-list .aa-select-list-update { left: 47px; right: auto;}
 /**
  AD GROUP LIST
 */
-.advanced-ads_page_advanced-ads-groups .tablenav.top { margin: 15px 0 0; }
+.advanced-ads_page_advanced-ads-groups #wpbody-content > .wrap { margin-top: 20px; }
+.advanced-ads_page_advanced-ads-groups .tablenav.top { margin: 0px; padding-top: 0px; }
 #advads-ad-group-list .row-actions span + span::before { content: '|'; padding: 0 3px; }
 #advads-ad-group-list ul, #advads-ad-group-list ol { margin: 0; list-style-position: inside; }
 #advads-ad-group-list .advads-group-ads tr:nth-child(odd) { background: #f9f9f9; }
@@ -382,6 +384,9 @@ fieldset.advads-group-add-ad { margin-top: 1em; }
 /**
  AD PLACEMENTS
 */
+.advanced-ads_page_advanced-ads-placements #wpbody-content > .wrap { margin-top: 20px; }
+.advanced-ads_page_advanced-ads-placements .tablenav.top { margin-top: 0px; padding-top: 0px; }
+.advads-placements-table { margin-top: 20px; }
 .advads-placements-table-options { text-align: right; }
 .advads-placements-table-options input[type="number"] { width: 4.5em; }
 .advads-placements-table ol { margin: 0.5em 0; list-style-position: inside; }
@@ -460,6 +465,13 @@ tr:hover .on-hover { display: block; }
 	align-items: start;
 	padding-left: 20px;
 	gap: 10px 10px;
+}
+
+#advads-header .advads-help:before {
+	margin-top: 3px;
+	font-size: 24px;
+	line-height: 24px;
+	height: 24px;
 }
 
 #advads-header svg {
@@ -598,6 +610,10 @@ body.rtl #mapi-archived-ads { left: 78px; right:auto; }
 	display: block;
 	margin: 12px auto;
 	cursor: pointer;
+}
+
+#mapi-account-alerts > div:not(:last-of-type) {
+	margin-bottom: 10px;
 }
 
 @media screen and (min-width: 1368px) {

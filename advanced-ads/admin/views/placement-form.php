@@ -47,23 +47,28 @@
 		</span>
 	</p>
 	<p class="advads-notice-inline advads-error advads-form-name-error"><?php esc_html_e( 'Please enter a name.', 'advanced-ads' ); ?></p>
-	<h3>3. <?php esc_html_e( 'Choose the Ad or Group', 'advanced-ads' ); ?></h3>
-	<p><select name="advads[placement][item]">
+	<h3>
+		<label for="advads-placement-item">3. <?php esc_html_e( 'Choose the Ad or Group', 'advanced-ads' ); ?></label>
+	</h3>
+	<p>
+		<select name="advads[placement][item]" id="advads-placement-item" disabled>
 			<option value=""><?php esc_html_e( '--not selected--', 'advanced-ads' ); ?></option>
-			<?php if ( isset( $items['groups'] ) ) : ?>
-				<optgroup label="<?php esc_html_e( 'Ad Groups', 'advanced-ads' ); ?>">
-					<?php foreach ( $items['groups'] as $_item_id => $_item_title ) : ?>
-						<option value="<?php echo esc_attr( $_item_id ); ?>"><?php echo esc_html( $_item_title ); ?></option>
-					<?php endforeach; ?>
-				</optgroup>
-			<?php endif; ?>
-			<?php if ( isset( $items['ads'] ) ) : ?>
-				<optgroup label="<?php esc_html_e( 'Ads', 'advanced-ads' ); ?>">
-					<?php foreach ( $items['ads'] as $_item_id => $_item_title ) : ?>
-						<option value="<?php echo esc_attr( $_item_id ); ?>"><?php echo esc_html( $_item_title ); ?></option>
-					<?php endforeach; ?>
-				</optgroup>
-			<?php endif; ?>
-		</select></p>
+		</select>
+	</p>
 	<?php wp_nonce_field( 'advads-placement', 'advads_placement', true ); ?>
 </form>
+
+<script type="text/html" id="tmpl-advads-placement-ad-select">
+	<select name="advads[placement][item]" id="advads-placement-item">
+		<option value=""><?php esc_html_e( '--not selected--', 'advanced-ads' ); ?></option>
+		<# for ( group of data.items ) { #>
+		<optgroup label="{{ group.label }}">
+			<# for ( item_id in group.items ) { #>
+			<option value="{{ item_id }}">
+				{{ group.items[item_id].name }}
+			</option>
+			<# } #>
+		</optgroup>
+		<# } #>
+	</select>
+</script>

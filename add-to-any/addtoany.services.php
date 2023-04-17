@@ -92,11 +92,6 @@ $A2A_SHARE_SAVE_services = array(
 		"icon" => "buffer",
 		"color" => "2A2A2A",
 	),
-	"citeulike" => array(
-		"name" => "CiteULike",
-		"icon" => "citeulike",
-		"color" => "2781CD",
-	),
 	"copy_link" => array(
 		"name" => "Copy Link",
 		"icon" => "link",
@@ -351,6 +346,11 @@ $A2A_SHARE_SAVE_services = array(
 		"name" => "Symbaloo Bookmarks",
 		"icon" => "symbaloo",
 		"color" => "6DA8F7",
+	),
+	"microsoft_teams" => array(
+		"name" => "Teams",
+		"icon" => "microsoft_teams",
+		"color" => "5059C9",
 	),
 	"telegram" => array(
 		"name" => "Telegram",

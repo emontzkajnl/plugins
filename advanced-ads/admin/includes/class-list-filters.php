@@ -193,7 +193,7 @@ class Advanced_Ads_Ad_List_Filters {
 			}
 
 			// convert all expiration dates.
-			$ad         = new Advanced_Ads_Ad( $post->ID );
+			$ad         = \Advanced_Ads\Ad_Repository::get( $post->ID );
 			$expiration = new Advanced_Ads_Ad_Expiration( $ad );
 			$expiration->save_expiration_date( $this->all_ads_options[ $post->ID ], $ad );
 			$expiration->is_ad_expired();
@@ -208,20 +208,19 @@ class Advanced_Ads_Ad_List_Filters {
 	private function collect_all_groups() {
 		global $wpdb;
 
-		$_groups = Advanced_Ads::get_ad_groups();
 		$groups  = [];
 
 		/**
 		 * It looks like there might be a third-party conflict we haven’t been able to reproduce that causes the group
 		 * objects to stay empty. Hence, we introduced the `empty` check.
 		 */
-		foreach ( $_groups as $g ) {
-			if ( empty( $g->term_id ) ) {
+		foreach ( Advanced_Ads::get_instance()->get_model()->get_ad_groups() as $group ) {
+			if ( empty( $group->term_id ) ) {
 				continue;
 			}
-			$groups[ $g->term_id ] = [
-				'name' => $g->name,
-				'slug' => $g->slug,
+			$groups[ $group->term_id ] = [
+				'name' => $group->name,
+				'slug' => $group->slug,
 			];
 		}
 

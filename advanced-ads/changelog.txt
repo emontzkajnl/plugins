@@ -1,5 +1,52 @@
 == Changelog ==
 
+= 1.42.1 (April 12, 2023) =
+
+- Improvement: add dismiss buttons to Google AdSense account alerts in the backend
+- Improvement: add JS event on showing a modal
+- Fix: prevent a termination notification after activating a valid licence
+- Fix: remove a bug that prevented the modal from closing
+- Fix: prevent group modal from opening again after saving
+
+= 1.42.0 (March 29, 2023) =
+
+- Improvement: enhance WP Admin performance by minimizing Advanced_Ads_Ad objects
+- Improvement: open the group edit form after creating a new group
+- Improvement: unify checkbox text layout on general settings page
+- Fix: show values in the Ad injection column in the Pages overview
+
+= 1.41.0 (March 14, 2023) =
+
+- Improvement: filter post and pages with disabled ads in the backend
+- Improvement: improve the main description of ad groups and placements
+- Fix: update logic in placements to ensure the selected item exists in the list of available items
+- Fix: prevent infinite loop when ad author was deleted from database
+
+= 1.40.2 (February 22, 2023) =
+
+- Fix: allow closing of modals that are not associated with a form
+- Fix: show tab content after submitting settings page
+
+= 1.40.1 (February 14, 2023) =
+
+- Fix: correct issue on settings page that prevented changing tabs
+
+= 1.40.0 (February 14, 2023) =
+
+- Improvement: add termination notices to Advanced Ads screens
+- Improvement: update the device condition to include "tablet" devices
+- Improvement: unify the page descriptions of the group and placement lists
+- Improvement: enable back/forward navigation in the settings page
+- Fix: unset `fields` query argument when requesting ad groups
+- Fix: fix ordered ad groups with ads set to display only once
+- Fix: prevent a PHP error when saving placements
+- Fix: re-add erroneously removed groups filter on Ad overview
+
+= 1.39.2 (January 26, 2023) =
+
+- Fix: improve privacy cookie regex matching against common values
+- Fix: prevent deprecation notice on `ArrayObject::getOffset` in PHP 8.1+
+
 = 1.39.1 (December 19, 2022) =
 
 - Fix: check the validity of the form before saving the modal

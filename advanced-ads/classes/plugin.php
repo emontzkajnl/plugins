@@ -920,7 +920,7 @@ class Advanced_Ads_Plugin {
 			return;
 		}
 
-		$ad = new Advanced_Ads_Ad( $post->ID );
+		$ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 
 		if ( $old_status !== $new_status ) {
 			/**

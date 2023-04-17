@@ -21,14 +21,17 @@
 // create new group.
 if ( isset( $_REQUEST['advads-group-add-nonce'] ) ) {
 	$create_result = $ad_groups_list->create_group();
-	// display error message.
 	if ( is_wp_error( $create_result ) ) {
-		// potential error comes from WP_Error and is no user input.
-		// phpcs:ignore
-		$error_string = $create_result->get_error_message();
-		echo '<div class="notice error inline"><p>' . esc_html( $error_string ) . '</p></div>';
+		echo '<div class="notice error inline"><p>' . esc_html( $create_result->get_error_message() ) . '</p></div>';
 	} else {
 		echo '<div class="notice inline"><p>' . esc_html__( 'Ad Group successfully created', 'advanced-ads' ) . '</p></div>';
+		?>
+		<script>
+			window.addEventListener( 'DOMContentLoaded', () => {
+				window.location.hash = '#modal-group-edit-<?php echo esc_html( $create_result->id ); ?>';
+			} );
+		</script>
+		<?php
 	}
 }
 // save updated groups.
@@ -48,14 +51,18 @@ if ( isset( $_REQUEST['advads-group-update-nonce'] ) ) {
 </div>
 <div class="wrap nosubsub">
 	<h2 style="display: none;"><!-- There needs to be an empty H2 headline at the top of the page so that WordPress can properly position admin notifications --></h2>
-	<?php ob_start(); ?>
-	<p>
-		<?php
-		esc_attr_e( 'Ad Groups are a very flexible method to bundle ads. You can use them to display random ads in the frontend or run split tests, but also just for informational purposes. Not only can an Ad Groups have multiple ads, but an ad can belong to multiple ad groups.', 'advanced-ads' );
-		?>
-		<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/ad-groups/?utm_source=advanced-ads&utm_medium=link&utm_campaign=groups'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads' ); ?></a>
-	</p>
 	<?php
+	ob_start();
+	if ( ! count( $ad_groups_list->groups ) ) :
+		?>
+		<p>
+			<?php
+			echo esc_html( $ad_groups_list::get_description() );
+			?>
+			<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/ad-groups/?utm_source=advanced-ads&utm_medium=link&utm_campaign=groups'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads' ); ?></a>
+		</p>
+		<?php
+	endif;
 	require ADVADS_BASE_PATH . 'admin/views/group-form.php';
 	$modal_slug = 'group-new';
 	new Advanced_Ads_Modal( array(

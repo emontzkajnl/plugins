@@ -69,6 +69,7 @@ class Placement_Type_Options extends \ArrayObject {
 	 *
 	 * @return false|mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function &offsetGet( $key ) {
 		if ( ! $this->offsetExists( $key ) && property_exists( $this, $key ) ) {
 			return $this->{$key};

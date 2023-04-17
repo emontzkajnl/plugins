@@ -205,7 +205,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	 * @todo move ad initialization to main function and just global it
 	 */
 	public function markup_meta_boxes( $post, $box ) {
-		$ad = new Advanced_Ads_Ad( $post->ID );
+		$ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 
 		switch ( $box['id'] ) {
 			case 'ad-main-box':
@@ -224,6 +224,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 				$wrapper_class      = $ad->options( 'output.wrapper-class', '' );
 				$debug_mode_enabled = (bool) $ad->options( 'output.debugmode', false );
 				$view               = 'ad-output-metabox.php';
+				$hndlelinks         = '<a href="' . ADVADS_URL . 'manual/optimizing-the-ad-layout/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-layout" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
 				break;
 			case 'ad-display-box':
 				$view        = 'conditions/ad-display-metabox.php';

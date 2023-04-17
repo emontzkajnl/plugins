@@ -49,6 +49,20 @@ class Placement_Type extends \ArrayObject {
 	private $options;
 
 	/**
+	 * Compute all allowed ads once and assign them to this variable.
+	 *
+	 * @var array
+	 */
+	private $allowed_ads;
+
+	/**
+	 * Compute all allowed groups once and assign them to this variable.
+	 *
+	 * @var array
+	 */
+	private $allowed_groups;
+
+	/**
 	 * The placement type.
 	 *
 	 * @var string
@@ -145,5 +159,80 @@ class Placement_Type extends \ArrayObject {
 		}
 
 		return in_array( $type, $allowed, true );
+	}
+
+	/**
+	 * Get all allowed groups for this placement type.
+	 * Save them in instance, so they only have to be calculated once per type.
+	 *
+	 * @return array
+	 */
+	public function get_allowed_groups() {
+		if ( isset( $this->allowed_groups ) ) {
+			return $this->allowed_groups;
+		}
+
+		$this->allowed_groups = [];
+
+		foreach ( \Advanced_Ads::get_instance()->get_model()->get_ad_groups() as $group ) {
+			if ( ! $this->is_group_type_allowed( $group->type ) ) {
+				continue;
+			}
+
+			// check if the group has allowed ads.
+			$group_ads = array_filter( $group->get_all_ads(), function( \WP_Post $ad_post ) {
+				return $this->is_ad_type_allowed( ( new \Advanced_Ads_Ad( $ad_post->ID ) )->type );
+			} );
+			if ( empty( $group_ads ) ) {
+				continue;
+			}
+
+			$this->allowed_groups[ 'group_' . $group->id ] = $group->name;
+		}
+
+		return $this->allowed_groups;
+	}
+
+	/**
+	 * Get all allowed ads for this placement type.
+	 * Save them in instance, so they only have to be calculated once per type.
+	 *
+	 * @return array
+	 */
+	public function get_allowed_ads() {
+		if ( isset( $this->allowed_ads ) ) {
+			return $this->allowed_ads;
+		}
+
+		$this->allowed_ads = [];
+
+		foreach ( $this->get_all_ads() as $ad ) {
+			if ( ! $this->is_ad_type_allowed( $ad->type ) ) {
+				continue;
+			}
+			$this->allowed_ads[ 'ad_' . apply_filters( 'wpml_object_id', $ad->id, 'advanced_ads', true ) ] = $ad->title;
+		}
+
+		return $this->allowed_ads;
+	}
+
+	/**
+	 * Get all available ads once.
+	 *
+	 * @return \Advanced_Ads_Ad[]
+	 */
+	private function get_all_ads() {
+		static $all_ads;
+		if ( $all_ads === null ) {
+			$all_ads = array_map( function( $ad_id ) {
+				return new \Advanced_Ads_Ad( $ad_id );
+			}, \Advanced_Ads::get_instance()->get_model()->get_ads( [
+				'orderby' => 'title',
+				'order'   => 'ASC',
+				'fields'  => 'ids',
+			] ) );
+		}
+
+		return $all_ads;
 	}
 }

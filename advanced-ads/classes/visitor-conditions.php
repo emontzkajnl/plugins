@@ -37,11 +37,24 @@ class Advanced_Ads_Visitor_Conditions {
 			[
 				'mobile'   => [
 					// type of the condition.
-					'label'       => __( 'device', 'advanced-ads' ),
-					'description' => __( 'Display ads only on mobile devices or hide them.', 'advanced-ads' ),
-					'metabox'     => [ 'Advanced_Ads_Visitor_Conditions', 'mobile_is_or_not' ], // callback to generate the metabox.
-					'check'       => [ 'Advanced_Ads_Visitor_Conditions', 'check_mobile' ], // callback for frontend check.
-					'helplink'    => ADVADS_URL . 'manual/display-ads-either-on-mobile-or-desktop/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-device',
+					'label'        => __( 'Device', 'advanced-ads' ),
+					'metabox'      => [ 'Advanced_Ads_Visitor_Conditions', 'mobile_is_or_not' ], // callback to generate the metabox.
+					'check'        => [ 'Advanced_Ads_Visitor_Conditions', 'check_device' ], // callback for frontend check.
+					'helplink'     => ADVADS_URL . 'manual/display-ads-either-on-mobile-or-desktop/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-device',
+					'device_types' => [
+						'mobile'  => [
+							'id'    => 'mobile',
+							'label' => _x( 'Mobile', 'Device condition', 'advanced-ads' ),
+						],
+						'tablet'  => [
+							'id'    => 'tablet',
+							'label' => _x( 'Tablet', 'Device condition', 'advanced-ads' ),
+						],
+						'desktop' => [
+							'id'    => 'desktop',
+							'label' => _x( 'Desktop', 'Device condition', 'advanced-ads' ),
+						],
+					],
 				],
 				'loggedin' => [
 					'label'        => __( 'logged-in visitor', 'advanced-ads' ),
@@ -104,31 +117,25 @@ class Advanced_Ads_Visitor_Conditions {
 			return;
 		}
 
-		// form name basis.
-		$name = self::get_form_name_with_index( $form_name, $index );
-
 		// options.
 		$operator = isset( $options['operator'] ) ? $options['operator'] : 'is';
 
-		include ADVADS_BASE_PATH . 'admin/views/conditions/condition-device.php';
-
-		if ( ! defined( 'AAR_SLUG' ) ) {
-			?><p><?php
-			sprintf(
-				wp_kses(
-				// translators: %s is a URL. Please don’t change it.
-					__( 'Display ads by the available space on the device or target tablets with the <a href="%s" target="_blank">Responsive add-on</a>', 'advanced-ads' ),
-					[
-						'a' => [
-							'href'   => [],
-							'target' => [],
-						],
-					]
-				),
-				ADVADS_URL . 'add-ons/responsive-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor-responsive'
-			);
-			?></p><?php
+		// convert previous binary option to device selector.
+		if ( ! array_key_exists( 'value', $options ) ) {
+			$options['value'] = $operator === 'is' ? [ 'tablet', 'mobile' ] : [ 'desktop' ];
+			$operator         = 'is';
 		}
+
+		$type_options[ $options['type'] ]['device_types'] = array_map( function( $device_type ) use ( $options ) {
+			$device_type['checked'] = in_array( $device_type['id'], $options['value'], true );
+
+			return $device_type;
+		}, $type_options[ $options['type'] ]['device_types'] );
+
+		// form name basis.
+		$name = self::get_form_name_with_index( $form_name, $index );
+
+		include ADVADS_BASE_PATH . 'admin/views/conditions/condition-device.php';
 	}
 
 	/**
@@ -334,14 +341,47 @@ class Advanced_Ads_Visitor_Conditions {
 	}
 
 	/**
-	 * Check mobile visitor condition in frontend
+	 * Check whether device visitor condition in frontend is true.
 	 *
 	 * @param array $options options of the condition.
 	 *
-	 * @return bool true if can be displayed
+	 * @return bool
 	 */
-	public static function check_mobile( $options = [] ) {
+	public static function check_device( $options = [] ) {
+		if ( ! array_key_exists( 'value', $options ) ) {
+			return self::check_mobile( $options );
+		}
 
+		$mobile_detect = new Mobile_Detect();
+		// register callbacks to decide whether device "is".
+		$callbacks = array_intersect_key( [
+			'mobile'  => function() use ( $mobile_detect ) {
+				return $mobile_detect->isMobile() && ! $mobile_detect->isTablet();
+			},
+			'tablet'  => function() use ( $mobile_detect ) {
+				return $mobile_detect->isTablet();
+			},
+			'desktop' => function() use ( $mobile_detect ) {
+				return ! $mobile_detect->isTablet() && ! $mobile_detect->isMobile();
+			},
+		], array_flip( $options['value'] ) );
+		// only call devices that are part of the condition.
+		array_walk( $callbacks, static function( callable &$value ) {
+			$value = $value();
+		} );
+
+		return array_filter( $callbacks ) !== [];
+	}
+
+	/**
+	 * Check mobile visitor condition in frontend
+	 *
+	 * @param array $options options of the condition.
+	 * @deprecated -- Only used if new options hasn't been saved
+	 *
+	 * @return bool
+	 */
+	private static function check_mobile( $options ) {
 		if ( ! isset( $options['operator'] ) ) {
 			return true;
 		}

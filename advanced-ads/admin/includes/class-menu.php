@@ -246,9 +246,8 @@ class Advanced_Ads_Admin_Menu {
 	public function display_placements_page() {
 		$placement_types = Advanced_Ads_Placements::get_placement_types();
 		$placements      = Advanced_Ads::get_ad_placements_array(); // -TODO use model
-		// load ads and groups for select field.
-		$items = Advanced_Ads_Placements::items_for_select();
-		$orderby = $this->get_field_to_order_placement();
+		$orderby         = $this->get_field_to_order_placement();
+		$has_placements  = isset( $placements ) && is_array( $placements ) && count( $placements );
 
 		// display view.
 		include ADVADS_BASE_PATH . 'admin/views/placements.php';
@@ -281,96 +280,69 @@ class Advanced_Ads_Admin_Menu {
 	 * @since    1.6.8.1
 	 */
 	public function display_support_page() {
-
 		include ADVADS_BASE_PATH . 'admin/views/support.php';
 	}
 
 	/**
 	 * Render the ad group page
-	 *
-	 * @since    1.0.0
 	 */
 	public function ad_group_admin_page() {
-
 		$taxonomy  = Advanced_Ads::AD_GROUP_TAXONOMY;
 		$post_type = Advanced_Ads::POST_TYPE_SLUG;
 		$tax       = get_taxonomy( $taxonomy );
-		$action = Advanced_Ads_Admin::get_instance()->current_action();
+		$action    = Advanced_Ads_Admin::get_instance()->current_action();
 
 		// handle new and updated groups.
-		if ( 'editedgroup' === $action ) {
+		if ( $action === 'editedgroup' ) {
 			$group_id = (int) $_POST['group_id'];
 			check_admin_referer( 'update-group_' . $group_id );
 
 			if ( ! current_user_can( $tax->cap->edit_terms ) ) {
-				wp_die( esc_html__( 'Sorry, you are not allowed to access this feature.', 'advanced-ads' ) ); }
+				wp_die( esc_html__( 'Sorry, you are not allowed to access this feature.', 'advanced-ads' ) );
+			}
 
 			// handle new groups.
-			if ( 0 === $group_id ) {
-				$ret = wp_insert_term( $_POST['name'], $taxonomy, $_POST );
-				if ( $ret && ! is_wp_error( $ret ) ) {
-					$forced_message = 1; } else {
-					$forced_message = 4; }
-					// handle group updates.
+			if ( $group_id === 0 ) {
+				wp_insert_term( $_POST['name'], $taxonomy, $_POST );
 			} else {
+				// handle group updates.
 				$tag = get_term( $group_id, $taxonomy );
 				if ( ! $tag ) {
-					wp_die( esc_html__( 'You attempted to edit an ad group that doesn&#8217;t exist. Perhaps it was deleted?', 'advanced-ads' ) ); }
+					wp_die( esc_html__( 'You attempted to edit an ad group that doesn&#8217;t exist. Perhaps it was deleted?', 'advanced-ads' ) );
+				}
 
-				$ret = wp_update_term( $group_id, $taxonomy, $_POST );
-				if ( $ret && ! is_wp_error( $ret ) ) {
-					$forced_message = 3; } else {
-					$forced_message = 5; }
+				wp_update_term( $group_id, $taxonomy, $_POST );
 			}
 			// deleting items.
-		} elseif ( 'delete' === $action ) {
+		} elseif ( $action === 'delete' ) {
 			$group_id = (int) $_REQUEST['group_id'];
 			check_admin_referer( 'delete-tag_' . $group_id );
 
 			if ( ! current_user_can( $tax->cap->delete_terms ) ) {
-				wp_die( esc_html__( 'Sorry, you are not allowed to access this feature.', 'advanced-ads' ) ); }
+				wp_die( esc_html__( 'Sorry, you are not allowed to access this feature.', 'advanced-ads' ) );
+			}
 
 			wp_delete_term( $group_id, $taxonomy );
 			// delete the weights.
 			Advanced_Ads_Group::delete_ad_weights( $group_id );
-
-			$forced_message = 2;
 		}
 
-		// handle views.
-		switch ( $action ) {
-			case 'edit':
-				$title = $tax->labels->edit_item;
-				if ( isset( $_REQUEST['group_id'] ) ) {
-					$group_id = absint( $_REQUEST['group_id'] );
-					$tag      = get_term( $group_id, $taxonomy, OBJECT, 'edit' );
-				} else {
-					$group_id = 0;
-					$tag      = false;
-				}
+		$screen = get_current_screen();
 
-				include ADVADS_BASE_PATH . 'admin/views/ad-group-edit.php';
-				break;
-
-			default:
-				$title  = $tax->labels->name;
-				$screen = get_current_screen();
-
-				if ( ! $screen ) {
-					return;
-				}
-
-				$screen->taxonomy = Advanced_Ads::AD_GROUP_TAXONOMY;
-				$wp_list_table    = _get_list_table( 'WP_Terms_List_Table' );
-				$wp_list_table->prepare_items();
-				// load the ad group list after groups might have been deleted
-				$ad_groups_list      = new Advanced_Ads_Groups_List();
-				$group_types         = $ad_groups_list->get_ad_group_types();
-				$group_types_premium = $ad_groups_list->get_ad_group_types_premium();
-				$is_search           = ! empty( $_GET['s'] );
-				// load template.
-				include ADVADS_BASE_PATH . 'admin/views/ad-group.php';
+		if ( ! $screen ) {
+			return;
 		}
+
+		$screen->taxonomy = Advanced_Ads::AD_GROUP_TAXONOMY;
+		$wp_list_table    = _get_list_table( 'WP_Terms_List_Table' );
+		$wp_list_table->prepare_items();
+		// load the ad group list after groups might have been deleted
+		$ad_groups_list      = new Advanced_Ads_Groups_List();
+		$group_types         = $ad_groups_list->get_ad_group_types();
+		$group_types_premium = $ad_groups_list->get_ad_group_types_premium();
+		$is_search           = ! empty( $_GET['s'] );
+		// load template.
+		include ADVADS_BASE_PATH . 'admin/views/ad-group.php';
 	}
 
 	/**

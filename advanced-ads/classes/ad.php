@@ -188,76 +188,35 @@ class Advanced_Ads_Ad {
 	public $output;
 
 	/**
-	 * Init ad object
+	 * Whether the current ad is in a head placement.
 	 *
-	 * @param int   $id id of the ad.
-	 * @param array $args additional arguments.
+	 * @var bool
 	 */
-	public function __construct( $id, $args = [] ) {
-		$this->id   = (int) $id;
-		$this->args = is_array( $args ) ? $args : [];
-
-		// whether the ad will be tracked.
-		$this->global_output = isset( $this->args['global_output'] ) ? (bool) $this->args['global_output'] : true;
-
-		// Run constructor to check early if ajax cache busting already created inline css.
-		$this->inline_css = new Advanced_Ads_Inline_Css();
-
-		if ( ! empty( $this->id ) ) {
-			$this->load( $this->id );
-		}
-
-		// dynamically add sanitize filters for condition types.
-		$_types = [];
-		// -TODO use model
-		$advanced_ads_ad_conditions = Advanced_Ads::get_ad_conditions();
-		foreach ( $advanced_ads_ad_conditions as $_condition ) {
-			// add unique.
-			$_types[ $_condition['type'] ] = false;
-		}
-		// iterate types.
-		foreach ( array_keys( $_types ) as $_type ) {
-			// -TODO might be faster to use __call() method or isset()-test class method array
-			$method_name = 'sanitize_condition_' . $_type;
-			if ( method_exists( $this, $method_name ) ) {
-				add_filter( 'advanced-ads-sanitize-condition-' . $_type, [ $this, $method_name ], 10, 1 );
-			} elseif ( function_exists( 'advads_sanitize_condition_' . $_type ) ) {
-				// check for public function to sanitize this.
-				add_filter( 'advanced-ads-sanitize-condition-' . $_type, 'advads_sanitize_condition_' . $_type, 10, 1 );
-			}
-		}
-	}
+	public $is_head_placement;
 
 	/**
-	 * Load an ad object by id based on its ad type
+	 * Advanced_Ads_Ad constructor.
 	 *
-	 * @param int $id ad id.
-	 *
-	 * @return bool false if ad could not be loaded.
+	 * @param int      $id   Ad ID.
+	 * @param iterable $args Additional arguments.
 	 */
-	private function load( $id = 0 ) {
-
-		$_data = get_post( $id );
-		if ( null === $_data ) {
-			return false;
+	public function __construct( int $id, iterable $args = [] ) {
+		if ( empty( $id ) ) {
+			return;
 		}
 
-		// return, if not an ad.
-		if ( Advanced_Ads::POST_TYPE_SLUG !== $_data->post_type ) {
-			return false;
-		} else {
-			$this->is_ad = true;
+		$this->id   = $id;
+		$this->args = is_array( $args ) ? $args : [];
+
+		$post_data = get_post( $id );
+		if ( $post_data === null || $post_data->post_type !== Advanced_Ads::POST_TYPE_SLUG ) {
+			return;
 		}
 
-		$this->type  = $this->options( 'type' );
-		$this->title = $_data->post_title;
-		/* load ad type object */
-		$types = Advanced_Ads::get_instance()->ad_types;
-		if ( isset( $types[ $this->type ] ) ) {
-			$this->type_obj = $types[ $this->type ];
-		} else {
-			$this->type_obj = new Advanced_Ads_Ad_Type_Abstract();
-		}
+		$this->is_ad    = true;
+		$this->type     = $this->options( 'type' );
+		$this->title    = $post_data->post_title;
+		$this->type_obj = Advanced_Ads::get_instance()->ad_types[ $this->type ] ?? new Advanced_Ads_Ad_Type_Abstract();
 
 		// filter the positioning options.
 		new Advanced_Ads_Ad_Positioning( $this );
@@ -268,13 +227,13 @@ class Advanced_Ads_Ad {
 		$this->conditions           = $this->options( 'conditions' );
 		$this->description          = $this->options( 'description' );
 		$this->output               = $this->options( 'output' );
-		$this->status               = $_data->post_status;
+		$this->status               = $post_data->post_status;
 		$this->expiry_date          = (int) $this->options( 'expiry_date' );
 		$this->is_head_placement    = isset( $this->args['placement_type'] ) && 'header' === $this->args['placement_type'];
 		$this->args['is_top_level'] = ! isset( $this->args['is_top_level'] );
 
 		// load content based on ad type.
-		$this->content = $this->type_obj->load_content( $_data );
+		$this->content = $this->type_obj->load_content( $post_data );
 
 		if ( ! $this->is_head_placement ) {
 			$this->maybe_create_label();
@@ -292,6 +251,24 @@ class Advanced_Ads_Ad {
 		}
 
 		$this->ad_expiration = new Advanced_Ads_Ad_Expiration( $this );
+
+		// dynamically add sanitize filters for condition types.
+		$condition_types = array_unique( array_column( Advanced_Ads::get_instance()->get_model()->get_ad_conditions(), 'type' ) );
+		foreach ( $condition_types as $condition_type ) {
+			$method_name = 'sanitize_condition_' . $condition_type;
+			if ( method_exists( $this, $method_name ) ) {
+				add_filter( 'advanced-ads-sanitize-condition-' . $condition_type, [ $this, $method_name ], 10, 1 );
+			} elseif ( function_exists( 'advads_sanitize_condition_' . $condition_type ) ) {
+				// check for public function to sanitize this.
+				add_filter( 'advanced-ads-sanitize-condition-' . $condition_type, 'advads_sanitize_condition_' . $condition_type, 10, 1 );
+			}
+		}
+
+		// whether the ad will be tracked.
+		$this->global_output = ! isset( $this->args['global_output'] ) || (bool) $this->args['global_output'];
+
+		// Run constructor to check early if ajax cache busting already created inline css.
+		$this->inline_css = new Advanced_Ads_Inline_Css();
 	}
 
 	/**

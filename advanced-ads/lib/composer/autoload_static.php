@@ -20,10 +20,23 @@ class ComposerStaticInit_advanced_ads
         ),
     );
 
+    public static $prefixesPsr0 = array (
+        'D' => 
+        array (
+            'Detection' => 
+            array (
+                0 => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/namespaced',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'ADVADS_SL_Plugin_Updater' => __DIR__ . '/../..' . '/classes/EDD_SL_Plugin_Updater.php',
         'Advads_Ad' => __DIR__ . '/../..' . '/classes/ad.php',
         'Advanced_Ads' => __DIR__ . '/../..' . '/public/class-advanced-ads.php',
+        'Advanced_Ads\\Abstract_Repository' => __DIR__ . '/../..' . '/src/Abstract_Repository.php',
+        'Advanced_Ads\\Ad_Repository' => __DIR__ . '/../..' . '/src/Ad_Repository.php',
+        'Advanced_Ads\\Admin\\Post_List' => __DIR__ . '/../..' . '/admin/includes/class-post-list.php',
         'Advanced_Ads\\Placement_Type' => __DIR__ . '/../..' . '/src/Placement_Type.php',
         'Advanced_Ads\\Placement_Type_Options' => __DIR__ . '/../..' . '/src/Placement_Type_Options.php',
         'Advanced_Ads_Ad' => __DIR__ . '/../..' . '/classes/ad.php',
@@ -75,6 +88,8 @@ class ComposerStaticInit_advanced_ads
         'Advanced_Ads_Visitor_Conditions' => __DIR__ . '/../..' . '/classes/visitor-conditions.php',
         'Advanced_Ads_Widget' => __DIR__ . '/../..' . '/classes/widget.php',
 
+        'Detection\\MobileDetect' => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/namespaced/Detection/MobileDetect.php',
+        'Mobile_Detect' => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/Mobile_Detect.php',
         'Yoast_I18n_WordPressOrg_v3' => __DIR__ . '/..' . '/yoast/i18n-module/src/i18n-wordpressorg-v3.php',
         'Yoast_I18n_v3' => __DIR__ . '/..' . '/yoast/i18n-module/src/i18n-v3.php',
     );
@@ -84,6 +99,7 @@ class ComposerStaticInit_advanced_ads
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit_advanced_ads::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit_advanced_ads::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit_advanced_ads::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit_advanced_ads::$classMap;
 
         }, null, ClassLoader::class);

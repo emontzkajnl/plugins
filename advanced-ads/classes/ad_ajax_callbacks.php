@@ -45,6 +45,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 		add_action( 'wp_ajax_advads-ad-health-notice-solved', [ $this, 'ad_health_notice_solved' ] );
 		add_action( 'wp_ajax_advads-update-frontend-element', [ $this, 'update_frontend_element' ] );
 		add_action( 'wp_ajax_advads-get-block-hints', [ $this, 'get_block_hints' ] );
+		add_action( 'wp_ajax_advads-placements-allowed-ads', [ $this, 'get_allowed_ads_for_placement_type' ] );
 
 	}
 
@@ -67,7 +68,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 			die();
 		}
 
-		$ad = new Advanced_Ads_Ad( $ad_id );
+		$ad = \Advanced_Ads\Ad_Repository::get( $ad_id );
 
 		if ( ! empty( $types[ $type_string ] ) && method_exists( $types[ $type_string ], 'render_parameters' ) ) {
 			$type = $types[ $type_string ];
@@ -570,5 +571,23 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		$hints = Advanced_Ads_Group::get_hints( new Advanced_Ads_Group( (int) $item[1] ) );
 		wp_send_json_success( $hints );
+	}
+
+	/**
+	 * Get allowed ads per placement.
+	 *
+	 * @return void
+	 */
+	public function get_allowed_ads_for_placement_type() {
+		check_ajax_referer( sanitize_text_field( $_POST['action'] ) );
+
+		wp_send_json_success( [
+			'items' => array_filter(
+				Advanced_Ads_Placements::get_items_for_placement( sanitize_text_field( $_POST['placement_type'] ) ),
+				static function( $items_group ) {
+					return ! empty( $items_group['items'] );
+				}
+			),
+		] );
 	}
 }

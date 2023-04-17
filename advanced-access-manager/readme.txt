@@ -3,8 +3,8 @@ Contributors: vasyltech
 Tags: access control, membership, backend menu, user role, restricted content, security, jwt
 Requires at least: 4.7.0
 Requires PHP: 5.6.0
-Tested up to: 5.9.0
-Stable tag: 6.8.1
+Tested up to: 6.2.0
+Stable tag: 6.9.9
 
 All you need to manage access to WordPress websites on the frontend, backend and API levels for any role, user or visitors.
 
@@ -16,46 +16,36 @@ https://www.youtube.com/watch?v=mj5Xa_Wc16Y
 
 = Few Quick Facts =
 
-* The only plugin that gives you the absolute freedom to define a most granular access to any aspect of your website and most of the features are free;
-* Bullet-proven plugin that is used on over 100,000 websites where all features are well-tested and [documented](https://aamplugin.com/support). Very low amount of support tickets speaks for quality;
-* It is the only plugin that gives you the ability to manage access to your website content for any role, individual user and visitors or even define the default access to all posts, pages, custom post types, categories, and custom taxonomies;
-* AAM is a developer-oriented plugin. It has dozens of hooks and configurations. It is integrated with WordPress RESTful and XML-RPC APIs and has numerous abstract layers to simplify coding;
-* No ads or other promotional crap. The UI is clean and well crafted so you can focus only on what matters;
-* No need to be a "paid" customer to get help. Request support at any time;
-* Some features are limited or available only with [premium add-ons](https://aamplugin.com/pricing). AAM functionality is transparent and you will absolutely know when you need to get a premium add-on;
-
-= Main Areas Of Focus =
-
-* [Access & Security Policy](https://aamplugin.com/reference/policy) allows you to define who, when, how and under what conditions your website resources can be accessed;
-* Content access control on the frontend, backend and API levels to posts, pages, media attachments, custom post types, categories, tags, custom taxonomies for any role, user and visitors;
-* Roles & capabilities management with the ability to create new roles and capabilities, edit, clone or delete existing;
-* Access control to backend area including backend menu, toolbar, metaboxes & widgets;
-* Access control to RESTful API;
-* Developer-friendly API so it can be used by other developers to work with AAM core;
-* And all necessary features to setup smooth user flow during login, logout, access denied even, 404 etc.
+* The only plugin that gives you the absolute freedom to define the most granular access to any aspect of your website, and most of the features are free.
+* Bullet-proven solution used on over 100,000 websites where all features are well-tested and [documented](https://aamportal.com). The low amount of support tickets speaks for quality.
+* It is the only plugin that allows managing access to your website content for any role, individual user, and visitor or configuring the default access to all posts, pages, custom post types, categories, and custom taxonomies.
+* AAM is a developer-oriented plugin. It has dozens of hooks and configurations. It is integrated with WordPress RESTful and XML-RPC APIs and has numerous abstract layers to simplify coding.
+* No ads or other promotional crap. The UI is clean and well-crafted, so you can focus only on what matters.
+* No need to be a "paid" customer to get help. Request [support](https://aamportal.com/support) at any time.
+* Some features are limited or available only with [premium add-ons](https://aamportal.com/premium). AAM functionality is transparent and you will know when the premium add-on is required.
 
 = The Most Popular Features =
 
-* [free] Manage Backend Menu. Manage access to the backend menu for any user or role. Find out more from [How to manage WordPress backend menu](https://aamplugin.com/article/how-to-manage-wordpress-backend-menu) article;
+* [free] Manage Backend Menu. Manage access to the backend menu for any user or role.
 * [free] Manage Roles & Capabilities. Manage all your WordPress roles and capabilities.
-* [free] All necessary set of tools to manage JWT authentication [Ultimate guide to WordPress JWT Authentication](https://aamplugin.com/article/ultimate-guide-to-wordpress-jwt-authentication)
-* [free] Create temporary user accounts. Create and manage temporary user accounts. Find out more from [How to create temporary WordPress user account](https://aamplugin.com/article/how-to-create-temporary-wordpress-user-account);
-* [limited] Content access. Very granular access to an unlimited number of posts, pages or custom post types ([20 different options](https://aamplugin.com/reference/plugin#posts-terms)). With premium [Plus Package](https://aamplugin.com/extension/plus-package) add-on also manage access to taxonomies, terms or setup the default access to everything. Find out more from [How to manage access to the WordPress content](https://aamplugin.com/article/how-to-manage-access-to-the-wordpress-content) article;
+* [free] All necessary sets of tools to manage authentication with JWT.
+* [free] Create temporary user accounts. Create and manage temporary user accounts.
+* [limited] Content access. Granular access to an unlimited number of posts, pages, custom post types, terms, taxonomies, or custom taxonomies.
 * [free] Manage Admin Toolbar. Filter out unnecessary items from the top admin toolbar for any role or user.
-* [free] Backend Lockdown. Restrict access to your website backend side for any user or role. Find out more from [How to lockdown WordPress backend](https://aamplugin.com/article/how-to-lockdown-wordpress-backend) article;
-* [free] Secure Login Widget & Shortcode. Drop AJAX login widget or shortcode anywhere on your website. Find out more from [How does AAM Secure Login works](https://aamplugin.com/article/how-does-aam-secure-login-works) article;
+* [free] Backend Lockdown. Restrict access to your website's backend side for any user or role.
+* [free] Secure Login Widget & Shortcode. Drop the AJAX login widget or shortcode anywhere on your website.
 * [free] Ability to enable/disable RESTful and XML-RPC APIs.
 * [limited] URI Access. Allow or deny access to any page of your website by the page URL as well as how to redirect a user when access is denied;
-* [free] Manage access to RESTful or XML-RPC individual endpoints for any role, user or visitors.
-* [free] Login with URL. For more information check [WordPress: Temporary User Account, Login With URL & JWT Token](https://aamplugin.com/article/wordpress-temporary-user-account-login-with-url-jwt-token) article.
-* [free] Content Filter. Filter or replace parts of your content with AAM shortcodes. Find out more from [How to filter WordPress post content](https://aamplugin.com/article/how-to-filter-wordpress-post-content) article;
+* [free] Manage access to RESTful or XML-RPC individual endpoints for any role, user, or visitor.
+* [free] Passwordless login with URL.
+* [free] Content Filter. Filter or replace parts of your content with AAM shortcodes.
 * [free] Login/Logout Redirects. Define custom login and logout redirect for any user or role;
-* [free] 404 Redirect. Redefine where a user should be redirected when a page does not exist. Find out more from [How to redirect on WordPress 404 error](https://aamplugin.com/article/how-to-redirect-on-wordpress-404-error);
-* [free] Access Denied Redirect. Define custom redirect for any role, user or visitors when access is denied for a restricted area on your website;
-* [free] Manage Metaboxes & Widgets. Filter out restricted or unnecessary metaboxes and widgets on both frontend and backend for any user, role or visitors. Find out more from [How to hide WordPress metaboxes & widgets](https://aamplugin.com/article/how-to-hide-wordpress-metaboxes-and-widgets) article;
-* [paid] Manage access based on IP address or referred domain. Manage access to the entire website or any specific page or post based on referred host or IP address. Find out more from [How to manage access to WordPress website by IP address](https://aamplugin.com/article/how-to-manage-access-to-wordpress-website-by-ip-address) article;
-* [free] Multiple role support. AAM supports multiple roles per user [WordPress access control for users with multiple roles](https://aamplugin.com/article/wordpress-access-control-for-users-with-multiple-roles)
-* [and even more...] Check our [official website](https://aamplugin.com) to learn more about AAM
+* [free] 404 Redirect. Redefine where a user should be redirected when a page does not exist.
+* [free] Access Denied Redirect. Define custom redirect for any role, user, or visitor when access is denied for a restricted area on your website.
+* [free] Manage Metaboxes & Widgets. Filter out restricted or unnecessary metaboxes and widgets on both frontend and backend for any user, role, or visitor.
+* [paid] Manage access based on an IP address or referred domain. Manage access to the entire website or any specific page or post based on referred host or IP address.
+* [free] Multiple role support.
+* [and even more...]
 
 = Non-Negotiable =
 
@@ -90,6 +80,82 @@ We take security and privacy very seriously, that is why there are several non-n
 11. Improve your website security
 
 == Changelog ==
+
+= 6.9.9 =
+* Fixed: Undefined array key "callback" [https://github.com/aamplugin/advanced-access-manager/issues/264](https://github.com/aamplugin/advanced-access-manager/issues/264)
+* Fixed: PHP Deprecated: strpos(): Passing null to parameter #1 ($haystack) of type string [https://github.com/aamplugin/advanced-access-manager/issues/265](https://github.com/aamplugin/advanced-access-manager/issues/265)
+* Changed: Disabling the "Render Access Manager Metabox" by default [https://github.com/aamplugin/advanced-access-manager/issues/268](https://github.com/aamplugin/advanced-access-manager/issues/268)
+* Changed: https://github.com/aamplugin/advanced-access-manager/issues/266 [https://github.com/aamplugin/advanced-access-manager/issues/266](https://github.com/aamplugin/advanced-access-manager/issues/266)
+* Added: Include MU plugins in the policy dependency check [https://github.com/aamplugin/advanced-access-manager/issues/267](https://github.com/aamplugin/advanced-access-manager/issues/267)
+
+= 6.9.8 =
+* Fixed: Fix the missing token_expires [https://github.com/aamplugin/advanced-access-manager/issues/263](https://github.com/aamplugin/advanced-access-manager/issues/263)
+* Fixed: DataTables warning: table id=role-list - Ajax error [https://github.com/aamplugin/advanced-access-manager/issues/262](https://github.com/aamplugin/advanced-access-manager/issues/262)
+* Fixed: List of users does not filter [https://github.com/aamplugin/advanced-access-manager/issues/261](https://github.com/aamplugin/advanced-access-manager/issues/261)
+
+= 6.9.7 =
+* Fixed: DataTables warning: table id=role-list [https://github.com/aamplugin/advanced-access-manager/issues/258](https://github.com/aamplugin/advanced-access-manager/issues/258)
+* Fixed: PHP Fatal error: Uncaught ArgumentCountError [https://github.com/aamplugin/advanced-access-manager/issues/259](https://github.com/aamplugin/advanced-access-manager/issues/259)
+* Added New: Warn user about disabling RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/260](https://github.com/aamplugin/advanced-access-manager/issues/260)
+
+= 6.9.6 =
+* Fixed: Role XXX already exists [https://github.com/aamplugin/advanced-access-manager/issues/250](https://github.com/aamplugin/advanced-access-manager/issues/250)
+* Fixed: Clean-up deprecated warnings [https://github.com/aamplugin/advanced-access-manager/issues/252](https://github.com/aamplugin/advanced-access-manager/issues/252)
+* Added New: RESTful API to manage Roles [https://github.com/aamplugin/advanced-access-manager/issues/253](https://github.com/aamplugin/advanced-access-manager/issues/253)
+* Added New: Introducing AAM Developer Framework [https://github.com/aamplugin/advanced-access-manager/issues/254](https://github.com/aamplugin/advanced-access-manager/issues/254)
+* Added New: Enhance AAM API to allow settings reset [https://github.com/aamplugin/advanced-access-manager/issues/249](https://github.com/aamplugin/advanced-access-manager/issues/249)
+* Changed: Simplify premium offering functionality further [https://github.com/aamplugin/advanced-access-manager/issues/255](https://github.com/aamplugin/advanced-access-manager/issues/255)
+* Changed: Remove all references to aamplugin.com [https://github.com/aamplugin/advanced-access-manager/issues/256](https://github.com/aamplugin/advanced-access-manager/issues/256)
+
+= 6.9.5 =
+* Fixed: Duplicated ConfigPress editor [https://github.com/aamplugin/advanced-access-manager/issues/241](https://github.com/aamplugin/advanced-access-manager/issues/241)
+* Changed: Switch to aamportal.com API for the premium add-ons [https://github.com/aamplugin/advanced-access-manager/issues/243](https://github.com/aamplugin/advanced-access-manager/issues/243)
+* Changed: Improve AAM Admin Menu feature performance [https://github.com/aamplugin/advanced-access-manager/issues/240](https://github.com/aamplugin/advanced-access-manager/issues/240)
+
+= 6.9.4 =
+* Fixed: Incorrectly escaped string values [https://github.com/aamplugin/advanced-access-manager/issues/239](https://github.com/aamplugin/advanced-access-manager/issues/239)
+* Fixed: Incorrectly handled revoked token validation [https://github.com/aamplugin/advanced-access-manager/issues/238](https://github.com/aamplugin/advanced-access-manager/issues/238)
+* Fixed: Super-Admin is unable to re-assign roles in network sites [https://github.com/aamplugin/advanced-access-manager/issues/180](https://github.com/aamplugin/advanced-access-manager/issues/180)
+
+= 6.9.3 =
+* Fixed: Fatal error: Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable... [https://github.com/aamplugin/advanced-access-manager/issues/236](https://github.com/aamplugin/advanced-access-manager/issues/236)
+* Fixed: Warning: Undefined variable $value in... [https://github.com/aamplugin/advanced-access-manager/issues/235](https://github.com/aamplugin/advanced-access-manager/issues/235)
+* Changed: Deprecating offering of some AAM premium add-ons [https://github.com/aamplugin/advanced-access-manager/issues/237](https://github.com/aamplugin/advanced-access-manager/issues/237)
+
+= 6.9.2 =
+* Fixed: Compliance with WordPress.org code quality [https://github.com/aamplugin/advanced-access-manager/issues/229](https://github.com/aamplugin/advanced-access-manager/issues/229)
+
+= 6.9.1 =
+* Fixed: Incorrectly stripped backslashes for Access Policy [https://github.com/aamplugin/advanced-access-manager/issues/228](https://github.com/aamplugin/advanced-access-manager/issues/228)
+* Fixed: PHP Notice: Function AAM_Backend_Subject::hasCapability was called incorrectly [https://github.com/aamplugin/advanced-access-manager/issues/227](https://github.com/aamplugin/advanced-access-manager/issues/227)
+* Fixed: PHP Notice: Undefined offset: -1 in [https://github.com/aamplugin/advanced-access-manager/issues/226](https://github.com/aamplugin/advanced-access-manager/issues/226)
+* Added New: Add the ability to hook into filter [https://github.com/aamplugin/advanced-access-manager/issues/225](https://github.com/aamplugin/advanced-access-manager/issues/225)
+
+= 6.9.0 =
+* Fixed: Revoking JWT token via UI causes current user to logout [https://github.com/aamplugin/advanced-access-manager/issues/224](https://github.com/aamplugin/advanced-access-manager/issues/224)
+* Fixed: Notice: Undefined variable: cache [https://github.com/aamplugin/advanced-access-manager/issues/223](https://github.com/aamplugin/advanced-access-manager/issues/223)
+* Changed: Update JWT vendor [https://github.com/aamplugin/advanced-access-manager/issues/221](https://github.com/aamplugin/advanced-access-manager/issues/221)
+
+= 6.8.5 =
+* Fixed: Redirect may not always work [https://github.com/aamplugin/advanced-access-manager/issues/214](https://github.com/aamplugin/advanced-access-manager/issues/214)
+* Fixed: PHP Notice: Undefined index: 404.redirect.** [https://github.com/aamplugin/advanced-access-manager/issues/215](https://github.com/aamplugin/advanced-access-manager/issues/215)
+* Changed: Update DataTables to 1.12.1 [https://github.com/aamplugin/advanced-access-manager/issues/217](https://github.com/aamplugin/advanced-access-manager/issues/217)
+* Added New: Allow value chaining for PHP_GLOBAL marker [https://github.com/aamplugin/advanced-access-manager/issues/216](https://github.com/aamplugin/advanced-access-manager/issues/216)
+* Added New: Add the ability to filter assigned/unassigned capabilities [https://github.com/aamplugin/advanced-access-manager/issues/218](https://github.com/aamplugin/advanced-access-manager/issues/218)
+
+= 6.8.4 =
+* Fixed: PHP Notice: Undefined property: stdClass::$override [https://github.com/aamplugin/advanced-access-manager/issues/211](https://github.com/aamplugin/advanced-access-manager/issues/211)
+* Changed: Upgraded iFrame resizer library [https://github.com/aamplugin/advanced-access-manager/issues/213](https://github.com/aamplugin/advanced-access-manager/issues/213)
+* Changed: Replace CodeMirror with WP default instance [https://github.com/aamplugin/advanced-access-manager/issues/212](https://github.com/aamplugin/advanced-access-manager/issues/212)
+
+= 6.8.3 =
+* Fixed: PHP Deprecated: filter_var(): Passing null to parameter [https://github.com/aamplugin/advanced-access-manager/issues/208](https://github.com/aamplugin/advanced-access-manager/issues/208)
+* Added New: Extend CALLBACK to support inline arguments [https://github.com/aamplugin/advanced-access-manager/issues/206](https://github.com/aamplugin/advanced-access-manager/issues/206)
+* Added New: Add support for the THE_POST token [https://github.com/aamplugin/advanced-access-manager/issues/205](https://github.com/aamplugin/advanced-access-manager/issues/205)
+* Added New: Add support for new resource types Filter & Action [https://github.com/aamplugin/advanced-access-manager/issues/207](https://github.com/aamplugin/advanced-access-manager/issues/207)
+
+= 6.8.2 =
+* Fixed: Fix jquery 1.9 incompatibility with attr 'checked' by @Tofandel [https://github.com/aamplugin/advanced-access-manager/pull/204](https://github.com/aamplugin/advanced-access-manager/pull/204)
 
 = 6.8.1 =
 * Fixed: Translation issues [https://github.com/aamplugin/advanced-access-manager/issues/199](https://github.com/aamplugin/advanced-access-manager/issues/199)

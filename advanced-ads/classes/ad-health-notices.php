@@ -366,7 +366,7 @@ class Advanced_Ads_Ad_Health_Notices {
 		// attach link to ad, if given.
 		if ( ! empty( $atts['ad_id'] ) ) {
 			$id = absint( $atts['ad_id'] );
-			$ad = new Advanced_Ads_Ad( $id );
+			$ad = \Advanced_Ads\Ad_Repository::get( $id );
 			if ( $id && isset( $ad->title ) && '' !== $ad->title ) {
 				$edit_link                             = ' <a href="' . get_edit_post_link( $id ) . '">' . $ad->title . '</a>';
 				$notices[ $notice_key ]['append_text'] = isset( $notices[ $notice_key ]['append_text'] ) ? $notices[ $notice_key ]['append_text'] . $edit_link : $edit_link;

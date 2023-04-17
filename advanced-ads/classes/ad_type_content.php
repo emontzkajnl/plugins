@@ -67,6 +67,24 @@ class Advanced_Ads_Ad_Type_Content extends Advanced_Ads_Ad_Type_Abstract{
 			if ( ! user_can_richedit() ) {
 				$content = esc_textarea( $content );
 			}
+			add_filter( 'tiny_mce_before_init', function( array $init_array, $editor_id ) {
+				if ( $editor_id !== 'advanced-ad-parameters-content' ) {
+					return $init_array;
+				}
+				// add a JS listener to trigger an `input` event for the rich text textarea.
+				$init_array['setup'] = <<<'JS'
+[editor => {
+	const textarea = document.getElementById('advanced-ad-parameters-content');
+	editor.on('Dirty', event => {
+		textarea.value = editor.getContent();
+		textarea.dispatchEvent(new Event('input'));
+	});
+}][0]
+JS;
+
+				return $init_array;
+			}, 10, 2 );
+
 			$args = [
 				'textarea_name' => 'advanced_ad[content]',
 				'textarea_rows' => 10,

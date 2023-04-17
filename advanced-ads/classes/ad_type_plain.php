@@ -48,8 +48,13 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 
 		?><p class="description"><?php esc_html_e( 'Insert plain text or code into this field.', 'advanced-ads' ); ?></p>
 		<?php $this->error_unfiltered_html( $ad ); ?>
-		<textarea id="advads-ad-content-plain" cols="40" rows="10" name="advanced_ad[content]"
-				onkeyup="Advanced_Ads_Admin.check_ad_source();"><?php echo esc_textarea( $content ); ?></textarea>
+		<textarea
+			id="advads-ad-content-plain"
+			cols="40"
+			rows="10"
+			name="advanced_ad[content]"
+			onkeyup="Advanced_Ads_Admin.check_ad_source()"
+		><?php echo esc_textarea( $content ); ?></textarea>
 		<?php include ADVADS_BASE_PATH . 'admin/views/ad-info-after-textarea.php'; ?>
 		<input type="hidden" name="advanced_ad[output][allow_php]" value="0"/>
 

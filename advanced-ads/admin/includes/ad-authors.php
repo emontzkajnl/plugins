@@ -141,13 +141,14 @@ class Advanced_Ads_Ad_Authors {
 			return $caps;
 		}
 
-		$ad = new Advanced_Ads_Ad( $post_id );
+		$ad = \Advanced_Ads\Ad_Repository::get( $post_id );
 		if ( $ad->type !== 'plain' ) {
 			return $caps;
 		}
 
 		$author_id = (int) get_post_field( 'post_author', $post_id );
-		if ( $author_id !== $user_id && ! user_can( $author_id, $cap, $post_id ) ) {
+		$author    = get_userdata( $author_id );
+		if ( $author === false || ( $author_id !== $user_id && ! user_can( $author, $cap, $post_id ) ) ) {
 			$author_id = $user_id;
 		}
 

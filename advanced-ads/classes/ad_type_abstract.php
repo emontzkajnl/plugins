@@ -117,8 +117,8 @@ class Advanced_Ads_Ad_Type_Abstract {
 	/**
 	 * Load content field for the ad
 	 *
-	 * @param obj $post WP post object
-	 * @return str $content ad content
+	 * @param WP_Post $post WP post object
+	 * @return string $content ad content
 	 * @since 1.0.0
 	 */
 	public function load_content($post){

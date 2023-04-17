@@ -502,15 +502,12 @@ a.btn:focus, a.btn:active {
 }
 
 .aam-iframe .aam-subject-title {
-  display: none;
+  display: block;
+  font-size: 0.9em;
 }
 
 .aam-iframe .postbox .hndle {
   display: none;
-}
-
-.aam-subject-title {
-  margin-left: 4px;
 }
 
 .aam-api-method.post {
@@ -567,6 +564,7 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
     vertical-align: middle;
+    word-break: break-all;
 }
 
 .progress {
@@ -976,7 +974,15 @@ input[type=radio]:checked + label:before {
 
 .aam-license-key {
     display: block;
-    margin-bottom: 5px;
+    width: 100%;
+    text-align: left;
+    font-size: 1.1em;
+    color: #a94442;
+}
+
+.aam-license-key:active, .aam-license-key:hover {
+  text-decoration: none;
+  color: #F04748;
 }
 
 .aam-setting-description, .aam-extension-description {
@@ -1091,6 +1097,22 @@ input[type=radio]:checked + label:before {
     content: ' ';
     display: block;
     clear:both;
+}
+
+.error-container {
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.error-container > ul {
+  margin-top: 10px;
+  margin-bottom: 0;
+  padding-left: 20px;
+  list-style: circle;
+}
+
+.nav>li>a {
+  padding: 10px 10px;
 }
 
 .aam-social {

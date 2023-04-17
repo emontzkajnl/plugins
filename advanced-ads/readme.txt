@@ -2,9 +2,9 @@
 Contributors: webzunft, advancedads
 Tags: ads, adsense, amp, ads.txt, ad rotations, ad blocker, amazon, banner, click fraud protection, google ad manager, header code, lazy loading,
 Requires at least: 4.9
-Tested up to: 6.1
+Tested up to: 6.2
 Requires PHP: 7.2
-{Stable tag: }1.39.1
+Stable tag: 1.42.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -334,16 +334,17 @@ Yes. You can use plenty of [hooks](https://wpadvancedads.com/codex/) to customiz
 
 == Changelog ==
 
-= 1.39.1 (December 19, 2022) =
+= 1.42.1 (April 12, 2023) =
 
-- Fix: check the validity of the form before saving the modal
-- Fix: correct "Show Usage" modal on placements page
+- Improvement: add dismiss buttons to Google AdSense account alerts in the backend
+- Improvement: add JS event on showing a modal
+- Fix: prevent a termination notification after activating a valid licence
+- Fix: remove a bug that prevented the modal from closing
+- Fix: prevent group modal from opening again after saving
 
-= 1.39.0 (December 14, 2022) =
+= 1.42.0 (March 29, 2023) =
 
-- Improvement: add PeepSo ad type image
-- Improvement: add fallback ad type image for unknown ad types
-- Fix: remove unused jQuery UI assets
-- Fix: prevent uncaught `TypeError` on Placements search
-- Fix: add the site URL to the export filename
-- Fix: prevent duplicate queries due to circular functions calls in capability checks
+- Improvement: enhance WP Admin performance by minimizing Advanced_Ads_Ad objects
+- Improvement: open the group edit form after creating a new group
+- Improvement: unify checkbox text layout on general settings page
+- Fix: show values in the Ad injection column in the Pages overview

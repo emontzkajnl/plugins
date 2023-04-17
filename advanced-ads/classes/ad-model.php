@@ -99,15 +99,19 @@ class Advanced_Ads_Model {
 	/**
 	 * Load all ad groups
 	 *
+	 * @param iterable $args array with options.
+	 *
+	 * @return Advanced_Ads_Group[] array with ad groups
 	 * @since 1.1.0
-	 * @param array $args array with options.
-	 * @return array array with ad groups
-	 * @link http://codex.wordpress.org/Function_Reference/get_terms
+	 * @link  http://codex.wordpress.org/Function_Reference/get_terms
 	 */
-	public function get_ad_groups( $args = [] ) {
-		$args['hide_empty'] = isset( $args['hide_empty'] ) ? $args['hide_empty'] : false; // display groups without any ads.
+	public function get_ad_groups( iterable $args = [] ) {
+		$args['hide_empty'] = $args['hide_empty'] ?? false;
+		unset( $args['fields'] );
 
-		return get_terms( Advanced_Ads::AD_GROUP_TAXONOMY, $args );
+		return array_map( static function( WP_Term $term ) {
+			return new Advanced_Ads_Group( $term );
+		}, get_terms( Advanced_Ads::AD_GROUP_TAXONOMY, $args ) );
 	}
 
 	/**
