@@ -37,7 +37,7 @@ class PostmanSuggestProSocket {
             $this->data[] = array(
                 'extenstion'    =>  'Office365 API (Pro)',
                 'logo'          =>  POST_SMTP_ASSETS . 'images/logos/office365.png',
-                'pro'          =>  POST_SMTP_ASSETS . 'images/icons/pro.png',
+                'pro'           =>  POST_SMTP_ASSETS . 'images/icons/pro.png',
                 'url'           =>  'https://postmansmtp.com/extensions/office-365-extension-for-post-smtp/'
             );
         }
@@ -46,10 +46,20 @@ class PostmanSuggestProSocket {
             $this->data[] = array(
                 'extenstion'    =>  'Amazon SES (Pro)',
                 'logo'          =>  POST_SMTP_ASSETS . 'images/logos/amazonses.png',
-                'pro'          =>  POST_SMTP_ASSETS . 'images/icons/pro.png',
+                'pro'           =>  POST_SMTP_ASSETS . 'images/icons/pro.png',
                 'url'           =>  'https://postmansmtp.com/extensions/post-smtp-extension-for-amazon-ses/'
             );
         }
+
+        if( !class_exists( 'PostSMTP_ZohoMail' ) ) {
+            $this->data[] = array(
+                'extenstion'    =>  'Zoho (Pro)',
+                'logo'          =>  POST_SMTP_ASSETS . 'images/logos/zoho.jpg',
+                'pro'           =>  POST_SMTP_ASSETS . 'images/icons/pro.png',
+                'url'           =>  'https://postmansmtp.com/extensions/zoho-mail-pro-extension/'
+            );
+        }
+
 
     }
 
@@ -63,7 +73,7 @@ class PostmanSuggestProSocket {
 
         $pluginData = apply_filters( 'postman_get_plugin_metadata', null );
 
-        wp_register_script( 'postman-suggest-pro-sockets', POST_SMTP_ASSETS . 'js/postman-suggest.js', array( 'jquery' ), $pluginData, true );
+        wp_register_script( 'postman-suggest-pro-sockets', POST_SMTP_ASSETS . 'js/postman-admin.js', array( 'jquery' ), $pluginData['version'], true );
 
         wp_enqueue_script( 'postman-suggest-pro-sockets' );
 

@@ -672,7 +672,7 @@ class Quick_Featured_Images_Columns {
 		$post_ids = $wpdb->get_col( $wpdb->prepare( "
 			SELECT	`post_id` 
 			FROM	$wpdb->postmeta 
-			WHERE	`meta_key` LIKE '_thumbnail_id' 
+			WHERE	`meta_key` = '_thumbnail_id' 
 				AND	`meta_value` = %d", $attachment_id
 		) ); 
 		

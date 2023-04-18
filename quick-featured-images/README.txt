@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=NSEQX73VHXKS8
 Tags: featured image,featured images,bulk set,automatic,thumbnails
 Requires at least: 3.8
 Requires PHP: 5.2
-Tested up to: 5.9
-Stable tag: 13.6.0
+Tested up to: 6.2
+Stable tag: 13.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -284,14 +284,19 @@ If you want to contribute a translation of the plugin in your language it would 
 
 == Changelog ==
 
+= 13.7.0 =
+* Improved performance when displaying post thumbnails (thanks to @odoremieux)
+* tested successfully with WordPress 6.2 (beta)
+
 = 13.6.0 =
 * improved styles and starting using minify
 * added free vs. pro section
-* Tested successfully with WordPress 5.9
+* tested successfully with WordPress 5.9
+* tested successfully with WordPress 6.0
 
 = 13.5.7 =
 * improved and added text and help
-* Tested successfully with WordPress 5.8
+* tested successfully with WordPress 5.8
 
 = 13.5.6 =
 * added autoload class

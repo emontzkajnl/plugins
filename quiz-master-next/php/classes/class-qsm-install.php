@@ -665,6 +665,27 @@ class QSM_Install {
 		);
 		$mlwQuizMasterNext->pluginHelper->register_quiz_setting( $field_array, 'quiz_options' );
 
+		// Settings for quick result
+		$field_array = array(
+			'id'         => 'hide_correct_answer',
+			'label'      => __( 'Hide Correct Answer', 'quiz-master-next' ),
+			'type'       => 'radio',
+			'options'    => array(
+				array(
+					'label' => __( 'Yes', 'quiz-master-next' ),
+					'value' => 1,
+				),
+				array(
+					'label' => __( 'No', 'quiz-master-next' ),
+					'value' => 0,
+				),
+			),
+			'default'    => 0,
+			'help'       => __( 'Hide correct answer on result page if user selected wrong answer from quiz.', 'quiz-master-next' ),
+			'option_tab' => 'display',
+		);
+		$mlwQuizMasterNext->pluginHelper->register_quiz_setting( $field_array, 'quiz_options' );
+
 		$field_array = array(
 			'id'         => 'end_quiz_if_wrong',
 			'label'      => __( 'End quiz if there is wrong answer', 'quiz-master-next' ),
@@ -735,6 +756,26 @@ class QSM_Install {
 		$field_array = array(
 			'id'         => 'enable_pagination_quiz',
 			'label'      => __( 'Show current page number', 'quiz-master-next' ),
+			'type'       => 'radio',
+			'options'    => array(
+				array(
+					'label' => __( 'Yes', 'quiz-master-next' ),
+					'value' => 1,
+				),
+				array(
+					'label' => __( 'No', 'quiz-master-next' ),
+					'value' => 0,
+				),
+			),
+			'default'    => 0,
+			'option_tab' => 'display',
+		);
+		$mlwQuizMasterNext->pluginHelper->register_quiz_setting( $field_array, 'quiz_options' );
+
+		// Setting for pagination of quiz
+		$field_array = array(
+			'id'         => 'show_question_featured_image_in_result',
+			'label'      => __( 'Show question featured image in results page', 'quiz-master-next' ),
 			'type'       => 'radio',
 			'options'    => array(
 				array(
@@ -1228,6 +1269,16 @@ class QSM_Install {
 			'label'      => __( 'Next button', 'quiz-master-next' ),
 			'type'       => 'text',
 			'default'    => 0,
+			'option_tab' => 'text-button',
+		);
+		$mlwQuizMasterNext->pluginHelper->register_quiz_setting( $field_array, 'quiz_text' );
+
+		// Registers start_quiz_survey_text setting
+		$field_array = array(
+			'id'         => 'start_quiz_survey_text',
+			'label'      => __( 'Start Quiz Button', 'quiz-master-next' ),
+			'type'       => 'text',
+			'default'    => '',
 			'option_tab' => 'text-button',
 		);
 		$mlwQuizMasterNext->pluginHelper->register_quiz_setting( $field_array, 'quiz_text' );

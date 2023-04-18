@@ -81,6 +81,7 @@ function qsm_options_emails_tab_content() {
 				$variable_list['Core']['%QUESTIONS_ANSWERS_EMAIL%'] = __( 'Shows the question, the answer provided by user, and the correct answer.', 'quiz-master-next' );
 				unset( $variable_list['Core']['%FACEBOOK_SHARE%'] );
 				unset( $variable_list['Core']['%TWITTER_SHARE%'] );
+				$variable_list = qsm_extra_template_and_leaderboard($variable_list);
 				// filter to add or remove variables from variable list for email tab
 				$variable_list = apply_filters( 'qsm_text_variable_list_email', $variable_list );
 
@@ -94,20 +95,40 @@ function qsm_options_emails_tab_content() {
 					foreach ( $variable_list as $category_name => $category_variables ) {
 						// check if the $category_variables is an array for backward compatibility
 						if ( is_array( $category_variables ) ) {
+							$classname = "qsm-text-template-span ";
+							$qsm_badge = "";
+							$upgrade_link = "";$variable = "";
+							$tooltip = '';
+							if ( ( ! class_exists( 'QSM_Extra_Variables' ) ) && ( 'Extra Template Variables' == $category_name ) ) {
+								$upgrade_link = qsm_get_plugin_link( 'extra-template-variables' );
+								$classname = "qsm-upgrade-popup-variable";
+								$qsm_badge = "<a  href =".$upgrade_link." target='_blank' class='qsm-upgrade-popup-badge'>".esc_html__( 'PRO', 'quiz-master-next' )."</a>";
+							}
+							if ( ( ! class_exists( 'Mlw_Qmn_Al_Widget' ) ) && ( 'Advanced Leaderboard' == $category_name ) ) {
+								$upgrade_link = qsm_get_plugin_link( 'downloads/advanced-leaderboard/' );
+								$classname = "qsm-upgrade-popup-variable";
+								$qsm_badge = "<a  href =".$upgrade_link." target='_blank' class='qsm-upgrade-popup-badge'>".esc_html__( 'PRO', 'quiz-master-next' )."</a>";
+							}
 							?>
-							<div><h2><?php echo esc_attr( $category_name ); ?></h2></div>
+							<div><h2 class="qsm-upgrade-popup-category-name"><?php echo esc_attr( $category_name ); ?></h2><?php echo  wp_kses_post( $qsm_badge ) ; ?></div>
 							<?php
 							foreach ( $category_variables as $variable_key => $variable ) {
 								?>
 								<div class="popup-template-span-wrap">
-									<span class="qsm-text-template-span">
-										<span class="button button-default template-variable"><?php echo esc_attr( $variable_key ); ?></span>
-										<span class="button click-to-copy">Click to Copy</span>
-										<span class="temp-var-seperator">
-											<span class="dashicons dashicons-editor-help qsm-tooltips-icon">
-												<span class="qsm-tooltips"><?php echo esc_attr( $variable ); ?></span>
-											</span>
-										</span>
+									<span class="qsm-text-template-span <?php echo esc_attr( $classname );?>">
+									<?php if ( ( ( ! class_exists( 'QSM_Extra_Variables' ) ) && ( 'Extra Template Variables' == $category_name ) ) || (( ! class_exists( 'Mlw_Qmn_Al_Widget' ) ) && ( 'Advanced Leaderboard' == $category_name )) ) {?>
+										<span class="button button-default template-variable qsm-tooltips-icon"><?php echo esc_attr( $variable_key ); ?>
+													<span class="qsm-tooltips qsm-upgrade-tooltip"><?php echo esc_html__( 'Available in pro', 'quiz-master-next' );?></span>
+												</span>
+												<?php } else { ?>
+												<span class="button button-default template-variable"><?php echo esc_attr( $variable_key ); ?></span>
+												<span class='button click-to-copy'>Click to Copy</span>
+												<span class="temp-var-seperator">
+													<span class="dashicons dashicons-editor-help qsm-tooltips-icon">
+													<span class="qsm-tooltips"><?php echo esc_attr( $variable ); ?></span>
+													</span>
+												</span>
+											<?php } ?>
 									</span>
 								</div>
 								<?php
@@ -182,16 +203,17 @@ function qsm_options_emails_tab_template() {
 	<div class="email-condition">
 		<button class="delete-condition-button"><span class="dashicons dashicons-trash"></span></button>
 		<select class="email-condition-category">
-					<option value="" <# if (data.category == '') { #>selected<# } #>><?php esc_html_e( 'Quiz', 'quiz-master-next' ); ?></option>
-					<option value="" disabled><?php esc_html_e( '---Select Category---', 'quiz-master-next' ); ?></option>
-					<?php if ( ! empty( $categories ) ) { ?>
-						<?php foreach ( $categories as $cat ) { ?>
-						<option value="<?php echo esc_attr( $cat[0] ); ?>" <# if (data.category == '<?php echo esc_attr( $cat[0] ); ?>') { #>selected<# } #>><?php echo esc_attr( $cat[0] ); ?></option>
-						<?php } ?>
-					<?php } else { ?>
-						<option value="" disabled><?php esc_html_e( 'No Categories Available', 'quiz-master-next' ); ?></option>
-					<?php } ?>
-				</select>
+			<option value="" <# if (data.category == '') { #>selected<# } #>><?php esc_html_e( 'Quiz', 'quiz-master-next' ); ?></option>
+			<option value="" disabled><?php esc_html_e( '---Select Category---', 'quiz-master-next' ); ?></option>
+			<?php if ( ! empty( $categories ) ) { ?>
+				<?php foreach ( $categories as $cat ) { ?>
+				<option value="<?php echo esc_attr( $cat[0] ); ?>" <# if (data.category == '<?php echo esc_attr( $cat[0] ); ?>') { #>selected<# } #>><?php echo esc_attr( $cat[0] ); ?></option>
+				<?php } ?>
+			<?php } else { ?>
+				<option value="" disabled><?php esc_html_e( 'No Categories Available', 'quiz-master-next' ); ?></option>
+			<?php } ?>
+			<?php do_action( 'qsm_email_page_condition_category' ); ?>
+		</select>
 		<select class="email-condition-criteria">
 			<option value="points" <# if (data.criteria == 'points') { #>selected<# } #>><?php esc_html_e( 'Total points earned', 'quiz-master-next' ); ?></option>
 			<option value="score" <# if (data.criteria == 'score') { #>selected<# } #>><?php esc_html_e( 'Correct score percentage', 'quiz-master-next' ); ?></option>

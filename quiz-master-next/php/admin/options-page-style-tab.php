@@ -249,7 +249,7 @@ function qsm_options_styling_tab_content() {
 					</h2>
 					<a class="qsm-popup__close" aria-label="Close modal" data-micromodal-close></a>
 				</header>
-				<main class="qsm-popup__content" id="thme-color-settings-content">
+				<main class="qsm-popup__content" id="theme-color-settings-content">
 					<?php wp_nonce_field( 'save_theme_settings', 'save_theme_settings_nonce' ); ?>
 					<table class="form-table" style="width: 100%;">
 						<?php
@@ -288,7 +288,7 @@ function qsm_options_styling_tab_content() {
 												break;
 											case 'color':
                                                 ?>
-												<input name="settings[<?php echo esc_attr( $key ); ?>][default]" type="text" value="<?php echo esc_attr( $theme_val['default'] ); ?>" data-default-color="<?php echo esc_attr( $theme_val['default'] ); ?>" class="qsm-color-field" />
+												<input name="settings[<?php echo esc_attr( $key ); ?>][default]" type="text" data-alpha-enabled="true" value="<?php echo esc_attr( $theme_val['default'] ); ?>" data-default-color="<?php echo esc_attr( $theme_val['default'] ); ?>" class="qsm-color-field" />
 												<?php
 												break;
 											case 'checkbox':

@@ -95,51 +95,52 @@ class QMNGlobalSettingsPage {
 	 */
 	public static function default_settings() {
 		return array(
-			'form_type'                          => 0,
-			'system'                             => 3,
-			'score_roundoff'                     => 0,
-			'progress_bar'                       => 0,
-			'require_log_in'                     => 0,
-			'pagination'                         => 0,
-			'timer_limit'                        => 0,
-			'enable_result_after_timer_end'      => 0,
-			'skip_validation_time_expire'        => 0,
-			'total_user_tries'                   => 0,
-			'limit_total_entries'                => 0,
-			'question_from_total'                => 0,
-			'question_per_category'              => 0,
-			'contact_info_location'              => 0,
-			'loggedin_user_contact'              => 0,
-			'comment_section'                    => 1,
-			'question_numbering'                 => 0,
-			'show_optin'                         => 0,
-			'show_text_html'                     => 0,
-			'store_responses'                    => 1,
-			'send_email'                         => 1,
-			'disable_answer_onselect'            => 0,
-			'ajax_show_correct'                  => 0,
-			'contact_disable_autofill'           => 0,
-			'form_disable_autofill'              => 0,
-			'show_category_on_front'             => 0,
-			'enable_quick_result_mc'             => 0,
-			'end_quiz_if_wrong'                  => 0,
-			'enable_quick_correct_answer_info'   => 0,
-			'enable_retake_quiz_button'          => 1,
-			'enable_pagination_quiz'             => 0,
-			'enable_deselect_option'             => 0,
-			'disable_description_on_result'      => 0,
-			'disable_scroll_next_previous_click' => 0,
-			'disable_first_page'                 => 0,
-			'disable_mathjax'                    => 0,
-			'quiz_animation'                     => '',
-			'result_page_fb_image'               => QSM_PLUGIN_URL . 'assets/icon-200x200.png',
-			'randomness_order'                   => 0,
-			'scheduled_time_start'               => '',
-			'scheduled_time_end'                 => '',
-			'not_allow_after_expired_time'       => 0,
-			'preferred_date_format'              => 'F j, Y',
-			'default_answers'                    => 1,
-			'correct_answer_logic'               => 0,
+			'form_type'                              => 0,
+			'system'                                 => 3,
+			'score_roundoff'                         => 0,
+			'progress_bar'                           => 0,
+			'require_log_in'                         => 0,
+			'pagination'                             => 0,
+			'timer_limit'                            => 0,
+			'enable_result_after_timer_end'          => 0,
+			'skip_validation_time_expire'            => 0,
+			'total_user_tries'                       => 0,
+			'limit_total_entries'                    => 0,
+			'question_from_total'                    => 0,
+			'question_per_category'                  => 0,
+			'contact_info_location'                  => 0,
+			'loggedin_user_contact'                  => 0,
+			'comment_section'                        => 1,
+			'question_numbering'                     => 0,
+			'show_optin'                             => 0,
+			'show_text_html'                         => 0,
+			'store_responses'                        => 1,
+			'send_email'                             => 1,
+			'disable_answer_onselect'                => 0,
+			'ajax_show_correct'                      => 0,
+			'contact_disable_autofill'               => 0,
+			'form_disable_autofill'                  => 0,
+			'show_category_on_front'                 => 0,
+			'enable_quick_result_mc'                 => 0,
+			'end_quiz_if_wrong'                      => 0,
+			'enable_quick_correct_answer_info'       => 0,
+			'show_question_featured_image_in_result' => 0,
+			'enable_retake_quiz_button'              => 1,
+			'enable_pagination_quiz'                 => 0,
+			'enable_deselect_option'                 => 0,
+			'disable_description_on_result'          => 0,
+			'disable_scroll_next_previous_click'     => 0,
+			'disable_first_page'                     => 0,
+			'disable_mathjax'                        => 0,
+			'quiz_animation'                         => '',
+			'result_page_fb_image'                   => QSM_PLUGIN_URL . 'assets/icon-200x200.png',
+			'randomness_order'                       => 0,
+			'scheduled_time_start'                   => '',
+			'scheduled_time_end'                     => '',
+			'not_allow_after_expired_time'           => 0,
+			'preferred_date_format'                  => 'F j, Y',
+			'default_answers'                        => 1,
+			'correct_answer_logic'                   => 0,
 		);
 	}
 
@@ -185,11 +186,13 @@ class QMNGlobalSettingsPage {
 		add_settings_field( 'disable-auto-fill-for-contact-input', __( 'Disable auto fill for contact input', 'quiz-master-next' ), array( $this, 'qsm_global_disable_auto_fill_for_contact_input' ), 'qsm_default_global_option_contact', 'qmn-global-section' );
 		add_settings_field( 'disable-auto-fill-for-quiz-input', __( 'Disable auto fill for Quiz input', 'quiz-master-next' ), array( $this, 'qsm_global_disable_auto_fill_for_quiz_input' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'display-category-name-on-front-end', __( 'Display category name on front end', 'quiz-master-next' ), array( $this, 'qsm_global_display_category_name_on_front_end' ), 'qsm_default_global_option_display', 'qmn-global-section' );
+		add_settings_field( 'hide-correct-answer', __( 'Hide Correct Answer', 'quiz-master-next' ), array( $this, 'qsm_global_hide_correct_answer' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'show-results-inline', __( 'Show results inline', 'quiz-master-next' ), array( $this, 'qsm_global_show_results_inline' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'end-quiz-if-there-is-wrong-answer', __( 'End quiz if there is wrong answer', 'quiz-master-next' ), array( $this, 'qsm_global_end_quiz_if_there_is_wrong_answer' ), 'qsm_default_global_option_quiz_submission', 'qmn-global-section' );
 		add_settings_field( 'show-correct-answer-inline', __( 'Show correct answer inline', 'quiz-master-next' ), array( $this, 'qsm_global_show_correct_answer_inline' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'retake-quiz', __( 'Retake Quiz', 'quiz-master-next' ), array( $this, 'qsm_global_retake_quiz' ), 'qsm_default_global_option_quiz_submission', 'qmn-global-section' );
 		add_settings_field( 'show-current-page-number', __( 'Show current page number', 'quiz-master-next' ), array( $this, 'qsm_global_show_current_page_number' ), 'qsm_default_global_option_display', 'qmn-global-section' );
+		add_settings_field( 'show-current-page-number', __( 'Show question featured image in results page', 'quiz-master-next' ), array( $this, 'qsm_global_show_question_featured_image_in_result' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'deselect-answer', __( 'Deselect Answer', 'quiz-master-next' ), array( $this, 'qsm_global_deselect_answer' ), 'qsm_default_global_option_general', 'qmn-global-section' );
 		add_settings_field( 'disable-description-on-quiz-result-page', __( 'Disable description on quiz result page?', 'quiz-master-next' ), array( $this, 'qsm_global_disable_description_on_quiz_result_page' ), 'qsm_default_global_option_general', 'qmn-global-section' );
 		add_settings_field( 'disable_mathjax', __( 'Disable MathJax?', 'quiz-master-next' ), array( $this, 'qsm_global_disable_mathjax' ), 'qsm_default_global_option_general', 'qmn-global-section' );
@@ -1010,6 +1013,24 @@ class QMNGlobalSettingsPage {
 	}
 
 	/**
+	 * Generates Quiz Global  Field For Hide Correct Answer
+	 *
+	 * @since 8.1.0
+	 * @return void
+	 */
+	public function qsm_global_hide_correct_answer() {
+		global $globalQuizsetting;
+		$qsm_hide_correct_answer = ( isset( $globalQuizsetting['hide_correct_answer'] ) && '' !== $globalQuizsetting['hide_correct_answer'] ? $globalQuizsetting['hide_correct_answer'] : '0' );
+		echo '<fieldset class="buttonset buttonset-hide" >
+				<input type="radio" id="hide_correct_answer-1" name="qsm-quiz-settings[hide_correct_answer]" value="1" ' . checked( $qsm_hide_correct_answer, '1', false ) . '>
+				<label for="hide_correct_answer-1">Yes</label><br>
+				<input type="radio" id="hide_correct_answer-0" name="qsm-quiz-settings[hide_correct_answer]" value="0" ' . checked( $qsm_hide_correct_answer, '0', false ) . '>
+				<label for="hide_correct_answer-0">No</label><br>
+			 </fieldset>
+			<span class="qsm-opt-desc">Hide correct answer on result page if user selected wrong answer from quiz.</span>';
+	}
+
+	/**
 	 * Generates Quiz Global  Field For End quiz if there is wrong answer
 	 *
 	 * @since 4.1.0
@@ -1080,6 +1101,23 @@ class QMNGlobalSettingsPage {
 				<label for="enable_pagination_quiz-1">Yes</label><br>
 				<input type="radio" id="enable_pagination_quiz-0" name="qsm-quiz-settings[enable_pagination_quiz]" value="0" ' . checked( $qsm_enable_pagination_quiz, '0', false ) . '>
 				<label for="enable_pagination_quiz-0">No</label><br>
+			</fieldset>';
+	}
+
+	/**
+	 * Generates Quiz Global  Field For Show question feature image in result
+	 *
+	 * @since 4.1.0
+	 * @return void
+	 */
+	public function qsm_global_show_question_featured_image_in_result() {
+		global $globalQuizsetting;
+		$qsm_show_question_featured_image_in_result = ( isset( $globalQuizsetting['show_question_featured_image_in_result'] ) && '' !== $globalQuizsetting['show_question_featured_image_in_result'] ? $globalQuizsetting['show_question_featured_image_in_result'] : '0' );
+		echo '<fieldset class="buttonset buttonset-hide" >
+				<input type="radio" id="show_question_featured_image_in_result-1" name="qsm-quiz-settings[show_question_featured_image_in_result]" value="1" ' . checked( $qsm_show_question_featured_image_in_result, '1', false ) . '>
+				<label for="show_question_featured_image_in_result-1">Yes</label><br>
+				<input type="radio" id="show_question_featured_image_in_result-0" name="qsm-quiz-settings[show_question_featured_image_in_result]" value="0" ' . checked( $qsm_show_question_featured_image_in_result, '0', false ) . '>
+				<label for="show_question_featured_image_in_result-0">No</label><br>
 			</fieldset>';
 	}
 

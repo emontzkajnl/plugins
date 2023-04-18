@@ -2,9 +2,9 @@
 Contributors: quizsurvey,expresstech
 Tags: quiz, survey, lead, test, score, exam, questionnaire, question,wordpress quiz plugin
 Requires at least: 4.9
-Tested up to: 6.0
+Tested up to: 6.2
 Requires PHP: 5.4
-Stable tag: 8.0.8
+Stable tag: 8.1.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,7 +115,7 @@ If you like this plugin, consider exploring our other themes and plugins:
 
 📅 [Booking Ultra](https://wordpress.org/plugins/booking-ultra-pro/) - Appointment Booking plugin for WordPress - Show a quick form to accept bookings for your services with pre-set booking slots. Ideal for salons, medical professionals, lawyers, consultants, etc.
 
-⚡ [InstaWP](https://instawp.io/) - Launch a quick WordPress site with this sandbox service. Create New WordPress instance within a second.
+⚡ [InstaWP](https://instawp.com/) - Launch a quick WordPress site with this sandbox service. Create New WordPress instance within a second.
 
 == Installation ==
 
@@ -163,9 +163,65 @@ This is usually a theme conflict. You can [checkout out our common conflict solu
 18. Database
 
 == Changelog ==
+= 8.1.5 (April 13, 2023) =
+* Feature: Added option to display inline results for fill-in-the-blank and dropdown question types
+* Bug: Resolved an issue with the next button when multiple quizzes are used on the same page
+* Bug: Fixed a critical error on the result page
+* Bug: Addressed security and vulnerability concerns
+* Bug: Resolved an issue with hidden required questions validation
+* Bug: Fixed the correct answer information issue when importing questions from the question bank
+* Enhancement: Improved the user interface of the categories dropdown in the Options tab
+
+= 8.1.4 (March 31, 2023) =
+* Hotfix: Resolved an issue where the submit button appeared twice
+
+= 8.1.3 (March 29, 2023) =
+* Feature: Added Select and Radio input types as new features for contact fields
+* Bug: Resolved an issue where the submit button was not visible when pagination was used
+* Bug: Fixed submit button label rename issue with auto pagination
+* Bug: Fixed a problem with rounding scores
+* Bug: Improved security and resolved vulnerability issues
+* Bug: Corrected a validation issue with contact field checkboxes
+* Enhancement: Checked and confirmed compatibility with WordPress version 6.2
+
+= 8.1.2 (March 15, 2023) =
+* Hotfix: Fixed submit button visiblity issue with random question option
+
+= 8.1.1 (March 09, 2023) =
+* Feature: Added an option to highlight the correct answer if the user selected the wrong answer
+* Feature: Added an option to show/hide the question's featured image on the result page
+* Bug: Fixed an issue with adding a class for the correct/incorrect answers option
+* Bug: Fixed an encoding issue in the email header
+* Bug: Fixed an issue with immediately ending the quiz if the user selects the wrong answer in pagination
+* Enhancement: Improved the user interface for the question bank popup and options tabs
+* Enhancement: Improved the user interface for the quiz next and submit buttons
+
+
+= 8.1.0 (Feb 27, 2023) =
+* Feature: Added a new feature that allows users to show or hide correct answers on the result page
+* Bug: Fixed a bug that caused issues with the required field for the polar question type
+* Bug: Fixed security and vulnerability issues that were identified in the plugin
+* Bug: Fixed a bug that caused issues with displaying results inline for the short answer type
+* Enhancement: Improved user interface for editor
+
+= 8.0.10 (Feb 02, 2023) =
+* Feature: Added option to set theme color transparency
+* Bug: Fixed issue with %TIMER_MINUTES% variable
+* Bug: Fixed issue with duplicate question position
+
+= 8.0.9 (Jan 25, 2023) =
+* Feature: Added option to move a question on specified page/position
+* Feature: Added image answer type support for horizontal multiple response questions
+* Feature: Added separate button on first page to start quiz/survey
+* Bug: Fixed issue with fill in the blank question type causing conflict with other plugins
+* Bug: Fixed question position issue while duplicating questions
+* Bug: Fixed issue with %TIMER_MINUTES% variable
+* Bug: Fixed security issues
+* Enhancement: Improved format of wrong answers in emails
+
 = 8.0.8 (Dec 15, 2022) =
 * Bug: Fixed issue with short answer question type
-* Bug: Fixed security issues.
+* Bug: Fixed security issues
 * Bug: Fixed compatibility issues with php v7 or older
 
 = 8.0.7 (Dec 05, 2022) =

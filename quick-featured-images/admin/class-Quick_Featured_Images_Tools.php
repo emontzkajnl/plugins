@@ -1597,7 +1597,7 @@ class Quick_Featured_Images_Tools { // only for debugging: extends Quick_Feature
 		$image_ids = array();
 		global $wpdb;
 		// get a normal array all names of meta keys except the WP builtins meta keys beginning with an underscore '_'
-		$results = $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT `meta_value` FROM $wpdb->postmeta WHERE `meta_key` LIKE '_thumbnail_id' AND `meta_value` != %d", $this->selected_image_id ), ARRAY_N );
+		$results = $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT `meta_value` FROM $wpdb->postmeta WHERE `meta_key` = '_thumbnail_id' AND `meta_value` != %d", $this->selected_image_id ), ARRAY_N );
 		// flatten and sanitize results
 		if ( $results ) {
 			foreach ( $results as $r ) {

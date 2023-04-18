@@ -18,7 +18,7 @@ function qmn_horizontal_multiple_response_display( $id, $question, $answers ) {
 	if ( 0 == $required ) {
 		$mlw_class = 'mlwRequiredRadio';
 	}
-	$mlw_class .= apply_filters( 'qsm_horizontal_multiple_response_classes', $mlw_class, $id );
+	$mlw_class = apply_filters( 'qsm_horizontal_multiple_response_classes', $mlw_class, $id );
 	$limit_multiple_response = $mlwQuizMasterNext->pluginHelper->get_question_setting( $id, 'limit_multiple_response' );
 	$limit_mr_text           = '';
 	if ( $limit_multiple_response > 0 ) {
@@ -37,8 +37,10 @@ function qmn_horizontal_multiple_response_display( $id, $question, $answers ) {
 			foreach ( $answers as $answer_index => $answer ) {
 				$mlw_answer_total++;
 				if ( '' !== $answer[0] ) {
+					$answer_class = apply_filters( 'qsm_answer_wrapper_class', '', $answer, $id );
+					$answer_class .= 'image' === $answerEditor ? ' qmn_image_option' : '';
 					?>
-				<span class="mlw_horizontal_multiple">
+				<span class="mlw_horizontal_multiple <?php echo esc_attr( $answer_class ); ?>">
 					<input type="checkbox" <?php echo esc_attr( $limit_mr_text ); ?> name="question<?php echo esc_attr( $id ) . '[]'; ?>" id="question<?php echo esc_attr( $id ) . '_' . esc_attr( $mlw_answer_total ); ?>" value="<?php echo esc_attr( $answer_index ); ?>" />
 					<label class="qsm-input-label" for="question<?php echo esc_attr( $id ) . '_' . esc_attr( $mlw_answer_total ); ?>">
 						<?php
