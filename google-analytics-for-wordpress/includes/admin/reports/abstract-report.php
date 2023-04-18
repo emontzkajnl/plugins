@@ -171,8 +171,10 @@ class MonsterInsights_Report {
 		if ( ! $this->is_valid_date_range( $start, $end ) ) {
 			return array(
 				'success' => false,
-				'error'   => __( 'Invalid date range.', 'google-analytics-for-wordpress' ),
-				'data'    => array(),
+				'error'   => __( 'Whoops! No data found for this date range', 'google-analytics-for-wordpress' ),
+				'data'    => array(
+					'type' => 'INVALID_DATE_RANGE',
+				),
 			);
 		}
 

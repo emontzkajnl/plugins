@@ -36,11 +36,13 @@ function monsterinsights_tracking_script() {
 	if ( 'preview' === $mode ) {
 		require_once plugin_dir_path( MONSTERINSIGHTS_PLUGIN_FILE ) . 'includes/frontend/tracking/class-tracking-preview.php';
 		$tracking = new MonsterInsights_Tracking_Preview();
-		echo $tracking->frontend_output();
+		// Escaped in frontend_output function
+		echo $tracking->frontend_output(); // phpcs:ignore
 	} else {
 		require_once plugin_dir_path( MONSTERINSIGHTS_PLUGIN_FILE ) . 'includes/frontend/tracking/class-tracking-gtag.php';
 		$tracking = new MonsterInsights_Tracking_Gtag();
-		echo $tracking->frontend_output();
+		// Escaped in frontend_output function
+		echo $tracking->frontend_output(); // phpcs:ignore
 	}
 
 	do_action( 'monsterinsights_tracking_after_' . $mode );

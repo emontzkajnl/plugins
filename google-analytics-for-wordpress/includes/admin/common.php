@@ -79,6 +79,27 @@ function monsterinsights_is_reports_page()
 }
 
 /**
+ * Determine if the current page is any of the MI admin page.
+ *
+ * @return bool
+ */
+function monsterinsights_is_own_admin_page() {
+	if ( monsterinsights_is_reports_page() ) {
+		return true;
+	}
+
+	if ( monsterinsights_is_settings_page() ) {
+		return true;
+	}
+
+	if ( 'dashboard_page_monsterinsights-getting-started' === get_current_screen()->id ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Loads styles for all MonsterInsights-based Administration Screens.
  *
  * @return null Return early if not on the proper screen.
@@ -305,7 +326,7 @@ function monsterinsights_admin_scripts()
 				'shareasale_id'       => monsterinsights_get_shareasale_id(),
 				'shareasale_url'      => monsterinsights_get_shareasale_url(monsterinsights_get_shareasale_id(), ''),
 				'addons_url'          => is_multisite() ? network_admin_url('admin.php?page=monsterinsights_network#/addons') : admin_url('admin.php?page=monsterinsights_settings#/addons'),
-				'timezone'            => date('e'),
+				'timezone'            => date('e'), // phpcs:ignore
 				'authed'              => $site_auth || $ms_auth,
 				'auth_connected_type' => $auth->get_connected_type(),
 				'settings_url'        => add_query_arg('page', 'monsterinsights_settings', admin_url('admin.php')),
@@ -322,6 +343,7 @@ function monsterinsights_admin_scripts()
 				'update_settings'     => current_user_can('monsterinsights_save_settings'),
 				'migrated'            => monsterinsights_get_option('gadwp_migrated', 0),
 				'yearinreview'        => monsterinsights_yearinreview_dates(),
+				'reports_url'         => add_query_arg('page', 'monsterinsights_reports', admin_url('admin.php')),
 			)
 		);
 
@@ -617,7 +639,7 @@ add_action('admin_enqueue_scripts', 'monsterinsights_remove_conflicting_asset_fi
 function hide_non_monsterinsights_warnings()
 {
 	// Bail if we're not on a MonsterInsights screen.
-	if (empty($_REQUEST['page']) || strpos($_REQUEST['page'], 'monsterinsights') === false) {
+	if (empty($_REQUEST['page']) || strpos(sanitize_text_field($_REQUEST['page']), 'monsterinsights') === false) {
 		return;
 	}
 
@@ -714,34 +736,6 @@ function monsterinsights_get_upgrade_link($medium = '', $campaign = '', $url = '
 		return esc_url(monsterinsights_get_shareasale_url($shareasale_id, $url));
 	} else {
 		return esc_url($url);
-	}
-}
-
-function monsterinsights_get_url($medium = '', $campaign = '', $url = '', $escape = true)
-{
-	// Setup Campaign variables
-	$source      = monsterinsights_is_pro_version() ? 'proplugin' : 'liteplugin';
-	$medium      = !empty($medium) ? $medium : 'defaultmedium';
-	$campaign    = !empty($campaign) ? $campaign : 'defaultcampaign';
-	$content     = MONSTERINSIGHTS_VERSION;
-	$default_url = monsterinsights_is_pro_version() ? '' : 'lite/';
-	$url         = !empty($url) ? $url : 'https://www.monsterinsights.com/' . $default_url;
-
-	// Put together redirect URL
-	$url = add_query_arg(
-		array(
-			'utm_source'   => $source,   // Pro/Lite Plugin
-			'utm_medium'   => sanitize_key($medium),   // Area of MonsterInsights (example Reports)
-			'utm_campaign' => sanitize_key($campaign), // Which link (example eCommerce Report)
-			'utm_content'  => $content,  // Version number of MI
-		),
-		trailingslashit($url)
-	);
-
-	if ($escape) {
-		return esc_url($url);
-	} else {
-		return $url;
 	}
 }
 
@@ -985,13 +979,13 @@ add_action('admin_init', 'monsterinsights_year_in_review_notification');
  */
 function monsterinsights_yearinreview_dates()
 {
-	$current_date = date('Y-m-d');
-	$current_year = date('Y');
+	$current_date = date('Y-m-d'); // phpcs:ignore
+	$current_year = date('Y'); // phpcs:ignore
 	$report_year = $current_year - 1;
 	$show_report = false;
 	$next_year = (string) $report_year + 1;
-	$show_report_start_date = date('Y-m-d', strtotime("Jan 01, {$current_year}"));
-	$show_report_end_date = date('Y-m-d', strtotime("Jan 14, {$current_year}"));
+	$show_report_start_date = date('Y-m-d', strtotime("Jan 01, {$current_year}")); // phpcs:ignore
+	$show_report_end_date = date('Y-m-d', strtotime("Jan 14, {$current_year}")); // phpcs:ignore
 	if (($current_date >= $show_report_start_date) && ($current_date <= $show_report_end_date)) {
 		$show_report = true;
 	}
@@ -1000,4 +994,19 @@ function monsterinsights_yearinreview_dates()
 		'next_year' => $next_year,
 		'show_report' => $show_report,
 	];
+}
+
+function monsterinsights_get_sitei()
+{
+    $auth_key        = defined( 'AUTH_KEY' ) ? AUTH_KEY : '';
+    $secure_auth_key = defined( 'SECURE_AUTH_KEY' ) ? SECURE_AUTH_KEY : '';
+    $logged_in_key   = defined( 'LOGGED_IN_KEY' ) ? LOGGED_IN_KEY : '';
+
+    $sitei = $auth_key . $secure_auth_key . $logged_in_key;
+    $sitei = preg_replace( '/[^a-zA-Z0-9]/', '', $sitei );
+    $sitei = sanitize_text_field( $sitei );
+    $sitei = trim( $sitei );
+    $sitei = ( strlen( $sitei ) > 30 ) ? substr( $sitei, 0, 30 ) : $sitei;
+
+    return $sitei;
 }
