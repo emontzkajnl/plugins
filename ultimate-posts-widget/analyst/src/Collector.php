@@ -171,7 +171,11 @@ class Collector
 	{
 		$conn = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
-		$version = mysqli_get_server_info($conn);
+		if ($conn) {
+			$version = mysqli_get_server_info($conn);
+		} else {
+			return 'unknown';
+		}
 
 		return $version ? $version : 'unknown';
 	}

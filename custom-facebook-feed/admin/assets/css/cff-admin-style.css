@@ -2942,15 +2942,13 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
 }
 
 /* Menu Pro link */
-#adminmenu .wp-submenu .cff_get_pro_highlight{
-    color: #EC352F;
-	font-weight: 600;
-	/*background: rgba(0,0,0,0.5);*/
-}
+
+#adminmenu .wp-submenu .cff_get_pro_highlight,
 #adminmenu .wp-submenu .cff_get_pro_highlight:hover,
 #adminmenu .wp-submenu .cff_get_pro_highlight:active{
-    color: #EC352F;
-    /*background: rgba(0,0,0,0.65);*/
+	color: #fff;
+	font-weight: 600;
+	background-color: #1da867;
 }
 
 /* Install another plugin modal */

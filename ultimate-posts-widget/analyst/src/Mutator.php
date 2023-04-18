@@ -60,10 +60,10 @@ class Mutator
 
 			analyst_require_template('optin.php');
 
-			// analyst_require_template('forms/deactivate.php', [
-			// 	'pencilImage' => analyst_assets_url('img/pencil.png'),
-			// 	'smileImage' => analyst_assets_url('img/smile.png'),
-			// ]);
+			analyst_require_template('forms/deactivate.php', [
+				'pencilImage' => analyst_assets_url('img/pencil.png'),
+				'smileImage' => analyst_assets_url('img/smile.png'),
+			]);
 
 			analyst_require_template('forms/install.php', [
 				'pluginToInstall' => $this->cache->get('plugin_to_install'),

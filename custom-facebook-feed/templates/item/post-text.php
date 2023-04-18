@@ -35,7 +35,7 @@ if( !empty($post_text) ):
 			</a>
 		<?php endif;  ?>
 	</span>
-	<span class="cff-expand">... <a href="#" style="color: #<?php echo $cff_posttext_link_color; ?>"><span class="cff-more"><?php echo $atts[ 'seemoretext' ]; ?></span><span class="cff-less"><?php echo $atts[ 'seelesstext' ];  ?></span></a></span>
+	<span class="cff-expand">... <a href="#" style="color: #<?php echo $cff_posttext_link_color; ?>"><span class="cff-more"><?php echo esc_html( $atts[ 'seemoretext' ] ); ?></span><span class="cff-less"><?php echo esc_html( $atts[ 'seelesstext' ] );  ?></span></a></span>
 
 </<?php echo $cff_title_format ?>>
 

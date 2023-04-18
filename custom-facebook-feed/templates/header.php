@@ -25,9 +25,9 @@ if ($cff_header_type == "text") : //Start Text Header
 	$cff_icon_style 		= $this_class->get_style_attribute( 'header_icon' );
 	$cff_header_classes 	= CFF_Shortcode_Display::get_header_txt_classes( $cff_header_outside );
 ?>
-	<h3 class="cff-header <?php echo $cff_header_classes ?>" <?php echo $cff_header_styles ?>>
-		<span class="fa fab fa-<?php echo $atts['headericon']  ?>" <?php echo $cff_icon_style ?> aria-hidden="true"></span>
-		<span class="header-text"><?php echo stripslashes( $atts['headertext'] ) ?></span>
+	<h3 class="cff-header <?php echo esc_attr( $cff_header_classes ) ?>" <?php echo $cff_header_styles ?>>
+		<span class="fa fab fa-<?php echo esc_attr( $atts['headericon'] )  ?>" <?php echo $cff_icon_style ?> aria-hidden="true"></span>
+		<span class="header-text"><?php echo wp_kses_post( stripslashes( $atts['headertext'] ) ); ?></span>
 	</h3>
 <?php
 //End Text Header

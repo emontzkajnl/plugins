@@ -51,6 +51,7 @@
             if (isset($_POST['slug']) && !empty($_POST['slug'])) {
 
               // Handle the request
+              add_action('wp_ajax_inisev_installation', [&$this, 'handle_installation']);
               add_action('wp_ajax_inisev_installation_widget', [&$this, 'handle_installation']);
 
             }
@@ -59,7 +60,6 @@
             return;
 
           }
-
           // WordPress globals
           global $menu;
 
@@ -99,7 +99,6 @@
 
           // WordPress Global Variables
           global $menu, $pagenow;
-
           // Make sure $menu exists
           if (!isset($menu) || !is_array($menu)) return $this->fail(5);
 
@@ -114,6 +113,16 @@
             // Load styles
             wp_enqueue_script('inisev-carousel-script', ($this->url . 'assets/index.min.js'), [], filemtime($this->_root_dir . '/assets/index.min.js'), true);
             wp_enqueue_style('inisev-carousel-style', ($this->url . 'assets/style.min.css'), [], filemtime($this->_root_dir . '/assets/style.min.css'));
+
+            // Pass nonce to JS
+            wp_localize_script('inisev-carousel-script', 'inisev_carousel', [
+              'nonce' => wp_create_nonce('inisev_carousel'),
+            ], true);
+
+            // Print the footer
+            if (!has_action('ins_global_print_carrousel')) {
+              add_action('ins_global_print_carrousel', [&$this, '_print'], 1);
+            }
 
             // Print the footer
             add_action('admin_footer', [&$this, '_print'], 1);
@@ -320,7 +329,6 @@
         * Add/print the Carousel
         */
         public function _print() {
-
           try {
 
             include_once trailingslashit($this->_root_dir) . 'views/index.php';
@@ -341,6 +349,10 @@
         * Handle ajax request
         */
         public function handle_installation() {
+
+          if (check_ajax_referer('inisev_carousel', 'nonce', false) === false) {
+             wp_send_json_error();
+          }
 
           // Handle the slug and install the plugin
           $slug = sanitize_text_field($_POST['slug']);
@@ -373,7 +385,6 @@
     }
 
     if (!defined('INISEV_CAROUSEL_WIDGET')) {
-
       $carousel = new Inisev_Carousel_Widget(__FILE__, __DIR__);
 
     }

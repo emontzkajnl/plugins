@@ -57,19 +57,19 @@ if( empty($FBdata->data) || isset($FBdata->cached_error) || $cff_ppca_check_erro
 			</div>
 			<div id="cff-error-reason">
 				<?php if( isset($FBdata->error->message) ): ?>
-					<b><?php echo esc_html__('Error', 'custom-facebook-feed'); ?>:</b> <?php echo $FBdata->error->message; ?>
+					<b><?php echo esc_html__('Error', 'custom-facebook-feed'); ?>:</b> <?php echo wp_kses_post( $FBdata->error->message ); ?>
 				<?php endif; ?>
 				<?php if( isset($FBdata->error->type) ): ?>
-					<b><?php echo esc_html__('Type', 'custom-facebook-feed'); ?>:</b> <?php echo $FBdata->error->type; ?>
+					<b><?php echo esc_html__('Type', 'custom-facebook-feed'); ?>:</b> <?php echo wp_kses_post( $FBdata->error->type ); ?>
 				<?php endif; ?>
 				<?php if( isset($FBdata->error->error_subcode) ): ?>
-					<b><?php echo esc_html__('Subcode', 'custom-facebook-feed'); ?>:</b> <?php echo $FBdata->error->error_subcode; ?>
+					<b><?php echo esc_html__('Subcode', 'custom-facebook-feed'); ?>:</b> <?php echo wp_kses_post( $FBdata->error->error_subcode ); ?>
 				<?php endif; ?>
 				<?php if( isset($FBdata->error_msg) ): ?>
-					<b><?php echo esc_html__('Error', 'custom-facebook-feed'); ?>:</b> <?php echo $FBdata->error_msg; ?>
+					<b><?php echo esc_html__('Error', 'custom-facebook-feed'); ?>:</b> <?php echo wp_kses_post( $FBdata->error_msg ); ?>
 				<?php endif; ?>
 				<?php if( isset($FBdata->error_code) ): ?>
-					<?php echo esc_html__('Code', 'custom-facebook-feed'); ?>: <?php echo $FBdata->error_code; ?>
+					<?php echo esc_html__('Code', 'custom-facebook-feed'); ?>: <?php echo wp_kses_post( $FBdata->error_code ); ?>
 				<?php endif; ?>
 				<?php if( $FBdata == null ): ?>
 					<b><?php echo esc_html__('Error', 'custom-facebook-feed'); ?>:</b> <?php echo esc_html__('Server configuration issue', 'custom-facebook-feed'); ?>

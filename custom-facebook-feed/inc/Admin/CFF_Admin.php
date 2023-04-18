@@ -69,9 +69,9 @@ class CFF_Admin{
 		add_submenu_page(
 			'cff-top',
 			__( 'Upgrade to Pro', 'custom-facebook-feed' ),
-			__( '<span class="cff_get_pro">Try the Pro Demo</span>', 'custom-facebook-feed' ),
+			__( '<span class="cff_get_pro">Upgrade to Pro</span>', 'custom-facebook-feed' ),
 			$cap,
-			'https://smashballoondemo.com/?utm_campaign=facebook-free&utm_source=menu-link&utm_medium=upgrade-link',
+			'https://smashballoon.com/custom-facebook-feed/?utm_campaign=facebook-free&utm_source=menu-link&utm_medium=upgrade-link&utm_content=UpgradeToPro',
 			''
 		);
 

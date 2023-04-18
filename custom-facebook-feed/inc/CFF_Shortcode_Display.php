@@ -55,7 +55,7 @@ class CFF_Shortcode_Display {
 			if( !empty($single_style['value']) && $single_style['value'] != '#' && $single_style['value'] != 'inherit' && $single_style['value'] !== '0' ){
 				$style .= 	$single_style['css_name'] . ':' .
 							(isset($single_style['pref']) ? $single_style['pref'] : '') .
-							$single_style['value'] .
+							esc_attr( $single_style['value'] ).
 							(isset($single_style['suff']) ? $single_style['suff'] : '') .
 							';';
 			}
@@ -70,7 +70,7 @@ class CFF_Shortcode_Display {
 	 * Returns custom CSS classes for the CFF list container shortcode
 	 *
 	 * @since 2.19
-	 * @return Array
+	 * @return array
 	 */
 	public function feed_style_class_compiler(){
 		$result = [
@@ -145,13 +145,13 @@ class CFF_Shortcode_Display {
 		    $css_classes_string .= ' ' . $this->atts['paletteclass'];
 	    }
 
-	    $css_classes_string = ( !empty($css_classes_string) ) ? ' class="cff cff-list-container '.$css_classes_string.'" ' : 'class="cff cff-list-container"';
+	    $css_classes_string = ( !empty($css_classes_string) ) ? ' class="cff cff-list-container ' . esc_attr( $css_classes_string ) . '" ' : 'class="cff cff-list-container"';
 
 		$title_limit = !isset($title_limit) ? $this->atts['textlength'] : 9999;
-	    $attributes_string = ' data-char="'.$title_limit.'" ';
+	    $attributes_string = ' data-char="'. esc_attr( $title_limit ).'" ';
 	    $mobile_num = isset( $this->atts['nummobile'] ) && (int)$this->atts['nummobile'] !== (int)$this->atts['num'] ? (int)$this->atts['nummobile'] : false;
 
-	    $attributes_string .= ( $mobile_num ) ? ' data-nummobile="' . $mobile_num . '" data-pag-num="' . (int)$this->atts['num'] . '" ' :  '';
+	    $attributes_string .= ( $mobile_num ) ? ' data-nummobile="' . esc_attr( $mobile_num ) . '" data-pag-num="' . (int)$this->atts['num'] . '" ' :  '';
 	    if ( CFF_GDPR_Integrations::doing_gdpr( $this->atts ) ) {
 			$attributes_string .= ' data-cff-flags="gdpr" ';
 		}
@@ -162,6 +162,7 @@ class CFF_Shortcode_Display {
 			'cff_feed_styles' => $this->get_style_attribute( 'feed_global' ),
 			'cff_feed_attributes' => $attributes_string
 		];
+
 		return $result;
 	}
 
@@ -192,8 +193,8 @@ class CFF_Shortcode_Display {
 
 
 		return [
-			'class' => 'class="'. $item_class .'"',
-			'id' 	=> 'id="cff_'. $cff_post_id .'"',
+			'class' => 'class="'. esc_attr( $item_class ) .'"',
+			'id' 	=> 'id="cff_'. esc_attr( $cff_post_id ) .'"',
 			'style' => $this->get_post_item_style()
 		];
 	}
@@ -209,7 +210,7 @@ class CFF_Shortcode_Display {
 	public function get_post_item_style(){
 		$item_style = '';
 		if( $this->atts['poststyle'] == 'regular' ){
-			$item_style = ' style="border-bottom: '. CFF_Utils::return_value( $this->atts[ 'sepsize' ] , 0). 'px solid #'. str_replace('#', '', CFF_Utils::return_value( $this->atts[ 'sepcolor' ] , 'ddd')) . ';"';
+			$item_style = ' style="border-bottom: '. esc_attr( CFF_Utils::return_value( $this->atts[ 'sepsize' ] , 0). 'px solid #'. str_replace('#', '', CFF_Utils::return_value( $this->atts[ 'sepcolor' ] , 'ddd')) ) . ';"';
 		}else if( $this->atts['poststyle'] == 'boxed' ){
 			$item_style_array  = [
 				['css_name' => 'border-radius', 'value' => $this->atts['postcorners'] , 'suff' => 'px'],
@@ -525,7 +526,7 @@ class CFF_Shortcode_Display {
 	 * -----------------------------------------
 	 */
 	static function get_post_text_title_format( $atts ){
-		return ( empty($atts[ 'textformat' ]) || $atts[ 'textformat' ] == 'p' ) ? 'div' : $atts[ 'textformat' ];
+		return ( empty($atts[ 'textformat' ]) || $atts[ 'textformat' ] == 'p' ) ? 'div' : sanitize_key( $atts[ 'textformat' ] );
 	}
 
 	static function get_post_text_link( $cff_post_type, $this_class, $link, $PostID ){
@@ -760,7 +761,7 @@ class CFF_Shortcode_Display {
 	}
 
 	static function get_header_font_size( $atts ){
-		return !empty($atts['headertextsize']) ? 'style="font-size:'. $atts['headertextsize'] .'px;"'  : '';
+		return !empty($atts['headertextsize']) ? 'style="font-size:'. esc_attr( $atts['headertextsize'] ) .'px;"'  : '';
 	}
 
 	static function get_header_link( $header_data, $page_id ){

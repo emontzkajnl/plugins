@@ -3,14 +3,14 @@
 Plugin Name: Smash Balloon Custom Facebook Feed
 Plugin URI: https://smashballoon.com/custom-facebook-feed
 Description: Add completely customizable Facebook feeds to your WordPress site
-Version: 4.1.6
+Version: 4.1.8
 Author: Smash Balloon
 Author URI: http://smashballoon.com/
 License: GPLv2 or later
 Text Domain: custom-facebook-feed
 */
 /*
-Copyright 2022 Smash Balloon LLC (email : hey@smashballoon.com)
+Copyright 2023 Smash Balloon LLC (email : hey@smashballoon.com)
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -24,7 +24,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-define('CFFVER', '4.1.6');
+define('CFFVER', '4.1.8');
 define( 'WPW_SL_STORE_URL', 'https://smashballoon.com/' );
 define( 'WPW_SL_ITEM_NAME', 'Custom Facebook Feed WordPress Plugin Personal' ); //*!*Update Plugin Name at top of file*!*
 

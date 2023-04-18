@@ -219,6 +219,16 @@
 	padding-left: 0;
 	padding-right: 0;
 }
+.rl-gallery-tab-inside .rl-gallery-buttons .button {
+    margin-right: 10px;
+}
+.rl-gallery-tab-inside .rl-gallery-buttons .button.button-disabled {
+    pointer-events: none;
+}
+.rl-gallery-tab-inside .rl-gallery-buttons .description {
+    margin-top: 12px;
+    min-height: 20px;
+}
 .rl-gallery-tab-inside .rl-gallery-content {
 	text-align: left;
 	border: 1px dashed #aaa;

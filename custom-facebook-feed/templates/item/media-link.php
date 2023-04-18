@@ -21,8 +21,8 @@ if( $cff_show_media_link && ($cff_post_type == 'photo' || $cff_post_type == 'vid
 
 ?>
 <p class="cff-media-link">
-	<a href="<?php echo esc_url($link) ?>" <?php echo $target; ?> style="color: #<?php echo $cff_posttext_link_color ?>">
-		<span style="padding-right: 5px;" class="fa fas fa-<?php echo $media_link_icon ?>"></span><?php echo $media_link_txt ?>
+	<a href="<?php echo esc_url($link) ?>" <?php echo $target; ?> style="color: #<?php echo esc_attr( $cff_posttext_link_color ) ?>">
+		<span style="padding-right: 5px;" class="fa fas fa-<?php echo $media_link_icon ?>"></span><?php echo wp_kses_post( $media_link_txt ); ?>
 	</a>
 </p>
 <?php

@@ -2,9 +2,9 @@
 Contributors: WebFactory
 Tags: new window, new tab, external links, nofollow, noopener, ugc, sponsored, follow, dofollow, noreferrer, internal links, links, link, internal link, external link, link scanner, link checker
 Requires at least: 4.2
-Tested up to: 6.1
+Tested up to: 6.2
 Requires PHP: 7.2
-Stable tag: 2.57
+Stable tag: 2.58
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -243,6 +243,10 @@ See [FAQ](https://wordpress.org/plugins/wp-external-links/faq/) for more info.
 
 == Changelog ==
 
+= 2.58 =
+ * 2023-03-08
+ * security fix
+ 
 = 2.57 =
  * 2022-12-27
  * added double-check on all template include paths

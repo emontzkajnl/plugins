@@ -183,9 +183,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	        $len = count($feed_options);
 	        foreach( $feed_options as $key => $value ) {
 	            if ($i == $len - 1) {
-	                $json_data .= '&quot;'.$key.'&quot;: &quot;'.$value.'&quot;';
+	                $json_data .= '&quot;'.esc_attr( $key ).'&quot;: &quot;'. esc_attr( $value ).'&quot;';
 	            } else {
-	                $json_data .= '&quot;'.$key.'&quot;: &quot;'.$value.'&quot;, ';
+	                $json_data .= '&quot;'.esc_attr( $key ).'&quot;: &quot;'.esc_attr( $value ).'&quot;, ';
 	            }
 	            $i++;
 	        }
@@ -527,7 +527,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	    $custom_wrp_class = !empty($cff_feed_height) ? ' cff-wrapper-fixed-height' : '';
 
 		$cff_content .= '<div class="cff-wrapper-ctn '.$custom_wrp_class.'" '.$cff_insider_style.'>';
-		$cff_content .= '<div id="cff" ' . $cff_style_class['cff_custom_class'] . ' ' . $cff_style_class['cff_feed_styles'] . ' ' . $cff_style_class['cff_feed_attributes'] . '>';
+		$cff_content .= '<div id="cff" ' . $cff_style_class['cff_custom_class']  . ' ' . $cff_style_class['cff_feed_styles'] . ' ' . $cff_style_class['cff_feed_attributes'] . '>';
 
 	    //Add the page header to the inside of the top of feed
 		if ($cff_show_header && !$cff_header_outside) $cff_content .= $cff_header;

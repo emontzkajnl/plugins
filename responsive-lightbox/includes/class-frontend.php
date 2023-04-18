@@ -52,6 +52,16 @@ class Responsive_Lightbox_Frontend {
 	}
 
 	/**
+	 * Get class data.
+	 *
+	 * @param string $attr
+	 * @return mixed
+	 */
+	public function get_data( $attr ) {
+		return property_exists( $this, $attr ) ? $this->{$attr} : null;
+	}
+
+	/**
 	 * Add lightbox to images, galleries and videos.
 	 *
 	 * @param string $content HTML content
@@ -62,7 +72,10 @@ class Responsive_Lightbox_Frontend {
 		$rl = Responsive_Lightbox();
 
 		// get current script
-		$script = $rl->get_lightbox_script();
+		$script = $rl->get_data( 'current_script' );
+
+		// get scripts
+		$scripts = $rl->settings->get_data( 'scripts' );
 
 		// prepare arguments
 		$args = [
@@ -72,7 +85,7 @@ class Responsive_Lightbox_Frontend {
 				'script'	=> $rl->options['configuration'][$script],
 				'plugin'	=> $rl->options['settings']
 			],
-			'supports'	=> $rl->settings->scripts[$script]['supports']
+			'supports'	=> $scripts[$script]['supports']
 		];
 
 		// workaround for builder galleries to bypass images_as_gallery option, applied only to rl_gallery posts
@@ -313,7 +326,10 @@ class Responsive_Lightbox_Frontend {
 
 		if ( $rl->options['settings']['galleries'] && wp_attachment_is_image( $id ) ) {
 			// get current script
-			$script = $rl->get_lightbox_script();
+			$script = $rl->get_data( 'current_script' );
+
+			// get scripts
+			$scripts = $rl->settings->get_data( 'scripts' );
 
 			// prepare arguments
 			$args = [
@@ -323,8 +339,8 @@ class Responsive_Lightbox_Frontend {
 					'script'	=> $rl->options['configuration'][$script],
 					'plugin'	=> $rl->options['settings']
 				],
-				'supports'	=> $rl->settings->scripts[$script]['supports'],
-				'image_id'	=> $id,
+				'supports'	=> $scripts[$script]['supports'],
+				'image_id'	=> is_object( $id ) ? $id->id : $id,
 				'title'		=> '',
 				'caption'	=> '',
 				'src'		=> []
@@ -547,7 +563,8 @@ class Responsive_Lightbox_Frontend {
 
 		// is it rl gallery?
 		if ( $gallery ) {
-			$tabs = Responsive_Lightbox()->galleries->tabs;
+			// get tabs
+			$tabs = Responsive_Lightbox()->galleries->get_data( 'tabs' );
 
 			if ( ! empty( $tabs ) ) {
 				foreach ( $tabs as $key => $args ) {
@@ -558,8 +575,29 @@ class Responsive_Lightbox_Frontend {
 					$data = get_post_meta( $shortcode_atts['rl_gallery_id'], '_rl_' . $key, true );
 
 					// add those fields
-					if ( ! empty( $data['menu_item'] ) && is_array( $data[$data['menu_item']] ) )
-						$field_atts += $data[$data['menu_item']];
+					if ( ! empty( $data['menu_item'] ) && is_array( $data[$data['menu_item']] ) ) {
+						$new_data = $data[$data['menu_item']];
+
+						if ( $key === 'design' ) {
+							// remove show_title to avoid shortcode attribute duplication
+							if ( isset( $new_data['show_title'] ) ) {
+								if ( ! isset( $new_data['design_show_title'] ) )
+									$new_data['design_show_title'] = $new_data['show_title'];
+
+								unset( $new_data['show_title'] );
+							}
+
+							// remove show_caption to avoid shortcode attribute duplication
+							if ( isset( $new_data['show_caption'] ) ) {
+								if ( ! isset( $new_data['design_show_caption'] ) )
+									$new_data['design_show_caption'] = $new_data['show_caption'];
+
+								unset( $new_data['show_caption'] );
+							}
+						}
+
+						$field_atts += $new_data;
+					}
 				}
 			}
 
@@ -570,7 +608,7 @@ class Responsive_Lightbox_Frontend {
 				$field_atts['gallery_custom_class'] .= ' rl-hover-icon-' . $field_atts['show_icon'];
 		}
 
-		return apply_filters( 'rl_get_gallery_fields_atts', $field_atts );
+		return (array) apply_filters( 'rl_get_gallery_fields_atts', $field_atts );
 	}
 
 	/**
@@ -711,24 +749,24 @@ class Responsive_Lightbox_Frontend {
 			}
 		}
 
-		return apply_filters( 'rl_sanitize_shortcode_args', $atts );
+		return (array) apply_filters( 'rl_sanitize_shortcode_args', $atts );
 	}
 
 	/**
 	 * Get gallery images.
 	 *
-	 * @param array $args Gallery arguments
+	 * @param array $shortcode_atts Gallery arguments
 	 * @return array
 	 */
 	public function get_gallery_shortcode_images( $shortcode_atts ) {
 		// get main instance
 		$rl = Responsive_Lightbox();
 
-		if ( ! isset( $shortcode_atts['show_title'] ) || $shortcode_atts['show_title'] === 'global' )
-			$shortcode_atts['show_title'] = $rl->options['settings']['gallery_image_title'];
+		if ( ! isset( $shortcode_atts['design_show_title'] ) || $shortcode_atts['design_show_title'] === 'global' )
+			$shortcode_atts['design_show_title'] = $rl->options['settings']['gallery_image_title'];
 
-		if ( ! isset( $shortcode_atts['show_caption'] ) || $shortcode_atts['show_caption'] === 'global' )
-			$shortcode_atts['show_caption'] = $rl->options['settings']['gallery_image_caption'];
+		if ( ! isset( $shortcode_atts['design_show_caption'] ) || $shortcode_atts['design_show_caption'] === 'global' )
+			$shortcode_atts['design_show_caption'] = $rl->options['settings']['gallery_image_caption'];
 
 		$images = [];
 
@@ -816,7 +854,10 @@ class Responsive_Lightbox_Frontend {
 		// apply adjustments, as per settings
 		if ( $images ) {
 			// get current script
-			$script = $rl->get_lightbox_script();
+			$script = $rl->get_data( 'current_script' );
+
+			// get scripts
+			$scripts = $rl->settings->get_data( 'scripts' );
 
 			// prepare arguments
 			$args = [
@@ -826,7 +867,7 @@ class Responsive_Lightbox_Frontend {
 					'script'	=> $rl->options['configuration'][$script],
 					'plugin'	=> $rl->options['settings']
 				],
-				'supports'	=> $rl->settings->scripts[$script]['supports'],
+				'supports'	=> $scripts[$script]['supports'],
 				'image_id'	=> 0,
 				'caption'	=> '',
 				'title'		=> '',
@@ -891,7 +932,7 @@ class Responsive_Lightbox_Frontend {
 			}
 		}
 
-		return apply_filters( 'rl_get_gallery_shortcode_images', $images, $gallery_id, $shortcode_atts );
+		return (array) apply_filters( 'rl_get_gallery_shortcode_images', $images, $gallery_id, $shortcode_atts );
 	}
 
 	/**
@@ -936,15 +977,15 @@ class Responsive_Lightbox_Frontend {
 
 		$link .= '>';
 		$link .= apply_filters( 'rl_gallery_image_link_before', '', $attachment_id, $args );
-		$link .= '<img src="' . esc_url( $thumbnail[0] ) . '" width="' . (int) $thumbnail[1] . '" height="' . (int) $thumbnail[2] . '" alt="' . esc_attr( $args['alt'] ) . '" />';
+		$link .= '<img src="' . esc_url( $thumbnail[0] ) . '" width="' . (int) $thumbnail[1] . '" height="' . (int) $thumbnail[2] . '" alt="' . esc_attr( $args['alt'] ) . '"' . ( isset( $args['hide_image'] ) && $args['hide_image'] ? ' style="display: none;"' : '' ) . '/>';
 
 		// embed element?
 		if ( preg_match( '/^e\d+$/', $attachment_id ) === 1 ) {
-			$title = ! empty( $args['show_title'] ) ? $this->get_embed_title( $attachment_id, $args['show_title'], $args ) : '';
-			$caption = ! empty( $args['show_caption'] ) ? $this->get_embed_title( $attachment_id, $args['show_caption'], $args ) : '';
+			$title = ! empty( $args['design_show_title'] ) ? $this->get_embed_title( $attachment_id, $args['design_show_title'], $args ) : '';
+			$caption = ! empty( $args['design_show_caption'] ) ? $this->get_embed_title( $attachment_id, $args['design_show_caption'], $args ) : '';
 		} else {
-			$title = ! empty( $args['show_title'] ) ? $this->get_attachment_title( $attachment_id, $args['show_title'] ) : '';
-			$caption = ! empty( $args['show_caption'] ) ? $this->get_attachment_title( $attachment_id, $args['show_caption'] ) : '';
+			$title = ! empty( $args['design_show_title'] ) ? $this->get_attachment_title( $attachment_id, $args['design_show_title'] ) : '';
+			$caption = ! empty( $args['design_show_caption'] ) ? $this->get_attachment_title( $attachment_id, $args['design_show_caption'] ) : '';
 		}
 
 		if ( $title || $caption ) {
@@ -982,7 +1023,7 @@ class Responsive_Lightbox_Frontend {
 			// found any links?
 			if ( ! empty ( $links[0] ) ) {
 				// get current script
-				$script = $rl->get_lightbox_script();
+				$script = $rl->get_data( 'current_script' );
 
 				foreach ( $links[0] as $link_number => $link ) {
 					// get attachment id
@@ -1121,8 +1162,11 @@ class Responsive_Lightbox_Frontend {
 	 * @return string
 	 */
 	public function woocommerce_single_product_image_html( $html ) {
-		if ( Responsive_Lightbox()->options['settings']['woocommerce_gallery_lightbox'] )
-			$html = preg_replace( '/data-rel=\"(.*?)\"/', 'data-rel="' . esc_attr( Responsive_Lightbox()->options['settings']['selector'] ) . '-gallery-' . (int) $this->gallery_no . '"', $html );
+		// get main instance
+		$rl = Responsive_Lightbox();
+
+		if ( $rl->options['settings']['woocommerce_gallery_lightbox'] )
+			$html = preg_replace( '/data-rel=\"(.*?)\"/', 'data-rel="' . esc_attr( $rl->options['settings']['selector'] ) . '-gallery-' . (int) $this->gallery_no . '"', $html );
 
 		return $html;
 	}
@@ -1135,11 +1179,14 @@ class Responsive_Lightbox_Frontend {
 	 * @return string
 	 */
 	public function woocommerce_single_product_image_thumbnail_html( $html, $attachment_id ) {
-		if ( Responsive_Lightbox()->options['settings']['woocommerce_gallery_lightbox'] ) {
+		// get main instance
+		$rl = Responsive_Lightbox();
+
+		if ( $rl->options['settings']['woocommerce_gallery_lightbox'] ) {
 			// make sure main product image has same gallery number
 			$gallery_no = $this->gallery_no + 1;
 
-			$html = preg_replace( '/data-rel=\"(.*?)\"/', 'data-rel="' . esc_attr( Responsive_Lightbox()->options['settings']['selector'] ) . '-gallery-' . (int) $gallery_no . '"', $html );
+			$html = preg_replace( '/data-rel=\"(.*?)\"/', 'data-rel="' . esc_attr( $rl->options['settings']['selector'] ) . '-gallery-' . (int) $gallery_no . '"', $html );
 
 			preg_match( '/<a(.*?)((?:data-rel)=(?:\'|").*?(?:\'|"))(.*?)>/i', $html, $result );
 
@@ -1149,7 +1196,7 @@ class Responsive_Lightbox_Frontend {
 
 				// found valid link?
 				if ( ! empty( $result ) )
-					$html = $result[1] . '<a' . $result[2] . 'data-rel="' . esc_attr( Responsive_Lightbox()->options['settings']['selector'] ) . '-gallery-' . (int) $gallery_no . '" ' . $result[3] . $result[4] . '>' . $result[5];
+					$html = $result[1] . '<a' . $result[2] . 'data-rel="' . esc_attr( $rl->options['settings']['selector'] ) . '-gallery-' . (int) $gallery_no . '" ' . $result[3] . $result[4] . '>' . $result[5];
 			}
 
 			$html = $this->woocommerce_gallery_link( $html, $attachment_id );
@@ -1218,7 +1265,7 @@ class Responsive_Lightbox_Frontend {
 			$link = str_replace( '__RL_IMAGE_CAPTION__', esc_attr( $caption ), preg_replace( '/(<a[^>]*?)>/is', '$1 data-rl_caption="__RL_IMAGE_CAPTION__">', $link ) );
 		}
 
-		if ( $rl->get_lightbox_script() === 'magnific' )
+		if ( $rl->get_data( 'current_script' ) === 'magnific' )
 			$link = preg_replace( '/(<a[^>]*?)>/is', '$1 data-magnific_type="gallery">', $link );
 
 		return $link;
@@ -1230,7 +1277,10 @@ class Responsive_Lightbox_Frontend {
 	 * @return void
 	 */
 	public function woocommerce_gallery_init() {
-		if ( ( $priority = has_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails' ) ) !== false && ! empty( Responsive_Lightbox()->options['settings']['default_woocommerce_gallery'] ) && Responsive_Lightbox()->options['settings']['default_woocommerce_gallery'] !== 'default' ) {
+		// get main instance
+		$rl = Responsive_Lightbox();
+
+		if ( ( $priority = has_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails' ) ) !== false && ! empty( $rl->options['settings']['default_woocommerce_gallery'] ) && $rl->options['settings']['default_woocommerce_gallery'] !== 'default' ) {
 			// remove default gallery
 			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', $priority );
 
@@ -1369,6 +1419,9 @@ class Responsive_Lightbox_Frontend {
 			// set the cache expiration, 24 hours by default
 			$expire = (int) apply_filters( 'rl_object_cache_expire', DAY_IN_SECONDS );
 
+			if ( ! is_array( $post_ids ) )
+				$post_ids = [];
+
 			// update post ids
 			$post_ids[$url] = $post_id;
 
@@ -1440,6 +1493,7 @@ class Responsive_Lightbox_Frontend {
 	 * Helper: gallery number function.
 	 *
 	 * @param string $content
+	 * @param array $shortcode_atts
 	 * @return string
 	 */
 	public function gallery_attributes( $content, $shortcode_atts ) {
@@ -1454,6 +1508,9 @@ class Responsive_Lightbox_Frontend {
 
 		// add inline style, to our galleries only
 		if ( isset( $shortcode_atts['type'] ) ) {
+			// get main instance
+			$rl = Responsive_Lightbox();
+
 			// gallery style
 			wp_enqueue_style( 'responsive-lightbox-gallery' );
 
@@ -1461,23 +1518,24 @@ class Responsive_Lightbox_Frontend {
 			$rl_gallery_id = ! empty( $shortcode_atts['rl_gallery_id'] ) ? (int) $shortcode_atts['rl_gallery_id'] : 0;
 
 			// is it rl gallery?
-			$rl_gallery = Responsive_Lightbox()->options['builder']['gallery_builder'] && $rl_gallery_id && get_post_type( $rl_gallery_id ) === 'rl_gallery';
+			$rl_gallery = $rl->options['builder']['gallery_builder'] && $rl_gallery_id && get_post_type( $rl_gallery_id ) === 'rl_gallery';
 
 			// is it rl gallery? add design options
 			if ( $rl_gallery ) {
-				$fields = Responsive_Lightbox()->galleries->fields['design']['options'];
+				// get fields
+				$fields = $rl->galleries->get_data( 'fields' );
 
 				// get gallery fields attributes
-				$field_atts = rl_get_gallery_fields_atts( $fields, $shortcode_atts, $rl_gallery );
+				$field_atts = rl_get_gallery_fields_atts( $fields['design']['options'], $shortcode_atts, $rl_gallery );
 
 				// get only valid arguments
 				$atts = shortcode_atts( $field_atts, array_merge( $field_atts, $shortcode_atts ), 'gallery' );
 
 				// sanitize gallery fields
-				$atts = $this->sanitize_shortcode_args( $atts, $fields );
+				$atts = $this->sanitize_shortcode_args( $atts, $fields['design']['options'] );
 
 				// convert color
-				$background_color = Responsive_Lightbox()->hex2rgb( $atts['background_color'] );
+				$background_color = $rl->hex2rgb( $atts['background_color'] );
 
 				// invalid color?
 				if ( ! $background_color )
@@ -1491,7 +1549,14 @@ class Responsive_Lightbox_Frontend {
 				// add inline style
 				wp_add_inline_style(
 					'responsive-lightbox-gallery',
-					'.rl-gallery .rl-gallery-link {
+					':root {
+						--rl-gallery-background_color: ' . esc_attr( $atts['background_color'] ) . ';
+						--rl-gallery-background_opacity: ' . esc_attr( $opacity ) . ';
+						--rl-gallery-border_color: ' . esc_attr( $atts['border_color'] ) . ';
+						--rl-gallery-title_color: ' . esc_attr( $atts['title_color'] ) . ';
+						--rl-gallery-caption_color: ' . esc_attr( $atts['caption_color'] ) . ';
+					}
+					.rl-gallery .rl-gallery-link {
 						border: ' . (int) $atts['border_width'] . 'px solid ' . esc_attr( $atts['border_color'] ) . ';
 					}
 					.rl-gallery .rl-gallery-link .rl-gallery-item-title {
@@ -1741,8 +1806,12 @@ class Responsive_Lightbox_Frontend {
 		$field_atts = rl_get_gallery_fields_atts( $fields, $shortcode_atts, $rl_gallery );
 
 		// is it rl gallery? add misc and lightbox fields
-		if ( $rl_gallery )
-			$fields += $rl->galleries->fields['lightbox']['options'] + $rl->galleries->fields['misc']['options'];
+		if ( $rl_gallery ) {
+			// get fields
+			$fields_data = $rl->galleries->get_data( 'fields' );
+
+			$fields += $fields_data['lightbox']['options'] + $fields_data['misc']['options'];
+		}
 
 		// get only valid arguments
 		$atts = shortcode_atts( array_merge( $defaults, $field_atts ), $shortcode_atts, 'gallery' );
@@ -1830,11 +1899,11 @@ class Responsive_Lightbox_Frontend {
 		ob_start();
 
 		// $gallery_no and $rl_gallery_id are both integers ?>
-		<div class="rl-gallery-container<?php echo esc_attr( apply_filters( 'rl_gallery_container_class', '', $atts, $rl_gallery_id ) ); ?>" id="rl-gallery-container-<?php echo $gallery_no; ?>" data-gallery_id="<?php echo $rl_gallery_id; ?>">
+		<div class="rl-gallery-container<?php echo esc_attr( apply_filters( 'rl_gallery_container_class', '', $atts, $rl_gallery_id ) ); ?>" id="rl-gallery-container-<?php echo (int) $gallery_no; ?>" data-gallery_id="<?php echo (int) $rl_gallery_id; ?>">
 
 			<?php do_action( 'rl_before_gallery', $atts, $rl_gallery_id ); ?>
 
-			<div class="rl-gallery rl-basicgrid-gallery <?php echo esc_attr( $atts['class'] ); ?>" id="rl-gallery-<?php echo $gallery_no; ?>" data-gallery_no="<?php echo $gallery_no; ?>">
+			<div class="rl-gallery rl-basicgrid-gallery <?php echo esc_attr( $atts['class'] ); ?>" id="rl-gallery-<?php echo (int) $gallery_no; ?>" data-gallery_no="<?php echo (int) $gallery_no; ?>">
 
 			<?php foreach ( $images as $image ) {
 				// $image['link'] is already escaped
@@ -1957,8 +2026,12 @@ class Responsive_Lightbox_Frontend {
 		$field_atts = rl_get_gallery_fields_atts( $fields, $shortcode_atts, $rl_gallery );
 
 		// is it rl gallery? add misc and lightbox fields
-		if ( $rl_gallery )
-			$fields += $rl->galleries->fields['lightbox']['options'] + $rl->galleries->fields['misc']['options'];
+		if ( $rl_gallery ) {
+			// get fields
+			$fields_data = $rl->galleries->get_data( 'fields' );
+
+			$fields += $fields_data['lightbox']['options'] + $fields_data['misc']['options'];
+		}
 
 		// get only valid arguments
 		$atts = shortcode_atts( array_merge( $defaults, $field_atts ), $shortcode_atts, 'gallery' );
@@ -2033,11 +2106,11 @@ class Responsive_Lightbox_Frontend {
 		ob_start();
 
 		// $gallery_no and $rl_gallery_id are both integers ?>
-		<div class="rl-gallery-container<?php echo esc_attr( apply_filters( 'rl_gallery_container_class', '', $atts, $rl_gallery_id ) ); ?>" id="rl-gallery-container-<?php echo $gallery_no; ?>" data-gallery_id="<?php echo $rl_gallery_id; ?>">
+		<div class="rl-gallery-container<?php echo esc_attr( apply_filters( 'rl_gallery_container_class', '', $atts, $rl_gallery_id ) ); ?>" id="rl-gallery-container-<?php echo (int) $gallery_no; ?>" data-gallery_id="<?php echo (int) $rl_gallery_id; ?>">
 
 			<?php do_action( 'rl_before_gallery', $atts, $rl_gallery_id ); ?>
 
-			<ul class="rl-gallery rl-basicslider-gallery <?php echo esc_attr( $atts['class'] ); ?>" id="rl-gallery-<?php echo $gallery_no; ?>" data-gallery_no="<?php echo $gallery_no; ?>">
+			<ul class="rl-gallery rl-basicslider-gallery <?php echo esc_attr( $atts['class'] ); ?>" id="rl-gallery-<?php echo (int) $gallery_no; ?>" data-gallery_no="<?php echo (int) $gallery_no; ?>">
 
 			<?php foreach ( $images as $image ) {
 				// $image['link'] is already escaped
@@ -2061,36 +2134,33 @@ class Responsive_Lightbox_Frontend {
 		// styles
 		wp_enqueue_style( 'responsive-lightbox-basicslider-gallery', plugins_url( 'assets/slippry/slippry' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', dirname( __FILE__ ) ), [], $rl->defaults['version'] );
 
-		wp_localize_script(
-			'responsive-lightbox-basicslider-gallery',
-			'rlArgsBasicSliderGallery' . ( $gallery_no + 1 ),
-			[
-				'data' => [
-					'adaptive_height'		=> $atts['adaptive_height'],
-					'loop'					=> $atts['loop'],
-					'captions'				=> $atts['captions'],
-					'init_single'			=> $atts['init_single'],
-					'responsive'			=> $atts['responsive'],
-					'preload'				=> $atts['preload'],
-					'pager'					=> $atts['pager'],
-					'controls'				=> $atts['controls'],
-					'hide_on_end'			=> $atts['hide_on_end'],
-					'slide_margin'			=> $atts['slide_margin'],
-					'transition'			=> $atts['transition'],
-					'kenburns_zoom'			=> $atts['kenburns_zoom'],
-					'speed'					=> $atts['speed'],
-					'easing'				=> $atts['easing'],
-					'continuous'			=> $atts['continuous'],
-					'use_css'				=> $atts['use_css'],
-					'slideshow'				=> $atts['slideshow'],
-					'slideshow_direction'	=> $atts['slideshow_direction'],
-					'slideshow_hover'		=> $atts['slideshow_hover'],
-					'slideshow_hover_delay'	=> $atts['slideshow_hover_delay'],
-					'slideshow_delay'		=> $atts['slideshow_delay'],
-					'slideshow_pause'		=> $atts['slideshow_pause']
-				]
-			]
-		);
+		// prepare script data
+		$script_data = [
+			'adaptive_height'		=> $atts['adaptive_height'],
+			'loop'					=> $atts['loop'],
+			'captions'				=> $atts['captions'],
+			'init_single'			=> $atts['init_single'],
+			'responsive'			=> $atts['responsive'],
+			'preload'				=> $atts['preload'],
+			'pager'					=> $atts['pager'],
+			'controls'				=> $atts['controls'],
+			'hide_on_end'			=> $atts['hide_on_end'],
+			'slide_margin'			=> $atts['slide_margin'],
+			'transition'			=> $atts['transition'],
+			'kenburns_zoom'			=> $atts['kenburns_zoom'],
+			'speed'					=> $atts['speed'],
+			'easing'				=> $atts['easing'],
+			'continuous'			=> $atts['continuous'],
+			'use_css'				=> $atts['use_css'],
+			'slideshow'				=> $atts['slideshow'],
+			'slideshow_direction'	=> $atts['slideshow_direction'],
+			'slideshow_hover'		=> $atts['slideshow_hover'],
+			'slideshow_hover_delay'	=> $atts['slideshow_hover_delay'],
+			'slideshow_delay'		=> $atts['slideshow_delay'],
+			'slideshow_pause'		=> $atts['slideshow_pause']
+		];
+
+		wp_add_inline_script( 'responsive-lightbox-basicslider-gallery', 'var rlArgsBasicSliderGallery' . ( $gallery_no + 1 ) . ' = ' . wp_json_encode( $script_data ) . ";\n", 'before' );
 
 		// remove any new lines from the output so that the reader parses it better
 		return apply_filters( 'rl_gallery_shortcode_html', trim( preg_replace( '/\s+/', ' ', $gallery_html ) ), $atts, $rl_gallery_id );
@@ -2152,8 +2222,12 @@ class Responsive_Lightbox_Frontend {
 		$field_atts = rl_get_gallery_fields_atts( $fields, $shortcode_atts, $rl_gallery );
 
 		// is it rl gallery? add misc and lightbox fields
-		if ( $rl_gallery )
-			$fields += $rl->galleries->fields['lightbox']['options'] + $rl->galleries->fields['misc']['options'];
+		if ( $rl_gallery ) {
+			// get fields
+			$fields_data = $rl->galleries->get_data( 'fields' );
+
+			$fields += $fields_data['lightbox']['options'] + $fields_data['misc']['options'];
+		}
 
 		// get only valid arguments
 		$atts = shortcode_atts( array_merge( $defaults, $field_atts ), $shortcode_atts, 'gallery' );
@@ -2241,11 +2315,11 @@ class Responsive_Lightbox_Frontend {
 		ob_start();
 
 		// $gallery_no and $rl_gallery_id are both integers ?>
-		<div class="rl-gallery-container<?php echo esc_attr( apply_filters( 'rl_gallery_container_class', '', $atts, $rl_gallery_id ) ); ?>" id="rl-gallery-container-<?php echo $gallery_no; ?>" data-gallery_id="<?php echo $rl_gallery_id; ?>">
+		<div class="rl-gallery-container<?php echo esc_attr( apply_filters( 'rl_gallery_container_class', '', $atts, $rl_gallery_id ) ); ?>" id="rl-gallery-container-<?php echo (int) $gallery_no; ?>" data-gallery_id="<?php echo (int) $rl_gallery_id; ?>">
 
 			<?php do_action( 'rl_before_gallery', $atts, $rl_gallery_id ); ?>
 
-			<div class="rl-gallery rl-basicmasonry-gallery <?php echo esc_attr( $atts['class'] ); ?>" id="rl-gallery-<?php echo $gallery_no; ?>" data-gallery_no="<?php echo $gallery_no; ?>">
+			<div class="rl-gallery rl-basicmasonry-gallery <?php echo esc_attr( $atts['class'] ); ?>" id="rl-gallery-<?php echo (int) $gallery_no; ?>" data-gallery_no="<?php echo (int) $gallery_no; ?>">
 
 			<?php
 			$count = 0;
@@ -2328,16 +2402,13 @@ class Responsive_Lightbox_Frontend {
 			}'
 		);
 
-		wp_localize_script(
-			'responsive-lightbox-basicmasonry-gallery',
-			'rlArgsBasicMasonryGallery' . ( $gallery_no + 1 ),
-			[
-				'data' => [
-					'originLeft'	=> $atts['origin_left'],
-					'originTop'		=> $atts['origin_top']
-				]
-			]
-		);
+		// prepare script data
+		$script_data = [
+			'originLeft'	=> $atts['origin_left'],
+			'originTop'		=> $atts['origin_top']
+		];
+
+		wp_add_inline_script( 'responsive-lightbox-basicmasonry-gallery', 'var rlArgsBasicMasonryGallery' . ( $gallery_no + 1 ) . ' = ' . wp_json_encode( $script_data ) . ";\n", 'before' );
 
 		// remove any new lines from the output so that the reader parses it better
 		return apply_filters( 'rl_gallery_shortcode_html', trim( preg_replace( '/\s+/', ' ', $gallery_html ) ), $atts, $rl_gallery_id );
