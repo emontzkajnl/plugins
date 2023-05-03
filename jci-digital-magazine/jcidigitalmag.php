@@ -49,7 +49,7 @@ function jcidm_magazine(){
     // Get the location data if its already been entered
     $magazine_copy = get_post_meta($post->ID, 'magazine_copy', true);
     // Echo out the textarea with editor
-    echo  wp_editor( $magazine_copy, 'magazine', $settings = array('textarea_name' => magazine_copy, 'cols' => 60) ); 
+    echo  wp_editor( $magazine_copy, 'magazine', $settings = array('textarea_name' => $magazine_copy, 'cols' => 60) ); 
 
 // callback to display Calameo ID text field
 	echo '<div class="calameo-id-field"><label>Calameo ID</label>
