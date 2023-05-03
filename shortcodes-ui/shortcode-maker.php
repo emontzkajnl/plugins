@@ -685,7 +685,8 @@ JS;
 			
 			if(isset($sc_meta['_bascsh_attr'][0]) ){
 				$shortcode_attributes = unserialize($sc_meta['_bascsh_attr'][0]);
-				if (is_array($shortcode_attributes) && count($shortcode_attributes > 0)){
+				// if (is_array($shortcode_attributes) && count($shortcode_attributes > 0)){
+					if (is_array($shortcode_attributes) && count($shortcode_attributes) > 0 ){
 					$args = array();
 					foreach ($shortcode_attributes as $at){
 						if (isset($attr[$at['_basc_name']])){
