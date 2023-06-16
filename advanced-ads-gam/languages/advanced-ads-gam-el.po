@@ -1,0 +1,511 @@
+# Translation of Google Ad Manager in Greek
+# This file is distributed under the same license as the Google Ad Manager package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-10-23 22:57:18+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/3.0.0\n"
+"Language: el_GR\n"
+"Project-Id-Version: Google Ad Manager\n"
+
+#: admin/views/gam-connect.php:44
+msgid "Switching transport method"
+msgstr ""
+
+#. translators: amount of ads that can be imported from the Google account
+#: admin/views/importer/base-frame.php:11
+msgid "%d ad unit is not yet imported."
+msgid_plural "%d ad units are not yet imported."
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/ad-list-rows.php:11
+msgid "Update ad unit"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-soap.php:416
+msgid "Unknown response format"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-oauth2.php:245
+msgid "Unknown error while submitting code"
+msgstr ""
+
+#. translators: Google Ad Manager account ID
+#: admin/class-advanced-ads-gam-oauth2.php:121
+msgid "Unknown error while renewing access token for \"%s\""
+msgstr ""
+
+#: admin/views/ad-parameters.php:88
+msgid "The selected ad unit is not in your ad list."
+msgstr ""
+
+#: admin/views/ad-search.php:51
+msgid "The listed ad units are already imported."
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:85
+msgid "Testing the API"
+msgstr ""
+
+#: admin/views/ad-list-rows.php:21 admin/views/ads-list.php:63
+msgid "Search ad units"
+msgstr ""
+
+#: admin/views/ad-search.php:8
+msgid "Search"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-ajax.php:411
+msgid "Not Authorized"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:170
+msgid "No SOAP. unknown response format >> getting ad units list"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:155
+msgid "No SOAP. No access token >> getting ad units list"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:196
+msgid "No SOAP. No access token >> getting ad by"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:123
+msgid "No SOAP. Getting network list"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:176
+msgid "No SOAP. Getting all units"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:215
+msgid "No SOAP. Getting ads by"
+msgstr ""
+
+#: admin/views/ad-search.php:31
+msgid "No ad found matching that name"
+msgstr ""
+
+#: admin/views/ad-search.php:57
+msgid "Load into ad list"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-api-rest.php:46
+#: admin/class-advanced-ads-gam-oauth2.php:69
+msgid "Invalid JSON string"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-oauth2.php:227
+msgid "Error while submitting code"
+msgstr ""
+
+#: admin/views/ad-search.php:5
+msgid "Enter an ad unit name from your Google Ad Manager account"
+msgstr ""
+
+#: admin/class-advanced-ads-gam-ajax.php:415
+msgid "Bad request"
+msgstr ""
+
+#: admin/views/ad-list-rows.php:12
+msgid "Remove ad unit"
+msgstr ""
+
+#. translators: The string is followed by the sanitized key-value input before
+#. it is saved
+#: includes/class-advanced-ads-network-gam.php:302
+msgid "Will be created as"
+msgstr "Θα δημιουργηθεί ως"
+
+#: includes/predefined-sizes.php:11
+msgid "select a size"
+msgstr "επιλέξτε ένα μέγεθος"
+
+#: admin/views/ad-sizes/table.php:24
+msgid "Reset ad sizes"
+msgstr "Επαναφορά μεγεθών διαφημίσεων"
+
+#: admin/views/ad-sizes/table-cell.php:4
+#: admin/views/ad-sizes/table-header.php:2
+#: admin/views/ad-sizes/table-row.php:10 admin/views/ad-sizes/table.php:10
+msgid "remove size"
+msgstr "αφαιρέστε το μέγεθος"
+
+#: admin/views/ad-sizes/table-row.php:15 admin/views/ad-sizes/table.php:15
+msgid "new ad size"
+msgstr "νέο μέγεθος διαφήμισης"
+
+#: includes/predefined-sizes.php:12
+msgid "fluid"
+msgstr "υγρό"
+
+#: includes/class-advanced-ads-network-gam.php:300
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: admin/views/ad-sizes/table-row.php:16
+msgid "add screen width"
+msgstr "προσθέστε πλάτος οθόνης"
+
+#: admin/views/importer/base-frame.php:7
+msgid "You can choose which ad units to import."
+msgstr "Μπορείτε να επιλέξετε ποιες ενότητες διαφημίσεων θα εισαγάγετε."
+
+#: admin/views/ads-list.php:78
+msgid "The selected ad is not from the currently connected account. You can still use it though."
+msgstr "Η επιλεγμένη διαφήμιση δεν προέρχεται από τον τρέχοντα συνδεδεμένο λογαριασμό. Μπορείτε ακόμα να το χρησιμοποιήσετε όμως."
+
+#: admin/class-advanced-ads-gam-ajax.php:246
+msgid "Open ad overview"
+msgstr "Ανοίξτε την επισκόπηση διαφημίσεων"
+
+#: admin/views/importer/base-frame.php:15
+msgid "One ad unit is not yet imported"
+msgstr "Ενικός: Μία ενότητα διαφημίσεων δεν έχει ακόμη εισαχθεί."
+
+#. translators: amount of ads imported
+#: admin/class-advanced-ads-gam-ajax.php:245
+msgid "%s ad imported."
+msgid_plural "%s ads imported."
+msgstr[0] "Ενικός: Μία διαφήμιση εισήχθη."
+msgstr[1] "Πληθυντικός: %s διαφημίσεις εισήχθησαν."
+
+#: admin/views/ads-list.php:80
+msgid "Network code"
+msgstr "Κωδικός δικτύου"
+
+#: admin/views/importer/base-frame.php:21
+msgid "Import ad units from your account"
+msgstr "Εισαγάγετε ενότητες διαφημίσεων από τον λογαριασμό σας"
+
+#: admin/views/importer/base-frame.php:23
+msgid "Import"
+msgstr "Εισαγωγή"
+
+#: admin/class-advanced-ads-gam-admin.php:208
+msgid "Enter the user meta \"meta_key\" as a value."
+msgstr "Εισαγάγετε το meta χρήστη \"meta_key\" ως τιμή."
+
+#: admin/class-advanced-ads-gam-admin.php:203
+msgid "Enter the post meta \"meta_key\" as a value."
+msgstr "Εισαγάγετε το meta της ανάρτησης \"meta_key\" ως τιμή."
+
+#: admin/views/ad-sizes/responsive-sizes.php:12
+msgid "Does not work on AMP."
+msgstr "Δεν λειτουργεί σε AMP."
+
+#: admin/class-advanced-ads-gam-ajax.php:246 admin/views/ad-search.php:52
+#: admin/views/ad-search.php:56 admin/views/ad-search.php:61
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#: admin/views/ad-sizes/amp.php:11
+msgid "AMP pages"
+msgstr "Σελίδες AMP"
+
+#. Author of the plugin
+msgid "Advanced Ads GmbH"
+msgstr "Advanced Ads GmbH"
+
+#: admin/views/ad-sizes/table.php:23
+msgid "Ad units with the fluid size selected on AMP pages only work when placed below the fold."
+msgstr "Οι ενότητες διαφημίσεων με το ρευστό μέγεθος που έχει επιλεγεί σε σελίδες AMP λειτουργούν μόνο όταν τοποθετούνται κάτω από το πάσο."
+
+#: admin/views/ad-parameters.php:90 admin/views/ads-list.php:81
+msgid "Ad unit name"
+msgstr "Όνομα ενότητας διαφημίσεων"
+
+#: admin/views/gam-connect.php:37
+msgid "Processing authorization"
+msgstr "Εξουσιοδότηση επεξεργασίας"
+
+#. translators: link to manual page
+#: admin/views/gam-network-id.php:65
+msgid "Please enable the API option in your Ad Manager account and reload this page. Manual %s"
+msgstr "Ενεργοποιήστε την επιλογή API στον λογαριασμό σας στο Ad Manager και φορτώστε ξανά αυτήν τη σελίδα. Εγχειρίδιο %s"
+
+#: admin/views/ad-parameters.php:96
+msgid "Fluid sizes cannot be aligned left or right. Please choose another option for Position."
+msgstr "Τα μεγέθη υγρών δεν μπορούν να ευθυγραμμιστούν αριστερά ή δεξιά. Επιλέξτε μια άλλη επιλογή για Θέση."
+
+#. translators: 1: link to License tab, 2: closing anchor tag
+#: admin/views/gam-network-id.php:76
+msgid "Please re-activate %1$syour license%2$s to update the ad unit list."
+msgstr "Ενεργοποιήστε ξανά την %1$sάδειά σας%2$s για να ενημερώσετε τη λίστα ενοτήτων διαφημίσεων."
+
+#. translators: 1: link to License tab, 2: closing anchor tag
+#: admin/views/ad-parameters.php:48 admin/views/gam-network-id.php:40
+msgid "Please activate %1$syour license%2$s to connect your account."
+msgstr "Ενεργοποιήστε την %1$sάδειά σας%2$s για να συνδέσετε τον λογαριασμό σας."
+
+#: admin/views/ad-sizes/responsive-sizes.php:10
+msgid "Automatically filter out ad sizes that are too large for the available space in the frontend."
+msgstr "Φιλτράρετε αυτόματα τα μεγέθη διαφημίσεων που είναι πολύ μεγάλα για τον διαθέσιμο χώρο στη διεπαφή."
+
+#: admin/views/ad-sizes/table-row.php:17
+msgid "delete"
+msgstr "διαγραφή"
+
+#: admin/views/ad-sizes/table-row.php:4 admin/views/ad-sizes/table.php:5
+msgid "min. screen width"
+msgstr "ελάχ. πλάτος οθόνης"
+
+#: admin/views/key-value.php:148
+msgid "Add"
+msgstr "Προσθήκη"
+
+#: admin/views/key-value.php:52
+msgid "Key-value targeting"
+msgstr "Στόχευση κλειδιού-τιμής"
+
+#: admin/views/ad-parameters.php:65
+msgid "This ad unit does not have any ad sizes"
+msgstr "Αυτή η ενότητα διαφημίσεων δεν έχει κανένα μέγεθος διαφήμισης"
+
+#: admin/views/ad-parameters.php:60
+msgid "Ad sizes"
+msgstr "Μεγέθη διαφημίσεων"
+
+#: admin/views/ads-list.php:73
+msgid "Update ad"
+msgstr "Ενημέρωση διαφήμισης"
+
+#: admin/views/ads-list.php:71
+msgid "The selected ad unit has changed in your GAM account. Please re-save this ad to apply the new changes."
+msgstr "Η επιλεγμένη ενότητα διαφημίσεων έχει αλλάξει στον λογαριασμό σας στο GAM. Αποθηκεύστε ξανά αυτήν τη διαφήμιση για να εφαρμόσετε τις νέες αλλαγές."
+
+#: admin/class-advanced-ads-gam-admin.php:285 admin/views/key-value.php:94
+msgid "Any terms, including categories and tags. Enabled on single pages."
+msgstr "Τυχόν όροι, συμπεριλαμβανομένων κατηγοριών και ετικετών. Ενεργοποιήθηκε σε μεμονωμένες σελίδες."
+
+#: admin/class-advanced-ads-gam-admin.php:284 admin/views/key-value.php:90
+msgid "Any terms, including categories and tags. Enabled on single and archive pages."
+msgstr "Τυχόν όροι, συμπεριλαμβανομένων κατηγοριών και ετικετών. Ενεργοποιήθηκε σε μεμονωμένες σελίδες και σελίδες αρχειοθέτησης."
+
+#: admin/class-advanced-ads-gam-admin.php:283 admin/views/key-value.php:58
+#: admin/views/key-value.php:79 admin/views/key-value.php:145
+msgid "Value"
+msgstr "Τιμή"
+
+#: admin/class-advanced-ads-gam-admin.php:282 admin/views/key-value.php:57
+#: admin/views/key-value.php:75 admin/views/key-value.php:142
+msgid "Key"
+msgstr "Κλειδί"
+
+#: admin/class-advanced-ads-gam-admin.php:281 admin/views/key-value.php:56
+#: admin/views/key-value.php:71 admin/views/key-value.php:130
+msgid "Type"
+msgstr "Τύπος"
+
+#: admin/class-advanced-ads-gam-admin.php:239
+#: admin/class-advanced-ads-gam-admin.php:258
+#: admin/class-advanced-ads-gam-admin.php:261
+msgid "Connect to GAM"
+msgstr "Συνδεθείτε στο GAM"
+
+#: admin/class-advanced-ads-gam-admin.php:219
+msgid "send also on archive pages"
+msgstr "αποστολή επίσης σε σελίδες αρχείου"
+
+#: admin/class-advanced-ads-gam-admin.php:218
+msgid "Any terms on single pages, including categories and tags."
+msgstr "Τυχόν όροι σε μεμονωμένες σελίδες, συμπεριλαμβανομένων κατηγοριών και ετικετών."
+
+#: admin/class-advanced-ads-gam-admin.php:217
+msgid "Categories/Tags/Terms"
+msgstr "Κατηγορίες/Ετικέτες/Όροι"
+
+#: admin/class-advanced-ads-gam-admin.php:213
+msgid "Taxonomy of archive pages."
+msgstr "Ταξινόμηση σελίδων αρχείου."
+
+#: admin/class-advanced-ads-gam-admin.php:212
+msgid "Taxonomy"
+msgstr "Ταξινόμηση"
+
+#: admin/class-advanced-ads-gam-admin.php:207
+msgid "User meta"
+msgstr "Meta χρήστη"
+
+#: admin/class-advanced-ads-gam-admin.php:202
+msgid "Post meta"
+msgstr "Meta άρθρου"
+
+#: admin/class-advanced-ads-gam-admin.php:198
+msgid "ID of the Advanced Ads placement."
+msgstr "Αναγνωριστικό της τοποθέτησης Advanced Ads."
+
+#: admin/class-advanced-ads-gam-admin.php:197
+msgid "Placement ID"
+msgstr "Αναγνωριστικό τοποθέτησης"
+
+#: admin/class-advanced-ads-gam-admin.php:193
+msgid "ID of the current post or page."
+msgstr "Αναγνωριστικό της τρέχουσας ανάρτησης ή σελίδας."
+
+#: admin/class-advanced-ads-gam-admin.php:192
+msgid "Page ID"
+msgstr "Αναγνωριστικό σελίδας"
+
+#: admin/class-advanced-ads-gam-admin.php:180
+msgid "Page type"
+msgstr "Τύπος σελίδας"
+
+#: admin/class-advanced-ads-gam-admin.php:175
+msgid "Page slug"
+msgstr "Ψευδώνυμο σελίδας"
+
+#: admin/class-advanced-ads-gam-admin.php:170
+msgid "Post types"
+msgstr "Τύποι αναρτήσεων"
+
+#: admin/class-advanced-ads-gam-admin.php:164
+msgid "Custom key"
+msgstr "Προσαρμοσμένο κλειδί"
+
+#: includes/class-advanced-ads-network-gam.php:345
+msgid "one day ago"
+msgid_plural "%s days ago"
+msgstr[0] "Ενικός: πριν μια μέρα"
+msgstr[1] "Πλυθυντικός: %s ημέρες πριν"
+
+#: includes/class-advanced-ads-network-gam.php:342
+msgid "less than 24 hours ago"
+msgstr "πριν από λιγότερο από 24 ώρες"
+
+#: includes/class-advanced-ads-network-gam.php:340
+msgid "less than an hour ago"
+msgstr "πριν από λιγότερο από μία ώρα"
+
+#: includes/class-advanced-ads-network-gam.php:338
+msgid "just now"
+msgstr "μόλις τώρα"
+
+#: includes/class-advanced-ads-network-gam.php:334
+msgid "unknown"
+msgstr "άγνωστος"
+
+#: includes/class-advanced-ads-network-gam.php:332
+msgid "Last updated:"
+msgstr "Τελευταία ενημέρωση:"
+
+#: admin/views/key-value.php:120
+#: includes/class-advanced-ads-network-gam.php:299
+msgid "Remove"
+msgstr "Αφαίρεση"
+
+#. Plugin Name of the plugin
+msgid "Advanced Ads – Google Ad Manager Integration"
+msgstr "Advanced Ads – Ενσωμάτωση Google Ad Manager"
+
+#. Plugin URI of the plugin
+msgid "https://wpadvancedads.com/add-ons/google-ad-manager/"
+msgstr "https://wpadvancedads.com/add-ons/google-ad-manager/"
+
+#: admin/views/gam-connect.php:55
+msgid "Please select the network account"
+msgstr "Παρακαλώ επιλέξτε τον λογαριασμό δικτύου"
+
+#. Description of the plugin
+msgid "Google Ad Manager Integration for WordPress"
+msgstr "Google Ad Manager Ενσωμάτωση για WordPress"
+
+#: includes/class-advanced-ads-network-gam.php:119
+msgid "Collapse empty elements"
+msgstr "Σύμπτυξη κενών στοιχείων"
+
+#: includes/class-advanced-ads-network-gam.php:108
+msgid "Ad Manager account"
+msgstr "Λογαριασμός Ad Manager"
+
+#: advanced-ads-gam.php:62
+msgid "<strong>Advanced Ads – Google Ad Manager Integration</strong> is an extension for the free Advanced Ads plugin."
+msgstr "Η <strong>Advanced Ads – Ενσωμάτωση Google Ad Manager</strong> είναι μια επέκταση για τη δωρεάν προσθήκη Advanced Ads."
+
+#: advanced-ads-gam.php:59
+msgid "Install Now"
+msgstr "Εγκατάσταση τώρα"
+
+#: advanced-ads-gam.php:57
+msgid "Activate Now"
+msgstr "Ενεργοποίηση τώρα"
+
+#. Author URI of the plugin
+msgid "https://wpadvancedads.com"
+msgstr "https://wpadvancedads.com"
+
+#: admin/views/gam-network-id.php:32
+msgid "Connect your Google Ad Manager account"
+msgstr "Συνδέστε τον λογαριασμό σας Google Ad Manager"
+
+#: admin/views/gam-network-id.php:31 admin/views/gam-network-id.php:34
+msgid "Connect account"
+msgstr "Σύνδεση λογαριασμού"
+
+#: admin/views/gam-network-id.php:23
+msgid "Test account"
+msgstr "Δοκιμαστικός λογαριασμός"
+
+#: admin/views/gam-network-id.php:17
+msgid "Revoke access"
+msgstr "Ανάκληση πρόσβασης"
+
+#: admin/views/gam-connect.php:59
+msgid "Select account"
+msgstr "Επιλέξτε λογαριασμό"
+
+#: admin/views/gam-empty-div.php:11
+msgid "Fill space when ad is loaded"
+msgstr "Συμπληρώστε χώρο κατά τη φόρτωση της διαφήμισης"
+
+#: admin/views/gam-empty-div.php:10
+msgid "Collapse if empty"
+msgstr "Σύμπτυξη εάν είναι κενό"
+
+#: admin/views/gam-empty-div.php:9
+msgid "Do not collapse"
+msgstr "Μην συμπτήξετε"
+
+#: admin/views/ads-list.php:38 admin/views/ads-list.php:47
+msgid "You need to connect to a Google Ad Manager account"
+msgstr "Πρέπει να συνδεθείτε σε έναν λογαριασμό Google Ad Manager"
+
+#: admin/views/ads-list.php:26 admin/views/ads-list.php:60
+msgid "Ad Unit Code"
+msgstr "Κωδικός ενότητας διαφημίσεων"
+
+#: admin/views/ad-search.php:26 admin/views/ads-list.php:25
+#: admin/views/ads-list.php:59 admin/views/importer/import-table.php:14
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: admin/views/ad-search.php:25 admin/views/ads-list.php:24
+#: admin/views/ads-list.php:58 admin/views/importer/import-table.php:13
+msgid "Name"
+msgstr "Ονομα"
+
+#: admin/class-advanced-ads-gam-admin.php:372
+msgid "Google Ad Manager Integration"
+msgstr "Ενσωμάτωση Google Ad Manager"
+
+#: admin/class-advanced-ads-gam-api-soap.php:427 admin/views/gam-connect.php:51
+msgid "No Ad Manager network found in this Google account"
+msgstr "Δεν βρέθηκε δίκτυο Ad Manager σε αυτόν τον λογαριασμό Google"
+
+#. translators: GAM account holder name.
+#: admin/class-advanced-ads-gam-oauth2.php:101
+msgid "Error while renewing access token for \"%s\""
+msgstr "Σφάλμα κατά την ανανέωση του διακριτικού πρόσβασης για το \"%s\""
+
+#: includes/class-advanced-ads-gam-ad-type.php:26
+msgid "Use ad units from your Google Ad Manager account"
+msgstr "Χρησιμοποιήστε ενότητες διαφημίσεων από τον λογαριασμό σας στο Google Ad Manager"
+
+#: includes/class-advanced-ads-gam-ad-type.php:25
+msgid "Google Ad Manager"
+msgstr "Google Ad Manager"
