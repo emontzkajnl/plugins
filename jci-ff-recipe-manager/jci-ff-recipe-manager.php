@@ -94,7 +94,7 @@ function maximum_api_filter($query_params) {
 add_filter('rest_post_collection_params', 'maximum_api_filter');
 
 function update_recipes() {
-
+	add_action('admin_notices', function(){ echo 'update recipes function';});
 	// if (! $body['data']): // not empty
 	// 	echo 'has posts';
 	// else: 
@@ -103,7 +103,7 @@ function update_recipes() {
 	
 	// $current_page = 1;
 	// function load_recipes($current_page = 1) {
-		$response = wp_remote_get('https://farmflavor.com/wp-json/wp/v2/posts?after=2015-11-07T00:00:00&categories=5,6,19,24,28,25,7,417,8,27,17,18,34,13,31,32,22,14,26,20,9,16,10,11,23,21,35,12');
+		$response = wp_remote_get('https://farmflavor.com/wp-json/wp/v2/posts?after=2015-11-07T00:00:00&categories=5,6,19,24,28,25,7,417,8,27,17,18,34,13,31,32,22,14,26,20,9,16,10,11,23,21,35,12', array('timeout' => 120));
 		// page=1&per_page=100&
 		$body     = json_decode(wp_remote_retrieve_body( $response ), true);
 		// echo 'current page is '.$current_page;
@@ -143,7 +143,6 @@ function update_recipes() {
 	}
 
 }
-
 
 add_action('ag_cron_hook', 'update_recipes');
 
