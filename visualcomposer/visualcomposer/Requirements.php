@@ -17,70 +17,82 @@ if (!defined('ABSPATH')) {
 class VcvCoreRequirements
 {
     /**
-     * Perform system check for requirements.
+     * Perform system check for requirements
+     * And return user-friendly error message if it's fails.
+     *
+     * @return false|string
      */
-    public function coreChecks()
+    public function getCoreRequirementsErrorMessages()
     {
-        $message = '';
-        $die = false;
+        $errorList = $this->getCoreChecksMessage();
 
-        if (!self::checkVersion(VCV_REQUIRED_PHP_VERSION, PHP_VERSION)) {
-            $die = true;
-            $message .= '<li>' .
-                sprintf(
-                    'PHP version %s or greater (recommended 7 or greater)',
-                    VCV_REQUIRED_PHP_VERSION
-                ) .
-                '</li>';
+        if (!$errorList) {
+            return false;
         }
 
-        if (!self::checkVersion(VCV_REQUIRED_BLOG_VERSION, get_bloginfo('version'))) {
-            $die = true;
-            $message .= '<li>' .
-                sprintf(
-                    'WordPress version %s or greater',
-                    VCV_REQUIRED_BLOG_VERSION
-                ) .
-                '</li>';
+        $messages = '';
+        foreach ($errorList as $message) {
+            $messages .= '<li>' . esc_html($message) . '</li>';
         }
 
-        if (!function_exists('curl_exec') || !function_exists('curl_init')) {
-            $die = true;
-            $message .= '<li>' .
-                'The cURL extension must be loaded' .
-                '</li>';
-        }
-        if (
-            !function_exists('base64_decode')
-            || !function_exists('base64_encode')
-            || !function_exists('json_decode')
-            || !function_exists('json_encode')
-        ) {
-            $die = true;
-            $message .= '<li>' .
-                'The base64/json functions must be loaded' .
-                '</li>';
-        }
-        if (!function_exists('zlib_decode')) {
-            $die = true;
-            $message .= '<li>' .
-                'The zip extension must be loaded zlib_decode() is not defined' .
-                '</li>';
-        }
-
-        if ($die) {
-            $this->deactivate(VCV_PLUGIN_FULL_PATH);
-            wp_die(
-            // @codingStandardsIgnoreLine
-                'To run Visual Composer Website Builder your host needs to have:<ul>' . $message . '</ul>' . '<a href="'
-                . esc_url(admin_url('plugins.php')) . '">Go back to dashboard</a>'
-            );
-        }
-
-        return true;
+        return sprintf(
+            '%s%sTo run Visual Composer Website Builder your server needs to have:%s %s%s%s',
+            '<div class="notice notice-error is-dismissible">',
+            '<p>',
+            '</p>',
+            '<ul>',
+            $messages,
+            '</ul></div>'
+        );
     }
 
     /**
+     * Get error messages for requirements.
+     *
+     * @return array
+     */
+    public function getCoreChecksMessage()
+    {
+        $messages = [];
+
+        //TODO: Return VCV_REQUIRED_PHP_VERSION after few releases
+        if (!self::checkVersion(7.4, PHP_VERSION)) {
+            $messages[] = sprintf('PHP version %s or greater is required', 7.4);
+        }
+
+        if (!self::checkVersion(VCV_REQUIRED_BLOG_VERSION, get_bloginfo('version'))) {
+            $messages[] = sprintf('WordPress version %s or greater', VCV_REQUIRED_BLOG_VERSION);
+        }
+
+        if (!function_exists('curl_exec') || !function_exists('curl_init')) {
+            $messages[] = 'The cURL extension must be loaded';
+        }
+        if (!self::checkEncoding()) {
+            $messages[] = 'The base64/json functions must be loaded';
+        }
+        if (!function_exists('zlib_decode')) {
+            $messages[] = 'The zip extension must be loaded zlib_decode() is not defined';
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Check required encoding functions.
+     *
+     * @return bool
+     */
+    public function checkEncoding()
+    {
+        return function_exists('base64_decode')
+            || function_exists('base64_encode')
+            || function_exists('json_decode')
+            || function_exists('json_encode');
+    }
+
+    /**
+     * Version compare helper.
+     *
      * @param string $mustHaveVersion
      * @param string $versionToCheck
      *
@@ -93,16 +105,5 @@ class VcvCoreRequirements
         }
 
         return true;
-    }
-
-    /**
-     * @param $path
-     */
-    public function deactivate($path)
-    {
-        require_once ABSPATH . '/wp-admin/includes/plugin.php';
-        if (!defined('VCV_PHPUNIT') || !VCV_PHPUNIT) {
-            deactivate_plugins($path);
-        }
     }
 }

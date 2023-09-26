@@ -3,8 +3,8 @@
 Contributors: Stylemix
 Tags: Header Builder, Customized header, Header, Pearl Header Builder
 Requires at least: 4.6
-Tested up to: 5.6
-Stable tag: 1.3.4
+Tested up to: 6.3
+Stable tag: 1.3.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,6 +121,12 @@ This section describes how to install the plugin and get it working.
 4. Pearl Header Builder
 
 == Changelog ==
+
+= 1.3.6 =
+* Security update
+
+= 1.3.5 =
+* Security update
 
 = 1.3.4 =
 * Fixed domain for translations

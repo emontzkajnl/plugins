@@ -61,42 +61,20 @@ class Bundle implements Helper
         return $downloadUrl;
     }
 
-    public function getElementDownloadUrl($requestedData = [])
+    /**
+     * Get download url for plugin assets (elements, templates, addons etc)
+     *
+     * @param string $type (element, template, addons etc)
+     * @param array $requestedData
+     *
+     * @return string
+     */
+    public function getAssetDownloadUrl($type, $requestedData = [])
     {
         $urlHelper = vchelper('Url');
         $downloadUrl = $urlHelper->query(
             sprintf(
-                '%s/download/element?plugin=%s',
-                rtrim(vcvenv('VCV_HUB_URL'), '\//'),
-                VCV_VERSION
-            ),
-            $requestedData
-        );
-
-        return $downloadUrl;
-    }
-
-    public function getAddonDownloadUrl($requestedData = [])
-    {
-        $urlHelper = vchelper('Url');
-        $downloadUrl = $urlHelper->query(
-            sprintf(
-                '%s/download/addon?plugin=%s',
-                rtrim(vcvenv('VCV_HUB_URL'), '\//'),
-                VCV_VERSION
-            ),
-            $requestedData
-        );
-
-        return $downloadUrl;
-    }
-
-    public function getTemplateDownloadUrl($requestedData = [])
-    {
-        $urlHelper = vchelper('Url');
-        $downloadUrl = $urlHelper->query(
-            sprintf(
-                '%s/download/template?plugin=%s',
+                '%s/download/' . $type . '?plugin=%s',
                 rtrim(vcvenv('VCV_HUB_URL'), '\//'),
                 VCV_VERSION
             ),
@@ -109,6 +87,7 @@ class Bundle implements Helper
     public function unzipDownloadedBundle($bundle)
     {
         $fileHelper = vchelper('File');
+
         $result = $fileHelper->unzip($bundle, $this->getTempBundleFolder(), true);
 
         return $result;
@@ -324,6 +303,8 @@ class Bundle implements Helper
         $optionsHelper = vchelper('Options');
         $downloadHelper = vchelper('HubDownload');
         if (
+            // we use last_post_update in elements json
+            // to check if we need to update posts that contain this element
             isset($value['last_post_update']) && version_compare($value['last_post_update'], $previousVersion, '>')
         ) {
             $posts = vcfilter('vcv:hub:findUpdatePosts:' . $action, [], ['action' => $action]);
@@ -363,10 +344,11 @@ class Bundle implements Helper
      */
     protected function downloadRemoteBundleJson($url, $result, $loggerHelper)
     {
-        $response = vchelper('File')->download($url);
+        $fileHelper = vchelper('File');
+        $response = $fileHelper->download($url);
         if (!vcIsBadResponse($response)) {
             // $file /tmp/temp.tmp
-            $result = json_decode(file_get_contents($response), true);
+            $result = json_decode($fileHelper->getContents($response), true);
         } else {
             $messages = [];
             $messages[] = __('Failed to read remote bundle JSON.', 'visualcomposer') . ' #10006';

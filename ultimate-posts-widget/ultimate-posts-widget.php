@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Posts Widget
 Plugin URI: http://wordpress.org/plugins/ultimate-posts-widget/
 Description: The ultimate widget for displaying posts, custom post types or sticky posts with an array of options.
-Version: 2.2.5
+Version: 2.2.7
 Author: Clever Widgets
 Author URI: https://themecheck.info
 Text Domain: ultimate-posts-widget
@@ -851,22 +851,25 @@ add_action('admin_footer', function () {
 	if ($pagenow === 'plugins.php') {
 		?>
 		<script type="text/javascript">
-			jQuery('#upw_tifm_enable').on('click', (e) => {
-				e.preventDefault();
-				jQuery.post(ajaxurl, { action: 'tifm_save_decision', decision: 'true' }).done(() => {
-					window.location.reload();
-				}).fail(() => {
-					alert('There was an error and we could not update this option.');
+			(function () {
+				let nonceTIFM = "<?php echo wp_create_nonce('tifm_notice_nonce') ?>";
+				jQuery('#upw_tifm_enable').on('click', (e) => {
+					e.preventDefault();
+					jQuery.post(ajaxurl, { action: 'tifm_save_decision', decision: 'true', nonce: nonceTIFM }).done(() => {
+						window.location.reload();
+					}).fail(() => {
+						alert('There was an error and we could not update this option.');
+					});
 				});
-			});
-			jQuery('#upw_tifm_disable').on('click', (e) => {
-				e.preventDefault();
-				jQuery.post(ajaxurl, { action: 'tifm_save_decision', decision: 'false' }).done(() => {
-					window.location.reload();
-				}).fail(() => {
-					alert('There was an error and we could not update this option.');
+				jQuery('#upw_tifm_disable').on('click', (e) => {
+					e.preventDefault();
+					jQuery.post(ajaxurl, { action: 'tifm_save_decision', decision: 'false', nonce: nonceTIFM }).done(() => {
+						window.location.reload();
+					}).fail(() => {
+						alert('There was an error and we could not update this option.');
+					});
 				});
-			});
+			})();
 		</script>
 		<?php
 	}
@@ -875,6 +878,12 @@ add_action('admin_footer', function () {
 
 if (!has_action('wp_ajax_tifm_save_decision')) {
   add_action('wp_ajax_tifm_save_decision', function () {
+
+    // Nonce verification
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field($_POST['nonce']), 'tifm_notice_nonce')) {
+      wp_send_json_error();
+      return;
+    }
 
     if (isset($_POST['decision'])) {
 

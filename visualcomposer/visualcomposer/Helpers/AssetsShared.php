@@ -13,13 +13,27 @@ use VisualComposer\Framework\Illuminate\Support\Helper;
 
 class AssetsShared extends Container implements Helper
 {
+    /**
+     * @var null|array
+     */
     protected static $assetsLibrariesCache = null;
 
+    /**
+     * @param $name
+     * @param $path
+     *
+     * @return string
+     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
+     */
     protected function renameLocalPath($name, $path)
     {
         return vchelper('Url')->to(str_replace('[publicPath]/', 'public/sources/assetsLibrary/' . $name . '/', $path));
     }
 
+    /**
+     * @return array|null
+     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
+     */
     public function getSharedAssets()
     {
         if (empty(self::$assetsLibrariesCache)) {
@@ -32,6 +46,12 @@ class AssetsShared extends Container implements Helper
         return self::$assetsLibrariesCache;
     }
 
+    /**
+     * @param $assets
+     *
+     * @return \VisualComposer\Helpers\Options
+     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
+     */
     public function setSharedAssets($assets)
     {
         $optionsHelper = vchelper('Options');
@@ -40,6 +60,11 @@ class AssetsShared extends Container implements Helper
         return $optionsHelper->set('assetsLibrary', $assets);
     }
 
+    /**
+     * @param $filePath
+     *
+     * @return string
+     */
     public function getPluginsAssetUrl($filePath = '')
     {
         if (preg_match('/^http/', $filePath)) {
@@ -56,7 +81,7 @@ class AssetsShared extends Container implements Helper
      *
      * @param $path
      *
-     * @return mixed
+     * @return array|string|string[]
      */
     public function relative($path)
     {
@@ -84,7 +109,8 @@ class AssetsShared extends Container implements Helper
      *
      * @param $assetsPath
      *
-     * @return mixed
+     * @return array|null
+     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
      */
     public function findLocalAssetsPath($assetsPath)
     {
@@ -228,6 +254,7 @@ class AssetsShared extends Container implements Helper
      * @param $assetsLibraries
      *
      * @return array
+     * @throws \VisualComposer\Framework\Illuminate\Container\BindingResolutionException
      */
     protected function parseJsonFile($assetsLibraries)
     {
@@ -287,33 +314,20 @@ class AssetsShared extends Container implements Helper
         if (vcvenv('VCV_ENV_EXTENSION_DOWNLOAD')) {
             $optionsHelper = vchelper('Options');
             $assets = $optionsHelper->get('assetsLibrary', []);
-            $assetsHelper = vchelper('Assets');
             foreach ($assets as $key => $value) {
                 if (!isset($assetsLibraries[ $key ])) {
                     if (isset($value['jsBundle'])) {
-                        $value['jsBundle'] = add_query_arg(
-                            'v',
-                            VCV_VERSION,
-                            $assetsHelper->getAssetUrl($value['jsBundle'])
-                        );
+                        $value['jsBundle'] = $this->getBundleUrl($value['jsBundle']);
                     }
                     if (isset($value['cssBundle'])) {
-                        $value['cssBundle'] = add_query_arg(
-                            'v',
-                            VCV_VERSION,
-                            $assetsHelper->getAssetUrl($value['cssBundle'])
-                        );
+                        $value['cssBundle'] = $this->getBundleUrl($value['cssBundle']);
                     }
                     $assetsLibraries[ $key ] = $value;
 
                     if (isset($value['cssSubsetBundles'])) {
                         $cssSubsetBundles = [];
                         foreach ($value['cssSubsetBundles'] as $singleKey => $single) {
-                            $cssSubsetBundles[ $singleKey ] = add_query_arg(
-                                'v',
-                                VCV_VERSION,
-                                $assetsHelper->getAssetUrl($single)
-                            );
+                            $cssSubsetBundles[ $singleKey ] = $this->getBundleUrl($single);
                         }
                         $assetsLibraries[ $key ]['cssSubsetBundles'] = $cssSubsetBundles;
                     }
@@ -322,5 +336,25 @@ class AssetsShared extends Container implements Helper
         }
 
         return $assetsLibraries;
+    }
+
+    /**
+     * Get bundle url.
+     *
+     * @param string $relativePath
+     *
+     * @return string
+     */
+    public function getBundleUrl($relativePath)
+    {
+        $assetsHelper = vchelper('Assets');
+
+        $assetUrl = $assetsHelper->getAssetUrl($relativePath);
+
+        return add_query_arg(
+            'v',
+            VCV_VERSION,
+            apply_filters('vcv:helpers:assetsShared:getBundleUrl', $assetUrl, $relativePath)
+        );
     }
 }

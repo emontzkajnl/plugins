@@ -90,8 +90,9 @@ class Groups implements Helper
                 'elements' => [
                     'bannerElement',
                     'instagramImage',
-                    'flipBox',
+                    'hoverBox',
                     'iconHoverBox',
+                    'flipBox',
                     'tallHoverBox',
                     'simpleImageSlider',
                     'timelineSlideshow',
@@ -126,7 +127,9 @@ class Groups implements Helper
                     'Accordions',
                     'Tabs',
                 ],
-                'elements' => [],
+                'elements' => [
+                    'div',
+                ],
             ],
             'Theme Builder' => [
                 'title' => 'Theme Builder',
@@ -177,6 +180,7 @@ class Groups implements Helper
                     'sliderRevolution',
                     'translatePressLanguageSwitcher',
                     'wpForms',
+                    'hubSpotForms',
                 ],
             ],
             'Menus' => [
@@ -201,6 +205,12 @@ class Groups implements Helper
                     'Grids',
                 ],
                 'elements' => [],
+            ],
+            'Deprecated' => [
+                'title' => 'Deprecated',
+                'categories' => [
+                    'Deprecated',
+                ],
             ],
         ];
     }

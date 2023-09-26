@@ -18,7 +18,7 @@ class File implements Helper
     /**
      * @param $filePath
      *
-     * @return mixed
+     * @return bool|string
      */
     public function getContents($filePath)
     {
@@ -26,55 +26,86 @@ class File implements Helper
             return false;
         }
 
-        return file_get_contents($filePath);
+        $fileSystem = $this->getFileSystem();
+        if (!$fileSystem) {
+            return false;
+        }
+
+        // get content from using file system
+        return $fileSystem->get_contents($filePath);
+    }
+
+    public function exists($filePath)
+    {
+        $fileSystem = $this->getFileSystem();
+        if (!$fileSystem) {
+            return false;
+        }
+
+        return $fileSystem->exists($filePath);
+    }
+
+    public function isFile($filePath)
+    {
+        $fileSystem = $this->getFileSystem();
+        if (!$fileSystem) {
+            return false;
+        }
+
+        return $fileSystem->is_file($filePath);
+    }
+
+    public function isDir($filePath)
+    {
+        $fileSystem = $this->getFileSystem();
+        if (!$fileSystem) {
+            return false;
+        }
+
+        return $fileSystem->is_dir($filePath);
+    }
+
+    public function rename($oldName, $newName)
+    {
+        $this->checkDir(dirname($newName));
+
+        $fileSystem = $this->getFileSystem();
+        if (!$fileSystem) {
+            return false;
+        }
+
+        return $fileSystem->move($oldName, $newName);
     }
 
     /**
      * @param $filePath
      * @param $contents
      *
-     * @return mixed
+     * @return false|int
      */
     public function setContents($filePath, $contents)
     {
-        return file_put_contents($filePath, $contents);
+        $this->checkDir(dirname($filePath));
+
+        $fileSystem = $this->getFileSystem();
+        if (!$fileSystem) {
+            return false;
+        }
+
+        // set content using file system
+        return $fileSystem->put_contents($filePath, $contents);
     }
 
     /**
-     * Check does file exist
-     *
-     * @param $filePath
-     *
-     * @return bool
-     */
-    public function isFile($filePath)
-    {
-        return is_file($filePath);
-    }
-
-    /**
-     * Check does directory exist
+     * Check does directory exist and if not create it
      *
      * @param $dirPath
      *
      * @return bool
      */
-    public function isDir($dirPath)
+    public function checkDir($dirPath)
     {
-        return is_dir($dirPath);
-    }
-
-    /**
-     * Check does directory exists and if not create it
-     *
-     * @param $dirPath
-     * @param int $permissions
-     *
-     * @return bool
-     */
-    public function checkDir($dirPath, $permissions = 0777)
-    {
-        return !$this->isDir($dirPath) ? mkdir($dirPath, $permissions, true) : true;
+        return wp_mkdir_p($dirPath);
     }
 
     public function download($url)
@@ -100,12 +131,17 @@ class File implements Helper
     }
 
     /**
+     * Get wp filesystem object.
+     *
+     * @note we always should check if we have access to filesystem before ise it.
+     *
      * @return \WP_Filesystem_Base|bool
      */
     public function getFileSystem()
     {
         // @codingStandardsIgnoreLine
         global $wp_filesystem;
+
         $status = true;
         // @codingStandardsIgnoreLine
         if (!$wp_filesystem || !is_object($wp_filesystem)) {
@@ -129,7 +165,7 @@ class File implements Helper
 
     public function removeFile($file)
     {
-        return wp_delete_file($file);
+        wp_delete_file($file);
     }
 
     public function copyDirectory($from, $to, $overwrite = true)
@@ -158,6 +194,75 @@ class File implements Helper
 
     public function createDirectory($dir)
     {
-        return $this->getFileSystem()->mkdir($dir);
+        return wp_mkdir_p($dir);
+    }
+
+    /**
+     * We use it to get file contents from url.
+     *
+     * @note We also check the case when link to file lead to local server upload folder like
+     *
+     * @return string
+     */
+    public function getRemoteContents($url)
+    {
+        $remoteContent = $this->doRequest($url);
+        if ($remoteContent) {
+            return $remoteContent;
+        }
+
+        // in case when file is on localhost but all other cases do not working for him
+        // we try get file path to uploads from url and then get his content.
+        $remoteContent = $this->getContentsUrlAsLocalUpload($url);
+        if ($remoteContent) {
+            return $remoteContent;
+        }
+
+        return false;
+    }
+
+    /**
+     * Process request to specific url.
+     *
+     * @param string $url
+     * @param array $args
+     *
+     * @return false|string
+     */
+    public function doRequest($url, $args = [])
+    {
+        $response = wp_remote_request($url, $args);
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $responseCode = wp_remote_retrieve_response_code($response);
+
+        // Do nothing, response code is okay.
+        if ($responseCode === 200 || strpos($responseCode, '200') !== false) {
+            $response = wp_remote_retrieve_body($response);
+        } else {
+            $response = false;
+        }
+
+        return $response;
+    }
+
+    /**
+     * Try to convert url to wp uploads file path and then get content of it.
+     *
+     * @param string $url
+     *
+     * @return bool|string
+     */
+    public function getContentsUrlAsLocalUpload($url)
+    {
+        $basedirUpload = wp_upload_dir()['basedir'];
+        $siteUrl = get_site_url();
+
+        $file = str_replace($siteUrl . '/wp-content/uploads', $basedirUpload, $url);
+
+        return $this->getContents($file);
     }
 }

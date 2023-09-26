@@ -122,7 +122,29 @@ class Preview implements Helper
             }
         }
 
-        return $sourceId;
+        return (int)$sourceId;
+    }
+
+    /**
+     * Update post id with autosave id.
+     *
+     * @param int $sourceId
+     *
+     * @return int
+     */
+    public function updateSourceIdWithAutosaveId($sourceId)
+    {
+        $frontendHelper = vchelper('Frontend');
+
+        if ($frontendHelper->isPreview()) {
+            $autosavePreview = wp_get_post_autosave($sourceId);
+
+            if ($autosavePreview) {
+                $sourceId = $autosavePreview->ID;
+            }
+        }
+
+        return (int)$sourceId;
     }
 
     /**
@@ -140,6 +162,28 @@ class Preview implements Helper
             $previewPostList = $this->getPostPreviewList($post, $post->ID);
             if (!empty($previewPostList[0]) && is_object($previewPostList[0])) {
                 $post = $previewPostList[0];
+            }
+        }
+
+        return $post;
+    }
+
+    /**
+     * Update provided post object with corresponding autosave object.
+     *
+     * @param \WP_Post $post
+     *
+     * @return \WP_Post
+     */
+    public function updateSourcePostWithAutosavePost($post)
+    {
+        $frontendHelper = vchelper('Frontend');
+
+        if ($frontendHelper->isPreview()) {
+            $autosavePreview = wp_get_post_autosave($post->ID);
+
+            if ($autosavePreview) {
+                $post = $autosavePreview;
             }
         }
 

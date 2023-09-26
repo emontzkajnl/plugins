@@ -94,7 +94,7 @@ class FileController extends Container implements Module
 
             if ($isResetInitiated) {
                 $assetsHelper = vchelper('Assets');
-                $assetsHelper->generateSourceCssFile([], $sourcePost->ID);
+                $assetsHelper->generateSourceCssFile([], ['sourceId' => $sourcePost->ID]);
                 update_post_meta($sourcePost->ID, '_' . VCV_PREFIX . 'postSourceCssResetInitiated', time());
             }
         }
@@ -124,8 +124,9 @@ class FileController extends Container implements Module
         if ($bundleUrl) {
             if (!empty($previousCssFile) && empty($previousCssHash)) {
                 $assetsPath = $assetsHelper->getFilePath($previousCssFile);
-                if (!empty($assetsPath)) {
-                    $fileHelper->getFileSystem()->delete($assetsPath);
+                $fileSystem = $fileHelper->getFileSystem();
+                if ($fileSystem && !empty($assetsPath)) {
+                    $fileSystem->delete($assetsPath);
                 }
             }
         }

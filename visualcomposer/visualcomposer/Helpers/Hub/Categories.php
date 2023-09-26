@@ -507,6 +507,7 @@ class Categories implements Helper
                     'sliderRevolution',
                     'translatePressLanguageSwitcher',
                     'wpForms',
+                    'hubSpotForms',
                 ],
                 'icon' => $urlHelper->to('public/categories/icons/WordPress.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/WordPress.svg'),
@@ -519,7 +520,11 @@ class Categories implements Helper
             ],
             'Call To Action' => [
                 'title' => 'Call To Action',
-                'elements' => ['callToAction', 'simpleCallToAction', 'outlineCallToAction', 'callToActionWithIcon'],
+                'elements' => [
+                    'callToAction',
+                    'simpleCallToAction',
+                    'outlineCallToAction',
+                    'callToActionWithIcon'],
                 'icon' => $urlHelper->to('public/categories/icons/Call-To-Action.svg'),
                 'iconDark' => $urlHelper->to('public/categories/iconsDark/Call-To-Action.svg'),
             ],

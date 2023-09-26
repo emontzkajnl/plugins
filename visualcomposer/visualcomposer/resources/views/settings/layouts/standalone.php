@@ -1,10 +1,11 @@
 <?php
+
 if (!defined('ABSPATH')) {
     header('Status: 403 Forbidden');
     header('HTTP/1.1 403 Forbidden');
     exit;
 }
-
+$outputHelper = vchelper('Output');
 $variables = vcfilter(
     'vcv:wp:dashboard:variables',
     [
@@ -19,8 +20,8 @@ $variables = vcfilter(
 if (is_array($variables)) {
     foreach ($variables as $variable) {
         if (is_array($variable) && isset($variable['key'], $variable['value'])) {
-            $type = isset($variable['type']) ? $variable['type'] : 'variable';
-            evcview('partials/variableTypes/' . $type, $variable);
+            $variableType = isset($variable['type']) ? $variable['type'] : 'variable';
+            evcview('partials/variableTypes/' . $variableType, $variable);
         }
     }
     unset($variable);
@@ -29,7 +30,6 @@ if (is_array($variables)) {
 ?>
 <div class="wrap vcv-settings">
     <?php
-    // @codingStandardsIgnoreLine
-    echo $content;
+    $outputHelper->printNotEscaped($content);
     ?>
 </div>

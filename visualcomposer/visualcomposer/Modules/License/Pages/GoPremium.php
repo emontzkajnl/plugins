@@ -55,7 +55,8 @@ class GoPremium extends Container implements Module
                     return;
                 }
 
-                if (!$licenseHelper->isPremiumActivated() || $licenseHelper->isThemeActivated()) {
+                $active = vcfilter('vcv:license:pages', $licenseHelper->isPremiumActivated() || $licenseHelper->isThemeActivated());
+                if (!$active) {
                     $this->call('addPage');
                 }
 
@@ -64,7 +65,7 @@ class GoPremium extends Container implements Module
                     && $licenseHelper->isPremiumActivated()
                     && !$licenseHelper->isThemeActivated()
                 ) {
-                    wp_redirect(admin_url('admin.php?page=vcv-getting-started'));
+                    wp_safe_redirect(admin_url('admin.php?page=vcv-getting-started'));
                     exit;
                 }
             },
@@ -94,23 +95,25 @@ class GoPremium extends Container implements Module
     {
         $notices = $noticeHelper->all();
         $screen = get_current_screen();
-        if (
-            !$licenseHelper->isPremiumActivated()
+
+        $active = !$licenseHelper->isPremiumActivated()
+            && isset($screen->id)
             && !strpos($screen->id, $this->slug)
-            && !strpos(
-                $screen->id,
-                'vcv-getting-started'
-            )
-        ) {
+            && !strpos($screen->id, 'vcv-getting-started');
+
+        $active = vcfilter('vcv:modules:license:pages:goPremium:hubActivationNotice', $active);
+
+        if ($active) {
             if (!isset($notices['hubActivationNotice'])) {
                 $noticeHelper->addNotice(
                     'hubActivationNotice',
                     sprintf(
+                    // translators: %s: link to the license page.
                         __(
                             '<strong>Visual Composer:</strong> <a href="%s">Activate Premium</a> license to get full access to Visual Composer Hub. A place to download more content elements, templates, and addons.',
                             'visualcomposer'
                         ),
-                        admin_url('admin.php?page=vcv-activate-license&vcv-ref=wpdashboard')
+                        esc_url(admin_url('admin.php?page=vcv-activate-license&vcv-ref=wpdashboard'))
                     ),
                     'info'
                 );

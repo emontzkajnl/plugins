@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('ABSPATH')) {
     header('Status: 403 Forbidden');
     header('HTTP/1.1 403 Forbidden');
@@ -18,5 +19,5 @@ if (!defined('ABSPATH')) {
         <span class="vcv-ui-form-switch-label" data-vc-switch-on="<?php echo esc_attr__('on', 'visualcomposer'); ?>"></span>
         <span class="vcv-ui-form-switch-label" data-vc-switch-off="<?php echo esc_attr__('off', 'visualcomposer'); ?>"></span>
     </label>
-    <span><?php echo isset($title) ? $title : ''; ?></span>
+    <span><?php echo isset($title) ? esc_html($title) : ''; ?></span>
 </div>

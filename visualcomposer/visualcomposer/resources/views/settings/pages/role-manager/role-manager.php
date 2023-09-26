@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 }
 /**
  * @var array $page
+ * @var string $slug
  */
 $editableRoles = get_editable_roles();
 uksort(
@@ -25,7 +26,13 @@ uksort(
         return $roleFirstPos - $roleSecondPos;
     }
 );
+
+if (is_multisite()) {
+    $editableRoles = ['super-administrator' => ['name' => 'Super Administrator']] + $editableRoles;
+}
+
 $roleAccessHelper = vchelper('AccessRole');
+$outputHelper = vchelper('Output');
 $accessParts = $roleAccessHelper->getAvailableParts();
 ?>
 <style>
@@ -105,9 +112,9 @@ left: -69px;
 }
 
 </style>
-<form action="<?php echo vchelper('Url')->adminAjax(
+<form action="<?php echo esc_url(vchelper('Url')->adminAjax(
     ['vcv-action' => 'settings:roles:save:adminNonce', 'vcv-nonce' => vchelper('Nonce')->admin()]
-); ?>"
+)); ?>"
         method="post"
         data-vcv-ui-element="settings-tab-<?php echo esc_attr($slug); ?>"
         class="vcv-role-manager-capabilities-form vcv-dashboard-accordion vcv-settings-tab-content">
@@ -141,9 +148,9 @@ left: -69px;
             'title' => ucwords(str_replace('_', ' ', $key)) . $presetPostfix,
         ];
     }
-    foreach ($editableRoles as $role => $details) {
-        $roleObject = get_role($role);
-        if (!$roleObject) {
+    foreach ($editableRoles as $roleKey => $details) {
+        $roleObject = get_role($roleKey);
+        if (!$roleObject && $roleKey !== 'super-administrator') {
             continue;
         }
         $name = translate_user_role($details['name']);
@@ -151,94 +158,114 @@ left: -69px;
         echo '<div class="vcv-dashboard-accordion-item">
    <div class="vcv-dashboard-accordion-item-heading">
     <span class="vcv-dashboard-accordion-item-heading-text">
-       ' . $name . '
+       ' . esc_html($name) . '
     </span>
    </div>
    <div class="vcv-dashboard-accordion-item-content">';
-        if ($role === 'administrator') {
+        // IF role doesn't have cap `unfiltered_html` show notice
+        if ($roleObject && !$roleObject->has_cap('unfiltered_html')) {
+            echo '<div class="notice inline notice-warning update-nag" style="display:inline-block !important;padding: 1px 12px;"><p style="font-size: 14px">' . sprintf(
+                // translators: %1$s - role name, %2$s - link to help page, %3$s - capability, %4$s - </a>
+                __(
+                    'To enable Visual Composer for %1$s, %2$senable ‘%3$s’ capability%4$s for the exact user.',
+                    'visualcomposer'
+                ),
+                $name,
+                '<a class="vcv-notice-link" href="https://help.visualcomposer.com/docs/how-tos/how-to-enable-unfiltered_html/" target="_blank" rel="noopener noreferrer">',
+                '<strong>unfiltered_html</strong>',
+                '</a>'
+            ) . '</p>
+            </div>';
+        }
+        if ($roleKey === 'administrator') {
             $part = 'post_types';
-            $stateValue = $roleAccessHelper->who($role)->part($part)->getState();
-            echo vcfilter(
+            $stateValue = $roleAccessHelper->who($roleKey)->part($part)->getState();
+            $outputHelper->printNotEscaped(vcfilter(
                 'vcv:render:settings:roleManager:part:' . $part,
                 '',
                 [
                     'part' => $part,
                     'stateValue' => $stateValue,
                     'stateCapabilities' => $roleObject->capabilities,
-                    'role' => $role,
+                    'role' => $roleKey,
                     'roleObject' => $roleObject,
                     'roleAccessHelper' => $roleAccessHelper,
                 ]
-            );
+            ));
             echo sprintf(
                 '<p class="description admin-description">%s</p>',
-                __('All other features are enabled for the Administrator user role.', 'visualcomposer')
+                esc_html__('All other features are enabled for the Administrator user role.', 'visualcomposer')
             );
-        } elseif ($role === 'subscriber') {
+        } elseif ($roleKey === 'super-administrator') {
             echo sprintf(
                 '<p class="description">%s</p>',
-                __('All features are disabled for the Subscriber user role.', 'visualcomposer')
+                esc_html__('All features are enabled for the Super Administrator user role.', 'visualcomposer')
+            );
+        } elseif ($roleKey === 'subscriber') {
+            echo sprintf(
+                '<p class="description">%s</p>',
+                esc_html__('All features are disabled for the Subscriber user role.', 'visualcomposer')
             );
         } elseif (!$roleObject->has_cap('edit_posts')) {
             echo sprintf(
                 '<p class="description">%s</p>',
-                __('All options are disabled for this user role. No `edit_posts` capability enabled.', 'visualcomposer')
+                esc_html__('All features are disabled for this user role. No `edit_posts` capability enabled.', 'visualcomposer')
             );
         } else {
             $presetPart = 'role_presets';
             $optionsHelper = vchelper('Options');
             $rolePresets = $optionsHelper->get('role-presets', []);
 
-            $rolePresetValue = isset($rolePresets[$role]) ? $rolePresets[$role] : '';
+            $rolePresetValue = isset($rolePresets[$roleKey]) ? $rolePresets[$roleKey] : '';
             $rolePresetValue = vcfilter(
                 'vcv:render:settings:roleManager:rolePreset',
                 $rolePresetValue,
-                ['role' => $role]
+                ['role' => $roleKey]
             );
             if (empty($rolePresetValue)) {
                 $roleCapabilities = array_filter(
-                    array_keys(get_role($role)->capabilities),
+                    array_keys(get_role($roleKey)->capabilities),
                     function ($item) {
                         return strpos($item, 'vcv_access_rules__') !== false;
                     }
                 );
                 if (
                     count(array_diff(
-                        isset($prefixedDefaultCapabilities[$role]) ? $prefixedDefaultCapabilities[$role] : [],
+                        isset($prefixedDefaultCapabilities[$roleKey]) ? $prefixedDefaultCapabilities[$roleKey] : [],
                         $roleCapabilities
                     )) > 0
                 ) {
                     $rolePresetValue = 'custom';
                 }
             }
-            echo vcfilter(
+            $outputHelper->printNotEscaped(vcfilter(
                 'vcv:render:settings:roleManager:part:' . $presetPart,
                 '',
                 [
                     'part' => $presetPart,
-                    'role' => $role,
+                    'role' => $roleKey,
                     'dropdownOptions' => $dropdownOptions,
                     'presetValue' => $rolePresetValue
                 ]
-            );
+            ));
             foreach ($accessParts as $part) {
-                $stateValue = $roleAccessHelper->who($role)->part($part)->getState();
-                echo vcfilter(
+                $stateValue = $roleAccessHelper->who($roleKey)->part($part)->getState();
+                $outputHelper->printNotEscaped(vcfilter(
                     'vcv:render:settings:roleManager:part:' . $part,
                     '',
                     [
                         'part' => $part,
                         'stateValue' => $stateValue,
                         'stateCapabilities' => $roleObject->capabilities,
-                        'role' => $role,
+                        'role' => $roleKey,
                         'roleObject' => $roleObject,
                         'roleAccessHelper' => $roleAccessHelper,
                     ]
-                );
+                ));
             }
 
             if (!vcvenv('VCV_ADDON_ROLE_MANAGER_ENABLED')) {
-                echo vcview(
+                evcview(
                     'partials/teaser',
                     [
                         'page' => $page,
@@ -268,7 +295,7 @@ left: -69px;
         // global event listener (from youmightnotneedjquery)
         document.addEventListener('click', function (e) {
           // loop parent nodes from the target to the delegation node
-          for (var target = e.target; target && target != this; target = target.parentNode) {
+          for (let target = e.target; target && target != this; target = target.parentNode) {
             if (target.matches('.vcv-dashboard-accordion-item-heading')) {
               target.parentElement.classList.toggle('vcv-dashboard-accordion-item--active')
 
@@ -276,7 +303,7 @@ left: -69px;
               const presetDropdown = parent.querySelector('.vcv-ui-form-presets-dropdown')
 
               if (presetDropdown && presetDropdown.value !== 'custom') {
-                  var event = new Event('change');
+                  let event = new Event('change');
                   presetDropdown.dispatchEvent(event);
               }
 

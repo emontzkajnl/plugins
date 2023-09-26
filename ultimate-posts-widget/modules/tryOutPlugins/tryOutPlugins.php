@@ -1,10 +1,13 @@
 <?php
 
   /**
-   * File for our cool review ask in the header
+   * File for our cool try it out module
+   * That allows people to try out any plugin within WP directory
+   * Before they install it on their real website, this feature
+   * Is completely free and available for everyone
    *
    * @category Child Plugin
-   * @version v0.1.0
+   * @version v0.1.3
    * @since v0.1.0
    * @author iClyde <kontakt@iclyde.pl>
    */
@@ -23,13 +26,20 @@
 
         function __construct($plugin_file, $plugin_dir, $plugin_name, $plugin_menu_page) {
 
-          if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+          if (!is_admin() || !current_user_can('install_plugins')) return;
+          if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
             add_action('wp_ajax_tifm_notice_actions', [&$this, 'noticeAjax']);
+          }
+          
+          if (get_option('_tifm_force_disable_feature_fix', 'no') === 'no') {
+            delete_option('_tifm_hide_notice_forever');
+            update_option('_tifm_feature_enabled', 'disabled');
+            update_option('_tifm_disable_feature_forever', true);
+            update_option('_tifm_force_disable_feature_fix', true);
           }
 
           global $pagenow;
           if (!($pagenow == 'plugin-install.php' || $pagenow == 'admin-ajax.php')) return;
-          if (!is_admin() || !current_user_can('install_plugins')) return;
           if (get_option('_tifm_disable_feature_forever', false) != false) return;
 
           $this->pluginDir = $plugin_dir;

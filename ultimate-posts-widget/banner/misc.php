@@ -351,7 +351,11 @@
         public function handle_installation() {
 
           if (check_ajax_referer('inisev_carousel', 'nonce', false) === false) {
-             wp_send_json_error();
+            return wp_send_json_error();
+          }
+
+          if (!current_user_can('install_plugins')) {
+            return wp_send_json_error();
           }
 
           // Handle the slug and install the plugin

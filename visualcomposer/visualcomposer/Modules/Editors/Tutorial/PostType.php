@@ -68,22 +68,35 @@ class PostType extends Container implements Module
                     'name' => $this->postNamePlural,
                     'singular_name' => $this->postNameSingular,
                     'menu_name' => $this->postNamePlural,
+                    // translators: %s: Post type name.
                     'add_new' => sprintf(__('Add %s', 'visualcomposer'), $this->postNameSingular),
+                    // translators: %s: Post type name.
                     'add_new_item' => sprintf(__('Add New %s', 'visualcomposer'), $this->postNameSingular),
                     'edit' => __('Edit', 'visualcomposer'),
+                    // translators: %s: Post type name.
                     'edit_item' => sprintf(__('Edit %s', 'visualcomposer'), $this->postNameSingular),
+                    // translators: %s: Post type name.
                     'new_item' => sprintf(__('New %s', 'visualcomposer'), $this->postNameSingular),
+                    // translators: %s: Post type name.
                     'view' => sprintf(__('View %s', 'visualcomposer'), $this->postNamePlural),
+                    // translators: %s: Post type name.
                     'view_item' => sprintf(__('View %s', 'visualcomposer'), $this->postNameSingular),
+                    // translators: %s: Post type name.
                     'search_items' => sprintf(__('Search %s', 'visualcomposer'), $this->postNameSingular),
+                    // translators: %s: Post type name.
                     'not_found' => sprintf(__('No %s Found', 'visualcomposer'), $this->postNamePlural),
                     'not_found_in_trash' => sprintf(
+                    // translators: %s: Post type name.
                         __('No %s Found in Trash', 'visualcomposer'),
                         $this->postNamePlural
                     ),
+                    // translators: %s: Post type name.
                     'parent' => sprintf(__('Parent %s', 'visualcomposer'), $this->postNameSingular),
+                    // translators: %s: Post type name.
                     'filter_items_list' => sprintf(__('Filter %s', 'visualcomposer'), $this->postNamePlural),
+                    // translators: %s: Post type name.
                     'items_list_navigation' => sprintf(__('%s Navigation', 'visualcomposer'), $this->postNamePlural),
+                    // translators: %s: Post type name.
                     'items_list' => sprintf(__('%s List', 'visualcomposer'), $this->postNamePlural),
                 ],
                 'public' => false,
@@ -156,7 +169,7 @@ class PostType extends Container implements Module
             if ($pagenow === 'post.php' && $requestHelper->input('post')) {
                 $sourceId = $requestHelper->input('post');
                 $attr = '?post=' . $sourceId . '&action=edit&vcv-source-id=' . $sourceId . '&';
-                wp_redirect(
+                wp_safe_redirect(
                     admin_url(
                         $pagenow . $attr . 'post_type=' . rawurlencode($this->postType)
                         . '&vcv-action=frontend&vcv-editor-type='
@@ -165,7 +178,7 @@ class PostType extends Container implements Module
                 );
                 exit;
             }
-            wp_redirect(
+            wp_safe_redirect(
                 add_query_arg(['vcv-action' => 'frontend', 'vcv-editor-type' => rawurlencode($this->postType)])
             );
             exit;
@@ -255,7 +268,7 @@ class PostType extends Container implements Module
         $optionsHelper = vchelper('Options');
 
         // Capability migration for custom VC post types
-        if (!$optionsHelper->get($this->postType . '-capability-migration')) {
+        if (!$optionsHelper->get($this->postType . '-capability-migration-45')) {
             // @codingStandardsIgnoreStart
             global $wp_roles;
             $optionsHelper->delete($this->postType . '-capabilities-set');
@@ -264,7 +277,7 @@ class PostType extends Container implements Module
             $wp_roles->remove_cap('contributor', 'delete_' . $this->postType);
             $wp_roles->remove_cap('contributor', 'edit_' . $this->postType . 's');
             $wp_roles->remove_cap('contributor', 'delete_' . $this->postType . 's');
-            $optionsHelper->set($this->postType . '-capability-migration', 1);
+            $optionsHelper->set($this->postType . '-capability-migration-45', 1);
             // @codingStandardsIgnoreEnd
         }
 
@@ -272,7 +285,7 @@ class PostType extends Container implements Module
             return;
         }
 
-        $roles = ['administrator', 'editor'];
+        $roles = ['administrator', 'editor', 'author',  'contributor'];
 
         foreach ($roles as $role) {
             $roleObject = get_role($role);

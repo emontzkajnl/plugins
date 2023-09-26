@@ -65,19 +65,22 @@ class FeaturedImageController extends Container implements Module
 
                 // Is featured image exist
                 if ($featuredImageId) {
-                    $attachmentData = wp_get_attachment_metadata($featuredImageId);
-                    $attachmentPostData = get_post($featuredImageId);
-
                     // Get all size urls of image
                     $sizes = [];
-                    foreach ($attachmentData['sizes'] as $key => $size) {
-                        $imageSizeData = wp_get_attachment_image_src($featuredImageId, $key);
-                        $sizes[$key] = $imageSizeData[0];
-                    }
                     $fullImageUrl = wp_get_attachment_image_src($featuredImageId, 'full');
                     if (isset($fullImageUrl[0])) {
                         $sizes['full'] = $fullImageUrl[0];
                     }
+
+                    $attachmentData = wp_get_attachment_metadata($featuredImageId);
+                    if (!empty($attachmentData['sizes'])) {
+                        foreach ($attachmentData['sizes'] as $key => $size) {
+                            $imageSizeData = wp_get_attachment_image_src($featuredImageId, $key);
+                            $sizes[$key] = $imageSizeData[0];
+                        }
+                    }
+
+                    $attachmentPostData = get_post($featuredImageId);
 
                     // Get image text data
                     $imageData = [
@@ -127,7 +130,7 @@ class FeaturedImageController extends Container implements Module
         // Get selected image id
         if ($requestHelper->exists('vcv-settings-featured-image')) {
             $imageId = $requestHelper->input('vcv-settings-featured-image');
-            $currentPageId = $payload['sourceId'];
+            $currentPageId = vchelper('Preview')->updateSourceIdWithAutosaveId($payload['sourceId']);
             if ($imageId === 'empty') {
                 delete_post_meta($currentPageId, '_thumbnail_id');
             } elseif (isset($imageId['ids'][0])) {

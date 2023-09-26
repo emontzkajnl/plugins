@@ -37,6 +37,9 @@ class UserCapabilities implements Helper
             $hasAccess = false;
         }
         $hasAccess = $hasAccess && current_user_can('edit_post', $sourceId);
+        // and has unfiltered_html capability
+        $currentUserAccessHelper = vchelper('AccessCurrentUser');
+        $hasAccess = $hasAccess && $currentUserAccessHelper->isUserHasCap('unfiltered_html');
         // @codingStandardsIgnoreLine
         $hasAccess = $hasAccess && $this->isEditorEnabled($post->post_type);
 
@@ -60,6 +63,9 @@ class UserCapabilities implements Helper
         } elseif (in_array($postType, ['vcv_popups'])) {
             $hasAccess = $currentUserAccessHelper->part('dashboard')->can('addon_popup_builder', false)->get();
         }
+
+        // has unfiltered_html capability
+        $hasAccess = $hasAccess && $currentUserAccessHelper->isUserHasCap('unfiltered_html');
 
         return $hasAccess;
     }
@@ -107,16 +113,8 @@ class UserCapabilities implements Helper
                     'edit_page'
                 ],
             ],
-            'author' => [
-                'post_types' => [
-                    'edit_post'
-                ],
-            ],
-            'contributor' => [
-                'post_types' => [
-                    'edit_post'
-                ],
-            ],
+            'author' => [],
+            'contributor' => [],
             'subscriber' => [],
         ];
 

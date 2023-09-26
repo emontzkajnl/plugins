@@ -190,33 +190,31 @@ class PostType implements Helper
      */
     public function setupPost($sourceId)
     {
-        // @codingStandardsIgnoreStart
-        global $post_type, $post_type_object, $post, $wp_query;
+        global $wp_query;
         $queryPost = get_post($sourceId);
-
+        $globalsHelper = vchelper('Globals');
         if (
             isset($queryPost->post_type)
             && post_type_exists($queryPost->post_type)
         ) {
-            $post = $queryPost;
-            if ($post->post_title === __('Auto Draft')) {
-                $post->post_title = sprintf('%s #%s', __('Visual Composer', 'visualcomposer'), $post->ID);
+            $globalsHelper->set('post', $queryPost);
+            if ($queryPost->post_title === __('Auto Draft')) {
+                $queryPost->post_title = sprintf('%s #%s', __('Visual Composer', 'visualcomposer'), $queryPost->ID);
             }
-            setup_postdata($post);
+            setup_postdata($queryPost);
             /** @var \WP_Query $wp_query */
-            $wp_query->queried_object = $post;
+            $wp_query->queried_object = $queryPost;
             if (!isset($wp_query->posts)) {
                 $wp_query->posts = [];
             }
-            $wp_query->posts[0] = $post;
-            $wp_query->post = $post;
-            $wp_query->queried_object_id = $post->ID;
+            $wp_query->posts[0] = $queryPost;
+            $wp_query->post = $queryPost;
+            $wp_query->queried_object_id = $queryPost->ID;
             $wp_query->is_singular = true;
-            $post_type = $post->post_type;
-            $post_type_object = get_post_type_object($post_type);
+            $globalsHelper->set('post_type', $queryPost->post_type);
+            $globalsHelper->set('post_type_object', get_post_type_object($queryPost->post_type));
 
-            // @codingStandardsIgnoreEnd
-            return $post;
+            return $queryPost;
         }
 
         return false;
@@ -262,6 +260,7 @@ class PostType implements Helper
             $data['vcvCustomPostType'] = 1;
         }
         // @codingStandardsIgnoreLine
+        // translators: %s: post type name
         $data['viewText'] = sprintf(__('View %s', 'visualcomposer'), $post_type_object->labels->singular_name);
 
         return $data;
@@ -366,5 +365,126 @@ class PostType implements Helper
             'private',
             'future',
         ];
+    }
+
+    /**
+     * Check if post grid data source correspond certain type name.
+     *
+     * @param string $typeName
+     * @param array $payload
+     *
+     * @return bool
+     */
+    public function isPostGridDataSourceType($typeName, $payload)
+    {
+        if (empty($payload['atts']['source']['tag'])) {
+            return false;
+        }
+
+        if ($payload['atts']['source']['tag'] === $typeName) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Update user role capabilities related to specific post type.
+     *
+     * @param string $postType
+     *
+     * @return void
+     */
+    public function updatePostTypeUserRoleCapabilities($postType)
+    {
+        $optionsHelper = vchelper('Options');
+        if ($optionsHelper->get($postType . '-capabilities-set')) {
+            return;
+        }
+
+        $roles = ['administrator', 'editor', 'author', 'contributor'];
+
+        foreach ($roles as $role) {
+            $roleObject = get_role($role);
+            if (!$roleObject) {
+                continue;
+            }
+
+            $capabilities = [
+                "read_{$postType}",
+                "edit_{$postType}",
+                "delete_{$postType}",
+                "edit_{$postType}s",
+                "delete_{$postType}s",
+            ];
+
+            if ($role === 'contributor') {
+                $capabilities = [
+                    "read_{$postType}",
+                    "edit_{$postType}s",
+                    "delete_{$postType}s",
+                ];
+            }
+
+            if (in_array($role, ['administrator', 'editor', 'author'])) {
+                $capabilities = array_merge(
+                    $capabilities,
+                    [
+                        "delete_published_{$postType}s",
+                        "publish_{$postType}s",
+                        "edit_published_{$postType}s",
+                    ]
+                );
+            }
+
+            if (in_array($role, ['administrator', 'editor'])) {
+                $capabilities = array_merge(
+                    $capabilities,
+                    [
+                        "read_private_{$postType}s",
+                        "edit_private_{$postType}s",
+                        "delete_private_{$postType}s",
+                        "delete_others_{$postType}s",
+                        "delete_{$postType}",
+                        "edit_others_{$postType}s",
+                        "create_{$postType}s"
+                    ]
+                );
+            }
+
+            if ($roleObject) {
+                foreach ($capabilities as $cap) {
+                    $roleObject->add_cap($cap);
+                }
+
+                $optionsHelper->set($postType . '-capabilities-set', 1);
+            }
+        }
+        // reset current user all caps
+        wp_get_current_user()->get_role_caps();
+    }
+
+    /**
+     * @param $postType
+     */
+    protected function updateCustomPostRoleCapabilityMigration($postType)
+    {
+        $optionsHelper = vchelper('Options');
+
+        // Capability migration for custom VC post types
+        if ($optionsHelper->get($postType . '-capability-migration')) {
+            return;
+        }
+
+        // @codingStandardsIgnoreStart
+        global $wp_roles;
+        $optionsHelper->delete($postType . '-capabilities-set');
+        $wp_roles->remove_cap('contributor', 'read_' . $postType);
+        $wp_roles->remove_cap('contributor', 'edit_' . $postType);
+        $wp_roles->remove_cap('contributor', 'delete_' . $postType);
+        $wp_roles->remove_cap('contributor', 'edit_' . $postType . 's');
+        $wp_roles->remove_cap('contributor', 'delete_' . $postType . 's');
+        $optionsHelper->set($postType . '-capability-migration', 1);
+        // @codingStandardsIgnoreEnd
     }
 }
