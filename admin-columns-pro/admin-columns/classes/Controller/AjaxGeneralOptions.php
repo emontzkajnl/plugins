@@ -4,11 +4,11 @@ namespace AC\Controller;
 
 use AC\Ajax;
 use AC\Capabilities;
-use AC\Registrable;
+use AC\Registerable;
 use AC\Request;
 use AC\Settings\GeneralOption;
 
-class AjaxGeneralOptions implements Registrable {
+class AjaxGeneralOptions implements Registerable {
 
 	/**
 	 * @var GeneralOption
@@ -19,7 +19,8 @@ class AjaxGeneralOptions implements Registrable {
 		$this->general_option = $general_option;
 	}
 
-	public function register() {
+	public function register(): void
+    {
 		$this->get_ajax_handler()->register();
 	}
 
@@ -44,8 +45,8 @@ class AjaxGeneralOptions implements Registrable {
 
 		$request = new Request();
 
-		$name = (string) $request->filter( 'option_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$value = (string) $request->filter( 'option_value', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$name = (string) $request->filter( 'option_name' );
+		$value = (string) $request->filter( 'option_value' );
 
 		$options = $this->general_option->get();
 

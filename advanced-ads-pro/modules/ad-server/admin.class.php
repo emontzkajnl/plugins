@@ -11,10 +11,6 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 	 * Advanced_Ads_Pro_Module_Ad_Server_Admin constructor.
 	 */
 	public function __construct() {
-		// Stop, if main plugin doesn’t exist.
-		if ( ! class_exists( 'Advanced_Ads', false ) ) {
-			return;
-		}
 
 		// Add settings section to allow module enabling.
 		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ], 10, 1 );

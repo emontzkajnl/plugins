@@ -1,15 +1,15 @@
-# Copyright (C) 2022 Advanced Ads GmbH
+# Copyright (C) 2023 Advanced Ads GmbH
 # This file is distributed under the same license as the Advanced Ads Pro plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Advanced Ads Pro 2.19.2\n"
+"Project-Id-Version: Advanced Ads Pro 2.23.0\n"
 "Report-Msgid-Bugs-To: https://wpadvancedads.com/support/\n"
 "Last-Translator: Thomas Maier <post@webzunft.de>\n"
 "Language-Team: webgilde <support@wpadvancedads.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-12-14T10:38:22+00:00\n"
+"POT-Creation-Date: 2023-09-13T08:38:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: advanced-ads-pro\n"
@@ -112,20 +112,20 @@ msgstr ""
 msgid "Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities"
 msgstr ""
 
-#: modules/ad-server/admin.class.php:43
-#: modules/ad-server/admin.class.php:72
+#: modules/ad-server/admin.class.php:39
+#: modules/ad-server/admin.class.php:68
 msgid "Ad Server"
 msgstr ""
 
-#: modules/ad-server/admin.class.php:73
+#: modules/ad-server/admin.class.php:69
 msgid "Display ads on external websites."
 msgstr ""
 
-#: modules/ad-server/admin.class.php:119
+#: modules/ad-server/admin.class.php:115
 msgid "Public string"
 msgstr ""
 
-#: modules/ad-server/admin.class.php:133
+#: modules/ad-server/admin.class.php:129
 msgid "Usage"
 msgstr ""
 
@@ -135,9 +135,11 @@ msgstr ""
 #: modules/cache-busting/views/settings.php:12
 #: modules/click-fraud-protection/views/settings.php:10
 #: modules/lazy-load/views/settings.php:8
+#: modules/rest-api/views/module-enable.php:12
 msgid "Activate module."
 msgstr ""
 
+#. translators: Link to parallax manual
 #: modules/ad-server/views/module-settings.php:15
 #: modules/ads-for-adblockers/views/settings.php:9
 #: modules/advanced-display-conditions/main.class.php:499
@@ -146,7 +148,7 @@ msgstr ""
 #: modules/advanced-visitor-conditions/main.class.php:384
 #: modules/advanced-visitor-conditions/main.class.php:441
 #: modules/advanced-visitor-conditions/main.class.php:478
-#: modules/buddypress/buddypress.class.php:357
+#: modules/buddypress/buddypress.class.php:352
 #: modules/cache-busting/views/settings.php:14
 #: modules/click-fraud-protection/click-fraud-protection.class.php:133
 #: modules/click-fraud-protection/click-fraud-protection.class.php:141
@@ -154,11 +156,14 @@ msgstr ""
 #: modules/gamipress/views/visitor-condition-achievement.php:34
 #: modules/gamipress/views/visitor-condition-points.php:41
 #: modules/gamipress/views/visitor-condition-rank.php:41
-#: modules/geo/admin/views/setting-maxmind-license-key.php:8
-#: modules/geo/classes/admin.php:386
+#: modules/geo/admin/views/setting-maxmind-license-key.php:10
+#: modules/geo/classes/admin.php:369
+#: modules/group-refresh/views/settings_group_refresh.php:22
 #: modules/lazy-load/views/settings.php:10
 #: modules/paid-memberships-pro/main.class.php:134
 #: modules/paid-memberships-pro/main.class.php:253
+#: modules/parallax-ads/views/placement-options-after.php:24
+#: modules/rest-api/views/module-enable.php:15
 msgid "Manual"
 msgstr ""
 
@@ -198,15 +203,15 @@ msgstr ""
 msgid "No Ads found"
 msgstr ""
 
-#: modules/admin-bar/admin-bar.class.php:87
+#: modules/admin-bar/admin-bar.class.php:91
 msgid "ad"
 msgstr ""
 
-#: modules/admin-bar/admin-bar.class.php:90
+#: modules/admin-bar/admin-bar.class.php:94
 msgid "group"
 msgstr ""
 
-#: modules/admin-bar/admin-bar.class.php:93
+#: modules/admin-bar/admin-bar.class.php:97
 msgid "placement"
 msgstr ""
 
@@ -294,7 +299,7 @@ msgstr ""
 #: modules/advanced-visitor-conditions/main.class.php:327
 #: modules/advanced-visitor-conditions/main.class.php:370
 #: modules/gamipress/views/visitor-condition-achievement.php:16
-#: modules/geo/classes/admin.php:298
+#: modules/geo/classes/admin.php:281
 #: modules/paid-memberships-pro/main.class.php:111
 #: modules/paid-memberships-pro/main.class.php:230
 msgid "is"
@@ -305,7 +310,7 @@ msgstr ""
 #: modules/advanced-visitor-conditions/main.class.php:328
 #: modules/advanced-visitor-conditions/main.class.php:371
 #: modules/gamipress/views/visitor-condition-achievement.php:17
-#: modules/geo/classes/admin.php:299
+#: modules/geo/classes/admin.php:282
 #: modules/paid-memberships-pro/main.class.php:112
 #: modules/paid-memberships-pro/main.class.php:231
 msgid "is not"
@@ -457,114 +462,114 @@ msgstr ""
 msgid "within %s seconds"
 msgstr ""
 
-#: modules/background-ads/admin.class.php:24
+#: modules/background-ads/admin.class.php:31
 msgid "Background Ad"
 msgstr ""
 
-#: modules/background-ads/admin.class.php:25
+#: modules/background-ads/admin.class.php:32
 msgid "Background of the website behind the main wrapper."
 msgstr ""
 
-#: modules/background-ads/admin.class.php:36
+#: modules/background-ads/admin.class.php:47
 msgid "Select a background color in case the background image is not high enough to cover the whole screen."
 msgstr ""
 
-#: modules/background-ads/admin.class.php:40
+#: modules/background-ads/admin.class.php:51
 msgid "background"
 msgstr ""
 
-#: modules/bbpress/admin.class.php:26
+#: modules/bbpress/admin.class.php:24
 msgid "bbPress Static Content"
 msgstr ""
 
-#: modules/bbpress/admin.class.php:27
+#: modules/bbpress/admin.class.php:25
 msgid "Display ads on bbPress related pages."
 msgstr ""
 
-#: modules/bbpress/admin.class.php:32
+#: modules/bbpress/admin.class.php:30
 msgid "bbPress Reply Content"
 msgstr ""
 
-#: modules/bbpress/admin.class.php:33
+#: modules/bbpress/admin.class.php:31
 msgid "Display ads in bbPress replies."
 msgstr ""
 
-#: modules/bbpress/admin.class.php:44
-#: modules/bbpress/admin.class.php:60
+#: modules/bbpress/admin.class.php:42
+#: modules/bbpress/admin.class.php:58
 #: modules/buddypress/views/position-option.php:13
 #: modules/inject-content/admin.class.php:78
 #: modules/inject-content/admin.class.php:93
 msgid "position"
 msgstr ""
 
-#: modules/bbpress/admin.class.php:76
+#: modules/bbpress/admin.class.php:74
 msgid "Inject at %s. post"
 msgstr ""
 
-#: modules/bbpress/admin.class.php:82
-#: modules/bbpress/admin.class.php:99
+#: modules/bbpress/admin.class.php:80
+#: modules/bbpress/admin.class.php:97
 msgid "forum topic page"
 msgstr ""
 
-#: modules/bbpress/admin.class.php:86
+#: modules/bbpress/admin.class.php:84
 msgid "single forum page"
 msgstr ""
 
-#: modules/bbpress/admin.class.php:90
+#: modules/bbpress/admin.class.php:88
 msgid "forums page"
 msgstr ""
 
-#: modules/buddypress/admin.class.php:41
+#: modules/buddypress/admin.class.php:36
 msgid "BuddyBoss Content"
 msgstr ""
 
-#: modules/buddypress/admin.class.php:42
+#: modules/buddypress/admin.class.php:37
 msgid "Display ads on BuddyBoss related pages."
 msgstr ""
 
-#: modules/buddypress/admin.class.php:51
+#: modules/buddypress/admin.class.php:46
 msgid "BuddyPress Content"
 msgstr ""
 
-#: modules/buddypress/admin.class.php:52
+#: modules/buddypress/admin.class.php:47
 msgid "Display ads on BuddyPress related pages."
 msgstr ""
 
-#: modules/buddypress/admin.class.php:88
-#: modules/buddypress/admin.class.php:96
+#: modules/buddypress/admin.class.php:83
+#: modules/buddypress/admin.class.php:91
 msgid "Activity Entry"
 msgstr ""
 
-#: modules/buddypress/admin.class.php:104
+#: modules/buddypress/admin.class.php:99
 msgid "Group List"
 msgstr ""
 
-#: modules/buddypress/admin.class.php:107
+#: modules/buddypress/admin.class.php:102
 msgid "Member List"
 msgstr ""
 
-#: modules/buddypress/buddypress.class.php:105
+#: modules/buddypress/buddypress.class.php:100
 msgid "BuddyPress profile field"
 msgstr ""
 
-#: modules/buddypress/buddypress.class.php:106
+#: modules/buddypress/buddypress.class.php:101
 msgid "Display ads based on BuddyPress profile fields."
 msgstr ""
 
-#: modules/buddypress/buddypress.class.php:118
+#: modules/buddypress/buddypress.class.php:113
 msgid "BuddyBoss profile field"
 msgstr ""
 
-#: modules/buddypress/buddypress.class.php:119
+#: modules/buddypress/buddypress.class.php:114
 msgid "Display ads based on BuddyBoss profile fields."
 msgstr ""
 
-#: modules/buddypress/buddypress.class.php:308
+#: modules/buddypress/buddypress.class.php:303
 msgid "BuddyBoss group"
 msgstr ""
 
-#: modules/buddypress/buddypress.class.php:309
-#: modules/buddypress/buddypress.class.php:355
+#: modules/buddypress/buddypress.class.php:304
+#: modules/buddypress/buddypress.class.php:350
 msgid "Display ads based on existing BuddyBoss groups."
 msgstr ""
 
@@ -603,44 +608,56 @@ msgstr ""
 msgid "No profile fields found"
 msgstr ""
 
-#: modules/cache-busting/admin-ui.class.php:57
-msgctxt "setting label"
-msgid "AJAX"
+#: modules/cache-busting/admin-ui.class.php:32
+#: modules/geo/classes/admin.php:397
+msgid "You are not allowed to do this."
 msgstr ""
 
-#: modules/cache-busting/admin-ui.class.php:58
-#: modules/cache-busting/cache-busting.class.php:1685
-msgctxt "setting label"
-msgid "off"
+#: modules/cache-busting/admin-ui.class.php:40
+msgid "Cache busting has been successfully enabled for the assigned placement."
 msgstr ""
 
-#: modules/cache-busting/admin-ui.class.php:59
-msgctxt "setting label"
-msgid "auto"
+#: modules/cache-busting/admin-ui.class.php:43
+msgid "Couldn't find the placement."
 msgstr ""
 
 #: modules/cache-busting/admin-ui.class.php:78
+msgid "auto"
+msgstr ""
+
+#: modules/cache-busting/admin-ui.class.php:79
+#: modules/cache-busting/views/settings.php:31
+#: modules/cache-busting/views/settings.php:55
+msgid "AJAX"
+msgstr ""
+
+#: modules/cache-busting/admin-ui.class.php:80
+#: modules/cache-busting/views/settings.php:62
+msgid "off"
+msgstr ""
+
+#: modules/cache-busting/admin-ui.class.php:99
 msgctxt "placement admin label"
 msgid "Cache-busting"
 msgstr ""
 
-#: modules/cache-busting/admin-ui.class.php:131
+#: modules/cache-busting/admin-ui.class.php:152
 msgid "The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not passive cache-busting."
 msgstr ""
 
 #. translators: %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:156
+#: modules/cache-busting/admin-ui.class.php:177
 msgid "It seems that a caching plugin is activated. Your ads might not rotate properly while cache busting is disabled. <a href=\"%s\" target=\"_blank\">Activate cache busting.</a>"
 msgstr ""
 
 #. translators: %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:179
+#: modules/cache-busting/admin-ui.class.php:200
 msgid "You need a placement to deliver this group using cache busting. <a href=\"%s\" target=\"_blank\">Create a placement now.</a>"
 msgstr ""
 
 #. translators: %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:200
-msgid "It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href=\"%s\" target=\"_blank\">Activate cache busting for this placement.</a>"
+#: modules/cache-busting/admin-ui.class.php:221
+msgid "It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href=\"#\" data-placement=\"%s\" class=\"js-placement-activate-cb\">Activate cache busting for this placement.</a>"
 msgstr ""
 
 #: modules/cache-busting/admin.class.php:16
@@ -673,6 +690,11 @@ msgstr ""
 msgid "The ad is not displayed on the page"
 msgstr ""
 
+#: modules/cache-busting/cache-busting.class.php:1685
+msgctxt "setting label"
+msgid "off"
+msgstr ""
+
 #: modules/cache-busting/cache-busting.class.php:1688
 msgctxt "placement admin label"
 msgid "Cache-busting:"
@@ -683,11 +705,7 @@ msgid "Default option"
 msgstr ""
 
 #: modules/cache-busting/views/settings.php:18
-msgid "Choose which method to use when cache busting for a placement is set to “auto”."
-msgstr ""
-
-#: modules/cache-busting/views/settings.php:31
-msgid "AJAX"
+msgid "Choose which method to use when a placement needs cache busting and the option is set to “auto”."
 msgstr ""
 
 #: modules/cache-busting/views/settings.php:38
@@ -708,14 +726,6 @@ msgstr ""
 
 #: modules/cache-busting/views/settings.php:49
 msgid "Choose the fallback if “passive“ cache busting is not possible."
-msgstr ""
-
-#: modules/cache-busting/views/settings.php:55
-msgid "Use AJAX"
-msgstr ""
-
-#: modules/cache-busting/views/settings.php:62
-msgid "No cache busting"
 msgstr ""
 
 #: modules/cache-busting/views/settings.php:70
@@ -790,15 +800,15 @@ msgstr ""
 msgid "Period for which to hide the ad ( in days )"
 msgstr ""
 
-#: modules/duplicate-ads/admin.class.php:86
+#: modules/duplicate-ads/admin.class.php:81
 msgid "Create a copy of this ad"
 msgstr ""
 
-#: modules/duplicate-ads/admin.class.php:86
+#: modules/duplicate-ads/admin.class.php:81
 msgid "Duplicate"
 msgstr ""
 
-#: modules/duplicate-ads/admin.class.php:139
+#: modules/duplicate-ads/admin.class.php:134
 msgctxt "noun"
 msgid "copy"
 msgstr ""
@@ -839,28 +849,44 @@ msgstr ""
 msgid "Choose rank"
 msgstr ""
 
-#: modules/geo/admin/views/setting-download.php:4
-#: modules/geo/classes/admin.php:244
+#: modules/geo/admin/views/setting-download.php:13
+msgid "Geo Databases found."
+msgstr ""
+
+#: modules/geo/admin/views/setting-download.php:19
+msgid "The MaxMind license key is missing."
+msgstr ""
+
+#. translators: 1: opening <a>-tag to Advanced Ads manual, 2: closing <a>-tag
+#: modules/geo/admin/views/setting-download.php:24
+#: modules/geo/classes/admin.php:227
+msgid "Please read the %1$sinstallation instructions%2$s."
+msgstr ""
+
+#: modules/geo/admin/views/setting-download.php:35
+#: modules/geo/classes/admin.php:227
 msgid "Geo Databases not found."
 msgstr ""
 
-#: modules/geo/admin/views/setting-download.php:5
+#: modules/geo/admin/views/setting-download.php:38
 msgid "In order to use Geo Targeting, please download the geo location databases by clicking on the button below."
 msgstr ""
 
-#: modules/geo/admin/views/setting-download.php:10
-msgid "Last update: %s"
-msgstr ""
-
-#: modules/geo/admin/views/setting-download.php:18
+#: modules/geo/admin/views/setting-download.php:45
 msgid "Update geo location databases"
 msgstr ""
 
-#: modules/geo/admin/views/setting-download.php:65
+#. translators: Timestamp in the localized date_format
+#: modules/geo/admin/views/setting-download.php:61
+msgid "Last update: %s"
+msgstr ""
+
+#. translators: Timestamp in the localized date_format
+#: modules/geo/admin/views/setting-download.php:72
 msgid "Next possible update on %s."
 msgstr ""
 
-#: modules/geo/admin/views/setting-download.php:66
+#: modules/geo/admin/views/setting-download.php:79
 msgid "The databases are updated on the first Tuesday (midnight, GMT) of each month."
 msgstr ""
 
@@ -873,7 +899,7 @@ msgid "Location based on your visitor profile cookie:"
 msgstr ""
 
 #: modules/geo/admin/views/visitor-profile.php:15
-#: modules/geo/classes/admin.php:258
+#: modules/geo/classes/admin.php:241
 msgid "Coordinates"
 msgstr ""
 
@@ -881,184 +907,175 @@ msgstr ""
 msgid "Reset Visitor Profile"
 msgstr ""
 
-#: modules/geo/classes/admin.php:55
+#: modules/geo/classes/admin.php:49
 msgid "Geo Targeting"
 msgstr ""
 
-#: modules/geo/classes/admin.php:63
+#: modules/geo/classes/admin.php:57
 msgid "MaxMind license key"
 msgstr ""
 
-#: modules/geo/classes/admin.php:72
+#: modules/geo/classes/admin.php:66
 msgid "MaxMind Database"
 msgstr ""
 
-#: modules/geo/classes/admin.php:82
+#: modules/geo/classes/admin.php:76
 msgid "Method"
 msgstr ""
 
-#: modules/geo/classes/admin.php:92
+#: modules/geo/classes/admin.php:86
 msgid "Language of names"
 msgstr ""
 
-#: modules/geo/classes/admin.php:128
-msgid "Geo Databases found."
-msgstr ""
-
-#: modules/geo/classes/admin.php:134
-msgid "The MaxMind license key is missing."
-msgstr ""
-
-#: modules/geo/classes/admin.php:134
-#: modules/geo/classes/admin.php:244
-msgid "Please read the %1$sinstallation instructions%2$s."
-msgstr ""
-
-#: modules/geo/classes/admin.php:225
+#: modules/geo/classes/admin.php:208
 #: modules/geo/classes/public.php:174
 #: modules/geo/classes/public.php:332
 msgid "(unknown city)"
 msgstr ""
 
-#: modules/geo/classes/admin.php:234
+#: modules/geo/classes/admin.php:217
 #: modules/geo/classes/public.php:180
 #: modules/geo/classes/public.php:336
 msgid "(unknown region)"
 msgstr ""
 
-#: modules/geo/classes/admin.php:247
+#: modules/geo/classes/admin.php:230
 msgid "Maybe you are working on a local or secured environment."
 msgstr ""
 
-#: modules/geo/classes/admin.php:251
+#: modules/geo/classes/admin.php:234
 msgid "Your IP address format is incorrect"
 msgstr ""
 
-#: modules/geo/classes/admin.php:282
+#: modules/geo/classes/admin.php:265
 msgid "by specific location"
 msgstr ""
 
-#: modules/geo/classes/admin.php:286
+#: modules/geo/classes/admin.php:269
 msgid "by radius"
 msgstr ""
 
-#: modules/geo/classes/admin.php:323
-#: modules/geo/classes/admin.php:325
+#: modules/geo/classes/admin.php:306
+#: modules/geo/classes/admin.php:308
 msgid "or"
 msgstr ""
 
-#: modules/geo/classes/admin.php:324
+#: modules/geo/classes/admin.php:307
 msgid "State/Region"
 msgstr ""
 
-#: modules/geo/classes/admin.php:326
-#: modules/geo/classes/admin.php:376
+#: modules/geo/classes/admin.php:309
+#: modules/geo/classes/admin.php:359
 msgid "City"
 msgstr ""
 
-#: modules/geo/classes/admin.php:341
+#: modules/geo/classes/admin.php:324
 msgid "This option can’t be used if your site is using sucuri.net."
 msgstr ""
 
-#: modules/geo/classes/admin.php:351
+#: modules/geo/classes/admin.php:334
 msgid "Distance is less than or equal to"
 msgstr ""
 
-#: modules/geo/classes/admin.php:352
+#: modules/geo/classes/admin.php:335
 msgid "Distance is greater than"
 msgstr ""
 
-#: modules/geo/classes/admin.php:354
+#: modules/geo/classes/admin.php:337
 msgid "Distance"
 msgstr ""
 
-#: modules/geo/classes/admin.php:356
+#: modules/geo/classes/admin.php:339
 msgid "kilometers (km)"
 msgstr ""
 
-#: modules/geo/classes/admin.php:357
+#: modules/geo/classes/admin.php:340
 msgid "miles (mi)"
 msgstr ""
 
-#: modules/geo/classes/admin.php:358
+#: modules/geo/classes/admin.php:341
 msgid "from"
 msgstr ""
 
-#: modules/geo/classes/admin.php:359
+#: modules/geo/classes/admin.php:342
 msgid "get coordinates"
 msgstr ""
 
-#: modules/geo/classes/admin.php:360
+#: modules/geo/classes/admin.php:343
 msgid "Latitude"
 msgstr ""
 
-#: modules/geo/classes/admin.php:361
+#: modules/geo/classes/admin.php:344
 msgid "Longitude"
 msgstr ""
 
-#: modules/geo/classes/admin.php:366
+#: modules/geo/classes/admin.php:349
 msgid "Distance to center"
 msgstr ""
 
-#: modules/geo/classes/admin.php:377
+#: modules/geo/classes/admin.php:360
 msgid "Search"
 msgstr ""
 
-#: modules/geo/classes/admin.php:378
+#: modules/geo/classes/admin.php:361
 msgid "Cancel"
 msgstr ""
 
-#: modules/geo/classes/admin.php:379
+#: modules/geo/classes/admin.php:362
 msgid "Enter the name of the city, click the search button and pick one of the results to set the coordinates of the center."
 msgstr ""
 
-#: modules/geo/classes/admin.php:391
+#: modules/geo/classes/admin.php:374
 msgid "Location based on your IP address"
 msgstr ""
 
-#: modules/geo/classes/admin.php:421
+#: modules/geo/classes/admin.php:401
 msgid "The upload dir is not available"
 msgstr ""
 
-#: modules/geo/classes/admin.php:481
+#: modules/geo/classes/admin.php:405
+msgid "Please provide a MaxMind license key"
+msgstr ""
+
+#: modules/geo/classes/admin.php:474
 msgid "Database updated successfully!"
 msgstr ""
 
-#: modules/geo/classes/admin.php:500
+#: modules/geo/classes/admin.php:492
 msgid "Database update failed"
 msgstr ""
 
-#: modules/geo/classes/admin.php:505
+#: modules/geo/classes/admin.php:497
 msgid "Error downloading database from: %1$s - %2$s"
 msgstr ""
 
-#: modules/geo/classes/admin.php:529
+#: modules/geo/classes/admin.php:521
 msgid "Could not open downloaded database for reading: %s"
 msgstr ""
 
-#: modules/geo/classes/admin.php:543
+#: modules/geo/classes/admin.php:535
 msgid "Could not access filesystem"
 msgstr ""
 
-#: modules/geo/classes/admin.php:553
+#: modules/geo/classes/admin.php:545
 msgid "Could not open database for writing %s"
 msgstr ""
 
 #. translators: 1: The number of search results.
-#: modules/geo/classes/admin.php:660
+#: modules/geo/classes/admin.php:659
 msgid "Found %1$d results. Please pick the one, you want to use."
 msgstr ""
 
-#: modules/geo/classes/admin.php:661
+#: modules/geo/classes/admin.php:660
 msgid "Your search did not return any results."
 msgstr ""
 
-#: modules/geo/classes/admin.php:662
+#: modules/geo/classes/admin.php:661
 msgid "There was an error connecting to the search service."
 msgstr ""
 
 #. translators: 1: A link to the geo location service.
-#: modules/geo/classes/admin.php:664
+#: modules/geo/classes/admin.php:663
 msgid "You can search for the geo coordinates manually at %1$s."
 msgstr ""
 
@@ -2196,7 +2213,7 @@ msgstr ""
 msgid "Activate now"
 msgstr ""
 
-#: modules/group-refresh/views/settings_group_refresh.php:25
+#: modules/group-refresh/views/settings_group_refresh.php:26
 msgid "Please use a placement to deliver this group using cache-busting."
 msgstr ""
 
@@ -2369,6 +2386,33 @@ msgstr ""
 msgid "Display ads only to users with a specific membership level set with PaidMembershipsPro."
 msgstr ""
 
+#: modules/parallax-ads/classes/Advanced_Ads_Pro_Module_Parallax_Admin_UI.php:69
+msgid "Parallax Ads"
+msgstr ""
+
+#: modules/parallax-ads/views/placement-options-after.php:19
+msgid "Enable the parallax effect."
+msgstr ""
+
+#. translators: Link to parallax manual
+#: modules/parallax-ads/views/placement-options-after.php:24
+msgid "Optimized for image ads. %s"
+msgstr ""
+
+#: modules/parallax-ads/views/placement-options-after.php:31
+msgctxt "Parallax Ad placement height"
+msgid "Height"
+msgstr ""
+
+#: modules/parallax-ads/views/placement-options-after.php:37
+msgctxt "Parallax Ad placement height unit"
+msgid "Unit"
+msgstr ""
+
+#: modules/parallax-ads/views/placement-options-after.php:40
+msgid "Choose the height of the cutout, either in pixels or relative to the viewport."
+msgstr ""
+
 #: modules/placement-tests/placement-tests.class.php:92
 #: modules/placement-tests/placement-tests.class.php:93
 msgid "Save New Test"
@@ -2471,6 +2515,18 @@ msgstr ""
 
 #: modules/placement-tests/views/setting_placement_test_weight.php:8
 msgid "Test weight"
+msgstr ""
+
+#: modules/rest-api/classes/Admin_UI.php:33
+msgid "REST API"
+msgstr ""
+
+#: modules/rest-api/classes/Advanced_Ads_Ad.php:25
+msgid "Invalid ad ID."
+msgstr ""
+
+#: modules/rest-api/classes/Advanced_Ads_Group.php:22
+msgid "Invalid group ID."
 msgstr ""
 
 #: modules/weekdays/views/ad-submitbox-meta.php:4

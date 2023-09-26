@@ -94,8 +94,12 @@ class SC_Admin_Tools{
 
     public static function insert_window(){
 
+        if( !current_user_can( 'edit_posts' ) ){
+            wp_die( __( 'Not enough permissions to browse and insert shortcodes', 'shortcoder' ) );
+        }
+
         include_once( 'insert.php' );
-        die(0);
+        wp_die();
 
     }
 

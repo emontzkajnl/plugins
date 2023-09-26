@@ -102,7 +102,7 @@ class Aaabs_Adsense_Public_Facing
 				$output .= 'data-ad-client="ca-' . $pub_id . '" ' . "\n";
 				$output .= 'data-ad-slot="' . $content->slotId . '" ' . "\n";
 				$output .= '></ins>' . "\n";
-				$output .= '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>' . "\n";
+				$output .= '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-' . $pub_id . '" crossorigin="anonymous"></script>' . "\n";
 				$output .= '<script> ' . "\n";
 				$output .= '(adsbygoogle = window.adsbygoogle || []).push({}); ' . "\n";
 				$output .= '</script>' . "\n";
@@ -116,7 +116,7 @@ class Aaabs_Adsense_Public_Facing
 				$output .= 'data-ad-slot="' . $content->slotId . '" ' . "\n";
 				$output .= 'data-ad-format="' . $content->resize . '" ' . "\n";
 				$output .= '></ins>' . "\n";
-				$output .= '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>' . "\n";
+				$output .= '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-' . $pub_id . '" crossorigin="anonymous"></script>' . "\n";
 				$output .= '<script>(adsbygoogle = window.adsbygoogle || []).push({}); </script>' . "\n";
 				break;
 			}
@@ -137,7 +137,7 @@ class Aaabs_Adsense_Public_Facing
 			$output .= sprintf( 'data-matched-content-rows-num="%s,%s"', $settings['rows_num_m'], $settings['rows_num'] ) . "\n";
 			$output .= sprintf( 'data-matched-content-columns-num="%s,%s"', $settings['columns_num_m'], $settings['columns_num'] ) . "\n";
 			$output .= '></ins>' . "\n";
-			$output .= '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>' . "\n";
+			$output .= '<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-' . $pub_id . '" crossorigin="anonymous"></script>' . "\n";
 			$output .= '<script>(adsbygoogle = window.adsbygoogle || []).push({}); </script>' . "\n";
 		}
 

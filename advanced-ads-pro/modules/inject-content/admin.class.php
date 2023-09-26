@@ -46,7 +46,7 @@ class Advanced_Ads_Pro_Module_Inject_Content_Admin {
 					checked( $inject_by, 'pro_custom_element' ); ?>><?php _e( 'by existing element', 'advanced-ads-pro' ); ?></label>
 				</legend>
 					<p class="description"><?php _e( 'Place ads in relation to an existing element in the frontend.', 'advanced-ads-pro' ); ?></p>
-					<input class="advads-frontend-element" type="text" name="advads[placements][<?php echo $placement_slug; ?>][options][pro_custom_element]" value="<?php
+					<input class="advads-frontend-element advads-wide-input" type="text" name="advads[placements][<?php echo $placement_slug; ?>][options][pro_custom_element]" value="<?php
 					    echo ( isset( $placement['options']['pro_custom_element'] ) ) ? esc_attr( stripslashes( $placement['options']['pro_custom_element'] ) ) : ''; 
 					    ?>" placeholder="<?php _e( 'or enter manually', 'advanced-ads-pro' ); ?>"/>
 					<button style="display:none; color: red;" type="button" class="advads-deactivate-frontend-picker button"><?php echo esc_html_x( 'stop selection', 'frontend picker', 'advanced-ads-pro' ); ?></button>

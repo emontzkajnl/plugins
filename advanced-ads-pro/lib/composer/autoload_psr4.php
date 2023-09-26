@@ -6,4 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Advanced_Ads_Pro\\Rest_Api\\' => array($baseDir . '/modules/rest-api/classes'),
 );

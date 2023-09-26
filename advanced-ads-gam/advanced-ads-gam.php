@@ -5,7 +5,7 @@
  * Plugin Name:       Advanced Ads – Google Ad Manager Integration
  * Plugin URI:        https://wpadvancedads.com/add-ons/google-ad-manager/
  * Description:       Google Ad Manager Integration for WordPress
- * Version:           2.3.0
+ * Version:           2.3.1
  * Author:            Advanced Ads GmbH
  * Author URI:        https://wpadvancedads.com
  * Text Domain:       advanced-ads-gam
@@ -26,7 +26,7 @@ define( 'AAGAM_APP_NAME', 'AdvadsGAM' );
 define( 'AAGAM_API_KEY_OPTION', 'advanced-ads-gam-apikey' );
 define( 'AAGAM_PLUGIN_NAME', 'Google Ad Manager Integration' );
 define( 'AAGAM_SETTINGS', 'advanced-ads-gam' );
-define( 'AAGAM_VERSION', '2.3.0' );
+define( 'AAGAM_VERSION', '2.3.1' );
 define( 'AAGAM_NO_SOAP_URL', 'https://gam-connect.wpadvancedads.com/api/v1/' );
 
 /**

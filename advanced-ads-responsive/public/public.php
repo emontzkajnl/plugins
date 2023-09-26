@@ -72,10 +72,6 @@ class Advanced_Ads_Responsive {
 
 				// Add js file to header.
 				add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
-				
-
-                // add filter for condition check
-                add_filter( 'advanced-ads-can-display', array( $this, 'can_display' ), 10, 2 );
 
                 // use wrapper filter to create a wrapping <div /> ( used as height probe on the ad )
                 add_filter( 'advanced-ads-set-wrapper', array( $this, 'wrapper_filter' ), 10, 2 );
@@ -150,60 +146,6 @@ class Advanced_Ads_Responsive {
                         wp_enqueue_script( 'advads-responsive-tooltip-js' );
                         wp_enqueue_style( 'advads-responsive-tooltip-css', AAR_BASE_URL . 'public/assets/css/tooltip.css', array(), null );
             }
-    }
-
-    /**
-     * check if the current ad can be displayed based on minimal and maximum browser width
-     *
-     * @since 1.0.0
-     * @param bool $can_display value as set so far
-     * @param obj $ad the ad object
-     * @return bool false if can’t be displayed, else return $can_display
-     * @deprecated since version 1.2.1, use check_browser_width() instead
-     */
-    public function can_display( $can_display, $ad = 0 ){
-	if ( ! $can_display ) {
-		return false;
-	}
-
-        $ad_options = $ad->options();
-
-        // check if by-size option is provided and option enabled
-        if( ! isset( $ad_options['visitor']['by-size']['enable'] ) || !$ad_options['visitor']['by-size']['enable'] ) return $can_display;
-
-        $browser_width = 0;
-        if ( ! empty( $_COOKIE['advanced_ads_browser_width'] ) ) {
-            $browser_width = absint( $_COOKIE['advanced_ads_browser_width'] );
-        }
-
-        // check default method if browser width is still empty
-        if ( empty( $browser_width ) ){
-            if( ! empty( $ad_options['visitor']['by-size']['fallback'] ) ){
-                switch ( $ad_options['visitor']['by-size']['fallback'] ){
-                    case 'display' : // display ad anyway
-                        return $can_display;
-                        break;
-                    case 'hide' : // don’t display the ad
-                        return false;
-                        break;
-                    case 'mobile' :
-                        if( ! wp_is_mobile() ) return false;
-                        break;
-                    case 'desktop' :
-                        if( wp_is_mobile() ) return false;
-                        break;
-                }
-            }
-        }
-
-        // check browser width against minimum/maximum settings
-        $from = absint( $ad_options['visitor']['by-size']['from'] );
-        $to = absint( $ad_options['visitor']['by-size']['to'] );
-
-        if( $from > 0 && $from > $browser_width ) return false;
-        if( $to > 0 && $to < $browser_width ) return false;
-
-        return $can_display;
     }
 
 	/**

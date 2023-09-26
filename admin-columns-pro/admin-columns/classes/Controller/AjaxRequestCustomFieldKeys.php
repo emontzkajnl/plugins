@@ -4,13 +4,14 @@ namespace AC\Controller;
 
 use AC\Ajax;
 use AC\Helper\Select;
-use AC\Registrable;
+use AC\Registerable;
 use AC\Request;
 use AC\Response;
 
-class AjaxRequestCustomFieldKeys implements Registrable {
+class AjaxRequestCustomFieldKeys implements Registerable {
 
-	public function register() {
+	public function register(): void
+    {
 		$this->get_ajax_handler()->register();
 	}
 

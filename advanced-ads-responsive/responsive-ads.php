@@ -5,7 +5,7 @@
  * Plugin Name:       Advanced Ads – Responsive Ads
  * Plugin URI:        https://wpadvancedads.com/add-ons/responsive-ads/
  * Description:       Improve ad display on mobile devices and AMP pages
- * Version:           1.10.5
+ * Version:           1.11.0
  * Author:            Advanced Ads GmbH
  * Author URI:        https://wpadvancedads.com
  * Text Domain:       advanced-ads-responsive
@@ -28,7 +28,7 @@ if ( ! class_exists( 'Advanced_Ads_Responsive' ) ) {
 	// Plugin slug and textdoamin.
 	define( 'AAR_SLUG', 'responsive-ads' );
 
-	define( 'AAR_VERSION', '1.10.5' );
+	define( 'AAR_VERSION', '1.11.0' );
 	define( 'AAR_PLUGIN_URL', 'https://wpadvancedads.com' );
 	define( 'AAR_PLUGIN_NAME', 'Responsive Ads' );
 

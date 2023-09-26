@@ -10,11 +10,6 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	 * Advanced_Ads_Pro_Module_Duplicate_Ads_Admin constructor.
 	 */
 	public function __construct() {
-		// stop, if main plugin doesn’t exist.
-		if ( ! class_exists( 'Advanced_Ads', false ) ) {
-			return;
-		}
-
 		add_action( 'admin_init', [ $this, 'admin_init' ] );
 		add_action( 'admin_action_advanced_ads_duplicate_ad', [ $this, 'duplicate_ad' ] );
 

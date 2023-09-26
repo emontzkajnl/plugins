@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Responsive Ads package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-04-12 19:02:34+0000\n"
+"PO-Revision-Date: 2023-02-24 11:37:12+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -10,6 +10,11 @@ msgstr ""
 "X-Generator: GlotPress/3.0.0\n"
 "Language: de_CH\n"
 "Project-Id-Version: Responsive Ads\n"
+
+#. %1$s is the opening link tag, %2$s is closing link tag.
+#: admin/views/list.php:8
+msgid "This feature is deprecated. Please find the removal schedule %1$shere%2$s"
+msgstr "Diese Funktion ist veraltet. Den Zeitplan für deren Entfernung finden Sie %1$shier%2$s"
 
 #. Author of the plugin
 msgid "Advanced Ads GmbH"
@@ -51,11 +56,7 @@ msgstr "Anpassen"
 msgid "Layout"
 msgstr "Layout"
 
-#: modules/amp/admin/views/setting-page-adsense.php:2
-msgid "Enable AMP Auto ads"
-msgstr "Automatische Anzeigen auf AMP (Accelerated Mobile Pages) aktivieren"
-
-#: admin/admin.php:150
+#: admin/admin.php:147
 msgid "Fallback width"
 msgstr "Fallback-Breite"
 
@@ -164,25 +165,25 @@ msgstr "rechteckig"
 msgid "horizontal"
 msgstr "horizontal"
 
-#: modules/gadsense/admin/admin.php:68
+#: modules/gadsense/admin/admin.php:85
 msgid "Not Displayed"
 msgstr "Nicht angezeigt"
 
-#: modules/gadsense/admin/admin.php:67
+#: modules/gadsense/admin/admin.php:84
 #: modules/gadsense/admin/views/ad-params-manual-css.php:58
 msgid "remove"
 msgstr "entfernen"
 
-#: modules/gadsense/admin/admin.php:66
+#: modules/gadsense/admin/admin.php:83
 #: modules/gadsense/admin/views/ad-params-manual-css.php:57
 msgid "Remove this rule"
 msgstr "Regel entfernen"
 
-#: modules/amp/public/public.php:430
+#: modules/amp/public/public.php:405
 msgid "Display ads on Accelerated Mobile Pages"
 msgstr "Anzeigen auf AMP (Accelerated Mobile Pages) einblenden"
 
-#: modules/amp/public/public.php:429
+#: modules/amp/public/public.php:404
 msgid "Accelerated Mobile Pages"
 msgstr "AMP (Accelerated Mobile Pages)"
 
@@ -190,7 +191,7 @@ msgstr "AMP (Accelerated Mobile Pages)"
 msgid "Ads that are visible on Accelerated Mobile Pages"
 msgstr "Anzeigen, die auf AMP-Seiten sichtbar sind"
 
-#: modules/amp/admin/admin_adsense.php:25
+#: modules/amp/admin/admin_adsense.php:30
 msgid "This ad type is not supported on AMP pages"
 msgstr "Dieser Anzeigentyp wird nicht auf AMP-Seiten unterstützt"
 
@@ -226,75 +227,39 @@ msgstr "Sie benötigen <a href=\"%s\" target=\"_blank\">Advanced Ads Pro</a> mit
 msgid "Reload ads that are loaded via cache-busting when screen resizes."
 msgstr "Anzeigen neu laden, sobald sich die Bildschirmbreite ändert. Funktioniert nur, wenn Cache-Busting aktiv ist."
 
-#: admin/views/metabox.php:23
-msgid "Display on mobile only"
-msgstr "Nur mobil anzeigen"
-
-#: admin/views/metabox.php:20
-msgid "Display on desktop only"
-msgstr "Nur auf Desktop anzeigen"
-
-#: admin/views/metabox.php:17
-msgid "Don’t load the ad"
-msgstr "Anzeige nicht einblenden"
-
-#: admin/views/metabox.php:14
-msgid "Display the ad anyway"
-msgstr "Anzeige einblenden"
-
-#: admin/views/metabox.php:9
-msgid "On the first page view of a new visitor the browser size can not be determined in advanced. Decide here what to do in this case."
-msgstr "Beim ersten Seitenaufruf eines Nutzers kann die Browserbreite noch nicht bestimmt werden. Entscheiden Sie hier, was dann passiert."
-
-#: admin/views/metabox.php:6
-msgid "Display ad in browsers with a size of %s px to %s px"
-msgstr "Zeige die Anzeige in Browsern mit einer Breite von %s bis %s Pixeln"
-
-#: admin/views/metabox.php:4
-msgid "Display ad by browser size"
-msgstr "Anzeige abhängig der Browserbreite einblenden"
-
-#: admin/views/metabox.php:2
-msgid "The below version of the browser width check is deprecated. Please use the new version of visitor conditions above to replace it."
-msgstr "Die unten verwendete Version des Browserbreiten-Tests ist veraltet. Bitte nutzen Sie die neuen Besucherbedingungen."
-
-#: admin/views/metabox.php:1
-msgid "Display by browser size"
-msgstr "Abhängig von der Browserbreite einblenden"
-
-#: admin/views/list.php:73
+#: admin/views/list.php:85
 msgid "ad is NOT visible"
 msgstr "Anzeige nicht sichtbar"
 
-#: admin/views/list.php:71
+#: admin/views/list.php:83
 msgid "ad is visible"
 msgstr "Anzeige sichtbar"
 
-#: admin/views/list.php:23
+#: admin/views/list.php:35
 msgid "(ads without groups)"
 msgstr "(Anzeigen ohne Gruppen)"
 
-#: admin/views/list.php:10
+#: admin/views/list.php:22
 msgid "ad"
 msgstr "Anzeige"
 
-#: admin/views/list.php:9
+#: admin/views/list.php:21
 msgid "ad group"
 msgstr "Anzeigengruppe"
 
-#: admin/views/list.php:4
+#: admin/views/list.php:16
 msgid "Not enough responsive ads to list them."
 msgstr "Nicht genug responsive Anzeigen vorhanden um sie aufzulisten."
 
-#: public/public.php:147
+#: public/public.php:143
 msgid "container width"
 msgstr "Container-Breite"
 
-#: public/public.php:146
+#: public/public.php:142
 msgid "ad size"
 msgstr "Anzeigengröße"
 
-#: public/public.php:145
+#: public/public.php:141
 msgid "window width"
 msgstr "Fensterbreite"
 
@@ -314,35 +279,35 @@ msgstr "Anzeigen anhand der Browserbreite einblenden."
 msgid "browser width"
 msgstr "Browserbreite"
 
-#: admin/admin.php:143
+#: admin/admin.php:140
 msgid "Reload ads on resize"
 msgstr "Anzeigen neuladen"
 
-#: admin/admin.php:134
+#: admin/admin.php:131
 msgid "Responsive Image Ads"
 msgstr "Responsive Bildanzeigen"
 
-#: admin/admin.php:125
+#: admin/admin.php:122
 msgid "Activate size assistant"
 msgstr "Breiten-Assistent aktivieren"
 
-#: admin/admin.php:117 admin/admin.php:242 admin/admin.php:242
+#: admin/admin.php:114 admin/admin.php:206 admin/admin.php:207
 #: admin/views/list.php:2
 msgid "Responsive Ads"
 msgstr "Responsive Anzeigen"
 
-#: admin/admin.php:108
+#: admin/admin.php:105
 msgid "Responsive"
 msgstr "Responsive"
 
-#: admin/admin.php:73
+#: admin/admin.php:70
 msgid "<strong>%s</strong> requires the <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> plugin to be installed and activated on your site."
 msgstr "<strong>%s</strong> basiert auf dem freien <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> Plugin."
 
-#: admin/admin.php:69
+#: admin/admin.php:66
 msgid "Install Now"
 msgstr "Jetzt installieren"
 
-#: admin/admin.php:67
+#: admin/admin.php:64
 msgid "Activate Now"
 msgstr "Jetzt aktivieren"

@@ -7,10 +7,6 @@ class Advanced_Ads_Pro_Module_bbPress {
     }
     
     public function wp_plugins_loaded_ad_actions(){
-	// stop, if main plugin doesn’t exist
-	if ( ! class_exists( 'Advanced_Ads', false ) ) {
-            return;
-	}
         
         // stop if bbPress isn't activated
         if ( ! class_exists( 'bbPress', false ) ){

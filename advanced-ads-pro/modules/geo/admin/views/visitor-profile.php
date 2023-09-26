@@ -1,6 +1,6 @@
 <?php
 /**
- * Show the visitor information saved to the `advanced_ads_pro_server_info` cookie.
+ * Show the visitor information saved to the `advanced_ads_visitor` cookie.
  *
  * @var Advanced_Ads_Geo_Visitor_Profile $visitor_profile
  */

@@ -495,14 +495,6 @@ AdvancedAdsGamConnect.prototype = {
 window.jQuery(function () {
 	const gamAdType = jQuery( '#advanced-ad-type-gam' );
 
-	if ( gamAdType.is( ':checked' ) ) {
-		jQuery( '#tracking-ads-box' ).hide();
-	}
-
-	jQuery( document ).on( 'paramloaded', function () {
-		jQuery( '#tracking-ads-box' ).toggle( ! gamAdType.is( ':checked' ) );
-	} );
-
 	new AdvancedAdsNetworkGam();
 
 	jQuery( document ).on( 'change', 'input[name^="advanced_ad[output][ad-sizes]"][type="number"]', function () {

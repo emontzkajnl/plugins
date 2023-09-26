@@ -11,6 +11,12 @@
  */
 class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 
+	/**
+	 * The constructor.
+	 *
+	 * @param Advanced_Ads_Pro_Module_Cache_Busting $cache_busting Cache Busting instance.
+	 * @param array                                 $options Option array.
+	 */
 	public function __construct( $cache_busting, $options ) {
 		$this->cache_busting = $cache_busting;
 		$this->options = $options;
@@ -19,7 +25,7 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 		$this->vc_cache_reset = ! empty( $this->options['vc_cache_reset'] ) ? absint( $this->options['vc_cache_reset'] ) : 0;
 
 		$this->is_ajax = ! empty( $cache_busting->is_ajax );
-		new Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie( $this );
+		new Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie( $this );
 	}
 
 	/**
@@ -135,9 +141,12 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 
 }
 
-class Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie {
+/**
+ * Cache Bust: Visitor info cookie
+ */
+class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 	// Note: hard-coded in JS.
-	const SERVER_INFO_COOKIE_NAME = 'advanced_ads_pro_server_info';
+	const VISITOR_INFO_COOKIE_NAME = 'advanced_ads_visitor';
 
 	public function __construct( $server_info ) {
 		$this->server_info = $server_info;
@@ -195,8 +204,8 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie {
 	private function parse_existing_cookies() {
 		$n_cookie = [];
 
-		if ( isset( $_COOKIE[ self::SERVER_INFO_COOKIE_NAME ] ) ) {
-			$e_cookie = $_COOKIE[ self::SERVER_INFO_COOKIE_NAME ];
+		if ( isset( $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ] ) ) {
+			$e_cookie = $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ];
 			$e_cookie = wp_unslash( $e_cookie );
 			$e_cookie = json_decode( $e_cookie, true);
 
@@ -259,10 +268,12 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie {
 
 	/**
 	 * Set cookie.
+	 *
+	 * @param string $cookie Cookie.
 	 */
 	public function set_cookie( $cookie ) {
 		if ( ! $cookie ) {
-			setrawcookie( self::SERVER_INFO_COOKIE_NAME, '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN );
+			setrawcookie( self::VISITOR_INFO_COOKIE_NAME, '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN );
 			return;
 		}
 
@@ -275,7 +286,7 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie {
 		}
 
 		// Prevent spaces from being converted to '+'
-		setrawcookie( self::SERVER_INFO_COOKIE_NAME, $cookie, time() + $this->server_info->server_info_duration, COOKIEPATH, COOKIE_DOMAIN );
+		setrawcookie( self::VISITOR_INFO_COOKIE_NAME, $cookie, time() + $this->server_info->server_info_duration, COOKIEPATH, COOKIE_DOMAIN );
 	}
 
 	/**

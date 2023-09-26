@@ -1,24 +1,22 @@
 <?php
 
 class Advanced_Ads_Pro_Module_bbPress_Admin {
-    
-    public function __construct() {
-        // stop, if main plugin doesn’t exist
-	if ( ! class_exists( 'Advanced_Ads', false ) ) {
-            return;
+
+	/**
+	 * Constructor. Register relevant hooks.
+	 */
+	public function __construct() {
+
+		// stop if bbPress isn't activated
+		if ( ! class_exists( 'bbPress', false ) ) {
+			return;
+		}
+
+		// add sticky placement
+		add_action( 'advanced-ads-placement-types', [ $this, 'add_placement' ] );
+		// content of sticky placement
+		add_action( 'advanced-ads-placement-options-after', [ $this, 'placement_options' ], 10, 2 );
 	}
-        
-        // stop if bbPress isn't activated
-        if ( ! class_exists( 'bbPress', false ) ){
-            return;
-        }
-        
-        // add sticky placement
-	add_action( 'advanced-ads-placement-types', [ $this, 'add_placement' ] );
-        // content of sticky placement
-	add_action( 'advanced-ads-placement-options-after', [ $this, 'placement_options' ], 10, 2 );
-        
-    }
     
     public function add_placement($types){
         //ad injection on a bbPress forum

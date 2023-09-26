@@ -3,6 +3,7 @@
 namespace ACP\Column\Post;
 
 use AC;
+use ACP\ConditionalFormat;
 use ACP\Editing;
 use ACP\Editing\Settings\EditableType;
 use ACP\Export;
@@ -11,7 +12,9 @@ use ACP\Search;
 use ACP\Sorting;
 
 class Content extends AC\Column\Post\Content
-	implements Editing\Editable, Sorting\Sortable, Filtering\Filterable, Export\Exportable, Search\Searchable {
+	implements Editing\Editable, Sorting\Sortable, Filtering\Filterable, Export\Exportable, Search\Searchable, ConditionalFormat\Formattable {
+
+	use ConditionalFormat\ConditionalFormatTrait;
 
 	public function register_settings() {
 		parent::register_settings();
@@ -20,11 +23,9 @@ class Content extends AC\Column\Post\Content
 	}
 
 	public function editing() {
-		$view = EditableType\Content::TYPE_WYSIWYG === $this->get_inline_editable_type()
-			? new Editing\View\Wysiwyg()
-			: new Editing\View\TextArea();
-
-		return new Editing\Service\Post\Content( $view );
+		return EditableType\Content::TYPE_WYSIWYG === $this->get_inline_editable_type()
+			? new Editing\Service\Post\ContentWysiwyg()
+			: new Editing\Service\Post\Content();
 	}
 
 	public function filtering() {

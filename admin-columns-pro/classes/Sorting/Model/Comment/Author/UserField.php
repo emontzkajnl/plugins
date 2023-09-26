@@ -1,51 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ACP\Sorting\Model\Comment\Author;
 
-use ACP;
+use ACP\Search\Query\Bindings;
 use ACP\Sorting\AbstractModel;
+use ACP\Sorting\Model\QueryBindings;
+use ACP\Sorting\Model\SqlOrderByFactory;
+use ACP\Sorting\Type\Order;
 
-class UserField extends AbstractModel {
+class UserField extends AbstractModel implements QueryBindings
+{
 
-	/**
-	 * @var string
-	 */
-	private $user_field;
+    private $user_field;
 
-	public function __construct( $user_field ) {
-		parent::__construct();
+    public function __construct(string $user_field)
+    {
+        parent::__construct();
 
-		$this->user_field = (string) $user_field;
-	}
+        $this->user_field = $user_field;
+    }
 
-	public function get_sorting_vars() {
-		add_filter( 'comments_clauses', [ $this, 'comments_clauses_callback' ] );
+    public function create_query_bindings(Order $order): Bindings
+    {
+        global $wpdb;
 
-		return [
-			'suppress_filters' => false,
-		];
-	}
+        $bindings = new Bindings();
 
-	public function comments_clauses_callback( $clauses ) {
-		global $wpdb;
+        $alias = $bindings->get_unique_alias('ufield');
 
-		$order = esc_sql( $this->get_order() );
+        $bindings->join("LEFT JOIN $wpdb->users AS $alias ON $wpdb->comments.user_id = $alias.ID");
+        $bindings->order_by(
+            SqlOrderByFactory::create("$alias.$this->user_field", (string)$order)
+        );
 
-		$join_type = $this->show_empty
-			? 'LEFT'
-			: 'INNER';
-
-		$clauses['join'] .= " {$join_type} JOIN {$wpdb->users} AS acsort_users ON {$wpdb->comments}.user_id = acsort_users.ID";
-
-		if ( ! $this->show_empty ) {
-			$clauses['join'] .= sprintf( " AND acsort_users.`%s` <> ''", esc_sql( $this->user_field ) );
-		}
-
-		$clauses['orderby'] = sprintf( "acsort_users.%s $order, {$wpdb->comments}.comment_ID $order", esc_sql( $this->user_field ) );
-
-		remove_filter( 'comments_clauses', [ $this, __FUNCTION__ ] );
-
-		return $clauses;
-	}
+        return $bindings;
+    }
 
 }

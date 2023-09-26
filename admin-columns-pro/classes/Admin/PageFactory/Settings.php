@@ -3,23 +3,30 @@
 namespace ACP\Admin\PageFactory;
 
 use AC;
+use AC\Asset\Location;
+use ACP\Admin\MenuFactory;
+use ACP\Admin\Section;
 use ACP\Sorting\Admin\Section\ResetSorting;
-use ACP\Sorting\Admin\ShowAllResults;
 
-class Settings extends AC\Admin\PageFactory\Settings {
+class Settings extends AC\Admin\PageFactory\Settings
+{
 
-	public function create() {
-		$page = parent::create();
+    public function __construct(Location\Absolute $location, MenuFactory $menu_factory)
+    {
+        parent::__construct($location, $menu_factory, true);
+    }
 
-		$page->add_section( new ResetSorting(), 30 );
+    public function create()
+    {
+        $page = parent::create();
+        $page->add_section(new ResetSorting(), 30);
 
-		$general_section = $page->get_section( AC\Admin\Section\General::NAME );
+        $general_section = $page->get_section(AC\Admin\Section\General::NAME);
+        if ($general_section instanceof AC\Admin\Section\General) {
+            $general_section->add_option(new Section\Partial\LayoutTabs());
+        }
 
-		if ( $general_section instanceof AC\Admin\Section\General ) {
-			$general_section->add_option( new ShowAllResults() );
-		}
-
-		return $page;
-	}
+        return $page;
+    }
 
 }

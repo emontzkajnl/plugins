@@ -179,6 +179,10 @@ class SC_Admin{
 
     public static function admin_ajax(){
 
+        if( !current_user_can( 'manage_options' ) ){
+            wp_die();
+        }
+
         $g = self::clean_get();
         $do = $g[ 'do' ];
 
@@ -187,7 +191,7 @@ class SC_Admin{
             echo 'done';
         }
 
-        die( 0 );
+        wp_die();
 
     }
 

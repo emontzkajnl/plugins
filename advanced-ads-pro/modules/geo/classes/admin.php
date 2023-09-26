@@ -28,20 +28,14 @@ class Advanced_Ads_Geo_Admin {
 	 */
 	public function __construct() {
 		$this->views_path = plugin_dir_path( __FILE__ ) . '../admin/views';
-		$this->wp_admin_plugins_loaded();
 
-		// Add assets.
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
-	}
-
-	/**
-	 * Load actions and filters
-	 */
-	public function wp_admin_plugins_loaded() {
 		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ] );
 
 		// ajax request to download the database
 		add_action( 'wp_ajax_advads_download_geolite_database', [ $this, 'download_database' ] );
+
+		// Add assets.
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
 	}
 
 	/**
@@ -113,30 +107,19 @@ class Advanced_Ads_Geo_Admin {
 
 	/**
 	 * Render MaxMind database field.
+	 *
+	 * @return void
 	 */
 	public function render_settings_database() {
-		// check when the last update happened
 		$last_update = get_option( ADVADS_SLUG . '-' . Advanced_Ads_Geo_Plugin::OPTIONS_SLUG . '-last-update-geolite2', false );
 		$next_update = $this->get_next_first_tuesday_timestamp();
-		$api         = Advanced_Ads_Geo_Api::get_instance();
 
-		$license_exists = ! empty( Advanced_Ads_Geo_Plugin::get_instance()->options( 'maxmind-license-key', '' ) );
 		// Check if the database files exist and do not contain errors.
+		$api               = Advanced_Ads_Geo_Api::get_instance();
 		$correct_databases = $api->get_GeoIP2_city_reader() && $api->get_GeoIP2_country_reader();
 
-		if ( $correct_databases ) {
-			?><p><?php _e( 'Geo Databases found.', 'advanced-ads-pro' ); ?></p>
-			<?php
-		}
-
-		if ( ! $license_exists ) :
-			?>
-			<p><span class="advads-notice-inline advads-error"><?php _e( 'The MaxMind license key is missing.', 'advanced-ads-pro' ); ?></span>&nbsp;<?php printf( __( 'Please read the %1$sinstallation instructions%2$s.', 'advanced-ads-pro' ), '<a href="' . ADVADS_URL . 'manual/geo-targeting-condition/#Enabling_Geo-Targeting" target="_blank">', '</a>' ); ?></p>
-			<?php
-		else :
-			// Render download of the geo database.
-			include $this->views_path . '/setting-download.php';
-		endif;
+		// Render download of the geo database.
+		include $this->views_path . '/setting-download.php';
 	}
 
 	/**
@@ -411,17 +394,18 @@ class Advanced_Ads_Geo_Admin {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
 		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
-			return;
+			wp_send_json_error( __( 'You are not allowed to do this.', 'advanced-ads-pro' ), 400 );
 		}
-
-		// $scheme = 'https' . (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === 'on' ? 's' : '');
-		$scheme = 'https'; // https only now
 
 		if ( ! $upload_full = Advanced_Ads_Geo_Plugin::get_instance()->get_upload_full() ) {
-			wp_send_json_error( __( 'The upload dir is not available', 'advanced-ads-pro' ) );
+			wp_send_json_error( __( 'The upload dir is not available', 'advanced-ads-pro' ), 400 );
 		}
 
-		$license_key = ! empty( $_REQUEST['license_key'] ) ? sanitize_text_field( $_REQUEST['license_key'] ) : '';
+		if ( empty( $_REQUEST['license_key'] ) ) {
+			wp_send_json_error( __( 'Please provide a MaxMind license key', 'advanced-ads-pro' ), 400 );
+		}
+
+		$license_key = sanitize_text_field( $_REQUEST['license_key'] );
 		$file_prefix = Advanced_Ads_Geo_Plugin::get_maxmind_file_prefix();
 
 		if ( '' === $file_prefix ) {
@@ -431,8 +415,8 @@ class Advanced_Ads_Geo_Admin {
 
 		// download source
 		$download_urls = [
-			'city'    => $scheme . '://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&suffix=tar.gz&license_key=' . $license_key,
-			'country' => $scheme . '://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&suffix=tar.gz&license_key=' . $license_key,
+			'city'    => 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&suffix=tar.gz&license_key=' . $license_key,
+			'country' => 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&suffix=tar.gz&license_key=' . $license_key,
 		];
 
 		// Paths where we will save files.
@@ -472,24 +456,32 @@ class Advanced_Ads_Geo_Admin {
 
 			$result = $this->download_geolite2_database( $download_url, $db_file, $filename );
 			if ( ! isset( $result['state'] ) || ! $result['state'] ) {
-				wp_send_json_error( $result['message'] );
-				exit();
+				wp_send_json_error( $result['message'], 400 );
 			}
 		}
 
+		// save geo options on db update
+		$pro_plugin  = Advanced_Ads_Pro::get_instance();
+		$pro_options = $pro_plugin->get_options();
+		if ( ! array_key_exists( Advanced_Ads_Geo_Plugin::OPTIONS_SLUG, $pro_options ) ) {
+			$pro_options[ Advanced_Ads_Geo_Plugin::OPTIONS_SLUG ] = [];
+		}
+		$pro_options[ Advanced_Ads_Geo_Plugin::OPTIONS_SLUG ]['maxmind-license-key'] = $license_key;
+		$pro_options[ Advanced_Ads_Geo_Plugin::OPTIONS_SLUG ]['locale']              = sanitize_text_field( $_REQUEST['locale'] );
+		$pro_plugin->update_options( $pro_options );
+
 		update_option( ADVADS_SLUG . '-' . Advanced_Ads_Geo_Plugin::OPTIONS_SLUG . '-last-update-geolite2', time() );
 		wp_send_json_success( __( 'Database updated successfully!', 'advanced-ads-pro' ) );
-
-		exit();
 	}
 
 	/**
 	 * Download GeoLite2 databases
 	 *
-	 * @param str $download_url download url
-	 * @param str $db_file target file
-	 * @param str $filename target filename in the archive.
-	 * @return boolean
+	 * @param string $download_url The download url.
+	 * @param string $db_file      The target file.
+	 * @param string $filename     The target filename in the archive.
+	 *
+	 * @return array
 	 */
 	private function download_geolite2_database( $download_url, $db_file, $filename ) {
 
@@ -652,10 +644,17 @@ class Advanced_Ads_Geo_Admin {
 
 	/**
 	 * Register and enqueue admin-specific scripts.
+	 *
+	 * @return void
 	 */
 	public function enqueue_admin_scripts() {
-		$handle      = ADVADS_SLUG . '-' . Advanced_Ads_Geo_Plugin::OPTIONS_SLUG . '-admin-script';
-		$translation = [
+		if ( ! \Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+			return;
+		}
+
+		$handle = ADVADS_SLUG . '-' . Advanced_Ads_Geo_Plugin::OPTIONS_SLUG . '-admin-script';
+		wp_enqueue_script( $handle, plugin_dir_url( __FILE__ ) . '../admin/assets/admin.js', [], AAP_VERSION, true );
+		wp_localize_script( $handle, 'advads_geo_translation', [
 			/* translators: 1: The number of search results. */
 			'found_results'           => __( 'Found %1$d results. Please pick the one, you want to use.', 'advanced-ads-pro' ),
 			'no_results'              => __( 'Your search did not return any results.', 'advanced-ads-pro' ),
@@ -664,10 +663,8 @@ class Advanced_Ads_Geo_Admin {
 			'manual_geo_search'       => sprintf( __( 'You can search for the geo coordinates manually at %1$s.', 'advanced-ads-pro' ), '<a href="https://nominatim.openstreetmap.org/">nominatim.openstreetmap.org</a>' ),
 			'COOKIEPATH'              => COOKIEPATH,
 			'COOKIE_DOMAIN'           => COOKIE_DOMAIN,
-		];
-		wp_register_script( $handle, plugin_dir_url( __FILE__ ) . '../admin/assets/admin.js' );
-		wp_localize_script( $handle, 'advads_geo_translation', $translation );
-		wp_enqueue_script( $handle );
+			'nonce'                   => wp_create_nonce( 'advanced-ads-admin-ajax-nonce' ),
+		] );
 	}
 
 	/**

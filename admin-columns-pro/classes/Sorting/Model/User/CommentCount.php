@@ -1,82 +1,76 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ACP\Sorting\Model\User;
 
+use ACP\Search\Query\Bindings;
 use ACP\Sorting\AbstractModel;
-use WP_User_Query;
+use ACP\Sorting\Model\QueryBindings;
+use ACP\Sorting\Model\SqlOrderByFactory;
+use ACP\Sorting\Model\SqlTrait;
+use ACP\Sorting\Type\Order;
 
-class CommentCount extends AbstractModel {
+class CommentCount extends AbstractModel implements QueryBindings
+{
 
-	const STATUS_APPROVED = '1';
-	const STATUS_SPAM = 'spam';
-	const STATUS_TRASH = 'trash';
-	const STATUS_PENDING = '0';
+    use SqlTrait;
 
-	/**
-	 * @var string
-	 */
-	private $status;
+    public const STATUS_APPROVED = '1';
+    public const STATUS_SPAM = 'spam';
+    public const STATUS_TRASH = 'trash';
+    public const STATUS_PENDING = '0';
 
-	/**
-	 * @var array
-	 */
-	private $post_types;
+    private $status;
 
-	public function __construct( array $status = [], array $post_types = [] ) {
-		parent::__construct();
+    private $post_types;
 
-		if ( empty( $status ) ) {
-			$status = [ self::STATUS_APPROVED, self::STATUS_PENDING ];
-		}
+    public function __construct(array $status = [], array $post_types = [])
+    {
+        parent::__construct();
 
-		$this->status = $status;
-		$this->post_types = $post_types;
-	}
+        if (empty($status)) {
+            $status = [self::STATUS_APPROVED, self::STATUS_PENDING];
+        }
 
-	public function get_sorting_vars() {
-		add_action( 'pre_user_query', [ $this, 'pre_user_query_callback' ] );
+        $this->status = $status;
+        $this->post_types = $post_types;
+    }
 
-		return [];
-	}
+    public function create_query_bindings(Order $order): Bindings
+    {
+        global $wpdb;
 
-	public function pre_user_query_callback( WP_User_Query $query ) {
-		global $wpdb;
+        $bindings = new Bindings();
 
-		$order = $this->get_order();
+        $alias = $bindings->get_unique_alias('comment_count');
 
-		$join_type = $this->show_empty
-			? 'LEFT'
-			: 'INNER';
+        $join = "\nLEFT JOIN $wpdb->comments AS $alias ON $alias.user_id = $wpdb->users.ID";
 
-		$where_status = $this->status
-			? sprintf( " AND acsort_comments.comment_approved IN ( %s )", $this->esc_sql_array( $this->status ) )
-			: '';
+        if ($this->status) {
+            $join .= sprintf(
+                "\nAND $alias.comment_approved IN ( %s )",
+                $this->esc_sql_array($this->status)
+            );
+        }
 
-		$query->query_fields .= ", COUNT( acsort_comments.comment_ID ) AS acsort_commentcount";
-		$query->query_from .= " 
-			$join_type JOIN {$wpdb->comments} AS acsort_comments ON acsort_comments.user_id = {$wpdb->users}.ID
-			{$where_status}
-		";
+        if ($this->post_types) {
+            $join .= sprintf(
+                "\nLEFT JOIN $wpdb->posts AS acsort_posts ON acsort_posts.ID = $alias.comment_post_ID AND acsort_posts.post_type IN ( %s )",
+                $this->esc_sql_array($this->post_types)
+            );
+        }
 
-		if ( $this->post_types ) {
+        $bindings->join($join);
+        $bindings->group_by("$wpdb->users.ID");
+        $bindings->order_by(
+            SqlOrderByFactory::create_with_count(
+                "$alias.comment_ID",
+                (string)$order
+            )
+        );
 
-			$where_post_type = sprintf( " AND acsort_posts.post_type IN ( %s )", $this->esc_sql_array( $this->post_types ) );
-
-			$query->query_from .= " 
-				$join_type JOIN {$wpdb->posts} AS acsort_posts ON acsort_posts.ID = acsort_comments.comment_post_ID
-				{$where_post_type}
-			";
-		}
-		$query->query_orderby = "
-			GROUP BY {$wpdb->users}.ID
-			ORDER BY acsort_commentcount $order, {$wpdb->users}.ID $order
-		";
-
-		remove_action( 'pre_user_query', [ $this, __FUNCTION__ ] );
-	}
-
-	private function esc_sql_array( $array ) {
-		return sprintf( "'%s'", implode( "','", array_map( 'esc_sql', $array ) ) );
-	}
+        return $bindings;
+    }
 
 }

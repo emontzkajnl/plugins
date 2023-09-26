@@ -103,7 +103,7 @@ $(document).ready(function(){
             wp.CodeMirror.defineMode('sc_mode', function(config, parserConfig){
                 var sc_overlay = {
                     token: function(stream, state){
-                        if(stream.match(/\$\$[a-z0-9A-Z:_\-]+\$\$/)){
+                        if(stream.match(/\$\$[a-z0-9A-Z:_ \-]+\$\$/)){
                             return 'number sc_param';
                         }
                         if(stream.match(/%%.*?%%/)){
@@ -216,10 +216,15 @@ $(document).ready(function(){
 
         var $cf_box = $('.sc_cf_box');
         var $cf_info = $('.sc_cf_info');
+        var default_val = $('.sc_cf_default').val().trim();
         var param_val = $cf_box.val().trim();
 
+        if(default_val != ''){
+            default_val = ':' + default_val;
+        }
+
         if( param_val != '' && $cf_box[0].checkValidity() ){
-            insert_in_editor('$$custom_field:' + param_val + '$$');
+            insert_in_editor('$$custom_field:' + param_val + default_val + '$$');
             $cf_info.removeClass('red');
             close_params_list();
         }else{

@@ -68,6 +68,10 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 		}
 
 		wp_enqueue_script( 'advanced-ads-pro/cache_busting_admin_bar', $uri_rel_path . 'admin_bar.js', $deps, AAP_VERSION, true );
+
+		// scrollable ads listing when ads long then windows height
+		$custom_inline_style = '#wp-admin-bar-advads_current_ads-default { overflow-y: auto; max-height:calc(100vh - 50px); } ';
+		wp_add_inline_style('admin-bar', $custom_inline_style );
 	}
 
 	/**

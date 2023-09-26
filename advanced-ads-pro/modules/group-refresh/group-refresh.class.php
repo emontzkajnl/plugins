@@ -243,7 +243,7 @@ class Advanced_Ads_Pro_Group_Refresh {
 
 
 			if ( $is_first_impression ) {
-				$style = in_array( $position, [ 'left', 'right' ] ) ? 'float:' . $float . ';' : '';
+				$style = in_array( $position, [ 'left', 'right' ] ) ? 'float:' . $position . ';' : '';
 				// Create wrapper around group. The following AJAX requests will insert group content into this wrapper.
 				$output_string = $js . '<div style="' . $style . '" class="' . $element_id .  '" id="' . $element_id .  '">' . $output_string . '</div>';
 			} else {
@@ -296,14 +296,16 @@ class Advanced_Ads_Pro_Group_Refresh {
 
 		$el_group_id = $ad->args['cache_busting_elementid'] . '_' . $ad->args['group_info']['id'];
 
-		if ( ! empty( $this->state_groups[ $el_group_id ] ) ) {
-			// Save current ad id so that this ad will not be added to next AJAX response.
-			$this->state_groups[ $el_group_id ]['prev_ad_id'] = $ad->id;
-			// Do not track the same ad twice.
-			$this->state_groups[ $el_group_id ]['shown_ad_ids'][ $ad->id ] = true;
-			// Allow to show only 1 ad.
-			$this->state_groups[ $el_group_id ]['limit_exceeded'] = 1;
+		if ( empty( $this->state_groups[ $el_group_id ] ) ) {
+			return $ad;
 		}
+
+		// Save current ad id so that this ad will not be added to next AJAX response.
+		$this->state_groups[ $el_group_id ]['prev_ad_id'] = $ad->id;
+		// Do not track the same ad twice.
+		$this->state_groups[ $el_group_id ]['shown_ad_ids'][ $ad->id ] = true;
+		// Allow to show only 1 ad.
+		$this->state_groups[ $el_group_id ]['limit_exceeded'] = 1;
 
 		// Get the position of the placement or the ad.
 		if ( ! isset( $this->state_groups[ $el_group_id ]['position'] ) ) {
@@ -340,7 +342,14 @@ class Advanced_Ads_Pro_Group_Refresh {
 	public static function is_enabled( Advanced_Ads_Group $group ) {
 		$result = ! empty( $group->options['refresh']['enabled'] ) && in_array( $group->type , [ 'default', 'ordered' ] )
 			&& empty( $group->ad_args['adblocker_active'] );
-		return $result;
+
+		/**
+		 * Filter to disable refresh for a group.
+		 *
+		 * @param bool               $enabled Whether refresh is enabled.
+		 * @param Advanced_Ads_Group $group   The group object.
+		 */
+		return (bool) apply_filters( 'advanced-ads-group-refresh-enabled', $result, $group );
 	}
 
 	/**

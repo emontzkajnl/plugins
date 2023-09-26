@@ -3,14 +3,14 @@
 namespace ACP\Check;
 
 use AC\Message\Notice;
-use AC\Registrable;
+use AC\Registerable;
 use AC\Screen;
 use AC\Type\Url\Site;
 use AC\Type\Url\UtmTags;
 use ACP\Admin\Feedback;
 
 class Beta
-	implements Registrable {
+	implements Registerable {
 
 	/**
 	 * @var Feedback
@@ -21,7 +21,8 @@ class Beta
 		$this->feedback = $feedback;
 	}
 
-	public function register() {
+	public function register(): void
+    {
 		add_action( 'ac/screen', [ $this, 'register_notice' ] );
 	}
 

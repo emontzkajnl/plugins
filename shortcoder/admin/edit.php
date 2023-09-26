@@ -89,8 +89,8 @@ class SC_Admin_Edit{
                 'value' => $settings[ '_sc_disable_sc' ],
                 'name' => '_sc_disable_sc',
                 'list' => array(
-                    'yes' => 'Yes',
-                    'no' => 'No'
+                    'yes' => __( 'Yes', 'shortcoder' ),
+                    'no' => __( 'No', 'shortcoder' )
                 ),
                 'helper' => __( 'Select to disable the shortcode from executing in all the places where it is used.', 'shortcoder' )
             ))),
@@ -99,8 +99,8 @@ class SC_Admin_Edit{
                 'value' => $settings[ '_sc_disable_admin' ],
                 'name' => '_sc_disable_admin',
                 'list' => array(
-                    'yes' => 'Yes',
-                    'no' => 'No'
+                    'yes' => __( 'Yes', 'shortcoder' ),
+                    'no' => __( 'No', 'shortcoder' )
                 ),
                 'helper' => __( 'Select to disable the shortcode from executing for administrators.', 'shortcoder' )
             ))),
@@ -109,9 +109,9 @@ class SC_Admin_Edit{
                 'value' => $settings[ '_sc_allowed_devices' ],
                 'name' => '_sc_allowed_devices',
                 'list' => array(
-                    'all' => 'All devices',
-                    'desktop_only' => 'Desktop only',
-                    'mobile_only' => 'Mobile only'
+                    'all' => __( 'All devices', 'shortcoder' ),
+                    'desktop_only' => __( 'Desktop only', 'shortcoder' ),
+                    'mobile_only' => __( 'Mobile only', 'shortcoder' )
                 ),
                 'helper' => __( 'Select the devices where the shortcode should be executed. Note: If any caching plugin is used, a separate caching for desktop and mobile might be required.', 'shortcoder' )
             ))),
@@ -302,6 +302,8 @@ class SC_Admin_Edit{
             echo '<p>' . esc_html__( 'Pull a custom field value of the current post and display it inside the shortcode content.', 'shortcoder' ) . '<a href="https://www.aakashweb.com/docs/shortcoder/shortcode-parameters/#custom-fields" target="_blank" title="' . esc_attr__( 'More information', 'shortcoder' ) . '"><span class="dashicons dashicons-info"></span></a></p>';
             echo '<h4>' . esc_html__( 'Enter custom field name', 'shortcoder' ) . '</h4>';
             echo '<input type="text" class="sc_cf_box widefat" pattern="[a-zA-Z0-9_-]+"/>';
+            echo '<h4>' . esc_html__( 'Default value', 'shortcoder' ) . '</h4>';
+            echo '<input type="text" class="sc_cf_default widefat"/>';
             echo '<button class="button sc_cf_btn">' . esc_html__( 'Insert custom field', 'shortcoder' ) . '</button>';
             echo '<p class="sc_cf_info"><small>' . esc_html__( 'Only alphabets, numbers, underscore and hyphens are allowed. Cannot be empty.', 'shortcoder' ) . '</small></p></li>';
         echo '</ul></li>';

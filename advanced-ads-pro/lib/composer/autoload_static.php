@@ -6,6 +6,20 @@ namespace AdvancedAdsPro\Composer\Autoload;
 
 class ComposerStaticInit_advanced_ads_pro
 {
+    public static $prefixLengthsPsr4 = array (
+        'A' => 
+        array (
+            'Advanced_Ads_Pro\\Rest_Api\\' => 26,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Advanced_Ads_Pro\\Rest_Api\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/modules/rest-api/classes',
+        ),
+    );
+
     public static $classMap = array (
         'AdvancedAdsPro\\GeoIp2\\Database\\Reader' => __DIR__ . '/../..' . '/lib/geoip2/geoip2/src/Database/Reader.php',
         'AdvancedAdsPro\\GeoIp2\\Exception\\AddressNotFoundException' => __DIR__ . '/../..' . '/lib/geoip2/geoip2/src/Exception/AddressNotFoundException.php',
@@ -92,6 +106,33 @@ class ComposerStaticInit_advanced_ads_pro
         'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Parser\\Tokenizer\\Tokenizer' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Parser/Tokenizer/Tokenizer.php',
         'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Parser\\Tokenizer\\TokenizerEscaping' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Parser/Tokenizer/TokenizerEscaping.php',
         'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Parser\\Tokenizer\\TokenizerPatterns' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Parser/Tokenizer/TokenizerPatterns.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\CssSelectorConverterTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/CssSelectorConverterTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\AbstractNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/AbstractNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\AttributeNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/AttributeNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\ClassNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/ClassNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\CombinedSelectorNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/CombinedSelectorNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\ElementNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/ElementNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\FunctionNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/FunctionNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\HashNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/HashNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\NegationNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/NegationNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\PseudoNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/PseudoNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\SelectorNodeTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/SelectorNodeTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Node\\SpecificityTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Node/SpecificityTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Handler\\AbstractHandlerTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Handler/AbstractHandlerTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Handler\\CommentHandlerTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Handler/CommentHandlerTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Handler\\HashHandlerTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Handler/HashHandlerTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Handler\\IdentifierHandlerTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Handler/IdentifierHandlerTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Handler\\NumberHandlerTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Handler/NumberHandlerTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Handler\\StringHandlerTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Handler/StringHandlerTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Handler\\WhitespaceHandlerTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Handler/WhitespaceHandlerTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\ParserTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/ParserTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\ReaderTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/ReaderTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Shortcut\\ClassParserTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Shortcut/ClassParserTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Shortcut\\ElementParserTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Shortcut/ElementParserTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Shortcut\\EmptyStringParserTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Shortcut/EmptyStringParserTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\Shortcut\\HashParserTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/Shortcut/HashParserTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\Parser\\TokenStreamTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/Parser/TokenStreamTest.php',
+        'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\Tests\\XPath\\TranslatorTest' => __DIR__ . '/../..' . '/lib/symfony/css-selector/Tests/XPath/TranslatorTest.php',
         'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\XPath\\Extension\\AbstractExtension' => __DIR__ . '/../..' . '/lib/symfony/css-selector/XPath/Extension/AbstractExtension.php',
         'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\XPath\\Extension\\AttributeMatchingExtension' => __DIR__ . '/../..' . '/lib/symfony/css-selector/XPath/Extension/AttributeMatchingExtension.php',
         'AdvancedAdsPro\\Symfony\\Component\\CssSelector\\XPath\\Extension\\CombinationExtension' => __DIR__ . '/../..' . '/lib/symfony/css-selector/XPath/Extension/CombinationExtension.php',
@@ -110,10 +151,18 @@ class ComposerStaticInit_advanced_ads_pro
         'Advanced_Ads_Geo_Version_Check' => __DIR__ . '/../..' . '/modules/geo/classes/Advanced_Ads_Geo_Version_Check.php',
         'Advanced_Ads_Geo_Visitor_Profile' => __DIR__ . '/../..' . '/modules/geo/classes/Advanced_Ads_Geo_Visitor_Profile.php',
         'Advanced_Ads_Pro' => __DIR__ . '/../..' . '/classes/advanced-ads-pro.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Admin_UI' => __DIR__ . '/../..' . '/modules/rest-api/classes/Admin_UI.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Advanced_Ads_Ad' => __DIR__ . '/../..' . '/modules/rest-api/classes/Advanced_Ads_Ad.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Advanced_Ads_Group' => __DIR__ . '/../..' . '/modules/rest-api/classes/Advanced_Ads_Group.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Rest_Ads_Query' => __DIR__ . '/../..' . '/modules/rest-api/classes/Rest_Ads_Query.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Rest_Api' => __DIR__ . '/../..' . '/modules/rest-api/classes/Rest_Api.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Rest_Exception' => __DIR__ . '/../..' . '/modules/rest-api/classes/Rest_Exception.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Rest_Groups_Query' => __DIR__ . '/../..' . '/modules/rest-api/classes/Rest_Groups_Query.php',
+        'Advanced_Ads_Pro\\Rest_Api\\Rest_Query_Params_Helper' => __DIR__ . '/../..' . '/modules/rest-api/classes/Rest_Query_Params_Helper.php',
         'Advanced_Ads_Pro_AdSense_Public' => __DIR__ . '/../..' . '/modules/gadsense/public.php',
         'Advanced_Ads_Pro_Admin' => __DIR__ . '/../..' . '/classes/advanced-ads-pro-admin.php',
         'Advanced_Ads_Pro_Cache_Busting_Server_Info' => __DIR__ . '/../..' . '/modules/cache-busting/server-info.class.php',
-        'Advanced_Ads_Pro_Cache_Busting_Server_Info_Cookie' => __DIR__ . '/../..' . '/modules/cache-busting/server-info.class.php',
+        'Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie' => __DIR__ . '/../..' . '/modules/cache-busting/server-info.class.php',
         'Advanced_Ads_Pro_Compatibility' => __DIR__ . '/../..' . '/classes/compatibility.php',
         'Advanced_Ads_Pro_Group_Refresh' => __DIR__ . '/../..' . '/modules/group-refresh/group-refresh.class.php',
         'Advanced_Ads_Pro_Group_Refresh_Admin' => __DIR__ . '/../..' . '/modules/group-refresh/admin.class.php',
@@ -147,6 +196,9 @@ class ComposerStaticInit_advanced_ads_pro
         'Advanced_Ads_Pro_Module_Lazy_Load_Admin' => __DIR__ . '/../..' . '/modules/lazy-load/admin.class.php',
         'Advanced_Ads_Pro_Module_PaidMembershipsPro' => __DIR__ . '/../..' . '/modules/paid-memberships-pro/main.class.php',
         'Advanced_Ads_Pro_Module_PaidMembershipsPro_Admin' => __DIR__ . '/../..' . '/modules/paid-memberships-pro/admin.class.php',
+        'Advanced_Ads_Pro_Module_Parallax' => __DIR__ . '/../..' . '/modules/parallax-ads/classes/Advanced_Ads_Pro_Module_Parallax.php',
+        'Advanced_Ads_Pro_Module_Parallax_Admin_UI' => __DIR__ . '/../..' . '/modules/parallax-ads/classes/Advanced_Ads_Pro_Module_Parallax_Admin_UI.php',
+        'Advanced_Ads_Pro_Module_Parallax_Frontend' => __DIR__ . '/../..' . '/modules/parallax-ads/classes/Advanced_Ads_Pro_Module_Parallax_Frontend.php',
         'Advanced_Ads_Pro_Module_Placement_Conditions' => __DIR__ . '/../..' . '/modules/placement_conditions/main.class.php',
         'Advanced_Ads_Pro_Module_Placement_Conditions_Admin' => __DIR__ . '/../..' . '/modules/placement_conditions/admin.class.php',
         'Advanced_Ads_Pro_Module_bbPress' => __DIR__ . '/../..' . '/modules/bbpress/bbpress.class.php',
@@ -161,6 +213,8 @@ class ComposerStaticInit_advanced_ads_pro
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit_advanced_ads_pro::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit_advanced_ads_pro::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit_advanced_ads_pro::$classMap;
 
         }, null, ClassLoader::class);

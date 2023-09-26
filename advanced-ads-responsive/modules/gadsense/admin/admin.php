@@ -21,7 +21,7 @@ class Aaabs_Adsense_Admin
 	 * @return array
 	 */
 	public function pre_save_post( $advanced_ads_vars ) {
-		if ($_POST['ad-resize-type'] === 'manual') {
+		if ( isset( $_POST['ad-resize-type'] ) && $_POST['ad-resize-type'] === 'manual' ) {
 			$advanced_ads_vars['width']  = (int) $_POST['default-width'];
 			$advanced_ads_vars['height'] = (int) $_POST['default-height'];
 		}

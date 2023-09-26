@@ -7,8 +7,8 @@ Donate link: https://www.paypal.me/vaakash/
 License: GPLv2 or later
 Requires PHP: 5.3
 Requires at least: 4.9.0
-Tested up to: 6.2
-Stable tag: 6.2
+Tested up to: 6.3
+Stable tag: 6.3
 
 Create custom "Shortcodes" easily for HTML, JavaScript, CSS code snippets and use the shortcodes within posts, pages & widgets
 
@@ -129,6 +129,14 @@ Yes, this feature is available in the PRO version. You can upgrade to the [PRO v
 
 
 ## Changelog
+
+### 6.3
+* New: Set default value for the custom field parameters.
+* New: Custom parameter default value is shown in the insert shortcode popup.
+* Fix: Restrict access to admin-ajax calls.
+* Fix: Some admin texts were missing translation.
+* Fix: Removed the note in the insert popup for fully closed shortcode.
+* Fix: Debug comment line now has the name of the shortcode.
 
 ### 6.2
 * New: Option to show shortcode content in "All shortcodes" page.

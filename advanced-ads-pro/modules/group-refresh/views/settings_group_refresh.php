@@ -19,6 +19,7 @@
 	<?php if ( ! $cb_module_enabled ) : ?>
 		<a href="<?php echo esc_url( admin_url( 'admin.php?page=advanced-ads-settings#top#pro' ) ); ?>">(<?php esc_html_e( 'Activate now', 'advanced-ads-pro' ); ?>)</a>
 	<?php endif; ?>
+	<a href="<?php echo esc_url( ADVADS_URL ) . 'refresh-ads-on-the-same-spot/?utm_source=advanced-ads&utm_medium=link&utm_campaign=groups-refresh-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
 </p>
 
 <?php if ( $show_warning ): ?>

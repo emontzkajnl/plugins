@@ -28,11 +28,6 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 	 * Register relevant hooks
 	 */
 	public function wp_plugins_loaded_ad_actions() {
-		// stop, if main plugin doesn’t exist
-		if ( ! class_exists( 'Advanced_Ads', false ) ) {
-			return;
-		}
-
 		// stop if BuddyPress isn't activated
 		if ( ! class_exists( 'BuddyPress', false ) ) {
 			return;

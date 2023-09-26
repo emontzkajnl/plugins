@@ -2,7 +2,7 @@
 Requires at least: WP 4.9
 Tested up to: 6.1
 Requires PHP: 5.6
-{Stable tag: }2.20.0
+Stable tag: 2.24.0
 
 Advanced Ads Pro is for those who want to perform magic on their ads.
 
@@ -78,10 +78,10 @@ You can use Advanced Ads along any other ad management plugin and don’t need t
 
 == Changelog ==
 
-= 2.20.0 (December 14, 2022) =
+= 2.24.0 (September 13, 2023) =
 
-- Improvement: disable the Ads admin toolbar item with the `ADVANCED_ADS_PRO_DISABLE_ADS_TOOLBAR_ITEM` constant
-- Fix: improve IP-detection in Geo Module
-- Fix: show visitor profile in Geo Location condition and allow users to remove it
+- Improvement: add a link to enable cache busting on the fly for groups that need a placement with cache busting enabled
+- Fix: prevent background placements triggering termination notifications even without changes
+- Fix: prevent a PHP warning when passing styles to wp_add_inline_style()
 
-Build: 2022-12-60b8029e
+Build: 2023-09-8f31c6b0

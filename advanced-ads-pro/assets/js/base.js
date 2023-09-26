@@ -1,4 +1,4 @@
-
+// phpcs:ignoreFile
 /**
  * global advanced_ads_pro_ajax_object
  *
@@ -808,7 +808,7 @@ var Advads_passive_cb_Conditions = {
 	// ad impression cookie name basis
 	AD_IMPRESSIONS_COOKIE_NAME: 'advanced_ads_ad_impressions',
 
-	SERVER_INFO_COOKIE_NAME: 'advanced_ads_pro_server_info',
+	VISITOR_INFO_COOKIE_NAME: 'advanced_ads_visitor',
 
 	conditions : {
 		// Advanced Ads plugin
@@ -871,29 +871,32 @@ var Advads_passive_cb_Conditions = {
 	},
 
 	/**
-	 * check mobile visitor condition in frontend
+	 * Check whether ad can by displayed by mobile visitor condition in frontend
 	 *
-	 * @param {arr} options options of the condition
-	 * @return {bool} true if can be displayed
+	 * @param {Object} options options of the condition
+	 * @return {Boolean}
 	 */
 	check_mobile: function( options ) {
 		// https://github.com/kaimallea/isMobile
 		!function(a){var b=/iPhone/i,c=/iPod/i,d=/iPad/i,e=/(?=.*\bAndroid\b)(?=.*\bMobile\b)/i,f=/Android/i,g=/(?=.*\bAndroid\b)(?=.*\bSD4930UR\b)/i,h=/(?=.*\bAndroid\b)(?=.*\b(?:KFOT|KFTT|KFJWI|KFJWA|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|KFARWI|KFASWI|KFSAWI|KFSAWA)\b)/i,i=/IEMobile/i,j=/(?=.*\bWindows\b)(?=.*\bARM\b)/i,k=/BlackBerry/i,l=/BB10/i,m=/Opera Mini/i,n=/(CriOS|Chrome)(?=.*\bMobile\b)/i,o=/(?=.*\bFirefox\b)(?=.*\bMobile\b)/i,p=new RegExp("(?:Nexus 7|BNTV250|Kindle Fire|Silk|GT-P1000)","i"),q=function(a,b){return a.test(b)},r=function(a){var r=a||navigator.userAgent,s=r.split("[FBAN");return"undefined"!=typeof s[1]&&(r=s[0]),this.apple={phone:q(b,r),ipod:q(c,r),tablet:!q(b,r)&&q(d,r),device:q(b,r)||q(c,r)||q(d,r)},this.amazon={phone:q(g,r),tablet:!q(g,r)&&q(h,r),device:q(g,r)||q(h,r)},this.android={phone:q(g,r)||q(e,r),tablet:!q(g,r)&&!q(e,r)&&(q(h,r)||q(f,r)),device:q(g,r)||q(h,r)||q(e,r)||q(f,r)},this.windows={phone:q(i,r),tablet:q(j,r),device:q(i,r)||q(j,r)},this.other={blackberry:q(k,r),blackberry10:q(l,r),opera:q(m,r),firefox:q(o,r),chrome:q(n,r),device:q(k,r)||q(l,r)||q(m,r)||q(o,r)||q(n,r)},this.seven_inch=q(p,r),this.any=this.apple.device||this.android.device||this.windows.device||this.other.device||this.seven_inch,this.phone=this.apple.phone||this.android.phone||this.windows.phone,this.tablet=this.apple.tablet||this.android.tablet||this.windows.tablet,"undefined"==typeof window?this:void 0},s=function(){var a=new r;return a.Class=r,a};"undefined"!=typeof module&&module.exports&&"undefined"==typeof window?module.exports=r:"undefined"!=typeof module&&module.exports&&"undefined"!=typeof window?module.exports=s():"function"==typeof define&&define.amd?define("isMobile",[],a.isMobile=s()):a.isMobile=s()}(this);
 
-		if ( ! advads_pro_utils.isset( options.operator ) ) {
-			return true;
+		// previous implementation
+		if ( ! advads_pro_utils.isset( options.value ) ) {
+			if ( ! advads_pro_utils.isset( options.operator ) ) {
+				return true;
+			}
+
+			const isMobile = this.isMobile.any;
+			return options.operator === 'is_not' ? ! isMobile : isMobile;
 		}
 
-		switch ( options.operator ) {
-			case 'is':
-				return this.isMobile.any;
-				break;
-			case 'is_not':
-				return ! this.isMobile.any
-				break;
-		}
-
-		return true;
+		// check callbacks, filter them and see if the result is not empty.
+		const isTablet = this.check_tablet( {operator: 'is'} );
+		return Object.keys( Object.fromEntries( Object.entries( {
+			mobile:  this.isMobile.any && ! isTablet,
+			tablet:  isTablet,
+			desktop: ! this.isMobile.any && ! isTablet
+		} ).filter( ( ( [key, val] ) => options.value.includes( key ) && val ) ) ) ).length > 0;
 	},
 
 	/**
@@ -1505,7 +1508,7 @@ var Advads_passive_cb_Conditions = {
 	 */
 	get_stored_info: function() {
 		try {
-			var info = JSON.parse( advads.get_cookie( this.SERVER_INFO_COOKIE_NAME ) );
+			var info = JSON.parse( advads.get_cookie( this.VISITOR_INFO_COOKIE_NAME ) );
 		} catch ( e ) {}
 
 		if ( 'object' !== typeof info || 'object' !== typeof info['conditions'] ) {
@@ -2391,7 +2394,7 @@ if ( ! advads_pro_utils ) {
 				this.log( "passive_placements\n", advads_passive_placements );
 				this.log( "ajax_queries\n", advads_ajax_queries );
 
-				this.log( Advads_passive_cb_Conditions.SERVER_INFO_COOKIE_NAME + "\n", Advads_passive_cb_Conditions.get_stored_info() );
+				this.log( Advads_passive_cb_Conditions.VISITOR_INFO_COOKIE_NAME + "\n", Advads_passive_cb_Conditions.get_stored_info() );
 			}
 		},
 

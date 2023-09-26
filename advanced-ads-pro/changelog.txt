@@ -1,5 +1,46 @@
 == Changelog ==
 
+= 2.24.0 (September 13, 2023) =
+
+- Improvement: add a link to enable cache busting on the fly for groups that need a placement with cache busting enabled
+- Fix: prevent background placements triggering termination notifications even without changes
+- Fix: prevent a PHP warning when passing styles to wp_add_inline_style()
+
+= 2.23.0 (August 30, 2023) =
+
+- Improvement: update Arabic, Danish, French (France), German, German (Austria), German (Switzerland), German (formal), Greek, Italian, Japanese, Polish, Spanish (Argentina), Spanish (Colombia), Spanish (Mexico), Spanish (Spain) and Spanish (Venezuela) translations
+- Improvement: make current ad list in admin toolbar scrollable, when the list is longer than the window height
+- Fix: update labels and description of the cache busting setting
+- Fix: adjust the width of the custom position placement input field
+- Fix: replace deprecated `intval()` function with type-casting operator
+
+= 2.22.1 (July 5, 2023) =
+
+- Improvement: update Danish, Turkish and Slovenian translations
+- Fix: prevent incorrect or multiple target URLs being opened with rotating background ads
+
+= 2.22.0 (May 31, 2023) =
+
+- Feature: add parallax placement option
+- Improvement: update Arabic, Danish, German, Italian translations
+- Improvement: add Norwegian, Slovenian, Turkish translations
+- Improvement: rename advanced_ads_pro_server_info cookie into advanced_ads_visitor
+
+= 2.21.2 (February 14, 2023) =
+
+- Improvement: update the MaxMind license key and database UI on the settings page
+- Fix: show more than two ads in a group if the position option and AJAX cache-busting are used for a placement
+
+= 2.21.1 (January 19, 2023) =
+
+- Fix: prepare cache-busting for changes in device visitor condition
+
+= 2.21.0 (January 10, 2023) =
+
+- Feature: add REST API endpoints
+- Improvement: update Arabic, Danish, German, and Italian translations
+- Improvement: restrict the ad types assignable to the background placement
+
 = 2.20.0 (December 14, 2022) =
 
 - Improvement: disable the Ads admin toolbar item with the `ADVANCED_ADS_PRO_DISABLE_ADS_TOOLBAR_ITEM` constant

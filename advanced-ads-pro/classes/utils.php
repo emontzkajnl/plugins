@@ -57,7 +57,7 @@ class Advanced_Ads_Pro_Utils {
 	 * @return int A non-negative integer.
 	 */
 	public static function absint( $maybeint, $min = null, $max = null ) {
-		$int = abs( intval( $maybeint ) );
+		$int = abs( (int) $maybeint );
 
 		if ( null !== $min && $int < $min ) {
 			return $min;

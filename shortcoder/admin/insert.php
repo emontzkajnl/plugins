@@ -56,10 +56,11 @@ if( empty( $shortcodes ) ){
             foreach( $cp_data as $data ){
                 $colon_pos = strpos( $data, ':' );
                 if( $colon_pos === false ){
-                    array_push( $params, trim( $data ) );
+                    array_push( $params, array( trim( $data ), false ) );
                 }else{
                     $cp_name = substr( $data, 0, $colon_pos );
-                    array_push( $params, trim( $cp_name ) );
+                    $cp_default = substr( $data, $colon_pos+1 );
+                    array_push( $params, array( trim( $cp_name ), $cp_default ) );
                 }
             }
         }
@@ -88,10 +89,14 @@ if( empty( $shortcodes ) ){
                 $temp = array();
 
                 foreach( $params as $k => $v ){
-                    $cleaned = str_replace( '%', '', $v );
+                    $cleaned = str_replace( '%', '', $v[0] );
                     if( !in_array( $cleaned, $temp ) ){
                         array_push( $temp, $cleaned );
-                        echo '<label>' . esc_html( $cleaned ) . ': <input type="text" class="sc_param" data-param="' . esc_attr( $cleaned ) . '"/></label> ';
+                        echo '<label>' . esc_html( $cleaned ) . ': <input type="text" class="sc_param" data-param="' . esc_attr( $cleaned ) . '"/>';
+                        if( $v[1] ){
+                            echo '<small>' . esc_html__( 'Default', 'shortcoder' ) . ': <code>' . esc_html( $v[1] ) . '</code></small>';
+                        }
+                        echo '</label> ';
                     }
                 }
 
@@ -117,42 +122,6 @@ if( empty( $shortcodes ) ){
 }
 
 ?>
-</div>
-
-<div class="note">
-<p><strong>Note:</strong> When shortcodes are inserted in a post, please ensure all the shortcodes are closed. Click for more details.</p>
-    <table>
-        <tr>
-<td>
-<pre>
-Paragraph 1
-[sc name="my-shortcode-1"]
-
-Paragraph 2
-[sc name="my-shortcode-2"]
-
-Paragraph 3
-[sc name="my-shortcode-3"][/sc]
-</pre>
-<p>❌ Here, everything between <code>my-shortcode-1</code> and <code>my-shortcode-3</code> won't be displayed because <code>my-shortcode-3</code> has a closing shortcode.</p>
-<p>So all the contents between <code>[sc name="my-shortcode-1"] ... [/sc]</code> are taken inside <code>my-shortcode-1</code>.</p>
-</td>
-
-<td>
-<pre>
-Paragraph 1
-[sc name="my-shortcode-1"][/sc]
-
-Paragraph 2
-[sc name="my-shortcode-2"][/sc]
-
-Paragraph 3
-[sc name="my-shortcode-3"][/sc]
-</pre>
-<p>✅ Close all the Shortcoder's shortcodes in a post with <code>[/sc]</code>. <a href="https://codex.wordpress.org/Shortcode_API#Unclosed_Shortcodes" target="_blank">Learn more</a></p>
-</td>
-        </tr>
-    </table>
 </div>
 
 <div class="footer_thanks">Thanks for using <a href="https://www.aakashweb.com/wordpress-plugins/shortcoder/" target="_blank">Shortcoder</a> &bull; Please <a href="https://wordpress.org/support/plugin/shortcoder/reviews/?rate=5#new-post" target="_blank">rate 5 stars</a> and spread the word.</div>

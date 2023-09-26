@@ -4,20 +4,11 @@ namespace AC\ListScreenRepository;
 
 use AC\Type\ListScreenId;
 
-interface SourceAware {
+interface SourceAware
+{
 
-	/**
-	 * @param ListScreenId $id
-	 *
-	 * @return string
-	 */
-	public function get_source( ListScreenId $id );
+    public function get_source(ListScreenId $id = null): string;
 
-	/**
-	 * @param ListScreenId $id
-	 *
-	 * @return bool
-	 */
-	public function has_source( ListScreenId $id );
+    public function has_source(ListScreenId $id = null): bool;
 
 }

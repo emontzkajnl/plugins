@@ -20,6 +20,27 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 		//add_filter( 'advanced-ads-save-options', array( $this, 'save_options' ), 10, 2 );
 		add_filter( 'advanced-ads-ad-notices', [$this, 'ad_notices'], 10, 3 );
 		add_action( 'wp_ajax_advads-reset-vc-cache', [ $this, 'reset_vc_cache' ] );
+		add_action( 'wp_ajax_advads-placement-activate-cb', [ $this, 'ads_activate_placement_cb' ] );
+	}
+
+	/**
+	 * Activate placement cache busting
+	 */
+	public function ads_activate_placement_cb(){
+		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
+		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) && !filter_has_var( INPUT_POST, "placement" ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to do this.', 'advanced-ads-pro' ), 400 );
+		}
+		$placement_slug = sanitize_text_field( $_POST['placement'] );
+		$placements = Advanced_Ads::get_ad_placements_array();
+
+		if ( isset( $placements[$placement_slug] ) ) {
+			$placements[$placement_slug]['options']['cache-busting'] = 'auto';
+			Advanced_Ads::get_instance()->get_model()->update_ad_placements_array( $placements );
+			wp_send_json_success( esc_html__( 'Cache busting has been successfully enabled for the assigned placement.', 'advanced-ads-pro' ) );
+		}
+
+		wp_send_json_error( esc_html__( "Couldn't find the placement.", 'advanced-ads-pro' ), 400 );
 	}
 
 	/**
@@ -54,9 +75,9 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 
 		// l10n
 		$values = [
-			Advanced_Ads_Pro_Module_Cache_Busting::OPTION_ON => _x( 'AJAX', 'setting label', 'advanced-ads-pro' ),
-			Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF => _x( 'off', 'setting label', 'advanced-ads-pro' ),
-			Advanced_Ads_Pro_Module_Cache_Busting::OPTION_AUTO => _x( 'auto', 'setting label', 'advanced-ads-pro' ),
+			Advanced_Ads_Pro_Module_Cache_Busting::OPTION_AUTO => esc_html__( 'auto','advanced-ads-pro' ),
+			Advanced_Ads_Pro_Module_Cache_Busting::OPTION_ON => esc_html__( 'AJAX','advanced-ads-pro' ),
+			Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF => esc_html__( 'off','advanced-ads-pro' ),
 		];
 
 		// options
@@ -71,10 +92,10 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 				$placement_slug.'-cache-busting-'.$k.'"/>'.$l.'</label>';
 		}
 		$option_content = ob_get_clean();
-		
+
 		if( class_exists( 'Advanced_Ads_Admin_Options' ) ){
-			Advanced_Ads_Admin_Options::render_option( 
-				'placement-cache-busting', 
+			Advanced_Ads_Admin_Options::render_option(
+				'placement-cache-busting',
 				_x( 'Cache-busting', 'placement admin label', 'advanced-ads-pro' ),
 				$option_content );
 		}
@@ -111,18 +132,18 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	// 	}
 	// 	return $options;
 	// }
-	
+
 	/**
 	 * show cache-busting specific ad notices
-	 * 
+	 *
 	 * @since 1.13.1
 	 */
 	public function ad_notices( $notices, $box, $post ){
-	    
+
 	    $ad = new Advanced_Ads_Ad( $post->ID );
-	    
+
 	    // $content = json_decode( stripslashes( $ad->content ) );
-	    
+
 	    switch ($box['id']){
 		case 'ad-parameters-box' :
 			// show hint that for ad-group ad type, cache-busting method will only be AJAX or off
@@ -134,8 +155,8 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 			}
 		    break;
 	    }
-	    
-	    
+
+
 	    return $notices;
 	}
 
@@ -197,15 +218,16 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 				$hints[] = sprintf(
 					wp_kses(
 						// translators: %s is an URL.
-						__( 'It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href="%s" target="_blank">Activate cache busting for this placement.</a>', 'advanced-ads-pro' ),
+						__( 'It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href="#" data-placement="%s" class="js-placement-activate-cb">Activate cache busting for this placement.</a>', 'advanced-ads-pro' ),
 						[
 							'a' => [
 								'href'   => [],
-								'target' => [],
+								'data-placement' => [],
+								'class' => [],
 							],
 						]
 					),
-					esc_url( sprintf( '%s#modal-%s', admin_url( 'admin.php?page=advanced-ads-placements' ), $slug ) )
+					$slug
 				);
 				return $hints;
 			}

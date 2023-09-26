@@ -11,7 +11,9 @@
  * @property-read float  $lon
  */
 class Advanced_Ads_Geo_Visitor_Profile {
-	const SERVER_INFO_COOKIE_NAME = 'advanced_ads_pro_server_info';
+
+	const VISITOR_INFO_COOKIE_NAME = 'advanced_ads_visitor';
+
 	/**
 	 * Whether there is a saved profile.
 	 * @var bool
@@ -64,7 +66,7 @@ class Advanced_Ads_Geo_Visitor_Profile {
 	 * If not, return early.
 	 */
 	public function __construct() {
-		if ( ! isset( $_COOKIE[ self::SERVER_INFO_COOKIE_NAME ] ) ) {
+		if ( ! isset( $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ] ) ) {
 			return;
 		}
 		try {
@@ -87,10 +89,11 @@ class Advanced_Ads_Geo_Visitor_Profile {
 	 * Parse the cookie value and see if it contains the keys we expect.
 	 *
 	 * @return array
-	 * @throws RuntimeException
+	 *
+	 * @throws RuntimeException If cookie has unexpected values.
 	 */
 	private function parse_raw_cookie() {
-		$value = json_decode( wp_unslash( $_COOKIE[ self::SERVER_INFO_COOKIE_NAME ] ), true );
+		$value = json_decode( wp_unslash( $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ] ), true );
 
 		if ( array_key_exists( 'conditions', $value ) && array_key_exists( 'geo_targeting', $value['conditions'] ) ) {
 			// get the random key inside geo_targeting

@@ -2,7 +2,7 @@
 Requires at least: 3.5
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 1.10.5
+Stable tag: 1.11.0
 
 Display ads based on the browser size of the visitor’s device.
 
@@ -48,6 +48,21 @@ Responsive Ads is based on the free Advanced Ads plugin, a simple and powerful a
 You can use Advanced Ads along any other ad management plugin and don’t need to switch completely.
 
 == Changelog ==
+
+= 1.11.0 =
+
+- Improvement: update AdSense code script tags to align with their latest version
+- Improvement: remove an old version of the browser width condition that was deprecated in 2015
+- Improvement: deprecate the Responsive Ads list. See the removal schedule on https://wpadvancedads.com/manual/deprecated-features/.
+- Improvement: update UI of an AMP related notice on the ad edit page
+- Improvement: update Arabic, German, Slovenian translations
+- Fix: pass empty string instead of null to `add_submenu_page()`
+
+= 1.10.6 =
+
+- Improvement: add Slovenian translations
+- Improvement: update Danish translations
+- Fix: prevent undefined index notice
 
 = 1.10.5 =
 
@@ -328,4 +343,4 @@ You can use Advanced Ads along any other ad management plugin and don’t need t
 = 1.0 =
 * first plugin version
 
-Build: 2022-12-de381968
+Build: 2023-09-e1b75372

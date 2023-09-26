@@ -15,7 +15,7 @@ $vc_cache_reset_on_login = ! empty( $options['cache-busting']['vc_cache_reset_ac
 
 <div class="advads-sub-settings">
     <h4><?php esc_html_e( 'Default option', 'advanced-ads-pro' ); ?></h4>
-	<p class="description"><?php esc_html_e( 'Choose which method to use when cache busting for a placement is set to “auto”.', 'advanced-ads-pro' ); ?></p>
+	<p class="description"><?php esc_html_e( 'Choose which method to use when a placement needs cache busting and the option is set to “auto”.', 'advanced-ads-pro' ); ?></p>
 	<label>
 		<input name="<?php echo esc_attr( Advanced_Ads_Pro::OPTION_KEY ); ?>[cache-busting][default_auto_method]" type="radio" value="passive"
 								<?php
@@ -52,14 +52,14 @@ $vc_cache_reset_on_login = ! empty( $options['cache-busting']['vc_cache_reset_ac
 								<?php
 								checked( $fallback_method, 'ajax' );
 								?>
-		/><?php esc_html_e( 'Use AJAX', 'advanced-ads-pro' ); ?>
+		/><?php esc_html_e( 'AJAX', 'advanced-ads-pro' ); ?>
 	</label>
 	<label>
 		<input name="<?php echo esc_attr( Advanced_Ads_Pro::OPTION_KEY ); ?>[cache-busting][default_fallback_method]" type="radio" value="disable"
 								<?php
 								checked( $fallback_method, 'disable' );
 								?>
-		/><?php esc_html_e( 'No cache busting', 'advanced-ads-pro' ); ?>
+		/><?php esc_html_e( 'off', 'advanced-ads-pro' ); ?>
 	</label>
 
 	<input id="advads-pro-vc-hash" name="<?php echo esc_attr( Advanced_Ads_Pro::OPTION_KEY ); ?>[cache-busting][vc_cache_reset]" type="hidden" value="

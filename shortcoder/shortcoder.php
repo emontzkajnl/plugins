@@ -4,13 +4,13 @@ Plugin Name: Shortcoder
 Plugin URI: https://www.aakashweb.com/wordpress-plugins/shortcoder/
 Description: Shortcoder plugin allows to create a custom shortcodes for HTML, JavaScript and other snippets. Now the shortcodes can be used in posts/pages and the snippet will be replaced in place.
 Author: Aakash Chakravarthy
-Version: 6.2
+Version: 6.3
 Author URI: https://www.aakashweb.com/
 Text Domain: shortcoder
 Domain Path: /languages
 */
 
-define( 'SC_VERSION', '6.2' );
+define( 'SC_VERSION', '6.3' );
 define( 'SC_PATH', plugin_dir_path( __FILE__ ) ); // All have trailing slash
 define( 'SC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SC_ADMIN_URL', trailingslashit( plugin_dir_url( __FILE__ ) . 'admin' ) );
@@ -75,7 +75,7 @@ final class Shortcoder{
         $sc_settings = $shortcode[ 'settings' ];
 
         if( !self::can_display( $shortcode ) ){
-            $sc_content = '<!-- Shortcode does not match the conditions -->';
+            $sc_content = sprintf( '<!-- Shortcode [%s] does not match the conditions -->', self::$current_shortcode );
         }else{
             $sc_content = self::replace_sc_params( $sc_content, $atts );
             $sc_content = self::replace_wp_params( $sc_content, $enclosed_content );
@@ -203,7 +203,7 @@ final class Shortcoder{
         if( !array_key_exists( $sc_name, $shortcodes ) ){
             $sc_name = sanitize_title_with_dashes( $sc_name );
             if( !array_key_exists( $sc_name, $shortcodes ) ){
-                return '<!-- Shortcode does not exist -->';
+                return sprintf( '<!-- Shortcode [%s] does not exist -->', $sc_name );
             }
         }
 
@@ -310,29 +310,33 @@ final class Shortcoder{
 
         global $post;
 
-        preg_match_all('/\$\$[^\s^$]+\$\$/', $content, $matches );
+        preg_match_all('/\$\$custom_field\:(.*?)\$\$/', $content, $matches );
 
-        $cf_tags = $matches[0];
-
-        if( empty( $cf_tags ) ){
+        if( empty( $matches[0] ) ){
             return $content;
         }
 
-        foreach( $cf_tags as $tag ){
-            
-            if( strpos( $tag, 'custom_field:' ) === false ){
+        $cf_tags = $matches[1];
+
+        foreach( $cf_tags as $cf_tag ){
+
+            $cf_data = explode( ':', $cf_tag, 2 );
+            $cf_name = trim( $cf_data[0] );
+            $cf_default_val = count( $cf_data ) == 2 ? trim( $cf_data[1] ) : '';
+
+            if( empty( $cf_name ) ){
                 continue;
             }
-            
-            preg_match( '/:[^\s\$]+/', $tag, $match );
 
-            if( empty( $match ) ){
-                continue;
+            if( is_object( $post ) ){
+                $cf_actual_val = get_post_meta( $post->ID, $cf_name, true );
+                $value = $cf_actual_val == '' ? $cf_default_val : $cf_actual_val;
+            }else{
+                $value = $cf_default_val;
             }
 
-            $match = substr( $match[0], 1 );
-            $value = is_object( $post ) ? get_post_meta( $post->ID, $match, true ) : '';
-            $content = str_replace( $tag, $value, $content );
+            $full_tag = '$$custom_field:' . $cf_tag . '$$';
+            $content = str_replace( $full_tag, $value, $content );
 
         }
         

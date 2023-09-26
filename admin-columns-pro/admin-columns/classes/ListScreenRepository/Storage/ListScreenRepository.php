@@ -1,129 +1,139 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AC\ListScreenRepository\Storage;
 
 use AC;
 use AC\Exception;
 use AC\ListScreen;
+use AC\ListScreenCollection;
 use AC\ListScreenRepository\Rules;
 use AC\ListScreenRepository\SourceAware;
 use AC\Type\ListScreenId;
 use LogicException;
 
-class ListScreenRepository implements AC\ListScreenRepositoryWritable, SourceAware {
+class ListScreenRepository implements AC\ListScreenRepositoryWritable, SourceAware
+{
 
-	/**
-	 * @var AC\ListScreenRepository
-	 */
-	private $repository;
+    use AC\ListScreenRepository\ListScreenRepositoryTrait;
 
-	/**
-	 * @var bool
-	 */
-	private $writable;
+    private $repository;
 
-	/**
-	 * @var Rules
-	 */
-	private $rules;
+    private $writable;
 
-	/**
-	 * @param AC\ListScreenRepository $repository
-	 * @param bool|null               $writable
-	 * @param Rules|null              $rules
-	 */
-	public function __construct( AC\ListScreenRepository $repository, $writable = null, Rules $rules = null ) {
-		if ( null === $writable ) {
-			$writable = false;
-		}
+    private $rules;
 
-		$this->repository = $repository;
-		$this->writable = $writable && $this->repository instanceof AC\ListScreenRepositoryWritable;
-		$this->rules = $rules;
-	}
+    public function __construct(AC\ListScreenRepository $repository, bool $writable = null, Rules $rules = null)
+    {
+        if (null === $writable) {
+            $writable = false;
+        }
 
-	/**
-	 * @return bool
-	 */
-	public function is_writable() {
-		return $this->writable;
-	}
+        $this->repository = $repository;
+        $this->writable = $writable && $this->repository instanceof AC\ListScreenRepositoryWritable;
+        $this->rules = $rules;
+    }
 
-	/**
-	 * @param bool $writable
-	 *
-	 * @return self
-	 */
-	public function with_writable( $writable ) {
-		return new self(
-			$this->repository,
-			$writable,
-			$this->rules
-		);
-	}
+    protected function find_from_source(ListScreenId $id): ?ListScreen
+    {
+        $list_screen = $this->repository->find($id);
 
-	/**
-	 * @return Rules
-	 */
-	public function get_rules() {
-		if ( ! $this->has_rules() ) {
-			throw new LogicException( 'No rules defined.' );
-		}
+        if ($list_screen && ! $this->is_writable()) {
+            $list_screen->set_read_only(true);
+        }
 
-		return $this->rules;
-	}
+        return $list_screen;
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function has_rules() {
-		return $this->rules !== null;
-	}
+    protected function find_all_from_source(): ListScreenCollection
+    {
+        $list_screens = $this->repository->find_all();
 
-	public function find( ListScreenId $id ) {
-		$list_screen = $this->repository->find( $id );
+        if ( ! $this->is_writable()) {
+            $this->set_all_read_only($list_screens);
+        }
 
-		if ( $list_screen && ! $this->is_writable() ) {
-			$list_screen->set_read_only( true );
-		}
+        return $list_screens;
+    }
 
-		return $list_screen;
-	}
+    protected function find_all_by_key_from_source(string $key): ListScreenCollection
+    {
+        $list_screens = $this->repository->find_all_by_key($key);
 
-	public function exists( ListScreenId $id ) {
-		return $this->repository->exists( $id );
-	}
+        if ( ! $this->is_writable()) {
+            $this->set_all_read_only($list_screens);
+        }
 
-	public function find_all( array $args = [] ) {
-		$list_screens = $this->repository->find_all( $args );
+        return $list_screens;
+    }
 
-		if ( ! $this->is_writable() ) {
-			foreach ( $list_screens as $list_screen ) {
-				$list_screen->set_read_only( true );
-			}
-		}
+    public function is_writable(): bool
+    {
+        return $this->writable;
+    }
 
-		return $list_screens;
-	}
+    public function with_writable(bool $writable): self
+    {
+        return new self(
+            $this->repository,
+            $writable,
+            $this->rules
+        );
+    }
 
-	public function save( ListScreen $list_screen ) {
-		$this->repository->save( $list_screen );
-	}
+    public function get_rules(): Rules
+    {
+        if ( ! $this->has_rules()) {
+            throw new LogicException('No rules defined.');
+        }
 
-	public function delete( ListScreen $list_screen ) {
-		$this->repository->delete( $list_screen );
-	}
+        return $this->rules;
+    }
 
-	public function get_source( ListScreenId $id ) {
-		if ( ! $this->has_source( $id ) ) {
-			throw new Exception\SourceNotAvailableException();
-		}
+    public function has_rules(): bool
+    {
+        return $this->rules !== null;
+    }
 
-		return $this->repository->get_source( $id );
-	}
+    private function set_all_read_only(ListScreenCollection $list_screens): void
+    {
+        foreach ($list_screens as $list_screen) {
+            $list_screen->set_read_only(true);
+        }
+    }
 
-	public function has_source( ListScreenId $id ) {
-		return $this->repository instanceof SourceAware && $this->repository->has_source( $id );
-	}
+    public function exists(ListScreenId $id): bool
+    {
+        return $this->repository->exists($id);
+    }
+
+    public function save(ListScreen $list_screen): void
+    {
+        if ($this->repository instanceof AC\ListScreenRepositoryWritable) {
+            $this->repository->save($list_screen);
+        }
+    }
+
+    public function delete(ListScreen $list_screen): void
+    {
+        if ($this->repository instanceof AC\ListScreenRepositoryWritable) {
+            $this->repository->delete($list_screen);
+        }
+    }
+
+    public function get_source(ListScreenId $id = null): string
+    {
+        if ( ! $this->has_source($id)) {
+            throw new Exception\SourceNotAvailableException();
+        }
+
+        return $this->repository->get_source($id);
+    }
+
+    public function has_source(ListScreenId $id = null): bool
+    {
+        return $this->repository instanceof SourceAware && $this->repository->has_source($id);
+    }
 
 }

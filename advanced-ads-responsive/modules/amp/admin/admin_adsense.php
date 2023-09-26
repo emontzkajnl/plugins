@@ -28,7 +28,7 @@ class Advanced_Ads_Responsive_Amp_Adsense_Admin {
 					// Hidden by default and made visible with JS.
 					$notices[] = array(
 						'text'  => __( 'This ad type is not supported on AMP pages', 'advanced-ads-responsive' ),
-						'class' => 'advanced-ads-adsense-amp-warning hidden',
+						'class' => 'advanced-ads-adsense-amp-warning advads-notice-inline advads-idea hidden',
 					);
 					break;
 			}
