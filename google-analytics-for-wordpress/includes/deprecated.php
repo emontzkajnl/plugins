@@ -240,11 +240,51 @@ function _monsterinsights_deprecated( $message ) {
 	}
 }
 
+/**
+ * Check installed deprecated addons.
+ *
+ * @return void
+ * @since 8.19.0
+ */
+function _monsterinsights_check_deprecated_addons() {
+	// Check facebook-instant-articles
+	if (
+		in_array(
+			'monsterinsights-facebook-instant-articles/monsterinsights-facebook-instant-articles.php',
+			apply_filters(
+				'active_plugins',
+				get_option( 'active_plugins' )
+			)
+		)
+	) {
+		// Deprecated addon is activated, add a notice.
+		add_action( 'admin_notices', '_monsterinsights_notice_deprecated_facebook_instant_articles' );
+	}
+}
 
 /**
- * Start Deprecated Actions & Filters.
+ * Admin notice for deprecated Facebook Instant Articles addon
  *
- * These backwards compatibility fixes may be removed at any time.
- * Users/Developers are encouraged to update their code as soon as possible.
+ * @access public
+ * @return void
+ * @since 8.19.0
+ *
  */
+function _monsterinsights_notice_deprecated_facebook_instant_articles()
+{
+	$url = admin_url('plugins.php');
+	// Check for MS dashboard
+	if (is_network_admin()) {
+		$url = network_admin_url('plugins.php');
+	}
+	?>
+	<div data-dismissible="deprecated-addon-facebook-instant-articles" class="notice notice-error is-dismissible">
+		<p>
+			<?php echo __( 'Facebook Instant Article support ended in April 2023. You may deactivate and delete the MonsterInsights addon at your earliest convenience.', 'ga-premium');
+		?>
+		</p>
+	</div>
+	<?php
+}
+
 

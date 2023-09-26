@@ -1,10 +1,11 @@
 <?php
+namespace crop_thumbnails;
 
 /**
  * Contains all code inside the croping-window
  */
 
-class CPT_ForbiddenException extends Exception {}
+class CPT_ForbiddenException extends \Exception {}
 
 class CropPostThumbnailsEditor {
 
@@ -18,11 +19,11 @@ class CropPostThumbnailsEditor {
 		header('Content-Type: application/json; charset=UTF-8');
 		try {
 			echo json_encode( $this->getCropData() );
-		} catch(InvalidArgumentException $e) {
+		} catch(\InvalidArgumentException $e) {
 			self::doErrorResponse(400, 'FAILURE while processing request: '.$e->getMessage());
 		} catch(CPT_ForbiddenException $e) {
 			self::doErrorResponse(403, 'ERROR not allowed.');
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			self::doErrorResponse(400, 'FAILURE while processing request.');
 		}
 		die();//to prevent to send back a "0"
@@ -65,6 +66,7 @@ class CropPostThumbnailsEditor {
 			'waiting' => self::fixJsLangStrings(__('Please wait until the images are cropped.','crop-thumbnails')),
 			'rawImage' => self::fixJsLangStrings(__('Raw','crop-thumbnails')),
 			'pixel' => self::fixJsLangStrings(__('pixel','crop-thumbnails')),
+			'instructions_overlay_text' => self::fixJsLangStrings(__('Choose an image size.','crop-thumbnails')),
 			'instructions_header' => self::fixJsLangStrings(__('Quick Instructions','crop-thumbnails')),
 			'instructions_step_1' => self::fixJsLangStrings(__('Step 1: Choose an image-size from the list.','crop-thumbnails')),
 			'instructions_step_2' => self::fixJsLangStrings(__('Step 2: Change the selection of the image above.','crop-thumbnails')),
@@ -75,6 +77,7 @@ class CropPostThumbnailsEditor {
 			'label_same_ratio_mode_select' => self::fixJsLangStrings(__('Select together','crop-thumbnails')),
 			'label_same_ratio_mode_group' => self::fixJsLangStrings(__('Group together','crop-thumbnails')),
 			'label_deselect_all' => self::fixJsLangStrings(__('deselect all','crop-thumbnails')),
+			'label_large_handles' => self::fixJsLangStrings(__('use large handles','crop-thumbnails')),
 			'dimensions' => self::fixJsLangStrings(__('Dimensions:','crop-thumbnails')),
 			'ratio' => self::fixJsLangStrings(__('Ratio:','crop-thumbnails')),
 			'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
@@ -110,13 +113,13 @@ class CropPostThumbnailsEditor {
 		
 		//simple validation
 		if(empty($_REQUEST['imageId'])) {
-			throw new InvalidArgumentException('Missing Parameter "imageId".');
+			throw new \InvalidArgumentException('Missing Parameter "imageId".');
 		}
 
 		
 		$imagePostObj = get_post(intval($_REQUEST['imageId']));
 		if(empty($imagePostObj) || $imagePostObj->post_type!=='attachment') {
-			throw new InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
+			throw new \InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
 		}
 		$result['sourceImageId'] = $imagePostObj->ID;
 

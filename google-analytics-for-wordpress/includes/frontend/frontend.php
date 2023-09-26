@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-
 /**
  * Print Monsterinsights frontend tracking script.
  *
@@ -94,19 +93,21 @@ add_action( 'template_redirect', 'monsterinsights_events_tracking', 9 );
 function monsterinsights_rss_link_tagger( $guid ) {
 	global $post;
 
-	if ( monsterinsights_get_option( 'tag_links_in_rss', false ) ) {
-		if ( is_feed() ) {
-			if ( monsterinsights_get_option( 'allow_anchor', false ) ) {
-				$delimiter = '#';
-			} else {
-				$delimiter = '?';
-				if ( strpos( $guid, $delimiter ) > 0 ) {
-					$delimiter = '&amp;';
-				}
+	if (
+		monsterinsights_get_option( 'tag_links_in_rss', false )
+		&& is_feed() 
+		&& ! empty( $post->post_name )
+	) {
+		if ( monsterinsights_get_option( 'allow_anchor', false ) ) {
+			$delimiter = '#';
+		} else {
+			$delimiter = '?';
+			if ( strpos( $guid, $delimiter ) > 0 ) {
+				$delimiter = '&amp;';
 			}
-
-			return $guid . $delimiter . 'utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=' . urlencode( $post->post_name );
 		}
+
+		return $guid . $delimiter . 'utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=' . urlencode( $post->post_name );
 	}
 
 	return $guid;
@@ -231,8 +232,8 @@ function monsterinsights_administrator_tracking_notice() {
 	}
 
 	// Only show when tracking.
-	$ua = monsterinsights_get_ua();
-	if ( empty( $ua ) ) {
+	$tracking_tag = monsterinsights_get_v4_id();
+	if ( empty( $tracking_tag ) ) {
 		return;
 	}
 

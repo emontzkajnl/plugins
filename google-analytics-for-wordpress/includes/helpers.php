@@ -8,6 +8,7 @@
  * @package MonsterInsights
  * @subpackage Helper
  * @author  Chris Christoff
+ * TODO Go through this file and remove UA and dual tracking references/usages
  */
 
 // Exit if accessed directly
@@ -81,8 +82,8 @@ function monsterinsights_track_user( $user_id = - 1 ) {
 	}
 
 	// or if tracking code is not entered
-	$tracking_ids = monsterinsights_get_tracking_ids();
-	if ( empty( $tracking_ids ) ) {
+	$tracking_id = monsterinsights_get_v4_id();
+	if ( empty( $tracking_id ) ) {
 		$track_user = false;
 	}
 
@@ -1295,44 +1296,11 @@ function monsterinsights_get_page_title() {
  * Count the number of occurrences of UA tags inserted by third-party plugins.
  *
  * @param string $body
- * @param string $type
  *
  * @return int
  */
-function monsterinsights_count_third_party_ua_codes( $body, $type = 'ua' ) {
+function monsterinsights_count_third_party_v4_codes($body) {
 	$count = 0;
-
-	// Count all potential google site verification tags
-	if ( $type === 'ua' ) {
-		$pattern = '/content="UA-[0-9-]+"/';
-
-		if ( preg_match_all( $pattern, $body, $matches ) ) {
-			$count += count( $matches[0] );
-		}
-	}
-
-	// Advanced Ads plugin (https://wpadvancedads.com)
-	// When `Ad blocker counter` setting is populated with an UA ID
-	if ( class_exists( 'Advanced_Ads' ) ) {
-		$options = Advanced_Ads::get_instance()->options();
-
-		$pattern = '/UA-[0-9-]+/';
-		if ( $type === 'ua' && isset( $options['ga-UID'] ) && preg_match( $pattern, $options['ga-UID'] ) ) {
-			++ $count;
-		}
-	}
-
-	// WP Popups plugin (https://wppopups.com/)
-	// When `Google UA Code` setting is populated with an UA Id
-	if ( function_exists( 'wppopups_setting' ) ) {
-		$code = wppopups_setting( 'ua-code' );
-
-		$pattern = '/UA-[0-9-]+/';
-		if ( $type === 'ua' && ! empty( $code ) && preg_match( $pattern, $code ) ) {
-			++ $count;
-		}
-	}
-
 	return $count;
 }
 
@@ -1371,16 +1339,13 @@ function monsterinsights_count_addon_codes( $current_code ) {
  * Detect tracking code error depending on the type of tracking code
  *
  * @param string $body
- * @param string $type
  *
  * @return array
  */
-function monsterinsights_detect_tracking_code_error( $body, $type = 'ua' ) {
+function monsterinsights_detect_tracking_code_error( $body ) {
 	$errors = array();
 
-	$current_code = $type === 'ua'
-		? monsterinsights_get_ua_to_output()
-		: monsterinsights_get_v4_id_to_output();
+	$current_code = monsterinsights_get_v4_id_to_output();
 
 	$url = monsterinsights_get_url( 'notice', 'using-cache', 'https://www.wpbeginner.com/beginners-guide/how-to-clear-your-cache-in-wordpress/' );
 	// Translators: The placeholders are for making the "We noticed you're using a caching plugin" text bold.
@@ -1404,7 +1369,7 @@ function monsterinsights_detect_tracking_code_error( $body, $type = 'ua' ) {
 		return $errors;
 	}
 
-	if ( $type === 'v4' && false === strpos( $body, '__gtagTracker' ) ) {
+	if ( false === strpos( $body, '__gtagTracker' ) ) {
 		$errors[] = $cache_error;
 
 		return $errors;
@@ -1415,7 +1380,7 @@ function monsterinsights_detect_tracking_code_error( $body, $type = 'ua' ) {
 	$limit += monsterinsights_count_addon_codes( $current_code );
 
 	// TODO: Need to re-evaluate this regularly when third party plugins start supporting v4
-	$limit += monsterinsights_count_third_party_ua_codes( $body, $type );
+	$limit += monsterinsights_count_third_party_v4_codes( $body );
 
 	// Count all the codes from the page.
 	$total_count = substr_count( $body, $current_code );
@@ -1427,8 +1392,7 @@ function monsterinsights_detect_tracking_code_error( $body, $type = 'ua' ) {
 	}
 
 	// Main property always has a ?id=(UA|G|GT)-XXXXXXXX script
-	$connected_type = MonsterInsights()->auth->get_connected_type();
-	if ( $type === $connected_type && strpos( $body, 'googletagmanager.com/gtag/js?id=' . $current_code ) !== false ) {
+	if ( strpos( $body, 'googletagmanager.com/gtag/js?id=' . $current_code ) !== false ) {
 		// In that case, we can safely deduct one from the total count
 		-- $total_count;
 	}
@@ -1506,7 +1470,7 @@ function monsterinsights_menu_highlight_color() {
  * @param string $url The url to which users get redirected.
  */
 function monsterinsights_custom_track_pretty_links_redirect( $url ) {
-	if ( ! function_exists( 'monsterinsights_mp_track_event_call' ) && ! function_exists( 'monsterinsights_mp_collect_v4' ) ) {
+	if ( ! function_exists( 'monsterinsights_mp_collect_v4' ) ) {
 		return;
 	}
 
@@ -1525,7 +1489,6 @@ function monsterinsights_custom_track_pretty_links_redirect( $url ) {
 		}
 	}
 	// Check if this is an affiliate link and use the appropriate category.
-	$ec            = 'outbound-link';
 	$inbound_paths = monsterinsights_get_option( 'affiliate_links', array() );
 	$path          = empty( $_SERVER['REQUEST_URI'] ) ? '' : $_SERVER['REQUEST_URI']; // phpcs:ignore
 	if ( ! empty( $inbound_paths ) && is_array( $inbound_paths ) && ! empty( $path ) ) {
@@ -1536,7 +1499,6 @@ function monsterinsights_custom_track_pretty_links_redirect( $url ) {
 			}
 			if ( 0 === strpos( $path, trim( $inbound_path['path'] ) ) ) {
 				$label = ! empty( $inbound_path['label'] ) ? trim( $inbound_path['label'] ) : 'aff';
-				$ec   .= '-' . $label;
 				$found = true;
 				break;
 			}
@@ -1549,35 +1511,28 @@ function monsterinsights_custom_track_pretty_links_redirect( $url ) {
 		return;
 	}
 
-	if ( monsterinsights_get_ua_to_output() ) {
-		$track_args = array(
-			't'  => 'event',
-			'ec' => $ec,
-			'ea' => $url,
-			'el' => 'external-redirect',
-		);
-		monsterinsights_mp_track_event_call( $track_args );
-	}
-
 	if ( monsterinsights_get_v4_id_to_output() ) {
 		$url_components = parse_url( $url );
-		$args           = array(
-			'events' => array(
-				array(
-					'link_text'   => 'external-redirect',
-					'link_url'    => $url,
-					'link_domain' => $url_components['host'],
-					'outbound'    => true,
-				),
-			),
+		$params_args    = array(
+			'link_text'   => 'external-redirect',
+			'link_url'    => $url,
+			'link_domain' => $url_components['host'],
+			'outbound'    => 'true',
 		);
 
 		if ( ! empty( $label ) ) {
-			$args['events'][0]['affiliate_label']   = $label;
-			$args['events'][0]['is_affiliate_link'] = true;
+			$params_args['affiliate_label']   = $label;
+			$params_args['is_affiliate_link'] = 'true';
 		}
 
-		monsterinsights_mp_collect_v4( $args );
+		monsterinsights_mp_collect_v4( array(
+			'events' => array(
+				array(
+					'name'   => 'click',
+					'params' => $params_args,
+				)
+			),
+		) );
 	}
 }
 

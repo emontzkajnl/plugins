@@ -601,6 +601,18 @@ function gtm4wp_sanitize_options( $options ) {
 			}
 			$output[ $optionname ] = trim( (string) $newoptionvalue );
 
+		} elseif ( GTM4WP_OPTION_GTMCUSTOMPATH === $optionname ) {
+			// remove https:// prefix if used.
+			$newoptionvalue = trim( $newoptionvalue, "/\n\r\t\v\x00" );
+
+			$gtm_custom_path_has_error = (bool) preg_match( '/^[a-zA-Z0-9\.\-\_]*$/', $newoptionvalue );
+			if ( false === $gtm_custom_path_has_error ) {
+				add_settings_error( GTM4WP_ADMIN_GROUP, GTM4WP_OPTIONS . '[' . GTM4WP_OPTION_GTMCUSTOMPATH . ']', esc_html__( 'Invalid GTM custom domain path. Value can include anything between a-z, A-Z, 0-9 or any of the characters . - _', 'duracelltomi-google-tag-manager' ) );
+				$newoptionvalue = '';
+			}
+
+			$output[ $optionname ] = $newoptionvalue;
+
 		} elseif ( GTM4WP_OPTION_INTEGRATE_AMPID === $optionname ) {
 			// Accelerated Mobile Pages settings.
 			$_ampid_val = trim( $newoptionvalue );
@@ -959,7 +971,7 @@ function gtm4wp_admin_init() {
 			'description' => '<strong>Thomas Geiger</strong><br />
 				Website: <a href="https://gtm4wp.com/" target="_blank" rel="noopener">gtm4wp.com</a><br />
 				<a href="https://www.linkedin.com/in/duracelltomi" target="_blank" rel="noopener">Me on LinkedIn</a><br />
-				<a href="http://www.linkedin.com/company/jabjab-online-marketing-ltd" target="_blank" rel="noopener">JabJab Online Marketing on LinkedIn</a>',
+				<a href="https://www.linkedin.com/company/jabjab-online-marketing/" target="_blank" rel="noopener">JabJab Online Marketing on LinkedIn</a>',
 		)
 	);
 
