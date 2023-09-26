@@ -196,9 +196,9 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 				if ( strpos( $image, 'loading=' ) !== false ) {
 					continue;
 				}
-
-				// replace the image string.
-				$content = str_replace( $image, wp_img_tag_add_loading_attr( $image, 'the_content' ), $content );
+				
+				// Optimize image HTML tag with loading attributes based on WordPress filter context.
+				$content = str_replace( $image, $this->img_tag_add_loading_attr( $image, 'the_content' ), $content );
 			}
 		}
 

@@ -93,5 +93,5 @@
 			</li>
 		</ul>
 	</td>
-	<td class="advads-ad-group-list-ads"><?php $this->render_ads_list( $group ); ?></td>
+	<td><?php $this->render_ads_list( $group ); ?></td>
 </tr>

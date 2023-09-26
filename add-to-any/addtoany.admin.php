@@ -532,6 +532,8 @@ function A2A_SHARE_SAVE_options_page() {
 				<div id="addtoany_services_tip">
 					<p style="line-height:0">
 						<img src="<?php echo esc_url( $A2A_SHARE_SAVE_plugin_url ); ?>/icons/instagram.svg" width="24" height="24" style="margin-right:8px">
+						<img src="<?php echo esc_url( $A2A_SHARE_SAVE_plugin_url ); ?>/icons/threads.svg" width="24" height="24" style="margin-right:8px">
+						<img src="<?php echo esc_url( $A2A_SHARE_SAVE_plugin_url ); ?>/icons/tiktok.svg" width="24" height="24" style="margin-right:8px">
 						<img src="<?php echo esc_url( $A2A_SHARE_SAVE_plugin_url ); ?>/icons/youtube.svg" width="24" height="24" style="margin-right:8px">
 						<img src="<?php echo esc_url( $A2A_SHARE_SAVE_plugin_url ); ?>/icons/discord.svg" width="24" height="24" style="margin-right:8px">
 						<img src="<?php echo esc_url( $A2A_SHARE_SAVE_plugin_url ); ?>/icons/snapchat.svg" width="24" height="24">

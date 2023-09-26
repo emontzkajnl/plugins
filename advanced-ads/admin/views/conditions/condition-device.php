@@ -13,8 +13,9 @@
 
 	<div class="advads-conditions-single advads-buttonset">
 		<?php
+		$rand = md5( $name );
 		foreach ( $type_options[ $options['type'] ]['device_types'] as $device_type ) :
-			$input_id = 'advads-visitor-conditions-device-' . $index . '-' . $device_type['id'];
+			$input_id = 'advads-visitor-conditions-device-' . $index . '-' . $device_type['id'] . '-' . $rand;
 			?>
 			<label for="<?php echo esc_attr( $input_id ); ?>" class="button advads-button">
 				<?php echo esc_html( $device_type['label'] ); ?>

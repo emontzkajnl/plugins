@@ -6,6 +6,13 @@ class Advanced_Ads_Ads_Txt_Public {
 	const TOP = '# Advanced Ads ads.txt';
 
 	/**
+	 * Ads.txt data management class
+	 *
+	 * @var Advanced_Ads_Ads_Txt_Strategy
+	 */
+	private $strategy;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct( $strategy ) {
@@ -119,7 +126,7 @@ class Advanced_Ads_Ads_Txt_Public {
 			$results = $wpdb->get_results( sprintf(
 				"SELECT blog_id, meta_value FROM $wpdb->blogmeta WHERE meta_key='%s' AND blog_id IN (%s)",
 				Advanced_Ads_Ads_Txt_Strategy::OPTION,
-				join( ',', array_map( 'intval', $not_refferals ) )
+				join( ',', array_map( function($value) { return (int)$value; }, $not_refferals ) )
 			) );
 
 			$blog_data = [];

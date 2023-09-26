@@ -32,12 +32,16 @@ class Advanced_Ads_Admin_Ad_Type {
 			]
 		);
 		add_filter( 'manage_advanced_ads_posts_custom_column', [ $this, 'ad_list_columns' ], 10, 2 );
+		// Sortable Columns
+		add_filter( 'manage_edit-advanced_ads_sortable_columns', [ $this, 'ad_sortable_columns' ], 10, 2 );
 		// Add custom filter views.
 		add_action( 'restrict_manage_posts', [ $this, 'ad_list_add_filters' ] );
 		add_filter( 'default_hidden_columns', [ $this, 'hide_ad_list_columns' ], 10, 2 );
 		add_filter( 'bulk_post_updated_messages', [ $this, 'ad_bulk_update_messages' ], 10, 2 );
 		// order ad lists.
 		add_filter( 'request', [ $this, 'ad_list_request' ] );
+		// order ad lists by date.
+		add_filter( 'pre_get_posts', [ $this, 'ad_list_order' ] );
 		add_action( 'all_admin_notices', [ $this, 'no_ads_yet_notice' ] );
 		// Manipulate post data when post is created.
 		add_filter( 'wp_insert_post_data', [ $this, 'prepare_insert_post_data' ] );
@@ -141,6 +145,7 @@ class Advanced_Ads_Admin_Ad_Type {
 				$new_columns['ad_size']        = __( 'Size', 'advanced-ads' );
 				$new_columns['ad_timing']      = __( 'Ad Planning', 'advanced-ads' );
 				$new_columns['ad_shortcode']   = __( 'Ad Shortcode', 'advanced-ads' );
+				$new_columns['ad_date']        = __( 'Date', 'advanced-ads' );
 			}
 		}
 
@@ -151,6 +156,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			'ad_type',
 			'ad_description',
 			'ad_preview',
+			'ad_date',
 			'ad_size',
 			'ad_timing',
 			'ad_shortcode',
@@ -166,6 +172,19 @@ class Advanced_Ads_Admin_Ad_Type {
 
 		return array_intersect_key( $new_columns, array_flip( $allowed_columns ) );
 	}
+
+
+	/**
+	 * Add a sortable column for the 'ad_date' in the post listing table.
+	 *
+	 * @param array $columns The list of columns.
+	 * @return array Modified list of columns.
+	 */
+	function ad_sortable_columns( $columns ) {
+		$columns['ad_date'] = 'ad_date';
+		return $columns;
+	}
+	
 
 	/**
 	 * Add ad list column content
@@ -196,6 +215,10 @@ class Advanced_Ads_Admin_Ad_Type {
 				break;
 			case 'ad_shortcode':
 				$this->ad_list_columns_shortcode( $ad );
+				break;
+			case 'ad_date':
+				$this->ad_list_columns_date( $ad );
+				break;
 		}
 	}
 
@@ -266,6 +289,27 @@ class Advanced_Ads_Admin_Ad_Type {
 		}
 
 		do_action( 'advanced-ads-ad-list-details-column-after', $ad );
+	}
+
+
+
+	/**
+	 * Display an ad date in ads list.
+	 *
+	 * @param Advanced_Ads_Ad $ad ad object.
+	 *
+	 * @return void
+	 */
+	private function ad_list_columns_date( $ad ) {
+		$id = $ad->id ?? null;
+
+		if ( ! $id ) {
+			return;
+		}
+		$dateTimeRegex = get_option('date_format').' \\a\\t '.get_option('time_format');
+		$published_date =  get_the_date( $dateTimeRegex, $id );
+		$modified_date  =  get_the_modified_date( $dateTimeRegex, $id );
+		include ADVADS_BASE_PATH . 'admin/views/ad-list/date.php';
 	}
 
 	/**
@@ -350,6 +394,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			$hidden[] = 'author';
 			$hidden[] = 'ad_size';
 			$hidden[] = 'ad_shortcode';
+			$hidden[] = 'ad_date';
 		}
 
 		return $hidden;
@@ -398,6 +443,27 @@ class Advanced_Ads_Admin_Ad_Type {
 	}
 
 	/**
+	 * Modify the post listing order in the admin panel for a specific custom post type.
+	 *
+	 * @param WP_Query $query The WP_Query object.
+	 */
+	function ad_list_order( $query ) {
+		global $pagenow;
+
+		$post_type = $query->query['post_type'] ?? '';
+		$orderby   = $_GET['orderby'] ?? '';
+		$order     = $_GET['order'] ?? '';
+		// Check if in the admin area, on the post listing page, and for the specified custom post type.
+		if ( is_admin() && $pagenow === 'edit.php' && $post_type === 'advanced_ads' && $orderby && $order ) {
+			// Modify the query based on the orderby value.
+			if ( $orderby === 'ad_date' ) {
+				$query->set( 'orderby', 'post_modified' );
+				$query->set( 'order', strtoupper( $order ) === 'DESC' ? 'DESC' : 'ASC' );
+			}
+		}
+	}
+
+	/**
 	 * Order ads by title on ads list
 	 *
 	 * @param array $vars array with request vars.
@@ -420,7 +486,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			add_action( 'pre_get_posts', [ $this, 'default_ad_list_order' ] );
 		}
 
-		if ( $vars['orderby'] === 'expiry_date' ) {
+		if ( $vars['orderby'] === 'expiry_date') {
 			$vars['orderby']  = 'meta_value';
 			$vars['meta_key'] = Advanced_Ads_Ad_Expiration::POST_META;
 			$vars['order']    = strtoupper( $vars['order'] ) === 'DESC' ? 'DESC' : 'ASC';
@@ -429,7 +495,6 @@ class Advanced_Ads_Admin_Ad_Type {
 				$vars['post_status'] = Advanced_Ads_Ad_Expiration::POST_STATUS;
 			}
 		}
-
 		return $vars;
 	}
 
@@ -700,6 +765,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		 * Set `advanced-ads-ad-edit-show-placement-injection` to false if you want to prevent the box from appearing
 		 */
 		if ( isset( $_GET['message'] ) && 6 === $_GET['message'] && apply_filters( 'advanced-ads-ad-edit-show-placement-injection', true ) ) {
+			$latest_post = $this->get_latest_post();
 			include ADVADS_BASE_PATH . 'admin/views/placement-injection-top.php';
 		}
 	}
@@ -1080,5 +1146,70 @@ class Advanced_Ads_Admin_Ad_Type {
 		 * @param Advanced_Ads_Ad $ad   Ad object.
 		 */
 		return (string) apply_filters( 'advanced-ads-list-ad-size', $size, $ad );
+	}
+
+	/**
+	 * Load a template with the information on ad expiry
+	 *
+	 * @param int $ad_id ad id.
+	 *
+	 * @return string
+	 */
+	public static function get_ad_schedule_output( int $ad_id ): string {
+		$ad                 = \Advanced_Ads\Ad_Repository::get( $ad_id );
+		$expiry_date_format = get_option( 'date_format' ) . ', ' . get_option( 'time_format' );
+		$post_start         = get_post_time( 'U', true, $ad_id );
+		$tz_option          = get_option( 'timezone_string' );
+		$status_type        = '';
+		$status_strings     = [];
+
+		ob_start();
+
+		if ( $post_start > time() ) {
+			$status_type = 'future';
+			// translators: %s is a date.
+			$status_strings[] = sprintf( __( 'starts %s', 'advanced-ads' ), get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $post_start ), $expiry_date_format ) );
+		}
+		if ( isset( $ad->expiry_date ) && $ad->expiry_date ) {
+			$expiry      = $ad->expiry_date;
+			$expiry_date = date_create( '@' . $expiry );
+
+			if ( $tz_option ) {
+				$expiry_date->setTimezone( Advanced_Ads_Utils::get_wp_timezone() );
+			} else {
+				$tz_name       = Advanced_Ads_Utils::get_timezone_name();
+				$tz_offset     = substr( $tz_name, 3 );
+				$off_time      = date_create( '2017-09-21 T10:44:02' . $tz_offset );
+				$offset_in_sec = date_offset_get( $off_time );
+				$expiry_date   = date_create( '@' . ( $expiry + $offset_in_sec ) );
+			}
+
+			$tz = ' ( ' . Advanced_Ads_Utils::get_timezone_name() . ' )';
+
+			if ( $expiry > time() ) {
+				$status_type = ! $status_type ? 'expiring' : $status_type;
+				// translators: %s is a date.
+				$status_strings[] = sprintf( __( 'expires %s', 'advanced-ads' ), $expiry_date->format( $expiry_date_format ) ) . $tz;
+			} elseif ( $expiry <= time() ) {
+				$status_type = ! $status_type ? 'expired' : $status_type;
+				// translators: %s is a date.
+				$status_strings[] = sprintf( __( 'expired %s', 'advanced-ads' ), $expiry_date->format( $expiry_date_format ) ) . $tz;
+			}
+		}
+
+		$status_type = ! $status_type ? 'published' : $status_type;
+
+		include ADVADS_BASE_PATH . 'admin/views/ad/status-icon.php';
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Load latest blog post
+	 * @return WP_POST|null
+	 */
+	public function get_latest_post(){
+		$posts = wp_get_recent_posts(["numberposts" => 1]);
+		return $posts ? $posts[0] : null;
 	}
 }

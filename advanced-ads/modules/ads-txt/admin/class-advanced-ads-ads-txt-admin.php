@@ -4,6 +4,20 @@
  */
 class Advanced_Ads_Ads_Txt_Admin {
 	/**
+	 * Ads.txt data management class
+	 *
+	 * @var Advanced_Ads_Ads_Txt_Strategy
+	 */
+	private $strategy;
+
+	/**
+	 * Ads.txt frontend logic class
+	 *
+	 * @var Advanced_Ads_Ads_Txt_Public
+	 */
+	private $public;
+
+	/**
 	 * AdSense network ID.
 	 */
 	const adsense = 'adsense';
@@ -20,11 +34,12 @@ class Advanced_Ads_Ads_Txt_Admin {
 	/**
 	 * Constructor
 	 *
-	 * @param obj $strategy Advanced_Ads_Ads_Txt_Strategy.
+	 * @param Advanced_Ads_Ads_Txt_Strategy $strategy Ads.txt data management class.
+	 * @param Advanced_Ads_Ads_Txt_Public   $public Ads.txt frontend logic class.
 	 */
 	public function __construct( Advanced_Ads_Ads_Txt_Strategy $strategy, Advanced_Ads_Ads_Txt_Public $public ) {
 		$this->strategy = $strategy;
-		$this->public = $public;
+		$this->public   = $public;
 
 		add_filter( 'advanced-ads-sanitize-settings', [ $this, 'toggle' ], 10, 1 );
 		add_action( 'pre_update_option_advanced-ads-adsense', [ $this, 'update_adsense_option' ], 10, 2 );
@@ -299,6 +314,7 @@ class Advanced_Ads_Ads_Txt_Admin {
 
 		$r = call_user_func( [ 'Advanced_Ads_Ads_Txt_Utils', $func ], $url );
 
+		$transient = is_array( $transient ) ? $transient : [];
 		$transient[ $func ] = $r;
 		set_transient( $key, $transient, WEEK_IN_SECONDS );
 		return $r;

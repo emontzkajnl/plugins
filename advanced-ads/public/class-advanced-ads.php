@@ -771,6 +771,7 @@ class Advanced_Ads {
 			'labels'            => $labels,
 			'show_ui'           => true,
 			'show_in_nav_menus' => false,
+			'show_in_menu'		=> false,
 			'show_tagcloud'     => false,
 			'show_admin_column' => true,
 			'query_var'         => false,

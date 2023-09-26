@@ -10,11 +10,12 @@
 /**
  * WordPress API manager
  *
- * @since 6.6.0 Fixed https://github.com/aamplugin/advanced-access-manager/issues/131
- * @since 6.0.0 Initial implementation of the class
+ * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/274
+ * @since 6.6.0  https://github.com/aamplugin/advanced-access-manager/issues/131
+ * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.6.0
+ * @version 6.9.10
  */
 class AAM_Backend_Feature_Main_Route
     extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAware
@@ -44,66 +45,19 @@ class AAM_Backend_Feature_Main_Route
     const TEMPLATE = 'service/route.php';
 
     /**
-     * Get list of API routes
+     * Constructor
      *
-     * @return string
-     *
-     * @access public
-     * @version 6.0.0
-     */
-    public function getTable()
-    {
-        $list   = array();
-        $object = AAM_Backend_Subject::getInstance()->getObject(self::OBJECT_TYPE);
-
-        // Build all RESTful routes
-        if (AAM::api()->getConfig('core.settings.restful', true)) {
-            foreach (rest_get_server()->get_routes() as $route => $handlers) {
-                $methods = array();
-                foreach ($handlers as $handler) {
-                    $methods = array_merge($methods, array_keys($handler['methods']));
-                }
-
-                foreach (array_unique($methods) as $method) {
-                    $isRestricted = $object->isRestricted('restful', $route, $method);
-                    $list[] = array(
-                        $route,
-                        'restful',
-                        $method,
-                        htmlspecialchars($route),
-                        $isRestricted ? 'checked' : 'unchecked'
-                    );
-                }
-            }
-        }
-
-        return wp_json_encode(array('data' => $list));
-    }
-
-    /**
-     * Save route access settings
-     *
-     * @return string
-     *
-     * @since 6.6.0 Fixed https://github.com/aamplugin/advanced-access-manager/issues/131
-     * @since 6.0.0 Initial implementation of the method
+     * @return void
      *
      * @access public
-     * @version 6.6.0
+     * @version 6.9.13
      */
-    public function save()
+    public function __construct()
     {
-        $type   = $this->getFromPost('type');
-        $route  = $this->getFromPost('route');
-        $method = $this->getFromPost('method');
-        $value  = $this->getFromPost('value', FILTER_VALIDATE_BOOLEAN);
-
-        $object = AAM_Backend_Subject::getInstance()->getObject(self::OBJECT_TYPE);
-        $id     = strtolower("{$type}|{$route}|{$method}");
-
-        $result = $object->updateOptionItem($id, $value)->save();
-
-        return wp_json_encode(array('status' => ($result ? 'success' : 'failure')));
+        // Customize the user experience
+        add_filter('aam_route_mode_panel_filter', function() {
+            return AAM_Backend_View::getInstance()->loadPartial('route-mode');
+        });
     }
 
     /**

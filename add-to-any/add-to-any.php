@@ -3,7 +3,7 @@
  * Plugin Name: AddToAny Share Buttons
  * Plugin URI: https://www.addtoany.com/
  * Description: Share buttons for your pages including AddToAny's universal sharing button, Facebook, Twitter, LinkedIn, Pinterest, WhatsApp and many more.
- * Version: 1.8.6
+ * Version: 1.8.8
  * Author: AddToAny
  * Author URI: https://www.addtoany.com/
  * Text Domain: add-to-any
@@ -13,7 +13,7 @@
 // Explicitly globalize to support bootstrapped WordPress.
 global $A2A_locale, $A2A_FOLLOW_services,
 	$A2A_SHARE_SAVE_options, $A2A_SHARE_SAVE_plugin_dir, $A2A_SHARE_SAVE_plugin_url, 
-	$A2A_SHARE_SAVE_services;
+	$A2A_SHARE_SAVE_services, $A2A_3p_consent;
 
 $A2A_SHARE_SAVE_plugin_dir = untrailingslashit( plugin_dir_path( __FILE__ ) );
 $A2A_SHARE_SAVE_plugin_url = untrailingslashit( plugin_dir_url( __FILE__ ) );
@@ -500,30 +500,29 @@ function ADDTOANY_SHARE_SAVE_SPECIAL( $special_service_code, $args = array() ) {
 	
 	$args = array_merge( $args, A2A_SHARE_SAVE_link_vars( $args ) ); // linkname_enc, etc.
 	
-	$special_anchor_template = '<a class="a2a_button_%1$s addtoany_special_service"%2$s></a>';
+	$special_anchor_template = '<a class="%1$s_%2$s addtoany_special_service"%3$s></a>';
 	$custom_attributes = '';
-	
+
+	global $A2A_3p_consent;
+	$a2a_prefix = $A2A_3p_consent === false ? 'a2a_disabled' : 'a2a_button';
+
 	if ( $special_service_code == 'facebook_like' ) {
 		$custom_attributes .= ( isset( $options['special_facebook_like_options']['verb'] )
 			&& 'recommend' == $options['special_facebook_like_options']['verb'] ) ? ' data-action="recommend"' : '';
 		$custom_attributes .= ( isset( $options['special_facebook_like_options']['show_count'] )
 			&& $options['special_facebook_like_options']['show_count'] == '1' ) ? '' : ' data-layout="button"';
 		$custom_attributes .= ' data-href="' . esc_attr( $args['linkurl'] ) . '"';
-		$special_html = sprintf( $special_anchor_template, $special_service_code, $custom_attributes );
-	}
-	
-	elseif ( $special_service_code == 'twitter_tweet' ) {
+		$special_html = sprintf( $special_anchor_template, $a2a_prefix, $special_service_code, $custom_attributes );
+	} elseif ( $special_service_code == 'twitter_tweet' ) {
 		$custom_attributes .= ' data-url="' . esc_attr( $args['linkurl'] ) . '"';
 		$custom_attributes .= ' data-text="' . esc_attr( $args['linkname'] ) . '"';
-		$special_html = sprintf( $special_anchor_template, $special_service_code, $custom_attributes );
-	}
-	
-	elseif ( $special_service_code == 'pinterest_pin' ) {
+		$special_html = sprintf( $special_anchor_template, $a2a_prefix, $special_service_code, $custom_attributes );
+	} elseif ( $special_service_code == 'pinterest_pin' ) {
 		$custom_attributes .= ( isset( $options['special_pinterest_pin_options']['show_count'] )
 			&& $options['special_pinterest_pin_options']['show_count'] == '1' ) ? '' : ' data-pin-config="none"';
 		$custom_attributes .= ' data-url="' . esc_attr( $args['linkurl'] ) . '"';
 		$custom_attributes .= ( empty( $args['linkmedia'] ) ) ? '' : ' data-media="' . esc_attr( $args['linkmedia'] ) . '"';
-		$special_html = sprintf( $special_anchor_template, $special_service_code, $custom_attributes );
+		$special_html = sprintf( $special_anchor_template, $a2a_prefix, $special_service_code, $custom_attributes );
 	}
 	
 	if ( isset( $args['output_later'] ) && $args['output_later'] == true )
@@ -1094,6 +1093,14 @@ function A2A_SHARE_SAVE_enqueue_script() {
 				. '}'
 			. '});';
 	}
+	$has_threads_service = isset( $options['active_services'] ) && in_array( 'threads', $options['active_services'] );
+	/** JS that removes empty services until Firefox supports :has() in CSS. */
+	$empty_services_js_static = $has_threads_service ? "\n"
+		. 'a2a_config.callbacks.push({ready:function(){'
+			. 'document.querySelectorAll(".a2a_s_undefined").forEach(function(emptyIcon){'
+				. 'emptyIcon.parentElement.style.display="none";'
+			. '})'
+		. '}});' : '';
 	
 	// Enternal script call + initial JS + set-once variables.
 	$additional_js = ( isset( $options['additional_js_variables'] ) ) ? $options['additional_js_variables'] : '';
@@ -1107,6 +1114,7 @@ function A2A_SHARE_SAVE_enqueue_script() {
 		. 'a2a_config.templates={};'
 		. addtoany_menu_locale_escaped()
 		. $floating_js_escaped
+		. $empty_services_js_static
 		. $script_configs_escaped
 		. "\n";
 	

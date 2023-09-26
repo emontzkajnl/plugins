@@ -1,5 +1,52 @@
 == Changelog ==
 
+= 1.46.0 (August 17, 2023) =
+
+- Feature: add a direct link to view the ad when a new ad is published
+- Improvement: use adsense ad unit title in adsense earnings metabox
+- Fix: add an "aria-label" attribute to link tags which contain images
+- Fix: add a new Translation promo class, which prevents PHP deprecation notices
+- Fix: prevent deprecation warnings in PHP 8.2
+- Fix: remove unused AMP code that in some cases threw a PHP error
+- Fix: exchange 'wp_img_tag_add_loading_attr' function, which was deprecated in WordPress 6.3,  with 'wp_img_tag_add_loading_optimization_attrs'
+
+= 1.45.1 (August 4, 2023) =
+
+- Improvement: add a button to create ads on the groups page if no ads exist
+- Fix: replace deprecated methods `intval()` and `strval()`, with type-casting
+- Fix: add a deprecation notice for the 'disable top anchor Auto ads' feature, since it's no longer supported by AdSense
+- Fix: remove flickering while hiding ads on the group page
+- Fix: remove a bug when sorting ads by date
+
+= 1.45.0 (July 26, 2023) =
+
+- Feature: add a sortable date column to the ad list
+- Fix: hide filter button in ad list if no results found
+- Fix: remove ad blocker assets when uninstalling the plugin
+- Fix: prevent PHP notices on the placements page with PHP 8.1
+- Fix: remove "Up to 1 ad displayed." on the group page when only one ad is displayed.
+- Fix: prevent PHP deprecation notices with PHP 8.1
+
+= 1.44.1 (June 28, 2023) =
+
+- Fix: ensure cached ads are in fact an array
+
+= 1.44.0 (May 31, 2023) =
+
+- Improvement: combine condition meta boxes into 'Targeting'
+
+= 1.43.0 (May 17, 2023) =
+
+- Improvement: move schedule information about ads in groups into a tooltip
+- Fix: prevent multiple device conditions on placements not working together
+- Fix: prevent a PHP notice that occurred in connection with display conditions
+
+= 1.42.2 (April 26, 2023) =
+
+- Improvement: remove unused frontend notices code
+- Improvement: remove ad injection log due to more false positives than actual issues
+- Fix: prevent a warning when third-party scripts are registered without a source
+
 = 1.42.1 (April 12, 2023) =
 
 - Improvement: add dismiss buttons to Google AdSense account alerts in the backend

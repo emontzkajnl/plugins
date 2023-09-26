@@ -71,7 +71,6 @@ class ComposerStaticInit_advanced_ads
         'Advanced_Ads_Display_Conditions' => __DIR__ . '/../..' . '/classes/display-conditions.php',
         'Advanced_Ads_Filesystem' => __DIR__ . '/../..' . '/classes/filesystem.php',
         'Advanced_Ads_Frontend_Checks' => __DIR__ . '/../..' . '/classes/frontend_checks.php',
-        'Advanced_Ads_Frontend_Notices' => __DIR__ . '/../..' . '/classes/frontend-notices.php',
         'Advanced_Ads_Group' => __DIR__ . '/../..' . '/classes/ad_group.php',
         'Advanced_Ads_Groups_List' => __DIR__ . '/../..' . '/admin/includes/class-ad-groups-list.php',
         'Advanced_Ads_In_Content_Injector' => __DIR__ . '/../..' . '/classes/in-content-injector.php',
@@ -90,8 +89,7 @@ class ComposerStaticInit_advanced_ads
 
         'Detection\\MobileDetect' => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/namespaced/Detection/MobileDetect.php',
         'Mobile_Detect' => __DIR__ . '/..' . '/mobiledetect/mobiledetectlib/Mobile_Detect.php',
-        'Yoast_I18n_WordPressOrg_v3' => __DIR__ . '/..' . '/yoast/i18n-module/src/i18n-wordpressorg-v3.php',
-        'Yoast_I18n_v3' => __DIR__ . '/..' . '/yoast/i18n-module/src/i18n-v3.php',
+        'Translation_Promo' => __DIR__ . '/../..' . '/classes/class-translation-promo.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

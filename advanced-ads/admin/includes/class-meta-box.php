@@ -69,14 +69,22 @@ class Advanced_Ads_Admin_Meta_Boxes {
 			&& Advanced_Ads_AdSense_Data::get_instance()->is_setup()
 			&& ! Advanced_Ads_AdSense_Data::get_instance()->is_hide_stats()
 		) {
-			add_meta_box(
-				'advads-gadsense-box',
-				__( 'AdSense Earnings', 'advanced-ads' ),
-				[ $this, 'markup_meta_boxes' ],
-				$post_type,
-				'normal',
-				'high'
-			);
+			$ad_unit = Advanced_Ads_Network_Adsense::get_instance()->get_ad_unit( $post->ID );
+
+			if ( $ad_unit ) {
+				add_meta_box(
+					'advads-gadsense-box',
+					sprintf(
+						/* translators: 1: Name of ad unit */
+						esc_html__( 'Earnings of  %1$s', 'advanced-ads' ),
+						esc_html( $ad_unit->name )
+					),
+					[ $this, 'markup_meta_boxes' ],
+					$post_type,
+					'normal',
+					'high'
+				);
+			}
 		}
 
 		// use dynamic filter from to add close class to ad type meta box after saved first time.
@@ -110,20 +118,12 @@ class Advanced_Ads_Admin_Meta_Boxes {
 			'high'
 		);
 		add_meta_box(
-			'ad-display-box',
-			__( 'Display Conditions', 'advanced-ads' ),
+			'ad-targeting-box',
+			__( 'Targeting', 'advanced-ads' ),
 			[ $this, 'markup_meta_boxes' ],
 			$post_type,
 			'normal',
-			'high'
-		);
-		add_meta_box(
-			'ad-visitor-box',
-			__( 'Visitor Conditions', 'advanced-ads' ),
-			[ $this, 'markup_meta_boxes' ],
-			$post_type,
-			'normal',
-			'high'
+			'default'
 		);
 		if ( ! defined( 'AAP_VERSION' ) ) {
 			add_meta_box(
@@ -152,8 +152,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 			'advads-gadsense-box',
 			'ad-parameters-box',
 			'ad-output-box',
-			'ad-display-box',
-			'ad-visitor-box',
+			'ad-targeting-box',
 			'advads-pro-pitch',
 			'advads-tracking-pitch',
 			'revisionsdiv', // revisions – only when activated.
@@ -226,15 +225,16 @@ class Advanced_Ads_Admin_Meta_Boxes {
 				$view               = 'ad-output-metabox.php';
 				$hndlelinks         = '<a href="' . ADVADS_URL . 'manual/optimizing-the-ad-layout/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-layout" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
 				break;
-			case 'ad-display-box':
-				$view        = 'conditions/ad-display-metabox.php';
-				$hndlelinks  = '<a href="#" class="advads-video-link">' . __( 'Video', 'advanced-ads' ) . '</a>';
-				$hndlelinks .= '<a href="' . ADVADS_URL . 'manual/display-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-display" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
-				$videomarkup = '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/VjfrRl5Qn4I?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>';
-				break;
-			case 'ad-visitor-box':
-				$view       = 'conditions/ad-visitor-metabox.php';
-				$hndlelinks = '<a href="' . ADVADS_URL . 'manual/visitor-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
+			case 'ad-targeting-box':
+				$view                         = 'conditions/ad-targeting-metabox.php';
+				$hndlelinks                   = '<a href="#" class="advads-video-link">' . __( 'Video', 'advanced-ads' ) . '</a>';
+				$hndlelinks                  .= '<a href="' . ADVADS_URL . 'manual/display-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-display" target="_blank" class="advads-manual-link">' . __( 'Display Conditions', 'advanced-ads' ) . '</a>';
+				$hndlelinks                  .= '<a href="' . ADVADS_URL . 'manual/visitor-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor" target="_blank" class="advads-manual-link">' . __( 'Visitor Conditions', 'advanced-ads' ) . '</a>';
+				$videomarkup                  = '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/VjfrRl5Qn4I?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>';
+				$display_conditions           = $ad->options( 'conditions', [] );
+				$visitor_conditions           = $ad->options( 'visitors', [] );
+				$display_conditions_available = ( empty( $display_conditions ) );
+				$visitor_conditions_available = ( empty( $visitor_conditions ) );
 				break;
 			case 'advads-pro-pitch':
 				$view = 'upgrades/all-access.php';

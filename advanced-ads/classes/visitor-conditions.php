@@ -286,17 +286,17 @@ class Advanced_Ads_Visitor_Conditions {
 			$pro_conditions[] = __( 'user agent', 'advanced-ads' );
 			$pro_conditions[] = __( 'user can (capabilities)', 'advanced-ads' );
 			$pro_conditions[] = __( 'user role', 'advanced-ads' );
-		}
-		if ( ! defined( 'AAR_VERSION' ) ) {
 			$pro_conditions[] = __( 'browser width', 'advanced-ads' );
 		}
+
 		asort( $pro_conditions );
 
 		// the action to call using AJAX.
 		$action            = 'load_visitor_conditions_metabox';
 		$connector_default = 'and';
 
-		include ADVADS_BASE_PATH . 'admin/views/conditions/visitor-conditions-form-top.php';
+		$empty_options = ! is_array( $set_conditions ) || ! count( $set_conditions );
+
 		include ADVADS_BASE_PATH . 'admin/views/conditions/conditions-form.php';
 	}
 

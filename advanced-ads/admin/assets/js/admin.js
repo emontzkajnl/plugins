@@ -295,16 +295,10 @@ jQuery( document ).ready( function ( $ ) {
 	// set default group options for earch group
 
 	advads_show_group_options( $( '.advads-ad-group-type input:checked' ) )
-	// group page: hide ads if more than 4 – than only show 3
-	$( '.advads-ad-group-list-ads' ).each( function () {
-		if ( 5 <= $( this ).find( 'li' ).length ) {
-			$( this ).find( 'li:gt(2)' ).hide()
-		}
 
-	} )
 	// show more than 3 ads when clicked on a link
 	$( '.advads-group-ads-list-show-more' ).on( 'click', function () {
-		jQuery( this ).hide().parents( '.advads-ad-group-list-ads' ).find( 'li' ).show()
+		$( this ).hide().parent().siblings( '.advads-ad-group-list-ads' ).children( 'div' ).show()
 	} )
 
 	/**
@@ -850,17 +844,13 @@ jQuery( document ).ready( function ( $ ) {
 		$( this ).appendTo( $( this ).parents('.postbox').find( 'h2.hndle' ) )
 		$( this ).removeClass( 'hidden' )
 	} );
-	// open tutorial link when clicked on it
+	// Open tutorial link when clicked on it in targeting metabox.
 	$( '.advads-video-link' ).on( 'click', function (event) {
-		event.preventDefault()
-		var video_container = $( event.target ).parents( '.postbox' ).find( '.advads-video-link-container' )
-		video_container.html( video_container.data( 'videolink' ) )
-	} );
-	// open inline tutorial link when clicked on it
-	$( '.advads-video-link-inline' ).on( 'click', function ( el ) {
-		el.preventDefault()
-		var video_container = $( this ).parents( 'div' ).siblings( '.advads-video-link-container' )
-		video_container.html( video_container.data( 'videolink' ) )
+		event.preventDefault();
+		var parent = $( event.target ).closest( '.postbox' );
+		parent.removeClass( 'closed' );
+		var videoContainer = parent.find( '.advads-video-link-container' );
+		videoContainer.html( videoContainer.data( 'videolink' ) );
 	} );
 	// switch import type
 	jQuery( '.advads_import_type' ).on( 'change', function () {

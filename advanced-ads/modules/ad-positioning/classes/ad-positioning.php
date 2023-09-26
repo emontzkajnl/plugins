@@ -48,7 +48,7 @@ class Advanced_Ads_Ad_Positioning {
 
 		$this->positioning['margin'] = array_merge(
 			$this->positioning['margin'],
-			array_map( 'intval', $options['margin'] )
+			array_map( function($value) { return (int)$value; }, $options['margin'] )
 		);
 
 		$this->positioning['position'] = $options['position'];

@@ -274,15 +274,6 @@ class Advanced_Ads_In_Content_Injector {
 				$ad_dom = new DOMDocument( '1.0', $wp_charset );
 				$libxml_use_internal_errors = libxml_use_internal_errors( true );
 				$ad_dom->loadHtml( '<!DOCTYPE html><html><meta http-equiv="Content-Type" content="text/html; charset=' . $wp_charset . '" /><body>' . $ad_content );
-				// log errors.
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG && current_user_can( 'advanced_ads_manage_options' ) ) {
-					foreach ( libxml_get_errors() as $_error ) {
-						// continue, if there is '&' symbol, but not HTML entity.
-						if ( false === stripos( $_error->message, 'htmlParseEntityRef:' ) ) {
-							Advanced_Ads::log( 'possible content injection error for placement "' . $placement_id . '": ' . print_r( $_error, true ) );
-						}
-					}
-				}
 
 				switch ( $options['position'] ) {
 					case 'append':

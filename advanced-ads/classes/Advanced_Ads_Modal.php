@@ -25,7 +25,7 @@ class Advanced_Ads_Modal {
 	 * @param bool  $render    Whether to render the modal from the constructor. Defaults to true.
 	 */
 	public function __construct( array $arguments, $render = true ) {
-		$this->view_arguments = array_intersect_key( wp_parse_args( array_map( 'strval', $arguments ), $this->view_arguments ), $this->view_arguments );
+		$this->view_arguments = array_intersect_key( wp_parse_args( array_map( function($value) { return (string)$value; }, $arguments ), $this->view_arguments ), $this->view_arguments );
 
 		if ( $render ) {
 			$this->render();

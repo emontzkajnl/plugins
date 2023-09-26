@@ -116,7 +116,7 @@ class Advanced_Ads_Ad_Authors {
 		}
 
 		$user_query = new WP_User_Query( $this->filter_ad_authors( [ 'fields' => 'ID' ] ) );
-		if ( ! in_array( (int) $data['post_author'], array_map( 'intval', $user_query->get_results() ), true ) ) {
+		if ( ! in_array( (int) $data['post_author'], array_map( function($value) { return (int)$value; }, $user_query->get_results() ), true ) ) {
 			wp_die( esc_html__( 'Sorry, you\'re not allowed to assign this user.', 'advanced-ads' ) );
 		}
 	}
@@ -157,7 +157,7 @@ class Advanced_Ads_Ad_Authors {
 			$user_query = new WP_User_Query( $this->filter_ad_authors( [ 'fields' => 'ID' ] ) );
 		}
 
-		if ( ! in_array( $author_id, array_map( 'intval', $user_query->get_results() ), true ) ) {
+		if ( ! in_array( $author_id, array_map( function($value) { return (int)$value; }, $user_query->get_results() ), true ) ) {
 			$caps[] = 'do_not_allow';
 		}
 

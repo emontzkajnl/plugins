@@ -184,9 +184,6 @@ class Advanced_Ads_AdSense_Public {
 			add_action( 'amp_post_template_footer', [ $this, 'add_auto_ads_amp_body_script' ] );
 
 			// Other AMP plugins.
-		} elseif ( function_exists( 'is_wp_amp' ) ) {
-			// WP AMP — Accelerated Mobile Pages for WordPress and WooCommerce (https://codecanyon.net/item/wp-amp-accelerated-mobile-pages-for-wordpress-and-woocommerce/16278608).
-			add_action( 'amphtml_after_footer', [ $this, 'add_adsense_auto_ads' ] );
 		}
 	}
 

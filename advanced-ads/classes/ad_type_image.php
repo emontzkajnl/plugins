@@ -103,8 +103,8 @@ class Advanced_Ads_Ad_Type_Image extends Advanced_Ads_Ad_Type_Abstract {
 			$width  = isset( $ad->width ) ? absint( $ad->width ) : $width;
 			$height = isset( $ad->height ) ? absint( $ad->height ) : $height;
 		}
-		$hwstring = image_hwstring( $width, $height );
-		$alt      = trim( esc_textarea( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
+		$hwstring 	= image_hwstring( $width, $height );
+		$alt      	= trim( esc_textarea( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
 
 		global $wp_current_filter;
 
@@ -156,7 +156,8 @@ class Advanced_Ads_Ad_Type_Image extends Advanced_Ads_Ad_Type_Abstract {
 			&& wp_lazy_loading_enabled( 'img', $wp_current_filter )
 			&& ! strpos( $more_attributes, 'loading=' )
 		) {
-			$img = wp_img_tag_add_loading_attr( $img, $wp_current_filter );
+			// Optimize image HTML tag with loading attributes based on WordPress filter context.
+			$img = $this->img_tag_add_loading_attr( $img, $wp_current_filter );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- use unescaped image tag here
@@ -211,10 +212,12 @@ class Advanced_Ads_Ad_Type_Image extends Advanced_Ads_Ad_Type_Abstract {
 		$this->create_image_tag( $id, $ad );
 		$img = ob_get_clean();
 		if ( ! defined( 'AAT_VERSION' ) && $url ) {
+			$alt      	= trim( esc_textarea( get_post_meta( $id, '_wp_attachment_image_alt', true ) ) );
+			$aria_label	= !empty( $alt ) ? $alt : wp_basename( get_the_title( $id ) );
 			// get general target setting
 			$options      = Advanced_Ads::get_instance()->options();
 			$target_blank = ! empty( $options['target-blank'] ) ? ' target="_blank"' : '';
-			$img          = sprintf( '<a href="%s"%s>%s</a>', esc_url( $url ), $target_blank, $img );
+			$img          = sprintf( '<a href="%s"%s aria-label="%s">%s</a>', esc_url( $url ), $target_blank, $aria_label, $img );
 		}
 
 		return $img;

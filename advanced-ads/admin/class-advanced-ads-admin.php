@@ -885,4 +885,28 @@ class Advanced_Ads_Admin {
 
 		include ADVADS_BASE_PATH . 'admin/views/header.php';
 	}
+
+
+	
+	/**
+	 * Show a note about a deprecated feature and link to the appropriate page in our manual
+	 *
+	 * @param string $feature simple string to indicate the deprecated feature. Will be added to the UTM campaign attribute.
+	 */
+	public static function show_deprecated_notice( $feature = '' ) {
+		$url = esc_url( ADVADS_URL ) . 'manual/deprecated-features/';
+
+		if ( '' !== $feature ) {
+			$url .= '#utm_source=advanced-ads&utm_medium=link&utm_campaign=deprecated-' . sanitize_title_for_query( $feature );
+		}
+
+		echo '<br/><br/><span class="advads-notice-inline advads-error">';
+		printf(
+			// Translators: %1$s is the opening link tag, %2$s is closing link tag.
+			esc_html__( 'This feature is deprecated. Please find the removal schedule %1$shere%2$s', 'advanced-ads-pro' ),
+			'<a href="' . esc_url( $url ) . '" target="_blank">',
+			'</a>'
+		);
+		echo '</span>';
+	}
 }

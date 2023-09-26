@@ -370,7 +370,7 @@ class Advanced_Ads_Group {
 		$found = false;
 		$key = 'ad_group_all_ads_' . $this->post_type . '_' . $this->taxonomy . '_' . $this->slug;
 		$ads = wp_cache_get( $key, Advanced_Ads_Model::OBJECT_CACHE_GROUP, false, $found );
-		if ( $found ) {
+		if ( $found && is_array( $ads ) ) {
 			$this->ads = $ads;
 		} else {
 			$ads = new WP_Query( $args );

@@ -20,19 +20,19 @@
 <?php
 // create new group.
 if ( isset( $_REQUEST['advads-group-add-nonce'] ) ) {
-	$create_result = $ad_groups_list->create_group();
-	if ( is_wp_error( $create_result ) ) {
-		echo '<div class="notice error inline"><p>' . esc_html( $create_result->get_error_message() ) . '</p></div>';
-	} else {
-		echo '<div class="notice inline"><p>' . esc_html__( 'Ad Group successfully created', 'advanced-ads' ) . '</p></div>';
-		?>
-		<script>
-			window.addEventListener( 'DOMContentLoaded', () => {
-				window.location.hash = '#modal-group-edit-<?php echo esc_html( $create_result->id ); ?>';
-			} );
-		</script>
-		<?php
-	}
+	    $create_result = $ad_groups_list->create_group();
+		if ( is_wp_error( $create_result ) ) {
+			echo '<div class="notice error inline"><p>' . esc_html( $create_result->get_error_message() ) . '</p></div>';
+		} else {
+			echo '<div class="notice inline"><p>' . esc_html__( 'Ad Group successfully created', 'advanced-ads' ) . '</p></div>';
+			?>
+				<script>
+					window.addEventListener( 'DOMContentLoaded', () => {
+						window.location.hash = '#modal-group-edit-<?php echo esc_html( $create_result->id ); ?>';
+					} );
+				</script>
+			<?php
+		}
 }
 // save updated groups.
 if ( isset( $_REQUEST['advads-group-update-nonce'] ) ) {

@@ -740,8 +740,11 @@ class Advanced_Ads_Ad_List_Filters {
 
 		// show filters, if the option to show them is enabled or a search is running
 		if ( get_current_screen()->get_option( 'show-filters' ) || self::uses_filter_or_search() ) {
-			wp_add_inline_style( ADVADS_SLUG . '-admin-styles', '.post-type-advanced_ads .search-box { display: block; }
-				.post-type-advanced_ads .tablenav.top .alignleft.actions:not(.bulkactions) { display: block; }' );
+			global $wp_query;
+			wp_add_inline_style( ADVADS_SLUG . '-admin-styles', '.post-type-advanced_ads .search-box { display: block; }' );	
+			if (isset($wp_query->found_posts) && $wp_query->found_posts > 0) {
+				wp_add_inline_style(ADVADS_SLUG . '-admin-styles', '.post-type-advanced_ads .tablenav.top .alignleft.actions:not(.bulkactions) { display: block; }' );
+			}
 			return;
 		}
 

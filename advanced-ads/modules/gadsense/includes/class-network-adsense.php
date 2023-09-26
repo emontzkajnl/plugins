@@ -19,6 +19,20 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 	private static $instance;
 
 	/**
+	 * AdSense options handling class.
+	 *
+	 * @var Advanced_Ads_AdSense_Data
+	 */
+	private $data;
+
+	/**
+	 * The AdSense network’s settings section ID
+	 *
+	 * @var string
+	 */
+	protected $settings_section_id;
+
+	/**
 	 * Instance of Advanced_Ads_Network_Adsense
 	 *
 	 * @return Advanced_Ads_Ad_Type_Adsense|Advanced_Ads_Network_Adsense
@@ -189,6 +203,7 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 		<label>
 			<input type="checkbox" name="<?php echo esc_attr( GADSENSE_OPT_NAME ); ?>[top-anchor-ad]" value="1" <?php checked( $anchor_ad ); ?> />
 			<?php esc_html_e( 'Enable this box if you don’t want Google Auto ads to place anchor ads at the top of your page.', 'advanced-ads' ); ?>
+			<?php Advanced_Ads_Admin::show_deprecated_notice('top Anchor Ad'); ?>
 		</label>
 		<?php
 	}
@@ -221,7 +236,7 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 			<?php esc_attr_e( 'Insert the AdSense header code to enable Auto ads and verify your website.', 'advanced-ads' ); ?>
 		</label>
 		<ul>
-			<li><a href="<?php echo esc_url( ADVADS_URL ) . 'adsense-auto-ads-wordpress/#Display_Auto_Ads_only_on_specific_pages'; ?>" target="_blank"><?php esc_attr_e( 'Display Auto ads only on specific pages', 'advanced-ads' ); ?></a></li>
+			<li><a href="<?php echo esc_url( ADVADS_URL ) . 'adsense-auto-ads-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-adsense-specific-pages#Display_AdSense_Auto_Ads_only_on_specific_pages'; ?>" target="_blank"><?php esc_attr_e( 'Display Auto ads only on specific pages', 'advanced-ads' ); ?></a></li>
 			<li><a href="<?php echo esc_url( ADVADS_URL ) . 'adsense-in-random-positions-auto-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=backend-autoads-ads'; ?>" target="_blank"><?php esc_attr_e( 'Why are ads appearing in random positions?', 'advanced-ads' ); ?></a></li>
 			<?php
 			if ( ! empty( $options['adsense-id'] ) ) :
@@ -528,5 +543,36 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 	 */
 	public function supports_manual_ad_setup() {
 		return true;
+	}
+
+	/**
+	 * Get the ad unit associated with a given ad ID.
+	 *
+	 * @param int $ad_id The ID of the ad.
+	 * @return object|null The ad unit object associated with the given ad ID, or null if not found.
+	 */
+	function get_ad_unit( $ad_id ){
+		$ad_repository = new \Advanced_Ads\Ad_Repository();
+		$adense_ad = $ad_repository->get( $ad_id );
+		// Early bail!!
+		if ( ! $adense_ad || 'adsense' !== ( $adense_ad->type ?? '' ) || ! isset( $adense_ad->content ) ) {
+			return null;
+		}
+		
+		$ad_units = $this->get_external_ad_units();
+		if ( empty( $ad_units ) ) {
+			return null;
+		}
+	
+		$json_content = json_decode( $adense_ad->content );
+		$unit_code = $json_content->slotId ?? null;
+	
+		foreach( $ad_units as $ad_unit ) {
+			if( $ad_unit->slot_id === $unit_code){
+				return $ad_unit;
+			}
+		}
+	
+		return null;
 	}
 }

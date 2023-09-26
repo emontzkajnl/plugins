@@ -46,7 +46,6 @@ return array(
     'Advanced_Ads_Display_Conditions' => $baseDir . '/classes/display-conditions.php',
     'Advanced_Ads_Filesystem' => $baseDir . '/classes/filesystem.php',
     'Advanced_Ads_Frontend_Checks' => $baseDir . '/classes/frontend_checks.php',
-    'Advanced_Ads_Frontend_Notices' => $baseDir . '/classes/frontend-notices.php',
     'Advanced_Ads_Group' => $baseDir . '/classes/ad_group.php',
     'Advanced_Ads_Groups_List' => $baseDir . '/admin/includes/class-ad-groups-list.php',
     'Advanced_Ads_In_Content_Injector' => $baseDir . '/classes/in-content-injector.php',
@@ -65,6 +64,5 @@ return array(
 
     'Detection\\MobileDetect' => $vendorDir . '/mobiledetect/mobiledetectlib/namespaced/Detection/MobileDetect.php',
     'Mobile_Detect' => $vendorDir . '/mobiledetect/mobiledetectlib/Mobile_Detect.php',
-    'Yoast_I18n_WordPressOrg_v3' => $vendorDir . '/yoast/i18n-module/src/i18n-wordpressorg-v3.php',
-    'Yoast_I18n_v3' => $vendorDir . '/yoast/i18n-module/src/i18n-v3.php',
+    'Translation_Promo' => $baseDir . '/classes/class-translation-promo.php',
 );

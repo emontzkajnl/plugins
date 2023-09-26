@@ -298,7 +298,8 @@ class Advanced_Ads_Display_Conditions {
 		$action            = 'load_display_conditions_metabox';
 		$connector_default = 'or';
 
-		include ADVADS_BASE_PATH . 'admin/views/conditions/display-conditions-form-top.php';
+		$empty_options = ! is_array( $set_conditions ) || ! count( $set_conditions );
+
 		include ADVADS_BASE_PATH . 'admin/views/conditions/conditions-form.php';
 	}
 
@@ -1310,7 +1311,7 @@ class Advanced_Ads_Display_Conditions {
 	public function ad_select_args_callback( $args ) {
 		global $post, $wp_the_query, $wp_query, $numpages;
 
-		if ( isset( $post ) ) {
+		if ( $post instanceof WP_Post ) {
 			if ( ! isset( $args['post'] ) ) {
 				$args['post'] = [];
 			}

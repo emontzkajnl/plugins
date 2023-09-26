@@ -75,7 +75,7 @@ class Advanced_Ads_Ad_Type_Abstract {
 		if ( ! file_exists( ADVADS_BASE_PATH . $icon_path ) ) {
 			$icon_path = 'admin/assets/img/ad-types/empty.svg';
 		}
-		printf( '<img src="%s" width="50" height="50"/>', esc_url( ADVADS_BASE_URL . $icon_path ) );
+		printf( '<img src="%s" width="50" height="50" />', esc_url( ADVADS_BASE_URL . $icon_path ) );
 	}
 
 	/**
@@ -157,4 +157,25 @@ class Advanced_Ads_Ad_Type_Abstract {
 
 		return do_shortcode( $output );
 	}
+
+
+	/**
+	 * Applies image loading optimization attributes to an image HTML tag based on WordPress version.
+	 *
+	 * @param string $img     HTML image tag.
+	 * @param string $context content
+	 *
+	 * @return string Updated HTML image tag with loading optimization attributes.
+	 */
+	public function img_tag_add_loading_attr( $img, $context ) {
+		// Check if the current WordPress version is compatible.
+		if ( is_wp_version_compatible( '6.3' ) ) {
+			 // If compatible, apply the function to add loading optimization attributes
+			return wp_img_tag_add_loading_optimization_attrs( $img, $context );
+		}
+		
+		// If not compatible, use the deprecated function to add loading attribute
+		return wp_img_tag_add_loading_attr( $img, $context );
+	}
+
 }

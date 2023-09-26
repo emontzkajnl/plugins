@@ -15,7 +15,6 @@ class Advanced_Ads_Ajax {
 		add_action( 'wp_ajax_nopriv_advads_ad_select', [ $this, 'advads_ajax_ad_select' ] );
 		add_action( 'wp_ajax_advads-ad-health-notice-push', [ $this, 'ad_health_notice_push' ] );
 		add_action( 'wp_ajax_nopriv_advads-ad-health-notice-push', [ $this, 'ad_health_notice_push' ] );
-		add_action( 'wp_ajax_advads-ad-frontend-notice-update', [ $this, 'frontend_notice_update' ] );
 	}
 
 	/**
@@ -182,31 +181,6 @@ class Advanced_Ads_Ajax {
 			Advanced_Ads_Ad_Health_Notices::get_instance()->update( $key, $attr );
 		} else {
 			Advanced_Ads_Ad_Health_Notices::get_instance()->add( $key, $attr );
-		}
-
-		die();
-	}
-
-	/**
-	 * Update frontend notice array
-	 */
-	public function frontend_notice_update() {
-
-		check_ajax_referer( 'advanced-ads-frontend-notice-nonce', 'nonce' );
-
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
-			return;
-		}
-
-		$key  = ( ! empty( $_REQUEST['key'] ) ) ? esc_attr( $_REQUEST['key'] ) : false;
-		$attr = ( ! empty( $_REQUEST['attr'] ) && is_array( $_REQUEST['attr'] ) ) ? $_REQUEST['attr'] : [];
-
-		// Update or new entry?
-		if ( isset( $attr['mode'] ) && 'update' === $attr['mode'] ) {
-			die();
-			// Advanced_Ads_Frontend_Notices::get_instance()->update( $key, $attr );.
-		} else {
-			Advanced_Ads_Frontend_Notices::get_instance()->update( $key, $attr );
 		}
 
 		die();

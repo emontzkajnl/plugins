@@ -8,16 +8,30 @@ class Advanced_Ads_Admin_Menu {
 	/**
 	 * Instance of this class.
 	 *
-	 * @var      object
+	 * @var object
 	 */
 	protected static $instance = null;
 
 	/**
 	 * Slug of the ad group page
 	 *
-	 * @var      string
+	 * @var string
 	 */
 	protected $ad_group_hook_suffix = null;
+
+	/**
+	 * Slug of the AA plugin
+	 *
+	 * @var string
+	 */
+	private $plugin_slug;
+
+	/**
+	 * Slug of the ad post type
+	 *
+	 * @var string
+	 */
+	private $post_type;
 
 	/**
 	 * Advanced_Ads_Admin_Menu constructor.
@@ -38,7 +52,7 @@ class Advanced_Ads_Admin_Menu {
 	 */
 	public static function get_instance() {
 		// If the single instance hasn't been set, set it now.
-		if ( null === self::$instance ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 
@@ -225,7 +239,6 @@ class Advanced_Ads_Admin_Menu {
 	 * @since    1.2.2
 	 */
 	public function display_overview_page() {
-
 		include ADVADS_BASE_PATH . 'admin/views/overview.php';
 	}
 
@@ -291,7 +304,7 @@ class Advanced_Ads_Admin_Menu {
 		$post_type = Advanced_Ads::POST_TYPE_SLUG;
 		$tax       = get_taxonomy( $taxonomy );
 		$action    = Advanced_Ads_Admin::get_instance()->current_action();
-
+		
 		// handle new and updated groups.
 		if ( $action === 'editedgroup' ) {
 			$group_id = (int) $_POST['group_id'];
@@ -375,7 +388,7 @@ class Advanced_Ads_Admin_Menu {
 	private function get_url_for_content_placement_picker() {
 		$location = false;
 
-		if ( 'posts' === get_option( 'show_on_front' ) ) {
+		if ( get_option( 'show_on_front' ) === 'posts' ) {
 			$recent_posts = wp_get_recent_posts(
 				[
 					'numberposts' => 1,

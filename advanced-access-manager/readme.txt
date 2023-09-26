@@ -3,8 +3,8 @@ Contributors: vasyltech
 Tags: access control, membership, backend menu, user role, restricted content, security, jwt
 Requires at least: 4.7.0
 Requires PHP: 5.6.0
-Tested up to: 6.2.0
-Stable tag: 6.9.9
+Tested up to: 6.3.1
+Stable tag: 6.9.16
 
 All you need to manage access to WordPress websites on the frontend, backend and API levels for any role, user or visitors.
 
@@ -80,6 +80,59 @@ We take security and privacy very seriously, that is why there are several non-n
 11. Improve your website security
 
 == Changelog ==
+
+= 6.9.16 =
+* Fixed: Error when trying to edit the menu [https://github.com/aamplugin/advanced-access-manager/issues/315](https://github.com/aamplugin/advanced-access-manager/issues/315)
+* Breaking Change: Removed `callback` attribute from `aam` shortcodes [https://github.com/aamplugin/advanced-access-manager/issues/316](https://github.com/aamplugin/advanced-access-manager/issues/316)
+* Changed: Improved shortcode remote IP detection [https://github.com/aamplugin/advanced-access-manager/issues/317](https://github.com/aamplugin/advanced-access-manager/issues/317)
+
+= 6.9.14 =
+* Fixed: PHP deprecated notices [https://github.com/aamplugin/advanced-access-manager/issues/305](https://github.com/aamplugin/advanced-access-manager/issues/305)
+* Fixed: Admin Menu get corrupted if the first submenu is restricted [https://github.com/aamplugin/advanced-access-manager/issues/307](https://github.com/aamplugin/advanced-access-manager/issues/307)
+* Fixed: Multipage role list malfunction [https://github.com/aamplugin/advanced-access-manager/issues/306](https://github.com/aamplugin/advanced-access-manager/issues/306)
+* Fixed: Empty error message when role fail to create [https://github.com/aamplugin/advanced-access-manager/issues/310](https://github.com/aamplugin/advanced-access-manager/issues/310)
+* Changed: Adding ref=plugin query param to all links that point to aamportal.com [https://github.com/aamplugin/advanced-access-manager/issues/308](https://github.com/aamplugin/advanced-access-manager/issues/308)
+* Added New: Introduce Access Denied Redirect RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/309](https://github.com/aamplugin/advanced-access-manager/issues/309)
+
+= 6.9.13 =
+* Fixed: User object does not initialize after login [https://github.com/aamplugin/advanced-access-manager/issues/300](https://github.com/aamplugin/advanced-access-manager/issues/300)
+* Fixed: Wildcard for URL Access malfunction [https://github.com/aamplugin/advanced-access-manager/issues/296](https://github.com/aamplugin/advanced-access-manager/issues/296)
+* Fixed: Restoring a previous Policy Revision adds backslashes (thank you @solaceten) [https://github.com/aamplugin/advanced-access-manager/issues/294](https://github.com/aamplugin/advanced-access-manager/issues/294)
+* Fixed: Incorrectly handled login redirect with access policy [https://github.com/aamplugin/advanced-access-manager/issues/299](https://github.com/aamplugin/advanced-access-manager/issues/299)
+* Changed: Move toolbar cache to transient & increase cache ttl [https://github.com/aamplugin/advanced-access-manager/issues/297](https://github.com/aamplugin/advanced-access-manager/issues/297)
+* Added New: Add additional helpful tips to the AAM UI [https://github.com/aamplugin/advanced-access-manager/issues/298](https://github.com/aamplugin/advanced-access-manager/issues/298)
+* Added New: Introduce Metaboxes & Widgets RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/301](https://github.com/aamplugin/advanced-access-manager/issues/301)
+* Added New: Introduce Backend Menu RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/293](https://github.com/aamplugin/advanced-access-manager/issues/293)
+* Added New: Introduce Admin Toolbar RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/302](https://github.com/aamplugin/advanced-access-manager/issues/302)
+* Added New: Add notification about premium add-on update availability [https://github.com/aamplugin/advanced-access-manager/issues/303](https://github.com/aamplugin/advanced-access-manager/issues/303)
+* Added New: Introduce restricted mode for RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/304](https://github.com/aamplugin/advanced-access-manager/issues/304)
+
+= 6.9.12 =
+* Fixed: URL Access skips query params for new rules [https://github.com/aamplugin/advanced-access-manager/issues/283](https://github.com/aamplugin/advanced-access-manager/issues/283)
+* Fixed: Access policy does not apply for newly logged in user [https://github.com/aamplugin/advanced-access-manager/issues/286](https://github.com/aamplugin/advanced-access-manager/issues/286)
+* Fixed: Compatibility with PHP 5.6 [https://github.com/aamplugin/advanced-access-manager/issues/287](https://github.com/aamplugin/advanced-access-manager/issues/287)
+* Changed: Rewrite the Login Redirect service to use RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/285](https://github.com/aamplugin/advanced-access-manager/issues/285)
+* Changed: Rewrite the Logout Redirect service to use RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/291](https://github.com/aamplugin/advanced-access-manager/issues/291)
+* Changed: Rewrite the 404 Redirect service to use RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/292](https://github.com/aamplugin/advanced-access-manager/issues/292)
+* Changed: Backend Menu UI improvement [https://github.com/aamplugin/advanced-access-manager/issues/288](https://github.com/aamplugin/advanced-access-manager/issues/288)
+* Changed: Admin toolbar UI improvement [https://github.com/aamplugin/advanced-access-manager/issues/289](https://github.com/aamplugin/advanced-access-manager/issues/289)
+* Changed: Metaboxes & Widgets UI improvement [https://github.com/aamplugin/advanced-access-manager/issues/290](https://github.com/aamplugin/advanced-access-manager/issues/290)
+* Added New: Allow redefining the login message when access is restricted [https://github.com/aamplugin/advanced-access-manager/issues/284](https://github.com/aamplugin/advanced-access-manager/issues/284)
+
+= 6.9.11 =
+* Fixed: Change role does not work for expired access [https://github.com/aamplugin/advanced-access-manager/issues/279](https://github.com/aamplugin/advanced-access-manager/issues/279)
+* Changed: Enhance JWT Token RESTful API [https://github.com/aamplugin/advanced-access-manager/issues/278](https://github.com/aamplugin/advanced-access-manager/issues/278)
+* Changed: Replace deprecated DateTime format [https://github.com/aamplugin/advanced-access-manager/issues/281](https://github.com/aamplugin/advanced-access-manager/issues/281)
+* Changed: Improve user experience during plugin activation [https://github.com/aamplugin/advanced-access-manager/issues/282](https://github.com/aamplugin/advanced-access-manager/issues/282)
+
+= 6.9.10 =
+* Fixed: Can't see AAM settings when editing page [https://github.com/aamplugin/advanced-access-manager/issues/270](https://github.com/aamplugin/advanced-access-manager/issues/270)
+* Fixed: The set_slug should not sanitize key [https://github.com/aamplugin/advanced-access-manager/issues/271](https://github.com/aamplugin/advanced-access-manager/issues/271)
+* Fixed: Admin Menu restriction edge-case [https://github.com/aamplugin/advanced-access-manager/issues/272](https://github.com/aamplugin/advanced-access-manager/issues/272)
+* Changed: Refactor JWT Token Service [https://github.com/aamplugin/advanced-access-manager/issues/273](https://github.com/aamplugin/advanced-access-manager/issues/273)
+* Changed: Refactor the API Route Service [https://github.com/aamplugin/advanced-access-manager/issues/274](https://github.com/aamplugin/advanced-access-manager/issues/274)
+* Changed: Normalize Role ID [https://github.com/aamplugin/advanced-access-manager/issues/275](https://github.com/aamplugin/advanced-access-manager/issues/275)
+* Changed: Stop using user_status column [https://github.com/aamplugin/advanced-access-manager/issues/276](https://github.com/aamplugin/advanced-access-manager/issues/276)
 
 = 6.9.9 =
 * Fixed: Undefined array key "callback" [https://github.com/aamplugin/advanced-access-manager/issues/264](https://github.com/aamplugin/advanced-access-manager/issues/264)

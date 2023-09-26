@@ -87,6 +87,8 @@ class AAM_Core_Policy_Token
     {
         foreach ($tokens as $token) {
             $val  = self::getTokenValue($token, $args);
+            $val  = is_null($val) ? '' : $val;
+
             $part = str_replace(
                 $token,
                 (is_scalar($val) || is_null($val) ? $val : json_encode($val)),
@@ -116,7 +118,7 @@ class AAM_Core_Policy_Token
     {
         $parts = explode('.', preg_replace('/^\$\{([^}]+)\}$/', '${1}', $token), 2);
 
-        if (isset(self::$map[$parts[0]])) {
+        if (array_key_exists($parts[0], self::$map)) {
             if ($parts[0] === 'ARGS') {
                 $value = call_user_func(self::$map[$parts[0]], $parts[1], $args);
             } else {
@@ -257,18 +259,19 @@ class AAM_Core_Policy_Token
      *
      * @return mixed
      *
-     * @since 6.9.3 https://github.com/aamplugin/advanced-access-manager/issues/235
-     * @since 6.3.0 Fixed bug that caused "Fatal error: Allowed memory size of XXX
-     *              bytes exhausted"
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/286
+     * @since 6.9.3  https://github.com/aamplugin/advanced-access-manager/issues/235
+     * @since 6.3.0  Fixed bug that caused "Fatal error: Allowed memory size of XXX
+     *               bytes exhausted"
+     * @since 6.0.0  Initial implementation of the method
      *
      * @access protected
-     * @version 6.9.3
+     * @version 6.9.12
      */
     protected static function getUserValue($prop)
     {
         $value = null;
-        $user  = wp_get_current_user();
+        $user  = AAM::getUser();
 
         switch (strtolower($prop)) {
             case 'ip':
@@ -283,17 +286,20 @@ class AAM_Core_Policy_Token
 
             case 'capabilities':
             case 'caps':
-                $allcaps = is_a($user, 'WP_User') ? (array)$user->allcaps : array();
+                $all   = $user->allcaps;
+                $value = array();
 
-                foreach ($allcaps as $cap => $effect) {
-                    if (!empty($effect)) {
-                        $value[] = $cap;
+                if (is_array($all)) {
+                    foreach ($all as $cap => $effect) {
+                        if (!empty($effect)) {
+                            $value[] = $cap;
+                        }
                     }
                 }
                 break;
 
             default:
-                $value = (is_a($user, 'WP_User') ? $user->{$prop} : null);
+                $value = $user->{$prop};
                 break;
         }
 

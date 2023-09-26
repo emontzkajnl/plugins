@@ -108,8 +108,6 @@ class Advanced_Ads_Plugin {
 		add_shortcode( 'the_ad_group', [ $this, 'shortcode_display_ad_group' ] );
 		add_shortcode( 'the_ad_placement', [ $this, 'shortcode_display_ad_placement' ] );
 
-		// remove default ad group menu item // -TODO only for admin.
-		add_action( 'admin_menu', [ $this, 'remove_taxonomy_menu_item' ] );
 		// load widgets.
 		add_action( 'widgets_init', [ $this, 'widget_init' ] );
 
@@ -375,14 +373,7 @@ class Advanced_Ads_Plugin {
 		}
 	}
 
-	/**
-	 * Remove WP tag edit page for the ad group taxonomy
-	 *  needed, because we can’t remove it with `show_ui` without also removing the meta box
-	 */
-	public function remove_taxonomy_menu_item() {
-		remove_submenu_page( 'edit.php?post_type=advanced_ads', 'edit-tags.php?taxonomy=advanced_ads_groups&amp;post_type=advanced_ads' );
-	}
-
+	
 	/**
 	 * Shortcode to include ad in frontend
 	 *
@@ -691,6 +682,8 @@ class Advanced_Ads_Plugin {
 			global $wpdb;
 			$main_blog_id = $wpdb->blogid;
 
+			// Delete assets (main blog).
+			Advanced_Ads_Ad_Blocker_Admin::get_instance()->clear_assets();
 			Advanced_Ads::get_instance()->create_post_types();
 
 			if ( ! is_multisite() ) {
@@ -705,8 +698,7 @@ class Advanced_Ads_Plugin {
 				switch_to_blog( $main_blog_id );
 			}
 
-			// Delete assets (main blog).
-			Advanced_Ads_Ad_Blocker_Admin::get_instance()->clear_assets();
+
 		}
 
 	}
@@ -825,7 +817,7 @@ class Advanced_Ads_Plugin {
 
 		$url = self::get_short_url( $url );
 
-		$code = intval( substr( md5( $url ), - 1 ), 16 );
+		$code = (int)substr( md5( $url ), - 1 );
 
 		switch ( $ex ) {
 			case 'b':

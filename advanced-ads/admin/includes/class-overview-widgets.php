@@ -29,7 +29,7 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 	public static function setup_overview_widgets() {
 
 		// initiate i18n notice.
-		new Yoast_I18n_WordPressOrg_v3(
+		new Translation_Promo(
 			[
 				'textdomain'     => 'advanced-ads',
 				'plugin_name'    => 'Advanced Ads',
@@ -718,8 +718,7 @@ endif;
 		// allow add-ons to manipulate the output.
 		$add_ons = apply_filters( 'advanced-ads-overview-add-ons', $add_ons );
 
-		uasort( $add_ons, [ 'self', 'sort_by_order' ] );
-
+		uasort( $add_ons, [ __CLASS__, 'sort_by_order' ] );
 		?>
 		<table class="widefat striped">
 		<?php
@@ -737,6 +736,7 @@ endif;
 		<?php
 	}
 
+	
 	/**
 	 * Sort by installed add-ons
 	 *
@@ -745,7 +745,7 @@ endif;
 	 *
 	 * @return int
 	 */
-	private static function sort_by_order( $a, $b ) {
+	protected static function sort_by_order( $a, $b ) {
 		return $a['order'] - $b['order'];
 	}
 

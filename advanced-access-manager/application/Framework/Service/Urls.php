@@ -10,11 +10,17 @@
 /**
  * AAM service URL manager
  *
+ * @since 6.9.13 https://github.com/aamplugin/advanced-access-manager/issues/296
+ * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/283
+ * @since 6.9.9  Initial implementation of the class
+ *
  * @package AAM
- * @since 6.9.9
+ * @version 6.9.13
  */
 class AAM_Framework_Service_Urls
 {
+
+    use AAM_Framework_Service_BaseTrait;
 
     /**
      * Rule type aliases
@@ -22,7 +28,7 @@ class AAM_Framework_Service_Urls
      * To be a bit more verbose, we are renaming the legacy rule types to something
      * that is more intuitive
      *
-     * @since 6.9.9
+     * @version 6.9.9
      */
     const RULE_TYPE_ALIAS = array(
         'allow'    => 'allow',
@@ -35,39 +41,6 @@ class AAM_Framework_Service_Urls
     );
 
     /**
-     * Single instance of itself
-     *
-     * @var AAM_Framework_Service_Urls
-     *
-     * @access private
-     * @static
-     * @since 6.9.9
-     */
-    private static $_instance = null;
-
-    /**
-     * The runtime context
-     *
-     * This context typically contains information about current subject
-     *
-     * @var array
-     *
-     * @access private
-     * @since 6.9.9
-     */
-    private $_runtime_context = null;
-
-    /**
-     * Instantiate the service
-     *
-     * @return void
-     *
-     * @access protected
-     * @since 6.9.9
-     */
-    protected function __construct() {}
-
-    /**
      * Return list of rules for give subject
      *
      * @param array $inline_context Context
@@ -75,7 +48,7 @@ class AAM_Framework_Service_Urls
      * @return array
      *
      * @access public
-     * @since 6.9.9
+     * @version 6.9.9
      */
     public function get_rule_list($inline_context = null)
     {
@@ -111,7 +84,7 @@ class AAM_Framework_Service_Urls
      * @return array
      *
      * @access public
-     * @since 6.9.9
+     * @version 6.9.9
      * @throws UnderflowException If rule does not exist
      */
     public function get_rule_by_id($id, $inline_context = null)
@@ -148,7 +121,7 @@ class AAM_Framework_Service_Urls
      * @return array
      *
      * @access public
-     * @since 6.9.9
+     * @version 6.9.9
      * @throws Exception If fails to persist the rule
      */
     public function create_rule(array $rule, $inline_context = null)
@@ -178,7 +151,7 @@ class AAM_Framework_Service_Urls
      * @return array
      *
      * @access public
-     * @since 6.9.9
+     * @version 6.9.9
      * @throws UnderflowException If rule does not exist
      * @throws Exception If fails to persist a rule
      */
@@ -229,7 +202,7 @@ class AAM_Framework_Service_Urls
      * @return array
      *
      * @access public
-     * @since 6.9.9
+     * @version 6.9.9
      * @throws UnderflowException If rule does not exist
      * @throws Exception If fails to persist a rule
      */
@@ -267,7 +240,9 @@ class AAM_Framework_Service_Urls
             throw new Exception('Failed to persist the rule');
         }
 
-        return $this->_prepare_rule($found['url'], $found['rule']);
+        $subject->flushCache();
+
+        return $this->get_rule_by_id($id, $inline_context);
     }
 
     /**
@@ -278,7 +253,7 @@ class AAM_Framework_Service_Urls
      * @return array
      *
      * @access public
-     * @since 6.9.9
+     * @version 6.9.9
      */
     public function reset_rules($inline_context = null)
     {
@@ -298,44 +273,6 @@ class AAM_Framework_Service_Urls
     }
 
     /**
-     * Get current subject
-     *
-     * @param mixed $inline_context Runtime context
-     *
-     * @return AAM_Core_Subject
-     *
-     * @access private
-     * @since 6.9.9
-     */
-    private function _get_subject($inline_context)
-    {
-        // Determine if the access level and subject ID are either part of the
-        // inline arguments or runtime context when service is requested through the
-        // framework service manager
-        if ($inline_context) {
-            $context = $inline_context;
-        } elseif ($this->_runtime_context) {
-            $context = $this->_runtime_context;
-        } else {
-            throw new InvalidArgumentException('No context provided');
-        }
-
-        if (isset($context['subject'])
-            && is_a($context['subject'], AAM_Core_Subject::class)) {
-            $subject = $context['subject'];
-        } elseif (empty($context['access_level'])) {
-            throw new InvalidArgumentException('The access_level is required');
-        } else {
-            $subject  = AAM_Framework_Manager::subject()->get(
-                $context['access_level'],
-                isset($context['subject_id']) ? $context['subject_id'] : null
-            );
-        }
-
-        return $subject;
-    }
-
-    /**
      * Normalize and prepare the rule model
      *
      * @param string $url
@@ -345,7 +282,7 @@ class AAM_Framework_Service_Urls
      * @return array
      *
      * @access private
-     * @since 6.9.9
+     * @version 6.9.9
      */
     private function _prepare_rule($url, $settings, $is_inherited = false)
     {
@@ -381,8 +318,12 @@ class AAM_Framework_Service_Urls
      *
      * @return array
      *
+     * @since 6.9.13 https://github.com/aamplugin/advanced-access-manager/issues/296
+     * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/283
+     * @since 6.9.9  Initial implementation of the method
+     *
      * @access private
-     * @since 6.9.9
+     * @version 6.9.13
      */
     private function _validate_rule(array $rule)
     {
@@ -391,10 +332,19 @@ class AAM_Framework_Service_Urls
         $type = array_search($rule['type'], self::RULE_TYPE_ALIAS);
 
         // Parse and validate the incoming URL
-        $parsed = wp_parse_url($rule['url']);
-        $url    = wp_validate_redirect(
-            empty($parsed['path']) ? '/' : $parsed['path']
-        );
+        if ($rule['url'] === '*') {
+            $url = '*';
+        } else {
+            $parsed = wp_parse_url($rule['url']);
+            $url    = wp_validate_redirect(
+                empty($parsed['path']) ? '/' : $parsed['path']
+            );
+        }
+
+        // Adding query params if provided
+        if (isset($parsed['query'])) {
+            $url .= '?' . $parsed['query'];
+        }
 
         if (empty($type)) {
             throw new InvalidArgumentException('The `type` is required');
@@ -450,28 +400,6 @@ class AAM_Framework_Service_Urls
             'url'  => $url,
             'rule' => array_merge($normalized, array('type' => $type))
         );
-    }
-
-    /**
-     * Bootstrap and return an instance of the service
-     *
-     * @param array $runtime_context
-     *
-     * @return AAM_Framework_Service_Urls
-     *
-     * @access public
-     * @static
-     * @since 6.9.9
-     */
-    public static function get_instance($runtime_context = null)
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new self;
-        }
-
-        self::$_instance->_runtime_context = $runtime_context;
-
-        return self::$_instance;
     }
 
 }

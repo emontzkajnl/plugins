@@ -425,7 +425,11 @@ $quick_actions['delete'] = '<a style="cursor: pointer;" class="advads-delete-tag
 								<h4><?php echo esc_html__( 'Display Conditions', 'advanced-ads' ); ?></h4>
 								<ul>
 									<?php foreach ( $_placement['options']['placement_conditions']['display'] as $condition ) : ?>
-										<li><?php echo esc_html( $display_conditions->conditions[ $condition['type'] ]['label'] ); ?></li>
+										<?php if ( array_key_exists( $condition['type'], (array) $display_conditions->conditions ) ) : ?>
+											<li>
+												<?php echo esc_html( $display_conditions->conditions[ $condition['type'] ]['label'] ); ?>
+											</li>
+										<?php endif; ?>
 									<?php endforeach; ?>
 								</ul>
 							<?php endif; ?>
@@ -433,7 +437,11 @@ $quick_actions['delete'] = '<a style="cursor: pointer;" class="advads-delete-tag
 								<h4><?php echo esc_html__( 'Visitor Conditions', 'advanced-ads' ); ?></h4>
 								<ul>
 									<?php foreach ( $_placement['options']['placement_conditions']['visitors'] as $condition ) : ?>
-										<li><?php echo esc_html( $visitor_conditions->conditions[ $condition['type'] ]['label'] ); ?></li>
+										<?php if ( array_key_exists( $condition['type'], $visitor_conditions->conditions ) ): ?>
+											<li>
+												<?php echo esc_html( $visitor_conditions->conditions[ $condition['type'] ]['label'] ); ?>
+											</li>
+										<?php endif; ?>
 									<?php endforeach; ?>
 								</ul>
 							<?php endif; ?>

@@ -72,8 +72,7 @@ class Advanced_Ads_Ad_Blocker {
 			// Loop through all script files and change the URL from which they are loaded
 			if( is_object( $wp_scripts ) && is_array( $wp_scripts->registered ) ) foreach( $wp_scripts->registered as $script )
 			{
-				if( strpos( $script->src, 'advanced-ads' ) !== false )
-				{
+				if ( $script->src && is_string( $script->src ) && strpos( $script->src, 'advanced-ads' ) !== false ) {
 					$script->src = $this->clean_up_filename( $script->src );
 				}
 			}

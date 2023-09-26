@@ -539,8 +539,7 @@ class Advanced_Ads_Ad_Blocker_Admin {
 	function clear_assets() {
 		$advads_options = Advanced_Ads::get_instance()->options();
 
-		if ( ! empty( $advads_options['use-adblocker'] )
-			&& ! empty( $this->options['folder_name'] )
+		if ( ! empty( $this->options['folder_name'] )
 			&& ! empty( $this->options['module_can_work'] )
 			&& $this->upload_dir
 			&& class_exists( 'WP_Filesystem_Direct', false )

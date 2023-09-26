@@ -33,6 +33,20 @@ abstract class Advanced_Ads_Ad_Network {
 	protected $nonce;
 
 	/**
+	 * The network’s settings section ID
+	 *
+	 * @var string
+	 */
+	protected $settings_section_id;
+
+	/**
+	 * The network’s settings init hook.
+	 *
+	 * @var string
+	 */
+	private $settings_init_hook;
+
+	/**
 	 * Advanced_Ads_Ad_Network constructor.
 	 *
 	 * @param string $identifier an identifier that will be used for hooks, settings, ids and much more - MAKE SURE IT IS UNIQUE.

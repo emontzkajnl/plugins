@@ -2,9 +2,9 @@
 Contributors: webzunft, advancedads
 Tags: ads, adsense, amp, ads.txt, ad rotations, ad blocker, amazon, banner, click fraud protection, google ad manager, header code, lazy loading,
 Requires at least: 4.9
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 7.2
-Stable tag: 1.42.1
+Stable tag: 1.46.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,7 +50,7 @@ Advanced Ads allowed us to grow from 0 to 100 MM monthly ad impressions. Benefit
 
 choose between different ad types that enable you to:
 
-* insert ads and banners from all ad and affiliate networks (e.g., Google AdSense, [Amazon Affiliate Program](https://wpadvancedads.com/amazon-affiliate-program-wordpress/), BuySellAds, Google Ad Manager (formerly Google DoubleClick for Publishers, DFP), Ezoic, media.net, Booking.com, Tradedoubler, Awin, Getyourguide, The Moneytizer, Infolinks...)
+* insert ads and banners from all ad and affiliate networks (e.g., Google AdSense, [Amazon Affiliate Program](https://wpadvancedads.com/amazon-affiliate-program-wordpress/), BuySellAds, Google Ad Manager (formerly Google DoubleClick for Publishers, DFP), Ezoic, media.net, [Booking.com](https://wpadvancedads.com/booking-com-ads-wordpress/), Tradedoubler, Awin, Getyourguide, The Moneytizer, Infolinks...)
 * dedicated support for all types of Google AdSense ads, including text and display ads, native ads (In-article, In-feed, Multiplex ads), Auto ads, and Auto ads for AMP
 * display images and image banners
 * create content-rich ads with the WordPress TinyMCE editor
@@ -154,7 +154,7 @@ https://vimeo.com/577170591
 >
 > * all add-ons include priority email support
 > * [All Access](https://wpadvancedads.com/add-ons/all-access/?utm_source=wporg&utm_medium=link&utm_campaign=wp-add-ons) – includes all available add-ons
-> * [Advanced Ads Pro](https://wpadvancedads.com/add-ons/advanced-ads-pro/?utm_source=wporg&utm_medium=link&utm_campaign=wp-add-ons) – powerful tools for ad optimizations: cache-busting, more placements, [lazy loading](https://wpadvancedads.com/lazy-load-ads/?utm_source=wporg&utm_medium=link&utm_campaign=features), ad blocker module, [click fraud protection](https://wpadvancedads.com/manual/click-fraud-protection/?utm_source=wporg&utm_medium=link&utm_campaign=features), [geo targeting](https://wpadvancedads.com/add-ons/geo-targeting/?utm_source=wporg&utm_medium=link&utm_campaign=features), and many more
+> * [Advanced Ads Pro](https://wpadvancedads.com/advanced-ads-pro/?utm_source=wporg&utm_medium=link&utm_campaign=wp-add-ons) – powerful tools for ad optimizations: cache-busting, more placements, [lazy loading](https://wpadvancedads.com/lazy-load-ads/?utm_source=wporg&utm_medium=link&utm_campaign=features), ad blocker module, [click fraud protection](https://wpadvancedads.com/manual/click-fraud-protection/?utm_source=wporg&utm_medium=link&utm_campaign=features), [geo targeting](https://wpadvancedads.com/add-ons/geo-targeting/?utm_source=wporg&utm_medium=link&utm_campaign=features), [parallax ads](https://wpadvancedads.com/parallax-ads/?utm_source=wporg&utm_medium=link&utm_campaign=features) and many more
 > * [Tracking](https://wpadvancedads.com/add-ons/tracking/?utm_source=wporg&utm_medium=link&utm_campaign=wp-add-ons) – track ad impressions and ad clicks with local methods or Google Analytics
 > * [Responsive Ads](https://wpadvancedads.com/add-ons/responsive-ads/?utm_source=wporg&utm_medium=link&utm_campaign=wp-add-ons) – target ads to specific browser sizes and create ads for AMP
 > * [Google Ad Manager Integration](https://wpadvancedads.com/add-ons/google-ad-manager/?utm_source=wporg&utm_medium=link&utm_campaign=wp-add-ons) – a quick and error-free way to load ad units from your Google Ad Manager (formerly Google DoubleClick for Publishers, DFP) account without touching any ad codes
@@ -334,17 +334,12 @@ Yes. You can use plenty of [hooks](https://wpadvancedads.com/codex/) to customiz
 
 == Changelog ==
 
-= 1.42.1 (April 12, 2023) =
+= 1.46.0 (August 17, 2023) =
 
-- Improvement: add dismiss buttons to Google AdSense account alerts in the backend
-- Improvement: add JS event on showing a modal
-- Fix: prevent a termination notification after activating a valid licence
-- Fix: remove a bug that prevented the modal from closing
-- Fix: prevent group modal from opening again after saving
-
-= 1.42.0 (March 29, 2023) =
-
-- Improvement: enhance WP Admin performance by minimizing Advanced_Ads_Ad objects
-- Improvement: open the group edit form after creating a new group
-- Improvement: unify checkbox text layout on general settings page
-- Fix: show values in the Ad injection column in the Pages overview
+- Feature: add a direct link to view the ad when a new ad is published
+- Improvement: use adsense ad unit title in adsense earnings metabox
+- Fix: add an "aria-label" attribute to link tags which contain images
+- Fix: add a new Translation promo class, which prevents PHP deprecation notices
+- Fix: prevent deprecation warnings in PHP 8.2
+- Fix: remove unused AMP code that in some cases threw a PHP error
+- Fix: exchange 'wp_img_tag_add_loading_attr' function, which was deprecated in WordPress 6.3,  with 'wp_img_tag_add_loading_optimization_attrs'

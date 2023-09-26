@@ -265,7 +265,7 @@
                         createdRow: function (row, data) {
                             if (isCurrent(data[0])) {
                                 $('td:eq(0)', row).html(
-                                    '<strong class="aam-highlight">' + data[2] + '</strong>'
+                                    '<span class="aam-highlight">' + data[2] + '</span>'
                                 );
                             } else {
                                 $('td:eq(0)', row).html('<span>' + data[2] + '</span>');
@@ -287,50 +287,64 @@
                             var actions = data[3].split(',');
 
                             var container = $('<div/>', { 'class': 'aam-row-actions' });
+
                             $.each(actions, function (i, action) {
                                 switch (action) {
                                     case 'manage':
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-cog ' + (isCurrent(data[0]) ? 'text-muted' : 'text-info')
                                         }).bind('click', function () {
-                                            if (!$(this).prop('disabled')) {
-                                                $(this).prop('disabled', true);
-                                                var title = $('td:eq(0) span', row).html();
-                                                getAAM().setSubject('role', data[0], title, data[4]);
-                                                $('td:eq(0) span', row).replaceWith(
-                                                    '<strong class="aam-highlight">' + title + '</strong>'
-                                                );
+                                            var title = $('td:eq(0) span', row).html();
 
+                                            // Reset all roles
+                                            $('#role-list').DataTable().rows().eq(0).each(function(i) {
+                                                $(
+                                                    'td:eq(0) span',
+                                                    $('#role-list').DataTable().row(i).node()
+                                                ).removeClass('aam-highlight');
+
+                                                $(
+                                                    '.icon-cog',
+                                                    $('#role-list').DataTable().row(i).node()
+                                                ).attr('class', 'aam-row-action icon-cog text-info');
+                                            });
+
+                                            getAAM().setSubject('role', data[0], title, data[4]);
+                                            $('td:eq(0) span', row).replaceWith(
+                                                '<span class="aam-highlight">' + title + '</span>'
+                                            );
+
+                                            $('i.icon-cog', container).attr(
+                                                'class', 'aam-row-action icon-spin4 animate-spin'
+                                            );
+
+                                            if (getAAM().isUI('main')) {
                                                 $('i.icon-cog', container).attr(
                                                     'class', 'aam-row-action icon-spin4 animate-spin'
                                                 );
+                                                getAAM().fetchContent('main');
+                                                $('i.icon-spin4', container).attr(
+                                                    'class', 'aam-row-action icon-cog text-muted'
+                                                );
+                                            } else if (getAAM().isUI('post')) {
+                                                getAAM().fetchPartial('post-access-form', function (content) {
+                                                    $('#metabox-post-access-form').html(content);
 
-                                                if (getAAM().isUI('main')) {
-                                                    $('i.icon-cog', container).attr(
-                                                        'class', 'aam-row-action icon-spin4 animate-spin'
-                                                    );
-                                                    getAAM().fetchContent('main');
+                                                    getAAM().triggerHook('load-access-form', [
+                                                        $('#content-object-type').val(),
+                                                        $('#content-object-id').val(),
+                                                        $(this)
+                                                    ]);
+
                                                     $('i.icon-spin4', container).attr(
                                                         'class', 'aam-row-action icon-cog text-muted'
                                                     );
-                                                } else if (getAAM().isUI('post')) {
-                                                    getAAM().fetchPartial('post-access-form', function (content) {
-                                                        $('#metabox-post-access-form').html(content);
-                                                        getAAM().triggerHook('load-access-form', [
-                                                            $('#content-object-type').val(),
-                                                            $('#content-object-id').val(),
-                                                            $(this)
-                                                        ]);
-                                                        $('i.icon-spin4', container).attr(
-                                                            'class', 'aam-row-action icon-cog text-muted'
-                                                        );
-                                                    });
-                                                }
+                                                });
                                             }
                                         }).attr({
                                             'data-toggle': "tooltip",
                                             'title': getAAM().__('Manage role')
-                                        }).prop('disabled', (isCurrent(data[0]) ? true : false)));
+                                        }));
                                         break;
 
                                     case 'edit':
@@ -497,10 +511,11 @@
                         LoadRolesDropdown();
 
                         //clear add role form first
-                        $('input', '#add-role-modal').val('').focus();
+                        $('input', '#add-role-modal').val('');
+                        $('input[name="name"]', '#add-role-modal').focus();
                     });
 
-                    $('#edit-role-modal').on('shown.bs.modal', function (e) {
+                    $('#edit-role-modal').on('shown.bs.modal', function () {
                         $('input[name="name"]', '#edit-role-modal').focus();
                     });
 
@@ -558,11 +573,13 @@
                                     $('.error-container').removeClass('hidden');
 
                                     // Error summary
-                                    $('#role-error-summary').text(err.responseJSON.message);
+                                    $('#role-error-summary').text(
+                                        'Failed to create new role for the following reason(s)'
+                                    );
                                     $('#role-error-list').empty();
 
-                                    $.each(err.responseJSON.data.details, (p, e) => {
-                                        $('#role-error-list').append(`<li>${e.message}</li>`);
+                                    $.each(err.responseJSON.errors, (_, e) => {
+                                        $('#role-error-list').append(`<li>${e[0]}</li>`);
                                     });
                                 },
                                 complete: function () {
@@ -630,11 +647,13 @@
                                     $('.error-container').removeClass('hidden');
 
                                     // Error summary
-                                    $('#edit-role-error-summary').text(err.responseJSON.message);
+                                    $('#edit-role-error-summary').text(
+                                        'Failed to update role for the following reason(s)'
+                                    );
                                     $('#edit-role-error-list').empty();
 
-                                    $.each(err.responseJSON.data.details, (p, e) => {
-                                        $('#edit-role-error-list').append(`<li>${e.message}</li>`);
+                                    $.each(err.responseJSON.errors, (_, e) => {
+                                        $('#edit-role-error-list').append(`<li>${e[0]}</li>`);
                                     });
                                 },
                                 complete: function () {
@@ -761,7 +780,7 @@
                                 });
                             } else {
                                 $(btn).attr({
-                                    'class': 'aam-row-action icon-lock-open-alt text-warning',
+                                    'class': 'aam-row-action icon-lock-open text-warning',
                                     'title': getAAM().__('Lock user'),
                                     'data-original-title': getAAM().__('Lock user')
                                 });
@@ -783,42 +802,39 @@
              */
             function generateJWT() {
                 if ($('#login-url-preview').length === 1) {
-                    // Build the trigger
-                    var trigger = {
-                        action: $('#action-after-expiration').val()
+                    const action = $('#action-after-expiration').val();
+
+                    const payload = {
+                        user_id: $('#reset-user-expiration-btn').attr('data-user-id'),
+                        expires_at: (new Date($('#user-expires').val() * 1000)).toISOString(),
+                    };
+
+                    if (action) {
+                        payload.additional_claims = {
+                            trigger: {
+                                action
+                            }
+                        }
+
+                        if (action === 'change-role') {
+                            payload.additional_claims.trigger.meta = $('#expiration-change-role').val();
+                        }
                     }
 
-                    if (trigger.action === 'change-role') {
-                        trigger.meta = $('#expiration-change-role').val();
-                    }
-
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/jwt`, {
                         type: 'POST',
                         dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Jwt.generate',
-                            _ajax_nonce: getLocal().nonce,
-                            subject: 'user',
-                            subjectId: $('#reset-user-expiration-btn').attr('data-user-id'),
-                            expires: $('#user-expires').val(),
-                            trigger: trigger,
-                            register: true
+                        data: payload,
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
                         },
                         beforeSend: function () {
                             $('#login-url-preview').val(getAAM().__('Generating URL...'));
                         },
                         success: function (response) {
-                            if (response.status === 'success') {
-                                $('#login-url-preview').val(
-                                    $('#login-url-preview').data('url').replace('%s', response.jwt)
-                                );
-                                $('#login-jwt').val(response.jwt);
-                            } else {
-                                getAAM().notification(
-                                    'danger', getAAM().__('Failed to generate JWT token')
-                                );
-                            }
+                            $('#login-url-preview').val(
+                                $('#login-url-preview').data('url').replace('%s', response.token)
+                            );
                         },
                         error: function () {
                             getAAM().notification('danger');
@@ -999,14 +1015,6 @@
                                                     getAAM().loadRoleList();
                                                     $('#expiration-change-role-holder').addClass('hidden');
                                                 }
-
-                                                // set JWT if defined
-                                                if (settings.length === 4) {
-                                                    $('#login-url-preview').val(
-                                                        $('#login-url-preview').data('url').replace('%s', settings[3])
-                                                    );
-                                                    $('#login-jwt').val(settings[3]);
-                                                }
                                             } else {
                                                 $('#reset-user-expiration-btn, #expiration-change-role-holder').addClass('hidden');
                                                 $('#user-expires, #action-after-expiration, #login-url-preview, #login-url').val('');
@@ -1033,7 +1041,7 @@
                                 case 'lock':
                                     if (getAAM().isUI('main')) {
                                         $(container).append($('<i/>', {
-                                            'class': 'aam-row-action icon-lock-open-alt text-warning'
+                                            'class': 'aam-row-action icon-lock-open text-success'
                                         }).bind('click', function () {
                                             blockUser(data[0], $(this));
                                         }).attr({
@@ -1046,7 +1054,7 @@
                                 case 'no-lock':
                                     if (getAAM().isUI('main')) {
                                         $(container).append($('<i/>', {
-                                            'class': 'aam-row-action icon-lock-open-alt text-muted'
+                                            'class': 'aam-row-action icon-lock-open text-muted'
                                         }).attr({
                                             'data-toggle': "tooltip",
                                             'title': getAAM().__('Lock user')
@@ -1189,8 +1197,7 @@
                         user: $(_this).attr('data-user-id'),
                         expires: $('#user-expires').val(),
                         after: $('#action-after-expiration').val(),
-                        role: $('#expiration-change-role').val(),
-                        jwt: $('#login-jwt').val()
+                        role: $('#expiration-change-role').val()
                     },
                     beforeSend: function () {
                         $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
@@ -1871,7 +1878,7 @@
                     $('.aam-restrict-menu').each(function () {
                         $(this).bind('click', function () {
                             var _this = $(this);
-                            var status = ($('i', $(this)).hasClass('icon-eye-off') ? 1 : 0);
+                            var status = ($('i', $(this)).hasClass('icon-lock') ? 1 : 0);
                             var target = _this.data('target');
 
                             $('i', _this).attr('class', 'icon-spin4 animate-spin');
@@ -1888,23 +1895,27 @@
                                     $('#aam-menu-overwrite').show();
 
                                     if (status) { //locked the menu
-                                        $('.aam-inner-tab', target).append(
-                                            $('<div/>', { 'class': 'aam-lock' })
+                                        $('.aam-menu-expended-list', target).append(
+                                            $('<div/>', { 'class': 'aam-lock' }).append(
+                                                getAAM().__('The entire menu is restricted with all submenus')
+                                            )
                                         );
                                         _this.removeClass('btn-danger').addClass('btn-primary');
-                                        _this.html('<i class="icon-eye"></i>' + getAAM().__('Show Menu'));
-                                        //add menu restricted indicator
+                                        _this.html('<i class="icon-lock-open"></i>' + getAAM().__('Show Menu'));
+
                                         var ind = $('<i/>', {
-                                            'class': 'aam-panel-title-icon icon-eye-off text-danger'
+                                            'class': 'aam-panel-title-icon icon-lock text-danger'
                                         });
                                         $('.panel-title', target + '-heading').append(ind);
                                     } else {
-                                        $('.aam-lock', target).remove();
                                         _this.removeClass('btn-primary').addClass('btn-danger');
+
                                         _this.html(
-                                            '<i class="icon-eye-off"></i>' + getAAM().__('Restrict Menu')
+                                            '<i class="icon-lock"></i>' + getAAM().__('Restrict Menu')
                                         );
-                                        $('.panel-title .icon-eye-off', target + '-heading').remove();
+                                        $('.panel-title .icon-lock', target + '-heading').remove();
+
+                                        getAAM().fetchContent('main');
                                     }
                                 } else {
                                     _this.prop('checked', !status);
@@ -1922,20 +1933,26 @@
                         });
                     });
 
-                    $('input[type="checkbox"]', '#admin-menu').each(function () {
+                    $('.aam-accordion-action', '#admin-menu').each(function () {
                         $(this).bind('click', function () {
                             var _this = $(this);
 
+                            const status = _this.hasClass('icon-lock-open') ? 1 : 0;
+
+                            // Show loading indicator
+                            _this.attr('class', 'aam-accordion-action icon-spin4 animate-spin');
+
                             save(
                                 [_this.data('menu-id')],
-                                _this.is(':checked') ? 1 : 0,
+                                status,
                                 function (result) {
                                     if (result.status === 'success') {
                                         $('#aam-menu-overwrite').show();
-                                        if (_this.is(':checked')) {
-                                            _this.next().attr('data-original-title', getAAM().__('Uncheck to allow'));
+
+                                        if (status) {
+                                            _this.attr('class', 'aam-accordion-action icon-lock text-danger');
                                         } else {
-                                            _this.next().attr('data-original-title', getAAM().__('Check to restrict'));
+                                            _this.attr('class', 'aam-accordion-action icon-lock-open text-success');
                                         }
                                     }
                                 }
@@ -1947,6 +1964,10 @@
                     $('#menu-reset').bind('click', function () {
                         getAAM().reset('Main_Menu.reset', $(this));
                     });
+
+                    $('[data-toggle="toggle"]', '#admin_menu-content').bootstrapToggle();
+
+                    getAAM().triggerHook('init-backend-menu');
                 }
             }
 
@@ -2003,15 +2024,14 @@
                     $('.aam-restrict-toolbar').each(function () {
                         $(this).bind('click', function () {
                             var _this = $(this);
-                            var status = ($('i', $(this)).hasClass('icon-eye-off') ? 1 : 0);
+                            var status = ($('i', $(this)).hasClass('icon-lock') ? 1 : 0);
                             var target = _this.data('target');
 
                             $('i', _this).attr('class', 'icon-spin4 animate-spin');
 
                             var items = new Array(_this.data('toolbar'));
 
-                            $('input', target).each(function () {
-                                $(this).prop('checked', status ? true : false);
+                            $('.aam-accordion-action', target).each(function () {
                                 items.push($(this).data('toolbar'));
                             });
 
@@ -2020,23 +2040,29 @@
                                     $('#aam-toolbar-overwrite').show();
 
                                     if (status) { //locked the menu
-                                        $('.aam-inner-tab', target).append(
-                                            $('<div/>', { 'class': 'aam-lock' })
+                                        $('.aam-menu-expended-list', target).append(
+                                            $('<div/>', { 'class': 'aam-lock' }).append(
+                                                getAAM().__('The entire menu is restricted with all submenus')
+                                            )
                                         );
                                         _this.removeClass('btn-danger').addClass('btn-primary');
-                                        _this.html('<i class="icon-eye"></i>' + getAAM().__('Show Menu'));
+                                        _this.html('<i class="icon-lock-open"></i>' + getAAM().__('Show Menu'));
+
                                         //add menu restricted indicator
                                         var ind = $('<i/>', {
-                                            'class': 'aam-panel-title-icon icon-eye-off text-danger'
+                                            'class': 'aam-panel-title-icon icon-lock text-danger'
                                         });
                                         $('.panel-title', target + '-heading').append(ind);
                                     } else {
-                                        $('.aam-lock', target).remove();
                                         _this.removeClass('btn-primary').addClass('btn-danger');
+
                                         _this.html(
-                                            '<i class="icon-eye-off"></i>' + getAAM().__('Restrict Menu')
+                                            '<i class="icon-lock"></i>' + getAAM().__('Hide Menu')
                                         );
-                                        $('.panel-title .icon-eye-off', target + '-heading').remove();
+
+                                        $('.panel-title .icon-lock', target + '-heading').remove();
+
+                                        getAAM().fetchContent('main');
                                     }
                                 } else {
                                     _this.prop('checked', !status);
@@ -2058,26 +2084,36 @@
                         getAAM().reset('Main_Toolbar.reset', $(this));
                     });
 
-                    $('input[type="checkbox"]', '#toolbar-list').each(function () {
+                    $('.aam-accordion-action', '#toolbar-list').each(function () {
                         $(this).bind('click', function () {
                             var _this = $(this);
+
+                            const status = _this.hasClass('icon-lock-open') ? 1 : 0;
+
+                            // Show loading indicator
+                            _this.attr('class', 'aam-accordion-action icon-spin4 animate-spin');
+
                             save(
-                                [$(this).data('toolbar')],
-                                $(this).is(':checked') ? 1 : 0,
+                                [_this.data('toolbar')],
+                                status,
                                 function (result) {
                                     if (result.status === 'success') {
                                         $('#aam-toolbar-overwrite').show();
 
-                                        if (_this.is(':checked')) {
-                                            _this.next().attr('data-original-title', getAAM().__('Uncheck to show'));
+                                        if (status) {
+                                            _this.attr('class', 'aam-accordion-action icon-lock text-danger');
                                         } else {
-                                            _this.next().attr('data-original-title', getAAM().__('Check to hide'));
+                                            _this.attr('class', 'aam-accordion-action icon-lock-open text-success');
                                         }
                                     }
                                 }
                             );
                         });
                     });
+
+                    $('[data-toggle="toggle"]', '#toolbar-content').bootstrapToggle();
+
+                    getAAM().triggerHook('init-admin-toolbar');
                 }
             }
 
@@ -2247,26 +2283,34 @@
                         getAAM().reset('Main_Metabox.reset', $(this));
                     });
 
-                    $('input[type="checkbox"]', '#metabox-list').each(function () {
+                    $('.aam-accordion-action', '#metabox-list').each(function () {
                         $(this).bind('click', function () {
                             var _this = $(this);
+
+                            const status = _this.hasClass('icon-lock-open') ? 1 : 0;
+
+                            // Show loading indicator
+                            _this.attr('class', 'aam-accordion-action icon-spin4 animate-spin');
+
                             save(
                                 [$(this).data('metabox')],
-                                $(this).is(':checked'),
+                                status,
                                 function (result) {
                                     if (result.status === 'success') {
                                         $('#aam-metabox-overwrite').show();
 
-                                        if (_this.is(':checked')) {
-                                            _this.next().attr('data-original-title', getAAM().__('Uncheck to show'));
+                                        if (status) {
+                                            _this.attr('class', 'aam-accordion-action icon-lock text-danger');
                                         } else {
-                                            _this.next().attr('data-original-title', getAAM().__('Check to hide'));
+                                            _this.attr('class', 'aam-accordion-action icon-lock-open text-success');
                                         }
                                     }
                                 }
                             );
                         });
                     });
+
+                    getAAM().triggerHook('init-metabox');
                 }
             }
 
@@ -3370,27 +3414,15 @@
          */
         (function ($) {
 
-            /**
-             *
-             * @param {type} items
-             * @param {type} status
-             * @param {type} successCallback
-             * @returns {undefined}
-             */
-            function save(param, value, successCallback) {
+            function save(payload, successCallback) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/403`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Redirect.save',
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            _ajax_nonce: getLocal().nonce,
-                            param: param,
-                            value: value
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
                         },
+                        dataType: 'json',
+                        data: payload,
                         success: function (response) {
                             successCallback(response);
                         },
@@ -3411,42 +3443,92 @@
                 if ($(container).length) {
                     $('input[type="radio"]', container).each(function () {
                         $(this).bind('click', function () {
-                            //hide group
-                            $('.' + $(this).data('group')).hide();
+                            // Determine area
+                            const area = $(this).data('group');
 
-                            //show the specific one
+                            // Hide group
+                            $('.' + area).hide();
+
+                            // Show the specific one
                             $($(this).data('action')).show();
 
-                            //save redirect type
-                            save(
-                                $(this).attr('name'),
-                                $(this).val(),
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-redirect-overwrite').show();
-                                    }
-                                }
-                            );
+                            // Now, if the redirect type is default, then
+                            // save the data, otherwise save only when more detail
+                            // provided
+                            const type = $(this).val();
+
+                            if (type === 'default') {
+                                save(getAAM().prepareRequestSubjectData({ area, type }), () => {
+                                    $('#aam-redirect-overwrite').show();
+                                });
+                            }
                         });
                     });
 
                     $('input[type="text"],select,textarea', container).each(function () {
                         $(this).bind('change', function () {
+                            const value = $.trim($(this).val());
+
+                            let area;
+                            if ($(this).attr('id') === 'frontend-page') {
+                                area = 'frontend';
+                            } else if ($(this).attr('id') === 'backend-page') {
+                                area = 'backend';
+                            } else {
+                                area = $(this).data('group');
+                            }
+
+                            // Determining type
+                            const type = $(`input[name="${area}.redirect.type"]:checked`).val();
+
+                            const payload = {
+                                area,
+                                type
+                            };
+
+                            if (type === 'page_redirect') {
+                                payload.redirect_page_id = value;
+                            } else if (type === 'url_redirect') {
+                                payload.redirect_url = value;
+                            } else if (type === 'trigger_callback') {
+                                payload.callback = value;
+                            } else if (type === 'custom_message') {
+                                payload.message = value;
+                            }
+
                             //save redirect type
-                            save(
-                                $(this).attr('name'),
-                                $(this).val(),
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-redirect-overwrite').show();
-                                    }
-                                }
-                            );
+                            save(getAAM().prepareRequestSubjectData(payload), () => {
+                                $('#aam-redirect-overwrite').show();
+                            });
                         });
                     });
 
                     $('#redirect-reset').bind('click', function () {
-                        getAAM().reset('Main_Redirect.reset', $(this));
+                        const _btn = $(this);
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/403`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            beforeSend: function () {
+                                var label = _btn.text();
+                                _btn.attr('data-original-label', label);
+                                _btn.text(getAAM().__('Resetting...'));
+                            },
+                            success: function () {
+                                getAAM().fetchContent('main');
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                _btn.text(_btn.attr('data-original-label'));
+                            }
+                        });
                     });
                 }
             }
@@ -3466,25 +3548,20 @@
 
             /**
              *
-             * @param {type} items
-             * @param {type} status
-             * @param {type} successCallback
-             * @returns {undefined}
+             * @param {payload}  payload
+             * @param {function} successCallback
+             *
+             * @returns {void}
              */
-            function save(param, value, successCallback) {
+            function save(payload, successCallback) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/login`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_LoginRedirect.save',
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            _ajax_nonce: getLocal().nonce,
-                            param: param,
-                            value: value
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
                         },
+                        dataType: 'json',
+                        data: payload,
                         success: function (response) {
                             successCallback(response);
                         },
@@ -3505,48 +3582,75 @@
                 if ($(container).length) {
                     $('input[type="radio"]', container).each(function () {
                         $(this).bind('click', function () {
-                            //hide all fields
+                            // Hide all fields
                             $('.login-redirect-action').hide();
 
-                            //show the specific one
+                            // Show the specific one
                             $($(this).data('action')).show();
 
-                            //save redirect type
-                            save(
-                                $(this).attr('name'),
-                                $(this).val(),
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-login-redirect-overwrite').show();
-                                    }
-                                }
-                            );
+                            // Now, if the login redirect type is default, then
+                            // save the data, otherwise save only when more detail
+                            // provided
+                            const type = $(this).val();
+
+                            if (type === 'default') {
+                                save(getAAM().prepareRequestSubjectData({ type }), () => {
+                                    $('#aam-login-redirect-overwrite').show();
+                                });
+                            }
                         });
                     });
 
-                    $('input[type="text"],select,textarea', container).each(function () {
+                    $('input[type="text"],select', container).each(function () {
                         $(this).bind('change', function () {
-                            if ($(this).is('input[type="checkbox"]')) {
-                                var val = $(this).prop('checked') ? $(this).val() : 0;
+                            const value = $.trim($(this).val());
+                            const type  = $('input[name="login.redirect.type"]:checked').val();
+
+                            const payload = {
+                                type
+                            };
+
+                            if (type === 'page_redirect') {
+                                payload.redirect_page_id = value;
+                            } else if (type === 'url_redirect') {
+                                payload.redirect_url = value;
                             } else {
-                                val = $.trim($(this).val());
+                                payload.callback = value;
                             }
 
                             //save redirect type
-                            save(
-                                $(this).attr('name'),
-                                val,
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-login-redirect-overwrite').show();
-                                    }
-                                }
-                            );
+                            save(getAAM().prepareRequestSubjectData(payload), () => {
+                                $('#aam-login-redirect-overwrite').show();
+                            });
                         });
                     });
 
                     $('#login-redirect-reset').bind('click', function () {
-                        getAAM().reset('Main_LoginRedirect.reset', $(this));
+                        const _btn = $(this);
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/login`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            beforeSend: function () {
+                                var label = _btn.text();
+                                _btn.attr('data-original-label', label);
+                                _btn.text(getAAM().__('Resetting...'));
+                            },
+                            success: function () {
+                                getAAM().fetchContent('main');
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                _btn.text(_btn.attr('data-original-label'));
+                            }
+                        });
                     });
                 }
             }
@@ -3571,20 +3675,15 @@
              * @param {type} successCallback
              * @returns {undefined}
              */
-            function save(param, value, successCallback) {
+            function save(payload, successCallback) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/logout`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_LogoutRedirect.save',
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            _ajax_nonce: getLocal().nonce,
-                            param: param,
-                            value: value
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
                         },
+                        dataType: 'json',
+                        data: payload,
                         success: function (response) {
                             successCallback(response);
                         },
@@ -3611,36 +3710,69 @@
                             //show the specific one
                             $($(this).data('action')).show();
 
-                            //save redirect type
-                            save(
-                                $(this).attr('name'),
-                                $(this).val(),
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-logout-redirect-overwrite').show();
-                                    }
-                                }
-                            );
+                            // Now, if the login redirect type is default, then
+                            // save the data, otherwise save only when more detail
+                            // provided
+                            const type = $(this).val();
+
+                            if (type === 'default') {
+                                save(getAAM().prepareRequestSubjectData({ type }), () => {
+                                    $('#aam-logout-redirect-overwrite').show();
+                                });
+                            }
                         });
                     });
 
-                    $('input[type="text"],select,textarea', container).each(function () {
+                    $('input[type="text"],select', container).each(function () {
                         $(this).bind('change', function () {
+                            const value = $.trim($(this).val());
+                            const type  = $('input[name="logout.redirect.type"]:checked').val();
+
+                            const payload = {
+                                type
+                            };
+
+                            if (type === 'page_redirect') {
+                                payload.redirect_page_id = value;
+                            } else if (type === 'url_redirect') {
+                                payload.redirect_url = value;
+                            } else {
+                                payload.callback = value;
+                            }
+
                             //save redirect type
-                            save(
-                                $(this).attr('name'),
-                                $(this).val(),
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-logout-redirect-overwrite').show();
-                                    }
-                                }
-                            );
+                            save(getAAM().prepareRequestSubjectData(payload), () => {
+                                $('#aam-logout-redirect-overwrite').show();
+                            });
                         });
                     });
 
                     $('#logout-redirect-reset').bind('click', function () {
-                        getAAM().reset('Main_LogoutRedirect.reset', $(this));
+                        const _btn = $(this);
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/logout`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            beforeSend: function () {
+                                var label = _btn.text();
+                                _btn.attr('data-original-label', label);
+                                _btn.text(getAAM().__('Resetting...'));
+                            },
+                            success: function () {
+                                getAAM().fetchContent('main');
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                _btn.text(_btn.attr('data-original-label'));
+                            }
+                        });
                     });
                 }
             }
@@ -3660,28 +3792,22 @@
 
             /**
              *
-             * @param {type} param
-             * @param {type} value
+             * @param {type} items
+             * @param {type} status
+             * @param {type} successCallback
              * @returns {undefined}
              */
-            function save(param, value, cb) {
+            function save(payload, successCallback) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/404`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_404Redirect.save',
-                            _ajax_nonce: getLocal().nonce,
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            param: param,
-                            value: value
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
                         },
+                        dataType: 'json',
+                        data: payload,
                         success: function (response) {
-                            if (typeof cb === 'function') {
-                                cb(response);
-                            }
+                            successCallback(response);
                         },
                         error: function () {
                             getAAM().notification('danger');
@@ -3706,28 +3832,69 @@
                             //show the specific one
                             $($(this).data('action')).show();
 
-                            //save redirect type
-                            save(
-                                $(this).attr('name'),
-                                $(this).val(),
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-404redirect-overwrite').show();
-                                    }
-                                }
-                            );
+                            // Now, if the login redirect type is default, then
+                            // save the data, otherwise save only when more detail
+                            // provided
+                            const type = $(this).val();
+
+                            if (type === 'default') {
+                                save(getAAM().prepareRequestSubjectData({ type }), () => {
+                                    $('#aam-404redirect-overwrite').show();
+                                });
+                            }
                         });
                     });
 
-                    $('input[type="text"],select,textarea', container).each(function () {
+                    $('input[type="text"],select', container).each(function () {
                         $(this).bind('change', function () {
+                            const value = $.trim($(this).val());
+                            const type  = $('input[name="404.redirect.type"]:checked').val();
+
+                            const payload = {
+                                type
+                            };
+
+                            if (type === 'page_redirect') {
+                                payload.redirect_page_id = value;
+                            } else if (type === 'url_redirect') {
+                                payload.redirect_url = value;
+                            } else {
+                                payload.callback = value;
+                            }
+
                             //save redirect type
-                            save($(this).attr('name'), $(this).val());
+                            save(getAAM().prepareRequestSubjectData(payload), () => {
+                                $('#aam-404redirect-overwrite').show();
+                            });
                         });
                     });
 
                     $('#404redirect-reset').bind('click', function () {
-                        getAAM().reset('Main_404Redirect.reset', $(this));
+                        const _btn = $(this);
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/404`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            beforeSend: function () {
+                                var label = _btn.text();
+                                _btn.attr('data-original-label', label);
+                                _btn.text(getAAM().__('Resetting...'));
+                            },
+                            success: function () {
+                                getAAM().fetchContent('main');
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                _btn.text(_btn.attr('data-original-label'));
+                            }
+                        });
                     });
                 }
             }
@@ -3747,41 +3914,29 @@
 
             /**
              *
-             * @param {type} type
-             * @param {type} route
-             * @param {type} method
+             * @param {type} id
              * @param {type} btn
              * @returns {undefined}
              */
-            function save(type, route, method, btn) {
+            function save(id, btn) {
                 var value = $(btn).hasClass('icon-check-empty');
 
                 getAAM().queueRequest(function () {
                     //show indicator
                     $(btn).attr('class', 'aam-row-action icon-spin4 animate-spin');
 
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/api-route/${id}`, {
                         type: 'POST',
                         dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Route.save',
-                            _ajax_nonce: getLocal().nonce,
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            type: type,
-                            route: route,
-                            method: method,
-                            value: value
+                        data: getAAM().prepareRequestSubjectData({
+                            is_restricted: value
+                        }),
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
                         },
-                        success: function (response) {
-                            if (response.status === 'failure') {
-                                getAAM().notification('danger', response.error);
-                                updateBtn(btn, value ? 0 : 1);
-                            } else {
-                                $('#aam-route-overwrite').removeClass('hidden');
-                                updateBtn(btn, value);
-                            }
+                        success: function () {
+                            $('#aam-route-overwrite').removeClass('hidden');
+                            updateBtn(btn, value);
                         },
                         error: function () {
                             updateBtn(btn, value ? 0 : 1);
@@ -3807,6 +3962,23 @@
 
             /**
              *
+             * @param {*} text
+             * @returns
+             */
+            function escapeHtml(text) {
+                var map = {
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  '"': '&quot;',
+                  "'": '&#039;'
+                };
+
+                return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+            }
+
+            /**
+             *
              * @returns {undefined}
              */
             function initialize() {
@@ -3818,18 +3990,31 @@
                         pagingType: 'simple',
                         serverSide: false,
                         ajax: {
-                            url: getLocal().ajaxurl,
-                            type: 'POST',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Main_Route.getTable',
-                                _ajax_nonce: getLocal().nonce,
-                                subject: getAAM().getSubject().type,
-                                subjectId: getAAM().getSubject().id
+                            url: `${getLocal().rest_base}aam/v2/service/api-route`,
+                            type: 'GET',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            dataSrc: function (routes) {
+                                // Transform the received data into DT format
+                                const data = [];
+
+                                $.each(routes, (_, route) => {
+                                    data.push([
+                                        route.id,
+                                        route.method,
+                                        escapeHtml(route.route),
+                                        route.is_restricted ? 'checked' : 'unchecked'
+                                    ]);
+                                });
+
+                                return data;
                             }
                         },
                         columnDefs: [
-                            { visible: false, targets: [0, 1] },
+                            { visible: false, targets: [0] },
                             { className: 'text-center', targets: [0, 1] }
                         ],
                         language: {
@@ -3844,12 +4029,12 @@
                         createdRow: function (row, data) {
                             // decorate the method
                             var method = $('<span/>', {
-                                'class': 'aam-api-method ' + data[2].toLowerCase()
-                            }).text(data[2]);
+                                'class': 'aam-api-method ' + data[1].toLowerCase()
+                            }).text(data[1]);
 
                             $('td:eq(0)', row).html(method);
 
-                            var actions = data[4].split(',');
+                            var actions = data[3].split(',');
 
                             var container = $('<div/>', { 'class': 'aam-row-actions' });
                             $.each(actions, function (i, action) {
@@ -3858,7 +4043,7 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action text-muted icon-check-empty'
                                         }).bind('click', function () {
-                                            save(data[1], data[0], data[2], this);
+                                            save(data[0], this);
                                         }));
                                         break;
 
@@ -3866,7 +4051,7 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action text-danger icon-check'
                                         }).bind('click', function () {
-                                            save(data[1], data[0], data[2], this);
+                                            save(data[0], this);
                                         }));
                                         break;
 
@@ -3880,8 +4065,35 @@
 
                     //reset button
                     $('#route-reset').bind('click', function () {
-                        getAAM().reset('Main_Route.reset', $(this));
+                        const _btn = $(this);
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/api-route/reset`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            beforeSend: function () {
+                                var label = _btn.text();
+                                _btn.attr('data-original-label', label);
+                                _btn.text(getAAM().__('Resetting...'));
+                            },
+                            success: function () {
+                                getAAM().fetchContent('main');
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                _btn.text(_btn.attr('data-original-label'));
+                            }
+                        });
                     });
+
+                    $('[data-toggle="toggle"]', '#route-content').bootstrapToggle();
+
+                    getAAM().triggerHook('init-api-route');
                 }
             }
 
@@ -3897,25 +4109,6 @@
          * @returns {void}
          */
         (function ($) {
-
-            /**
-             *
-             * @returns
-             */
-            function prepareRequestSubjectData(mergeWith = {}) {
-                // Prepare the payload
-                const data = {
-                    access_level: getAAM().getSubject().type
-                };
-
-                if (data.access_level === 'role') {
-                    data.role_id = getAAM().getSubject().id;
-                } else if (data.access_level === 'user') {
-                    data.user_id = getAAM().getSubject().id;
-                }
-
-                return Object.assign({}, mergeWith, data);
-            }
 
             /**
              *
@@ -3952,7 +4145,7 @@
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce
                             },
-                            data: prepareRequestSubjectData(),
+                            data: getAAM().prepareRequestSubjectData(),
                             dataType: 'json',
                             beforeSend: function () {
                                 var label = _btn.text();
@@ -4016,7 +4209,7 @@
                             $.ajax(endpoint, {
                                 type: 'POST',
                                 dataType: 'json',
-                                data: prepareRequestSubjectData(payload),
+                                data: getAAM().prepareRequestSubjectData(payload),
                                 headers: {
                                     'X-WP-Nonce': getLocal().rest_nonce,
                                 },
@@ -4048,7 +4241,7 @@
                         $.ajax(`${getLocal().rest_base}aam/v2/service/url/${id}`, {
                             type: 'POST',
                             dataType: 'json',
-                            data: prepareRequestSubjectData(),
+                            data: getAAM().prepareRequestSubjectData(),
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce,
                                 'X-HTTP-Method-Override': 'DELETE'
@@ -4085,7 +4278,7 @@
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce
                             },
-                            data: prepareRequestSubjectData(),
+                            data: getAAM().prepareRequestSubjectData(),
                             dataType: 'json',
                             dataSrc: function (json) {
                                 // Transform the received data into DT format
@@ -4261,52 +4454,6 @@
 
             /**
              *
-             * @param {type} expires
-             * @returns {undefined}
-             */
-            function generateJWT(expires, refreshable) {
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Main_Jwt.generate',
-                        _ajax_nonce: getLocal().nonce,
-                        subject: getAAM().getSubject().type,
-                        subjectId: getAAM().getSubject().id,
-                        expires: expires,
-                        refreshable: refreshable,
-                        register: false
-                    },
-                    beforeSend: function () {
-                        $('#jwt-token-preview').val(
-                            getAAM().__('Generating token...')
-                        );
-
-                        $('#jwt-url-preview').val(
-                            getAAM().__('Generating URL...')
-                        );
-                    },
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            $('#jwt-token-preview').val(response.jwt);
-                            $('#jwt-url-preview').val(
-                                $('#jwt-url-preview').data('url').replace('%s', response.jwt)
-                            );
-                        } else {
-                            getAAM().notification(
-                                'danger', getAAM().__('Failed to generate JWT token')
-                            );
-                        }
-                    },
-                    error: function () {
-                        getAAM().notification('danger');
-                    }
-                });
-            }
-
-            /**
-             *
              */
             function initialize() {
                 var container = '#jwt-content';
@@ -4326,6 +4473,8 @@
                         sideBySide: true
                     });
 
+                    let jwtClaimsEditor;
+
                     $('#create-jwt-modal').on('show.bs.modal', function () {
                         try {
                             var tomorrow = new Date();
@@ -4334,25 +4483,29 @@
                                 tomorrow
                             );
                             $('#jwt-expires').val('');
+
+                            $('#aam-jwt-claims-editor').val('{\n  \n}')
+
+                            if (!$('#aam-jwt-claims-editor').next().hasClass('CodeMirror')) {
+                                jwtClaimsEditor = wp.CodeMirror.fromTextArea(
+                                    document.getElementById("aam-jwt-claims-editor"),
+                                    {
+                                        type: 'application/json'
+                                    }
+                                );
+                            }
                         } catch (e) {
                             // do nothing. Prevent from any kind of corrupted data
                         }
                     });
 
                     $('#jwt-expiration-datapicker').on('dp.change', function (res) {
-                        $('#jwt-expires').val(res.date.unix());
-                        generateJWT(
-                            $('#jwt-expires').val(),
-                            $('#jwt-refreshable').is(':checked')
-                        );
+                        $('#jwt-expires').val(res.date.toISOString());
                     });
 
-                    $('#jwt-refreshable').on('change', function () {
-                        generateJWT(
-                            $('#jwt-expires').val(),
-                            $('#jwt-refreshable').is(':checked')
-                        );
-                    });
+                    // Prepare the URL endpoint
+                    let url  = `${getLocal().rest_base}aam/v2/service/jwt`;
+                        url += `?user_id=${getAAM().getSubject().id}&fields=claims,token,id,signed_url,is_valid`;
 
                     $('#jwt-list').DataTable({
                         autoWidth: false,
@@ -4363,15 +4516,36 @@
                         stateSave: false,
                         serverSide: false,
                         ajax: {
-                            url: getLocal().ajaxurl,
-                            type: 'POST',
+                            url,
+                            type: 'GET',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
                             dataType: 'json',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Main_Jwt.getTable',
-                                _ajax_nonce: getLocal().nonce,
-                                subject: getAAM().getSubject().type,
-                                subjectId: getAAM().getSubject().id
+                            dataSrc: function (tokens) {
+                                // Transform the received data into DT format
+                                const data = [];
+
+                                $.each(tokens, (_, token) => {
+                                    let details;
+
+                                    if (token.is_valid) {
+                                        details = 'Expires On: ' + (new Date(token.claims.exp * 1000)).toDateString()
+                                    } else {
+                                        details = 'Token is no longer valid';
+                                    }
+
+                                    data.push([
+                                        token.id,
+                                        token.token,
+                                        token.signed_url,
+                                        token.is_valid,
+                                        details,
+                                        'view,delete'
+                                    ]);
+                                });
+
+                                return data;
                             }
                         },
                         language: {
@@ -4384,8 +4558,8 @@
                             lengthMenu: '_MENU_'
                         },
                         columnDefs: [
-                            { visible: false, targets: [0, 1] },
-                            { orderable: false, targets: [0, 1, 2, 4] }
+                            { visible: false, targets: [0, 1, 2] },
+                            { orderable: false, targets: [0, 1, 2, 3, 5] }
                         ],
                         initComplete: function () {
                             var create = $('<a/>', {
@@ -4400,7 +4574,7 @@
                         },
                         createdRow: function (row, data) {
                             // Render status
-                            if (data[2] === true) {
+                            if (data[3] === true) {
                                 $('td:eq(0)', row).html(
                                     '<i class="icon-ok-circled text-success"></i>'
                                 );
@@ -4410,7 +4584,12 @@
                                 );
                             }
 
-                            var actions = data[4].split(',');
+                            // Token details
+                            $('td:eq(1)', row).html(
+                                data[0] + '<br/><small>' + data[4] + '</small>'
+                            )
+
+                            var actions = data[5].split(',');
 
                             var container = $('<div/>', { 'class': 'aam-row-actions' });
                             $.each(actions, function (i, action) {
@@ -4431,8 +4610,8 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-eye text-success'
                                         }).bind('click', function () {
-                                            $('#view-jwt-token').val(data[0]);
-                                            $('#view-jwt-url').val(data[1]);
+                                            $('#view-jwt-token').val(data[1]);
+                                            $('#view-jwt-url').val(data[2]);
                                             $('#view-jwt-modal').modal('show');
                                         }).attr({
                                             'data-toggle': "tooltip",
@@ -4449,27 +4628,40 @@
                     });
 
                     $('#create-jwt-btn').bind('click', function () {
-                        $.ajax(getLocal().ajaxurl, {
+                        // Preparing the payload
+                        const payload = {
+                            user_id: getAAM().getSubject().id,
+                            is_refreshable: $('#jwt-refreshable').is(':checked'),
+                            expires_at: $('#jwt-expires').val()
+                        }
+
+                        try {
+                            const claims = JSON.parse(jwtClaimsEditor.getValue());
+
+                            if (Object.keys(claims).length > 0) {
+                                payload.additional_claims = claims;
+                            }
+                        } catch (e) {
+                            console.log(e);
+                        }
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/jwt?fields=token,signed_url`, {
                             type: 'POST',
                             dataType: 'json',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Main_Jwt.save',
-                                _ajax_nonce: getLocal().nonce,
-                                subject: getAAM().getSubject().type,
-                                subjectId: getAAM().getSubject().id,
-                                token: $('#jwt-token-preview').val()
+                            data: payload,
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
                             },
                             beforeSend: function () {
                                 $('#create-jwt-btn').html(getAAM().__('Creating...'));
                             },
                             success: function (response) {
-                                if (response.status === 'success') {
-                                    $('#create-jwt-modal').modal('hide');
-                                    $('#jwt-list').DataTable().ajax.reload();
-                                } else {
-                                    getAAM().notification('danger', response.reason);
-                                }
+                                $('#create-jwt-modal').modal('hide');
+                                $('#jwt-list').DataTable().ajax.reload();
+
+                                $('#view-jwt-token').val(response.token);
+                                $('#view-jwt-url').val(response.signed_url);
+                                $('#view-jwt-modal').modal('show');
                             },
                             error: function () {
                                 getAAM().notification('danger');
@@ -4481,27 +4673,22 @@
                     });
 
                     $('#jwt-delete-btn').bind('click', function () {
-                        $.ajax(getLocal().ajaxurl, {
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/jwt/${$('#jwt-delete-btn').attr('data-id')}`, {
                             type: 'POST',
                             dataType: 'json',
                             data: {
-                                action: 'aam',
-                                sub_action: 'Main_Jwt.delete',
-                                _ajax_nonce: getLocal().nonce,
-                                subject: getAAM().getSubject().type,
-                                subjectId: getAAM().getSubject().id,
-                                token: $('#jwt-delete-btn').attr('data-id')
+                                user_id: getAAM().getSubject().id
+                            },
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
                             },
                             beforeSend: function () {
                                 $('#jwt-delete-btn').html(getAAM().__('Deleting...'));
                             },
-                            success: function (response) {
-                                if (response.status === 'success') {
-                                    $('#delete-jwt-modal').modal('hide');
-                                    $('#jwt-list').DataTable().ajax.reload();
-                                } else {
-                                    getAAM().notification('danger', response.reason);
-                                }
+                            success: function () {
+                                $('#delete-jwt-modal').modal('hide');
+                                $('#jwt-list').DataTable().ajax.reload();
                             },
                             error: function () {
                                 getAAM().notification('danger');
@@ -4638,10 +4825,15 @@
                     });
 
                     $('input[type="checkbox"]', '.aam-feature.settings').bind('change', function () {
-                        save(
-                            $(this).attr('name'),
-                            $(this).prop('checked')
-                        );
+                        let value;
+
+                        if ($(this).prop('checked')) {
+                            value = $(this).data('value-on') || true;
+                        } else {
+                            value = $(this).data('value-off') || false;
+                        }
+
+                        save($(this).attr('name'), value);
                     });
 
                     $('#clear-settings').bind('click', function () {
@@ -4855,6 +5047,90 @@
                     complete: function () {
                         _this.text(getAAM().__('Reset')).prop('disabled', false);
                     }
+                });
+            });
+        })(jQuery);
+
+        /**
+         * Support tab
+         */
+         (function ($) {
+            const input = {
+                fullname: null,
+                email: null,
+                message: null
+            };
+
+            function Recalibrate() {
+                if (input.message && input.email) {
+                    $('#send-message-btn').removeAttr('disabled');
+                } else {
+                    $('#send-message-btn').attr('disabled', true);
+                }
+            }
+
+            getAAM().addHook('init', function() {
+                $('#support-message').on('keyup', function() {
+                    $('#message-countdown').text(700 - $(this).val().length);
+
+                    input.message = $(this).val().trim();
+
+                    Recalibrate();
+                });
+
+                $('#support-email').on('change', function() {
+                    input.email = $(this).val().trim();
+
+                    Recalibrate();
+                });
+
+                $('#support-fullname').on('change', function() {
+                    input.fullname = $(this).val().trim();
+                });
+
+                $('#send-message-btn').bind('click', () => {
+                    $.ajax(`${getLocal().rest_base}aam/v2/support`, {
+                        type: 'POST',
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
+                        },
+                        dataType: 'json',
+                        data: input,
+                        beforeSend: function () {
+                            $('#send-message-btn').text(
+                                getAAM().__('Submitting...')
+                            ).attr('disabled', true);
+                        },
+                        success: function () {
+                            getAAM().notification(
+                                'success',
+                                'Message submitted successfully!'
+                            );
+
+                            input.message = null;
+                            $('#support-message').val('');
+
+                            Recalibrate();
+                        },
+                        error: function (err) {
+                            if (err.status === 400) {
+                                getAAM().notification(
+                                    'danger', err.responseJSON.message
+                                );
+                            } else {
+                                getAAM().notification(
+                                    'danger',
+                                    Object.values(err.responseJSON.errors).join('; ')
+                                );
+                            }
+                            $('#send-message-btn').removeAttr('disabled');
+                        },
+                        complete: function () {
+                            $('#send-message-btn').text(
+                                getAAM().__('Send the Message')
+                            );
+                        }
+                    });
                 });
             });
         })(jQuery);
@@ -5260,10 +5536,12 @@
         //help tooltip
         $('body').delegate('[data-toggle="tooltip"]', 'hover', function (event) {
             event.preventDefault();
+
             $(this).tooltip({
                 'placement': $(this).data('placement') || 'top',
                 'container': 'body'
             });
+
             $(this).tooltip('show');
         });
 
@@ -5478,6 +5756,26 @@
     }
 
     AAM.prototype.getLocal = getLocal;
+
+    /**
+     *
+     * @param {*} mergeWith
+     * @returns
+     */
+    AAM.prototype.prepareRequestSubjectData = function(mergeWith = {}) {
+       // Prepare the payload
+       const data = {
+           access_level: getAAM().getSubject().type
+       };
+
+       if (data.access_level === 'role') {
+           data.role_id = getAAM().getSubject().id;
+       } else if (data.access_level === 'user') {
+           data.user_id = getAAM().getSubject().id;
+       }
+
+       return Object.assign({}, mergeWith, data);
+   }
 
     /**
      *

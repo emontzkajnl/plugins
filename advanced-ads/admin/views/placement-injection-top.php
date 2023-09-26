@@ -11,13 +11,14 @@ $is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type 
 <span class="advads-loader" style="display: none;"></span>
 	<div id="advads-ad-injection-message-placement-created" class="hidden">
 	<p><?php esc_html_e( 'Congratulations! Your ad is now visible in the frontend.', 'advanced-ads' ); ?></p>
-	<a class="advads-placement-link button button-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=advanced-ads-placements#single-placement-' ) ); ?>"><?php esc_html_e( 'Adjust the placement options', 'advanced-ads' ); ?></a>
+	<?php if (empty( $ad->conditions ) && ! empty( $latest_post ) ): ?>
+		<a class="button button-primary" target="_blank" href="<?php echo esc_url( get_permalink( $latest_post['ID'] ) ); ?>"><?php esc_html_e( 'Take a look at your ad', 'advanced-ads' ); ?></a>
+	<?php endif; ?>
 	<p>
 	<?php
 	printf(
 		wp_kses(
 		// translators: %s is a URL.
-
 			__( 'Ad not showing up? Take a look <a href="%s" target="_blank">here</a>', 'advanced-ads' ),
 			[
 				'a' => [
@@ -29,7 +30,17 @@ $is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type 
 		esc_url( ADVADS_URL ) . 'manual/ads-not-showing-up/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-not-visible'
 	);
 	?>
-		</p>
+	</p>
+	<p>
+	<?php
+	printf(
+		// Translators: %1$s is the opening link tag, %2$s is closing link tag.
+		__( 'Adjust the placement options? Take a look  %1$shere.%2$s', 'advanced-ads' ),
+		'<a href="' . esc_url( admin_url( 'admin.php?page=advanced-ads-placements#single-placement-' ) ) . '" target="_blank">',
+		'</a>'
+	);
+	?>
+	</p>
 	</div>
 	<div id="advads-ad-injection-box-placements">
 		<h2><?php esc_html_e( 'Where do you want to display the ad?', 'advanced-ads' ); ?></h2>

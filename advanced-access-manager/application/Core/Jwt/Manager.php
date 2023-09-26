@@ -13,11 +13,13 @@
  * Majority of the work is taken from the Firebase PHP JWT library. The code was
  * adopted to work with PHP 5.6.0+.
  *
- * @since 6.9.8 https://github.com/aamplugin/advanced-access-manager/issues/263
- * @since 6.9.0 Initial implementation of the class
+ * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/287
+ * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/273
+ * @since 6.9.8  https://github.com/aamplugin/advanced-access-manager/issues/263
+ * @since 6.9.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.9.8
+ * @version 6.9.12
  *
  * @link https://github.com/firebase/php-jwt
  */
@@ -25,6 +27,23 @@ class AAM_Core_Jwt_Manager
 {
 
     use AAM_Core_Contract_SingletonTrait;
+
+    /**
+     * Config options aliases
+     *
+     * The option names changed, but to stay backward compatible, we need to support
+     * legacy names.
+     *
+     * @version 6.9.11
+     */
+    const OPTION_ALIAS = array(
+        'service.jwt.expires_in'              => 'authentication.jwt.expires',
+        'service.jwt.signing_algorithm'       => 'authentication.jwt.algorithm',
+        'service.jwt.private_cert_path'       => 'authentication.jwt.privateKeyPath',
+        'service.jwt.public_cert_path'        => 'authentication.jwt.publicKeyPath',
+        'service.jwt.private_cert_passphrase' => 'authentication.jwt.passphrase',
+        'service.jwt.signing_secret'          => 'authentication.jwt.secret'
+    );
 
     /**
      * When checking nbf, iat or expiration times,
@@ -63,18 +82,21 @@ class AAM_Core_Jwt_Manager
      *
      * @return boolean
      *
+     * @since 6.9.11 https://github.com/aamplugin/advanced-access-manager/issues/281
+     * @since 6.9.0  Initial implementation of the method
+     *
      * @access public
-     * @version 6.9.0
+     * @version 6.9.11
      */
     public function validate($token)
     {
         try {
             // Validating headers segment. Make sure that all necessary properties
             // are defined correctly
-            $this->validateHeaders($token);
+            $headers = $this->validateHeaders($token);
 
             // Get signing attributes
-            $attrs = $this->getSigningAttributes();
+            $attrs = $this->getSigningAttributes(false, $headers->alg);
 
             // Verify the signature
             $this->validateSignature($token, $attrs->key);
@@ -86,7 +108,7 @@ class AAM_Core_Jwt_Manager
             // token can actually be used. If it's not yet that time, abort.
             if (isset($payload->nbf) && $payload->nbf > ($timestamp + $this->_leeway)) {
                 throw new Exception(
-                    'Cannot handle token prior to ' . date(DateTime::ISO8601, $payload->nbf)
+                    'Cannot handle token prior to ' . date(DateTime::ATOM, $payload->nbf)
                 );
             }
 
@@ -95,7 +117,7 @@ class AAM_Core_Jwt_Manager
             // correctly used the nbf claim).
             if (isset($payload->iat) && $payload->iat > ($timestamp + $this->_leeway)) {
                 throw new Exception(
-                    'Cannot handle token prior to ' . date(DateTime::ISO8601, $payload->iat)
+                    'Cannot handle token prior to ' . date(DateTime::ATOM, $payload->iat)
                 );
             }
 
@@ -123,7 +145,7 @@ class AAM_Core_Jwt_Manager
      */
     public function encode($payload)
     {
-        $attrs = $this->getSigningAttributes();
+        $attrs = $this->getSigningAttributes(true);
 
         // Encode the JWT headers first
         $segments = array($this->urlsafeB64Encode($this->jsonEncode(array(
@@ -132,7 +154,7 @@ class AAM_Core_Jwt_Manager
         ))));
 
 
-        $ttl = AAM_Core_Config::get('authentication.jwt.expires', '+24 hours');
+        $ttl = $this->_getConfigOption('service.jwt.expires_in', '+24 hours');
 
         if (is_numeric($ttl)) {
             $ttl = "+{$ttl} seconds";
@@ -180,6 +202,52 @@ class AAM_Core_Jwt_Manager
     public function decode($token)
     {
         return $this->validate($token, $this->getSigningAttributes()->key);
+    }
+
+    /**
+     * Just extract claims and ignore errors
+     *
+     * @param string $token
+     *
+     * @return array|null
+     *
+     * @access public
+     * @version 6.9.10
+     */
+    public function extractClaims($token)
+    {
+        $response = null;
+
+        try {
+            $response = $this->decodeSegment($token, 1);
+        } catch (Exception $e) {
+            // Do nothing
+        }
+
+        return $response;
+    }
+
+    /**
+     * Extract token's headers
+     *
+     * @param string $token
+     *
+     * @return array
+     *
+     * @access public
+     * @version 6.9.11
+     */
+    public function extractHeaders($token)
+    {
+        $response = null;
+
+        try {
+            $response = $this->decodeSegment($token, 0);
+        } catch (Exception $e) {
+            // Do nothing
+        }
+
+        return $response;
     }
 
     /**
@@ -236,8 +304,8 @@ class AAM_Core_Jwt_Manager
 
         if (empty($this->_supported_algs[$alg])) {
             throw new DomainException('Algorithm not supported');
-        } elseif (empty($key) || !is_string($key)) {
-            throw new InvalidArgumentException('The signing key must be a string');
+        } elseif (empty($key)) {
+            throw new InvalidArgumentException('The signing key cannot be empty');
         }
 
         list($function, $algorithm) = $this->_supported_algs[$alg];
@@ -250,6 +318,7 @@ class AAM_Core_Jwt_Manager
             if (!$success) {
                 throw new DomainException('OpenSSL unable to sign data');
             }
+
             if ($alg === 'ES256') {
                 $signature = $this->signatureFromDER($signature, 256);
             } elseif ($alg === 'ES384') {
@@ -306,7 +375,9 @@ class AAM_Core_Jwt_Manager
         if ($errno = json_last_error()) {
             throw new DomainException('Failed to encode JSON with error ' . $errno);
         } elseif ($json === false) {
-            throw new DomainException('Provided object could not be encoded to valid JSON');
+            throw new DomainException(
+                'Provided object could not be encoded to valid JSON'
+            );
         }
 
         return $json;
@@ -315,31 +386,32 @@ class AAM_Core_Jwt_Manager
     /**
      * Get token signing attributes like algorithm and key
      *
+     * @param bool   $to_sign
+     * @param string $alg
+     *
      * @return stdClass
      *
      * @access protected
      * @version 6.9.0
      */
-    protected function getSigningAttributes()
+    protected function getSigningAttributes($to_sign = false, $alg = null)
     {
-        $alg = strtoupper(
-            AAM_Core_Config::get('authentication.jwt.algorithm', 'HS256')
-        );
+        if (empty($alg)) {
+            $alg = $this->_getConfigOption('service.jwt.signing_algorithm', 'HS256');
+        }
 
-        if (strpos($alg, 'RS') === 0) {
-            $path       = AAM_Core_Config::get('authentication.jwt.privateKeyPath');
-            $key        = (is_readable($path) ? file_get_contents($path) : null);
-            $passphrase = AAM_Core_Config::get('authentication.jwt.passphrase', false);
+        $alg_upper = strtoupper($alg);
 
-            if ($passphrase && extension_loaded('openssl')) {
-                $key = openssl_pkey_get_private($key, $passphrase);
-            }
+        if (strpos($alg_upper, 'RS') === 0) {
+            $key = $this->_getKeyFromCert($to_sign);
         } else {
-            $key = AAM_Core_Config::get('authentication.jwt.secret', SECURE_AUTH_KEY);
+            $key = $this->_getConfigOption(
+                'service.jwt.signing_secret', SECURE_AUTH_KEY
+            );
         }
 
         return (object) array(
-            'alg' => $alg,
+            'alg' => $alg_upper,
             'key' => $key
         );
     }
@@ -349,7 +421,7 @@ class AAM_Core_Jwt_Manager
      *
      * @param string $token
      *
-     * @return void
+     * @return stdClass
      *
      * @access protected
      * @version 6.9.0
@@ -365,6 +437,8 @@ class AAM_Core_Jwt_Manager
         if (empty($this->_supported_algs[$headers->alg])) {
             throw new UnexpectedValueException('Algorithm not supported');
         }
+
+        return $headers;
     }
 
     /**
@@ -671,6 +745,75 @@ class AAM_Core_Jwt_Manager
         $der .= chr(strlen($value));
 
         return $der . $value;
+    }
+
+    /**
+     * Extract key from certificate
+     *
+     * @param bool $to_sign
+     *
+     * @return string
+     *
+     * @access private
+     * @version 6.9.11
+     */
+    private function _getKeyFromCert($to_sign)
+    {
+        $response = null;
+
+        if (extension_loaded('openssl')) {
+            if ($to_sign) {
+                $path = str_replace(
+                    '{ABSPATH}',
+                    ABSPATH,
+                    $this->_getConfigOption('service.jwt.private_cert_path')
+                );
+
+                $key = (is_readable($path) ? file_get_contents($path) : null);
+
+                $passphrase = $this->_getConfigOption(
+                    'service.jwt.private_cert_passphrase'
+                );
+
+                $response = openssl_pkey_get_private($key, $passphrase);
+            } else {
+                $path = str_replace(
+                    '{ABSPATH}',
+                    ABSPATH,
+                    $this->_getConfigOption('service.jwt.public_cert_path')
+                );
+                $key = (is_readable($path) ? file_get_contents($path) : null);
+
+                $response = openssl_pkey_get_public($key);
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get configuration option
+     *
+     * @param string $option
+     * @param mixed  $default
+     *
+     * @return mixed
+     *
+     * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/287
+     * @since 6.9.11 Initial implementation of the method
+     *
+     * @access private
+     * @version 6.9.12
+     */
+    private function _getConfigOption($option, $default = null)
+    {
+        $value = AAM_Core_Config::get($option);
+
+        if (is_null($value) && array_key_exists($option, self::OPTION_ALIAS)) {
+            $value = AAM_Core_Config::get(self::OPTION_ALIAS[$option]);
+        }
+
+        return is_null($value) ? $default : $value;
     }
 
 }
