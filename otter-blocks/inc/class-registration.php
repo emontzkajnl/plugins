@@ -17,7 +17,7 @@ class Registration {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Registration
+	 * @var Registration|null
 	 */
 	public static $instance = null;
 
@@ -97,8 +97,8 @@ class Registration {
 	/**
 	 * Register our custom block category.
 	 *
-	 * @param array                   $categories All categories.
-	 * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
+	 * @param array                    $categories All categories.
+	 * @param \WP_Block_Editor_Context $block_editor_context The current block editor context.
 	 *
 	 * @return mixed
 	 * @since   2.0.0
@@ -239,7 +239,6 @@ class Registration {
 			'themeisleGutenberg',
 			array(
 				'hasNeve'                 => defined( 'NEVE_VERSION' ),
-				'isCompatible'            => Main::is_compatible(),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
 				'upgradeLink'             => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
@@ -247,7 +246,7 @@ class Registration {
 				'should_show_upsell'      => Pro::should_show_upsell(),
 				'assetsPath'              => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'              => admin_url( 'update-core.php' ),
-				'optionsPath'             => admin_url( 'options-general.php?page=otter' ),
+				'optionsPath'             => admin_url( 'admin.php?page=otter' ),
 				'mapsAPI'                 => $api,
 				'hasStripeAPI'            => Stripe_API::has_keys(),
 				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
@@ -361,22 +360,14 @@ class Registration {
 	 * Handler which checks the blocks used and enqueue the assets which needs.
 	 *
 	 * @since   2.0.0
-	 * @param null $post Current post.
+	 * @param   string|int|null $post Current post.
 	 * @access  public
 	 */
 	public function enqueue_dependencies( $post = null ) {
 		$content = '';
 
 		if ( 'widgets' === $post ) {
-			$widgets = get_option( 'widget_block', array() );
-
-			foreach ( $widgets as $widget ) {
-				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
-					$content .= $widget['content'];
-				}
-			}
-
-			$post = $content;
+			$post = self::get_active_widgets_content();
 		} elseif ( 'block-templates' === $post ) {
 			global $_wp_current_template_content;
 
@@ -392,7 +383,7 @@ class Registration {
 			$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
 
 			foreach ( $templates_parts as $templates_part ) {
-				if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+				if ( isset( $templates_part->content ) && isset( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
 					$content .= $templates_part->content;
 				}
 			}
@@ -507,13 +498,17 @@ class Registration {
 					'root'               => esc_url_raw( rest_url() ),
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
-						'submission'         => __( 'Form submission from', 'otter-blocks' ),
-						'captcha-not-loaded' => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
-						'check-captcha'      => __( 'Please check the captcha.', 'otter-blocks' ),
-						'invalid-email'      => __( 'The email address is invalid!', 'otter-blocks' ),
-						'already-registered' => __( 'The email was already registered!', 'otter-blocks' ),
-						'try-again'          => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
-						'privacy'            => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+						'submission'           => __( 'Form submission from', 'otter-blocks' ),
+						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
+						'check-captcha'        => __( 'Please check the captcha.', 'otter-blocks' ),
+						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
+						'already-registered'   => __( 'The email was already registered!', 'otter-blocks' ),
+						'try-again'            => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
+						'privacy'              => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+						'too-many-files'       => __( 'Too many files loaded. Maximum is: ', 'otter-blocks' ),
+						'big-file'             => __( 'File size is to big. The limit is: ', 'otter-blocks' ),
+						'invalid-file'         => __( 'Invalid files type. The submitted files could not be processed.', 'otter-blocks' ),
+						'confirmingSubmission' => __( 'Confirming submission', 'otter-blocks' ),
 					),
 				)
 			);
@@ -687,15 +682,16 @@ class Registration {
 	 */
 	public function register_blocks() {
 		$dynamic_blocks = array(
-			'about-author'    => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'form-nonce'      => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map'      => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map'     => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-cards'    => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'      => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'review'          => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'sharing-icons'   => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-			'stripe-checkout' => '\ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block',
+			'about-author'         => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-nonce'           => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'           => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'          => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-cards'         => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'           => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'review'               => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'sharing-icons'        => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'stripe-checkout'      => '\ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block',
+			'form-multiple-choice' => '\ThemeIsle\GutenbergBlocks\Render\Form_Multiple_Choice_Block',
 		);
 
 		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
@@ -717,6 +713,7 @@ class Registration {
 			'form-input',
 			'form-nonce',
 			'form-textarea',
+			'form-multiple-choice',
 			'google-map',
 			'icon-list',
 			'icon-list-item',
@@ -966,13 +963,47 @@ class Registration {
 	}
 
 	/**
+	 * Get the content of all active widgets.
+	 *
+	 * @return string
+	 */
+	public static function get_active_widgets_content() {
+		global $wp_registered_widgets;
+		$content       = '';
+		$valid_widgets = array();
+		$widget_data   = get_option( 'widget_block', array() );
+
+		// Loop through all widgets, and add any that are active.
+		foreach ( $wp_registered_widgets as $widget_name => $widget ) {
+			// Get the active sidebar the widget is located in.
+			$sidebar = is_active_widget( $widget['callback'], $widget['id'] );
+
+			if ( $sidebar && 'wp_inactive_widgets' !== $sidebar ) {
+				$key = $widget['params'][0]['number'];
+
+				if ( isset( $widget_data[ $key ] ) ) {
+					$valid_widgets[] = (object) $widget_data[ $key ];
+				}
+			}
+		}
+
+		foreach ( $valid_widgets as $widget ) {
+			if ( isset( $widget->content ) ) {
+				$content .= $widget->content;
+			}
+		}
+
+		return $content;
+	}
+
+	/**
 	 * The instance method for the static class.
 	 * Defines and returns the instance of the static class.
 	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	 * @return Blocks_Export_Import
+	 * @return Registration
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {

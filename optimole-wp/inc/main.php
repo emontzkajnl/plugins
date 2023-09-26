@@ -24,6 +24,15 @@ final class Optml_Main {
 	public $manager;
 
 	/**
+	 * Holds the media_offload class.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @var  Optml_Media_Offload instance.
+	 */
+	public $media_offload;
+
+	/**
 	 * Holds the rest class.
 	 *
 	 * @access  public
@@ -40,6 +49,15 @@ final class Optml_Main {
 	 * @var Optml_Admin Admin instance.
 	 */
 	public $admin;
+
+	/**
+	 * Holds the Dam class.
+	 *
+	 * @access  public
+	 * @since   4.0
+	 * @var Optml_Dam Dam instance.
+	 */
+	public $dam;
 
 	/**
 	 * Holds the cli class.
@@ -69,16 +87,17 @@ final class Optml_Main {
 	public static function instance() {
 		if ( null === self::$_instance ) {
 			add_filter( 'themeisle_sdk_products', [ __CLASS__, 'register_sdk' ] );
+			add_filter( 'themeisle_sdk_ran_promos', '__return_true' );
 			add_filter( 'optimole-wp_uninstall_feedback_icon', [ __CLASS__, 'change_icon' ] );
 			add_filter( 'optimole_wp_uninstall_feedback_after_css', [ __CLASS__, 'adds_uf_css' ] );
 			add_filter( 'optimole_wp_feedback_review_message', [ __CLASS__, 'change_review_message' ] );
 			add_filter( 'optimole_wp_logger_heading', [ __CLASS__, 'change_review_message' ] );
-			add_filter( 'optml_default_settings', [ __CLASS__, 'change_lazyload_default' ] );
 			add_filter( 'optml_register_conflicts', [ __CLASS__, 'register_conflicts' ] );
 			self::$_instance          = new self();
 			self::$_instance->manager = Optml_Manager::instance();
 			self::$_instance->rest    = new Optml_Rest();
 			self::$_instance->admin   = new Optml_Admin();
+			self::$_instance->dam     = new Optml_Dam();
 			self::$_instance->media_offload = Optml_Media_Offload::instance();
 			if ( class_exists( 'WP_CLI' ) ) {
 				self::$_instance->cli = new Optml_Cli();
@@ -114,25 +133,6 @@ final class Optml_Main {
 		);
 
 		return $conflicts_to_register;
-	}
-
-	/**
-	 * Change lazyload default for new users.
-	 *
-	 * @param array $defaults Old defaults.
-	 *
-	 * @return array New defaults.
-	 */
-	public static function change_lazyload_default( $defaults ) {
-		$install_time = get_option( 'optimole_wp_install', 0 );
-
-		if ( $install_time < 1545652321 ) {
-			return $defaults;
-		}
-
-		$defaults['lazyload'] = 'enabled';
-
-		return $defaults;
 	}
 
 	/**

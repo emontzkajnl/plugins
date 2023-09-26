@@ -41,14 +41,17 @@ class QMN_Log_Manager
 	 */
 	public function register_post_type() {
 		/* logs post type */
+		$settings = (array) get_option( 'qmn-settings' );
 		$log_args = array(
-			'labels'          => array( 'name' => 'QSM Logs' ),
-			'public'          => defined( 'WP_DEBUG' ) && WP_DEBUG,
-			'query_var'       => false,
-			'rewrite'         => false,
-			'capability_type' => 'post',
-			'supports'        => array( 'title', 'editor' ),
-			'can_export'      => false,
+			'labels'              => array( 'name' => 'QSM Logs' ),
+			'public'              => ! empty( $settings['enable_qsm_log'] ) && $settings['enable_qsm_log'],
+			'query_var'           => false,
+			'publicly_queryable'  => false,
+			'rewrite'             => false,
+			'capability_type'     => 'post',
+			'supports'            => array( 'title', 'editor' ),
+			'can_export'          => false,
+			'exclude_from_search' => true,
 		);
 
 		// Registers QSM logs post type with filtered $args
@@ -61,7 +64,8 @@ class QMN_Log_Manager
 	 * @since 4.5.0
 	 */
 	public function register_taxonomy() {
-		register_taxonomy( 'qmn_log_type', 'qmn_log', array( 'public' => defined( 'WP_DEBUG' ) && WP_DEBUG ) );
+		$settings = (array) get_option( 'qmn-settings' );
+		register_taxonomy( 'qmn_log_type', 'qmn_log', array( 'public' => ! empty( $settings['enable_qsm_log'] ) && $settings['enable_qsm_log'] ) );
 		$types = $this->log_types();
 		foreach ( $types as $type ) {
 			if ( ! term_exists( $type, 'qmn_log_type' ) ) {
@@ -99,7 +103,8 @@ class QMN_Log_Manager
 			'post_parent'  => $parent,
 			'log_type'     => $type,
 		);
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		$settings = (array) get_option( 'qmn-settings' );
+        if ( ! empty( $settings['enable_qsm_log'] ) && $settings['enable_qsm_log'] ) {
 			return $this->insert_log( $log_data );
 		}
 		return false;

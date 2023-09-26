@@ -24,7 +24,7 @@ class Optml_Rest {
 	/**
 	 * Upload conflicts api.
 	 *
-	 * @var string upload_conflicts_api.
+	 * @var array upload_conflicts_api.
 	 */
 	public static $rest_routes = [
 		'service_routes' => ['update_option' => 'POST', 'request_update' => 'GET', 'check_redirects' => 'POST_PUT_PATCH',
@@ -69,11 +69,6 @@ class Optml_Rest {
 			],
 		],
 		'media_cloud_routes' => [
-			'offload_images' => 'POST',
-			'update_content' => 'POST',
-			'rollback_images' => 'POST',
-			'update_page' => 'POST',
-			'upload_rollback_images' => 'POST',
 			'number_of_images_and_pages' => 'POST',
 			'get_offload_conflicts' => 'GET',
 		],
@@ -88,6 +83,18 @@ class Optml_Rest {
 		],
 		'cache_routes' => [
 			'clear_cache_request' => 'POST',
+		],
+		'dam_routes' => [
+			'insert_images' => [
+				'POST',
+				'args' => [
+					'images' => [
+						'type'     => 'array',
+						'required' => true,
+					],
+				],
+				'permission_callback' => 'upload_files',
+			],
 		],
 	];
 
@@ -106,8 +113,9 @@ class Optml_Rest {
 	 * @param string $route The route name.
 	 * @param string $method The route access method GET, POST, POST_PUT_PATCH.
 	 * @param array  $args Optional argument to include required args.
+	 * @param string $permission_callback Optional permission callback.
 	 */
-	private function reqister_route( $route, $method = 'GET', $args = [] ) {
+	private function reqister_route( $route, $method = 'GET', $args = [], $permission_callback = 'manage_options' ) {
 		$wp_method_constant = false;
 		if ( $method === 'GET' ) {
 			$wp_method_constant = \WP_REST_Server::READABLE;
@@ -121,8 +129,8 @@ class Optml_Rest {
 		if ( $wp_method_constant !== false ) {
 			$params = [
 				'methods'             => $wp_method_constant,
-				'permission_callback' => function () {
-					return current_user_can( 'manage_options' );
+				'permission_callback' => function () use ( $permission_callback ) {
+					return current_user_can( $permission_callback );
 				},
 				'callback'            => [ $this, $route ],
 			];
@@ -152,6 +160,7 @@ class Optml_Rest {
 		$this->register_conflict_routes();
 		$this->register_cache_routes();
 		$this->register_media_offload_routes();
+		$this->register_dam_routes();
 	}
 
 	/**
@@ -217,6 +226,19 @@ class Optml_Rest {
 	}
 
 	/**
+	 * Register DAM routes.
+	 *
+	 * @return void
+	 */
+	public function register_dam_routes() {
+		foreach ( self::$rest_routes['dam_routes'] as $route => $details ) {
+			$permission = isset( $details['permission_callback'] ) ? $details['permission_callback'] : 'manage_options';
+			$args       = isset( $details['args'] ) ? $details['args'] : [];
+			$this->reqister_route( $route, $details[0], $args, $permission );
+		}
+	}
+
+	/**
 	 * Clear Cache request.
 	 *
 	 * @param WP_REST_Request $request clear cache rest request.
@@ -226,39 +248,13 @@ class Optml_Rest {
 	public function clear_cache_request( WP_REST_Request $request ) {
 		$settings = new Optml_Settings();
 		$type = $request->get_param( 'type' );
-		$token = $settings->get( 'cache_buster' );
-		$token_images = $settings->get( 'cache_buster_images' );
+		$response = $settings->clear_cache( $type );
 
-		if ( ! empty( $token_images ) ) {
-			$token = $token_images;
-		}
-		if ( ! empty( $type ) && $type === 'assets' ) {
-			$token = $settings->get( 'cache_buster_assets' );
-		}
-		$request  = new Optml_Api();
-		$data     = $request->get_cache_token( $token, $type );
-		if ( $data === false || is_wp_error( $data ) || empty( $data ) || ! isset( $data['token'] ) ) {
-			$extra = '';
-			if ( is_wp_error( $data ) ) {
-				/**
-				 * Error from api.
-				 *
-				 * @var WP_Error $data Error object.
-				 */
-				$extra = sprintf( __( '. ERROR details: %s', 'optimole-wp' ), $data->get_error_message() );
-			}
-			wp_send_json_error( __( 'Can not get new token from Optimole service', 'optimole-wp' ) . $extra );
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( $response->get_error_message() );
 		}
 
-		if ( ! empty( $type ) && $type === 'assets' ) {
-			set_transient( 'optml_cache_lock_assets', 'yes', 5 * MINUTE_IN_SECONDS );
-			$settings->update( 'cache_buster_assets', $data['token'] );
-		} else {
-			set_transient( 'optml_cache_lock', 'yes', 5 * MINUTE_IN_SECONDS );
-			$settings->update( 'cache_buster_images', $data['token'] );
-		}
-
-		return $this->response( $data['token'], '200' );
+		return $this->response( $response, '200' );
 	}
 
 	/**
@@ -288,6 +284,11 @@ class Optml_Rest {
 		}
 		$settings = new Optml_Settings();
 		$settings->update( 'api_key', $api_key );
+
+		if ( isset( $data['extra_visits'] ) ) {
+			$settings->update_frontend_banner_from_remote( $data['extra_visits'] );
+		}
+
 		if ( $data['app_count'] === 1 ) {
 			return $this->select_application( $original_request );
 		}
@@ -374,6 +375,18 @@ class Optml_Rest {
 			);
 
 		}
+
+		if ( $user === 'site_exists' ) {
+			return new WP_REST_Response(
+				[
+					'data'    => null,
+					'message' => sprintf( __( 'Error: This site has been previously registered. You can login to your account from %1$shere%2$s ', 'optimole-wp' ), '<a href="https://dashboard.optimole.com/login" target="_blank"> ', '</a>' ),
+					'code'    => 'site_exists',
+				],
+				200
+			);
+		}
+
 		$user_data = $user['res'];
 
 		$settings = new Optml_Settings();
@@ -381,6 +394,10 @@ class Optml_Rest {
 
 		if ( $user_data['app_count'] === 1 ) {
 			$settings->update( 'service_data', $user_data );
+		}
+
+		if ( isset( $user_data['extra_visits'] ) ) {
+			$settings->update_frontend_banner_from_remote( $user_data['extra_visits'] );
 		}
 
 		return $this->response( $user_data );
@@ -448,7 +465,7 @@ class Optml_Rest {
 			'post_type'              => 'attachment',
 			'post_mime_type'         => 'image',
 			'post_status'            => 'inherit',
-			'posts_per_page'         => 50,
+			'posts_per_page'         => 100,
 			'offset'                 => $offset,
 			'fields'                 => 'ids',
 			'no_found_rows'          => true,
@@ -488,8 +505,8 @@ class Optml_Rest {
 		$api = new Optml_Api();
 		$api->call_onboard_api( $image_urls );
 
-		// Check if image_url array has at least 50 items, if not, we have reached the end of the images
-		return $this->response( count( $image_urls ) < 50 ? true : false );
+		// Check if image_url array has at least 100 items, if not, we have reached the end of the images
+		return $this->response( count( $image_urls ) < 100 ? true : false );
 	}
 
 	/**
@@ -749,7 +766,7 @@ class Optml_Rest {
 
 			if ( $processed_images > 0 ) {
 				$response = wp_remote_get( $value['src'][ rand( 0, $processed_images - 1 ) ], $args );
-				if ( is_array( $response ) && ! is_wp_error( $response ) ) {
+				if ( ! is_wp_error( $response ) && is_array( $response ) ) {
 					$headers     = $response['headers']; // array of http header lines
 					$status_code = $response['response']['code'];
 					if ( $status_code === 301 ) {
@@ -781,107 +798,6 @@ class Optml_Rest {
 	}
 
 	/**
-	 * Push existing image our servers.
-	 *
-	 * @param WP_REST_Request $request rest request object.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function offload_images( WP_REST_Request $request ) {
-		$batch = 1;
-		if ( ! empty( $request->get_param( 'batch' ) ) ) {
-			$batch = $request->get_param( 'batch' );
-		}
-		$images = [];
-		if ( ! empty( $request->get_param( 'images' ) ) ) {
-			$images = $request->get_param( 'images' );
-		}
-		$media_response = Optml_Media_Offload::instance()->upload_images( $batch, $images );
-		$media_response['nonce'] = wp_create_nonce( 'wp_rest' );
-		return $this->response( $media_response );
-	}
-	/**
-	 * Update posts content.
-	 *
-	 * @param WP_REST_Request $request rest request object.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function update_content( WP_REST_Request $request ) {
-		$page = 1;
-		if ( ! empty( $request->get_param( 'page' ) ) ) {
-			$page = $request->get_param( 'page' );
-		}
-		$job = '';
-		if ( ! empty( $request->get_param( 'job' ) ) ) {
-			$job = $request->get_param( 'job' );
-		}
-		$batch = 1;
-		if ( ! empty( $request->get_param( 'batch' ) ) ) {
-			$batch = $request->get_param( 'batch' );
-		}
-		$media_response = Optml_Media_Offload::instance()->update_content( $page, $job, $batch );
-		$media_response['nonce'] = wp_create_nonce( 'wp_rest' );
-		return $this->response( $media_response );
-	}
-	/**
-	 * Rollback images to media library.
-	 *
-	 * @param WP_REST_Request $request rest request object.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function rollback_images( WP_REST_Request $request ) {
-		$batch = 1;
-		if ( ! empty( $request->get_param( 'batch' ) ) ) {
-			$batch = $request->get_param( 'batch' );
-		}
-		$images = [];
-		if ( ! empty( $request->get_param( 'images' ) ) ) {
-			$images = $request->get_param( 'images' );
-		}
-		$media_response = Optml_Media_Offload::instance()->rollback_images( $batch, $images );
-		$media_response['nonce'] = wp_create_nonce( 'wp_rest' );
-		return $this->response( $media_response );
-	}
-	/**
-	 * Update page to replace the image urls.
-	 *
-	 * @param WP_REST_Request $request rest request object.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function update_page( WP_REST_Request $request ) {
-		if ( empty( $request->get_param( 'post_id' ) ) ) {
-			return false;
-		}
-		$post_id = $request->get_param( 'post_id' );
-		return $this->response( Optml_Media_Offload::instance()->update_page( $post_id ) );
-	}
-	/**
-	 * Sync or rollback images with the given ids.
-	 *
-	 * @param WP_REST_Request $request rest request object.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function upload_rollback_images( WP_REST_Request $request ) {
-		$job = false;
-		if ( ! empty( $request->get_param( 'job' ) ) ) {
-			$job = $request->get_param( 'job' );
-		}
-		$image_ids = [];
-		if ( ! empty( $request->get_param( 'image_ids' ) ) ) {
-			$image_ids = $request->get_param( 'image_ids' );
-		}
-		if ( $job === 'offload_images' ) {
-			return $this->response( Optml_Media_Offload::instance()->upload_and_update_existing_images( $image_ids ) );
-		}
-		if ( $job === 'rollback_images' ) {
-			return $this->response( Optml_Media_Offload::instance()->rollback_and_update_images( $image_ids ) );
-		}
-	}
-	/**
 	 * Get total number of images.
 	 *
 	 * @param WP_REST_Request $request rest request object.
@@ -890,11 +806,24 @@ class Optml_Rest {
 	 */
 	public function number_of_images_and_pages( WP_REST_Request $request ) {
 		$action = 'offload_images';
+		$refresh = false;
+		$images = [];
+
 		if ( ! empty( $request->get_param( 'action' ) ) ) {
 			$action = $request->get_param( 'action' );
 		}
-		return $this->response( Optml_Media_Offload::number_of_images_and_pages( $action ) );
+
+		if ( ! empty( $request->get_param( 'refresh' ) ) ) {
+			$refresh = $request->get_param( 'refresh' );
+		}
+
+		if ( ! empty( $request->get_param( 'images' ) ) ) {
+			$images = $request->get_param( 'images' );
+		}
+
+		return $this->response( Optml_Media_Offload::get_image_count( $action, $refresh, $images ) );
 	}
+
 	/**
 	 * Get conflicts list.
 	 *
@@ -918,5 +847,24 @@ class Optml_Rest {
 		}
 
 		return $this->response( $active_conflicts );
+	}
+
+	/**
+	 * Insert images request.
+	 *
+	 * @param WP_REST_Request $request insert images rest request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function insert_images( WP_REST_Request $request ) {
+		$images = $request->get_param( 'images' );
+
+		if ( ! is_array( $images ) || empty( $images ) ) {
+			return $this->response( [ 'error' => 'No images found' ] );
+		}
+
+		$insert = Optml_Main::instance()->dam->insert_attachments( $images );
+
+		return $this->response( $insert );
 	}
 }

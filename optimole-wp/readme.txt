@@ -1,8 +1,8 @@
-=== Image optimization & Lazy Load by Optimole ===
+=== Image Optimization by Optimole - Lazy Load, CDN, Convert to WebP & AVIF ===
 Contributors: optimole
-Tags: image optimization, convert webp, responsive images, lazy load, images, optimization, performance, photos, free cdn
-Requires at least: 4.7
-Tested up to: 6.2
+Tags: image optimization, convert webp, image optimizer, lazy load, image, optimization, convert AVIF, resize, free cdn, compress images, optimize images
+Requires at least: 5.5
+Tested up to: 6.3
 Requires PHP: 5.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -11,80 +11,137 @@ Automatically compress, optimize and serve scaled images as well as convert WebP
 
 == Description ==
 
-> **What makes Optimole so special?**
->
-> * Smaller images. Same quality
-> * Fully automated; [set and forget](https://docs.optimole.com/article/1173-how-to-get-started-with-optimole-in-just-3-steps)
-> * Supports all image types
-> * Supports both Retina and WebP images
-> * Machine Learning(ML) powered automatic compression
-> * AVIF format support for lower image size
-> * Cloud image library support
-> * Serves images from a global CDN for free
-> * Optimizes based on the visitor's actual device (no more guesswork and width estimations)
-> * Full support for page builders like Elementor
-> * Lazy load without jQuery (better)
-> * Fully functional free version (we have paid plans as well)
->
-
 Optimole is the all-in-one solution to all of your image optimization needs. With full automation and a range of evolutionary features, Optimole makes it easy to clean up your heavy images and bloaty pages.
 
+🤔 Not sure? Test the Magic of Optimole - [Scan your website](https://optimole.com/test-drive/?utm_source=wpadmin&utm_medium=readme&utm_campaign=optimole) to see how we can help.
+
 Optimole [optimizes](https://www.codeinwp.com/blog/how-to-optimize-images/) your images in real-time with a cloud-based system to [speed up your website](https://optimole.com/website-speed-optimization-and-how-to-speed-up-wordpress/) and deliver high-quality images perfectly sized for every device. With a one-click setup and minimal footprint, you can start improving your site in minutes.
+
+### What makes Optimole so special?
+
+- Smaller images. Same quality
+- Fully automated; [set and forget](https://docs.optimole.com/article/1173-how-to-get-started-with-optimole-in-just-3-steps)
+- Supports all image types
+- Supports both Retina and WebP images
+- Machine Learning(ML) powered automatic compression
+- AVIF format support for lower image size
+- Streamline your media with Optimole's custom DAM (Digital asset Management) solution
+- Cloud image library support
+- Edit images in the cloud library before inserting them into your website
+- Serves images from a global CDN for free
+- Optimizes based on the visitor's actual device (no more guesswork and width estimations)
+- Full support for page builders like Elementor
+- Lazy load without jQuery (better)
+- Add a splash of color to your lazy-loading placeholder
+- Hero image optimization for speedier loads
+- Boost wooCommerce gallery performance with Optimole's lazy-loading
+- More file types in the dashboard (video, audio, documents and more)
+- Fully functional free version (we have [paid plans](https://optimole.com/pricing/?utm_source=wpadmin&utm_medium=readme&utm_campaign=optimole) as well)
 
 You'll be free to concentrate on other aspects of your site with Optimole's set and forget image optimization.
 
 So, if you have been looking for one plugin that provides lazy loading with a CDN and perfectly sized images, then Optimole is perfect for you.
 
+### Checkout a quick overview of Optimole plugin
+https://youtu.be/nR9iGNJFxnE
 
-**How does it do all these great things?**
-Optimole's format based optimization is handled in the cloud on a case-by-case basis. Once you have the plugin installed, Optimole will replace all of your image URLs with cloud-based URLs. We don't replace any images on your website, we compress images on the fly.
+### How does it do all these great things?
+
+Optimole's format-based optimization is handled in the cloud on a case-by-case basis. Once you have the plugin installed, Optimole will replace all of your image URLs with cloud-based URLs. We don't replace any images on your website, we compress images on the fly.
+
 When the image is requested, Optimole will apply the specific transformations required by the device and deliver it to your visitors. This means every image is perfectly sized for every device. The final result will be cached for a month to ensure ongoing fast delivery and more site speed.
 
-**How many images can be optimized?**
-With the basic plan, you will be able to optimize unmetered number of images for up to 5k monthly [visits](https://docs.optimole.com/article/1134-how-optimole-counts-the-number-of-visitors). All delivered from more than 200+ locations around the globe.
+### How many images can be optimized?
+
+With the basic plan, you will be able to optimize an unmetered number of images for up to 5k monthly [visits](https://docs.optimole.com/article/1134-how-optimole-counts-the-number-of-visitors). All are delivered from more than 450+ locations around the globe.
+
 Better yet. The free version is fully functional and includes all of the following great features:
 
-**Format Based Optimization**
-Our cloud-based transformation process means we can optimize images based on the format as well as serve images in next-gen formats. If your visitor is using a WebP capable browser, then Optimole will convert to WebP the image and send it to their device. AVIF support included.
+#### Format-Based Optimization
 
-**Cloud Library support**
-Offload your website images directly to Optimole Cloud and save storage space on your server. Cross share images between your all your websites connected to Optimole.
+Our cloud-based transformation process means we can optimize images based on the format as well as serve images in next-gen formats. If your visitor is using a WebP-capable browser, then Optimole will convert to WebP the image and send it to their device. AVIF support included.
 
-**Image Optimization**
+#### Cloud Library support
+
+Offload your website images directly to Optimole Cloud and save storage space on your server. Cross-share images between all your websites connected to Optimole.
+
+#### Image Optimization
+
 Our algorithms crunch the numbers to provide the best lossy or lossless optimization for the best-looking image at the smallest size using Machine Learning(ML) powered compression.
 
-**Exact Used Size**
+### Digital Assets Management (DAM)
+
+Elevate your media management with our custom DAM and utilize images from your Optimole account. The best part? You can now directly incorporate images from your Optimole account into the Elementor Builder. Additionally, we've seamlessly integrated DAM with the WordPress core editor, making image management a breeze. Access your Optimole images effortlessly, wherever you need them.
+
+#### Exact Used Size
+
 Optimole will use just one image and resize it delivering a responsive image to fit perfectly on your visitors' devices. No more awkward guesses at potential screen widths. Serve scaled images instantly.
 
-**Retina Support**
+#### Retina Support
+
 Optimole can detect Retina screens and deliver an image with the perfect Digital Pixel Ratio (DPR).
 
-**Smart Cropping**
-If you'd like to keep the most interesting part of an image; then you can enable smart cropping to help keep the image well sized without losing focus.
+#### Smart Cropping
 
-**No Content Shifting**
-The lazy load option defer offscreen images and is perfectly sized for the container to provide a seamless viewing experience without any content shifting.
+If you'd like to keep the most interesting part of an image; then you can enable smart cropping to help keep the image well-sized without losing focus.
 
-**Watermarks**
+>**Use Case:** Introducing Lisa, a lifestyle blogger who loves sharing her adventures through captivating visuals. With Optimole's Smart Cropping, Lisa's images are automatically resized to fit perfectly within her post layouts. Whether it's a breathtaking mountain landscape or a cosy café scene, Smart Cropping ensures every image tells its story without any hassle. Lisa's blog now shines with effortlessly framed images that capture every moment beautifully.
+
+### Hero Image Optimization
+
+Optimole now goes the extra mile by not just optimizing but also preloading your website’s hero image. This ensures that the most eye-catching element on your page is also the quickest to load, enhancing user experience.
+
+#### No Content Shifting
+
+The lazy load option defers offscreen images and is perfectly sized for the container to provide a seamless viewing experience without any content shifting.
+
+#### Watermarks
+
 Who has time for adding watermarks? Optimole will do the hard work for you. Just set it up and pick your preferred location and Optimole will add the watermark to all of your future images.
 
-**Downgrade Quality For Slower Connections**
+>**Use Case:** Meet John, a passionate photographer with a growing online gallery. Adding watermarks used to be a hassle—until Optimole stepped in. Now, John can easily add watermarks to any or all of his images with just a few clicks. He can adjust the size, position, and much more. 
+
+#### Downgrade Quality For Slower Connections
+
 Optimole provides an option to downgrade the image quality when it detects a slower network. Efficiently encode images by making up to 40% smaller with this neat feature to help visitors in a bottleneck.
 
-**Compatibility**
+#### Compatibility
+
 Optimole loves page builders and has unique tweaks to solve image replacements. It also has full compatibility with the new block editor since WordPress 5.0
 
-**CDN**
-Optimole provides free access to a AWS CloudFront CDN with edge locations in more than 200 cities around the globe.
+#### CDN
 
-**What About Security?**
-The stripped EXGIF data is not stored on our service. Optimole likes to work behind the scenes, and won't interact with your site's visitors. No data is collected but you can check the [Terms of Service](https://optimole.com/terms/)
+Optimole provides free access to an AWS CloudFront CDN with edge locations in more than 450+ cities around the globe.
 
-**Smooth And Clean**
-Optimole can be installed in a few clicks and then left in the back-end to do its job. Not happy with it? Optimole has a clean uninstall and your site will be just as before Optimole was installed.
+>**Use Case:** Meet Alex, an online store owner reaching customers globally. With Optimole's CDN, his product images are effortlessly spread across AWS CloudFront's 450+ global edge locations. This means shoppers from Tokyo to New York enjoy super-fast page loads, ensuring a seamless shopping experience and boosting Alex's business success.
 
-**Go Pro**
-Premium users will be able to optimize images starting with more than 25k monthly active users. Images in the Premium plan are served from AWS Cloudfront with over 200 locations all over the world.
+### Custom Lazy Load Placeholder Color
+
+Optimole enhances your lazy-loading experience by allowing for customizable placeholder colors. Now your placeholders can be as unique as your website.
+
+### More File Types
+
+No longer confined to just images — Optimole Dashboard now supports uploads for a variety of file types like documents, videos, text, and audio, widening your media capabilities.
+
+### What About Security?
+
+The stripped EXIF data is not stored on our service. Optimole likes to work behind the scenes, and won't interact with your site's visitors. No data is collected but you can check the [Terms of Service](https://optimole.com/terms/)
+
+### Smooth And Clean
+
+Optimole can be installed in a few clicks and then left in the back end to do its job. Not happy with it? Optimole has a clean uninstall and your site will be just as before Optimole was installed.
+
+### Go Pro 🚀
+
+Premium users will be able to optimize images starting with more than 50k monthly active users. Images in the Premium plan are served from AWS Cloudfront with over 450+ locations all over the world. Explore more features of [Optimole Pro](https://optimole.com/pricing/?utm_source=wpadmin&utm_medium=readme&utm_campaign=optimole).
+
+### Support 🤝
+
+We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/optimole-wp/).
+
+### Documentation 📚
+
+Discover how to make the most of Otter Blocks with our detailed and user-friendly [documentation](https://docs.optimole.com/).
 
 == Screenshots ==
 
@@ -94,6 +151,152 @@ Premium users will be able to optimize images starting with more than 25k monthl
 4. Plugin settings
 
 == Changelog ==
+
+#### [Version 3.10.0](https://github.com/Codeinwp/optimole-wp/compare/v3.9.2...v3.10.0) (2023-09-18)
+
+### New Features
+- **Edit Images in Cloud Library**: Images can now be edited before inserting them into your website.
+- **Lazyload for Optimole Cloud Library Images**: Images imported from the Optimole Cloud Library now support lazy-loading.
+- **Apply Optimization Settings to Cloud Library**: Optimole Cloud Library images now inherit image optimization settings from the plugin.
+- **More File Types in Dashboard**: Support for uploading additional file types like documents, videos, text, audio, etc. in the Optimole Dashboard.
+- **Add CLI Command for Clearing Image Cache**: New command-line interface option to easily clear the image cache.
+- **Best Format Toggle**: Choose to enable or disable automatic best format calculation for images.
+- **Generic Lazy-Loading Placeholder Color**: Added customizable color option for the generic lazy-loading placeholder.
+- **Improve WooCommerce Product Gallery Lazyload**: Enhanced lazyloading functionality for WooCommerce galleries.
+- **Resizing Images in Cloud Library and Dashboard**: Manually resize images by typing dimensions in the editor modal.
+
+### Improvements
+- **Explicit Connection Error Handling**: More detailed error messages for failed plugin connection.
+- **Unsaved Settings Alert**: The plugin settings page now prompts to confirm leaving the page if settings are unsaved.
+- **Better Folder UI/UX in the Dashboard**: Enhanced the user interface and experience for folders on the Optimole Dashboard.
+- **Multi-Image Selection UX**: Improved user experience for selecting multiple images in the Optimole Dashboard.
+
+### Bug Fixes
+- **Backwards Compatibility**: Fixed offload compatibility issues with WordPress versions below 6.0.
+- **Cloud Library Modal Loader not being removed**: In some contexts, the cloud library loader was not disappearing when opening the modal a second time.
+- **Visits Banner markup**: Optimole additional visits banner was interfering with modals on the front end of the website.
+
+
+
+
+##### [Version 3.9.2](https://github.com/Codeinwp/optimole-wp/compare/v3.9.1...v3.9.2) (2023-08-10)
+
+### Bug Fixes
+- **Fatal error**: In some edge-cases, the Hero Preloader feature was throwing a fatal error, trying to access inexistent posts.
+- **Lazyload default status**: Lazyload was off for new users by default when it should have been on.
+
+
+
+
+##### [Version 3.9.1](https://github.com/Codeinwp/optimole-wp/compare/v3.9.0...v3.9.1) (2023-08-07)
+
+### Bug Fixes
+- **Fatal error on PHP<7.3**: Fixed fatal error that the plugin was throwing on PHP versions lower than 7.3.
+- **PHP Warning**: Fixed warning when inserting an image with a defined height but no width.
+
+
+
+
+#### [Version 3.9.0](https://github.com/Codeinwp/optimole-wp/compare/v3.8.2...v3.9.0) (2023-08-03)
+
+### New Features
+- **Hero Image Optimization**: Adds fetch priority for hero images to preload them for enhanced performance.
+- **Digital Assets Management (DAM)**: Replaced old media modal integration with a new interface to browse and use the images on your Optimole account.
+- **DAM Elementor Compatibility**: Use images from your Optimole account in Elementor Builder.
+- **DAM Core Editor Integration**: Integrated DAM with the WordPress core editor.
+- **Cloud Library Dashboard**: Added a new Cloud Library page to manage your cloud assets straight from the website dashboard.
+
+### Improvements
+- **Image Offloading & Rollback**: Images offloading & rollback process is now ~50% faster and operates in the background.
+- **Moving Images**: Instant reflection of image movement to folders inside the Dashboard and DAM.
+
+### Bug Fixes
+- **AVIF Disabling Feature**: Fixed issue where serving AVIF format could not be disabled.
+- **Optimole Banner Toggling**: Fixed an issue where toggling the Optimole banner would sometimes not save the setting.
+- **Dashboard Image Uploading**: Fixes issue where certain images could not be uploaded to the Optimole Dashboard;
+
+
+
+
+##### [Version 3.8.2](https://github.com/Codeinwp/optimole-wp/compare/v3.8.1...v3.8.2) (2023-07-06)
+
+### Bug Fixes
+- **Compatibilities loading**: Ensure service is connected before loading compatibilities, throwing errors in some edge cases.
+- **Widgets screen layout**: Resolved issue with Optimole banner appearing in the admin inside widget iframes.
+- **Cloud library whitelist**: Fixed problem with sites not being removed from the cloud library whitelist.
+
+### Improvements
+- **Add Support Link**: Added a support link for Premium users.
+- **Removed Native Lazyload Fallback**: Native lazyload fallback has been removed.
+- **Add Compatibility for Spectra Blocks**: Introduced compatibility for Spectra Blocks.
+- **Add Error Notice**: Added an error notice when the filter length is not three or more characters.
+
+
+
+
+##### [Version 3.8.1](https://github.com/Codeinwp/optimole-wp/compare/v3.8.0...v3.8.1) (2023-06-27)
+
+### Bug Fixes
+- **Warning on lower versions of PHP when using Elementor**: Resolved the warning when the plugin was activated, but the service wasnt connected on lower versions of PHP when using Elementor.
+
+
+
+
+#### [Version 3.8.0](https://github.com/Codeinwp/optimole-wp/compare/v3.7.0...v3.8.0) (2023-06-19)
+
+### New features
+- **Option for max-width and max-height:** Users can select a maximum width/height for images delivered.
+- **Media Library bulk operations:** Users can now efficiently move multiple images at once within the media library folders.
+- **Additional visits:** Adds an option to enable a banner on all websites connected to the account promoting Optimole, gaining an additional 20,000 visits.
+
+### Improvements
+- **Plugin dashboard UI:** Reworked plugin dashboard to use React and have a more consistent design.
+- **Conflict notice:** Adds a notice to inform users about potential conflicts with other plugins.
+- **Eliminate Redundant Lazyload Resizing:** Skip unnecessary resizing when lazyloading images.
+- **Better search on the service dashboard**: Improved the search functionality to enhance performance and provide faster search results.
+
+### Bug Fixes
+- **WEBP extension exclusion:** Fixed an issue where the WEBP image format couldnt be excluded from lazy-load.
+- **Elementor compatibility:** Fixes an issue where Elementor backgrounds werent lazy-loaded on some newer versions.
+- **Invalid CDN parameters:** Fixes an issue where the image URL might have had invalid values.
+- **Upload file names:** Fixes an issue with the offload functionality, where some files were renamed when uploaded.
+
+
+
+
+#### [Version 3.7.0](https://github.com/Codeinwp/optimole-wp/compare/v3.6.1...v3.7.0) (2023-05-15)
+
+### New Features
+- **Best Format Optimization:** Implemented a system that automatically chooses the optimal image format, based on smallest resulting file size, to enhance site loading speed.
+- **Media Library Folders:** Improved browsing experience in the Media Library by adding the option to organize images into folders.
+- **Metadata Strip Option:** Introduced an option to enable/disable the stripping of metadata (EXIF, IPTC, etc.) from the resulting image, providing users with more control over their content.
+- **Noscript Tag:** Added a new option to disable the noscript tag in settings, providing more flexibility in configuring your site.
+- **Visit Stats by Domain:** Introduced a feature to display visit statistics by domain, aiding in traffic analysis and site optimization.
+- **Background Lazyload:** Added compatibility for background lazyload with both Otter Blocks and the core cover block, improving page load times.
+- **Hide API Key:** For enhanced security, API keys are now hidden by default.
+
+### Improvements
+- **Media Library Stats Formatting:** Improved number formatting for more readable Media Library statistics.
+- **Invoices Redesign:** Enhanced the design of invoices for better readability and user experience.
+- **User Experience on Fresh Installs:** Improved the user experience of the last images section on fresh installs, providing a more intuitive and engaging user interface.
+- **CDN Locations:** Updated the number of CDN locations to 450, offering improved content delivery speeds globally.
+- **Generic Placeholder:** Generic placeholders are now enabled by default.
+- **Video and Iframe Lazyload:** Lazyload is now enabled by default for videos and iframes to improve page load times.
+
+
+### Bug Fixes
+- **AVIF Option Bug:** Fixed an issue where the AVIF option was causing Microsoft Edge to fallback to JPEG/PNG instead of the intended WEBP format.
+- **Divi Blog Archive Pagination:** Resolved a bug that was preventing pagination from working on Divi blog archive templates when Optimole lazyloading was activated.
+- **PHP 8.2 Compatibility:** Fixed compatibility issues with PHP 8.2, ensuring smooth functionality across different PHP environments.
+- **View Sample Image Button:** Fixed the behaviour of the 'View Sample Image' button to work as intended.
+- **3rd Party Plugin Exclusions:** Resolved an issue where images injected by 3rd party plugins were ignoring exclusions in some cases.
+- **Search Bar Refresh:** Fixed an issue where the search bar required a page refresh when displaying no results.
+- **Upgrade Button Behaviour:** Fixed an issue with the behaviour of the 'Upgrade' button in dashboard cards.
+- **Display of Large Image Names:** Fixed a display issue for images with larger names, ensuring all image names are displayed correctly.
+- **Login and Signup Form Validation:** Fixed validation errors on the Login and Signup forms to ensure accurate data entry.
+
+
+
 
 ##### [Version 3.6.1](https://github.com/Codeinwp/optimole-wp/compare/v3.6.0...v3.6.1) (2023-04-09)
 

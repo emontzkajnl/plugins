@@ -17,16 +17,16 @@ class Stripe_API {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Stripe_API
+	 * @var Stripe_API|null
 	 */
 	public static $instance = null;
 
 	/**
 	 * Stripe Object.
 	 *
-	 * @var Stripe_API
+	 * @var StripeClient
 	 */
-	public $stripe = '';
+	public $stripe;
 
 	/**
 	 * Constructor
@@ -57,7 +57,7 @@ class Stripe_API {
 
 	/**
 	 * Check if API keys are set
-	 * 
+	 *
 	 * @return bool
 	 * @access public
 	 */
@@ -86,7 +86,7 @@ class Stripe_API {
 	 * Build Error Message
 	 *
 	 * @param object $error Error Object.
-	 * 
+	 *
 	 * @return \WP_Error
 	 * @access  public
 	 */
@@ -105,14 +105,18 @@ class Stripe_API {
 	/**
 	 * Make Stripe Request
 	 *
-	 * @param string $path Request path.
-	 * @param array  $args Request arguments.
-	 * 
+	 * @param string       $path Request path.
+	 * @param array|string $args Request arguments.
+	 *
 	 * @return mixed
 	 * @access public
 	 */
 	public function create_request( $path, $args = array() ) {
 		$response = array();
+
+		if ( ! self::has_keys() ) {
+			return $response;
+		}
 
 		try {
 			switch ( $path ) {
@@ -155,10 +159,6 @@ class Stripe_API {
 			$response = $this->build_error_response( $e );
 		} catch ( \Stripe\Exception\ApiErrorException $e ) {
 			$response = $this->build_error_response( $e );
-		} catch ( \Stripe\Exception\InvalidArgumentException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( Exception $e ) {
-			$response = $this->build_error_response( $e );
 		}
 
 		return $response;
@@ -169,7 +169,7 @@ class Stripe_API {
 	 *
 	 * @param string $session_id Stripe Session ID.
 	 * @param string $price_id Price ID.
-	 * 
+	 *
 	 * @return false|string
 	 * @access  public
 	 */
@@ -198,7 +198,7 @@ class Stripe_API {
 	 * Set Customer ID for curent user.
 	 *
 	 * @param string $session_id Stripe Session ID.
-	 * 
+	 *
 	 * @access  public
 	 */
 	public function save_customer_data( $session_id ) {
@@ -237,7 +237,7 @@ class Stripe_API {
 
 		array_push( $data, $object );
 
-		if ( ! $user_id ) {
+		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! $user_id ) {
 			setcookie( 'o_stripe_data', wp_json_encode( $data ), strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
 			return;
 		}
@@ -247,7 +247,7 @@ class Stripe_API {
 
 	/**
 	 * Get Customer ID for curent user.
-	 * 
+	 *
 	 * @return  array
 	 * @access  public
 	 */
@@ -277,7 +277,7 @@ class Stripe_API {
 	 * Check if user owns a product.
 	 *
 	 * @param string $product Product ID.
-	 * 
+	 *
 	 * @return  bool
 	 * @access  public
 	 */
@@ -318,7 +318,25 @@ class Stripe_API {
 				break;
 			}
 		}
-		
+
 		return $bool;
+	}
+
+	/**
+	 * Get session email.
+	 *
+	 * @param string $session_id Stripe Session ID.
+	 *
+	 * @return  bool|string
+	 * @access  public
+	 */
+	public function get_session_email( $session_id ) {
+		$session = $this->create_request( 'get_session', $session_id );
+
+		if ( empty( $session['customer_details']['email'] ) ) {
+			return false;
+		}
+
+		return $session['customer_details']['email'];
 	}
 }

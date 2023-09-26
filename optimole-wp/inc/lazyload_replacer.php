@@ -27,7 +27,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 
 	const IFRAME_TEMP_COMMENT = '/** optmliframelazyloadplaceholder */';
 
-	const SVG_PLACEHOLDER = 'data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20#width#%20#height#%22%20width%3D%22#width#%22%20height%3D%22#height#%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3C%2Fsvg%3E';
+	const SVG_PLACEHOLDER = 'data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20#width#%20#height#%22%20width%3D%22#width#%22%20height%3D%22#height#%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22#width#%22%20height%3D%22#height#%22%20fill%3D%22#fill#%22%2F%3E%3C%2Fsvg%3E';
 	/**
 	 * If frame lazyload is present on page.
 	 *
@@ -37,7 +37,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	/**
 	 * Cached object instance.
 	 *
-	 * @var Optml_Tag_Replacer
+	 * @var Optml_Lazyload_Replacer
 	 */
 	protected static $instance = null;
 	/**
@@ -82,18 +82,13 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	 * @var bool Lazyload placeholder flag.
 	 */
 	private static $is_lazyload_placeholder = false;
-	/**
-	 * Holds flags which remove noscript tag bundle causing issues on render, i.e slider plugins.
-	 *
-	 * @var array Noscript flags.
-	 */
 
 	/**
 	 * Class instance method.
 	 *
 	 * @codeCoverageIgnore
 	 * @static
-	 * @return Optml_Tag_Replacer
+	 * @return Optml_Lazyload_Replacer
 	 * @since  1.0.0
 	 * @access public
 	 */
@@ -112,19 +107,18 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	 * @return array Lazyload selectors.
 	 */
 	public static function get_background_lazyload_selectors() {
-
-		if ( ! empty( self::$background_lazyload_selectors ) && is_array( self::$background_lazyload_selectors ) ) {
+		if ( null !== self::$background_lazyload_selectors ) {
 			return self::$background_lazyload_selectors;
 		}
+
 		if ( self::instance()->settings->get( 'bg_replacer' ) === 'disabled' ) {
 			self::$background_lazyload_selectors = [];
-
 			return self::$background_lazyload_selectors;
 		}
 		$default_watchers = [
 			'.elementor-section[data-settings*="background_background"]',
 			'.elementor-section > .elementor-background-overlay',
-			'.wp-block-cover[style*="background-image"]',
+			'[class*="wp-block-cover"][style*="background-image"]',
 		];
 
 		$saved_watchers = self::instance()->settings->get_watchers();
@@ -151,8 +145,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	 * @return array
 	 */
 	public static function get_lazyload_bg_classes() {
-
-		if ( ! empty( self::$lazyload_background_classes ) && is_array( self::$lazyload_background_classes ) ) {
+		if ( null !== self::$lazyload_background_classes ) {
 			return self::$lazyload_background_classes;
 		}
 
@@ -179,8 +172,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	 * @return array
 	 */
 	public static function get_watcher_lz_classes() {
-
-		if ( ! empty( self::$lazyload_watcher_classes ) && is_array( self::$lazyload_watcher_classes ) ) {
+		if ( null !== self::$lazyload_watcher_classes ) {
 			return self::$lazyload_watcher_classes;
 		}
 
@@ -226,6 +218,23 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	}
 
 	/**
+	 * Check if the img tag should be lazyloaded early.
+	 *
+	 * @param string $image_tag The image tag.
+	 * @return bool Whether the image tag should be lazyloaded early or not.
+	 */
+	public function should_lazyload_early( $image_tag ) {
+		$flags = apply_filters( 'optml_lazyload_early_flags', [] );
+
+		foreach ( $flags as $flag ) {
+			if ( strpos( $image_tag, $flag ) !== false ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	/**
 	 * Replaces the tags with lazyload tags.
 	 *
 	 * @param string $new_tag The new tag.
@@ -242,6 +251,14 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 		if ( ! $this->can_lazyload_for( $original_url, $full_tag ) ) {
 			return Optml_Tag_Replacer::instance()->regular_tag_replace( $new_tag, $original_url, $new_url, $optml_args, $is_slashed );
 		}
+
+		if ( self::instance()->settings->get( 'native_lazyload' ) === 'enabled' ) {
+			if ( strpos( $new_tag, 'loading=' ) === false ) {
+				$new_tag = preg_replace( '/<img/im', $is_slashed ? '<img loading=\"lazy\"' : '<img loading="lazy"', $new_tag );
+			}
+			return $new_tag;
+		}
+
 		$should_ignore_rescale = ! $this->is_valid_mimetype_from_url( $original_url, [ 'gif' => true, 'svg' => true ] );
 
 		if ( ! self::$is_lazyload_placeholder && ! $should_ignore_rescale ) {
@@ -261,13 +278,22 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 
 		if ( $this->should_add_data_tag( $full_tag ) ) {
 			$opt_format = ' data-opt-src="%s" ';
+			$custom_class = '';
+
 			if ( $should_ignore_rescale ) {
+				$custom_class .= 'optimole-lazy-only ';
+			}
+			if ( $this->should_lazyload_early( $full_tag ) ) {
+				$custom_class .= 'optimole-load-early';
+			}
+
+			if ( ! empty( $custom_class ) ) {
 				if ( strpos( $new_tag, 'class=' ) === false ) {
-					$opt_format .= ' class="optimole-lazy-only" ';
+					$opt_format .= ' class="' . $custom_class . '" ';
 				} else {
 					$new_tag = str_replace(
 						( $is_slashed ? 'class=\"' : 'class="' ),
-						( $is_slashed ? 'class=\"optimole-lazy-only ' : 'class="optimole-lazy-only ' ),
+						( $is_slashed ? 'class=\"' . $custom_class . ' ' : 'class="' . $custom_class . ' ' ),
 						$new_tag
 					);
 				}
@@ -296,9 +322,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 			1
 		);
 		$new_tag = str_replace( 'srcset=', 'old-srcset=', $new_tag );
-		if ( strpos( $new_tag, 'loading=' ) === false && self::instance()->settings->get( 'native_lazyload' ) === 'enabled' ) {
-			$new_tag = preg_replace( '/<img/im', $is_slashed ? '<img loading=\"lazy\"' : '<img loading="lazy"', $new_tag );
-		}
+
 		if ( ! $this->should_add_noscript( $new_tag ) ) {
 			return $new_tag;
 		}
@@ -385,7 +409,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 			Optml_Config::$image_extensions
 		);
 
-		if ( ! isset( $type['ext'] ) || empty( $type['ext'] ) ) {
+		if ( empty( $type['ext'] ) ) {
 			return false;
 		}
 
@@ -422,8 +446,8 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	/**
 	 * Get SVG markup with specific width/height.
 	 *
-	 * @param int         $width Markup Width.
-	 * @param int         $height Markup Height.
+	 * @param int|string  $width Markup Width.
+	 * @param int|string  $height Markup Height.
 	 * @param string|null $url Original URL.
 	 *
 	 * @return string SVG code.
@@ -447,13 +471,19 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 
 		$width  = ! is_numeric( $width ) ? '100%' : $width;
 		$height = ! is_numeric( $height ) ? '100%' : $height;
+		$fill = $this->settings->get( 'placeholder_color' );
+
+		if ( empty( $fill ) ) {
+			$fill = 'transparent';
+		}
 
 		return
 			str_replace(
-				[ '#width#', '#height#' ],
+				[ '#width#', '#height#', '#fill#' ],
 				[
 					$width,
 					$height,
+					urlencode( $fill ),
 				],
 				self::SVG_PLACEHOLDER
 			);
@@ -467,6 +497,9 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	 * @return bool Should add?
 	 */
 	public function should_add_noscript( $tag ) {
+		if ( $this->settings->get( 'no_script' ) === 'disabled' ) {
+			return false;
+		}
 		foreach ( self::get_ignore_noscript_flags() as $banned_string ) {
 			if ( strpos( $tag, $banned_string ) !== false ) {
 				return false;
@@ -499,8 +532,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	 * @return array
 	 */
 	public static function get_ignore_noscript_flags() {
-
-		if ( ! empty( self::$ignore_no_script_flags ) && is_array( self::$ignore_no_script_flags ) ) {
+		if ( null !== self::$ignore_no_script_flags ) {
 			return self::$ignore_no_script_flags;
 		}
 
@@ -514,8 +546,7 @@ final class Optml_Lazyload_Replacer extends Optml_App_Replacer {
 	 * @return array
 	 */
 	public static function get_iframe_lazyload_flags() {
-
-		if ( ! empty( self::$iframe_lazyload_flags ) && is_array( self::$iframe_lazyload_flags ) ) {
+		if ( null !== self::$iframe_lazyload_flags ) {
 			return self::$iframe_lazyload_flags;
 		}
 

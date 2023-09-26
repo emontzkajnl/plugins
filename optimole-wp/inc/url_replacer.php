@@ -39,14 +39,15 @@ final class Optml_Url_Replacer extends Optml_App_Replacer {
 	/**
 	 * A filter which turns a local url into an optimized CDN image url or an array of image urls.
 	 *
-	 * @param string $url The url which should be replaced.
+	 * @param string|array $url The url which should be replaced.
 	 *
-	 * @return string Replaced url.
+	 * @return string|array Replaced url.
 	 */
 	public function replace_option_url( $url ) {
 		if ( empty( $url ) ) {
 			return $url;
 		}
+
 		// $url might be an array or an json encoded array with urls.
 		if ( is_array( $url ) || filter_var( $url, FILTER_VALIDATE_URL ) === false ) {
 			$array   = $url;
@@ -145,13 +146,13 @@ final class Optml_Url_Replacer extends Optml_App_Replacer {
 					$unoptimized_url = $tmp_url[2];
 				}
 			} else {
-				$unoptimized_url = Optml_Media_Offload::get_original_url( $attachment_id[1] );
+				$unoptimized_url = Optml_Media_Offload::get_original_url( (int) $attachment_id[1] );
 			}
 			if ( $unoptimized_url !== false ) {
 				$url = $unoptimized_url;
 			}
 		}
-		if ( strpos( $url, Optml_Config::$service_url ) !== false ) {
+		if ( strpos( $url, Optml_Config::$service_url ) !== false && ! $this->url_has_dam_flag( $url ) ) {
 			return $original_url;
 		}
 
@@ -224,14 +225,32 @@ final class Optml_Url_Replacer extends Optml_App_Replacer {
 			}
 			$url = $new_url;
 		}
+
 		if ( ! isset( $args['width'] ) ) {
-			$args['width'] = 'auto';
+			$args['width'] = $this->limit_dimensions_enabled ? $this->limit_width : 'auto';
 		}
 		if ( ! isset( $args['height'] ) ) {
-			$args['height'] = 'auto';
+			$args['height'] = $this->limit_dimensions_enabled ? $this->limit_height : 'auto';
 		}
+
 		$args['width']  = (int) $args['width'];
 		$args['height'] = (int) $args['height'];
+
+		if ( $this->limit_dimensions_enabled ) {
+			if ( $args['width'] > $this->limit_width || $args['height'] > $this->limit_height ) {
+				$scale = min( $this->limit_width / $args['width'], $this->limit_height / $args['height'] );
+
+				if ( $scale < 1 ) {
+					$args['width']  = (int) floor( $scale * $args['width'] );
+					$args['height'] = (int) floor( $scale * $args['height'] );
+				}
+			}
+
+			if ( isset( $args['resize'], $args['resize']['enlarge'] ) ) {
+				$args['resize']['enlarge'] = false;
+			}
+		}
+
 		if ( $args['width'] > 0 && $args['height'] > 0 ) {
 			list( $args['width'], $args['height'] ) = wp_constrain_dimensions( $args['width'], $args['height'], $this->max_width, $this->max_height );
 		} elseif ( $args['width'] > 0 ) {
@@ -252,8 +271,21 @@ final class Optml_Url_Replacer extends Optml_App_Replacer {
 			$arguments['format'] = $args['format'];
 		}
 
-		if ( empty( $arguments['format'] ) && $this->settings->get( 'avif' ) === 'enabled' && apply_filters( 'optml_should_avif_ext', true, $ext, $original_url ) ) {
-			$arguments['format'] = 'avif';
+		// If format is not already set, we use best format if it's enabled.
+		if ( ! isset( $arguments['format'] ) && $this->settings->is_best_format() ) {
+			$arguments['format'] = 'best';
+		}
+
+		if ( $this->settings->get( 'strip_metadata' ) === 'disabled' ) {
+			$arguments['strip_metadata'] = '0';
+		}
+
+		if ( ! apply_filters( 'optml_should_avif_ext', true, $ext, $original_url ) ) {
+			$arguments['ignore_avif'] = true;
+		}
+
+		if ( ! isset( $arguments['ignore_avif'] ) && $this->settings->get( 'avif' ) === 'disabled' ) {
+			$arguments['ignore_avif'] = true;
 		}
 
 		return  ( new Optml_Image( $url, $args, $this->active_cache_buster ) )->get_url( $arguments );

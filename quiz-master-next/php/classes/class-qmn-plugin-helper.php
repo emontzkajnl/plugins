@@ -339,6 +339,7 @@ class QMNPluginHelper {
 			'slug'    => $slug,
 			'options' => $options,
 		);
+		$new_type = apply_filters( 'register_question_type_new_type',$new_type );
 		$this->question_types[ $slug ] = $new_type;
 	}
 
@@ -608,16 +609,25 @@ class QMNPluginHelper {
 	 * Translate string before display
 	 */
 	public static function qsm_language_support( $translation_text = '', $translation_slug = '', $domain = 'QSM Meta' ) {
-		/**
-		 * Decode HTML Special characters.
-		 */
-		$translation_text = htmlspecialchars_decode( $translation_text, ENT_QUOTES );
+
 		/**
 		 * Check if WPML String Translation plugin is activated.
 		 */
 		if ( ! empty( $translation_text ) && is_plugin_active( 'wpml-string-translation/plugin.php' ) ) {
+			/**
+			 * Decode HTML Special characters.
+			 */
+			$translation_text = htmlspecialchars_decode( $translation_text, ENT_QUOTES );
 			$translation_slug    = sanitize_title( $translation_slug );
 			$new_text            = apply_filters( 'wpml_translate_single_string', $translation_text, $domain, $translation_slug );
+			if ( 'QSM Answers' === $domain && $new_text == $translation_text ) {
+				if ( 0 === strpos($translation_slug, 'caption-') ) {
+					$translation_slug    = sanitize_title( 'caption-' . $translation_text );
+				}else {
+					$translation_slug    = sanitize_title( 'answer-' . $translation_text );
+				}
+				$new_text            = apply_filters( 'wpml_translate_single_string', $translation_text, $domain, $translation_slug );
+			}
 			$new_text            = htmlspecialchars_decode( $new_text, ENT_QUOTES );
 			/**
 			 * Return translation for non-default strings.
@@ -674,13 +684,13 @@ class QMNPluginHelper {
 		$answers = isset( $question_data['answer_array'] ) ? maybe_unserialize( $question_data['answer_array'] ) : array();
 		if ( ! empty( $answers ) ) {
 			$answerEditor = isset( $settings['answerEditor'] ) ? $settings['answerEditor'] : 'text';
-			foreach ( $answers as $ans ) {
+			foreach ( $answers as $key => $ans ) {
 				if ( 'image' === $answerEditor ) {
 					$caption_text = trim( htmlspecialchars_decode( $ans[3], ENT_QUOTES ) );
-					$this->qsm_register_language_support( $caption_text, 'caption-' . $caption_text, 'QSM Answers' );
+					$this->qsm_register_language_support( $caption_text, 'caption-' . $question_id . '-' . $key, 'QSM Answers' );
 				} else {
 					$answer_text = trim( htmlspecialchars_decode( $ans[0], ENT_QUOTES ) );
-					$this->qsm_register_language_support( $answer_text, 'answer-' . $answer_text, 'QSM Answers' );
+					$this->qsm_register_language_support( $answer_text, 'answer-' . $question_id . '-' . $key, 'QSM Answers' );
 				}
 			}
 		}
@@ -979,7 +989,7 @@ class QMNPluginHelper {
 				'value' => 'heartBeat',
 			),
 			array(
-				'label' => __( 'No animation', 'quiz-master-next' ),
+				'label' => __( 'Select Quiz Animation', 'quiz-master-next' ),
 				'value' => '',
 			),
 		);
@@ -1096,7 +1106,7 @@ class QMNPluginHelper {
 	 */
 
 	public function qsm_results_css_inliner( $html ) {
-		
+
 		global $mlwQuizMasterNext;
 		$grading = $mlwQuizMasterNext->pluginHelper->get_section_setting( 'quiz_options', 'system' );
 		$wr_sign = 1 != $grading ? "&#x2715;&nbsp;" : "";

@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-} 
+}
 
 /**
  * This function shows the content of the multiple choice question.
@@ -32,7 +32,7 @@ function qmn_drop_down_display( $id, $question, $answers ) {
 				$mlw_answer_total++;
 				if ( '' !== $answer[0] ) {
 					$answer_text = trim( htmlspecialchars_decode( $answer[0], ENT_QUOTES ) );
-					$answer_text = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $answer_text, "answer-" . $answer_text, "QSM Answers" );
+					$answer_text = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $answer_text, "answer-" . $id . "-" . $answer_index, "QSM Answers" );
 					?>
 					<option value="<?php echo esc_attr( $answer_index ); ?>"><?php echo esc_html( $answer_text ); ?></option>
 					<?php
@@ -58,8 +58,8 @@ function qmn_drop_down_review( $id, $question, $answers ) {
 	$current_question               = new QSM_Question_Review_Choice( $id, $question, $answers );
 	$user_text_array                = $current_question->get_user_answer();
 	$correct_text_array             = $current_question->get_correct_answer();
-	$return_array['user_text']      = ! empty( $user_text_array ) ? implode( '.', $user_text_array ) : '' ;
-	$return_array['correct_text']   = ! empty( $correct_text_array ) ? implode( '.', $correct_text_array ) : '';
+	$return_array['user_text']      = ! empty( $user_text_array ) ? implode( ', ', $user_text_array ) : '' ;
+	$return_array['correct_text']   = ! empty( $correct_text_array ) ? implode( ', ', $correct_text_array ) : '';
 	$return_array['correct']        = $current_question->get_answer_status();
 	$return_array['points']         = $current_question->get_points();
 	$return_array['user_answer']    = $user_text_array;

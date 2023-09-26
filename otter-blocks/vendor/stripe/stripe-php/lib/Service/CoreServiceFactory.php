@@ -9,6 +9,7 @@ namespace Stripe\Service;
  *
  * @property AccountLinkService $accountLinks
  * @property AccountService $accounts
+ * @property AccountSessionService $accountSessions
  * @property ApplePayDomainService $applePayDomains
  * @property ApplicationFeeService $applicationFees
  * @property Apps\AppsServiceFactory $apps
@@ -55,6 +56,7 @@ namespace Stripe\Service;
  * @property SubscriptionItemService $subscriptionItems
  * @property SubscriptionService $subscriptions
  * @property SubscriptionScheduleService $subscriptionSchedules
+ * @property Tax\TaxServiceFactory $tax
  * @property TaxCodeService $taxCodes
  * @property TaxRateService $taxRates
  * @property Terminal\TerminalServiceFactory $terminal
@@ -73,6 +75,7 @@ class CoreServiceFactory extends \Stripe\Service\AbstractServiceFactory
     private static $classMap = [
         'accountLinks' => AccountLinkService::class,
         'accounts' => AccountService::class,
+        'accountSessions' => AccountSessionService::class,
         'applePayDomains' => ApplePayDomainService::class,
         'applicationFees' => ApplicationFeeService::class,
         'apps' => Apps\AppsServiceFactory::class,
@@ -119,6 +122,7 @@ class CoreServiceFactory extends \Stripe\Service\AbstractServiceFactory
         'subscriptionItems' => SubscriptionItemService::class,
         'subscriptions' => SubscriptionService::class,
         'subscriptionSchedules' => SubscriptionScheduleService::class,
+        'tax' => Tax\TaxServiceFactory::class,
         'taxCodes' => TaxCodeService::class,
         'taxRates' => TaxRateService::class,
         'terminal' => Terminal\TerminalServiceFactory::class,

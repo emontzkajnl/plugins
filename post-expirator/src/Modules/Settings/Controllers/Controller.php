@@ -3,13 +3,17 @@
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
 
-namespace PublishPressFuture\Modules\Settings\Controllers;
+namespace PublishPress\Future\Modules\Settings\Controllers;
 
-use PublishPressFuture\Core\HookableInterface;
-use PublishPressFuture\Core\HooksAbstract as CoreAbstractHooks;
-use PublishPressFuture\Framework\InitializableInterface;
-use PublishPressFuture\Modules\Settings\HooksAbstract as SettingsHooksAbstract;
-use PublishPressFuture\Modules\Settings\SettingsFacade;
+use PublishPress\Future\Core\HookableInterface;
+use PublishPress\Future\Core\HooksAbstract as CoreAbstractHooks;
+use PublishPress\Future\Framework\InitializableInterface;
+use PublishPress\Future\Framework\WordPress\Facade\OptionsFacade;
+use PublishPress\Future\Modules\Expirator\Interfaces\CronInterface;
+use PublishPress\Future\Modules\Settings\HooksAbstract as SettingsHooksAbstract;
+use PublishPress\Future\Modules\Settings\SettingsFacade;
+
+defined('ABSPATH') or die('Direct access not allowed.');
 
 class Controller implements InitializableInterface
 {
@@ -39,9 +43,14 @@ class Controller implements InitializableInterface
     private $taxonomiesModelFactory;
 
     /**
-     * @var \PublishPressFuture\Modules\Expirator\Models\ExpirationActionsModel
+     * @var \PublishPress\Future\Modules\Expirator\Models\ExpirationActionsModel
      */
     private $actionsModel;
+
+    /**
+     * @var \Closure
+     */
+    private $migrationsFactory;
 
     /**
      * @param HookableInterface $hooks
@@ -49,19 +58,22 @@ class Controller implements InitializableInterface
      * @param \Closure $settingsPostTypesModelFactory
      * @param \Closure $taxonomiesModelFactory
      * @param $actionsModel
+     * @param \Closure $migrationsFactory
      */
     public function __construct(
         HookableInterface $hooks,
         $settings,
         $settingsPostTypesModelFactory,
         $taxonomiesModelFactory,
-        $actionsModel
+        $actionsModel,
+        $migrationsFactory
     ) {
         $this->hooks = $hooks;
         $this->settings = $settings;
         $this->settingsPostTypesModelFactory = $settingsPostTypesModelFactory;
         $this->taxonomiesModelFactory = $taxonomiesModelFactory;
         $this->actionsModel = $actionsModel;
+        $this->migrationsFactory = $migrationsFactory;
     }
 
     public function initialize()
@@ -83,10 +95,13 @@ class Controller implements InitializableInterface
             [$this, 'onAdminEnqueueScript'],
             15
         );
-
         $this->hooks->addAction(
             CoreAbstractHooks::ACTION_ADMIN_INIT,
             [$this, 'processFormSubmission']
+        );
+        $this->hooks->addAction(
+            CoreAbstractHooks::ACTION_INIT,
+            [$this, 'initMigrations']
         );
     }
 
@@ -157,7 +172,7 @@ class Controller implements InitializableInterface
                 'publishpressFutureConfig',
                 [
                     'text' => [
-                        'settingsSectionTitle' => __('Default Expiration Values', 'post-expirator'),
+                        'settingsSectionTitle' => __('Default Values', 'post-expirator'),
                         'settingsSectionDescription' => __(
                             'Use the values below to set the default actions/values to be used for each for the corresponding post types.  These values can all be overwritten when creating/editing the post/page.',
                             'post-expirator'
@@ -169,9 +184,9 @@ class Controller implements InitializableInterface
                             'Select whether the PublishPress Future meta box is active for this post type.',
                             'post-expirator'
                         ),
-                        'fieldHowToExpire' => __('How to expire', 'post-expirator'),
+                        'fieldHowToExpire' => __('Action', 'post-expirator'),
                         'fieldHowToExpireDescription' => __(
-                            'Select the default expire action for the post type.',
+                            'Select the default action for the post type.',
                             'post-expirator'
                         ),
                         'fieldAutoEnable' => __('Auto-enable?', 'post-expirator'),
@@ -181,24 +196,26 @@ class Controller implements InitializableInterface
                             'Select whether the PublishPress Future is enabled for all new posts.',
                             'post-expirator'
                         ),
-                        'fieldTaxonomy' => __('Taxonomy (hierarchical)', 'post-expirator'),
+                        'fieldTaxonomy' => __('Taxonomy (Hierarchical)', 'post-expirator'),
                         'noItemsfound' => __('No taxonomies found', 'post-expirator'),
                         'fieldTaxonomyDescription' => __(
                             'Select the hierarchical taxonomy and terms to be used for taxonomy based expiration.',
                             'post-expirator'
                         ),
-                        'fieldWhoToNotify' => __('Who to notify', 'post-expirator'),
+                        'fieldWhoToNotify' => __('Who to Notify', 'post-expirator'),
                         'fieldWhoToNotifyDescription' => __(
-                            'Enter a comma separate list of emails that you would like to be notified when the post expires.',
+                            'Enter a comma separate list of emails that you would like to be notified when the action runs.',
                             'post-expirator'
                         ),
-                        'fieldDefaultDateTimeOffset' => __('Default date/time offset', 'post-expirator'),
+                        'fieldDefaultDateTimeOffset' => __('Default Date/Time Offset', 'post-expirator'),
                         'fieldDefaultDateTimeOffsetDescription' => sprintf(
+                            // translator: Please, do not translate the date format text, since PHP will not be able to calculate using non-english terms.
                             esc_html__(
-                                'Set the offset to use for the default expiration date and time. For information on formatting, see %1$s. For example, you could enter %2$s+1 month%3$s or %4$s+1 week 2 days 4 hours 2 seconds%5$s or %6$snext Thursday%7$s.',
+                                'Set the offset to use for the default action date and time. For information on formatting, see %1$s
+                                    . For example, you could enter %2$s+1 month%3$s or %4$s+1 week 2 days 4 hours 2 seconds%5$s or %6$snext Thursday%7$s. Please, use only terms in English.',
                                 'post-expirator'
                             ),
-                            '<a href="http://php.net/manual/en/function.strtotime.php" target="_new">' . esc_html__(
+                            '<a href="https://www.php.net/manual/en/function.strtotime.php" target="_new">' . esc_html__(
                                 'PHP strtotime function',
                                 'post-expirator'
                             ) . '</a>',
@@ -227,7 +244,14 @@ class Controller implements InitializableInterface
 
     private function getCurrentTab()
     {
-        $allowedTabs = array('general', 'defaults', 'display', 'editor', 'diagnostics', 'viewdebug', 'advanced');
+        $allowedTabs = array(
+            'general',
+            'defaults',
+            'display',
+            'diagnostics',
+            'viewdebug',
+            'advanced',
+        );
 
         $allowedTabs = apply_filters(SettingsHooksAbstract::FILTER_ALLOWED_TABS, $allowedTabs);
 
@@ -258,6 +282,12 @@ class Controller implements InitializableInterface
         $this->hooks->doAction(SettingsHooksAbstract::ACTION_SAVE_TAB . $tab);
     }
 
+    public function initMigrations()
+    {
+        $factory = $this->migrationsFactory;
+        $factory();
+    }
+
     private function saveTabDefaults()
     {
         $settingsPostTypesModelFactory = $this->settingsPostTypesModelFactory;
@@ -273,7 +303,7 @@ class Controller implements InitializableInterface
                 wp_die(esc_html__('Form Validation Failure: Sorry, your nonce did not verify.', 'post-expirator'));
             }
 
-            $_POST = \filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $_POST = \filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             foreach ($postTypes as $postType) {

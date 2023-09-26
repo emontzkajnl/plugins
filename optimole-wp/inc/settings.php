@@ -41,6 +41,7 @@ class Optml_Settings {
 	 * @var boolean Whether or not the auto connect action is hooked.
 	 */
 	private static $auto_connect_hooked = false;
+
 	/**
 	 * Default settings schema.
 	 *
@@ -59,11 +60,15 @@ class Optml_Settings {
 		'lazyload'             => 'disabled',
 		'scale'                => 'disabled',
 		'network_optimization' => 'disabled',
-		'lazyload_placeholder' => 'disabled',
+		'lazyload_placeholder' => 'enabled',
 		'bg_replacer'          => 'enabled',
-		'video_lazyload'       => 'disabled',
+		'video_lazyload'       => 'enabled',
 		'retina_images'        => 'disabled',
+		'limit_dimensions'     => 'disabled',
+		'limit_height'         => 1080,
+		'limit_width'          => 1920,
 		'resize_smart'         => 'disabled',
+		'no_script'            => 'disabled',
 		'filters'              => [],
 		'cloud_sites'          => [ 'all' => 'true' ],
 		'watchers'             => '',
@@ -84,9 +89,14 @@ class Optml_Settings {
 		'native_lazyload'      => 'disabled',
 		'offload_media'        => 'disabled',
 		'cloud_images'         => 'disabled',
+		'strip_metadata'       => 'enabled',
 		'skip_lazyload_images' => 3,
 		'defined_image_sizes'          => [ ],
-
+		'banner_frontend'      => 'disabled',
+		'offloading_status'    => 'disabled',
+		'rollback_status'      => 'disabled',
+		'best_format'          => 'enabled',
+		'placeholder_color'    => '',
 	];
 	/**
 	 * Option key.
@@ -105,6 +115,7 @@ class Optml_Settings {
 	 * Optml_Settings constructor.
 	 */
 	public function __construct() {
+
 		$this->namespace      = OPTML_NAMESPACE . '_settings';
 		$this->default_schema = apply_filters( 'optml_default_settings', $this->default_schema );
 		$this->options        = wp_parse_args( get_option( $this->namespace, $this->default_schema ), $this->default_schema );
@@ -133,7 +144,7 @@ class Optml_Settings {
 				$env_key = 'OPTIML_' . strtoupper( $key );
 				if ( defined( $env_key ) && constant( $env_key ) ) {
 					$value = constant( $env_key );
-					if ( $type === 'bool' && ( $value === '' || ! in_array(
+					if ( $type === 'bool' && ( (string) $value === '' || ! in_array(
 						$value,
 						[
 							'on',
@@ -144,7 +155,7 @@ class Optml_Settings {
 						continue;
 					}
 
-					if ( $type === 'int' && ( $value === '' || (int) $value > 100 || (int) $value < 0 ) ) {
+					if ( $type === 'int' && ( (string) $value === '' || (int) $value > 100 || (int) $value < 0 ) ) {
 						continue;
 					}
 					$sanitized_value       = ( $type === 'bool' ) ? ( $value === 'on' ? 'enabled' : 'disabled' ) : (int) $value;
@@ -152,6 +163,8 @@ class Optml_Settings {
 				}
 			}
 		}
+
+		add_action( 'init', [ $this, 'register_settings' ] );
 	}
 
 	/**
@@ -228,6 +241,7 @@ class Optml_Settings {
 				case 'network_optimization':
 				case 'lazyload_placeholder':
 				case 'retina_images':
+				case 'limit_dimensions':
 				case 'resize_smart':
 				case 'bg_replacer':
 				case 'video_lazyload':
@@ -240,10 +254,18 @@ class Optml_Settings {
 				case 'css_minify':
 				case 'js_minify':
 				case 'native_lazyload':
+				case 'strip_metadata':
+				case 'no_script':
+				case 'banner_frontend':
+				case 'offloading_status':
+				case 'rollback_status':
+				case 'best_format':
 					$sanitized_value = $this->to_map_values( $value, [ 'enabled', 'disabled' ], 'enabled' );
 					break;
 				case 'max_width':
 				case 'max_height':
+				case 'limit_height':
+				case 'limit_width':
 					$sanitized_value = $this->to_bound_integer( $value, 100, 5000 );
 					break;
 				case 'quality':
@@ -290,6 +312,7 @@ class Optml_Settings {
 					}
 					break;
 				case 'watchers':
+				case 'placeholder_color':
 					$sanitized_value = sanitize_text_field( $value );
 					break;
 				case 'skip_lazyload_images':
@@ -367,6 +390,30 @@ class Optml_Settings {
 	}
 
 	/**
+	 * Update frontend banner setting from remote.
+	 *
+	 * @param bool $value Value.
+	 *
+	 * @return bool
+	 */
+	public function update_frontend_banner_from_remote( $value ) {
+		if ( ! $this->is_main_mu_site() ) {
+			return false;
+		}
+
+		$opts                    = $this->options;
+		$opts['banner_frontend'] = $value ? 'enabled' : 'disabled';
+
+		$update = update_option( $this->namespace, $opts, false );
+
+		if ( $update ) {
+			$this->options = $opts;
+		}
+
+		return $update;
+	}
+
+	/**
 	 * Update settings.
 	 *
 	 * @param string $key Settings key.
@@ -378,13 +425,19 @@ class Optml_Settings {
 		if ( ! $this->is_allowed( $key ) ) {
 			return false;
 		}
-		// If we try to update from a website which is not the main OPTML blog, bail.
-		if ( defined( 'OPTIML_ENABLED_MU' ) && constant( 'OPTIML_ENABLED_MU' ) && defined( 'OPTIML_MU_SITE_ID' ) && constant( 'OPTIML_MU_SITE_ID' ) &&
-			 intval( constant( 'OPTIML_MU_SITE_ID' ) ) !== get_current_blog_id()
-		) {
+
+		if ( ! $this->is_main_mu_site() ) {
 			return false;
 		}
-		$opt         = $this->options;
+		$opt = $this->options;
+
+		if ( $key === 'banner_frontend' ) {
+			$api          = new Optml_Api();
+			$service_data = $this->get( 'service_data' );
+			$application  = isset( $service_data['cdn_key'] ) ? $service_data['cdn_key'] : '';
+			$response     = $api->update_extra_visits( $opt['api_key'], $value, $application );
+		}
+
 		$opt[ $key ] = $value;
 		$update      = update_option( $this->namespace, $opt, false );
 		if ( $update ) {
@@ -394,6 +447,22 @@ class Optml_Settings {
 			do_action( 'optml_settings_updated' );
 		}
 		return $update;
+	}
+
+	/**
+	 * Check that we're on the main OPTML blog.
+	 *
+	 * @return bool
+	 */
+	private function is_main_mu_site() {
+		// If we try to update from a website which is not the main OPTML blog, bail.
+		if ( defined( 'OPTIML_ENABLED_MU' ) && constant( 'OPTIML_ENABLED_MU' ) && defined( 'OPTIML_MU_SITE_ID' ) && constant( 'OPTIML_MU_SITE_ID' ) &&
+			 intval( constant( 'OPTIML_MU_SITE_ID' ) ) !== get_current_blog_id()
+		) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -414,11 +483,15 @@ class Optml_Settings {
 			'lazyload'             => $this->get( 'lazyload' ),
 			'network_optimization' => $this->get( 'network_optimization' ),
 			'retina_images'        => $this->get( 'retina_images' ),
+			'limit_dimensions'     => $this->get( 'limit_dimensions' ),
+			'limit_height'         => $this->get( 'limit_height' ),
+			'limit_width'          => $this->get( 'limit_width' ),
 			'lazyload_placeholder' => $this->get( 'lazyload_placeholder' ),
 			'skip_lazyload_images' => $this->get( 'skip_lazyload_images' ),
 			'bg_replacer'          => $this->get( 'bg_replacer' ),
 			'video_lazyload'       => $this->get( 'video_lazyload' ),
 			'resize_smart'         => $this->get( 'resize_smart' ),
+			'no_script'            => $this->get( 'no_script' ),
 			'image_replacer'       => $this->get( 'image_replacer' ),
 			'cdn'                  => $this->get( 'cdn' ),
 			'max_width'            => $this->get( 'max_width' ),
@@ -438,7 +511,13 @@ class Optml_Settings {
 			'autoquality'          => $this->get( 'autoquality' ),
 			'offload_media'        => $this->get( 'offload_media' ),
 			'cloud_images'         => $this->get( 'cloud_images' ),
+			'strip_metadata'       => $this->get( 'strip_metadata' ),
 			'whitelist_domains'    => $whitelist,
+			'banner_frontend'      => $this->get( 'banner_frontend' ),
+			'offloading_status'    => $this->get( 'offloading_status' ),
+			'rollback_status'      => $this->get( 'rollback_status' ),
+			'best_format'         => $this->get( 'best_format' ),
+			'placeholder_color'   => $this->get( 'placeholder_color' ),
 		];
 	}
 
@@ -501,6 +580,15 @@ class Optml_Settings {
 	 */
 	public function is_smart_cropping() {
 		return $this->get( 'resize_smart' ) === 'enabled';
+	}
+
+	/**
+	 * Check if best format is enabled.
+	 *
+	 * @return bool
+	 */
+	public function is_best_format() {
+		return $this->get( 'best_format' ) === 'enabled';
 	}
 
 	/**
@@ -596,5 +684,78 @@ class Optml_Settings {
 
 		return $update;
 	}
+	/**
+	 * Get raw settings value.
+	 *
+	 * @return  array
+	 */
+	public function get_raw_settings() {
+		return get_option( $this->namespace, false );
+	}
 
+	/**
+	 * Get settings for CSAT.
+	 *
+	 * @return void
+	 */
+	public function register_settings() {
+		register_setting(
+			'optml_settings',
+			'optml_csat',
+			[
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '{}',
+			]
+		);
+	}
+
+	/**
+	 * Clear cache.
+	 *
+	 * @param string $type Cache type.
+	 *
+	 * @return string|WP_Error
+	 */
+	public function clear_cache( $type = '' ) {
+		$token = $this->get( 'cache_buster' );
+		$token_images = $this->get( 'cache_buster_images' );
+
+		if ( ! empty( $token_images ) ) {
+			$token = $token_images;
+		}
+
+		if ( ! empty( $type ) && $type === 'assets' ) {
+			$token = $this->get( 'cache_buster_assets' );
+		}
+
+		$request  = new Optml_Api();
+		$data     = $request->get_cache_token( $token, $type );
+
+		if ( $data === false || is_wp_error( $data ) || empty( $data ) || ! isset( $data['token'] ) ) {
+			$extra = '';
+
+			if ( is_wp_error( $data ) ) {
+				/**
+				 * Error from api.
+				 *
+				 * @var WP_Error $data Error object.
+				 */
+				$extra = sprintf( __( '. ERROR details: %s', 'optimole-wp' ), $data->get_error_message() );
+			}
+
+			return new WP_Error( 'optimole_cache_buster_error', __( 'Can not get new token from Optimole service', 'optimole-wp' ) . $extra );
+		}
+
+		if ( ! empty( $type ) && $type === 'assets' ) {
+			set_transient( 'optml_cache_lock_assets', 'yes', 5 * MINUTE_IN_SECONDS );
+			$this->update( 'cache_buster_assets', $data['token'] );
+		} else {
+			set_transient( 'optml_cache_lock', 'yes', 5 * MINUTE_IN_SECONDS );
+			$this->update( 'cache_buster_images', $data['token'] );
+		}
+
+		return $data['token'];
+	}
 }

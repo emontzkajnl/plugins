@@ -1,3 +1,125 @@
+#### [Version 3.10.0](https://github.com/Codeinwp/optimole-wp/compare/v3.9.2...v3.10.0) (2023-09-18)
+
+### New Features
+- **Edit Images in Cloud Library**: Images can now be edited before inserting them into your website.
+- **Lazyload for Optimole Cloud Library Images**: Images imported from the Optimole Cloud Library now support lazy-loading.
+- **Apply Optimization Settings to Cloud Library**: Optimole Cloud Library images now inherit image optimization settings from the plugin.
+- **More File Types in Dashboard**: Support for uploading additional file types like documents, videos, text, audio, etc. in the Optimole Dashboard.
+- **Add CLI Command for Clearing Image Cache**: New command-line interface option to easily clear the image cache.
+- **Best Format Toggle**: Choose to enable or disable automatic best format calculation for images.
+- **Generic Lazy-Loading Placeholder Color**: Added customizable color option for the generic lazy-loading placeholder.
+- **Improve WooCommerce Product Gallery Lazyload**: Enhanced lazyloading functionality for WooCommerce galleries.
+- **Resizing Images in Cloud Library and Dashboard**: Manually resize images by typing dimensions in the editor modal.
+
+### Improvements
+- **Explicit Connection Error Handling**: More detailed error messages for failed plugin connection.
+- **Unsaved Settings Alert**: The plugin settings page now prompts to confirm leaving the page if settings are unsaved.
+- **Better Folder UI/UX in the Dashboard**: Enhanced the user interface and experience for folders on the Optimole Dashboard.
+- **Multi-Image Selection UX**: Improved user experience for selecting multiple images in the Optimole Dashboard.
+
+### Bug Fixes
+- **Backwards Compatibility**: Fixed offload compatibility issues with WordPress versions below 6.0.
+- **Cloud Library Modal Loader not being removed**: In some contexts, the cloud library loader was not disappearing when opening the modal a second time.
+- **Visits Banner markup**: Optimole additional visits banner was interfering with modals on the front end of the website.
+
+##### [Version 3.9.2](https://github.com/Codeinwp/optimole-wp/compare/v3.9.1...v3.9.2) (2023-08-10)
+
+### Bug Fixes
+- **Fatal error**: In some edge-cases, the Hero Preloader feature was throwing a fatal error, trying to access inexistent posts.
+- **Lazyload default status**: Lazyload was off for new users by default when it should have been on.
+
+##### [Version 3.9.1](https://github.com/Codeinwp/optimole-wp/compare/v3.9.0...v3.9.1) (2023-08-07)
+
+### Bug Fixes
+- **Fatal error on PHP<7.3**: Fixed fatal error that the plugin was throwing on PHP versions lower than 7.3.
+- **PHP Warning**: Fixed warning when inserting an image with a defined height but no width.
+
+#### [Version 3.9.0](https://github.com/Codeinwp/optimole-wp/compare/v3.8.2...v3.9.0) (2023-08-03)
+
+### New Features
+- **Hero Image Optimization**: Adds fetch priority for hero images to preload them for enhanced performance.
+- **Digital Assets Management (DAM)**: Replaced old media modal integration with a new interface to browse and use the images on your Optimole account.
+- **DAM Elementor Compatibility**: Use images from your Optimole account in Elementor Builder.
+- **DAM Core Editor Integration**: Integrated DAM with the WordPress core editor.
+- **Cloud Library Dashboard**: Added a new Cloud Library page to manage your cloud assets straight from the website dashboard.
+
+### Improvements
+- **Image Offloading & Rollback**: Images offloading & rollback process is now ~50% faster and operates in the background.
+- **Moving Images**: Instant reflection of image movement to folders inside the Dashboard and DAM.
+
+### Bug Fixes
+- **AVIF Disabling Feature**: Fixed issue where serving AVIF format could not be disabled.
+- **Optimole Banner Toggling**: Fixed an issue where toggling the Optimole banner would sometimes not save the setting.
+- **Dashboard Image Uploading**: Fixes issue where certain images could not be uploaded to the Optimole Dashboard;
+
+##### [Version 3.8.2](https://github.com/Codeinwp/optimole-wp/compare/v3.8.1...v3.8.2) (2023-07-06)
+
+### Bug Fixes
+- **Compatibilities loading**: Ensure service is connected before loading compatibilities, throwing errors in some edge cases.
+- **Widgets screen layout**: Resolved issue with Optimole banner appearing in the admin inside widget iframes.
+- **Cloud library whitelist**: Fixed problem with sites not being removed from the cloud library whitelist.
+
+### Improvements
+- **Add Support Link**: Added a support link for Premium users.
+- **Removed Native Lazyload Fallback**: Native lazyload fallback has been removed.
+- **Add Compatibility for Spectra Blocks**: Introduced compatibility for Spectra Blocks.
+- **Add Error Notice**: Added an error notice when the filter length is not three or more characters.
+
+##### [Version 3.8.1](https://github.com/Codeinwp/optimole-wp/compare/v3.8.0...v3.8.1) (2023-06-27)
+
+### Bug Fixes
+- **Warning on lower versions of PHP when using Elementor**: Resolved the warning when the plugin was activated, but the service wasnt connected on lower versions of PHP when using Elementor.
+
+#### [Version 3.8.0](https://github.com/Codeinwp/optimole-wp/compare/v3.7.0...v3.8.0) (2023-06-19)
+
+### New features
+- **Option for max-width and max-height:** Users can select a maximum width/height for images delivered.
+- **Media Library bulk operations:** Users can now efficiently move multiple images at once within the media library folders.
+- **Additional visits:** Adds an option to enable a banner on all websites connected to the account promoting Optimole, gaining an additional 20,000 visits.
+
+### Improvements
+- **Plugin dashboard UI:** Reworked plugin dashboard to use React and have a more consistent design.
+- **Conflict notice:** Adds a notice to inform users about potential conflicts with other plugins.
+- **Eliminate Redundant Lazyload Resizing:** Skip unnecessary resizing when lazyloading images.
+- **Better search on the service dashboard**: Improved the search functionality to enhance performance and provide faster search results.
+
+### Bug Fixes
+- **WEBP extension exclusion:** Fixed an issue where the WEBP image format couldnt be excluded from lazy-load.
+- **Elementor compatibility:** Fixes an issue where Elementor backgrounds werent lazy-loaded on some newer versions.
+- **Invalid CDN parameters:** Fixes an issue where the image URL might have had invalid values.
+- **Upload file names:** Fixes an issue with the offload functionality, where some files were renamed when uploaded.
+
+#### [Version 3.7.0](https://github.com/Codeinwp/optimole-wp/compare/v3.6.1...v3.7.0) (2023-05-15)
+
+### New Features
+- **Best Format Optimization:** Implemented a system that automatically chooses the optimal image format, based on smallest resulting file size, to enhance site loading speed.
+- **Media Library Folders:** Improved browsing experience in the Media Library by adding the option to organize images into folders.
+- **Metadata Strip Option:** Introduced an option to enable/disable the stripping of metadata (EXIF, IPTC, etc.) from the resulting image, providing users with more control over their content.
+- **Noscript Tag:** Added a new option to disable the noscript tag in settings, providing more flexibility in configuring your site.
+- **Visit Stats by Domain:** Introduced a feature to display visit statistics by domain, aiding in traffic analysis and site optimization.
+- **Background Lazyload:** Added compatibility for background lazyload with both Otter Blocks and the core cover block, improving page load times.
+- **Hide API Key:** For enhanced security, API keys are now hidden by default.
+
+### Improvements
+- **Media Library Stats Formatting:** Improved number formatting for more readable Media Library statistics.
+- **Invoices Redesign:** Enhanced the design of invoices for better readability and user experience.
+- **User Experience on Fresh Installs:** Improved the user experience of the last images section on fresh installs, providing a more intuitive and engaging user interface.
+- **CDN Locations:** Updated the number of CDN locations to 450, offering improved content delivery speeds globally.
+- **Generic Placeholder:** Generic placeholders are now enabled by default.
+- **Video and Iframe Lazyload:** Lazyload is now enabled by default for videos and iframes to improve page load times.
+
+
+### Bug Fixes
+- **AVIF Option Bug:** Fixed an issue where the AVIF option was causing Microsoft Edge to fallback to JPEG/PNG instead of the intended WEBP format.
+- **Divi Blog Archive Pagination:** Resolved a bug that was preventing pagination from working on Divi blog archive templates when Optimole lazyloading was activated.
+- **PHP 8.2 Compatibility:** Fixed compatibility issues with PHP 8.2, ensuring smooth functionality across different PHP environments.
+- **View Sample Image Button:** Fixed the behaviour of the 'View Sample Image' button to work as intended.
+- **3rd Party Plugin Exclusions:** Resolved an issue where images injected by 3rd party plugins were ignoring exclusions in some cases.
+- **Search Bar Refresh:** Fixed an issue where the search bar required a page refresh when displaying no results.
+- **Upgrade Button Behaviour:** Fixed an issue with the behaviour of the 'Upgrade' button in dashboard cards.
+- **Display of Large Image Names:** Fixed a display issue for images with larger names, ensuring all image names are displayed correctly.
+- **Login and Signup Form Validation:** Fixed validation errors on the Login and Signup forms to ensure accurate data entry.
+
 ##### [Version 3.6.1](https://github.com/Codeinwp/optimole-wp/compare/v3.6.0...v3.6.1) (2023-04-09)
 
 #### Bug Fixes

@@ -12,7 +12,7 @@ div.pe-qe-fields > .pe-category-list {
 }
 
 div.pe-qe-fields > div {
-    margin: 5px 0px;
+    margin: 5px 0;
 }
 
 #bulk-edit div.pe-qe-fields > .pe-category-list {
@@ -42,4 +42,16 @@ div.pe-qe-fields > div {
 .pe-qe-fields input.invalid {
     border: 2px solid #b15b5b;
     background-color: #ffdede;
+}
+
+.future-action-gray {
+    color: #afafaf;
+}
+
+.future-action-action-name {
+    font-style: italic;
+}
+
+.future-action-action-date {
+    font-weight: bold;
 }

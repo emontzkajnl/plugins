@@ -24,8 +24,10 @@ function qsm_generate_admin_results_page() {
 	<div class="wrap">
 		<div>
 			<h2 id="result_details">
-				<?php esc_html_e( 'Quiz Results', 'quiz-master-next' ); ?>
-				<span id="results-screen-option-button" class="button">Screen Options</span>
+				<?php esc_html_e( 'Quiz Results', 'quiz-master-next' );
+				if ( "quiz-results" == $active_tab ) { ?>
+					<span id="results-screen-option-button" class="button"><?php echo esc_html__( 'Screen Options', 'quiz-master-next' ) ?></span>
+				<?php } ?>
 			</h2>
 		</div>
 		<?php $mlwQuizMasterNext->alertManager->showAlerts(); ?>
@@ -295,8 +297,10 @@ function qsm_results_overview_tab_content() {
 		$results_screen_option['business']   = isset( $_POST['business'] ) ? sanitize_text_field( wp_unslash( $_POST['business'] ) ) : "0";
 		$results_screen_option['phone']      = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : "0";
 		$results_screen_option['ip_address'] = isset( $_POST['ip_address'] ) ? sanitize_text_field( wp_unslash( $_POST['ip_address'] ) ) : "0";
+		$results_screen_option['start_date'] = isset( $_POST['start_date'] ) ? sanitize_text_field( wp_unslash( $_POST['start_date'] ) ) : "0";
+		$results_screen_option['time_taken'] = isset( $_POST['time_taken'] ) ? sanitize_text_field( wp_unslash( $_POST['time_taken'] ) ) : "0";
 		//set screen option as user meta
-		add_user_meta( $user_id, 'results_screen_option', $results_screen_option, true );
+		update_user_meta( $user_id, 'results_screen_option', $results_screen_option );
 	} else {
 		$results_screen_option   = get_user_meta( $user_id, 'results_screen_option', true );
 		$results_screen_option   = ! empty( $results_screen_option ) ? $results_screen_option : '';
@@ -308,6 +312,12 @@ function qsm_results_overview_tab_content() {
 				'phone'      => '1',
 				'ip_address' => '1',
 			);
+		}
+		if ( ! isset( $results_screen_option['start_date'] ) ) {
+			$results_screen_option['start_date'] = "0";
+		}
+		if ( ! isset( $results_screen_option['time_taken'] ) ) {
+			$results_screen_option['time_taken'] = "0";
 		}
 	}
 	?>
@@ -326,7 +336,8 @@ function qsm_results_overview_tab_content() {
 			'email'         => __( 'Email', 'quiz-master-next' ),
 			'phone'         => __( 'Phone', 'quiz-master-next' ),
 			'user'          => __( 'User', 'quiz-master-next' ),
-			'time_taken'    => __( 'Time Taken', 'quiz-master-next' ),
+			'start_date'    => __( 'Start Date', 'quiz-master-next' ),
+			'time_taken'    => __( 'End Date', 'quiz-master-next' ),
 			'ip'            => __( 'IP Address', 'quiz-master-next' ),
 			'page_name'     => __( 'Page Name', 'quiz-master-next' ),
 			'page_url'      => __( 'Page URL', 'quiz-master-next' ),
@@ -354,13 +365,19 @@ function qsm_results_overview_tab_content() {
 		if ( "0" === $results_screen_option['ip_address'] ) {
 			$values['ip']['style'] = $display_none;
 		}
+		if ( "0" === $results_screen_option['start_date'] ) {
+			$values['start_date']['style'] = $display_none;
+		}
+		if ( "0" === $results_screen_option['time_taken'] ) {
+			$values['time_taken']['style'] = $display_none;
+		}
 
 		if ( $mlw_quiz_data ) {
 			foreach ( $mlw_quiz_data as $mlw_quiz_info ) {
 				$quiz_infos[]            = $mlw_quiz_info;
 				$mlw_complete_time       = '';
 				$mlw_qmn_results_array   = maybe_unserialize( $mlw_quiz_info->quiz_results );
-				$hidden_questions        = isset( $mlw_qmn_results_array['hidden_questions'] ) ? count( $mlw_qmn_results_array['hidden_questions'] ) : 0;
+				$hidden_questions        = ! empty( $mlw_qmn_results_array['hidden_questions'] ) && is_array($mlw_qmn_results_array['hidden_questions']) ? count( $mlw_qmn_results_array['hidden_questions'] ) : 0;
 				if ( is_array( $mlw_qmn_results_array ) ) {
 					$mlw_complete_hours = floor( $mlw_qmn_results_array[0] / 3600 );
 					if ( $mlw_complete_hours > 0 ) {
@@ -421,13 +438,22 @@ function qsm_results_overview_tab_content() {
 					}
 				}
 
+				if ( isset( $values['start_date'] ) ) {
+					if ( isset($mlw_qmn_results_array['quiz_start_date']) ) {
+						$sdate    = gmdate( get_option( 'date_format' ), strtotime( $mlw_qmn_results_array['quiz_start_date'] ) );
+						$stime    = gmdate( "h:i:s A", strtotime( $mlw_qmn_results_array['quiz_start_date'] ) );
+						$values['start_date']['content'][] = $sdate .' '. $stime;
+					} else {
+						$values['start_date']['content'][] = ' ';
+					}
+				}
+
 				$date    = gmdate( get_option( 'date_format' ), strtotime( $mlw_quiz_info->time_taken ) );
 				$time    = gmdate( "h:i:s A", strtotime( $mlw_quiz_info->time_taken ) );
 
 				if ( isset( $values['time_taken'] ) ) {
-					$values['time_taken']['content'][] = '<abbr title="' . esc_attr( $date . $time ) . '">' . esc_html( $date ) . '</abbr>';
+					$values['time_taken']['content'][] = $date .' '. $time;
 				}
-
 				if ( isset( $values['ip'] ) ) {
 					$values['ip']['content'][] = $mlw_quiz_info->user_ip;
 				}
@@ -435,7 +461,11 @@ function qsm_results_overview_tab_content() {
 					$values['page_name']['content'][] = $mlw_quiz_info->page_name;
 				}
 				if ( isset( $values['page_url'] ) ) {
-					$values['page_url']['content'][] = '<a href="' . esc_url( $mlw_quiz_info->page_url ) . '">' . esc_html( $mlw_quiz_info->page_url ) . '</a>';
+					$quiz_page_url = $mlw_quiz_info->page_url;
+					if ( ! empty( $mlw_qmn_results_array['page_url'] ) ) {
+						$quiz_page_url = $mlw_qmn_results_array['page_url'];
+					}
+					$values['page_url']['content'][] = '<a href="' . esc_url( $quiz_page_url ) . '">' . esc_html( $quiz_page_url ) . '</a>';
 				}
 				foreach ( $values as $k => $v ) {
 					if ( ! in_array( $k, [ 'score', 'time_complete', 'name', 'business', 'email', 'phone', 'user', 'time_taken', 'ip', 'page_name', 'page_url' ], true ) ) {
@@ -530,6 +560,14 @@ function qsm_results_overview_tab_content() {
 						<label>
 							<input type="checkbox" name="ip_address" value="1" <?php checked( $results_screen_option['ip_address'], "1", true ) ?>/>
 							<?php esc_html_e( 'IP Address', 'quiz-master-next' ); ?>
+						</label>
+						<label>
+							<input type="checkbox" name="start_date" value="1" <?php checked( $results_screen_option['start_date'], "1", true ) ?>/>
+							<?php esc_html_e( 'Start Date', 'quiz-master-next' ); ?>
+						</label>
+						<label>
+							<input type="checkbox" name="time_taken" value="1" <?php checked( $results_screen_option['time_taken'], "1", true ) ?>/>
+							<?php esc_html_e( 'End Date', 'quiz-master-next' ); ?>
 						</label>
 						<?php wp_nonce_field( 'results_screen_option', 'results-screen_option_nonce' ); ?>
 					</form>

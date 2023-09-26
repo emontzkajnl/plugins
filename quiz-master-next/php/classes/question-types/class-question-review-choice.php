@@ -38,7 +38,7 @@ class QSM_Question_Review_Choice extends QSM_Question_Review {
 			} else {
 				$user_correct_ans = -1;
 			}
-			$this->points            += intval($this->answer_array[ $user_answer_key ][1]);
+			$this->points            += floatval($this->answer_array[ $user_answer_key ][1]);
 			$check_correct_answer_key = $this->answer_array[ $user_answer_key ][2];
 
 			if ( 1 == $check_correct_answer_key ) {
@@ -46,6 +46,9 @@ class QSM_Question_Review_Choice extends QSM_Question_Review {
 			}
 		}
 		if ( ( $this->correct_answer_logic && count( $this->correct_answer ) === $user_correct_ans || ! $this->correct_answer_logic && $user_correct_ans === $total_correct_ans ) && $is_user_attempted ) {
+			$this->answer_status = 'correct';
+		}
+		if ( in_array( intval( $this->question_type ), array( 0, 1 ), true ) && 0 < $user_correct_ans ) {
 			$this->answer_status = 'correct';
 		}
 	}

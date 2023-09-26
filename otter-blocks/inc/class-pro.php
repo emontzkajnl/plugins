@@ -14,7 +14,7 @@ class Pro {
 	/**
 	 * Singleton.
 	 *
-	 * @var Pro Class object.
+	 * @var Pro|null Class object.
 	 */
 	protected static $instance = null;
 
@@ -159,6 +159,10 @@ class Pro {
 	 * @access  public
 	 */
 	public function should_show_dashboard_upsell() {
+		if ( defined( 'OTTER_PRO_VERSION' ) ) {
+			return;
+		}
+
 		$show_upsell = false;
 
 		$installed     = get_option( 'otter_blocks_install' );
@@ -248,7 +252,7 @@ class Pro {
 		<div class="clear">
 			<p><?php _e( 'Unlock the full power of WooCommerce Builder by activating Otter Pro license.', 'otter-blocks' ); ?></p>
 
-			<a href="<?php echo esc_url( admin_url( 'options-general.php?page=otter' ) ); ?>" target="_blank" class="button button-primary">
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=otter' ) ); ?>" target="_blank" class="button button-primary">
 				<?php _e( 'Activate License', 'otter-blocks' ); ?>
 			</a>
 		</div>
@@ -398,6 +402,11 @@ class Pro {
 	 * @access public
 	 */
 	public function add_pro_link( $links ) {
+
+		if ( defined( 'OTTER_PRO_VERSION' ) ) {
+			return $links;
+		}
+
 		$links[] = sprintf(
 			'<a href="%s" target="_blank" style="color:#ed6f57;font-weight:bold;">%s</a>',
 			esc_url_raw( tsdk_utmify( self::get_url(), 'pluginspage', 'action' ) ),
@@ -412,7 +421,7 @@ class Pro {
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Pro
 	 * @since   2.0.3
 	 * @access  public
 	 */

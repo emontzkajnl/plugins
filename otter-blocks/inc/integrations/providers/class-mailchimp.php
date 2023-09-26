@@ -47,14 +47,12 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
-	 * @param Form_Settings_Data|null $wp_options_form The integration data.
+	 * @param Form_Settings_Data $wp_options_form The integration data.
 	 * @since 2.0.3
 	 */
 	public function extract_data_from_integration( $wp_options_form ) {
-		if ( isset( $wp_options_form ) ) {
-			$this->set_api_key( $wp_options_form->get_api_key() );
-			$this->set_list_id( $wp_options_form->get_list_id() );
-		}
+		$this->set_api_key( $wp_options_form->get_api_key() );
+		$this->set_list_id( $wp_options_form->get_list_id() );
 		return $this;
 	}
 
@@ -108,57 +106,59 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	}
 
 	/**
-	 * Add a new subscriber to Mailchimp.
+	 * Make a request that add the email to the contact list.
 	 *
-	 * @param string $email The client email.
-	 * @return Form_Data_Response
-	 * @since 2.0.3
+	 * @param string $email The email address.
+	 * @return array|\WP_Error The response from Mailchimp.
 	 */
-	public function subscribe( $email ) {
-		$res         = new Form_Data_Response();
+	public function make_subscribe_request( $email ) {
 		$user_status = $this->get_new_user_status_mailchimp( $this->list_id );
 
-		$url       = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/members/' . md5( strtolower( $email ) );
-		$form_data = array(
+		$url = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/members/' . md5( strtolower( $email ) );
+
+		$payload = array(
 			'email_address' => $email,
 			'status'        => $user_status,
 		);
-		$args      = array(
+
+		$args = array(
 			'method'  => 'PUT',
 			'headers' => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
-			'body'    => wp_json_encode( $form_data ),
+			'body'    => wp_json_encode( $payload ),
 		);
 
-		$response = wp_remote_post( $url, $args );
-		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
-
-		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' )->set_is_credential_error( $this->is_credential_error( $body['status'] ) );
-
-			if ( ! empty( $body['detail'] ) && str_contains( $body['detail'], 'fake' ) ) {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
-			} else {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
-			}       
-		} else {
-			$res->mark_as_success();
-			$res->set_code( Form_Data_Response::SUCCESS_USER_SUBSCRIBED );
-		}
-
-		return $res;
+		return wp_remote_post( $url, $args );
 	}
 
 	/**
-	 * Test the subscription by registering a random generated email.
+	 * Add a new subscriber to Mailchimp.
 	 *
-	 * @return Form_Data_Response
+	 * @param Form_Data_Request $form_data The wrapper around request data.
+	 * @return Form_Data_Request
 	 * @since 2.0.3
 	 */
-	public function test_subscription() {
+	public function subscribe( $form_data ) {
 
-		return $this->subscribe( Form_Utils::generate_test_email() );
+		$email    = $form_data->get_first_email_from_input_fields();
+		$response = $this->make_subscribe_request( $email );
+		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+
+			if ( ! empty( $body['detail'] ) && strpos( $body['detail'], 'fake' ) !== false ) {
+				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
+			} else {
+				if ( $this->is_credential_error( $body['status'] ) ) {
+					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR );
+				} else {
+					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, $body['detail'] );
+				}
+			}
+		}
+
+		return $form_data;
 	}
 
 	/**
@@ -204,7 +204,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public static function validate_api_key( $api_key ) {
-		if ( ! isset( $api_key ) || '' === $api_key ) {
+		if ( '' === $api_key ) {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'API Key is missing!', 'otter-blocks' ),
@@ -265,8 +265,8 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public function get_information_from_provider( $request ) {
-		if ( $request->is_set( 'action' ) ) {
-			if ( $request->get( 'action' ) == 'listId' ) {
+		if ( $request->is_root_data_set( 'action' ) ) {
+			if ( $request->get_root_data( 'action' ) == 'listId' ) {
 				return $this->get_lists();
 			}
 		}

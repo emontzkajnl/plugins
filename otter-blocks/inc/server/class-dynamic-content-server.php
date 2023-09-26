@@ -17,21 +17,21 @@ class Dynamic_Content_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dynamic_Content_Server
+	 * @var Dynamic_Content_Server|null
 	 */
 	public static $instance = null;
 
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Dynamic_Content_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Dynamic_Content_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 
@@ -153,7 +153,7 @@ class Dynamic_Content_Server {
 	 *
 	 * Get dynamic image from WordPress.
 	 *
-	 * @param mixed $request Request arguments.
+	 * @param \WP_REST_Request $request Request arguments.
 	 *
 	 * @return mixed|\WP_REST_Response
 	 */
@@ -163,8 +163,14 @@ class Dynamic_Content_Server {
 		$fallback = $request->get_param( 'fallback' );
 		$path     = OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg';
 
-		if ( ! empty( $fallback ) && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			$path = $fallback;
+		if ( ! empty( $fallback ) ) {
+
+			$fallback           = sanitize_text_field( $fallback );
+			$feedback_full_path = realpath( $fallback );
+
+			if ( false !== $feedback_full_path && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				$path = $feedback_full_path;
+			}
 		}
 
 		$default = $path;
@@ -191,7 +197,7 @@ class Dynamic_Content_Server {
 
 		if ( 'logo' === $type ) {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
- 
+
 			if ( $custom_logo_id ) {
 				$path = wp_get_original_image_path( $custom_logo_id );
 			}
@@ -204,7 +210,9 @@ class Dynamic_Content_Server {
 				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 			$output = ob_get_contents();
 
-			header( 'Content-type: ' . $size['mime'] );
+			if ( ! empty( $size['mime'] ) ) {
+				header( 'Content-type: ' . $size['mime'] );
+			}
 			return $output;
 		}
 
@@ -212,7 +220,9 @@ class Dynamic_Content_Server {
 			readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 		$output = ob_get_contents();
 
-		header( 'Content-type: ' . $size['mime'] );
+		if ( isset( $size['mime'] ) ) {
+			header( 'Content-type: ' . $size['mime'] );
+		}
 		return $output;
 	}
 

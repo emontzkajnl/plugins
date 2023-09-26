@@ -2,9 +2,9 @@
 Contributors: quizsurvey,expresstech
 Tags: quiz, survey, lead, test, score, exam, questionnaire, question,wordpress quiz plugin
 Requires at least: 4.9
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.4
-Stable tag: 8.1.5
+Stable tag: 8.1.16
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -163,6 +163,81 @@ This is usually a theme conflict. You can [checkout out our common conflict solu
 18. Database
 
 == Changelog ==
+= 8.1.16 (September 20, 2023) =
+* Feature: Added option to use random question and answer with manual pagination
+* Bug: Fix quiz score calculation issue with file upload question types
+* Enhancement: Improved nonce validation logic
+
+= 8.1.15 (September 11, 2023) =
+* Bug: Fixed issue causing numeric responses of 0 to display as "No Answer Provided" in emails
+* Bug: Fixed issue with next button while using manual pagination
+* Bug: Fixed WPML issue with retake and start buttons
+* Bug: Fixed custom CSS issue
+* Enhancement: Improve file upload question type functionality
+* Enhancement: Improve nonce validation logic
+* Enhancement: Improved RTL (Right-to-Left) layout support
+
+= 8.1.14 (August 24, 2023) =
+* Feature: Added option to change text label for "No answer provided”
+* Bug: Resolved the issue where the timer would continue to display in the page title even after being disabled
+* Bug: Addressed several PHP warnings
+* Bug: Patched a vulnerability to prevent race conditions during submission
+* Bug: Fixed Cross Site Scripting (XSS) vulnerability in question description
+* Enhancement: Included an option to underline text in the editor
+
+= 8.1.13 (August 02, 2023) =
+* Bug: Fixed translation issue with German letters
+* Bug: Resolved quiz store issue related to long quiz URLs
+* Bug: Fixed issue with inline CSS class in quiz answer selection
+
+= 8.1.12 (July 20, 2023) =
+* Bug: The HTML tag issue with the admin result page has been resolved
+* Bug: Fixed issue with question position on manual pagination
+* Bug: Resolved the issue related to multiple responses showing in the inline result option
+* Enhancement: Significant performance improvements have been made to the show inline result feature
+
+= 8.1.11 (July 14, 2023) =
+* Bug: Resolved problem causing a blank screen upon submission
+* Bug: Rectified issues with the layout of the progress bar
+* Bug: Fixed security vulnerabilities and enhanced overall system protection
+
+= 8.1.10 (June 30, 2023) =
+* Bug: Fixed issues with timer after 8.1.9 release
+
+= 8.1.9 (June 28, 2023) =
+* Feature: Added option to disable quiz public links
+* Feature: Added option to apply global setting on multiple quizzes
+* Feature: Added the ability to set a default text for unanswered questions
+* Feature: Added option to store failed quiz submitted data
+* Feature: Added option to enable/disable QSM logs
+* Bug: Fixed visiblity issue with next button on comment screen
+* Bug: Fixed correct answer logic issue with multi choice question type
+
+= 8.1.8 (June 13, 2023) =
+* Feature: Added option to end quiz after x number of wrong answers
+* Feature: Added option to display the start and end dates of quizzes in the result list
+* Bug: Fixed issue with correct answer logic while applying global setting
+* Bug: Resolved hyperlink problem with multiple answer in email.
+* Enhancement: Improve show inline result UX
+* Enhancement: Improve questions hint tooltip UI
+* Enhancement: Implemented various improvements to enhance the user experience of the quiz admin panel
+
+= 8.1.7 (May 22, 2023) =
+* Feature: Now users can set separate question limits for individual categories.
+* Bug: Fixed issues with ending a quiz if wrong answer is selected
+* Enhancement: Enhanced the validation flow for the "end quiz if wrong answer" option.
+* Enhancement: Added a warning alert to notify users when they attempt to save invalid variables in the result or email template
+* Enhancement: Improved the functionality of nonce validation
+* Enhancement: Enhanced the user interface for displaying multiple response results
+* Enhancement: Improved the user experience for the "show inline result" option
+
+= 8.1.6 (April 24, 2023) =
+* Bug: Resolved a JavaScript conflict with the Avada theme
+* Bug: PHP warnings related to disallowing submission after quiz expiry have been fixed
+* Bug: Fixed issue with end quiz if there is wrong answer option
+* Bug: Corrected decimal and negative points calculations associated with point-related variables
+* Bug: Fixed visiblity issue with start button
+
 = 8.1.5 (April 13, 2023) =
 * Feature: Added option to display inline results for fill-in-the-blank and dropdown question types
 * Bug: Resolved an issue with the next button when multiple quizzes are used on the same page

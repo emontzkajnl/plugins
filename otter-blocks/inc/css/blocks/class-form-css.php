@@ -204,7 +204,7 @@ class Form_CSS extends Base_CSS {
 					),
 					array(
 						'property' => '--padding-tablet',
-						'value'    => 'paddingTablet',
+						'value'    => 'inputPaddingTablet',
 						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
@@ -220,7 +220,7 @@ class Form_CSS extends Base_CSS {
 					),
 					array(
 						'property' => '--padding-mobile',
-						'value'    => 'paddingMobile',
+						'value'    => 'inputPaddingMobile',
 						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
@@ -326,7 +326,7 @@ class Form_CSS extends Base_CSS {
 	/**
 	 * Generate Form Global CSS
 	 * 
-	 * @return string
+	 * @return string|void
 	 * @since 2.1.7
 	 * @access public
 	 */

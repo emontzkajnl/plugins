@@ -19,7 +19,7 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * The main instance var.
 	 *
-	 * @var CSS_Handler
+	 * @var CSS_Handler|null
 	 */
 	public static $instance = null;
 
@@ -122,6 +122,8 @@ class CSS_Handler extends Base_CSS {
 		$post_id = $request->get_param( 'id' );
 		self::generate_css_file( $post_id );
 
+		self::mark_review_block_metadata( $post_id );
+
 		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'otter-blocks' ) ) );
 	}
 
@@ -138,9 +140,9 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * Get CSS url for post.
 	 *
-	 * @param int/string $type Post ID or Widget.
+	 * @param int|string $type Post ID or Widget.
 	 *
-	 * @return string File url.
+	 * @return string|false File url.
 	 */
 	public static function get_css_url( $type = 'widgets' ) {
 		$file_name = '';
@@ -164,7 +166,7 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * Check if we have a CSS file for this post.
 	 *
-	 * @param int/string $type Post ID or Widget.
+	 * @param int|string $type Post ID or Widget.
 	 *
 	 * @return bool
 	 */
@@ -207,9 +209,10 @@ class CSS_Handler extends Base_CSS {
 
 		self::save_css_file( $post_id, $css );
 
+		self::mark_review_block_metadata( $post_id );
+
 		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'otter-blocks' ) ) );
 	}
-
 
 	/**
 	 * Function to save CSS into WordPress Filesystem.
@@ -217,7 +220,6 @@ class CSS_Handler extends Base_CSS {
 	 * @param int    $post_id Post id.
 	 * @param string $css CSS string.
 	 *
-	 * @return bool
 	 * @since   1.3.0
 	 * @access  public
 	 */
@@ -273,8 +275,6 @@ class CSS_Handler extends Base_CSS {
 				update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
 			}
 		}
-
-		return true;
 	}
 
 	/**
@@ -282,7 +282,6 @@ class CSS_Handler extends Base_CSS {
 	 *
 	 * @param int $post_id Post id.
 	 *
-	 * @return bool
 	 * @since   1.3.0
 	 * @access  public
 	 */
@@ -317,14 +316,11 @@ class CSS_Handler extends Base_CSS {
 		}
 
 		$wp_filesystem->delete( $file_path, true );
-
-		return true;
 	}
 
 	/**
 	 * Function to save/resave widget styles.
 	 *
-	 * @return  bool
 	 * @since   1.7.0
 	 * @access  public
 	 */
@@ -391,8 +387,6 @@ class CSS_Handler extends Base_CSS {
 				update_option( 'themeisle_blocks_widgets_css_file', $file_name );
 			}
 		}
-
-		return true;
 	}
 
 	/**
@@ -441,6 +435,37 @@ class CSS_Handler extends Base_CSS {
 		$css = $compressor->run( $css );
 
 		return $css;
+	}
+
+	/**
+	 * Mark in post meta if the post has a review block.
+	 * 
+	 * @param int $post_id Post ID.
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public static function mark_review_block_metadata( $post_id ) {
+		if ( empty( $post_id ) ) {
+			return;
+		}
+
+		$content     = get_the_content( '', false, $post_id );
+		$saved_value = boolval( get_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', true ) );
+
+		if ( empty( $content ) ) {
+
+			if ( true === $saved_value ) {
+				delete_post_meta( $post_id, '_themeisle_gutenberg_block_has_review' );
+			}
+
+			return;
+		}
+
+		$has_review = false !== strpos( $content, '<!-- wp:themeisle-blocks/review' );
+
+		if ( $has_review !== $saved_value ) {
+			update_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', $has_review );
+		}
 	}
 
 	/**

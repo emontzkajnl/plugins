@@ -369,8 +369,8 @@ class QMNQuizCreator {
 		$question_term_exists   = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $question_term ) );
 		$mlw_qmn_duplicate_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE quiz_id=%d", $quiz_id ) );
 		$quiz_settings          = maybe_unserialize( $mlw_qmn_duplicate_data->quiz_settings );
-		if ( 0 == $is_duplicating_questions ) {
-			$quiz_settings['pages'] = '';
+		if ( 0 == $is_duplicating_questions && isset($quiz_settings['pages']) ) {
+			$quiz_settings['pages'] = array();
 		}
 		$qsm_create_quiz_system = 0;
 		if ( isset( $mlw_qmn_duplicate_data->system ) ) {
@@ -609,7 +609,7 @@ class QMNQuizCreator {
 					}
 				}
 				// Fixed Rules Questions with new question ids
-				if ( $logic_rules ) {
+				if ( is_array( $logic_rules ) ) {
 					foreach ( $logic_rules as $logic_key => $logic_value ) {
 						foreach ( $logic_value as $logic_cond_k => $logic_cond ) {
 							foreach ( $logic_cond as $l_cond_k => $logic_val ) {

@@ -51,16 +51,18 @@ function qsm_options_emails_tab_content() {
 
 <!-- Emails Section -->
 <section class="qsm-quiz-email-tab" style="margin-top: 15px;">
-	<button class="save-emails button-primary"><?php esc_html_e( 'Save Emails', 'quiz-master-next' ); ?></button>
-	<button class="add-new-email button"><?php esc_html_e( 'Add New Email', 'quiz-master-next' ); ?></button>
-	<a class="qsm-show-all-variable-text" href="javascript:void(0)"><?php esc_html_e( 'Insert Template Variables', 'quiz-master-next' ); ?> <span class="dashicons dashicons-upload"></span></a>
 	<div id="qsm_emails">
 		<div style="margin-bottom: 30px;margin-top: 35px;" class="qsm-spinner-loader"></div>
 	</div>
-	<button class="save-emails button-primary"><?php esc_html_e( 'Save Emails', 'quiz-master-next' ); ?></button>
 	<button class="add-new-email button"><?php esc_html_e( 'Add New Email', 'quiz-master-next' ); ?></button>
+	<div class="option-page-result-page-tab-footer">
+		<div class="footer-bar-notice"></div>
+		<div class="result-tab-footer-buttons">
+			<a class="button-secondary qsm-show-all-variable-text" href="javascript:void(0)"><?php esc_html_e( 'Insert Template Variables', 'quiz-master-next' ); ?></a>
+			<button class="save-emails button-primary"><?php esc_html_e( 'Save Emails', 'quiz-master-next' ); ?></button>
+		</div>
+	</div>
 </section>
-
 <!-- Templates -->
 	<?php add_action( 'admin_footer', 'qsm_options_emails_tab_template' ); ?>
 <!--Template popup-->
@@ -194,6 +196,7 @@ function qsm_options_emails_tab_template() {
 				<label><?php esc_html_e( 'Email Content', 'quiz-master-next' ); ?></label>
 				<textarea id="email-template-{{ data.id }}" class="email-template">{{{ data.content }}}</textarea>
 				<label><input type="checkbox" class="reply-to" <# if ( "true" == data.replyTo || true == data.replyTo ) { #>checked<# } #>>Add user email as Reply-To</label>
+				<?php do_action( 'qsm_email_page_after',  $quiz_id, $categories ); ?>
 			</div>
 		</main>
 	</div>

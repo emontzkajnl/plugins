@@ -162,7 +162,7 @@ final class Optml_Tag_Replacer extends Optml_App_Replacer {
 				$images['img_url'][ $index ] = $new_src;
 			}
 			if ( ( apply_filters( 'optml_ignore_image_link', false, $src ) ||
-				 false !== strpos( $src, Optml_Config::$service_url ) ||
+				 ( false !== strpos( $src, Optml_Config::$service_url ) && ! $this->url_has_dam_flag( $src ) ) ||
 				 ! $this->can_replace_url( $src ) ||
 				 ! $this->can_replace_tag( $images['img_url'][ $index ], $tag ) ) && ! Optml_Media_Offload::is_not_processed_image( $src )
 			) {
@@ -287,7 +287,7 @@ final class Optml_Tag_Replacer extends Optml_App_Replacer {
 			}
 		}
 		if ( preg_match( '#height=["|\']?([\d%]+)["|\']?#i', $tag, $height_string ) ) {
-			if ( ctype_digit( $width_string[1] ) === true ) {
+			if ( ctype_digit( $height_string[1] ) === true ) {
 				$args['height'] = $height_string[1];
 			}
 		}
@@ -323,6 +323,15 @@ final class Optml_Tag_Replacer extends Optml_App_Replacer {
 	public function regular_tag_replace( $new_tag, $original_url, $new_url, $optml_args, $is_slashed = false, $full_tag = '' ) {
 		$pattern = '/(?<!\/)' . preg_quote( $original_url, '/' ) . '/i';
 		$replace = $is_slashed ? addcslashes( $new_url, '/' ) : $new_url;
+		if ( $this->settings->get( 'lazyload' ) === 'enabled' && $this->settings->get( 'native_lazyload' ) === 'enabled'
+			&& apply_filters( 'optml_should_load_eager', '__return_true' ) && ! $this->is_valid_gif( $original_url ) ) {
+			if ( strpos( $new_tag, 'loading=' ) === false ) {
+				$new_tag = preg_replace( '/<img/im', $is_slashed ? '<img loading=\"eager\"' : '<img loading="eager"', $new_tag );
+			} else {
+				$new_tag = $is_slashed ? str_replace( 'loading=\"lazy\"', 'loading=\"eager\"', $new_tag ) : str_replace( 'loading="lazy"', 'loading="eager"', $new_tag );
+			}
+		}
+
 		self::$lazyload_skipped_images ++;
 		return preg_replace( $pattern, $replace, $new_tag );
 	}

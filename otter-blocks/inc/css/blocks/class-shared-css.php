@@ -20,7 +20,7 @@ class Shared_CSS {
 	public static function section_shared() {
 		$css = array(
 			array(
-				'property' => '--content-color',
+				'property' => '--text-color',
 				'value'    => 'color',
 			),
 			array(
@@ -154,7 +154,7 @@ class Shared_CSS {
 			),
 			array(
 				'property'  => 'color',
-				'default'   => 'var( --content-color )',
+				'default'   => 'var( --text-color )',
 				'condition' => function( $attrs ) {
 					return isset( $attrs['color'] );
 				},
@@ -275,6 +275,14 @@ class Shared_CSS {
 						'value'   => 'boxShadowColor',
 						'default' => '#000',
 						'format'  => function( $value, $attrs ) {
+							if ( ! isset( $attrs['boxShadowColorOpacity'] ) ) {
+								return $value;
+							}
+
+							if ( 100 === $attrs['boxShadowColorOpacity'] ) {
+								return $value;
+							}
+
 							$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
 							return Base_CSS::hex2rgba( $value, $opacity );
 						},

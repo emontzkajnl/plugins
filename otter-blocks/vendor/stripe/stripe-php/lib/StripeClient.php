@@ -8,6 +8,7 @@ namespace Stripe;
  * Client used to send requests to Stripe's API.
  *
  * @property \Stripe\Service\AccountLinkService $accountLinks
+ * @property \Stripe\Service\AccountSessionService $accountSessions
  * @property \Stripe\Service\AccountService $accounts
  * @property \Stripe\Service\ApplePayDomainService $applePayDomains
  * @property \Stripe\Service\ApplicationFeeService $applicationFees
@@ -55,6 +56,7 @@ namespace Stripe;
  * @property \Stripe\Service\SubscriptionItemService $subscriptionItems
  * @property \Stripe\Service\SubscriptionScheduleService $subscriptionSchedules
  * @property \Stripe\Service\SubscriptionService $subscriptions
+ * @property \Stripe\Service\Tax\TaxServiceFactory $tax
  * @property \Stripe\Service\TaxCodeService $taxCodes
  * @property \Stripe\Service\TaxRateService $taxRates
  * @property \Stripe\Service\Terminal\TerminalServiceFactory $terminal

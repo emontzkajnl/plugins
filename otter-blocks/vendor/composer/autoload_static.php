@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitd85730a80579710a66706b5f691e944d
+class ComposerStaticInit5864b1543201859060f980ecd9cfbdcc
 {
     public static $files = array (
         '16e4325dd9bdbbd2ce8c9530b088e50b' => __DIR__ . '/..' . '/codeinwp/themeisle-sdk/load.php',
@@ -108,6 +108,7 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'Sabberworm\\CSS\\Value\\ValueList' => __DIR__ . '/..' . '/sabberworm/php-css-parser/src/Value/ValueList.php',
         'Stripe\\Account' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Account.php',
         'Stripe\\AccountLink' => __DIR__ . '/..' . '/stripe/stripe-php/lib/AccountLink.php',
+        'Stripe\\AccountSession' => __DIR__ . '/..' . '/stripe/stripe-php/lib/AccountSession.php',
         'Stripe\\ApiOperations\\All' => __DIR__ . '/..' . '/stripe/stripe-php/lib/ApiOperations/All.php',
         'Stripe\\ApiOperations\\Create' => __DIR__ . '/..' . '/stripe/stripe-php/lib/ApiOperations/Create.php',
         'Stripe\\ApiOperations\\Delete' => __DIR__ . '/..' . '/stripe/stripe-php/lib/ApiOperations/Delete.php',
@@ -223,6 +224,7 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'Stripe\\Service\\AbstractServiceFactory' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/AbstractServiceFactory.php',
         'Stripe\\Service\\AccountLinkService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/AccountLinkService.php',
         'Stripe\\Service\\AccountService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/AccountService.php',
+        'Stripe\\Service\\AccountSessionService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/AccountSessionService.php',
         'Stripe\\Service\\ApplePayDomainService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/ApplePayDomainService.php',
         'Stripe\\Service\\ApplicationFeeService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/ApplicationFeeService.php',
         'Stripe\\Service\\Apps\\AppsServiceFactory' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Apps/AppsServiceFactory.php',
@@ -291,6 +293,10 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'Stripe\\Service\\SubscriptionService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/SubscriptionService.php',
         'Stripe\\Service\\TaxCodeService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/TaxCodeService.php',
         'Stripe\\Service\\TaxRateService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/TaxRateService.php',
+        'Stripe\\Service\\Tax\\CalculationService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Tax/CalculationService.php',
+        'Stripe\\Service\\Tax\\SettingsService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Tax/SettingsService.php',
+        'Stripe\\Service\\Tax\\TaxServiceFactory' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Tax/TaxServiceFactory.php',
+        'Stripe\\Service\\Tax\\TransactionService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Tax/TransactionService.php',
         'Stripe\\Service\\Terminal\\ConfigurationService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Terminal/ConfigurationService.php',
         'Stripe\\Service\\Terminal\\ConnectionTokenService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Terminal/ConnectionTokenService.php',
         'Stripe\\Service\\Terminal\\LocationService' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Service/Terminal/LocationService.php',
@@ -343,6 +349,11 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'Stripe\\TaxCode' => __DIR__ . '/..' . '/stripe/stripe-php/lib/TaxCode.php',
         'Stripe\\TaxId' => __DIR__ . '/..' . '/stripe/stripe-php/lib/TaxId.php',
         'Stripe\\TaxRate' => __DIR__ . '/..' . '/stripe/stripe-php/lib/TaxRate.php',
+        'Stripe\\Tax\\Calculation' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Tax/Calculation.php',
+        'Stripe\\Tax\\CalculationLineItem' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Tax/CalculationLineItem.php',
+        'Stripe\\Tax\\Settings' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Tax/Settings.php',
+        'Stripe\\Tax\\Transaction' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Tax/Transaction.php',
+        'Stripe\\Tax\\TransactionLineItem' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Tax/TransactionLineItem.php',
         'Stripe\\Terminal\\Configuration' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Terminal/Configuration.php',
         'Stripe\\Terminal\\ConnectionToken' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Terminal/ConnectionToken.php',
         'Stripe\\Terminal\\Location' => __DIR__ . '/..' . '/stripe/stripe-php/lib/Terminal/Location.php',
@@ -395,6 +406,7 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Font_Awesome_Icons_CSS' => __DIR__ . '/../..' . '/inc/css/blocks/class-font-awesome-icons-css.php',
         'ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Form_CSS' => __DIR__ . '/../..' . '/inc/css/blocks/class-form-css.php',
         'ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Form_Input_CSS' => __DIR__ . '/../..' . '/inc/css/blocks/class-form-input-css.php',
+        'ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Form_Multiple_Choice_CSS' => __DIR__ . '/../..' . '/inc/css/blocks/class-form-multiple-choice-css.php',
         'ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Form_Textarea_CSS' => __DIR__ . '/../..' . '/inc/css/blocks/class-form-textarea-css.php',
         'ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Google_Map_CSS' => __DIR__ . '/../..' . '/inc/css/blocks/class-google-map-css.php',
         'ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Icon_List_CSS' => __DIR__ . '/../..' . '/inc/css/blocks/class-icon-list-css.php',
@@ -414,6 +426,7 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request' => __DIR__ . '/../..' . '/inc/integrations/api/form-request-data.php',
         'ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response' => __DIR__ . '/../..' . '/inc/integrations/api/form-response-data.php',
         'ThemeIsle\\GutenbergBlocks\\Integration\\Form_Email' => __DIR__ . '/../..' . '/inc/integrations/class-form-email.php',
+        'ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data' => __DIR__ . '/../..' . '/inc/integrations/class-form-field-wp-option-data.php',
         'ThemeIsle\\GutenbergBlocks\\Integration\\Form_Providers' => __DIR__ . '/../..' . '/inc/integrations/class-form-providers.php',
         'ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data' => __DIR__ . '/../..' . '/inc/integrations/class-form-settings-data.php',
         'ThemeIsle\\GutenbergBlocks\\Integration\\Form_Utils' => __DIR__ . '/../..' . '/inc/integrations/class-form-utils.php',
@@ -432,6 +445,7 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Lottie_Block' => __DIR__ . '/../..' . '/inc/render/amp/class-lottie.block.php',
         'ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Slider_Block' => __DIR__ . '/../..' . '/inc/render/amp/class-slider-block.php',
         'ThemeIsle\\GutenbergBlocks\\Render\\About_Author_Block' => __DIR__ . '/../..' . '/inc/render/class-about-author-block.php',
+        'ThemeIsle\\GutenbergBlocks\\Render\\Form_Multiple_Choice_Block' => __DIR__ . '/../..' . '/inc/render/class-form-multiple-choice.php',
         'ThemeIsle\\GutenbergBlocks\\Render\\Form_Nonce_Block' => __DIR__ . '/../..' . '/inc/render/class-form-nonce-block.php',
         'ThemeIsle\\GutenbergBlocks\\Render\\Google_Map_Block' => __DIR__ . '/../..' . '/inc/render/class-google-map-block.php',
         'ThemeIsle\\GutenbergBlocks\\Render\\Leaflet_Map_Block' => __DIR__ . '/../..' . '/inc/render/class-leaflet-map-block.php',
@@ -444,6 +458,7 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
         'ThemeIsle\\GutenbergBlocks\\Server\\Dashboard_Server' => __DIR__ . '/../..' . '/inc/server/class-dashboard-server.php',
         'ThemeIsle\\GutenbergBlocks\\Server\\Dynamic_Content_Server' => __DIR__ . '/../..' . '/inc/server/class-dynamic-content-server.php',
         'ThemeIsle\\GutenbergBlocks\\Server\\Form_Server' => __DIR__ . '/../..' . '/inc/server/class-form-server.php',
+        'ThemeIsle\\GutenbergBlocks\\Server\\Prompt_Server' => __DIR__ . '/../..' . '/inc/server/class-prompt-server.php',
         'ThemeIsle\\GutenbergBlocks\\Server\\Stripe_Server' => __DIR__ . '/../..' . '/inc/server/class-stripe-server.php',
         'tubalmartin\\CssMin\\Colors' => __DIR__ . '/..' . '/tubalmartin/cssmin/src/Colors.php',
         'tubalmartin\\CssMin\\Command' => __DIR__ . '/..' . '/tubalmartin/cssmin/src/Command.php',
@@ -454,9 +469,9 @@ class ComposerStaticInitd85730a80579710a66706b5f691e944d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitd85730a80579710a66706b5f691e944d::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitd85730a80579710a66706b5f691e944d::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitd85730a80579710a66706b5f691e944d::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5864b1543201859060f980ecd9cfbdcc::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5864b1543201859060f980ecd9cfbdcc::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit5864b1543201859060f980ecd9cfbdcc::$classMap;
 
         }, null, ClassLoader::class);
     }

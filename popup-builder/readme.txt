@@ -1,5 +1,5 @@
 === Popup Builder - Create highly converting, mobile friendly marketing popups. ===
-Contributors: Popup By Sygnoos, Sygnoos
+Contributors: Popup By Sygnoos
 Author: Popup Builder
 Author URI: https://popup-builder.com
 Plugin URI: https://popup-builder.com
@@ -8,7 +8,7 @@ Tags: popup, pop up, wordpress popup, popup maker, exit popup, popup builder, wo
 Requires at least: 4.2
 Tested up to: 6.1
 Requires PHP: 5.3.3
-Stable tag: 4.1.14
+Stable tag: 4.1.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,6 +145,9 @@ Go to the Popup Builder settings and set your desired options.
 14. Registration popup
 
 == Changelog ==
+
+= Version 4.1.15 =
+* Minor optimization.
 
 = Version 4.1.14 =
 * Bug fixed related to popup order's tooltip
@@ -421,7 +424,7 @@ After creating your popup, go to the desired page or post and you will see a met
 **Want to insert a popup on a link, that will open up when clicked on the link?**
 
 Simply add the following class to it: sg-confirm-popup-#popupid.
-Ex. `<a href="https://sygnoos.com/" class="sg-confirm-popup-1">Popup</a>`
+Ex. `<a href="https://popup-builder.com/" class="sg-confirm-popup-1">Popup</a>`
 This will open a popup before a user goes to the page from the link.
 
 **How to redirect users after clicking on the popup image?**
@@ -436,7 +439,7 @@ Under the Effects panel you will see 'Popup opening delay' option, all you need 
 **Want to open your links inside the popup without redirecting your users to the other site? (PRO)**
 
 You can simply create an empty iframe popup and add the following class to your link: sg-iframe-popup-#popupid number.
-Ex. `<a href="https://sygnoos.com/" class="sg-iframe-popup-1">Popup</a>`
+Ex. `<a href="https://popup-builder.com/" class="sg-iframe-popup-1">Popup</a>`
 This way, you'll have an iframe popup on your link, so when a user clicks on your link an iframe popup will open up, with the page of the link inside, so the users won't be redirected by the link.
 
 **Can I put a popup to show after clicking something?**
@@ -570,4 +573,4 @@ Leave us a good review :)
 
 == Upgrade Notice ==
 
-Current Version of Popup Builder is 4.1.14
+Current Version of Popup Builder is 4.1.15

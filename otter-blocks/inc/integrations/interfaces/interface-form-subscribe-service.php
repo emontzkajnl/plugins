@@ -17,11 +17,11 @@ interface FormSubscribeServiceInterface {
 	/**
 	 * Add the email to a contact list.
 	 *
-	 * @param strring $email The email.
+	 * @param Form_Data_Request $form_data The email.
 	 * @return mixed
 	 * @since 2.0.3
 	 */
-	public function subscribe( $email );
+	public function subscribe( $form_data );
 
 	/**
 	 * Get information (contact list) from the provider.
@@ -35,7 +35,7 @@ interface FormSubscribeServiceInterface {
 	/**
 	 * Get the integration data of from the WordPress Options.
 	 *
-	 * @param array $wp_options_form The forms option.
+	 * @param Form_Settings_Data $wp_options_form The forms option.
 	 * @return mixed
 	 * @since 2.0.3
 	 */
@@ -51,10 +51,10 @@ interface FormSubscribeServiceInterface {
 	public static function validate_api_key( $api_key );
 
 	/**
-	 * Test if the service is set up by registering a random email address on the contact list.
+	 * Make a request that add the email to the contact list.
 	 *
-	 * @return mixed
-	 * @since 2.0.3
+	 * @param string $email The email address.
+	 * @return array|\WP_Error The response from Mailchimp.
 	 */
-	public function test_subscription();
+	public function make_subscribe_request( $email );
 }

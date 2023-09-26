@@ -72,9 +72,10 @@ class QMNGlobalSettingsPage {
 		register_setting( 'qmn-settings-group', 'qmn-settings' );
 		add_settings_section( 'qmn-global-section', __( 'Main Settings', 'quiz-master-next' ), array( $this, 'global_section' ), 'qmn_global_settings' );
 		add_settings_field( 'usage-tracker', __( 'Allow Usage Tracking?', 'quiz-master-next' ), array( $this, 'usage_tracker_field' ), 'qmn_global_settings', 'qmn-global-section' );
+		add_settings_field( 'enable-qsm-log', __( 'Enable QSM log', 'quiz-master-next' ), array( $this, 'enable_qsm_log' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'ip-collection', __( 'Disable collecting and storing IP addresses?', 'quiz-master-next' ), array( $this, 'ip_collection_field' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'cpt-search', __( 'Disable Quiz Posts From Being Searched?', 'quiz-master-next' ), array( $this, 'cpt_search_field' ), 'qmn_global_settings', 'qmn-global-section' );
-		add_settings_field( 'cpt-archive', __( 'Disable Quiz Archive?', 'quiz-master-next' ), array( $this, 'cpt_archive_field' ), 'qmn_global_settings', 'qmn-global-section' );
+		add_settings_field( 'cpt-archive', __( 'Quiz Archive Settings', 'quiz-master-next' ), array( $this, 'cpt_archive_field' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'detele-qsm-data', __( 'Delete all the data related to QSM on deletion?', 'quiz-master-next' ), array( $this, 'qsm_delete_data' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'background-quiz-email-process', __( 'Process emails in background?', 'quiz-master-next' ), array( $this, 'qsm_background_quiz_email_process' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'cpt-slug', __( 'Quiz Url Slug', 'quiz-master-next' ), array( $this, 'cpt_slug_field' ), 'qmn_global_settings', 'qmn-global-section' );
@@ -188,7 +189,7 @@ class QMNGlobalSettingsPage {
 		add_settings_field( 'display-category-name-on-front-end', __( 'Display category name on front end', 'quiz-master-next' ), array( $this, 'qsm_global_display_category_name_on_front_end' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'hide-correct-answer', __( 'Hide Correct Answer', 'quiz-master-next' ), array( $this, 'qsm_global_hide_correct_answer' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'show-results-inline', __( 'Show results inline', 'quiz-master-next' ), array( $this, 'qsm_global_show_results_inline' ), 'qsm_default_global_option_display', 'qmn-global-section' );
-		add_settings_field( 'end-quiz-if-there-is-wrong-answer', __( 'End quiz if there is wrong answer', 'quiz-master-next' ), array( $this, 'qsm_global_end_quiz_if_there_is_wrong_answer' ), 'qsm_default_global_option_quiz_submission', 'qmn-global-section' );
+		add_settings_field( 'end-quiz-if-there-is-wrong-answer', __( 'End quiz', 'quiz-master-next' ), array( $this, 'qsm_global_end_quiz_if_there_is_wrong_answer' ), 'qsm_default_global_option_quiz_submission', 'qmn-global-section' );
 		add_settings_field( 'show-correct-answer-inline', __( 'Show correct answer inline', 'quiz-master-next' ), array( $this, 'qsm_global_show_correct_answer_inline' ), 'qsm_default_global_option_display', 'qmn-global-section' );
 		add_settings_field( 'retake-quiz', __( 'Retake Quiz', 'quiz-master-next' ), array( $this, 'qsm_global_retake_quiz' ), 'qsm_default_global_option_quiz_submission', 'qmn-global-section' );
 		add_settings_field( 'show-current-page-number', __( 'Show current page number', 'quiz-master-next' ), array( $this, 'qsm_global_show_current_page_number' ), 'qsm_default_global_option_display', 'qmn-global-section' );
@@ -375,18 +376,20 @@ class QMNGlobalSettingsPage {
 	 */
 	public function cpt_archive_field() {
 		$settings    = (array) get_option( 'qmn-settings' );
-		$cpt_archive = '0';
-		if ( isset( $settings['cpt_archive'] ) ) {
-			$cpt_archive = esc_attr( $settings['cpt_archive'] );
-		}
-		$checked = '';
-		if ( '1' == $cpt_archive ) {
-			$checked = " checked='checked'";
-		}
-
-		echo '<label class="switch">';
-			echo '<input type="checkbox" name="qmn-settings[cpt_archive]" id="qmn-settings[cpt_archive]" value="1"' . esc_attr( $checked ) . '/>';
-		echo '<span class="slider round"></span></label>';
+		$cpt_archive = ! empty( $settings['cpt_archive'] ) ? esc_attr( $settings['cpt_archive'] ) : 0;
+		$cpt_link = ! empty( $settings['disable_quiz_public_link'] ) ? esc_attr( $settings['disable_quiz_public_link'] ) : 0;
+		?>
+		<fieldset>
+			<label for="qmn-settings-cpt_archive">
+				<input type="checkbox" name="qmn-settings[cpt_archive]" id="qmn-settings-cpt_archive" value="1" <?php checked( $cpt_archive, 1, true ); ?> />
+				<?php esc_html_e( 'Disable Quiz Archive', 'quiz-master-next'); ?>
+			</label><br/>
+			<label for="qmn-settings-qsm-quiz-public-link">
+				<input type="checkbox" name="qmn-settings[disable_quiz_public_link]" id="qmn-settings-qsm-quiz-public-link" value="1" <?php echo checked( $cpt_link, 1, true ); ?> />
+				<?php esc_html_e( 'Disable Quiz Public link', 'quiz-master-next'); ?>
+			</label>
+		</fieldset>
+		<?php
 	}
 
 	/**
@@ -459,7 +462,14 @@ class QMNGlobalSettingsPage {
 			<p>The answers were as follows:</p>
 			%QUESTIONS_ANSWERS%';
 		}
-		wp_editor( $template, 'results_template', array( 'textarea_name' => 'qmn-settings[results_details_template]' ) );
+		wp_editor( $template, 'results_template', array(
+			'textarea_name' => 'qmn-settings[results_details_template]',
+			'tinymce'       => array(
+				'toolbar1' => 'formatselect,bold,italic,underline,bullist,numlist,blockquote,alignleft,aligncenter,alignright,alignjustify,link,wp_more,fullscreen,wp_adv',
+				'toolbar2' => 'strikethrough,hr,forecolor,pastetext,removeformat,charmap,outdent,indent,undo,redo,wp_help',
+			),
+		)
+		);
 	}
 
 	/**
@@ -483,6 +493,23 @@ class QMNGlobalSettingsPage {
 			echo '<input type="checkbox" name="qmn-settings[tracking_allowed]" id="qmn-settings[tracking_allowed]" value="2"' . esc_attr( $checked ) . '/><span class="slider round"></span>';
 		echo '</label>';
 		echo "<span class='global-sub-text' for='qmn-settings[tracking_allowed]'>" . esc_html__( "Allow Quiz And Survey Master to anonymously track this plugin's usage and help us make this plugin better.", 'quiz-master-next' ) . '</span>';
+	}
+
+	/**
+	 * Generates Setting Field For QSM logs
+	 *
+	 * @since 8.1.9
+	 * @return void
+	 */
+	public function enable_qsm_log() {
+		$settings         = (array) get_option( 'qmn-settings' );
+		$enable_qsm_log = ! empty( $settings['enable_qsm_log'] ) ? esc_attr( $settings['enable_qsm_log'] ) : 0;
+		?>
+		<label class="switch">
+			<input type="checkbox" name="qmn-settings[enable_qsm_log]" id="qmn-settings[enable_qsm_log]" value="1"' <?php checked( $enable_qsm_log, 1, true ); ?>/><span class="slider round"></span>
+		</label>
+		<span class='global-sub-text' for='qmn-settings[enable_qsm_log]'><?php esc_html_e( "Enable this option to generate QSM error logs", 'quiz-master-next' );?></span>
+		<?php
 	}
 
 	/**
@@ -1039,13 +1066,8 @@ class QMNGlobalSettingsPage {
 	public function qsm_global_end_quiz_if_there_is_wrong_answer() {
 		global $globalQuizsetting;
 		$qsm_end_quiz_if_wrong = ( isset( $globalQuizsetting['end_quiz_if_wrong'] ) && '' !== $globalQuizsetting['end_quiz_if_wrong'] ? $globalQuizsetting['end_quiz_if_wrong'] : '0' );
-		echo '<fieldset class="buttonset buttonset-hide" >
-				<input type="radio" id="end_quiz_if_wrong-1" name="qsm-quiz-settings[end_quiz_if_wrong]" value="1" ' . checked( $qsm_end_quiz_if_wrong, '1', false ) . ' >
-				<label for="end_quiz_if_wrong-1">Yes</label><br>
-				<input type="radio" id="end_quiz_if_wrong-0" name="qsm-quiz-settings[end_quiz_if_wrong]"  value="0" ' . checked( $qsm_end_quiz_if_wrong, '0', false ) . '>
-				<label for="end_quiz_if_wrong-0">No</label><br>
-			 </fieldset>
-			 <span class="qsm-opt-desc">This option works with vertical Multiple Choice , horizontal Multiple Choice , drop down , multiple response and horizontal multiple response question types</span>';
+		echo esc_html__('If', 'quiz-master-next').' <input class="small-text" type="number" step="1" min="0" id="end_quiz_if_wrong" name="qsm-quiz-settings[end_quiz_if_wrong]" value="' . esc_attr( $qsm_end_quiz_if_wrong ) . '">'.esc_html__(' wrong answer(s)', 'quiz-master-next').'
+			  <span class="qsm-opt-desc">'.esc_html__('If this set to \'0\' then quiz will not end any incorrect number of answer.', 'quiz-master-next').'</span>';
 	}
 
 	/**

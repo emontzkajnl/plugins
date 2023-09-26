@@ -3,18 +3,21 @@
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
 
-namespace PublishPressFuture\Modules\Expirator;
+namespace PublishPress\Future\Modules\Expirator;
 
 
-use PublishPressFuture\Framework\InitializableInterface;
-use PublishPressFuture\Framework\ModuleInterface;
-use PublishPressFuture\Framework\WordPress\Facade\CronFacade;
-use PublishPressFuture\Framework\WordPress\Facade\HooksFacade;
-use PublishPressFuture\Framework\WordPress\Facade\SiteFacade;
-use PublishPressFuture\Modules\Expirator\Controllers\BulkEditController;
-use PublishPressFuture\Modules\Expirator\Controllers\ExpirationController;
-use PublishPressFuture\Modules\Expirator\Interfaces\SchedulerInterface;
-use PublishPressFuture\Framework\WordPress\Facade\SanitizationFacade;
+use PublishPress\Future\Framework\InitializableInterface;
+use PublishPress\Future\Framework\ModuleInterface;
+use PublishPress\Future\Framework\WordPress\Facade\HooksFacade;
+use PublishPress\Future\Framework\WordPress\Facade\SanitizationFacade;
+use PublishPress\Future\Framework\WordPress\Facade\SiteFacade;
+use PublishPress\Future\Modules\Expirator\Controllers\BulkEditController;
+use PublishPress\Future\Modules\Expirator\Controllers\ExpirationController;
+use PublishPress\Future\Modules\Expirator\Controllers\ScheduledActionsController;
+use PublishPress\Future\Modules\Expirator\Interfaces\SchedulerInterface;
+use PublishPress\Future\Modules\Expirator\Schemas\ActionArgsSchema;
+
+defined('ABSPATH') or die('Direct access not allowed.');
 
 class Module implements ModuleInterface
 {
@@ -29,7 +32,7 @@ class Module implements ModuleInterface
     private $site;
 
     /**
-     * @var CronFacade
+     * @var \PublishPress\Future\Modules\Expirator\Interfaces\CronInterface
      */
     private $cron;
 
@@ -59,12 +62,38 @@ class Module implements ModuleInterface
     private $currentUserModelFactory;
 
     /**
-     * @var \PublishPressFuture\Framework\WordPress\Facade\RequestFacade
+     * @var \PublishPress\Future\Framework\WordPress\Facade\RequestFacade
      */
     private $request;
 
-    public function __construct($hooks, $site, $cron, $scheduler, $expirablePostModelFactory, $sanitization, $currentUserModelFactory, $request)
-    {
+    /**
+     * @var \Closure
+     */
+    private $actionArgsModelFactory;
+
+    /**
+     * @var \Closure
+     */
+    private $scheduledActionsTableFactory;
+
+    /**
+     * @var \Closure
+     */
+    private $settingsModelFactory;
+
+    public function __construct(
+        $hooks,
+        $site,
+        $cron,
+        $scheduler,
+        $expirablePostModelFactory,
+        $sanitization,
+        $currentUserModelFactory,
+        $request,
+        \Closure $actionArgsModelFactory,
+        \Closure $scheduledActionsTableFactory,
+        \Closure $settingsModelFactory
+    ) {
         $this->hooks = $hooks;
         $this->site = $site;
         $this->cron = $cron;
@@ -73,10 +102,15 @@ class Module implements ModuleInterface
         $this->sanitization = $sanitization;
         $this->currentUserModelFactory = $currentUserModelFactory;
         $this->request = $request;
+        $this->actionArgsModelFactory = $actionArgsModelFactory;
+        $this->scheduledActionsTableFactory = $scheduledActionsTableFactory;
+        $this->settingsModelFactory = $settingsModelFactory;
 
         $this->controllers['expiration'] = $this->factoryExpirationController();
         $this->controllers['bulk_edit'] = $this->factoryBulkEditController();
+        $this->controllers['scheduled_actions'] = $this->factoryScheduledActionsController();
     }
+
 
     /**
      * @inheritDoc
@@ -86,6 +120,8 @@ class Module implements ModuleInterface
         foreach ($this->controllers as $controller) {
             $controller->initialize();
         }
+
+        $this->hooks->addAction('admin_enqueue_scripts', [$this, 'enqueueScripts']);
     }
 
     private function factoryExpirationController()
@@ -95,7 +131,8 @@ class Module implements ModuleInterface
             $this->site,
             $this->cron,
             $this->scheduler,
-            $this->expirablePostModelFactory
+            $this->expirablePostModelFactory,
+            $this->settingsModelFactory
         );
     }
 
@@ -107,6 +144,40 @@ class Module implements ModuleInterface
             $this->sanitization,
             $this->currentUserModelFactory,
             $this->request
+        );
+    }
+
+    private function factoryScheduledActionsController()
+    {
+        return new ScheduledActionsController (
+            $this->hooks,
+            $this->actionArgsModelFactory,
+            $this->scheduledActionsTableFactory
+        );
+    }
+
+    public function enqueueScripts()
+    {
+        $currentScreen = get_current_screen();
+
+        if ($currentScreen->base !== 'post') {
+            return;
+        }
+
+        $isNewPostPage = $currentScreen->action === 'add';
+        $isEditPostPage = ! empty($_GET['action']) && ($_GET['action'] === 'edit'); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+        if (! $isEditPostPage && ! $isNewPostPage) {
+            return;
+        }
+
+
+        wp_enqueue_script(
+            'publishpress-future-expirator',
+            POSTEXPIRATOR_BASEURL . 'assets/js/expirator-classic-editor.js',
+            ['jquery'],
+            PUBLISHPRESS_FUTURE_VERSION,
+            true
         );
     }
 }

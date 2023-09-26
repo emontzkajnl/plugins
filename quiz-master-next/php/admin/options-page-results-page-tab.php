@@ -40,16 +40,18 @@ function qsm_options_results_tab_content() {
 
 <!-- Results Page Section -->
 <section class="qsm-quiz-result-tab" style="margin-top: 15px;">
-	<button class="save-pages button-primary"><?php esc_html_e( 'Save Results Pages', 'quiz-master-next' ); ?></button>
-	<button class="add-new-page button"><?php esc_html_e( 'Add New Results Page', 'quiz-master-next' ); ?></button>
-	<a class="qsm-show-all-variable-text" href="javascript:void(0)"><?php esc_html_e( 'Insert Template Variables', 'quiz-master-next' ); ?> <span class="dashicons dashicons-upload"></span></a>
 	<div id="results-pages">
 		<div style="margin-bottom: 30px;margin-top: 35px;" class="qsm-spinner-loader"></div>
 	</div>
-	<button class="save-pages button-primary"><?php esc_html_e( 'Save Results Pages', 'quiz-master-next' ); ?></button>
 	<button class="add-new-page button"><?php esc_html_e( 'Add New Results Page', 'quiz-master-next' ); ?></button>
+	<div class="option-page-result-page-tab-footer">
+		<div class="footer-bar-notice"></div>
+		<div class="result-tab-footer-buttons">
+			<a class="button-secondary qsm-show-all-variable-text" href="javascript:void(0)"><?php esc_html_e( 'Insert Template Variables', 'quiz-master-next' ); ?></a>
+			<button class="save-pages button-primary"><?php esc_html_e( 'Save Results Pages', 'quiz-master-next' ); ?></button>
+		</div>
+	</div>
 </section>
-
 <!-- Templates -->
 <?php add_action('admin_footer', 'qsm_options_results_tab_template'); ?>
 <!--Template popup-->
@@ -217,8 +219,10 @@ function qsm_options_results_tab_template(){
 							<p><?php esc_html_e( 'Create the results page that should be shown when the conditions are met.', 'quiz-master-next' ); ?></p>
 						</div>
 						<textarea id="results-page-{{ data.id }}" class="results-page-template">{{{ data.page }}}</textarea>
+						<?php do_action( 'qsm_result_page_before_redirect_input',  $quiz_id, $categories ); ?>
 						<p><?php esc_html_e( 'Or, redirect the user by entering the URL below:', 'quiz-master-next' ); ?></p>
 						<input type="text" class="results-page-redirect" value="<# if ( data.redirect ) { #>{{ data.redirect }}<# } #>">
+						<?php do_action( 'qsm_result_page_after',  $quiz_id, $categories ); ?>
 					</div>
 				</main>
 			</div>

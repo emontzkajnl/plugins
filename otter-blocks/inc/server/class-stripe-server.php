@@ -17,37 +17,28 @@ class Stripe_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Stripe_Server
+	 * @var Stripe_Server|null
 	 */
 	public static $instance = null;
 
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Stripe_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Stripe_Server
+	 * @var string
 	 */
 	public $version = 'v1';
-
-	/**
-	 * Stripe Object.
-	 *
-	 * @var Stripe_Server
-	 */
-	public $stripe = '';
 
 	/**
 	 * Initialize the class
 	 */
 	public function init() {
-		$this->stripe = new Stripe_API();
-		
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
@@ -105,7 +96,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_products( \WP_REST_Request $request ) {
-		return $this->stripe->create_request(
+		return ( new Stripe_API() )->create_request(
 			'products',
 			array(
 				'active' => true,
@@ -123,7 +114,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_price( \WP_REST_Request $request ) {
-		return $this->stripe->create_request(
+		return ( new Stripe_API() )->create_request(
 			'prices',
 			array(
 				'active'  => true,

@@ -1,3 +1,89 @@
+#### [Version 2.4.0](https://github.com/Codeinwp/otter-blocks/compare/v2.3.4...v2.4.0) (2023-09-21)
+
+- Introducing Otter AI Block With Form AI & Content AI Support
+- Added Webhooks Integration to Form Block
+- Added Hidden Field to Form Block
+- Circle Counter Block Enhancements
+- Adding RequestAnimationFrame() to Scroll Sniffing for Better Performance
+- Added Stripe Field to Form Block
+- Add Link Target Setting in Product Review Block
+- Fix Slider Block Image Arrangement Behaving Weirdly
+- Fix CSS Not Generating When Switching to FSE Theme
+- Fix Visual Issues in Section’s Background & Overlay Controls
+- Fix Box Shadow Not Changing on Section Columns
+- Fix Block Settings Panel Being Visible for Non-Admins
+- Fix Form Block Not Saving Changes in FSE Templates
+- Fix Multiple Otter Notices Appearing at Once
+- Various Small Fixes
+
+##### [Version 2.3.4](https://github.com/Codeinwp/otter-blocks/compare/v2.3.3...v2.3.4) (2023-08-23)
+
+- Fix z-index with Shape Divider in Section
+- Fix Tabs Block Resetting Editor Sidebar When Changing Viewport
+- Fix Fatal Error in Form Submission Page in Certain Cases If Viewed as Super Admin
+- Fix Progress Bar Height for Mobile Devices
+- Fix Stripe Block Not Working Correctly in WP 5.9
+- Fix Form Submit Messages Not Working
+
+##### [Version 2.3.3](https://github.com/Codeinwp/otter-blocks/compare/v2.3.2...v2.3.3) (2023-08-11)
+
+- WordPress 6.3 Compatibility
+
+##### [Version 2.3.2](https://github.com/Codeinwp/otter-blocks/compare/v2.3.1...v2.3.2) (2023-07-17)
+
+- Added Autoresponder to Stripe Block
+- Adding Alternative Style to Review Block
+- Improvements to Dynamic Value Module
+- Fix Form Redirection Not Working Correctly
+- Fix Bow Shadow Not Visible in the Editor
+
+##### [Version 2.3.1](https://github.com/Codeinwp/otter-blocks/compare/v2.3.0...v2.3.1) (2023-06-20)
+
+- Added Option to Allow Block Tools to Be Enabled by Default
+- Improvements for Social Sharing Block
+- Improvements to Posts Block’s Handling of WooCommerce Products
+- Fix Dynamic Tags Not Working with Neve Pro Custom Layouts
+- Fix Wrong Defaults in Form
+- Fix Form Submissions Not Saving to Database If SMTP Fails
+- Fix the Option to save Google Fonts Locally Not Working
+- Fix Form Option Not Saving
+- Fix Illegal String Offset on Minimal Version Check
+- Fix the Issue with Otter Menu Pointing to the Old URL
+- Fix Form Submission Email Being Used as Post Title of Form Submissions
+
+#### [Version 2.3.0](https://github.com/Codeinwp/otter-blocks/compare/v2.2.7...v2.3.0) (2023-05-25)
+
+- Add Custom Taxonomy Support to Dynamic Values
+- Add More New Fields to Form Block
+- Add Option to Store Form Block Emails to WordPress Dashboard
+- Add Api Field in Stripe Block
+- Add Support for HTML in Stripe Block Messages
+- Add CDN Links in Patterns
+- Various Form Block Enhancements
+- Bump Minimum PHP Compatibility to 5.6
+- Fix Dynamic Tags Not Working in Widgets
+- Fix Review Comparison Table Not Taking Reusable Review Blocks into Consideration
+- Fix Unused Assets Being Loaded When a Block Is Removed from Widgets
+- Fix Custom CSS Module Not Working with FSE
+- Fix Accordion Block Schema Conflicts with Neve PRO Performance Module and Lazy-loading Off-screen Elements
+
+##### [Version 2.2.7](https://github.com/Codeinwp/otter-blocks/compare/v2.2.6...v2.2.7) (2023-05-08)
+
+- Add Width Option to Form Block
+- Improve Stripe Block Error Handling
+- Fix the Issue with SVG Logos Not Being Able to Get Picked Logo
+- Fix Background Color Detection
+- Fix Shape Divider Covering Section Block
+- Fix Accordion Block Schema Not Being Removed
+
+##### [Version 2.2.6](https://github.com/Codeinwp/otter-blocks/compare/v2.2.5...v2.2.6) (2023-04-26)
+
+- Hardening Dynamic Content security
+
+##### [Version 2.2.5](https://github.com/Codeinwp/otter-blocks/compare/v2.2.4...v2.2.5) (2023-04-21)
+
+- Fixes a bug with the new WP release causing blocks to crash during transformation
+
 ##### [Version 2.2.4](https://github.com/Codeinwp/otter-blocks/compare/v2.2.3...v2.2.4) (2023-03-30)
 
 - Add Preview for Dynamic Data in the Popover Control

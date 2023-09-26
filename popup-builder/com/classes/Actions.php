@@ -1104,13 +1104,13 @@ class Actions
 		else if ($column == 'options') {
 			$cloneUrl = AdminHelper::popupGetClonePostLink($postId);
 			$actionButtons = '<div class="icon icon_blue">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconEdit.png"  alt="Edit" class="icon_edit" onclick="location.href=\''.get_edit_post_link($postId).'\'">
+								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconEdit.png" title="Edit" alt="Edit" class="icon_edit" onclick="location.href=\''.get_edit_post_link($postId).'\'">
 							</div>';
 			$actionButtons .= '<div class="icon icon_blue">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconClone.png"  alt="Clone" class="icon_clone" onclick="location.href=\''.esc_url($cloneUrl).'\'">
+								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconClone.png"  title="Clone" alt="Clone" class="icon_clone" onclick="location.href=\''.esc_url($cloneUrl).'\'">
 							</div>';
 			$actionButtons .= '<div class="icon icon_pink">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/recycle-bin.svg"  alt="Remove" class="icon_remove" onclick="location.href=\''.get_delete_post_link($postId).'\'">
+								<img src="'.SG_POPUP_PUBLIC_URL.'icons/recycle-bin.svg" title="Remove" alt="Remove" class="icon_remove" onclick="location.href=\''.get_delete_post_link($postId).'\'">
 							</div>';
 
 			echo wp_kses($actionButtons, AdminHelper::allowed_html_tags());

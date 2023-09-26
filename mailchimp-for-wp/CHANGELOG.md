@@ -1,6 +1,33 @@
 Changelog
 =========
 
+#### 4.9.7 - Aug 29, 2023
+
+- Update third-party JS dependencies.
+- Minor textual improvements.
+- Bump tested WordPress version.
+
+
+#### 4.9.6 - Jul 12, 2023
+
+- Update third-party JS dependencies.
+- Address some minor codestyle issues.
+
+
+#### 4.9.5 - Jun 7, 2023
+
+- Fix generated HTML for list/audience choice fields.
+- Fix deprecation warning in includes/admin/class-review-notice.php.
+- Update JavaScript dependencies.
+
+
+#### 4.9.4 - May 2, 2023
+
+- Fallback to default checkbox label if none given. Thanks to [Shojib Khan](https://github.com/kshojib).
+- Improve WooCommerce integration settings page by disabling position field if integration is disabled. Thanks to [Shojib Khan](https://github.com/kshojib).
+- Update JavaScript dependencies.
+
+
 #### 4.9.3 - Mar 31, 2023
 
 - Defend against breaking change in latest WPForms update.

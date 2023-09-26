@@ -219,13 +219,14 @@ class Filters
 	}
 
 	public function systemInformation($infoContent)
-	{
-
+	{		
+		/* 
+		// This info have been delcared on AdminHelper.php function getbrowser() 
 		$infoContent .= 'Platform:           '.isset($platform) ? $platform : '' . "\n";
 		$infoContent .= 'Browser Name:       '.isset($bname) ? $bname : '' . "\n";
 		$infoContent .= 'Browser Version:    '.isset($version) ? $version : '' . "\n";
 		$infoContent .= 'User Agent:         '.isset($uAgent) ? $uAgent : '' . "\n";
-
+		*/
 		return $infoContent;
 	}
 

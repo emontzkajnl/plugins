@@ -2,16 +2,17 @@
 Contributors: publishpress, kevinB, stevejburge, andergmartins
 Author: publishpress
 Author URI: https://publishpress.com
-Tags: expire posts, update posts, schedule changes, automatic changes, 
-Requires at least: 5.3
-Tested up to: 6.2
-Stable tag: 2.9.2
+Tags: expire posts, update posts, schedule changes, automatic changes,
+Requires at least: 5.5
+Requires PHP: 7.2.5
+Tested up to: 6.3
+Stable tag: 3.1.0
 
 Add an expiration date to posts. When your post is automatically unpublished, you can delete the post, change the status, or update the post categories.
 
 == Description ==
 
-The PublishPress Future plugin allows you to make automatic changes to posts. pages and other content types. On a date you choose, PublishPree Future can delete your post, change the status, or update the post categories, or make other changes.
+The PublishPress Future plugin allows you to make automatic changes to posts, pages and other content types. On a date you choose, PublishPress Future can delete your post, change the status, or update the post categories, or make other changes.
 
 Here's an overview of what you can do with PublishPress Future:
 
@@ -72,7 +73,7 @@ For each expiration event, a custom cron job is scheduled. This can help reduce 
 
 [Click here to see the technical details for this plugin](https://publishpress.com/knowledge-base/scheduling-cron-jobs/).
 
-## Logs for All Your Post Changes 
+## Logs for All Your Post Changes
 
 PublishPress Future Pro allows you to keep a detailed record of all the changes that happen to your posts. PublishPress Future records several key data points for all actions:
 
@@ -135,9 +136,131 @@ Yes, the PublishPress Future plugin allows you to schedule automatic changes to 
 Yes, the PublishPress Future plugin allows you to schedule automatic changes to posts, pages and other content types including WooCommerce products. To enable this feature, go to Future > Post Types. Check the “Active” box for the post type you're using with Elementor.
 
 [Click here for more details on Elementor post changes](https://publishpress.com/knowledge-base/schedule-changes-elementor/)
-    
+
 
 == Changelog ==
+
+= [3.1.0] - 06 Sep, 2023 =
+
+* FIXED: Fix compatibility with Composer-based installations, using prefixed libraries, #522;
+* FIXED: Fix notice about using `FILTER_SANITIZE_STRING` on PHP 8, #525;
+* CHANGED: Remove the file `define-base-path.php`. The constant `PUBLISHPRESS_FUTURE_BASE_PATH` is deprecated and is now defined in the main plugin file;
+* CHANGED: Internal dependencies moved from `vendor` to `lib/vendor`, #522;
+* CHANGED: Replaced Pimple library with a prefixed version of the library to avoid conflicts with other plugins, #522;
+* CHANGED: Replaced Psr/Container library with a prefixed version of the library to avoid conflicts with other plugins, #522;
+* CHANGED: Change min PHP version to 7.2.5. If not compatible, the plugin will not execute;
+* CHANGED: Change min WP version to 5.5. If not compatible, the plugin will not execute;
+* CHANGED: Updated internal libraries to the latest versions;
+* CHANGED: Changed the priority of the hook `plugins_loaded` on the main plugin file from 10 to 5, #522;
+* CHANGED: Removed the `vendor-locator-future` library. Internal vendor is now on a fixed path, `lib/vendor`, #522;
+* CHANGED: Deprecated constant `PUBLISHPRESS_FUTURE_VENDOR_PATH` in favor of `PUBLISHPRESS_FUTURE_LIB_VENDOR_PATH`;
+* CHANGED: Update Action Scheduler library to 3.6.2;
+* CHANGED: Update the .pot and .mo files;
+
+= [3.0.6] - 26 Jul, 2023 =
+
+* FIXED: Fix JavaScript error on the block editor: Uncaught TypeError: Cannot read properties of undefined (reading 'indexOf'), #517;
+* FIXED: Fix fatal error on content with shortcode: Call to undefined method ...ExpirablePostModel::getExpiratigetExpirationDateAsUnixTimeonDate(), #516;
+
+= [3.0.5] - 25 Jul, 2023 =
+
+* ADDED: Add a setting field to control the style of the Future Action column on posts lists (Advanced tab), #482;
+* FIXED: Fix the message that prevented to select terms for a future action, #488;
+* FIXED: Fix the taxonomy field in the Post Types settings page, that was not visible unless you select a taxonomy related default action, #496;
+* FIXED: Fix the space after the "reset" button on the calendar field, in the block editor, #465;
+* FIXED: Fix error displayed when trying to deactivate the plugin with "Preserve data after deactivating the plugin" as "Delete data", #499;
+* FIXED: Fix DB error when trying to create the action args table, due to DESCRIBE query on a table that do not exists yet, #450;
+* FIXED: Fix default expiration date time for post type on different timezones;
+* FIXED: Fix date and time on block editor with different timezones, #498;
+* FIXED: Fix missed title and post type info in emails or logs when the post is deleted, #507;
+* FIXED: Notice: Undefined variable: gmt_schedule_display_string, in the columns in the Future Action screens, #504;
+* FIXED: Update ES, FR, and IT translations, #509;
+* CHANGED: Improve the label for the terms field in the block editor panel, #483;
+* CHANGED: Merge the settings tabs "Diagnostics" and "Tools", #501;
+* CHANGED: Update the .pot file;
+* CHANGED: Renamed the settings tab "Defaults" to "General";
+* CHANGED: Added some instructions comments to translators;
+* CHANGED: The default date interval for global and post type settings now only accepts EN format, $495;
+* CHANGED: Add log message when date time offset is invalid when trying to schedule a future action;
+* CHANGED: Change the date format on "Scheduled Date" column in the Future Actions list to use the site timezone and not GMT date. GMT date is now displayed on the tooltip;
+* CHANGED: Changed text and buttons labels on Diagnostics and Tools settings tab, #506;
+* CHANGED: Add method getExpirationDateAsUnixTime to the ExpirablePostModel class;
+* CHANGED: Changed method getTitle on ExpirablePostModel to return title from args if post is not found anymore;
+* CHANGED: Changed method getPostType on ExpirablePostModel to return post type from args if post is not found anymore;
+* DEPRECATED: The methods getDefaultDate and getDefaultDateCustom on SettingsFacade class are deprecated;
+
+= [3.0.4] - 04 Jul, 2023 =
+
+* FIXED: Fix "Save changes" notification on block editor when post is not edited, #449;
+* FIXED: Fix unchecked category on classic editor when editing a post with future action enabled, #481;
+* FIXED: Update French translation, #473;
+* FIXED: Fix the plugin initialization to properly load the plugin text domain, and CLI commands;
+* FIXED: Fix the start of the week on the calendar, honoring the site setting, #484;
+* FIXED: Fix the taxonomy field for custom post types;
+* FIXED: Fix consistency in the message in the block editor, compared to classic editor, when no taxonomy is selected;
+* FIXED: Update the .pot file;
+* CHANGED: The name of the block editor component changed from `postexpirator-sidebar` to `publishpress-future-action`, #449;
+* CHANGED: Update the Action Scheduler library from 3.6.0 to 3.6.1;
+* REMOVED: Remove internal function `postexpirator_init`;
+
+= [3.0.3] - 20 Jun, 2023 =
+
+* FIXED: Error on the block editor: The "postexpirator-sidebar" plugin has encountered an error and cannot be rendered, #475;
+* FIXED: Error message in the future action column: Action scheduled but its definition is not available anymore, #474;
+* CHANGED: Update message when future action data is corrupted for the post;
+
+= [3.0.2] - 19 Jun, 2023 =
+
+* FIXED: Fix warning displayed in the classic editor if a taxonomy is not properly selected, #453;
+* FIXED: Fix typo in a message when a taxonomy is not properly selected;
+* FIXED: Fix a blank post type label in the Arguments column in the Actions Log list when a post type is not registered anymore;
+* FIXED: FIx error message in the Future Action column if the action is not found anymore, #454;
+* FIXED: Fix default date/time offset, #455;
+* FIXED: Fix label "Action" on a few screens, #458;
+* FIXED: Fix broken screen due by a long select field in Classic Editor, #458;
+* FIXED: Fix Future action ordering not working on "Posts" screen, #462;
+* FIXED: Update .pot file and some translation strings;
+
+= [3.0.1] - 15 Jun, 2023 =
+
+* ADDED: Add diagnostic check for DB schema in the Settings page;
+* CHANGED: Changed privacy for method PublishPress\Future\Framework\WordPress\Models\PostModel::getPostInstance from `private` to `protected`;
+* FIXED: Restore future action data on post meta fields, #452;
+* FIXED: Fix PHP warning about undefined index 'categoryTaxonomy';
+* FIXED: Fix auto-enabled future action on new posts, #447;
+* FIXED: Fix default future action type on custom post types;
+* FIXED: First letter of future actions log is not capitalized on some messages in the popup view;
+* FIXED: Fix log message when actions related to taxonomy terms run;
+
+= [3.0.0] - 13 Jun, 2023 =
+
+* ADDED: Add Dutch translation files, #429;
+* CHANGED: Namespace has been changed from `PublishPressFuture` to `PublishPress\Future`;
+* CHANGED: Functions, autoload, class aliases and class loading have been moved into a hook for the action `plugins_loaded` with priority 10;
+* CHANGED: Post expiration queue migrated from WP Cron to Action Scheduler library from WooCommerce, #149;
+* CHANGED: Deprecate hook "publishpressfuture_expire" in favor of "publishpress_future/run_workflow". New hook has two arguments: postId and action, #149;
+* CHANGED: Changed the label "Type" to "Action" in the bulk edit field;
+* CHANGED: Change the capability checked before authorizing API usage. Changed from `edit_posts` to `publishpress_future_expire_post`;
+* CHANGED: Added the old post status in the log message when the post expires changing status;
+* CHANGED: Change the text of options in the bulk edit field, for more clearance;
+* CHANGED: Change text of Post Types settings tab;
+* CHANGED: FIXED: Replace "Expiry" with "Actions", #392;
+* FIXED: Fix PHP warning about undefined index 'terms', #412;
+* FIXED: Fix error on block editor: can't read "length" of undefined;
+* FIXED: Fix escaping on a few admin text;
+* FIXED: Fix text and positions of expiration fields in the bulk edit form;
+* FIXED: Fix email notifications, #414;
+* FIXED: Fix PHP Fatal error: Uncaught TypeError: gmdate(): Argument #2 ($timestamp) must be of type ?int, #413;
+* FIXED: All the expirations scheduled to the future run if we call "wp cron events run --all", #340;
+* FIXED: Deactivation of the plugin does not remove the cron jobs and settings, #107;
+* FIXED: Can we make the cron schedule more human-readable, #231;
+* FIXED: Expiration actions related to taxonomy are not working if default way to expire is not taxonomy related, #409;
+* FIXED: Database error on a new site install, #424;
+* FIXED: Bulk Edit Text doesn't match Quick Edit, #422;
+* FIXED: Expiration Email Notification is not working, #414;
+* FIXED: Capital case for statuses, #430;
+* FIXED: Make sure all files has protection against direct access, #436;
+* FIXED: Fix fatal error sending expiration email, #434, #433;
 
 = [2.9.2] - 28 Feb, 2023 =
 
@@ -165,6 +288,8 @@ Yes, the PublishPress Future plugin allows you to schedule automatic changes to 
 * FIXED: HTML escaping for a field on the settings screen;
 * FIXED: Fix the expiration date column date format;
 * FIXED: Fix option to clear data on uninstall, removing the debug table;
+* FIXED: Combining Multiple Cron Events #149;
+
 
 = [2.8.3] - 10 Jan, 2023 =
 

@@ -869,7 +869,7 @@ function qsm_text_template_variable_list() {
 			'%TIMER_MINUTES%'             => __( 'The amount of time user spent on quiz in minutes i.e. If total time is 3 minutes 38 seconds. This will output 3', 'quiz-master-next' ),
 			'%TIMER_SECONDS%'             => __( 'The left over seconds user spent on quiz. i.e. If total time is 3 minutes 38 seconds. This will output 38', 'quiz-master-next' ),
 			'%CATEGORY_POINTS_X%'         => __( 'X: Category name - The amount of points a specific category earned.', 'quiz-master-next' ),
-			'%CATEGORY_SCORE_X%'          => __( 'X: Category name - The score a specific category earned.', 'quiz-master-next' ),
+			'%CATEGORY_SCORE_X%'          => __( 'X: Category name - This variable displays the percentage achieved in the selected category.', 'quiz-master-next' ),
 			'%CATEGORY_AVERAGE_POINTS%'   => __( 'The average points from all categories.', 'quiz-master-next' ),
 			'%CATEGORY_AVERAGE_SCORE%'    => __( 'The average score from all categories.', 'quiz-master-next' ),
 			'%QUESTION_MAX_POINTS%'       => __( 'Maximum points of the question', 'quiz-master-next' ),
@@ -1017,17 +1017,15 @@ function qsm_get_installed_theme( $saved_quiz_theme, $wizard_theme_list = '' ) {
 					<h2 class="theme-name" id="emarket-name"><?php echo esc_attr( $theme['theme_name'] ); ?></h2>
 					<div class="theme-actions">
 						<?php
-						if ( $saved_quiz_theme != $theme_id ) {
-							if ( 'wizard_theme_list' !== $wizard_theme_list ) {
-								?>
-								<button class="button qsm-activate-theme"><?php esc_html_e( 'Activate', 'quiz-master-next' ); ?></button>
-								<?php
-							}
-							?>
-						<?php } ?>
-						<?php if ( $saved_quiz_theme === $theme_id ) { ?>
-							<a class="button button-primary qsm-customize-color-settings" href="javascript:void(0)"><?php esc_html_e( 'Customize', 'quiz-master-next' ); ?></a>
-						<?php } ?>
+						$button = "";
+						if ( $saved_quiz_theme === $theme_id ) {
+							$button = '<a class="button button-primary qsm-customize-color-settings" href="javascript:void(0)">' . esc_html__( 'Customize', 'quiz-master-next' ) .' </a>';
+						}elseif ( 'wizard_theme_list' !== $wizard_theme_list ) {
+							$button = '<button class="button qsm-activate-theme"> ' . esc_html__( 'Activate', 'quiz-master-next' ) . '</button>';
+						}
+						$button = apply_filters( 'qsm_themes_action_button', $button, $theme, $active_themes );
+						echo wp_kses_post($button);
+						?>
 					</div>
 				</div>
 			</div>
@@ -1292,6 +1290,13 @@ function qsm_quiz_theme_settings( $type, $label, $name, $value, $default_value, 
 						qsm_get_input_control_unit( $param ); ?>
 						<?php
 		            break;
+				case 'dropdown':
+						$param = array(
+							'name'  => "settings[". $name ."]",
+							'value' => $value,
+						);
+						qsm_get_input_label_selected( $param );
+		            break;
 				default:
 					?>
 					<input name="settings[<?php echo esc_attr( $name ); ?>]" type="text" value="<?php echo esc_attr( $value ); ?>"/>
@@ -1396,4 +1401,41 @@ function qsm_get_input_control_unit( $param ) {
 		wp_kses( $options, $allowed_tags )
 	);
 
+}
+
+function qsm_get_input_label_selected( $param ) {
+	if ( empty( $param['name'] ) ) {
+		return;
+	}
+	$value = '';
+
+	if ( ! empty( $param['value'] ) ) {
+		$value = $param['value'];
+	}
+
+	$label_options = array( 'Numbers', 'Alphabets', 'Default' );
+
+	$options = '';
+	foreach ( $label_options as $labels ) {
+		$is_selected = '';
+		if ( $value === $labels ) {
+			$is_selected = 'selected';
+		}
+		$options .= sprintf(
+			'<option value="%1$s" %2$s >%1$s</option>',
+			esc_attr( $labels ),
+			esc_attr( $is_selected )
+		);
+	}
+	$allowed_tags = array(
+		'option' => array(
+			'value'    => array(),
+			'selected' => array(),
+		),
+	);
+	echo sprintf(
+		'<select name="%1$s"> %2$s </select>',
+		esc_attr( $param['name'] ),
+		wp_kses( $options ,$allowed_tags)
+	);
 }

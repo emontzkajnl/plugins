@@ -16,7 +16,7 @@ class Main {
 	/**
 	 * Singleton.
 	 *
-	 * @var Main Class object.
+	 * @var Main|null Class object.
 	 */
 	protected static $instance = null;
 
@@ -38,9 +38,12 @@ class Main {
 		add_action( 'init', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
-			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
-			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
+			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 3 );
+			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 2 );
 		}
+
+		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
 	}
 
 	/**
@@ -71,6 +74,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Providers',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
+			'\ThemeIsle\GutenbergBlocks\Server\Prompt_Server',
 		);
 
 		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );
@@ -90,43 +94,6 @@ class Main {
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
 		}
-	}
-
-	/**
-	 * Get if the version of plugin in latest.
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 */
-	public static function is_compatible() {
-		if ( ! function_exists( 'plugins_api' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		}
-
-		if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
-			return true;
-		}
-
-		$current = OTTER_BLOCKS_VERSION;
-
-		$args = array(
-			'slug'   => 'otter-blocks',
-			'fields' => array(
-				'version' => true,
-			),
-		);
-
-		$call_api = plugins_api( 'plugin_information', $args );
-
-		if ( is_wp_error( $call_api ) ) {
-			return true;
-		} else {
-			if ( ! empty( $call_api->version ) ) {
-				$latest = $call_api->version;
-			}
-		}
-
-		return version_compare( $current, $latest, '>=' );
 	}
 
 	/**
@@ -368,25 +335,37 @@ class Main {
 	 * @access public
 	 */
 	public function allow_meme_types( $mimes ) {
-		$mimes['json']   = 'application/json';
-		$mimes['lottie'] = 'application/zip';
-		$mimes['svg']    = 'image/svg+xml';
+		if ( ! isset( $mimes['json'] ) ) {
+			$mimes['json'] = 'application/json';
+		}
+
+		if ( ! isset( $mimes['lottie'] ) ) {
+			$mimes['lottie'] = 'application/zip';
+		}
+
+		if ( ! isset( $mimes['svg'] ) ) {
+			$mimes['svg'] = 'image/svg+xml';
+		}
+
+		if ( ! isset( $mimes['svgz'] ) ) {
+			$mimes['svgz'] = 'image/svg+xml';
+		}
+
 		return $mimes;
 	}
 
 	/**
 	 * Allow JSON uploads
 	 *
-	 * @param null $data File data.
-	 * @param null $file File object.
-	 * @param null $filename File name.
-	 * @param null $mimes Supported mimes.
+	 * @param array  $data File data.
+	 * @param string $file File object.
+	 * @param string $filename File name.
 	 *
 	 * @return array
 	 * @since  1.5.7
 	 * @access public
 	 */
-	public function fix_mime_type_json_svg( $data = null, $file = null, $filename = null, $mimes = null ) {
+	public function fix_mime_type_json_svg( $data, $file, $filename ) {
 		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
 		if ( 1 > strlen( $ext ) ) {
 			$exploded = explode( '.', $filename );
@@ -403,11 +382,41 @@ class Main {
 		return $data;
 	}
 
+	/**
+	 * Generate SVG attachment metadata if no other plugins does it.
+	 *
+	 * @param array   $metadata The metadata for and attachment.
+	 * @param numeric $attachment_id The attachment ID.
+	 * @return array
+	 */
+	public function generate_svg_attachment_metadata( $metadata, $attachment_id ) {
+
+		if ( 'image/svg+xml' !== get_post_mime_type( $attachment_id ) ) {
+			return $metadata;
+		}
+
+		if ( isset( $metadata['width'], $metadata['height'] ) ) {
+			return $metadata;
+		}
+
+		$svg_path = get_attached_file( $attachment_id );
+		$filename = basename( $svg_path );
+
+		$svg        = simplexml_load_file( $svg_path );
+		$attributes = $svg->attributes();
+
+		// Update metadata with SVG dimensions.
+		$metadata['width']  = intval( (string) $attributes->width );
+		$metadata['height'] = intval( (string) $attributes->height );
+		$metadata['file']   = $filename;
+
+		return $metadata;
+	}
+
 
 	/**
 	 * After Update Migration
 	 *
-	 * @return bool
 	 * @since  2.0.9
 	 * @access public
 	 */
@@ -423,11 +432,28 @@ class Main {
 	}
 
 	/**
+	 * About page SDK
+	 *
+	 * @return array
+	 * @since  2.3.1
+	 * @access public
+	 */
+	public function about_page() {
+		return array(
+			'location'         => 'otter',
+			'logo'             => esc_url_raw( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ),
+			'has_upgrade_menu' => ! DEFINED( 'OTTER_PRO_VERSION' ),
+			'upgrade_link'     => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
+			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
+		);
+	}
+
+	/**
 	 * Singleton method.
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Main
 	 * @since   1.0.0
 	 * @access  public
 	 */

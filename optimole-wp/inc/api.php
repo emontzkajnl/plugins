@@ -64,7 +64,7 @@ final class Optml_Api {
 	 *
 	 * @param string $api_key Api key.
 	 *
-	 * @return array|bool
+	 * @return array|bool|WP_Error
 	 */
 	public function connect( $api_key = '' ) {
 		if ( ! empty( $api_key ) ) {
@@ -77,7 +77,7 @@ final class Optml_Api {
 	/**
 	 * Get user data from service.
 	 *
-	 * @return array|bool User data.
+	 * @return array|string|bool|WP_Error User data.
 	 */
 	public function get_user_data( $api_key = '', $application = '' ) {
 		if ( ! empty( $api_key ) ) {
@@ -88,9 +88,25 @@ final class Optml_Api {
 	}
 
 	/**
+	 * Toggle the extra visits.
+	 *
+	 * @param string $api_key Api key.
+	 * @param string $status Status of the visits toggle.
+	 *
+	 * @return array|bool|string
+	 */
+	public function update_extra_visits( $api_key = '', $status = 'enabled', $application = '' ) {
+		if ( ! empty( $api_key ) ) {
+			$this->api_key = $api_key;
+		}
+
+		return $this->request( '/optml/v2/account/extra_visits', 'POST', [ 'extra_visits' => $status, 'application' => $application ] );
+	}
+
+	/**
 	 * Get cache token from service.
 	 *
-	 * @return array|bool User data.
+	 * @return array|bool|WP_Error User data.
 	 */
 	public function get_cache_token( $token = '', $type = '', $api_key = '' ) {
 		if ( ! empty( $api_key ) ) {
@@ -110,11 +126,11 @@ final class Optml_Api {
 	/**
 	 * Request constructor.
 	 *
-	 * @param string $path The request url.
-	 * @param string $method The request method type.
-	 * @param array  $params The request method type.
+	 * @param string       $path The request url.
+	 * @param string       $method The request method type.
+	 * @param array|string $params The request method type.
 	 *
-	 * @return array|boolean Api data.
+	 * @return array|string|boolean|WP_Error Api data.
 	 */
 	private function request( $path, $method = 'GET', $params = [], $extra_headers = [] ) {
 
@@ -124,7 +140,7 @@ final class Optml_Api {
 		if ( ! empty( $this->api_key ) ) {
 			$headers['Authorization'] = 'Bearer ' . $this->api_key;
 		}
-		if ( ! empty( $headers ) && is_array( $headers ) ) {
+		if ( is_array( $headers ) ) {
 			$headers = array_merge( $headers, $extra_headers );
 		}
 		$url  = trailingslashit( $this->api_root ) . ltrim( $path, '/' );
@@ -155,12 +171,18 @@ final class Optml_Api {
 		if ( ! isset( $response['code'] ) ) {
 			return false;
 		}
+
 		if ( intval( $response['code'] ) !== 200 ) {
-			if ( $path === 'optml/v2/account/complete_register_remote'
-				&& isset( $response['error'] )
-				&& $response['error'] === 'ERROR: This username is already registered. Please choose another one.' ) {
-				return 'email_registered';
+			if ( $path === 'optml/v2/account/complete_register_remote' && isset( $response['error'] ) ) {
+				if ( strpos( $response['error'], 'This email address is already registered.' ) !== false ) {
+					return 'email_registered';
+				}
+
+				if ( $response['error'] === 'ERROR: Site already whitelisted.' ) {
+					return 'site_exists';
+				}
 			}
+
 			if ( $path === '/optml/v2/account/details'
 				&& isset( $response['code'] ) && $response['code'] === 'not_allowed' ) {
 				return 'disconnect';
@@ -237,7 +259,7 @@ final class Optml_Api {
 	 * @param string $width Original image width.
 	 * @param string $height Original image height.
 	 * @param int    $file_size Original file size.
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	public function call_upload_api( $original_url = '', $delete = 'false', $table_id = '', $update_table = 'false', $get_url = 'false', $width = 'auto', $height = 'auto', $file_size = 0 ) {
 		$body = [
@@ -298,12 +320,22 @@ final class Optml_Api {
 		return wp_remote_post( $this->onboard_api_root, $options );
 	}
 
+
+	/**
+	 * Send a list of images with alt/title values to update.
+	 *
+	 * @param array $images List of images.
+	 * @return array
+	 */
+	public function call_data_enrich_api( $images = [] ) {
+		return $this->request( 'optml/v2/media/add_data', 'POST', ['images' => $images, 'key' => Optml_Config::$key] );
+	}
 	/**
 	 * Register user remotely on optimole.com.
 	 *
 	 * @param string $email User email.
 	 *
-	 * @return array|bool Api response.
+	 * @return array|bool|string|WP_Error Api response.
 	 */
 	public function create_account( $email ) {
 		return $this->request(
@@ -322,7 +354,7 @@ final class Optml_Api {
 	 *
 	 * @param string $api_key the api key.
 	 *
-	 * @return array|bool
+	 * @return array|bool|WP_Error
 	 */
 	public function get_optimized_images( $api_key = '' ) {
 		if ( ! empty( $api_key ) ) {
@@ -342,7 +374,7 @@ final class Optml_Api {
 	 *
 	 * @param string $api_key The API key.
 	 *
-	 * @return array|bool
+	 * @return array|bool|WP_Error
 	 */
 	public function get_watermarks( $api_key = '' ) {
 		if ( ! empty( $api_key ) ) {
@@ -358,7 +390,7 @@ final class Optml_Api {
 	 * @param integer $post_id The watermark post ID.
 	 * @param string  $api_key The API key.
 	 *
-	 * @return array|bool
+	 * @return array|bool|WP_Error
 	 */
 	public function remove_watermark( $post_id, $api_key = '' ) {
 		if ( ! empty( $api_key ) ) {

@@ -278,29 +278,36 @@ footer.qsm-popup__footer button.qsm-popup-secondary-button:hover {
 	min-height: 315px !important;
 }
 .qsm-progress-bar .progressbar-text {
-	position: absolute;
-	padding: 0px;
-	margin: 0px;
-	top: 20px !important;
-	right: 10px;
 	font-size: 13px;
-	font-weight: bold;
-	color: rgb(52, 152, 219);
+    font-weight: bold;
+    color: rgb(52, 152, 219);
+    width: 50px;
+    margin-left: 10px;
+}
+.qsm-progress-bar{
+	display: flex;
+	flex-direction: row-reverse;
+    align-items: center;
+	padding: 0;
 }
 .quiz_section .mlw-file-upload-error-msg {
 	color: red;
 	display: block;
 }
-
+.quiz_section .mlw-file-upload-error-msg.mlw-file-upload-success-msg {
+	color: green;
+	display: block;
+}
 .quiz_section .remove-uploaded-file {
 	color: red;
-	border: 1px solid red;
-	width: 31px;
-	padding: 5px 5px 0px 5px;
 	display: inline-block;
 	cursor: pointer;
+	margin-top: 5px;
 }
-
+.quiz_section .loading-uploaded-file {
+	width: 20px;
+	margin-bottom: -5px;
+}
 
 /**
 * Design for new template variable QUESTION_WITH_ANSWER
@@ -367,6 +374,10 @@ body .qsm-results-page .mlw_qmn_question .qmn_image_option:before {
 	background: #fff;
 	border-radius: 50%;
 	line-height: 1;
+	margin-top: 5px;
+}
+.qmn_question_answer img {
+    max-width: 100%;
 }
 .qsm-results-page .mlw_qmn_question .qmn_image_option {
 	flex-direction: column;
@@ -402,6 +413,10 @@ body .qsm-results-page .mlw_qmn_question .qmn_image_option:before {
 	bottom: 15px;
 	right: 0;
 	z-index: 1;
+}
+.qsm-disabled-btn {
+    opacity: 0.5;
+    pointer-events: none;
 }
 .quiz_section input[type="text"].qmn_fill_blank {
 	display: inline-block;
@@ -491,6 +506,7 @@ body .qsm-results-page .mlw_qmn_question .qmn_image_option:before {
 	visibility: visible;
 }
 body .ui-tooltip,
+.hint-qsm-tooltip,
 body .ui-tooltip.ui-widget-content {
 	box-shadow: none;
 	background: #222;
@@ -502,6 +518,39 @@ body .ui-tooltip.ui-widget-content {
 	line-height: 22px;
 	text-align: justify;
 }
+.qsm-tooltip-arrow {
+	width: 70px;
+	height: 16px;
+	overflow: hidden;
+	position: absolute;
+	left: 50%;
+	margin-left: -35px;
+	bottom: -16px;
+}
+.qsm-tooltip-arrow.top {
+	top: -16px;
+	bottom: auto;
+}
+
+.qsm-tooltip-arrow:after {
+	content: "";
+	background: #222;
+	border: 1px solid rgb(243, 243, 243);
+	position: absolute;
+	left: 20px;
+	top: -20px;
+	width: 25px;
+	height: 25px;
+	box-shadow: 6px 5px 9px -9px black;
+	-webkit-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+.qsm-tooltip-arrow.top:after {
+	bottom: -20px;
+	top: auto;
+}
+
 .qsm_quiz_processing_box {
 	display: inline-block;
 	width: 100%;

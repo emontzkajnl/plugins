@@ -29,12 +29,24 @@ var QSMAdmin;
             var template = wp.template('notice');
             var data = {
                 message: message,
-                type: type
+                type: type,
+                dismissible: true
             };
             $('.qsm-alerts').append(template(data));
+            $('.footer-bar-notice').append(template(data));
+
+            if ($('.footer-bar-notice').find('.notice-success').length > 0) {
+                $('.footer-bar-notice').css('color', 'green');
+            }
+
+            if ($('.footer-bar-notice').find('.notice-error').length > 0) {
+                $('.footer-bar-notice').css('color', 'red');
+            }
+            $('.footer-bar-notice .notice').fadeOut(5000);
         },
         clearAlerts: function () {
             $('.qsm-alerts').empty();
+            $('.footer-bar-notice').empty();
         },
         selectTab: function (tab) {
             $('.qsm-tab').removeClass('nav-tab-active');
@@ -45,9 +57,38 @@ var QSMAdmin;
         }
     };
     $(function () {
+        let optionCount = jQuery('select.question_limit_category:last option').length-1;
+        let selectCount = jQuery('select.question_limit_category').length;
+        if(optionCount == selectCount) {
+            jQuery(".add-more-link").hide();
+        }
+        if (jQuery('#limit_category_checkbox-1:checked').length > 0) {
+            jQuery('.qsm_tab_content input[name="question_per_category"],.qsm_tab_content .category_selection_random').parents("tr").hide();
+            jQuery('div.select-category-question-limit-maindiv').parents("tr").show();
+        } else {
+            jQuery('div.select-category-question-limit-maindiv').parents("tr").hide();
+            jQuery('.qsm_tab_content input[name="question_per_category"],.qsm_tab_content .category_selection_random .qsm_tab_content .category_selection_random').parents("tr").show();
+        }
         $('.qsm-tab').on('click', function (event) {
             event.preventDefault();
             QSMAdmin.selectTab($(this));
+        });
+
+        $(document).ready(function(){
+            if ($('.footer-bar-notice').find('.updated').length > 0) {
+                $('.footer-bar-notice').css('color', 'green');
+                $('.footer-bar-notice .updated').fadeOut(5000);
+            }
+
+            if ($('.footer-bar-notice').find('.error').length > 0) {
+                $('.footer-bar-notice').css('color', 'red');
+                $('.footer-bar-notice .error').fadeOut(5000);
+            }
+        });
+
+        $(document).on('click', '#close', function (e) {
+            e.preventDefault();
+            $('.footer-bar-notice').empty();
         });
 
         //show set global default potion popup
@@ -104,6 +145,40 @@ var QSMAdmin;
         jQuery('.category_selection_random').change(function () {
             var checked_data = jQuery(this).val().toString();
             jQuery('.catergory_comma_values').val(checked_data);
+        });
+
+        $(document).on('change', '#limit_category_checkbox-1', function (event) {
+            event.preventDefault();
+            if (jQuery('#limit_category_checkbox-1:checked').length > 0) {
+                jQuery('.qsm_tab_content input[name="question_per_category"],.qsm_tab_content .category_selection_random').parents("tr").hide();
+                jQuery('div.select-category-question-limit-maindiv').parents("tr").show();
+            } else {
+                jQuery('div.select-category-question-limit-maindiv').parents("tr").hide();
+                jQuery('.qsm_tab_content input[name="question_per_category"],.qsm_tab_content .category_selection_random').parents("tr").show();
+            }
+        });
+        jQuery(document).on('click','.add-more-category', function () {
+            let original = jQuery('div.select-category-question-limit-maindiv');
+            let lastChild = original.children().last();
+            if (lastChild.hasClass('add-more-link')) {
+                lastChild = lastChild.prev();
+            }
+            let clonedChild = lastChild.clone();
+            let optionCount = jQuery('select.question_limit_category:last option').length-1;
+            let selectCount = jQuery('select.question_limit_category').length+1;
+            clonedChild.appendTo(original);
+            if(optionCount <= selectCount) {
+                jQuery(".add-more-link").hide();
+            }
+        });
+        jQuery(document).on('click', '.delete-category-button', function() {
+            if((jQuery('div.select-category-question-limit-subdiv').length) > 1){
+                jQuery(this).parent('.select-category-question-limit-subdiv').remove();
+            }
+            let nextDiv = jQuery('.select-category-question-limit-maindiv').next('div');
+            if(nextDiv.next('div.add-more-link').length === 0 ) {
+                jQuery(".add-more-link").show();
+            }
         });
         jQuery('.category_selection_random').multiselect( {
             columns: 1,
@@ -308,7 +383,7 @@ var QSMAdmin;
                 $('.' + name + '_' + value).show();
             }
         });
-        $(document).on('change', '.qsm_tab_content select, #quiz_settings_wrapper select', function () {
+        $(document).on('change', '.qsm_tab_content select:not(.question_limit_category,.qsm-woo-result-related-products, .qsm-woo-email-related-products), #quiz_settings_wrapper select:not(.question_limit_category)', function () {
             var name = $(this).attr('name');
             var value = $(this).val();
             $('.qsm_hidden_tr').hide();
@@ -831,7 +906,7 @@ if(current_id == 'qsm_variable_text'){  jQuery(".current_variable")[0].click();}
             event.preventDefault();
             MicroModal.show('modal-export-import');
         });
-        $(document).on('change', '.qsm_tab_content select, #quiz_settings_wrapper select', function () {
+        $(document).on('change', '.qsm_tab_content select:not(.qsm-woo-result-related-products, .qsm-woo-email-related-products), #quiz_settings_wrapper select', function () {
             var name = $(this).attr('name');
             var value = $(this).val();
             $('.qsm_hidden_tr').hide();
@@ -1422,6 +1497,16 @@ var QSMContact;
                         });
                         emails.push(email);
                     });
+                    let _X_validation = false;
+                    _.each(emails, function( email ) {
+                        if( email.content.indexOf('_X%') != -1 || email.subject.indexOf('_X%') != -1 ) {
+                            _X_validation = true;
+                        }
+                    });
+                    if( _X_validation ) {
+                        QSMAdmin.displayAlert( qsm_admin_messages._X_validation_fails, 'error');
+                        return false;
+                    }
                     var data = {
                         'emails': emails,
                         'rest_nonce': qsmEmailsObject.rest_user_nonce
@@ -1486,13 +1571,14 @@ var QSMContact;
                             mediaButtons: true,
                             tinymce: {
                                 forced_root_block: '',
-                                toolbar1: 'formatselect,bold,italic,bullist,numlist,blockquote,alignleft,aligncenter,alignright,link,strikethrough,hr,forecolor,pastetext,removeformat,codeformat,charmap,undo,redo'
+                                toolbar1: 'formatselect,bold,italic,underline,bullist,numlist,blockquote,alignleft,aligncenter,alignright,link,wp_more,fullscreen,wp_adv',
+                                toolbar2: 'strikethrough,hr,forecolor,pastetext,removeformat,charmap,outdent,indent,undo,redo,wp_help'
                             },
                             quicktags: true,
                         };
                         wp.editor.initialize('email-template-' + QSMAdminEmails.total, settings);
                     }
-                    jQuery(document).trigger('qsm_after_add_email_block', [conditions, to, subject, content, replyTo]);
+                    jQuery(document).trigger('qsm_after_add_email_block', [conditions, to, subject, content, replyTo, QSMAdminEmails.total]);
                 },
                 newEmail: function () {
                     var conditions = [{
@@ -1703,6 +1789,7 @@ var import_button;
                 questionBankSuccess: function (model) {
                     var newModel = _.clone(model.attributes);
                     newModel.question_id = newModel.id;
+                    newModel.quizID = qsmTextTabObject.quiz_id;
                     newModel.id = null;
                     QSMQuestion.questions.create(
                         newModel, {
@@ -2159,7 +2246,8 @@ var import_button;
 						question_id: answer['question_id'],
 						answerType: answer['answerType'],
 						form_type: qsmQuestionSettings.form_type,
-						quiz_system: qsmQuestionSettings.quiz_system
+						quiz_system: qsmQuestionSettings.quiz_system,
+                        question_type: questionType,
 					};
                     if (answer['answerType'] == 'image') {
 						ansTemp = {
@@ -2171,7 +2259,8 @@ var import_button;
 							question_id: answer['question_id'],
 							answerType: answer['answerType'],
                             form_type: qsmQuestionSettings.form_type,
-                            quiz_system: qsmQuestionSettings.quiz_system
+                            quiz_system: qsmQuestionSettings.quiz_system,
+                            question_type: questionType
                         };
                     }
 					jQuery(document).trigger('qsm_new_answer_template', [ansTemp, answer, questionType]);
@@ -2200,7 +2289,8 @@ var import_button;
                             mediaButtons: true,
                             tinymce: {
                                 forced_root_block: '',
-                                toolbar1: 'formatselect,bold,italic,bullist,numlist,blockquote,alignleft,aligncenter,alignright,link,strikethrough,hr,forecolor,pastetext,removeformat,codeformat,charmap,undo,redo'
+                                toolbar1: 'formatselect,bold,italic,underline,bullist,numlist,blockquote,alignleft,aligncenter,alignright,alignjustify,link,wp_more,fullscreen,wp_adv',
+                                toolbar2: 'strikethrough,hr,forecolor,pastetext,removeformat,charmap,outdent,indent,undo,redo,wp_help'
                             },
                             quicktags: true,
                         };
@@ -2383,10 +2473,8 @@ var import_button;
                                     $.each(fut_arr, function (i) {
                                         $(".questionElements input[name='" + index + "[]']:checkbox[value='" + fut_arr[i] + "']").attr("checked", "true").prop('checked', true);
                                     });
-                                } else {
-                                    if (value != null) {
-                                        $('#' + index).val(value);
-                                    }
+                                } else if (value != null) {
+                                    $('#' + index).val(value);
                                 }
                             }
                             if (index == 'matchAnswer') {
@@ -2436,7 +2524,8 @@ var import_button;
                         mediaButtons: true,
                         tinymce: {
                             forced_root_block: '',
-                            toolbar1: 'formatselect,bold,italic,bullist,numlist,blockquote,alignleft,aligncenter,alignright,link,strikethrough,hr,forecolor,pastetext,removeformat,codeformat,charmap,undo,redo'
+                            toolbar1: 'formatselect,bold,italic,underline,bullist,numlist,blockquote,alignleft,aligncenter,alignright,alignjustify,link,wp_more,fullscreen,wp_adv',
+                            toolbar2: 'strikethrough,hr,forecolor,pastetext,removeformat,charmap,outdent,indent,undo,redo,wp_help'
                         },
                         quicktags: true,
                     };
@@ -2542,12 +2631,10 @@ var import_button;
                             current_element = current_page_section.find(".question").eq($("#current_question_position").val() - 1);
                             if ( 0 == new_element.length ) {
                                 new_page_section.append(current_element.clone());
-                            } else {
-                                if ( 1 == $("#current_question_position").val() && $("#changed_question_page_no").val() == $("#current_question_page_no").val() ) {
+                            } else if ( 1 == $("#current_question_position").val() && $("#changed_question_page_no").val() == $("#current_question_page_no").val() ) {
                                     new_element.after(current_element.clone());
-                                } else {
-                                    new_element.before(current_element.clone());
-                                }
+                            } else {
+                                new_element.before(current_element.clone());
                             }
                             current_element.remove();
                             let question_id = $("#current_question_id").val();
@@ -2707,15 +2794,11 @@ var import_button;
                                 MicroModal.show('modal-8');
                                 return false;
                             }
-                        } else {
-                            if (blanks == null || options_length === 0) {
-                                $('.modal-8-table').html(qsm_admin_messages.blank_required_validation);
-                                MicroModal.show('modal-8');
-                                return false;
-                            }
+                        } else if (blanks == null || options_length === 0) {
+                            $('.modal-8-table').html(qsm_admin_messages.blank_required_validation);
+                            MicroModal.show('modal-8');
+                            return false;
                         }
-
-
                     }
                     $('#save-edit-question-spinner').addClass('is-active');
                     var model_html = $('#modal-1-content').html();
@@ -2836,7 +2919,7 @@ var import_button;
                     if (pageKey.replace(/^\s+|\s+$/g, "").length == 0) {
                         alert(qsm_admin_messages.page_name_required);
                         return false;
-                    } else if (null == pageKey.match(/^[A-Za-z0-9\-\s]+$/)) {
+                    } else if (null == pageKey.match(/^[ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñA-Za-z0-9\-\s]+$/)) {
                         alert(qsm_admin_messages.page_name_validation);
                         return false;
                     } else {
@@ -3237,6 +3320,16 @@ var import_button;
                         });
                         pages.push(page);
                     });
+                    let _X_validation = false;
+                    _.each(pages, function( page ) {
+                        if( page.page.indexOf('_X%') != -1 ) {
+                            _X_validation = true;
+                        }
+                    });
+                    if( _X_validation ) {
+                        QSMAdmin.displayAlert( qsm_admin_messages._X_validation_fails, 'error');
+                        return false;
+                    }
                     var data = {
                         'pages': pages,
                         'rest_nonce': qsmResultsObject.rest_user_nonce
@@ -3301,12 +3394,13 @@ var import_button;
                         mediaButtons: true,
                         tinymce: {
                             forced_root_block: '',
-                            toolbar1: 'formatselect,bold,italic,bullist,numlist,blockquote,alignleft,aligncenter,alignright,link,strikethrough,hr,forecolor,pastetext,removeformat,codeformat,charmap,undo,redo'
+                            toolbar1: 'formatselect,bold,italic,underline,bullist,numlist,blockquote,alignleft,aligncenter,alignright,link,wp_more,fullscreen,wp_adv',
+                            toolbar2: 'strikethrough,hr,forecolor,pastetext,removeformat,charmap,outdent,indent,undo,redo,wp_help'
                         },
                         quicktags: true,
                     };
                     wp.editor.initialize('results-page-' + QSMAdminResults.total, settings);
-                    jQuery(document).trigger('qsm_after_add_result_block', [conditions, page, redirect]);
+                    jQuery(document).trigger('qsm_after_add_result_block', [conditions, page, redirect, QSMAdminResults.total]);
                 },
                 newResultsPage: function () {
                     var conditions = [{
