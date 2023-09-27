@@ -32,7 +32,6 @@
     border-radius: var(--rsp-border-radius);
     .modal-title {
       margin: 0;
-      background-color: white;
     }
     .rsssl-modal-close {
       cursor: pointer;
@@ -135,4 +134,8 @@
 
     }
   }
+}
+
+.components-modal__frame {
+  width: clamp(300px, 75ch, 100vw - 50px);
 }

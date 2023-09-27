@@ -527,7 +527,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	    $custom_wrp_class = !empty($cff_feed_height) ? ' cff-wrapper-fixed-height' : '';
 
 		$cff_content .= '<div class="cff-wrapper-ctn '.$custom_wrp_class.'" '.$cff_insider_style.'>';
-		$cff_content .= '<div id="cff" ' . $cff_style_class['cff_custom_class']  . ' ' . $cff_style_class['cff_feed_styles'] . ' ' . $cff_style_class['cff_feed_attributes'] . '>';
+		$cff_content .= '<div id="cff" ' . $cff_style_class['cff_custom_class'] . ' ' . $cff_style_class['cff_feed_styles'] . ' ' . $cff_style_class['cff_feed_attributes'] . '>';
 
 	    //Add the page header to the inside of the top of feed
 		if ($cff_show_header && !$cff_header_outside) $cff_content .= $cff_header;

@@ -6,6 +6,9 @@
  * @version 2.19 Custom Facebook Feed by Smash Balloon
  *
  */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $name = isset($news->from->name) ? $news->from->name : false;
 
 $post_item_attr = $this_class->get_item_attributes($cff_post_type, $cff_album, $cff_post_bg_color_check, $cff_post_style, $cff_box_shadow, $name, $cff_post_id);

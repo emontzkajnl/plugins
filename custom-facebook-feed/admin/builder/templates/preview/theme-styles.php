@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 $file = get_stylesheet_uri();
 $theme_css = new \CustomFacebookFeed\Builder\CFF_Theme_CSS( $file );
 

@@ -8,6 +8,7 @@
  */
 
 namespace CustomFacebookFeed;
+use CustomFacebookFeed\Admin\CFF_Onboarding_Wizard;
 use CustomFacebookFeed\SB_Facebook_Data_Manager;
 use CustomFacebookFeed\Admin\CFF_Admin;
 use CustomFacebookFeed\Admin\CFF_About;
@@ -244,6 +245,21 @@ final class Custom_Facebook_Feed{
 	public $cff_elementor_base;
 
 	/**
+	 * CFF_Onboarding_Wizard.
+	 *
+	 * Onboarding Wizard.
+	 *
+	 * @since 4.0
+	 * @access public
+	 *
+	 * @var CFF_Onboarding_Wizard
+	 */
+	public $cff_onboarding_wizard;
+
+
+
+
+	/**
 	 * Custom_Facebook_Feed Instance.
 	 *
 	 * Just one instance of the Custom_Facebook_Feed class
@@ -279,6 +295,8 @@ final class Custom_Facebook_Feed{
 			register_activation_hook( CFF_FILE, [ self::$instance, 'cff_activate' ] );
 			register_deactivation_hook( CFF_FILE, [ self::$instance, 'cff_deactivate' ] );
 			register_uninstall_hook( CFF_FILE, array('CustomFacebookFeed\Custom_Facebook_Feed','cff_uninstall'));
+
+			add_action('admin_init', [ self::$instance, 'cff_activation_plugin_redirect' ]);
 
 
 		}
@@ -321,6 +339,7 @@ final class Custom_Facebook_Feed{
 		$this->cff_about_us					= new CFF_About_Us();
 		$this->cff_support					= new CFF_Support();
 		$this->cff_elementor_base			= CFF_Elementor_Base::instance();
+		$this->cff_onboarding_wizard				= new CFF_Onboarding_Wizard();
 
 
 		$this->cff_ppca_check_notice_dismiss();
@@ -387,7 +406,7 @@ final class Custom_Facebook_Feed{
 	 */
 	public function enqueue_styles_assets(){
 	    $options = get_option('cff_style_settings');
-	    
+
 		// Handles the minification of the plugin stylesheets
 		$cff_min = isset( $_GET['sb_debug'] ) ? '' : '.min';
 
@@ -439,7 +458,7 @@ final class Custom_Facebook_Feed{
 	 */
 	public function enqueue_scripts_assets(){
 	    $options = get_option('cff_style_settings');
-	    
+
 		// Handles the minification of the plugin scripts
 		$cff_min = isset( $_GET['sb_debug'] ) ? '' : '.min';
 
@@ -653,6 +672,18 @@ final class Custom_Facebook_Feed{
 				$cff_statuses_option['groups_need_update'] = $groups_need_update;
 				update_option( 'cff_statuses', $cff_statuses_option, false );
 			}
+
+			$cff_statuses_option['wizard_dismissed'] = false;
+			update_option( 'cff_statuses', $cff_statuses_option );
+		}
+
+		if ( version_compare( $db_ver, '2.5', '<' ) ) {
+			$cff_statuses_option = get_option( 'cff_statuses', array() );
+			if( !isset($cff_statuses_option['wizard_dismissed']) ){
+				$cff_statuses_option['wizard_dismissed'] = true;
+				update_option( 'cff_statuses', $cff_statuses_option );
+			}
+			update_option( 'cff_db_version', CFF_DBVERSION );
 		}
 	}
 
@@ -693,6 +724,11 @@ final class Custom_Facebook_Feed{
 			wp_schedule_event( $six_am_local, 'cffweekly', 'cff_notification_update' );
 		}
 
+		$cff_statuses_option = get_option( 'cff_statuses', array() );
+		if( !isset( $cff_statuses_option['wizard_dismissed'] ) || $cff_statuses_option['wizard_dismissed'] === false){
+			add_option('cff_plugin_do_activation_redirect', true);
+		}
+
 	    if ( ! empty( $options ) ) {
 	    	return;
 	    }
@@ -725,6 +761,20 @@ final class Custom_Facebook_Feed{
 	    get_option('cff_show_access_token');
 	    update_option( 'cff_show_access_token', true );
 
+
+	}
+
+	public function cff_activation_plugin_redirect() {
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		if( !current_user_can( $cap ) ){
+			return false;
+		}
+
+		if ( get_option('cff_plugin_do_activation_redirect', false) ) {
+			delete_option('cff_plugin_do_activation_redirect');
+			wp_safe_redirect( admin_url( '/admin.php?page=cff-setup' )  );
+			exit();
+		}
 	}
 
 

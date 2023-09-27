@@ -18,7 +18,8 @@ var oembeds_data = {
     openInstaInstaller: false,
     loaderSVG: cff_oembeds.loaderSVG,
     checkmarkSVG: cff_oembeds.checkmarkSVG,
-    installerStatus: null
+    installerStatus: null,
+    isSetupPage : false
 }
 
 var cffoEmbeds = new Vue({

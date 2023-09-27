@@ -3582,7 +3582,7 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
 
 .cff-fb-popup-inside {
   left: 80px;
-  width: 880px;
+  width: 980px;
   max-width: calc(100% - 200px);
   background: #fff;
   color: #141B38;
@@ -3591,6 +3591,9 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
   border-radius: 2px;
   overflow-y: auto;
   max-height: 80vh;
+}
+.cff-fb-feedtypes-pp-ctn .cff-fb-popup-inside {
+	width: 1170px;
 }
 .cff-fb-popup-inside[data-step="redirect_1"]{
   width: 575px;

@@ -1,6 +1,6 @@
 <div class="cff-settings-cta" :class="{'cff-show-features': freeCtaShowFeatures}" v-if="feedsList.length > 0 || legacyFeedsList.length > 0">
     <div class="cff-cta-head-inner">
-        <div class="cff-cta-title">
+        <div class="cff-cta-left">
             <div class="cff-plugin-logo">
                 <svg width="35" height="36" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 0.560059C6.75 0.560059 0 7.29506 0 15.5901C0 23.0901 5.49 29.3151 12.66 30.4401V19.9401H8.85V15.5901H12.66V12.2751C12.66 8.51006 14.895 6.44006 18.33 6.44006C19.965 6.44006 21.675 6.72506 21.675 6.72506V10.4301H19.785C17.925 10.4301 17.34 11.5851 17.34 12.7701V15.5901H21.51L20.835 19.9401H17.34V30.4401C20.8747 29.8818 24.0933 28.0783 26.4149 25.3551C28.7365 22.632 30.008 19.1685 30 15.5901C30 7.29506 23.25 0.560059 15 0.560059Z" fill="#006BFA"/>
@@ -15,16 +15,18 @@
                         </svg>
                         {{genericText.liteFeedUsers}}
                     </span>
-                    <span class="cff-cta-btn">
-                        <a :href="upgradeUrl" class="cff-btn-blue" target="_blank">
-                            {{genericText.tryDemo}}
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0.166016 10.6584L8.99102 1.83341H3.49935V0.166748H11.8327V8.50008H10.166V3.00841L1.34102 11.8334L0.166016 10.6584Z" fill="white"/>
-                            </svg>
-                        </a>
-                    </span>
                 </div>
             </div>
+        </div>
+        <div class="cff-cta-right">
+            <span class="cff-cta-btn">
+                <a :href="upgradeUrl" class="cff-btn-blue" target="_blank">
+                    {{genericText.tryDemo}}
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0.166016 10.6584L8.99102 1.83341H3.49935V0.166748H11.8327V8.50008H10.166V3.00841L1.34102 11.8334L0.166016 10.6584Z" fill="white"/>
+                    </svg>
+                </a>
+            </span>
         </div>
         
     </div>

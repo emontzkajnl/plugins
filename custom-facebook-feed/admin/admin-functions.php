@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use CustomFacebookFeed\CFF_Utils;
 use CustomFacebookFeed\CFF_Oembed;
 use CustomFacebookFeed\CFF_GDPR_Integrations;

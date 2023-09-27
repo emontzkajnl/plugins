@@ -60,6 +60,9 @@ class CFF_GDPR_Integrations {
 		if ( function_exists( 'run_cookie_law_info' ) || class_exists( 'Cookie_Law_Info' ) ) {
 			return 'GDPR Cookie Consent by WebToffee';
 		}
+		if ( defined( 'CKY_APP_ASSETS_URL' ) ) {
+			return 'CookieYes | GDPR Cookie Consent by CookieYes';
+		}
 		if ( class_exists( 'Cookiebot_WP' ) ) {
 			return 'Cookiebot by Cybot A/S';
 		}

@@ -46,9 +46,11 @@
 				include_once CFF_BUILDER_DIR . 'templates/preview/preview-components.php';
 				//include_once CFF_BUILDER_DIR . 'templates/preview/light-box.php';
 				include_once CFF_BUILDER_DIR . 'templates/preview/like-box.php';
+				include_once CFF_BUILDER_DIR . 'templates/preview/dummy-lightbox.php';
 			?>
 		</div>
 	</div>
 	<cff-post-lightbox-component :single-post="lightBox.post" :light-box="lightBox" :customizer-feed-data="customizerFeedData"  :translated-text="translatedText"></cff-post-lightbox-component>
 	<cff-post-dummy-lightbox-component :dummy-light-box-data="dummyLightBoxData" :light-box="lightBox" :customizer-feed-data="customizerFeedData"  :translated-text="translatedText"></cff-post-dummy-lightbox-component>
+	<cff-dummy-lightbox :customizer-feed-data="customizerFeedData" :customizer-screens="customizerScreens" ></cff-dummy-lightbox>
 </div>

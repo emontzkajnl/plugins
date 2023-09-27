@@ -930,6 +930,8 @@ function sbi_cron_updater() {
 	$cron_updater->do_feed_updates();
 
 	sbi_do_background_tasks( array() );
+    \InstagramFeed\Admin\SBI_Support_Tool::delete_expired_users();
+
 }
 add_action( 'sbi_feed_update', 'sbi_cron_updater' );
 

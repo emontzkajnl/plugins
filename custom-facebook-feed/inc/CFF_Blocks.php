@@ -6,6 +6,10 @@
  */
 namespace CustomFacebookFeed;
 
+use CustomFacebookFeed\Helpers\Util;
+use CustomFacebookFeed\Builder\CFF_Db;
+use CustomFacebookFeed\CFF_Utils;
+
 class CFF_Blocks {
 
 	/**
@@ -36,6 +40,15 @@ class CFF_Blocks {
 	protected function hooks() {
 		add_action( 'init', array( $this, 'register_block' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+
+		/*
+		* Add smashballoon category and Facebook Feed Block 
+		* @since 4.1.9
+		*/
+		add_filter( 'block_categories_all', array( $this, 'register_block_category' ), 10, 2 );
+		add_action( 'init', array( $this, 'register_facebook_feed_block' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_facebook_feed_block_editor_assets' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'set_script_translations' ) );
 	}
 
 	/**
@@ -163,6 +176,112 @@ class CFF_Blocks {
 	 */
 	public static function is_gb_editor() {
 		return defined( 'REST_REQUEST' ) && REST_REQUEST && ! empty( $_REQUEST['context'] ) && 'edit' === $_REQUEST['context']; // phpcs:ignore
+	}
+
+	/**
+	 * Register Block Category
+	 * 
+	 * @since 4.1.9
+	 */
+	public function register_block_category( $categories, $context ) {
+		$exists = array_search( 'smashballoon', array_column( $categories, 'slug' ) );
+
+		if ( $exists !== false ) {
+			return $categories;
+		}
+		
+		return array_merge(
+			$categories,
+			array(
+				array(
+					'slug' => 'smashballoon',
+					'title' => __( 'Smash Balloon', 'custom-facebook-feed' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Register Block
+	 * 
+	 * @since 4.1.9
+	 */
+	public function register_facebook_feed_block() {
+		register_block_type( trailingslashit( CFF_PLUGIN_DIR ) . 'assets/dist/sbf-feed',
+			array(
+				'render_callback' => array( $this, 'render_facebook_feed_block' ),
+			)
+		);
+	}
+
+	/**
+	 * Render Block
+	 * 
+	 * @since 4.1.9
+	 */
+	public function render_facebook_feed_block( $attributes ) {
+		$content = '';
+
+		if ( isset( $attributes['feedId'] ) ) {
+			$content = do_shortcode( '[custom-facebook-feed feed=' . (int) $attributes['feedId'] . ']' );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Enqueue Block Assets
+	 * 
+	 * @since 4.1.9
+	 */
+	public function enqueue_facebook_feed_block_editor_assets() {
+		$asset_file = include_once trailingslashit( CFF_PLUGIN_DIR ) . 'assets/dist/blocks.asset.php';
+
+		wp_enqueue_script(
+			'cff-feed-block-editor',
+			trailingslashit( CFF_PLUGIN_URL ) . 'assets/dist/blocks.js',
+			$asset_file['dependencies'],
+			$asset_file['version'],
+			true
+		);
+
+		wp_enqueue_style(
+			'cff-feed-block-editor',
+			trailingslashit( CFF_PLUGIN_URL ) . 'assets/dist/blocks.css',
+			array(),
+			$asset_file['version']
+		);
+
+		wp_localize_script(
+			'cff-feed-block-editor',
+			'cff_feed_block_editor',
+			array(
+				'feeds' => CFF_Db::feeds_query(),
+				'feed_url' => admin_url('admin.php?page=cff-feed-builder'),
+				'plugins_info' => Util::get_smash_plugins_status_info(),
+				'has_facebook_feed_block' => $this->has_facebook_feed_block(),
+				'is_pro_active' => CFF_Utils::cff_is_pro_version(),
+				'nonce'         => wp_create_nonce( 'cff-admin' ),
+			)
+		);
+	}
+
+	/**
+	 * Set Script Translations
+	 * 
+	 * @since 4.1.9
+	 */
+	public function set_script_translations() {
+		wp_set_script_translations( 'cff-feed-block-editor', 'custom-facebook-feed', CFF_PLUGIN_DIR . 'languages' );
+	}
+
+	/**
+	 * Check if the post has a Facebook Feed block
+	 * 
+	 * @since 4.1.9
+	 */
+	public function has_facebook_feed_block() {
+		return has_block( 'cff/cff-feed-block' );
 	}
 
 }

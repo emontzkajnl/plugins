@@ -399,7 +399,12 @@ if(!cff_js_exists){
             if (consentGiven || !gdpr) {
                 return true;
             }
-            if (typeof CLI_Cookie !== "undefined") { // GDPR Cookie Consent by WebToffee
+			if (typeof window.cookieyes !== "undefined") { // CookieYes | GDPR Cookie Consent by CookieYes
+				console.log('here');
+				if (typeof window.cookieyes._ckyConsentStore.get !== 'undefined') {
+					consentGiven = window.cookieyes._ckyConsentStore.get('functional') === 'yes';
+				}
+			} else if (typeof CLI_Cookie !== "undefined") { // GDPR Cookie Consent by WebToffee
                 if (CLI_Cookie.read(CLI_ACCEPT_COOKIE_NAME) !== null)  {
 
                     // WebToffee no longer uses this cookie but being left here to maintain backwards compatibility
@@ -542,7 +547,7 @@ if(!cff_js_exists){
             });
 
             // GDPR Cookie Consent by WebToffee
-            $('.cli-user-preference-checkbox').on('click', function(){
+            $('.cli-user-preference-checkbox, .cky-notice button').on('click', function(){
                 setTimeout(function() {
                     jQuery('.cff-wrapper').each(function(index){
                         afterConsentToggled( false, jQuery(this) );

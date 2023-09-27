@@ -165,6 +165,8 @@ class CFF_Upgrader {
 
 			// Redirect.
 			$oth = hash( 'sha512', wp_rand() );
+			$hashed_oth = hash_hmac( 'sha512', $oth, wp_salt() );
+
 			update_option( 'cff_one_click_upgrade', $oth );
 			$version  = '1.0';
 			$version_info     = CFF_Upgrader::get_version_info( $license_data );
@@ -177,7 +179,7 @@ class CFF_Upgrader {
 			$redirect = admin_url( 'admin.php?page=' . self::REDIRECT );
 			$url = add_query_arg( array(
 				'key'      => $license,
-				'oth'      => $oth,
+				'oth'      => $hashed_oth,
 				'endpoint' => $endpoint,
 				'version'  => $version,
 				'siteurl'  => $siteurl,
@@ -216,7 +218,7 @@ class CFF_Upgrader {
 			wp_send_json_error( $error );
 		}
 
-		if ( ! hash_equals( $oth, $post_oth ) ) {
+		if ( hash_hmac( 'sha512', $oth, wp_salt() ) !== $post_oth ) {
 			wp_send_json_error( $error );
 		}
 

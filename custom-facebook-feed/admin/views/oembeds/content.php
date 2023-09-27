@@ -1,11 +1,12 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 <div class="cff-fb-full-wrapper cff-fb-fs">
     <?php
         /**
          * CFF Admin Notices
-         * 
+         *
          * @since 4.0
          */
-        do_action('cff_admin_notices'); 
+        do_action('cff_admin_notices');
     ?>
     <div class="cff-oembeds-container">
         <div class="cff-section-header">

@@ -17,6 +17,7 @@ var extensions_data = {
     btnClicked: null,
     btnStatus: null,
     btnName: null,
+    isSetupPage : false
 }
 
 var cffAbout = new Vue({
@@ -65,7 +66,7 @@ var cffAbout = new Vue({
             this.btnClicked = index + 1;
             this.btnStatus = 'loading';
             this.btnName = name;
-            
+
             let data = new FormData();
             data.append( 'action', 'cff_deactivate_addon' );
             data.append( 'nonce', this.nonce );
@@ -136,7 +137,7 @@ var cffAbout = new Vue({
 
         /**
          * Toggle Sticky Widget view
-         * 
+         *
          * @since 4.0
          */
          toggleStickyWidget: function() {

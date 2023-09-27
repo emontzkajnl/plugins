@@ -26,7 +26,8 @@ var support_data = {
         type : 'success', // success, error, warning, message
         text : '',
         shown : null
-    }
+    },
+    isSetupPage : false
 }
 
 var cffsupport = new Vue({

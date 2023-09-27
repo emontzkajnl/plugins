@@ -1,3 +1,4 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 <div class="cff-stck-wdg">
 	<?php
 		$icons = CustomFacebookFeed\Builder\CFF_Feed_Builder::builder_svg_icons();

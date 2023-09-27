@@ -106,7 +106,8 @@ var settings_data = {
     fullScreenLoader : false,
     appLoaded : false,
     previewLoaded : false,
-    loadingBar : true
+    loadingBar : true,
+    isSetupPage : false
 };
 
 // The tab component

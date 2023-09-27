@@ -139,6 +139,8 @@ class CFF_Customize_Tab{
 	 * @return array
 	*/
 	static function get_customize_feedlayout_controls(){
+		$svg_icons = CFF_Feed_Builder::builder_svg_icons();
+		$svg_rocket_icon = $svg_icons['rocketPremiumBlue'];
 		return [
 			[
 				'type' 		=> 'toggleset',
@@ -166,7 +168,7 @@ class CFF_Customize_Tab{
 						'value' 			=> 'carousel',
 						'icon' 				=> 'carousel',
 						'checkExtension'	=> 'carousel',
-						'label' => __( 'Carousel', 'custom-facebook-feed' )
+						'label' => __( 'Carousel ', 'custom-facebook-feed' ) . $svg_rocket_icon
 					]
 				]
 			],

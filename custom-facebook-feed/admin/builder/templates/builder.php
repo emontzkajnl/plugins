@@ -1,4 +1,4 @@
-<div id="cff-builder-app" class="cff-fb-fs cff-builder-app" :class="dismissLite == false ? 'cff-builder-app-lite-dismiss' : '' " :data-app-loaded="appLoaded ? 'true' : 'false'">
+<div id="cff-builder-app" class="cff-fb-fs cff-builder-app" :class="dismissLite == false ? 'cff-builder-app-lite-dismiss' : '' " :data-app-loaded="appLoaded === true ? 'true' : 'false'">
 	<?php
 		$icons = CustomFacebookFeed\Builder\CFF_Feed_Builder::builder_svg_icons();
 		include_once CFF_BUILDER_DIR . 'templates/sections/header.php';

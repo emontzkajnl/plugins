@@ -41,7 +41,7 @@ class CFF_Toggleset_Control extends CFF_Controls_Base{
 				<div class="sb-control-toggle-extension-cover" v-show="toggle.checkExtension != undefined && !checkExtensionActive(toggle.checkExtension)"></div>
 				<div class="sb-control-toggle-deco sb-tr-1"></div>
 				<div class="sb-control-toggle-icon" v-if="toggle.icon" v-html="svgIcons[toggle.icon]"></div>
-				<div class="sb-control-label">{{toggle.label}}</div>
+				<div class="sb-control-label" v-html="toggle.label"></div>
 			</div>
 		</div>
 		<?php

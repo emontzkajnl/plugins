@@ -236,6 +236,9 @@ Vue.component('sb-add-source-component', {
             if(screenType != 'customizer'){
                 self.createLocalStorage(screenType);
             }
+            if( self.$parent.isSetupPage === 'true'){
+                appendURL = appendURL+ ',is_setup_page=yes';
+            }
             var finalUrl = fbConnectURL + "{'{url=" + appendURL + "}'}";
             window.location = finalUrl;
         },
@@ -250,6 +253,9 @@ Vue.component('sb-add-source-component', {
             switch (screenType) {
                 case 'creationProcess':
                     cffStorage.setItem('selectedFeed', self.$parent.selectedFeed);
+                    if( self.$parent.isSetupPage === 'true'){
+                        cffStorage.setItem('isSetupPage', 'true');
+                    }
                 break;
                 case 'customizer':
                     cffStorage.setItem( 'feed_id', self.$parent.customizerFeedData.feed_info.id );
@@ -268,6 +274,12 @@ Vue.component('sb-add-source-component', {
          processFBConnectSuccess : function(){
             var self = this;
             if( cffStorage.FBConnect === 'true' && cffStorage.screenType ){
+                 if( cffStorage?.isSetupPage === 'true'  && cffStorage?.isSetupPage ){
+                    cffStorage.removeItem("isSetupPage");
+                    cffStorage.setItem('setCurrentStep',1);
+                    window.location = window.location.href.replace('cff-feed-builder', 'cff-setup') ;
+                }
+
                 if( cffStorage.screenType == 'creationProcess' && cffStorage.selectedFeed ){
                     self.$parent.selectedFeed = cffStorage.selectedFeed;
                     self.$parent.viewsActive.pageScreen = 'selectFeed';
@@ -279,10 +291,10 @@ Vue.component('sb-add-source-component', {
                     window.location.search = urlParams;
                 }
             }
-            localStorage.removeItem("FBConnect");
-            localStorage.removeItem("screenType");
-            localStorage.removeItem("selectedFeed");
-            localStorage.removeItem("feed_id");
+            cffStorage.removeItem("FBConnect");
+            cffStorage.removeItem("screenType");
+            cffStorage.removeItem("selectedFeed");
+            cffStorage.removeItem("feed_id");
         },
 
         groupNext : function() {

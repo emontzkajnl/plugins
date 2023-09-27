@@ -75,6 +75,19 @@ class CFF_Admin{
 			''
 		);
 
+    	//Show a Reviews plugin menu item if it isn't already installed
+		if( !is_plugin_active( 'reviews-feed/sb-reviews.php' ) && !is_plugin_active( 'reviews-feed-pro/sb-reviews-pro.php' )  && current_user_can( 'activate_plugins' ) && current_user_can( 'install_plugins' ) )
+		{
+			add_submenu_page(
+				'cff-top',
+				__( 'Reviews Feed', 'custom-facebook-feed' ),
+				'<span class="cff_get_sbr">' . __( 'Reviews Feed', 'custom-facebook-feed' ) . '<span class="cff-notice-alert"><span>New!</span> </span></span>',
+				$cap,
+				'admin.php?page=sbr',
+				''
+			);
+		}
+
     	//Show a Instagram plugin menu item if it isn't already installed
 		if( !is_plugin_active( 'instagram-feed/instagram-feed.php' ) && !is_plugin_active( 'instagram-feed-pro/instagram-feed.php' )  && current_user_can( 'activate_plugins' ) && current_user_can( 'install_plugins' ) ){
 			add_submenu_page(

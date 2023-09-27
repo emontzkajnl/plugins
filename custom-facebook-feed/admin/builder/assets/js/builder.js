@@ -3,6 +3,20 @@ var cffBuilder,
 	sketch = VueColor.Sketch;
 
 /**
+ * VueJS Dummy Lightbox
+ *
+ * @since 4.0
+ */
+Vue.component('cff-dummy-lightbox', {
+    name: 'cff-dummy-lightbox',
+    template: '#cff-dummy-lightbox',
+    props: ['customizerScreens','customizerFeedData'],
+    methods : {
+
+    }
+});
+
+/**
  * VueJS Iframe, Link, Video Component
  *
  * @since 4.0
@@ -112,6 +126,7 @@ cffBuilder = new Vue({
 	mixins: [VueClickaway.mixin],
 	data: {
 		nonce : cff_builder.nonce,
+		admin_nonce: cff_builder.admin_nonce,
 		plugins: cff_builder.installPluginsPopup,
 		dismissLite : cff_builder.facebook_feed_dismiss_lite,
 		supportPageUrl: cff_builder.supportPageUrl,
@@ -345,6 +360,19 @@ cffBuilder = new Vue({
 			text : '',
 			shown : null
 		},
+
+		//Onboarding Wizard
+		onboardingWizardContent : cff_builder.onboardingWizardContent,
+		currentOnboardingWizardStep : 0,
+		onboardingWizardStepContent : {},
+		currentOnboardingWizardActiveSettings : {},
+		onboardingSuccessMessages : cff_builder.onboardingWizardContent.successMessages,
+		onboardingSuccessMessagesDisplay : [],
+		onboardingWizardDone : 'false',
+		isSetupPage : cff_builder.isSetupPage,
+		setupLicencekey : '',
+		setupLicencekeyError : null,
+		licenseLoading : false
 	},
 	computed : {
 		feedStyleOutput : function(){
@@ -357,15 +385,6 @@ cffBuilder = new Vue({
 	},
 	created: function(){
 		var self = this;
-		//console.log(self.feedPagination)
-		//console.log(self.customizerSidebarBuilder)
-		//console.log(self.customizerFeedData)
-		//console.log(self.wordpressPageLists);
-		//console.log(self.feedTypes)
-		//console.log(self.advancedFeedTypes)
-		//console.log(self.activeExtensions)
-		//console.log(self.dummyLightBoxData.post)
-		//console.log(self.sourcesList)
 		if( self.customizerFeedData ){
 			setTimeout(function(){
 				self.generateMasonryGridHeight('update');
@@ -377,7 +396,6 @@ cffBuilder = new Vue({
 			}
 			self.customizerScreens.printedTemplate = self.feedTemplates[0];
 		}
-
 
 		if(self.customizerFeedData == undefined){
 			if(self.sourcesList.length == 1){
@@ -391,6 +409,13 @@ cffBuilder = new Vue({
 			self.activateView('sourcePopup', 'creation');
 		}
 
+		if(self?.onboardingWizardContent !== undefined){
+			self?.onboardingWizardContent.steps.forEach( step => {
+				self.onboardingWizardStepContent[step.id] = step;
+			} );
+			self.checkActiveOnboardingWizardSettings()
+		}
+
 		self.loadingBar = false;
         /* Onboarding - move elements so the position is in context */
 		self.positionOnboarding();
@@ -398,7 +423,22 @@ cffBuilder = new Vue({
 			self.positionOnboarding();
 		}, 500);
 
-		self.appLoaded = true;
+		if(self?.onboardingWizardContent !== undefined){
+			self?.onboardingWizardContent.steps.forEach( step => {
+				self.onboardingWizardStepContent[step.id] = step;
+			} );
+			self.checkActiveOnboardingWizardSettings()
+		}
+
+		if( cffStorage?.isSetupPage !== 'true' && cffStorage?.isSetupPage !== true ){
+			self.appLoaded = true;
+		}
+
+		if(cffStorage?.setCurrentStep !== undefined){
+			self.currentOnboardingWizardStep = 1;
+			cffStorage.removeItem("setCurrentStep");
+		}
+
 	},
 	methods: {
 		updateColorValue : function(id){
@@ -570,7 +610,7 @@ cffBuilder = new Vue({
 		 */
 		ajaxPost : function(data, callback){
 			var self = this;
-			data['nonce'] = this.nonce;
+			data['nonce'] = data.nonce ? data.nonce : this.nonce;
 			self.$http.post(self.ajaxHandler,data).then(callback);
 		},
 
@@ -856,6 +896,7 @@ cffBuilder = new Vue({
 			self.viewsActive.onboardingPopup = false;
 			self.viewsActive.onboardingCustomizerPopup = false;
 
+			this.switchCustomizerTab('customize');
 			self.viewsActive.onboardingStep = 0;
             var postData = {
                 action : 'cff_dismiss_onboarding',
@@ -2934,6 +2975,11 @@ cffBuilder = new Vue({
 					self.feedToDelete = args;
 					heading = heading.replace("#", self.feedToDelete.feed_name);
 				break;
+                case "deleteSource":
+                    self.sourceToDelete = args;
+                   heading = heading.replace("#", self.sourceToDelete.username);
+                    break;
+
 			}
 			self.dialogBox = {
 				active : true,
@@ -2966,6 +3012,9 @@ cffBuilder = new Vue({
 				case 'backAllToFeed':
 					window.location = self.builderUrl;
 				break;
+				case 'deleteSource':
+                    self.deleteSource(self.sourceToDelete);
+                    break;
 			}
 		},
 
@@ -3041,6 +3090,187 @@ cffBuilder = new Vue({
 
 		ctaToggleFeatures: function() {
 			this.freeCtaShowFeatures = !this.freeCtaShowFeatures;
+		},
+
+		/**
+		 * Next Wizard Step
+		 *
+		 * @since 6.3
+		*/
+		nextWizardStep : function( action = false ){
+			const self = this;
+			if( action === 'submit' ){
+				self.submitWizardData()
+			}
+
+			if( self.currentOnboardingWizardStep <  self.onboardingWizardContent.steps.length ){
+				self.currentOnboardingWizardStep +=1;
+			}
+		},
+
+		//
+		submitWizardData : function(){
+			const self = this,
+				wizardData = {
+					action: 'cff_feed_saver_manager_process_wizard',
+					data: JSON.stringify(self.currentOnboardingWizardActiveSettings)
+				};
+
+			self.ajaxPost(wizardData, function (_ref) {
+			});
+
+			if( self.sourcesList.length > 0 ){
+				self.onboardingSuccessMessagesDisplay.push( self.onboardingSuccessMessages.connectAccount );
+			}
+			self.onboardingSuccessMessagesDisplay.push( self.onboardingSuccessMessages.setupFeatures );
+
+			const settingsValues = Object.values(self.currentOnboardingWizardActiveSettings),
+					settingsKeys = Object.keys(self.currentOnboardingWizardActiveSettings);
+			settingsValues.map( ( st, stInd ) => {
+				if( st?.plugins && st?.plugins === 'smash' ){
+					self.onboardingSuccessMessagesDisplay.push( self.onboardingSuccessMessages.feedPlugins.replace('#', settingsKeys[stInd])  );
+				}else if( st?.id === 'reviews' ){
+					self.onboardingSuccessMessagesDisplay.push( 'Reviews ' + self.genericText.installed );
+				}else if( st?.type === 'install_plugins' ){
+					self.onboardingSuccessMessagesDisplay.push( '<span class="sb-onboarding-wizard-succes-name"> ' + st?.pluginName + '</span> ' + self.genericText.installed );
+				}
+			} )
+			setTimeout(function(){
+				self.onboardingWizardDone = 'true';
+			}, 100)
+			cffBuilder.$forceUpdate();
+		},
+
+		/**
+		 * Previous Wizard Step
+		 *
+		 * @since 6.3
+		*/
+		previousWizardStep : function(){
+			const self = this;
+			if( self.currentOnboardingWizardStep >  0 ){
+				self.currentOnboardingWizardStep -=1;
+			}
+		},
+
+		/**
+         * Delete Source Ajax
+         *
+         * @since 4.0
+        */
+        deleteSource: function (sourceToDelete) {
+			var self = this,
+				deleteSourceData = {
+					action: 'cff_feed_saver_manager_delete_source',
+					source_id: sourceToDelete.id,
+					username : sourceToDelete.username,
+					nonce : self.admin_nonce
+				};
+			self.ajaxPost(deleteSourceData, function (_ref) {
+				var data = _ref.data;
+				self.sourcesList = data;
+			});
+        },
+
+		//Get Source Avatarr
+		getSourceListAvatar: function ( source ) {
+			return typeof source.avatar_url !== 'undefined' && source.account_type === 'group' ? source.avatar_url : 'https://graph.facebook.com/'+source.account_id+'/picture'
+		},
+
+		//Switcher Onboarding Wizard Click
+		switcherOnboardingWizardClick : function ( elem ) {
+			const self = this;
+			if( elem?.uncheck === true ){
+				return false;
+			}
+
+			if(self.currentOnboardingWizardActiveSettings[elem?.data?.id] !== undefined){
+				delete self.currentOnboardingWizardActiveSettings[elem.data.id];
+			}else{
+				self.currentOnboardingWizardActiveSettings[elem.data.id] = elem.data;
+			}
+			cffBuilder.$forceUpdate();
+		},
+
+		//Select Option Wizard change
+		selectOptionOnboardingWizardChange : function ( elem ) {
+			const self = this,
+			 	elemValue = event.target.value,
+				elemData = {
+				...elem.data,
+				value : elemValue
+			};
+			self.currentOnboardingWizardActiveSettings[elem.data.id]  = elemData;
+			console.log(elemData);
+			cffBuilder.$forceUpdate();
+		},
+
+		switcherOnboardingWizardCheckActive : function ( elem ) {
+			const self = this;
+			if( elem?.uncheck === true ){
+				return elem?.active;
+			}else{
+				return self.currentOnboardingWizardActiveSettings[elem?.data?.id] !== undefined ? 'true' : 'false'
+			}
+
+		},
+
+		checkActiveOnboardingWizardSettings : function (){
+			const self = this,
+				currentStepContentSteps = self.onboardingWizardContent.steps;
+
+				currentStepContentSteps.map( (step, stepId) => {
+					let = currentStepContentValues = Object.values(step),
+						currentStepContentKeys = Object.keys(step);
+						currentStepContentValues.map( (sec, secId) => {
+						if( (self.onboardingWizardContent.saveSettings.includes(currentStepContentKeys[secId])) ){
+							currentStepContentValues[secId].forEach( elem => {
+								if( elem.active === true && elem?.data){
+									self.currentOnboardingWizardActiveSettings[elem.data.id] = elem.data;
+								}
+							} );
+						}
+					});
+				});
+		},
+
+		dismissOnboardingWizard : function(){
+			const self = this,
+				dismissWizardData = {
+					action: 'cff_feed_saver_manager_dismiss_wizard'
+				};
+
+			self.ajaxPost(dismissWizardData, function (_ref) {
+				window.location = self.builderUrl;
+			});
+			cffBuilder.$forceUpdate();
+		},
+		//One CLick Upgrade
+		runOneClickUpgrade : function(){
+			const self = this,
+			oneClickUpgradeData = {
+				action: 'cff_maybe_upgrade_redirect',
+				license_key: self.setupLicencekey,
+				nonce : self.admin_nonce
+			};
+			self.setupLicencekeyError = null
+			if( self.checkNotEmpty( self.setupLicencekey ) ){
+				self.licenseLoading = true;
+				self.ajaxPost(oneClickUpgradeData, function (_ref) {
+					var data = _ref.data;
+					if (data.success === false) {
+                        self.licenseLoading = false;
+                        if (typeof data.data !== 'undefined') {
+                            self.setupLicencekeyError = data.data.message
+                        }
+                    }
+                    if (data.success === true) {
+                        window.location.href = data.data.url
+                    }
+
+				});
+			}
+
 		}
 
 	}

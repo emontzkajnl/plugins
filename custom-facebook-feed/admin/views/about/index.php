@@ -1,10 +1,14 @@
 <?php
+    // Exit if accessed directly
+    if(!defined('ABSPATH')) {
+        exit;
+    }
     /**
      * CFF Header Notices
-     * 
+     *
      * @since 4.0
      */
-    do_action('cff_header_notices'); 
+    do_action('cff_header_notices');
 ?>
 <div id="cff-about" class="cff-about">
     <?php

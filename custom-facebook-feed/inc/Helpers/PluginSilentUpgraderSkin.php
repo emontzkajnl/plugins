@@ -1,7 +1,9 @@
 <?php
-
 namespace CustomFacebookFeed\Helpers;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /** \WP_Upgrader_Skin class */
 require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php';
 

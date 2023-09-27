@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 require_once trailingslashit( CFF_PLUGIN_DIR ) . 'admin/addon-functions.php';
 
 require_once trailingslashit( CFF_PLUGIN_DIR ) . 'inc/Helpers/PluginSilentUpgrader.php';
