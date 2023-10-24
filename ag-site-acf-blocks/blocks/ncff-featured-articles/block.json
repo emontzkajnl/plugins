@@ -1,0 +1,9 @@
+{
+    "name":     "acf/ncff-featured-articles",
+    "title":    "NCFF Featured Articles",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ncff-featured-articles.php"
+    }
+}

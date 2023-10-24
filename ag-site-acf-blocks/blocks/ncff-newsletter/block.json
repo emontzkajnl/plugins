@@ -1,0 +1,9 @@
+{
+    "name":     "acf/ncff-newsletter",
+    "title":    "NCFF Newsletter",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ncff-newsletter.php"
+    }
+}

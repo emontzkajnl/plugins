@@ -88,6 +88,8 @@ function my_acf_init_block_types() {
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ilfb-podcast-player/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ilfb-article-list/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/video-section/block.json');
+        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-featured-articles/block.json');
+        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-newsletter/block.json');
         wp_register_script('podcast-block',plugin_dir_path(__FILE__) . '/blocks/ilfb-podcast-player/podcast-style.js',array(), null, true);
     }
 } 
