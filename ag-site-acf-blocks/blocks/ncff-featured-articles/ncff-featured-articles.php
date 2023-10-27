@@ -12,7 +12,7 @@ $fa_one = get_field('top_article');
 $fa_two = get_field('article_two');
 $fa_three = get_field('article_three');
 ?>
-
+<div class="container">
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <div class="ncff-featured__top-container">
 <div class="ncff-featured__top-img-container">
@@ -29,7 +29,7 @@ $fa_three = get_field('article_three');
    
 </div>
 <div class="ncff-featured__bottom-container row">
-    <?php foreach (array($fa_one, $fa_two) as $key => $value) { 
+    <?php foreach (array($fa_two, $fa_three) as $key => $value) { 
         $primary_cat = get_post_meta($value,'_yoast_wpseo_primary_category', TRUE );
         // echo 'primary is '.get_the_category_by_ID($primary_cat); ?>
         <div class="col-12 m-col-6">
@@ -38,7 +38,7 @@ $fa_three = get_field('article_three');
         <div class="ncff-featured__sub-item nc-panel">
             <div class="ncff-featured__sub-item-text">
                 <p class="ncff-featured__cat"><?php echo strtolower(get_the_category_by_ID($primary_cat));  ?></p>
-                <h3 class="ncff-featured__bottom-title">
+                <h3 class="ncff-featured__bottom-title h2">
                     <?php echo '<a href="'.get_the_permalink($value).'" class="unstyle-link">'.get_the_title($value).'</a>'; ?>
                 </h3>
 
@@ -52,3 +52,4 @@ $fa_three = get_field('article_three');
 </div>
 
 </div>
+</div> <!-- container -->
