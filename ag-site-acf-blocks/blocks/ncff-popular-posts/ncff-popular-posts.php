@@ -4,7 +4,7 @@
  */
 
 $id = 'ncff-popular-' . $block['id'];
-$className = 'ncff-popular ';
+$className = 'ncff-popular offwhite-bkgrnd ';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 } 
@@ -18,10 +18,11 @@ $args = array(
     'orderby'               => 'meta_value',
     'meta_key'              => 'wpb_post_views_count'
 );
-$pop_query = new WP_Query($args);
-if ($pop_query->have_posts()):
-    echo '<div class="container">';
-    echo '<h2 class="h3">Most Popular</h2><div class="row">';
+$pop_query = new WP_Query($args); ?>
+<div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
+<?php if ($pop_query->have_posts()):
+
+    echo '<h2 class="h3">Most Popular</h2><div class="row ncff-popular__row">';
     while ($pop_query->have_posts()):
         $pop_query->the_post(); 
         $ID = get_the_ID(); 
@@ -34,17 +35,22 @@ if ($pop_query->have_posts()):
             </div>
             <div class="ncff-popular__text-container">
             <p class="ncff-featured__cat"><?php echo get_the_category_by_ID($primary_cat); ?></p>
-            <h2 class="ncff-popular__title"><?php echo get_the_title(); ?></h2>
+            <h2 class="ncff-popular__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
             </div>
             </div> <!-- container -->
         </div> <!-- col-12 -->
     <?php endwhile;
     echo '</div>'; // row
-    echo '</div>'; // container
+    $max_pages = $pop_query->max_num_pages;
+    if ($max_pages > 1) {
+        ?>
+        <script>
+            window.maxPopularPages = <?php echo $max_pages; ?>;
+        </script>
+        <?php echo '<div style="text-align: center;">';
+            echo '<button class="ncff-popular__btn background__primary">Load More</button>';
+            echo '</div>';
+    }
 endif;
-
 ?>
-
-<?php ?>
-
-<!-- </div> -->
+</div>

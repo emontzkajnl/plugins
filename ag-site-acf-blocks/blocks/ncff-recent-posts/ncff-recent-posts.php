@@ -16,34 +16,41 @@ $args = array(
     'paged'                 => $paged,
     'post_status'           => 'publish',
 );
-$pop_query = new WP_Query($args);
-if ($pop_query->have_posts()):
-    echo '<div style="background: #fff"><div class="container">';
-    echo '<h3 class="h2">Most Recent</h2>';
-    while ($pop_query->have_posts()):
-        $pop_query->the_post(); 
+$recent_query = new WP_Query($args);
+// echo 'max pages is '.$recent_query->max_num_pages;
+if ($recent_query->have_posts()): ?>
+    <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
+    <?php echo '<h3 class="h2">Most Recent</h2>';
+    while ($recent_query->have_posts()):
+        $recent_query->the_post(); 
         $ID = get_the_ID(); 
         $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE );?>
         <div class="ncff-recent__container">
             <div class="ncff-recent__img-container">
-                <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'medium-thumb' ).'</a>'; ?>
+                <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
             </div>
             <div class="ncff-recent__text-container">
             <p class="ncff-featured__cat"><?php echo get_the_category_by_ID($primary_cat); ?></p>
-            <h2 class="ncff-recent__title"><?php echo get_the_title(); ?></h2>
+            <h2 class="ncff-recent__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
             <?php echo the_excerpt(  ); ?>
             </div>
-            </div> <!-- container -->
+        </div> <!-- container -->
         
     <?php endwhile;
+    echo '</div>';
+    $max_pages = $recent_query->max_num_pages;
+    if ($max_pages > 1) {
+        ?>
+        <script>
+            window.maxRecentPages = <?php echo $max_pages; ?>;
+        </script>
+        <?php echo '<div style="text-align: center;">';
+            echo '<button class="ncff-recent__btn background__primary">Load More</button>';
+            echo '</div>';
+    }
+    
     
 endif;
 
 ?>
 
-<div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-<?php ?>
-
-</div>
-</div> <!-- container -->
-</div> <!-- background white -->
