@@ -22,7 +22,7 @@ $pop_query = new WP_Query($args); ?>
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <?php if ($pop_query->have_posts()):
 
-    echo '<h2 class="h3">Most Popular</h2><div class="row ncff-popular__row">';
+    echo '<h2 class="ncff-section-title">Most Popular</h2><div class="row ncff-popular__row">';
     while ($pop_query->have_posts()):
         $pop_query->the_post(); 
         $ID = get_the_ID(); 
@@ -35,7 +35,7 @@ $pop_query = new WP_Query($args); ?>
             </div>
             <div class="ncff-popular__text-container">
             <p class="ncff-featured__cat"><?php echo get_the_category_by_ID($primary_cat); ?></p>
-            <h2 class="ncff-popular__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
+            <h3 class="ncff-popular__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>
             </div>
             </div> <!-- container -->
         </div> <!-- col-12 -->

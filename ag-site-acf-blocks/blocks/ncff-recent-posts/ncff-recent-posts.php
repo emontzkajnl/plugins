@@ -20,7 +20,7 @@ $recent_query = new WP_Query($args);
 // echo 'max pages is '.$recent_query->max_num_pages;
 if ($recent_query->have_posts()): ?>
     <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-    <?php echo '<h3 class="h2">Most Recent</h2>';
+    <?php echo '<h2 class="ncff-section-title">Most Recent</h2>';
     while ($recent_query->have_posts()):
         $recent_query->the_post(); 
         $ID = get_the_ID(); 

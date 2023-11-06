@@ -38,7 +38,7 @@ $fa_three = get_field('article_three');
         <div class="ncff-featured__sub-item nc-panel">
             <div class="ncff-featured__sub-item-text">
                 <p class="ncff-featured__cat"><?php echo strtolower(get_the_category_by_ID($primary_cat));  ?></p>
-                <h3 class="ncff-featured__bottom-title h2">
+                <h3 class="ncff-featured__bottom-title ">
                     <?php echo '<a href="'.get_the_permalink($value).'" class="unstyle-link">'.get_the_title($value).'</a>'; ?>
                 </h3>
 
