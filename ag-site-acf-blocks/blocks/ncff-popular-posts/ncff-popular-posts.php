@@ -27,7 +27,8 @@ $pop_query = new WP_Query($args); ?>
         $pop_query->the_post(); 
         $ID = get_the_ID(); 
         $visited = get_post_meta( $ID, 'wpb_post_views_count', TRUE); 
-        $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE );?>
+        $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE ); 
+        ?>
         <div class="col-12 m-col-3 s-col-6">
         <div class="ncff-popular__container nc-panel">
             <div class="ncff-popular__img-container">
