@@ -17,7 +17,7 @@ $link = get_field('newsletter_link', 'options');
 <div class="ncff-newsletter__text-area">
     <h3 class="h2">Read<span class="ampersand">&</span>Connect </h3>
     <?php echo '<a href="'.get_the_permalink($link).'">'.get_the_post_thumbnail( $link, 'full').'</a>';
-    echo $text; ?> 
+    echo '<div class="ncff-newsletter__text" >'.$text.'</div>'; ?> 
 </div>
 <div class="ncff-newsletter__form-area">
 <p>Get the lastest news, recipes, articles and more, right to your inbox.</p>
