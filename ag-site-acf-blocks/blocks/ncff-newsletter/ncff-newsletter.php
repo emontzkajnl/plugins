@@ -26,11 +26,11 @@ $link = get_field('newsletter_link', 'options');
 <ul class="newsletter-social">
     <?php
     $facebook = get_field('facebook', 'options');
-    $twitter = get_field('twitter', 'options');
+    $instagram = get_field('instagram', 'options');
     $pinterest = get_field('pinterest', 'options');
     $youtube = get_field('youtube', 'options');
         echo $facebook ? '<li class="facebook"><a href="'.esc_url($facebook).'" target="_blank"><i class="fab fa-facebook-f"></i></a></li>' : '';
-        echo $twitter ? '<li class="twitter"><a href="'.esc_url($twitter).'" target="_blank"><i class="fab fa-twitter"></i></a></li>' : '';
+        echo $instagram ? '<li class="instagram"><a href="'.esc_url($instagram).'" target="_blank"><i class="fab fa-instagram"></i></a></li>' : '';
         echo $pinterest ? '<li class="pinterest"><a href="'.esc_url($pinterest).'" target="_blank"><i class="fab fa-pinterest-p"></i></a></li>' : '';
         echo $youtube ? '<li class="youtube"><a href="'.esc_url($youtube).'" target="_blank"><i class="fab fa-youtube"></i></a></li>' : '';
     ?>
