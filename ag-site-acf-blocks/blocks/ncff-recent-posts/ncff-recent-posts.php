@@ -24,13 +24,15 @@ if ($recent_query->have_posts()): ?>
     while ($recent_query->have_posts()):
         $recent_query->the_post(); 
         $ID = get_the_ID(); 
-        $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE );?>
+        $cat = get_the_category($ID); 
+        $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE ); 
+        $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;?>
         <div class="ncff-recent__container">
             <div class="ncff-recent__img-container">
                 <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
             </div>
             <div class="ncff-recent__text-container">
-            <p class="ncff-featured__cat"><?php echo get_the_category_by_ID($primary_cat); ?></p>
+            <p class="ncff-featured__cat"><?php echo $cat_name; ?></p>
             <h2 class="ncff-recent__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
             <?php echo the_excerpt(  ); ?>
             </div>
