@@ -27,7 +27,9 @@ $pop_query = new WP_Query($args); ?>
         $pop_query->the_post(); 
         $ID = get_the_ID(); 
         $visited = get_post_meta( $ID, 'wpb_post_views_count', TRUE); 
+        $cat = get_the_category($ID); 
         $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE ); 
+        $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;
         ?>
         <div class="col-12 m-col-3 s-col-6">
         <div class="ncff-popular__container nc-panel">
@@ -35,7 +37,7 @@ $pop_query = new WP_Query($args); ?>
                 <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail( ).'</a>'; ?>
             </div>
             <div class="ncff-popular__text-container">
-            <p class="ncff-featured__cat"><?php echo get_the_category_by_ID($primary_cat); ?></p>
+            <p class="ncff-featured__cat"><?php echo $cat_name; ?></p>
             <h3 class="ncff-popular__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>
             </div>
             </div> <!-- container -->
