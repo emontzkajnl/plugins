@@ -1,13 +1,18 @@
 {
+	"apiVersion": 3,
 	"name": "stackable/hero",
 	"title": "Hero",
 	"description": "A large hero area. Typically used at the very top of a page.",
-	"category": "layout",
+	"category": "stackable",
 	"usesContext": [
 		"postId",
 		"postType",
-		"queryId"
+		"queryId",
+		"stackable/innerBlockOrientation"
 	],
+	"providesContext": {
+		"stackable/innerBlockOrientation": "innerBlockOrientation"
+	},
 	"keywords": [
 		"Header"
 	],

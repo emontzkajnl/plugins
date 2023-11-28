@@ -219,13 +219,14 @@ class Filters
 	}
 
 	public function systemInformation($infoContent)
-	{
-
-		$infoContent .= 'Platform:           '.@$platform . "\n";
-		$infoContent .= 'Browser Name:       '.@$bname . "\n";
-		$infoContent .= 'Browser Version:    '.@$version . "\n";
-		$infoContent .= 'User Agent:         '.@$uAgent . "\n";
-
+	{		
+		/* 
+		// This info have been delcared on AdminHelper.php function getbrowser() 
+		$infoContent .= 'Platform:           '.isset($platform) ? $platform : '' . "\n";
+		$infoContent .= 'Browser Name:       '.isset($bname) ? $bname : '' . "\n";
+		$infoContent .= 'Browser Version:    '.isset($version) ? $version : '' . "\n";
+		$infoContent .= 'User Agent:         '.isset($uAgent) ? $uAgent : '' . "\n";
+		*/
 		return $infoContent;
 	}
 
@@ -597,7 +598,7 @@ class Filters
 			if (empty($targets['sgpb-target'][0])) {
 				return $previewLink .= '/?sg_popup_preview_id='.$popupId;
 			}
-			$targetParams = @$targets['sgpb-target'][0][0]['param'];
+			$targetParams = isset($targets['sgpb-target'][0][0]['param']) ? $targets['sgpb-target'][0][0]['param'] : '';
 			if ((!empty($targetParams) && $targetParams == 'not_rule') || empty($targetParams)) {
 				$previewLink = home_url();
 				$previewLink .= '/?sg_popup_preview_id='.$popupId;

@@ -1,9 +1,10 @@
 {
+	"apiVersion": 3,
 	"name": "stackable/divider",
 	"title": "Divider",
 	"description": "Add a pause between your content.",
-	"category": "common",
-	"usesContext": [ "postId", "postType", "queryId" ],
+	"category": "stackable",
+	"usesContext": [ "postId", "postType", "queryId" , "stackable/innerBlockOrientation" ],
 	"keywords": [
 		"Horizontal Rule",
 		"HR"

@@ -1,43 +1,41 @@
 <?php
 
 class Advanced_Ads_Pro_Module_bbPress_Admin {
-    
-    public function __construct() {
-        // stop, if main plugin doesn’t exist
-	if ( ! class_exists( 'Advanced_Ads', false ) ) {
-            return;
+
+	/**
+	 * Constructor. Register relevant hooks.
+	 */
+	public function __construct() {
+
+		// stop if bbPress isn't activated
+		if ( ! class_exists( 'bbPress', false ) ) {
+			return;
+		}
+
+		// add sticky placement
+		add_action( 'advanced-ads-placement-types', [ $this, 'add_placement' ] );
+		// content of sticky placement
+		add_action( 'advanced-ads-placement-options-after', [ $this, 'placement_options' ], 10, 2 );
 	}
-        
-        // stop if bbPress isn't activated
-        if ( ! class_exists( 'bbPress', false ) ){
-            return;
-        }
-        
-        // add sticky placement
-	add_action( 'advanced-ads-placement-types', array( $this, 'add_placement' ) );
-        // content of sticky placement
-	add_action( 'advanced-ads-placement-options-after', array( $this, 'placement_options' ), 10, 2 );
-        
-    }
     
     public function add_placement($types){
         //ad injection on a bbPress forum
-        $types['bbPress static'] = array(
+        $types['bbPress static'] = [
             'title' => __( 'bbPress Static Content', 'advanced-ads-pro' ),
             'description' => __( 'Display ads on bbPress related pages.', 'advanced-ads-pro' ),
             'image' => AAP_BASE_URL . 'modules/bbpress/assets/img/bbpress-static.png',
             'order' => 32,
-        );
-        $types['bbPress comment'] = array(
+        ];
+        $types['bbPress comment'] = [
             'title' => __( 'bbPress Reply Content', 'advanced-ads-pro' ),
             'description' => __( 'Display ads in bbPress replies.', 'advanced-ads-pro' ),
             'image' => AAP_BASE_URL . 'modules/bbpress/assets/img/bbpress-reply.png',
             'order' => 33,
-        );
+        ];
         return $types;
     }
     
-    public function placement_options( $placement_slug = '', $placement = array() ){
+    public function placement_options( $placement_slug = '', $placement = [] ){
 	if( 'bbPress static' === $placement['type'] ){
             $bbPress_static_positions = $this->get_bbPress_static_hooks();
             $current = isset($placement['options']['bbPress_static_hook']) ? $placement['options']['bbPress_static_hook'] : '';
@@ -78,30 +76,30 @@ class Advanced_Ads_Pro_Module_bbPress_Admin {
     }
 
     public function get_bbPress_static_hooks(){
-        return array(
-            __( 'forum topic page', 'advanced-ads-pro' ) => array(
+        return [
+            __( 'forum topic page', 'advanced-ads-pro' ) => [
                 'template after replies loop',
                 'template before replies loop',
-            ),
-            __( 'single forum page', 'advanced-ads-pro' ) => array(
+            ],
+            __( 'single forum page', 'advanced-ads-pro' ) => [
                 'template after single forum',
                 'template before single forum'
-            ),
-            __( 'forums page', 'advanced-ads-pro' ) => array(
+            ],
+            __( 'forums page', 'advanced-ads-pro' ) => [
                 'template after forums loop',
                 'template before forums loop'      
-            )
-        );
+            ]
+        ];
     }
     
     public function get_bbPress_comment_hooks(){
-        return array(
-            __( 'forum topic page', 'advanced-ads-pro' ) => array(
+        return [
+            __( 'forum topic page', 'advanced-ads-pro' ) => [
                 'theme after reply content',
                 'theme before reply content',
                 'theme after reply author admin details'
-            )
-        );
+            ]
+        ];
     }
     
 }

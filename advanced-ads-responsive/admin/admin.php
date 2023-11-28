@@ -50,9 +50,6 @@ class Advanced_Ads_Responsive_Admin {
 			return;
 		}
 
-		// add options to ad parameters
-		add_action( 'advanced-ads-visitor-conditions-after', array( $this, 'render_ad_parameters' ), 10, 2 );
-
 		add_action('advanced-ads-settings-init', array($this, 'settings_init'), 10, 1);
 		// add list page
 		add_action('admin_menu', array($this, 'add_list_page'));
@@ -198,52 +195,23 @@ class Advanced_Ads_Responsive_Admin {
 		require AAR_BASE_PATH . 'admin/views/setting_fallback_width.php';
 	}
 
-    /**
-     * render options for ad parameters
-     *
-     * @since 1.0.0
-     * @deprecated since version 1.2.1 replaced with visitor conditions api
-     */
-    public function render_ad_parameters( $ad = 0, $types = 0 ){
-
-
-        $by_size_options = $ad->options( 'visitor' );
-        $by_size_enable = 0;
-        $by_size_from = 0;
-        $by_size_to = 0;
-        $by_size_fallback = 'display';
-
-        if ( isset( $by_size_options['by-size'] ) ) {
-            $by_size_enable = isset( $by_size_options['by-size']['enable'] ) ? absint( $by_size_options['by-size']['enable'] ) : 0;
-            $by_size_from = absint( $by_size_options['by-size']['from'] );
-            $by_size_to = absint( $by_size_options['by-size']['to'] );
-        }
-        if ( isset( $by_size_options['by-size']['fallback'] ) ) {
-            $by_size_fallback = $by_size_options['by-size']['fallback'];
-        }
-
-	if( ! $by_size_enable ) {
-	    return;
+	/**
+	 * Add ads list page.
+	 *
+	 * @since 1.1.1
+	 */
+	public function add_list_page() {
+		add_submenu_page(
+			'',
+			__( 'Responsive Ads', 'advanced-ads-responsive' ),
+			__( 'Responsive Ads', 'advanced-ads-responsive' ),
+			method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ? Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) : 'manage_options',
+			AAR_SLUG . '-list',
+			[ $this, 'display_responsive_ads_list' ]
+		);
 	}
 
-        require_once( 'views/metabox.php' );
-    }
-
-    /**
-     * add ads list page
-     *
-     * @since 1.1.1
-     */
-    public function add_list_page(){
-	
-	$cap = method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ?  Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads') : 'manage_options';
-	
-        add_submenu_page(
-            null, __( 'Responsive Ads', 'advanced-ads-responsive' ), __( 'Responsive Ads', 'advanced-ads-responsive' ), $cap, AAR_SLUG . '-list', array( $this, 'display_responsive_ads_list' )
-         );
-    }
-
-    /**
+	/**
      * Render the responsive ads list page
      *
      * @since    1.0.0

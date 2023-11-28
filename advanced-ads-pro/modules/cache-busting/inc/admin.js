@@ -54,6 +54,32 @@ jQuery( document ).ready(function( $ ){
         } );
     });
 
+    $('.js-placement-activate-cb').on('click',function( e ){
+        e.preventDefault();
+        const button = $( this );
+		const placement = button.data('placement');
+		const loader = jQuery( '<span class="advads-loader"></span>' );
+
+		// Replace the dynamic field with the loader.
+		button.parent().replaceWith( loader );
+
+		$.post( ajaxurl, {
+			action:      'advads-placement-activate-cb',
+			placement:   placement.toString(),
+			nonce:       window.advads_geo_translation.nonce
+		} )
+		 .done( function ( result ) {
+			 if ( ! $.isPlainObject( result ) ) {
+				 return;
+			 }
+			 loader.replaceWith( '<p class="advads-notice-inline advads-idea">' + result.data + '</p>' );
+
+		 } )
+		 .fail( function ( jqXHR, errormessage, errorThrown ) {
+            loader.replaceWith( '<p class="advads-notice-inline advads-error">' + jqXHR.responseJSON.data + '</p>' );
+		 } )
+    });
+
 });
 
 

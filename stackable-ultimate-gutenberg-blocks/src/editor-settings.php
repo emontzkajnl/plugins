@@ -13,7 +13,8 @@ if ( ! class_exists( 'Stackable_Editor_Settings' ) ) {
 		 */
 		function __construct() {
 			// Register settings.
-			add_action( 'init', array( $this, 'register_settings' ) );
+			add_action( 'admin_init', array( $this, 'register_settings' ) );
+			add_action( 'rest_api_init', array( $this, 'register_settings' ) );
 
 			// Make our settings available in the editor.
 			add_filter( 'stackable_js_settings', array( $this, 'add_settings' ) );
@@ -49,6 +50,18 @@ if ( ! class_exists( 'Stackable_Editor_Settings' ) ) {
 
 			register_setting(
 				'stackable_editor_settings',
+				'stackable_google_maps_api_key',
+				array(
+					'type' => 'string',
+					'description' => __( 'Enables additional customization options for the Map Block.', STACKABLE_I18N ),
+					'sanitize_callback' => 'sanitize_text_field',
+					'show_in_rest' => true,
+					'default' => '',
+				)
+			);
+
+			register_setting(
+				'stackable_editor_settings',
 				'stackable_enable_design_library',
 				array(
 					'type' => 'boolean',
@@ -79,7 +92,7 @@ if ( ! class_exists( 'Stackable_Editor_Settings' ) ) {
 					'description' => __( 'Adds a persistent Navigation panel across all Stackable blocks', STACKABLE_I18N ),
 					'sanitize_callback' => 'sanitize_text_field',
 					'show_in_rest' => true,
-					'default' => true,
+					'default' => '',
 				)
 			);
 
@@ -130,6 +143,17 @@ if ( ! class_exists( 'Stackable_Editor_Settings' ) ) {
 					'default' => false,
 				)
 			);
+
+			register_setting(
+				'stackable_editor_settings',
+				'stackable_help_tooltip_disabled',
+				array(
+					'type' => 'string',
+					'sanitize_callback' => 'sanitize_text_field',
+					'show_in_rest' => true,
+					'default' => '',
+				)
+			);
 		}
 
 		public function sanitize_array_setting( $input ) {
@@ -143,6 +167,7 @@ if ( ! class_exists( 'Stackable_Editor_Settings' ) ) {
 		 * @return Array Settings array to be loaded in the editor.
 		 */
 		public function add_settings( $settings ) {
+			$settings['stackable_google_maps_api_key'] = get_option( 'stackable_google_maps_api_key' );
 			$settings['stackable_disabled_blocks'] = get_option( 'stackable_disabled_blocks' );
 			$settings['stackable_enable_design_library'] = get_option( 'stackable_enable_design_library' );
 			$settings['stackable_optimize_inline_css'] = get_option( 'stackable_optimize_inline_css' );

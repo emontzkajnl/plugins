@@ -1,0 +1,9 @@
+{
+    "name":     "acf/ncff-infobox",
+    "title":    "NCFF Info Box",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ncff-infobox.php"
+    }
+}

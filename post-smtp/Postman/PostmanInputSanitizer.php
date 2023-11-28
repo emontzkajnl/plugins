@@ -20,7 +20,7 @@ if ( ! class_exists( 'PostmanInputSanitizer' ) ) {
 		 *        	Contains all settings fields as array keys
 		 */
 		public function sanitize( $input ) {
-
+			
 		    if ( array_key_exists( 'external_option', $input ) ) {
 		        return $input;
             }
@@ -57,7 +57,11 @@ if ( ! class_exists( 'PostmanInputSanitizer' ) ) {
 			$this->sanitizePassword( 'Password', PostmanOptions::BASIC_AUTH_PASSWORD, $input, $new_input, $this->options->getPassword() );
 			$this->sanitizePassword( 'Mandrill API Key', PostmanOptions::MANDRILL_API_KEY, $input, $new_input, $this->options->getMandrillApiKey() );
 			$this->sanitizePassword( 'SendGrid API Key', PostmanOptions::SENDGRID_API_KEY, $input, $new_input, $this->options->getSendGridApiKey() );
+			$this->sanitizePassword( 'Brevo API Key', PostmanOptions::SENDINBLUE_API_KEY, $input, $new_input, $this->options->getSendinblueApiKey() );
+			$this->sanitizePassword( 'Postmark API Key', PostmanOptions::POSTMARK_API_KEY, $input, $new_input, $this->options->getPostmarkApiKey() );
+			$this->sanitizePassword( 'SparkPost API Key', PostmanOptions::SPARKPOST_API_KEY, $input, $new_input, $this->options->getSparkPostApiKey() );
 			$this->sanitizePassword( 'Mailgun API Key', PostmanOptions::MAILGUN_API_KEY, $input, $new_input, $this->options->getMailgunApiKey() );
+			$this->sanitizePassword( 'ElasticEmail API Key', PostmanOptions::ELASTICEMAIL_API_KEY, $input, $new_input, $this->options->getElasticEmailApiKey() );
 			$this->sanitizeString( 'Mailgun Domain Name', PostmanOptions::MAILGUN_DOMAIN_NAME, $input, $new_input );
 			$this->sanitizeString( 'Reply-To', PostmanOptions::REPLY_TO, $input, $new_input );
 			$this->sanitizeString( 'From Name Override', PostmanOptions::PREVENT_MESSAGE_SENDER_NAME_OVERRIDE, $input, $new_input );
@@ -67,7 +71,7 @@ if ( ! class_exists( 'PostmanInputSanitizer' ) ) {
 			$this->sanitizeString( 'Forced To Recipients', PostmanOptions::FORCED_TO_RECIPIENTS, $input, $new_input );
 			$this->sanitizeString( 'Forced CC Recipients', PostmanOptions::FORCED_CC_RECIPIENTS, $input, $new_input );
 			$this->sanitizeString( 'Forced BCC Recipients', PostmanOptions::FORCED_BCC_RECIPIENTS, $input, $new_input );
-			$this->sanitizeString( 'Additional Headers', PostmanOptions::ADDITIONAL_HEADERS, $input, $new_input );
+			$this->sanitizeTextarea( 'Additional Headers', PostmanOptions::ADDITIONAL_HEADERS, $input, $new_input );
 			$this->sanitizeInt( 'Read Timeout', PostmanOptions::READ_TIMEOUT, $input, $new_input );
 			$this->sanitizeInt( 'Conenction Timeout', PostmanOptions::CONNECTION_TIMEOUT, $input, $new_input );
 			$this->sanitizeInt( 'Log Level', PostmanOptions::LOG_LEVEL, $input, $new_input );
@@ -75,6 +79,7 @@ if ( ! class_exists( 'PostmanInputSanitizer' ) ) {
 			$this->sanitizeLogMax( 'Email Log Max Entries', PostmanOptions::MAIL_LOG_MAX_ENTRIES, $input, $new_input );
 			$this->sanitizeString( 'Run Mode', PostmanOptions::RUN_MODE, $input, $new_input );
 			$this->sanitizeString( 'Stealth Mode', PostmanOptions::STEALTH_MODE, $input, $new_input );
+			$this->sanitizeString( 'Broken Email Fix', PostmanOptions::INCOMPATIBLE_PHP_VERSION, $input, $new_input );
 			$this->sanitizeInt( 'Transcript Size', PostmanOptions::TRANSCRIPT_SIZE, $input, $new_input );
 			$this->sanitizeString( 'Temporary Directory', PostmanOptions::TEMPORARY_DIRECTORY, $input, $new_input );
 
@@ -117,6 +122,13 @@ if ( ! class_exists( 'PostmanInputSanitizer' ) ) {
 			if ( isset( $input [ $key ] ) ) {
 				$this->logSanitize( $desc, $input [ $key ] );
 				$new_input [ $key ] = sanitize_text_field( trim( $input [ $key ] ) );
+			}
+		}
+
+		public function sanitizeTextarea( $desc, $key, $input, &$new_input ) {
+			if ( isset( $input [ $key ] ) ) {
+				$this->logSanitize( $desc, $input [ $key ] );
+				$new_input [ $key ] = sanitize_textarea_field( trim( $input [ $key ] ) );
 			}
 		}
 

@@ -119,7 +119,7 @@ if( $pub_id_errors ) : ?>
 	</select>
 	<a href="<?php echo esc_url( ADVADS_URL ) . 'adsense-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-ad-types'; ?>" target="_blank"><?php esc_html_e( 'manual', 'advanced-ads' ); ?></a>
     </div>
-<?php if ( in_array( $unit_type, array( 'link', 'link-responsive' ), true ) ) : ?>
+<?php if ( in_array( $unit_type, [ 'link', 'link-responsive' ], true ) ) : ?>
 <p class="advads-message-warning"><?php esc_html_e( 'Google AdSense deprecated Link Units. Please choose another type.', 'advanced-ads' ); ?>
 	<a href="<?php echo esc_url( ADVADS_URL ); ?>adsense-link-units/"" target="_blank" rel="noopener">
 		<?php esc_html_e( 'Learn more', 'advanced-ads' ); ?>

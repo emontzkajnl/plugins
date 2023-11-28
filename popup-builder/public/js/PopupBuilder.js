@@ -406,7 +406,7 @@ SGPBPopup.prototype.getPopupObj = function()
 SGPBPopup.prototype.setPopupData = function(popupData)
 {
 	if (typeof popupData == 'string') {
-		var popupData = SGPBPopup.unserialize(popupData);
+		var popupData = SGPBPopup.JSONParse(popupData);
 	}
 
 	this.popupData = popupData;
@@ -457,7 +457,7 @@ SGPBPopup.getPopupOptionsById = function(popupId)
 	}
 	var options = popupDataDiv.attr('data-options');
 
-	return SGPBPopup.unserialize(options);
+	return SGPBPopup.JSONParse(options);
 };
 
 SGPBPopup.prototype.getCompatibleZiIndex = function(popupZIndex)
@@ -1869,7 +1869,11 @@ SGPBPopup.prototype.setMaxWidthForResponsiveImage = function()
 		}
 	}
 };
+SGPBPopup.JSONParse = function(data){
+	return JSON.parse(atob(data, true));
+};
 
+// unused function!
 SGPBPopup.b64DecodeUnicode = function(str)
 {
 	var Base64 = {
@@ -1947,7 +1951,8 @@ SGPBPopup.b64DecodeUnicode = function(str)
 	return Base64.decode(str);
 };
 
-SGPBPopup.unserialize = function(data)
+// unused function!
+SGPBPopup.unserialize_old = function(data)
 {
 	data = SGPBPopup.b64DecodeUnicode(data);
 
@@ -2617,7 +2622,7 @@ SgpbEventListener.prototype.sgpbClick = function(listenerObj, eventData)
 				jQuery(this).attr('data-popup-id', popupId);
 			}
 			var currentTarget = jQuery(this);
-			currentTarget.bind('click', function(e) {
+			currentTarget.bind('click touchstart', function(e) {
 				if (clickCount > 1) {
 					return true;
 				}

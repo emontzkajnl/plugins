@@ -10,17 +10,22 @@
 /**
  * Backend manager
  *
- * @since 6.7.9 https://github.com/aamplugin/advanced-access-manager/issues/192
- * @since 6.7.6 https://github.com/aamplugin/advanced-access-manager/issues/179
- * @since 6.6.2 https://github.com/aamplugin/advanced-access-manager/issues/138
- * @since 6.2.2 Added `manage_policies` and removed `blog_id` for the localized
- *              array of properties
- * @since 6.2.0 Added new property to the JS localization `blog_id`
- * @since 6.1.0 Fixed bug with HTML compression
- * @since 6.0.0 Initial implementation of the class
+ * @since 6.9.13 https://github.com/aamplugin/advanced-access-manager/issues/303
+ * @since 6.9.8  https://github.com/aamplugin/advanced-access-manager/issues/262
+ * @since 6.9.7  https://github.com/aamplugin/advanced-access-manager/issues/260
+ * @since 6.9.5  https://github.com/aamplugin/advanced-access-manager/issues/243
+ * @since 6.8.4  https://github.com/aamplugin/advanced-access-manager/issues/212
+ * @since 6.7.9  https://github.com/aamplugin/advanced-access-manager/issues/192
+ * @since 6.7.6  https://github.com/aamplugin/advanced-access-manager/issues/179
+ * @since 6.6.2  https://github.com/aamplugin/advanced-access-manager/issues/138
+ * @since 6.2.2  Added `manage_policies` and removed `blog_id` for the localized
+ *               array of properties
+ * @since 6.2.0  Added new property to the JS localization `blog_id`
+ * @since 6.1.0  Fixed bug with HTML compression
+ * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.7.9
+ * @version 6.9.13
  */
 class AAM_Backend_Manager
 {
@@ -33,16 +38,20 @@ class AAM_Backend_Manager
      *
      * @return void
      *
-     * @since 6.7.6 https://github.com/aamplugin/advanced-access-manager/issues/179
-     * @since 6.4.2 https://github.com/aamplugin/advanced-access-manager/issues/88
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.14 https://github.com/aamplugin/advanced-access-manager/issues/308
+     * @since 6.9.7  https://github.com/aamplugin/advanced-access-manager/issues/260
+     * @since 6.9.5  https://github.com/aamplugin/advanced-access-manager/issues/243
+     * @since 6.8.4  https://github.com/aamplugin/advanced-access-manager/issues/212
+     * @since 6.7.6  https://github.com/aamplugin/advanced-access-manager/issues/179
+     * @since 6.4.2  https://github.com/aamplugin/advanced-access-manager/issues/88
+     * @since 6.0.0  Initial implementation of the method
      *
      * @access protected
-     * @version 6.7.6
+     * @version 6.9.14
      */
     protected function __construct()
     {
-        //print required JS & CSS
+        // Print required JS & CSS
         add_action('aam_iframe_footer_action', array($this, 'printFooterJavascript'));
 
         // Alter user edit screen with support for multiple roles
@@ -80,75 +89,103 @@ class AAM_Backend_Manager
 
         // Check for pending migration scripts
         if (current_user_can('update_plugins')) {
-            $this->checkMigrationStatus();
-            $this->checkAddonUpdates();
+            // Checking for any legacy add-ons presence. If are available, let
+            // user know
+            $this->checkForLegacyAddons();
+
+            // Checking for the new update availability
+            $this->checkForPremiumAddonUpdate();
         }
+
+        if (AAM::api()->getConfig('core.settings.restful', true) === false) {
+            AAM_Core_Console::add(
+                __('The RESTful API is disabled. This may affect the AAM UI. Enable it on the AAM Settings page.', AAM_KEY)
+            );
+        }
+
+        add_action( 'admin_enqueue_scripts', function() {
+            global $post;
+
+            if (is_a($post, 'WP_Post') && ($post->post_type === 'aam_policy')) {
+                $settings = wp_enqueue_code_editor(
+                    array('type' => 'application/json')
+                );
+
+                if ( false !== $settings ) { // In case Codemirror is disabled
+                    wp_add_inline_script(
+                        'code-editor',
+                        sprintf(
+                            'jQuery(() => wp.codeEditor.initialize("%s", %s));',
+                            'aam-policy-editor',
+                            wp_json_encode($settings)
+                        )
+                    );
+                }
+            }
+        } );
     }
 
     /**
-     * Check if there are any pending settings and if so, trigger migration
+     * Check for presence of legacy add-ons
      *
      * @return void
      *
-     * @access protected
-     * @version 6.0.0
+     * @since 6.9.14 https://github.com/aamplugin/advanced-access-manager/issues/308
+     * @since 6.9.5  Initial implementation of the method
+     *
+     * @access public
+     * @version 6.9.14
      */
-    protected function checkMigrationStatus()
+    protected function checkForLegacyAddons()
     {
-        if (AAM_Core_Migration::hasPending()) {
-            $results = array('errors' => array(), 'dumps' => array());
+        static $plugins = null;
 
-            foreach(AAM_Core_Migration::getPending() as $filename) {
-                $executed = AAM_Core_Migration::executeScript($filename);
-
-                if (!empty($executed['errors'])) {
-                    $results['errors'] = array_merge(
-                        $results['errors'], $executed['errors']
-                    );
-                    $results['dumps'][basename($filename)] = $executed['dump'];
-                }
+        if (is_null($plugins)) {
+            if (file_exists(ABSPATH . 'wp-admin/includes/plugin.php')) {
+                require_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
 
-            // If there are any errors, store the entire log so user can be notified
-            if (!empty($results['errors'])) {
-                AAM_Core_Migration::storeFailureLog($results);
-            }
+            $plugins = get_plugins();
         }
 
-        // Check if there are any errors captured during the last migration process
-        $log = AAM_Core_Migration::getFailureLog();
-
-        if (!empty($log['errors'])) {
+        if (array_key_exists('aam-plus-package/bootstrap.php', $plugins)) {
             AAM_Core_Console::add(sprintf(
-                __('There was at least one error detected with the automated migration script. %sDownload the log%s for more details and contact our support at %ssupport@aamplugin.com%s for further assistance.', AAM_KEY),
-                '<a href="#" id="download-migration-log">', '</a>',
-                '<a href="mailto:support@aamplugin.com">', '</a>'
+                __('The Plus Package is deprecated as a stand-alone addon. Check the %sWe are migrating%s article for more information.', AAM_KEY),
+                '<a href="https://aamportal.com/blog/we-are-migrating?ref=plugin">', '</a>'
+            ));
+        }
+
+        if (array_key_exists('aam-ip-check/bootstrap.php', $plugins)) {
+            AAM_Core_Console::add(sprintf(
+                __('The IP Check is deprecated as a stand-alone addon. Check the %sWe are migrating%s article for more information.', AAM_KEY),
+                '<a href="https://aamportal.com/blog/we-are-migrating?ref=plugin">', '</a>'
+            ));
+        }
+
+        if (array_key_exists('aam-role-hierarchy/bootstrap.php', $plugins)) {
+            AAM_Core_Console::add(sprintf(
+                __('The Role Hierarchy is deprecated as a stand-alone addon. Check the %sWe are migrating%s article for more information.', AAM_KEY),
+                '<a href="https://aamportal.com/blog/we-are-migrating?ref=plugin">', '</a>'
             ));
         }
     }
 
     /**
-     * Display notification if new version is available
+     * Check if there is a new premium version available
      *
      * @return void
      *
      * @access protected
-     * @version 6.4.2
+     * @version 6.9.13
      */
-    protected function checkAddonUpdates()
+    protected function checkForPremiumAddonUpdate()
     {
-        $list = AAM_Addon_Repository::getInstance()->getList();
+        $premium = AAM_Addon_Repository::getInstance()->getPremiumData();
 
-        foreach($list as $addon) {
-            if ($addon['hasUpdate'] === true) {
-                AAM_Core_Console::add(
-                    sprintf(
-                        'The new version of ["%s"] is available for download.',
-                        $addon['title']
-                    ),
-                    'strong'
-                );
-            }
+        if (!is_null($premium['version']) && $premium['hasUpdate']) {
+            AAM_Core_Console::add(
+                __('The new version of premium Complete Package is available. Go to your license page to download the latest release.', AAM_KEY)
+            );
         }
     }
 
@@ -157,22 +194,25 @@ class AAM_Backend_Manager
      *
      * @return void
      *
+     * @since 6.9.8 https://github.com/aamplugin/advanced-access-manager/issues/262
      * @since 6.2.2 Added `manage_policies` and removed `blog_id` for the localized
      *              array of properties
      * @since 6.2.0 Added `blog_id` to the localized array of properties
      * @since 6.0.0 Initial implementation of the method
      *
      * @access public
-     * @version 6.2.2
+     * @version 6.9.8
      */
     public function printFooterJavascript()
     {
         if (AAM::isAAM()) {
             $subject  = AAM_Backend_Subject::getInstance();
             $locals   = apply_filters('aam_js_localization_filter', array(
-                'nonce'    => wp_create_nonce('aam_ajax'),
-                'ajaxurl'  => esc_url(admin_url('admin-ajax.php')),
-                'ui'       => AAM_Core_Request::get('aamframe', 'main'),
+                'nonce'      => wp_create_nonce('aam_ajax'),
+                'rest_nonce' => wp_create_nonce('wp_rest'),
+                'rest_base'  => esc_url_raw(rest_url()),
+                'ajaxurl'    => esc_url(admin_url('admin-ajax.php')),
+                'ui'            => AAM_Core_Request::get('aamframe', 'main'),
                 'url' => array(
                     'editUser'  => esc_url(admin_url('user-edit.php')),
                     'addUser'   => esc_url(admin_url('user-new.php')),
@@ -332,8 +372,6 @@ class AAM_Backend_Manager
      *
      * @access public
      * @version 6.0.0
-     *
-     * @link https://aamplugin.com/article/how-to-manage-access-to-aam-page-for-other-users
      */
     public function adminMenu()
     {
@@ -360,7 +398,7 @@ class AAM_Backend_Manager
             function() {
                 echo AAM_Backend_View::getInstance()->renderPage();
             },
-            AAM_MEDIA . '/active-menu.svg'
+            file_get_contents(AAM_BASEDIR . '/media/active-menu.data')
         );
     }
 

@@ -80,7 +80,7 @@ class PostmanDiagnosticTestController {
 	 * Register the Diagnostics screen
 	 */
 	public function addDiagnosticsSubmenu() {
-		$page = add_submenu_page( null, sprintf( __( '%s Setup', 'post-smtp' ), __( 'Postman SMTP', 'post-smtp' ) ), __( 'Postman SMTP', 'post-smtp' ), Postman::MANAGE_POSTMAN_CAPABILITY_NAME, PostmanDiagnosticTestController::DIAGNOSTICS_SLUG, array(
+		$page = add_submenu_page( '', sprintf( __( '%s Setup', 'post-smtp' ), __( 'Postman SMTP', 'post-smtp' ) ), __( 'Postman SMTP', 'post-smtp' ), Postman::MANAGE_POSTMAN_CAPABILITY_NAME, PostmanDiagnosticTestController::DIAGNOSTICS_SLUG, array(
 				$this,
 				'outputDiagnosticsContent',
 		) );
@@ -222,6 +222,15 @@ class PostmanGetDiagnosticsViaAjax {
 	public function getDiagnostics() {
 
 	    check_admin_referer('post-smtp', 'security');
+
+		if( !current_user_can( Postman::MANAGE_POSTMAN_CAPABILITY_NAME ) ) {
+			wp_send_json_error( 
+				array(
+					'Message'	=>	'Unauthorized.'
+				), 
+				401
+			);
+		}
 
 	    $curl = curl_version();
 		$transportRegistry = PostmanTransportRegistry::getInstance();

@@ -26,12 +26,15 @@ function sb_instagram_menu() {
 		$notice = ' <span class="update-plugins sbi-error-alert sbi-notice-alert"><span>!</span></span>';
 	}
 
-	$sbi_notifications = new SBI_Notifications();
-	$notifications = $sbi_notifications->get();
+	$notifications = false;
+	if ( class_exists( '\SBI_Notifications' ) ) {
+		$sbi_notifications = new \SBI_Notifications();
+		$notifications = $sbi_notifications->get();
+	}
 
 	$notice_bubble = '';
 	if ( empty( $notice ) && ! empty( $notifications ) && is_array( $notifications ) ) {
-		$notice_bubble = ' <span class="sbi-notice-alert"><span>'.count( $notifications ).'</span></span>';
+		$notice_bubble = ' <span class="sbi-notice-alert"><span>' . count( $notifications ) . '</span></span>';
 	}
 
 	add_menu_page(
@@ -45,11 +48,22 @@ function sb_instagram_menu() {
 	add_submenu_page(
 		'sb-instagram-feed',
 		__( 'Upgrade to Pro', 'instagram-feed' ),
-		__( '<span class="sbi_get_pro">Try the Pro Demo</span>', 'instagram-feed' ),
+		'<span class="sbi_get_pro">' . __( 'Upgrade to Pro', 'instagram-feed' ) . '</span>',
 		$cap,
-		'https://smashballoon.com/instagram-feed/demo/?utm_campaign=instagram-free&utm_source=menu-link&utm_medium=upgrade-link',
+		'https://smashballoon.com/instagram-feed/?utm_campaign=instagram-free&utm_source=menu-link&utm_medium=upgrade-link&utm_content=UpgradeToPro',
 		''
 	);
+
+	if ( version_compare(PHP_VERSION, '7.1.0') >= 0 && !is_plugin_active( 'reviews-feed/sb-reviews.php' ) && !is_plugin_active( 'reviews-feed-pro/sb-reviews-pro.php' )  ) {
+		add_submenu_page(
+			'sb-instagram-feed',
+			__( 'Reviews Feed', 'instagram-feed' ) ,
+			'<span class="sbi_get_sbr">' . __( 'Reviews Feed', 'instagram-feed' ) . '</span>'. '<span class="sbi-notice-alert sbi-new-indicator"><span>New!</span></span>',
+			$cap,
+			'admin.php?page=sbr',
+			''
+		);
+	}
 
 	//Show a Instagram plugin menu item if it isn't already installed
 	if( !is_plugin_active( 'custom-facebook-feed/custom-facebook-feed.php' ) && !is_plugin_active( 'custom-facebook-feed-pro/custom-facebook-feed.php' )  && current_user_can( 'activate_plugins' ) && current_user_can( 'install_plugins' ) ){
@@ -90,7 +104,7 @@ function sb_instagram_menu() {
 add_action( 'admin_menu', 'sb_instagram_menu' );
 
 function sbi_add_settings_link( $links ) {
-	$pro_link = '<a href="https://smashballoon.com/instagram-feed/demo/?utm_campaign=instagram-free&utm_source=plugins-page&utm_medium=upgrade-link" target="_blank" style="font-weight: bold; color: #1da867;">' . __( 'Try the Pro Demo', 'instagram-feed' ) . '</a>';
+	$pro_link = '<a href="https://smashballoon.com/instagram-feed/?utm_campaign=instagram-free&utm_source=plugins-page&utm_medium=upgrade-link&utm_content=UpgradeToPro" target="_blank" style="font-weight: bold; color: #1da867;">' . __( 'Upgrade to Pro', 'instagram-feed' ) . '</a>';
 
 	$sbi_settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=sbi-settings' ) ) . '">' . esc_html__( 'Settings', 'instagram-feed' ) . '</a>';
 	array_unshift( $links, $pro_link, $sbi_settings_link );
@@ -236,6 +250,49 @@ function sbi_admin_error_notices() {
 					<?php endif; ?>
 				</div>
 			</div>
+
+		<?php endif;
+
+		if ( ! empty( $errors ) && ( ! empty( $errors['unused_feed'] ) ) ) : ?>
+            <div class="sbi-admin-notices sbi-critical-error-notice">
+				<span class="sb-notice-icon sb-error-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z"
+                              fill="#D72C2C"/>
+                    </svg>
+				</span>
+                <div class="sbi-notice-body">
+                    <h3 class="sb-notice-title">
+						<?php echo esc_html__( 'Action Required Within 7 Days:', 'instagram-feed' ); ?>
+                    </h3>
+                    <p><?php echo wp_kses_post( $errors['unused_feed'] ); ?></p>
+                    <p><?php echo esc_html__( 'Or you can simply press the "Fix Usage" button to fix this issue.', 'instagram-feed' ); ?></p>
+                    <br>
+                    <p class="sbi-error-directions">
+                        <button class="sbi-reset-unused-feed-usage sbi-space-left sbi-btn sbi-notice-btn sbi-btn-blue"><?php esc_html_e( 'Fix Usage', 'instagram-feed' ); ?></button>
+                    </p>
+                </div>
+            </div>
+
+		<?php endif;
+
+		if ( ! empty( $errors ) && ( ! empty( $errors['platform_data_deleted'] ) ) ) : ?>
+            <div class="sbi-admin-notices sbi-critical-error-notice">
+				<span class="sb-notice-icon sb-error-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z"
+                              fill="#D72C2C"/>
+                    </svg>
+				</span>
+                <div class="sbi-notice-body">
+                    <h3 class="sb-notice-title">
+						<?php echo esc_html__( 'All Instagram Data has Been Removed:', 'instagram-feed' ); ?>
+                    </h3>
+                    <p><?php echo wp_kses_post( $errors['platform_data_deleted'] ); ?></p>
+                    <p><?php echo esc_html__( 'To fix your feeds, reconnect all accounts that were in use on the Settings page.', 'instagram-feed' ); ?></p>
+                    <br>
+                </div>
+            </div>
 
 		<?php endif;
 		$errors = $sb_instagram_posts_manager->get_critical_errors();

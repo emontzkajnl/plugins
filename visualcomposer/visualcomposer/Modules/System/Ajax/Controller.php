@@ -12,6 +12,7 @@ use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Logger;
 use VisualComposer\Helpers\Nonce;
+use VisualComposer\Helpers\Options;
 use VisualComposer\Helpers\Request;
 use VisualComposer\Helpers\Str;
 use VisualComposer\Helpers\Traits\EventsFilters;
@@ -86,6 +87,7 @@ class Controller extends Container implements Module
     {
         if ($requestHelper->isAjax()) {
             // Silence required to avoid warnings in case if function is restricted
+            // In any ajax request we must disable errors unless it is VCV_DEBUG enabled
             // @codingStandardsIgnoreStart
             @set_time_limit(120);
             if (!vcvenv('VCV_DEBUG')) {
@@ -179,14 +181,34 @@ class Controller extends Container implements Module
         vcvdie($response); // DO NOT USE WP_DIE because it can be overwritten by 3rd and cause plugin issues.
     }
 
-    protected function parseRequest(Request $requestHelper, Logger $loggerHelper)
+    protected function parseRequest(Request $requestHelper, Logger $loggerHelper, Options $optionsHelper)
     {
-        if (isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/octet-stream') {
-            $newAllJson = zlib_decode(file_get_contents('php://input'));
-            $newArgs = json_decode($newAllJson, true);
-            $all = $requestHelper->all();
-            $new = array_merge($all, $newArgs);
-            $requestHelper->setData($new);
+        // our dev env has false
+        if (\VcvEnv::get('VCV_JS_SAVE_ZIP')) {
+            $isBinary = isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/octet-stream';
+
+            // for default case we use binary content for ajax as it most lightweight.
+            if ($isBinary) {
+                $zip = file_get_contents('php://input');
+                $newAllJson = zlib_decode($zip);
+                $newArgs = json_decode($newAllJson, true);
+
+                $all = $requestHelper->all();
+                $new = array_merge($all, $newArgs);
+                $requestHelper->setData($new);
+                // we need it for a cases when user server environment do not support binary content.
+            } elseif ($requestHelper->exists('vcv-zip')) {
+                $zip = $requestHelper->input('vcv-zip');
+
+                // Base64 is safe to send through ajax, and it is used as a fallback for old versions.
+                // @codingStandardsIgnoreLine
+                $basedecoded = base64_decode($zip);
+                $newAllJson = zlib_decode($basedecoded);
+                $newArgs = json_decode($newAllJson, true);
+                $all = $requestHelper->all();
+                $new = array_merge($all, $newArgs);
+                $requestHelper->setData($new);
+            }
         }
 
         // Require an action parameter.

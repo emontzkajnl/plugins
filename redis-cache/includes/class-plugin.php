@@ -8,6 +8,7 @@
 namespace Rhubarb\RedisCache;
 
 use WP_Error;
+use Exception;
 
 defined( '\\ABSPATH' ) || exit;
 
@@ -45,7 +46,7 @@ class Plugin {
     /**
      * Plugin instance property
      *
-     * @var Plugin
+     * @var Plugin|null
      */
     private static $instance;
 
@@ -101,12 +102,17 @@ class Plugin {
         add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
         add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_redis_metrics' ] );
 
+        add_action( 'admin_bar_menu', [ $this, 'render_admin_bar' ], 998 );
+
         add_action( 'load-settings_page_redis-cache', [ $this, 'do_admin_actions' ] );
 
         add_action( 'wp_dashboard_setup', [ $this, 'setup_dashboard_widget' ] );
         add_action( 'wp_network_dashboard_setup', [ $this, 'setup_dashboard_widget' ] );
 
-        add_action( 'wp_ajax_roc_dismiss_notice', [ $this, 'dismiss_notice' ] );
+        add_action( 'wp_ajax_roc_dismiss_notice', [ $this, 'ajax_dismiss_notice' ] );
+        add_action( 'wp_ajax_roc_flush_cache', [ $this, 'ajax_flush_cache' ] );
+
+        add_filter( 'gettext_redis-cache', [ $this, 'get_text' ], 10, 2 );
 
         add_filter( 'plugin_row_meta', [ $this, 'add_plugin_row_meta' ], 10, 2 );
         add_filter( sprintf( '%splugin_action_links_%s', is_multisite() ? 'network_admin_' : '', WP_REDIS_BASENAME ), [ $this, 'add_plugin_actions_links' ] );
@@ -115,6 +121,10 @@ class Plugin {
 
         add_filter( 'qm/collectors', [ $this, 'register_qm_collector' ], 25 );
         add_filter( 'qm/outputter/html', [ $this, 'register_qm_output' ] );
+
+        add_filter( 'perflab_disable_object_cache_dropin', '__return_true' );
+        add_filter( 'w3tc_config_item_objectcache.enabled', '__return_false' );
+        add_action( 'litespeed_init', [ $this, 'litespeed_disable_objectcache' ] );
     }
 
     /**
@@ -140,7 +150,7 @@ class Plugin {
             is_multisite() ? 'settings.php' : 'options-general.php',
             __( 'Redis Object Cache', 'redis-cache' ),
             __( 'Redis', 'redis-cache' ),
-            is_multisite() ? 'manage_network_options' : 'manage_options',
+            $this->manage_redis_capability(),
             'redis-cache',
             [ $this, 'show_admin_page' ]
         );
@@ -182,7 +192,7 @@ class Plugin {
         UI::register_tab(
             'metrics',
             __( 'Metrics', 'redis-cache' ),
-            [ 'disabled' => defined( 'WP_REDIS_DISABLE_METRICS' ) && WP_REDIS_DISABLE_METRICS ]
+            [ 'disabled' => ! Metrics::is_enabled() ]
         );
 
         UI::register_tab(
@@ -200,7 +210,11 @@ class Plugin {
      * @return void
      */
     public function setup_dashboard_widget() {
-        if ( defined( 'WP_REDIS_DISABLE_METRICS' ) && WP_REDIS_DISABLE_METRICS ) {
+        if ( ! $this->current_user_can_manage_redis() ) {
+            return;
+        }
+
+        if ( ! Metrics::is_enabled() ) {
             return;
         }
 
@@ -208,6 +222,8 @@ class Plugin {
             'dashboard_rediscache',
             __( 'Redis Object Cache', 'redis-cache' ),
             [ $this, 'show_dashboard_widget' ],
+            null,
+            null,
             'normal',
             'high'
         );
@@ -239,25 +255,64 @@ class Plugin {
     }
 
     /**
-	 * Adds plugin meta links on the plugin page
-	 *
-	 * @param string[] $plugin_meta An array of the plugin's metadata.
-	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-	 * @return string[] An array of the plugin's metadata.
-	 */
-	public function add_plugin_row_meta( array $plugin_meta, $plugin_file ) {
-		if ( strpos( $plugin_file, 'redis-cache.php' ) === false ) {
-			return $plugin_meta;
-		}
+     * Ensure Author URI has UTM parameters.
+     *
+     * @param string $translation Translated text.
+     * @param string $text Text to translate.
+     * @return string
+     */
+    public function get_text( $translation, $text ) {
+        if ( $text === 'https://objectcache.pro' ) {
+            return $this->link_to_ocp( 'author', false );
+        }
+
+        return $translation;
+    }
+
+    /**
+     * Adds plugin meta links on the plugin page
+     *
+     * @param string[] $plugin_meta An array of the plugin's metadata.
+     * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
+     * @return string[] An array of the plugin's metadata.
+     */
+    public function add_plugin_row_meta( array $plugin_meta, $plugin_file ) {
+        if ( strpos( $plugin_file, 'redis-cache.php' ) === false ) {
+            return $plugin_meta;
+        }
+
+        if ( self::acceleratewp_install() ) {
+            return $plugin_meta;
+        }
 
         $plugin_meta[] = sprintf(
-			'<a href="%1$s"><span class="dashicons dashicons-star-filled" aria-hidden="true" style="font-size: 14px; line-height: 1.3"></span>%2$s</a>',
-			'https://objectcache.pro/?ref=oss&amp;utm_source=wp-plugin&amp;utm_medium=meta-row',
-			esc_html_x( 'Upgrade to Pro', 'verb', 'redis-cache' )
-		);
+            '<a href="%1$s"><span class="dashicons dashicons-star-filled" aria-hidden="true" style="font-size: 14px; line-height: 1.3"></span>%2$s</a>',
+            $this->link_to_ocp( 'meta-row' ),
+            esc_html_x( 'Upgrade to Pro', 'verb', 'redis-cache' )
+        );
 
-		return $plugin_meta;
-	}
+        return $plugin_meta;
+    }
+
+    /**
+     * Returns the link to Object Cache Pro.
+     *
+     * @param string $medium
+     * @param bool $as_html
+     * @return string
+     */
+    public function link_to_ocp($medium, $as_html = true)
+    {
+        $ref = 'oss';
+
+        if ( self::acceleratewp_install( true ) ) {
+            $ref = 'oss-cl';
+        }
+
+        $url = "https://objectcache.pro/?ref={$ref}&utm_source=wp-plugin&utm_medium={$medium}";
+
+        return $as_html ? str_replace('&', '&amp;', $url) : $url;
+    }
 
     /**
      * Enqueues admin style resources
@@ -281,7 +336,7 @@ class Plugin {
             return;
         }
 
-        wp_enqueue_style( 'redis-cache', WP_REDIS_DIR . '/assets/css/admin.css', null, WP_REDIS_VERSION );
+        wp_enqueue_style( 'redis-cache', WP_REDIS_PLUGIN_DIR . '/assets/css/admin.css', [], WP_REDIS_VERSION );
     }
 
     /**
@@ -309,12 +364,12 @@ class Plugin {
             return;
         }
 
-        $clipboard = file_exists( ABSPATH .WPINC . '/js/clipboard.min.js' );
+        $clipboard = file_exists( ABSPATH . WPINC . '/js/clipboard.min.js' );
 
         wp_enqueue_script(
             'redis-cache',
             plugins_url( 'assets/js/admin.js', WP_REDIS_FILE ),
-            array_merge( [ 'jquery', 'underscore' ], $clipboard ? [ 'clipboard' ] : [ ] ),
+            array_merge( [ 'jquery', 'underscore' ], $clipboard ? [ 'clipboard' ] : [] ),
             WP_REDIS_VERSION,
             true
         );
@@ -324,8 +379,9 @@ class Plugin {
             'rediscache',
             [
                 'jQuery' => 'jQuery',
-                'disable_pro' => $screen->id !== $this->screen,
-                'disable_banners' => defined( 'WP_REDIS_DISABLE_BANNERS' ) && WP_REDIS_DISABLE_BANNERS,
+                'disable_pro' => $screen->id !== $this->screen
+                    || ( defined( 'WP_REDIS_DISABLE_BANNERS' ) && WP_REDIS_DISABLE_BANNERS )
+                    || self::acceleratewp_install(),
                 'l10n' => [
                     'time' => __( 'Time', 'redis-cache' ),
                     'bytes' => __( 'Bytes', 'redis-cache' ),
@@ -362,7 +418,7 @@ class Plugin {
         wp_enqueue_script(
             'redis-cache-charts',
             plugins_url( 'assets/js/apexcharts.min.js', WP_REDIS_FILE ),
-            null,
+            [],
             WP_REDIS_VERSION,
             true
         );
@@ -482,7 +538,11 @@ class Plugin {
         }
 
         if ( ! $this->object_cache_dropin_exists() ) {
-            return __( 'Drop-in not installed', 'redis-cache' );
+            return __( 'Not enabled', 'redis-cache' );
+        }
+
+        if ( $this->object_cache_dropin_outdated() ) {
+            return __( 'Drop-in is outdated', 'redis-cache' );
         }
 
         if ( ! $this->validate_object_cache_dropin() ) {
@@ -507,18 +567,38 @@ class Plugin {
         global $wp_object_cache;
 
         if ( defined( 'WP_REDIS_DISABLED' ) && WP_REDIS_DISABLED ) {
-            return;
+            return null;
+        }
+
+        if ( $this->object_cache_dropin_outdated() ) {
+            return null;
         }
 
         if ( ! $this->validate_object_cache_dropin() ) {
-            return;
+            return null;
         }
 
         if ( ! method_exists( $wp_object_cache, 'redis_status' ) ) {
-            return;
+            return null;
         }
 
         return $wp_object_cache->redis_status();
+    }
+
+    /**
+     * Check whether we can connect to Redis via Predis.
+     *
+     * @return bool|string
+     */
+    public function check_redis_connection() {
+        try {
+            $predis = new Predis();
+            $predis->connect();
+        } catch ( Exception $error ) {
+            return $error->getMessage();
+        }
+
+        return true;
     }
 
     /**
@@ -531,12 +611,14 @@ class Plugin {
         global $wp_object_cache;
 
         if ( defined( 'WP_REDIS_DISABLED' ) && WP_REDIS_DISABLED ) {
-            return;
+            return null;
         }
 
-        if ( $this->validate_object_cache_dropin() && method_exists( $wp_object_cache, 'redis_version' ) ) {
-            return $wp_object_cache->redis_version();
+        if ( ! $this->validate_object_cache_dropin() || ! method_exists( $wp_object_cache, 'redis_version' ) ) {
+            return null;
         }
+
+        return $wp_object_cache->redis_version();
     }
 
     /**
@@ -551,9 +633,11 @@ class Plugin {
             return $wp_object_cache->diagnostics[ 'client' ];
         }
 
-        if ( defined( 'WP_REDIS_CLIENT' ) ) {
-            return WP_REDIS_CLIENT;
+        if ( ! defined( 'WP_REDIS_CLIENT' ) ) {
+            return null;
         }
+
+        return WP_REDIS_CLIENT;
     }
 
     /**
@@ -564,9 +648,11 @@ class Plugin {
     public function get_diagnostics() {
         global $wp_object_cache;
 
-        if ( $this->validate_object_cache_dropin() && property_exists( $wp_object_cache, 'diagnostics' ) ) {
-            return $wp_object_cache->diagnostics;
+        if ( ! $this->validate_object_cache_dropin() || ! property_exists( $wp_object_cache, 'diagnostics' ) ) {
+            return null;
         }
+
+        return $wp_object_cache->diagnostics;
     }
 
     /**
@@ -593,13 +679,11 @@ class Plugin {
      * @return void
      */
     public function show_admin_notices() {
-        if ( ! defined( 'WP_REDIS_DISABLE_BANNERS' ) || ! WP_REDIS_DISABLE_BANNERS ) {
-            $this->pro_notice();
-            $this->wc_pro_notice();
-        }
+        $this->pro_notice();
+        $this->wc_pro_notice();
 
         // Only show admin notices to users with the right capability.
-        if ( ! current_user_can( is_multisite() ? 'manage_network_options' : 'manage_options' ) ) {
+        if ( ! $this->current_user_can_manage_redis() ) {
             return;
         }
 
@@ -608,18 +692,22 @@ class Plugin {
             return;
         }
 
+        if ( defined( 'RedisCachePro\Version' ) || defined( 'ObjectCachePro\Version' ) ) {
+            return;
+        }
+
         if ( $this->object_cache_dropin_exists() ) {
             if ( $this->validate_object_cache_dropin() ) {
                 if ( $this->object_cache_dropin_outdated() ) {
-                    // translators: %s = Action link to update the drop-in.
                     $message = sprintf(
+                        // translators: %s = Action link to update the drop-in.
                         __( 'The Redis object cache drop-in is outdated. Please <a href="%s">update the drop-in</a>.', 'redis-cache' ),
                         $this->action_link( 'update-dropin' )
                     );
                 }
             } else {
-                // translators: %s = Link to settings page.
                 $message = sprintf(
+                    // translators: %s = Link to settings page.
                     __( 'A foreign object cache drop-in was found. To use Redis for object caching, please <a href="%s">enable the drop-in</a>.', 'redis-cache' ),
                     esc_url( network_admin_url( $this->page ) )
                 );
@@ -629,6 +717,185 @@ class Plugin {
                 printf( '<div class="update-nag notice notice-warning inline">%s</div>', wp_kses_post( $message ) );
             }
         }
+    }
+
+    /**
+     * Display the admin bar menu item.
+     *
+     * @param \WP_Admin_Bar $wp_admin_bar
+     *
+     * @return void
+     */
+    public function render_admin_bar( $wp_admin_bar ) {
+        if ( defined( 'WP_REDIS_DISABLE_ADMINBAR' ) && WP_REDIS_DISABLE_ADMINBAR ) {
+            return;
+        }
+
+        if ( ! $this->current_user_can_manage_redis() ) {
+            return;
+        }
+
+        $nodeTitle = __( 'Object Cache', 'redis-cache' );
+
+        $style = preg_replace( '/\s+/', ' ', $this->admin_bar_style() );
+        $script = preg_replace( '/\s+/', ' ', $this->admin_bar_script() );
+        $html = "\n{$style}\n{$script}\n";
+
+        $redis_status = $this->get_redis_status();
+
+        $wp_admin_bar->add_node([
+            'id' => 'redis-cache',
+            'title' => $nodeTitle,
+            'meta' => [
+                'html' => $html,
+                'class' => $redis_status === false ? 'redis-cache-error' : '',
+            ],
+        ]);
+
+        if ( $redis_status ) {
+            $wp_admin_bar->add_node([
+                'parent' => 'redis-cache',
+                'id' => 'redis-cache-flush',
+                'title' => __( 'Flush Cache', 'redis-cache' ),
+                'href' => $this->action_link( 'flush-cache' ),
+            ]);
+        }
+
+        $wp_admin_bar->add_node([
+            'parent' => 'redis-cache',
+            'id' => 'redis-cache-metrics',
+            'title' => __( 'Settings', 'redis-cache' ),
+            'href' => network_admin_url( $this->page ),
+        ]);
+
+        $wp_admin_bar->add_group(
+            [
+                'id' => 'redis-cache-info',
+                'parent' => 'redis-cache',
+                'meta' => [
+                    'class' => 'ab-sub-secondary',
+                ],
+            ]
+        );
+
+        $value = $this->get_status();
+        // translators: %s = The status of the Redis connection.
+        $title = sprintf( __( 'Status: %s', 'redis-cache' ), $value );
+
+        if ( $redis_status ) {
+            global $wp_object_cache;
+
+            $info = $wp_object_cache->info();
+            $hits = number_format_i18n( $info->hits );
+            $misses = number_format_i18n( $info->misses );
+            $size = size_format( $info->bytes );
+
+            $value = sprintf(
+                '%s%%&nbsp;&nbsp;%s/%s&nbsp;&nbsp;%s',
+                $info->ratio,
+                $hits,
+                $misses,
+                $size
+            );
+
+            $title = sprintf(
+                // translators: 1: Hit ratio, 2: Hits, 3: Misses. 4: Human-readable size of cache.
+                __( '(Current page) Hit Ratio: %1$s%%, Hits %2$s, Misses: %3$s, Size: %4$s', 'redis-cache' ),
+                $info->ratio,
+                $hits,
+                $misses,
+                $size
+            );
+        }
+
+        $wp_admin_bar->add_node([
+            'parent' => 'redis-cache-info',
+            'id' => 'redis-cache-info-details',
+            'title' => $value,
+            'href' => $redis_status && Metrics::is_enabled() ? network_admin_url( $this->page . '#metrics' ) : '',
+            'meta' => [
+                'title' => $title,
+            ],
+        ]);
+    }
+
+    /**
+     * Returns the admin-bar <style> tag.
+     *
+     * @return string
+     */
+    protected function admin_bar_style()
+    {
+        return <<<HTML
+            <style>
+                #wpadminbar ul li.redis-cache-error {
+                    background: #b30000;
+                }
+
+                #wpadminbar:not(.mobile) .ab-top-menu > li.redis-cache-error:hover > .ab-item {
+                    background: #b30000;
+                    color: #fff;
+                }
+            </style>
+HTML;
+    }
+
+    /**
+     * Returns the admin-bar <script> tag.
+     *
+     * @return string
+     */
+    protected function admin_bar_script()
+    {
+        $nonce = wp_create_nonce();
+        $ajaxurl = esc_url( admin_url( 'admin-ajax.php' ) );
+        $flushMessage = __( 'Flushing cache...', 'redis-cache' );
+
+        return <<<HTML
+            <script>
+                (function (element) {
+                    if (! element) {
+                        return;
+                    }
+
+                    element.addEventListener('click', async function (event) {
+                        event.preventDefault();
+
+                        var node = document.querySelector('#wp-admin-bar-redis-cache');
+                        var textNode = node.querySelector('.ab-item:first-child');
+
+                        if (! textNode.dataset.text) {
+                            textNode.dataset.text = textNode.innerText;
+                        }
+
+                        node.classList.remove('hover');
+                        textNode.innerText = '{$flushMessage}';
+
+                        try {
+                            var data = new FormData();
+                            data.append('action', 'roc_flush_cache');
+                            data.append('nonce', '{$nonce}');
+
+                            var response = await fetch('{$ajaxurl}', {
+                                method: 'POST',
+                                body: data,
+                            });
+
+                            textNode.innerText = await response.text();
+
+                            setTimeout(function () {
+                                textNode.innerText = textNode.dataset.text;
+                            }, 3000);
+                        } catch (error) {
+                            textNode.innerText = textNode.dataset.text;
+                            alert('Object cache could not be flushed: ' + error);
+                        }
+                    });
+                })(
+                    document.querySelector('#wp-admin-bar-redis-cache-flush > a')
+                );
+            </script>
+HTML;
     }
 
     /**
@@ -680,6 +947,16 @@ class Plugin {
                             FS_CHMOD_FILE
                         );
 
+                        if ( $result ) {
+                            try {
+                                $predis = new Predis();
+                                $predis->flush();
+                            } catch ( Exception $exception ) {
+                                // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+                                error_log( $exception );
+                            }
+                        }
+
                         /**
                          * Fires on cache enable event
                          *
@@ -705,6 +982,16 @@ class Plugin {
 
                     if ( $action === 'disable-cache' ) {
                         $result = $wp_filesystem->delete( WP_CONTENT_DIR . '/object-cache.php' );
+
+                        if ( $result ) {
+                            try {
+                                $predis = new Predis();
+                                $predis->flush();
+                            } catch ( Exception $exception ) {
+                                // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+                                error_log( $exception );
+                            }
+                        }
 
                         /**
                          * Fires on cache enable event
@@ -763,7 +1050,7 @@ class Plugin {
 
                 $messages = get_settings_errors( 'redis-cache' );
 
-                if ( ! empty( $messages ) ) {
+                if ( count( $messages ) !== 0 ) {
                     set_transient( 'settings_errors', $messages, 30 );
 
                     wp_safe_redirect(
@@ -780,7 +1067,7 @@ class Plugin {
      *
      * @return void
      */
-    public function dismiss_notice() {
+    public function ajax_dismiss_notice() {
         if ( isset( $_POST['notice'] ) ) {
             check_ajax_referer( 'roc_dismiss_notice' );
 
@@ -796,6 +1083,23 @@ class Plugin {
     }
 
     /**
+     * Flushes object cache
+     *
+     * @return void
+     */
+    public function ajax_flush_cache() {
+        if ( ! wp_verify_nonce( $_POST['nonce'] ) ) {
+            $message = 'Invalid Nonce.';
+        } else if ( wp_cache_flush() ) {
+            $message = 'Object cache flushed.';
+        } else {
+            $message = 'Object cache could not be flushed.';
+        }
+
+        wp_die( __( $message , 'redis-cache' ) );
+    }
+
+    /**
      * Displays a redis cache pro admin notice
      *
      * @return void
@@ -807,11 +1111,34 @@ class Plugin {
             return;
         }
 
+        if ( $screen->id === $this->screen && ( defined( 'RedisCachePro\Version' ) || defined( 'ObjectCachePro\Version' ) ) ) {
+            printf(
+                '<div class="notice notice-warning"><p>%s</p></div>',
+                wp_kses_post(
+                    sprintf(
+                        // translators: %s = Action link to update the drop-in.
+                        __( 'The Object Cache Pro plugin appears to be installed and should be used. You can safely <a href="%s">uninstall Redis Object Cache</a>.', 'redis-cache' ),
+                        esc_url( network_admin_url( 'plugins.php?plugin_status=all&s=redis%20object%20cache' ) )
+                    )
+                )
+            );
+
+            return;
+        }
+
+        if ( defined( 'RedisCachePro\Version' ) || defined( 'ObjectCachePro\Version' ) ) {
+            return;
+        }
+
+        if ( defined( 'WP_REDIS_DISABLE_BANNERS' ) && WP_REDIS_DISABLE_BANNERS ) {
+            return;
+        }
+
         if ( ! in_array( $screen->id, [ 'dashboard', 'dashboard-network' ], true ) ) {
             return;
         }
 
-        if ( ! current_user_can( is_multisite() ? 'manage_network_options' : 'manage_options' ) ) {
+        if ( ! $this->current_user_can_manage_redis() ) {
             return;
         }
 
@@ -837,6 +1164,14 @@ class Plugin {
      * @return void
      */
     public function wc_pro_notice() {
+        if ( defined( 'RedisCachePro\Version' ) || defined( 'ObjectCachePro\Version' ) ) {
+            return;
+        }
+
+        if ( defined( 'WP_REDIS_DISABLE_BANNERS' ) && WP_REDIS_DISABLE_BANNERS ) {
+            return;
+        }
+
         if ( ! class_exists( 'WooCommerce' ) ) {
             return;
         }
@@ -851,7 +1186,7 @@ class Plugin {
             return;
         }
 
-        if ( ! current_user_can( is_multisite() ? 'manage_network_options' : 'manage_options' ) ) {
+        if ( ! $this->current_user_can_manage_redis() ) {
             return;
         }
 
@@ -888,6 +1223,7 @@ class Plugin {
      * @return void
      */
     public function maybe_print_comment() {
+        /** @var \WP_Object_Cache $wp_object_cache */
         global $wp_object_cache;
 
         if (
@@ -908,10 +1244,13 @@ class Plugin {
         }
 
         if (
-            ! isset( $wp_object_cache->cache_hits ) ||
-            ! isset( $wp_object_cache->diagnostics ) ||
+            ! isset( $wp_object_cache->cache, $wp_object_cache->diagnostics ) ||
             ! is_array( $wp_object_cache->cache )
         ) {
+            return;
+        }
+
+        if ($this->incompatible_content_type()) {
             return;
         }
 
@@ -942,6 +1281,51 @@ class Plugin {
             $message, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             esc_html( $debug )
         );
+    }
+
+    /**
+     * Whether incompatible content type headers were sent.
+     *
+     * @return bool
+     */
+    protected function incompatible_content_type()
+    {
+        $jsonContentType = static function ($headers) {
+            foreach ($headers as $header => $value) {
+                if (stripos((string) $header, 'content-type') === false) {
+                    continue;
+                }
+
+                if (stripos((string) $value, '/json') === false) {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
+        };
+
+        if (function_exists('headers_list')) {
+            $headers = [];
+
+            foreach (headers_list() as $header) {
+                [$name, $value] = explode(':', $header);
+                $headers[$name] = $value;
+            }
+
+            if ($jsonContentType($headers)) {
+                return true;
+            }
+        }
+
+        if (function_exists('apache_response_headers')) {
+            if ($headers = apache_response_headers()) {
+                return $jsonContentType($headers);
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -985,6 +1369,7 @@ class Plugin {
      * @return true|WP_Error
      */
     public function test_filesystem_writing() {
+        /** @var \WP_Filesystem_Base $wp_filesystem */
         global $wp_filesystem;
 
         if ( ! $this->initialize_filesystem( '', true ) ) {
@@ -1054,7 +1439,7 @@ class Plugin {
             return;
         }
 
-        if ( ! current_user_can( is_multisite() ? 'manage_network_options' : 'manage_options' ) ) {
+        if ( ! $this->current_user_can_manage_redis() ) {
             return;
         }
 
@@ -1145,5 +1530,70 @@ class Plugin {
             network_admin_url( add_query_arg( 'action', $action, $this->page ) ),
             $action
         );
+    }
+
+    /**
+     * Obscure `password` URL parameter.
+     *
+     * @param string $url
+     * @return string
+     */
+    public function obscure_url_secrets( $url ) {
+        return preg_replace(
+            '/password=[^&]+/',
+            'password=*****',
+            (string) $url
+        );
+    }
+
+    /**
+     * The capability required to manage Redis.
+     *
+     * @return string
+     */
+    public function manage_redis_capability() {
+        return is_multisite() ? 'manage_network_options' : 'manage_options';
+    }
+
+    /**
+     * Does the current user have the capability to manage Redis?
+     *
+     * @return bool
+     */
+    public function current_user_can_manage_redis() {
+        return current_user_can( $this->manage_redis_capability() );
+    }
+
+    /**
+     * Prevent LiteSpeed Cache from overwriting the `object-cache.php` drop-in.
+     *
+     * @return void
+     */
+    public function litespeed_disable_objectcache()
+    {
+        if ( isset( $_POST['LSCWP_CTRL'], $_POST['LSCWP_NONCE'], $_POST['object'] ) ) {
+            $_POST['object'] = '0';
+        }
+    }
+
+    /**
+     * Returns `true` if the plugin was installed by AccelerateWP from CloudLinux.
+     *
+     * @param bool $ignore_banner_constant
+     * @return bool
+     */
+    public static function acceleratewp_install( $ignore_banner_constant = false ) {
+        $path = defined( 'WP_REDIS_PATH' ) ? WP_REDIS_PATH : null;
+        $scheme = defined( 'WP_REDIS_SCHEME' ) ? WP_REDIS_SCHEME : null;
+
+        if ( $scheme === 'unix' && strpos( (string) $path, '.clwpos/redis.sock' ) !== false ) {
+            if ( $ignore_banner_constant ) {
+                return true;
+            } else {
+                return defined( 'WP_REDIS_DISABLE_BANNERS' ) && WP_REDIS_DISABLE_BANNERS;
+            }
+        }
+
+        return false;
     }
 }

@@ -1,9 +1,10 @@
 {
+	"apiVersion": 3,
 	"name": "stackable/expand",
 	"title": "Expand / Show More",
 	"description": "Display a small snippet of text. Your readers can toggle it to show more information.",
-	"category": "layout",
-	"usesContext": [ "postId", "postType", "queryId" ],
+	"category": "stackable",
+	"usesContext": [ "postId", "postType", "queryId" , "stackable/innerBlockOrientation" ],
 	"keywords": [
 		"Hide",
 		"Less"

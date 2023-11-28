@@ -10,12 +10,13 @@
 /**
  * User Level Filter service
  *
+ * @since 6.9.9 https://github.com/aamplugin/advanced-access-manager/issues/266
  * @since 6.7.9 https://github.com/aamplugin/advanced-access-manager/issues/193
- * @since 6.4.0 Enhanced https://github.com/aamplugin/advanced-access-manager/issues/71
+ * @since 6.4.0 https://github.com/aamplugin/advanced-access-manager/issues/71
  * @since 6.0.0 Initial implementation of the class
  *
  * @package AAM
- * @version 6.7.9
+ * @version 6.9.9
  */
 class AAM_Service_UserLevelFilter
 {
@@ -57,7 +58,7 @@ class AAM_Service_UserLevelFilter
             add_filter('aam_service_list_filter', function ($services) {
                 $services[] = array(
                     'title'          => __('User Level Filter', AAM_KEY),
-                    'description'    => __('Extend default WordPress core users and roles handling, and make sure that users with lower user level cannot see or manager users and roles with higher level.', AAM_KEY),
+                    'description'    => __('Enhance the built-in WordPress core user and role management system to ensure that users with lower user levels are restricted from viewing or managing users and roles with higher levels of authority.', AAM_KEY),
                     'setting'        => self::FEATURE_FLAG,
                     'defaultEnabled' => false
                 );
@@ -76,11 +77,12 @@ class AAM_Service_UserLevelFilter
      *
      * @return void
      *
-     * @since 6.4.0 Enhanced https://github.com/aamplugin/advanced-access-manager/issues/71
+     * @since 6.9.9 https://github.com/aamplugin/advanced-access-manager/issues/266
+     * @since 6.4.0 https://github.com/aamplugin/advanced-access-manager/issues/71
      * @since 6.0.0 Initial implementation of the method
      *
      * @access protected
-     * @version 6.4.0
+     * @version 6.9.9
      */
     protected function initializeHooks()
     {
@@ -100,6 +102,23 @@ class AAM_Service_UserLevelFilter
         add_filter(
             'aam_user_can_manage_level_filter', array($this, 'isUserLevelAllowed'), 10, 2
         );
+
+        // Determine if user is allowed to be managed by other user based on the
+        // user level
+        add_filter('aam_get_user', function($user) {
+            if (is_a($user, WP_User::class)) {
+                $max_cap = AAM_Core_API::maxLevel($user->allcaps);
+
+                if (!$this->isUserLevelAllowed(true, $max_cap)) {
+                    $user = new WP_Error(
+                        'unauthorized_user_level',
+                        'This user is not allowed for managing'
+                    );
+                }
+            }
+
+            return $user;
+        });
 
         // Service fetch
         $this->registerService();
@@ -209,7 +228,7 @@ class AAM_Service_UserLevelFilter
     protected function prepareExcludedRoleList()
     {
         $exclude = array();
-        $roles   = AAM_Core_API::getRoles();
+        $roles   = AAM_Framework_Manager::roles();
 
         foreach ($roles->role_objects as $id => $role) {
             $roleMax = AAM_Core_API::maxLevel($role->capabilities);
@@ -234,7 +253,7 @@ class AAM_Service_UserLevelFilter
      */
     public function filterViews($views)
     {
-        $roles = AAM_Core_API::getRoles();
+        $roles = AAM_Framework_Manager::roles();
 
         foreach ($roles->role_objects as $id => $role) {
             $roleMax = AAM_Core_API::maxLevel($role->capabilities);

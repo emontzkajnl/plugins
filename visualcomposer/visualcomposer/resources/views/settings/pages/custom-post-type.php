@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
 if ($slug !== vchelper('Request')->input('page')) {
     return;
 }
+$outputHelper = vchelper('Output');
 $iframeUrl = add_query_arg(['post_type' => $slug, 'vcv-dashboard-iframe' => true], admin_url('edit.php'));
 ?>
 <div class="vcv-dashboard-iframe-loader-wrapper vcv-dashboard-iframe-loader--visible">
@@ -46,6 +47,8 @@ $iframeUrl = add_query_arg(['post_type' => $slug, 'vcv-dashboard-iframe' => true
       } else {
         isVcvClick = false
       }
+
+        <?php $outputHelper->printNotEscaped(vcfilter('vcv:resources:view:settings:pages:handleIframeBodyClick')); ?>
     }
 
     function setScrollHeight () {

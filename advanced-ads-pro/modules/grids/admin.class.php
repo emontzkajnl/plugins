@@ -4,8 +4,8 @@ class Advanced_Ads_Pro_Module_Grids_Admin {
 
 	public function __construct() {
 		// add new ad group type
-		add_action( 'advanced-ads-group-form-options', array( $this, 'group_options' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_scripts' ), 10 );
+		add_action( 'advanced-ads-group-form-options', [ $this, 'group_options' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'load_admin_scripts' ], 10 );
 	}
 	
 	/**
@@ -84,7 +84,7 @@ class Advanced_Ads_Pro_Module_Grids_Admin {
 		$screen = get_current_screen();
 		
 		if( isset( $screen->id ) && 'advanced-ads_page_advanced-ads-groups' === $screen->id ) {
-			wp_enqueue_script( 'advanced-ads-pro-grid-admin-group-script', plugins_url( 'assets/js/admin.js', __FILE__ ), array('jquery'), AAP_VERSION );
+			wp_enqueue_script( 'advanced-ads-pro-grid-admin-group-script', plugins_url( 'assets/js/admin.js', __FILE__ ), ['jquery'], AAP_VERSION );
 		}
 	}	
 }

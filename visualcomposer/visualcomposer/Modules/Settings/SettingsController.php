@@ -11,8 +11,7 @@ if (!defined('ABSPATH')) {
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Access\CurrentUser;
-use VisualComposer\Helpers\License;
-use VisualComposer\Helpers\Options;
+use VisualComposer\Helpers\Hub\Update;
 use VisualComposer\Helpers\Request;
 use VisualComposer\Helpers\Settings\TabsRegistry;
 use VisualComposer\Helpers\Traits\EventsFilters;
@@ -114,10 +113,12 @@ class SettingsController extends Container implements Module
      */
     protected function saveNotice()
     {
-        if (isset($_REQUEST['message']) && $_REQUEST['message'] === 'vcv-saved') {
+        $requestHelper = vchelper('Request');
+        $message = $requestHelper->input('vcv-message');
+        if ($message === 'vcv-saved') {
             echo sprintf(
                 '<div class="notice notice-success"><p>%s</p></div>',
-                __('Your settings are saved.', 'visualcomposer')
+                esc_html__('Your settings are saved.', 'visualcomposer')
             );
         }
     }
@@ -131,8 +132,7 @@ class SettingsController extends Container implements Module
     protected function beforeRenderRedirect(
         Request $requestHelper,
         TabsRegistry $tabsRegistry,
-        License $licenseHelper,
-        Options $optionsHelper
+        Update $updateHelper
     ) {
         $page = $requestHelper->input('page');
         if (
@@ -140,13 +140,14 @@ class SettingsController extends Container implements Module
             && !in_array($page, ['vcv-settings', 'vcv-update', 'vcv-license'], true)
             && strpos($page, 'vcv-') !== false
         ) {
-            $updateRequired = vchelper('Options')->get('bundleUpdateRequired');
-            if (($licenseHelper->isPremiumActivated() || $optionsHelper->get('agreeHubTerms')) && $updateRequired) {
+            if ($updateHelper->isBundleUpdateRequired()) {
                 // Redirect only if requested page is settings tab page
                 if ($tabsRegistry->get($page)) {
                     // Redirect if bundle update available
                     // Redirect only if slug !== vcv-settings (to allow reset)
-                    wp_redirect(admin_url('admin.php?page=vcv-update'));
+                    setcookie('vcv:redirect:update:url', $page, time() + 3600, '/');
+
+                    wp_safe_redirect(admin_url('admin.php?page=vcv-update'));
                     exit;
                 }
             }
@@ -164,13 +165,13 @@ class SettingsController extends Container implements Module
     protected function addActionLinks($links)
     {
         return array_merge(
-            array(
+            [
                 sprintf(
                     '<a href="%s">%s</a>',
-                    admin_url('admin.php?page=vcv-settings'),
+                    esc_url(admin_url('admin.php?page=vcv-settings')),
                     esc_html__('Settings', 'visualcomposer')
                 ),
-            ),
+            ],
             $links
         );
     }

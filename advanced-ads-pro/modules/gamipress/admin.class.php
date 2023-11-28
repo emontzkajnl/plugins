@@ -15,27 +15,27 @@ class Advanced_Ads_Pro_Module_GamiPress_Admin {
 	 * Advanced_Ads_Pro_Module_BuddyPress_Admin constructor.
 	 */
 	public function __construct() {
-		add_filter( 'advanced-ads-visitor-conditions', array( $this, 'visitor_conditions' ) );
-		$this->conditions = array(
-			'gamipress_points'      => array(
+		add_filter( 'advanced-ads-visitor-conditions', [ $this, 'visitor_conditions' ] );
+		$this->conditions = [
+			'gamipress_points'      => [
 				'label'       => __( 'GamiPress Points', 'advanced-ads-pro' ),
-				'description' => __( 'Display ads based on GamiPress user points', 'advanced-ads-pro' ),
-				'metabox'     => array( $this, 'points_metabox' ),
-				'check'       => array( 'Advanced_Ads_Pro_Module_GamiPress', 'check_points_visitor_condition' ),
-			),
-			'gamipress_rank'        => array(
+				'description' => __( 'Display ads based on GamiPress user points.', 'advanced-ads-pro' ),
+				'metabox'     => [ $this, 'points_metabox' ],
+				'check'       => [ 'Advanced_Ads_Pro_Module_GamiPress', 'check_points_visitor_condition' ],
+			],
+			'gamipress_rank'        => [
 				'label'       => __( 'GamiPress Rank', 'advanced-ads-pro' ),
-				'description' => __( 'Display ads based on GamiPress user rank', 'advanced-ads-pro' ),
-				'metabox'     => array( $this, 'achievement_rank_metabox' ),
-				'check'       => array( 'Advanced_Ads_Pro_Module_GamiPress', 'check_rank_visitor_condition' ),
-			),
-			'gamipress_achievement' => array(
+				'description' => __( 'Display ads based on GamiPress user ranks.', 'advanced-ads-pro' ),
+				'metabox'     => [ $this, 'achievement_rank_metabox' ],
+				'check'       => [ 'Advanced_Ads_Pro_Module_GamiPress', 'check_rank_visitor_condition' ],
+			],
+			'gamipress_achievement' => [
 				'label'       => __( 'GamiPress Achievement', 'advanced-ads-pro' ),
-				'description' => __( 'Display ads based on GamiPress user achievement', 'advanced-ads-pro' ),
-				'metabox'     => array( $this, 'achievement_rank_metabox' ),
-				'check'       => array( 'Advanced_Ads_Pro_Module_GamiPress', 'check_achievement_visitor_condition' ),
-			),
-		);
+				'description' => __( 'Display ads based on GamiPress user achievements.', 'advanced-ads-pro' ),
+				'metabox'     => [ $this, 'achievement_rank_metabox' ],
+				'check'       => [ 'Advanced_Ads_Pro_Module_GamiPress', 'check_achievement_visitor_condition' ],
+			],
+		];
 	}
 
 	/**
@@ -126,12 +126,12 @@ class Advanced_Ads_Pro_Module_GamiPress_Admin {
 	 * @return int[]
 	 */
 	private function get_posts( $post_type ) {
-		return ( new WP_Query( array(
+		return ( new WP_Query( [
 			'post_type'      => $post_type,
 			'posts_per_page' => -1,
 			'post_status'    => 'publish',
 			'fields'         => 'ids',
-		) ) )->posts;
+		] ) )->posts;
 	}
 
 	/**
@@ -150,7 +150,7 @@ class Advanced_Ads_Pro_Module_GamiPress_Admin {
 			return $this->get_posts( 'rank-type' );
 		}
 
-		return array();
+		return [];
 	}
 
 	/**

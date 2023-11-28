@@ -1,9 +1,10 @@
 {
+	"apiVersion": 3,
 	"name": "stackable/heading",
 	"title": "Heading",
 	"description": "Introduce new sections of your content in style.",
-	"category": "common",
-	"usesContext": [ "postId", "postType", "queryId" ],
+	"category": "stackable",
+	"usesContext": [ "postId", "postType", "queryId" , "stackable/innerBlockOrientation" ],
 	"keywords": [
 		"Title"
 	],

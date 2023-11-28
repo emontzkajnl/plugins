@@ -59,11 +59,13 @@ class StockMediaDownloadController extends Container implements Module
         License $licenseHelper,
         CurrentUser $currentUserHelper
     ) {
-        if (
-            $licenseHelper->isPremiumActivated()
+        $active = $licenseHelper->isPremiumActivated()
             && $requestHelper->exists('vcv-imageId')
-            && $currentUserHelper->wpAll($this->capability)->get()
-        ) {
+            && $currentUserHelper->wpAll($this->capability)->get();
+
+        $active = vcfilter('vcv:modules:hub:stockMedia:download', $active);
+
+        if ($active) {
             $imageId = $requestHelper->input('vcv-imageId');
             $imageSize = $requestHelper->input('vcv-imageSize');
             $stockMediaType = $requestHelper->input('vcv-stockMediaType');
@@ -109,9 +111,9 @@ class StockMediaDownloadController extends Container implements Module
      */
     protected function downloadImage($imageUrl, $imageSize, $stockMediaType, File $fileHelper)
     {
-        $parseUrl = parse_url($imageUrl);
+        $parseUrl = wp_parse_url($imageUrl);
         if (
-            in_array($stockMediaType, ['giphy','unsplash'], true)
+            in_array($stockMediaType, ['giphy', 'unsplash'], true)
             && preg_match('/(.*)(\.' . $stockMediaType . '\.com)$/', $parseUrl['host'])
         ) {
             if ($stockMediaType === 'unsplash') {
@@ -198,13 +200,13 @@ class StockMediaDownloadController extends Container implements Module
         if ($currentUserHelper->wpAll($this->capability)->get()) {
             $variables[] = [
                 'key' => 'VCV_LICENSE_KEY',
-                'value' => $licenseHelper->getKey(),
+                'value' => vcfilter('vcv:modules:Hub:StockMedia:addVariables:licenseKey', $licenseHelper->getKey()),
                 'type' => 'constant',
             ];
             if (defined('VCV_AUTHOR_API_KEY') && $licenseHelper->isThemeActivated()) {
                 $variables[] = [
                     'key' => 'VCV_LICENSE_UNSPLASH_AUTHOR_API_KEY',
-                    'value' => VCV_AUTHOR_API_KEY,
+                    'value' => constant('VCV_AUTHOR_API_KEY'),
                     'type' => 'constant',
                 ];
             }
@@ -312,13 +314,14 @@ class StockMediaDownloadController extends Container implements Module
     protected function getDownloadUrl($imageId, $imageSize, $stockMediaType)
     {
         $licenseHelper = vchelper('License');
+        $licenseKey = vcfilter('vcv:modules:Hub:StockMedia:addVariables:licenseKey', $licenseHelper->getKey());
         if ($stockMediaType === 'giphy') {
             $requestUrl = sprintf(
                 '%s/api/giphy/download/%s?size=%s&licenseKey=%s&url=%s',
                 rtrim(vcvenv('VCV_API_URL'), '\\/'),
                 $imageId,
                 $imageSize,
-                $licenseHelper->getKey(),
+                $licenseKey,
                 VCV_PLUGIN_URL
             );
         } else {
@@ -326,10 +329,10 @@ class StockMediaDownloadController extends Container implements Module
                 '%s/api/unsplash/download/%s?licenseKey=%s&url=%s%s',
                 rtrim(vcvenv('VCV_API_URL'), '\\/'),
                 $imageId,
-                $licenseHelper->getKey(),
+                $licenseKey,
                 VCV_PLUGIN_URL,
                 defined('VCV_AUTHOR_API_KEY') && $licenseHelper->isThemeActivated() ? ('&author_api_key='
-                    . VCV_AUTHOR_API_KEY) : ''
+                    . constant('VCV_AUTHOR_API_KEY')) : ''
             );
         }
         $response = wp_remote_get(

@@ -10,11 +10,12 @@
 /**
  * AAM core API gateway
  *
+ * @since 6.9.6 https://github.com/aamplugin/advanced-access-manager/issues/249
  * @since 6.1.0 Significant improvement of the inheritance mechanism
  * @since 6.0.0 Initial implementation of the class
  *
  * @package AAM
- * @version 6.1.0
+ * @version 6.9.6
  */
 final class AAM_Core_Gateway
 {
@@ -204,6 +205,20 @@ final class AAM_Core_Gateway
     }
 
     /**
+     * Reset all AAM settings and configurations
+     *
+     * @return void
+     *
+     * @access public
+     *
+     * @version 6.9.6
+     */
+    public function reset()
+    {
+        AAM_Core_API::clearSettings();
+    }
+
+    /**
      * Merge two set of access settings into one
      *
      * The merging method also takes in consideration the access settings preference
@@ -221,13 +236,18 @@ final class AAM_Core_Gateway
      */
     public function mergeSettings($set1, $set2, $objectType, $preference = null)
     {
-        $merged   = array();
+        $merged = array();
 
         // If preference is not explicitly defined, fetch it from the AAM configs
         if (is_null($preference)) {
+            $default_preference = $this->getConfig(
+                'core.settings.merge.preference',
+                'deny'
+            );
+
             $preference = $this->getConfig(
                 "core.settings.{$objectType}.merge.preference",
-                'deny'
+                $default_preference
             );
         }
 

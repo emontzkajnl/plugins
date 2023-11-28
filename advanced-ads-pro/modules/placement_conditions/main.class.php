@@ -1,7 +1,7 @@
 <?php
 class Advanced_Ads_Pro_Module_Placement_Conditions {
 	public function __construct() {
-		add_filter( 'advanced-ads-ad-select-args', array( $this, 'append_placement_conditions' ), 10, 2 );
+		add_filter( 'advanced-ads-ad-select-args', [ $this, 'append_placement_conditions' ], 10, 2 );
 	}
 
 	/**
@@ -19,14 +19,14 @@ class Advanced_Ads_Pro_Module_Placement_Conditions {
 		if ( ! empty( $args['placement_conditions']['visitors'] )  && is_array( $args['placement_conditions']['visitors'] ) ) {
 			// Get placement visitor conditions.
 			$placement_visitors = array_values( $args['placement_conditions']['visitors'] );
-			if ( ! array( $placement_visitors[0] ) ) {
-				$placement_visitors[0] = array();
+			if ( ! [ $placement_visitors[0] ] ) {
+				$placement_visitors[0] = [];
 			}
 			// We append placement conditions to ad conditions using the 'AND' connector.
 			$placement_visitors[0]['connector'] = 'and';
 
 			if ( ! isset ( $args['change-ad']['visitors'] ) || ! is_array( $args['change-ad']['visitors'] ) ) {
-				$args['change-ad']['visitors'] = array();
+				$args['change-ad']['visitors'] = [];
 			}
 
 			//Merge those conditions that the user may add using shortcode attributes.
@@ -37,13 +37,13 @@ class Advanced_Ads_Pro_Module_Placement_Conditions {
 			// Get placement display conditions.
 			$placement_display = array_values( $args['placement_conditions']['display'] );
 
-			if ( ! array( $placement_display[0] ) ) {
-				$placement_display[0] = array();
+			if ( ! [ $placement_display[0] ] ) {
+				$placement_display[0] = [];
 			}
 			$placement_display[0]['connector'] = 'and';
 
 			if ( ! isset ( $args['change-ad']['conditions'] ) || ! is_array( $args['change-ad']['conditions'] ) ) {
-				$args['change-ad']['conditions'] = array();
+				$args['change-ad']['conditions'] = [];
 			}
 
 			$args['change-ad']['conditions'] = array_merge( $placement_display, $args['change-ad']['conditions'] );

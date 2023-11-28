@@ -49,8 +49,8 @@ class Subscribers extends SGPBTable
 
 		$filterColumnsDisplaySettings = apply_filters('sgpbAlterColumnIntoSubscribers', $filterColumnsDisplaySettings);
 
-		$this->setColumns(@$filterColumnsDisplaySettings['columns']);
-		$this->setDisplayColumns(@$filterColumnsDisplaySettings['displayColumns']);
+		$this->setColumns((isset($filterColumnsDisplaySettings['columns']) ? $filterColumnsDisplaySettings['columns'] : ''));
+		$this->setDisplayColumns((isset($filterColumnsDisplaySettings['displayColumns']) ? $filterColumnsDisplaySettings['displayColumns'] : ''));
 		$this->setSortableColumns(array(
 			'id' => array('id', false),
 			'firstName' => array('firstName', true),

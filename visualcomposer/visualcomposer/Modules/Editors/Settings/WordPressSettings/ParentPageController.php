@@ -97,34 +97,64 @@ class ParentPageController extends Container implements Module
 
     /**
      * @param $response
-     * @param $payload
-     *
-     * @param \VisualComposer\Helpers\PostType $postTypeHelper
      *
      * @return mixed
      */
     protected function outputPageList(
-        $response,
-        $payload,
-        PostType $postTypeHelper
+        $response
     ) {
-        $currentPost = $postTypeHelper->get();
-        // @codingStandardsIgnoreLine
-        if (isset($currentPost->post_type) && post_type_supports( $currentPost->post_type, 'page-attributes' )) {
-            $response = array_merge(
-                $response,
-                [
-                    vcview(
-                        'partials/variableTypes/variable',
-                        [
-                            'key' => 'VCV_PAGE_LIST',
-                            'value' => $this->getPageList(),
-                        ]
-                    ),
-                ]
-            );
+        if (!$this->isPageSupportPageAttributes()) {
+            return $response;
         }
+
+        $parentId = wp_get_post_parent_id(get_the_ID());
+        if ($parentId) {
+            $pageList = ["current" => $parentId, "all" => [
+                ['label' => __('None', 'visualcomposer'), "value" => "none"],
+                [
+                    'label' => get_the_title($parentId),
+                    "value" => $parentId,
+                    "id" => $parentId,
+                    "parent" => 0
+                ]],
+            ];
+        } else {
+            $pageList = ["current" => "none", "all" => [['label' => __('None', 'visualcomposer'), "value" => "none"]]];
+        }
+
+        $response = array_merge(
+            $response,
+            [
+                vcview(
+                    'partials/variableTypes/variable',
+                    [
+                        'key' => 'VCV_PAGE_LIST',
+                        'value' => $pageList,
+                    ]
+                ),
+            ]
+        );
         return $response;
+    }
+
+
+    /**
+     * Check if current page support page attributes.
+     *
+     * @return bool
+     */
+    protected function isPageSupportPageAttributes()
+    {
+        $postTypeHelper = vchelper('PostType');
+        $currentPost = $postTypeHelper->get();
+
+        // @codingStandardsIgnoreLine
+        if (!isset($currentPost->post_type)) {
+            return false;
+        }
+
+        // @codingStandardsIgnoreLine
+        return post_type_supports($currentPost->post_type, 'page-attributes');
     }
 
     /**
@@ -132,8 +162,16 @@ class ParentPageController extends Container implements Module
      */
     protected function getPageListForUpdate()
     {
+        $parent = get_post_parent();
+
         $pageList = $this->getPageList();
-        return ['status' => true, 'data' => $pageList['all']];
+        $result = ['status' => true, 'data' => $pageList['all']];
+
+        if (!empty($parent->ID)) {
+            $result['current'] = $parent->ID;
+        }
+
+        return $result;
     }
 
     /**
@@ -148,10 +186,16 @@ class ParentPageController extends Container implements Module
     protected function setData($response, $payload, Request $requestHelper)
     {
         $currentPageId = $payload['sourceId'];
+        // Do not update post if `post_parent` is missing or not set
         if ($requestHelper->exists('vcv-settings-parent-page')) {
-            wp_update_post(
-                ['ID' => $currentPageId, 'post_parent' => $requestHelper->input('vcv-settings-parent-page')]
-            );
+            $postParent = $requestHelper->input('vcv-settings-parent-page');
+            if (!empty($postParent)) {
+                if ('none' === $postParent) {
+                    $postParent = 0;
+                }
+
+                wp_update_post(['ID' => $currentPageId, 'post_parent' => $postParent]);
+            }
         }
 
         return $response;

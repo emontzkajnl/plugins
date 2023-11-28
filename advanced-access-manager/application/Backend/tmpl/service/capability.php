@@ -1,4 +1,11 @@
-<?php /** @version 6.0.0 */ ?>
+<?php
+/**
+ * @since 6.9.2 https://github.com/aamplugin/advanced-access-manager/issues/229
+ * @since 6.0.0 Initial implementation of the template
+ *
+ * @version 6.9.2
+ * */
+?>
 
 <?php if (defined('AAM_KEY')) { ?>
     <div class="aam-feature" id="capability-content">
@@ -8,7 +15,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <p class="aam-notification">
-                        <?php echo sprintf(AAM_Backend_View_Helper::preparePhrase('[Be careful!] On this tab, you can manage capabilities for [%s]. Any changes to the list of capabilities is [permanent]. Consider to backup at least your database tables [_options] and [_usermeta] regularly. For more information about this service, refer to the %sHow to manage WordPress capabilities%s article.', 'b', 'b', 'b', 'i', 'i'), AAM_Backend_Subject::getInstance()->getName(), '<a href="https://aamplugin.com/article/how-to-manage-wordpress-capabilities" target="_blank">', '</a>'); ?>
+                        <?php echo sprintf(AAM_Backend_View_Helper::preparePhrase('[Be careful!] On this tab, you can manage capabilities for [%s]. Any changes to the list of capabilities is [permanent]. Consider to backup at least your database tables [_options] and [_usermeta] regularly.', 'b', 'b', 'b', 'i', 'i'), AAM_Backend_Subject::getInstance()->getName()); ?>
                     </p>
                 </div>
             </div>
@@ -21,9 +28,11 @@
                 </a>
                 <ul class="dropdown-menu" id="capability-groups" aria-labelledby="capability-filter">
                     <?php foreach ($this->getGroupList() as $group) { ?>
-                        <li><a href="#"><?php echo $group; ?></a></li>
+                        <li><a href="#"><?php echo esc_js($group); ?></a></li>
                     <?php } ?>
                     <li role="separator" class="divider"></li>
+                    <li><a href="#" data-assigned="true"><?php echo __('All Assigned', AAM_KEY); ?></a></li>
+                    <li><a href="#" data-unassigned="true"><?php echo __('All Unassigned', AAM_KEY); ?></a></li>
                     <li><a href="#" data-clear="true"><?php echo __('All Capabilities', AAM_KEY); ?></a></li>
                 </ul>
             </div>

@@ -1,5 +1,17 @@
 <div class="wrap">
     <h1><?php _e('Responsive Ads', 'advanced-ads-responsive'); ?></h1>
+	<div class="notice error advads-notice advads-notice-icon inline">
+		<p>
+			<?php
+			printf(
+				// translators: %1$s is the opening link tag, %2$s is closing link tag.
+				esc_html__( 'This feature is deprecated. Please find the removal schedule %1$shere%2$s', 'advanced-ads-responsive' ),
+				'<a href="' . esc_url( ADVADS_URL ) . 'manual/deprecated-features/" target="_blank">',
+				'</a>'
+			);
+			?>
+		</p>
+	</div>
     <?php if($max_columns <= 1) : ?>
     <p><?php _e('Not enough responsive ads to list them.', 'advanced-ads-responsive'); ?></p>
     <?php else : ?>

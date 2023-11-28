@@ -150,7 +150,7 @@ class AAM_Backend_Subject
         } else {
             // Covering scenario when changing between sites and they have mismatched
             // list of roles
-            if (AAM_Core_API::getRoles()->is_role($id)) {
+            if (AAM_Framework_Manager::roles()->is_role($id)) {
                 $subject = AAM::api()->getRole($id);
             } else {
                 $roles   = array_keys(get_editable_roles());
@@ -193,7 +193,7 @@ class AAM_Backend_Subject
         } elseif (current_user_can('aam_manage_default')) {
             $this->initRequestedSubject(AAM_Core_Subject_Default::UID, null);
         } else {
-            wp_die(__('You are not allowed to manage any AAM subject', AAM_KEY));
+            wp_die(__('You are not allowed to manage any users or roles', AAM_KEY));
         }
     }
 

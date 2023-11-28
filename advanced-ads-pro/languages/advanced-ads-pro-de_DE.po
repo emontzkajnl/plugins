@@ -2,20 +2,1432 @@
 # This file is distributed under the same license as the Advanced Ads Pro package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-24 12:22:12+0000\n"
+"PO-Revision-Date: 2023-08-24 10:57:42+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: GlotPress/2.3.1\n"
+"X-Generator: GlotPress/3.0.0\n"
 "Language: de\n"
 "Project-Id-Version: Advanced Ads Pro\n"
 
-#: modules/advanced-display-conditions/main.class.php:108
+#: modules/cache-busting/admin-ui.class.php:59
+#: modules/cache-busting/views/settings.php:62
+msgid "off"
+msgstr "deaktiviert"
+
+#: modules/cache-busting/views/settings.php:18
+msgid "Choose which method to use when a placement needs cache busting and the option is set to “auto”."
+msgstr "Wähle, welche Methode verwendet werden soll, wenn eine Platzierung Cache-Busting benötigt und die Option auf \"auto\" gesetzt ist."
+
+#: modules/cache-busting/admin-ui.class.php:57
+msgid "auto"
+msgstr "auto"
+
+#: modules/geo/classes/admin.php:397
+msgid "You are not allowed to do this."
+msgstr "Du bist nicht berechtigt, das zu tun."
+
+#: modules/geo/classes/admin.php:405
+msgid "Please provide a MaxMind license key"
+msgstr "Bitte gib einen MaxMind-Lizenzschlüssel ein"
+
+#. Link to parallax manual
+#: modules/parallax-ads/views/placement-options-after.php:24
+msgid "Optimized for image ads. %s"
+msgstr "Optimiert für Bildanzeigen. %s"
+
+#: modules/parallax-ads/views/placement-options-after.php:19
+msgid "Enable the parallax effect."
+msgstr "Parallax-Effekt aktivieren."
+
+#: modules/rest-api/classes/Admin_UI.php:33
+msgid "REST API"
+msgstr "REST API"
+
+#: modules/parallax-ads/classes/Advanced_Ads_Pro_Module_Parallax_Admin_UI.php:69
+msgid "Parallax Ads"
+msgstr "Parallax-Effekt"
+
+#: modules/parallax-ads/views/placement-options-after.php:37
+msgctxt "Parallax Ad placement height unit"
+msgid "Unit"
+msgstr "Einheit"
+
+#: modules/parallax-ads/views/placement-options-after.php:31
+msgctxt "Parallax Ad placement height"
+msgid "Height"
+msgstr "Höhe"
+
+#: modules/rest-api/classes/Advanced_Ads_Group.php:22
+msgid "Invalid group ID."
+msgstr "Ungültige Gruppen-ID."
+
+#: modules/rest-api/classes/Advanced_Ads_Ad.php:25
+msgid "Invalid ad ID."
+msgstr "Ungültige Anzeigen-ID."
+
+#: modules/parallax-ads/views/placement-options-after.php:40
+msgid "Choose the height of the cutout, either in pixels or relative to the viewport."
+msgstr "Wähle die Höhe des Ausschnitts, entweder in Pixeln oder relativ zum Viewport."
+
+#: modules/geo/admin/views/visitor-profile.php:20
+msgid "Reset Visitor Profile"
+msgstr "Benutzerprofil zurücksetzen"
+
+#: modules/geo/admin/views/visitor-profile.php:9
+msgid "Location based on your visitor profile cookie:"
+msgstr "Standort basierend auf dem Cookie deines Besucherprofils:"
+
+#: modules/geo/classes/admin.php:374
+msgid "Location based on your IP address"
+msgstr "Standort basierend auf deiner IP-Adresse"
+
+#: modules/advanced-visitor-conditions/main.class.php:200
+msgid "Display or hide ads for new visitors."
+msgstr "Anzeigen für neue Besucher ein- oder ausblenden."
+
+#: modules/advanced-visitor-conditions/main.class.php:177
+msgid "Display ads based on the value of a cookie. Set the operator to “matches/does not match” and leave the value empty to check only the existence of the cookie."
+msgstr "Anzeigen basierend auf dem Wert eines Cookies einblenden. Setze den Operator auf \"entspricht/entspricht nicht\" und lasse den Wert leer, um nur das Vorhandensein des Cookies zu prüfen."
+
+#: modules/advanced-display-conditions/main.class.php:81
+msgid "Display ads based on the page language set by the WPML plugin."
+msgstr "Anzeigen basierend auf der vom WPML-Plugin eingestellten Seitensprache einblenden."
+
+#: modules/buddypress/buddypress.class.php:304
+#: modules/buddypress/buddypress.class.php:350
+msgid "Display ads based on existing BuddyBoss groups."
+msgstr "Anzeigen basierend auf bestehenden BuddyBoss-Gruppen einblenden."
+
+#: modules/geo/classes/admin.php:340
+msgid "miles (mi)"
+msgstr "Meilen (mi)"
+
+#: modules/geo/classes/admin.php:661
+msgid "There was an error connecting to the search service."
+msgstr "Es ist ein Fehler bei der Verbindung mit dem Suchdienst aufgetreten."
+
+#: modules/geo/classes/admin.php:660
+msgid "Your search did not return any results."
+msgstr "Bei der Verbindung mit dem Suchdienst ist ein Fehler aufgetreten."
+
+#. 1: A link to the geo location service.
+#: modules/geo/classes/admin.php:663
+msgid "You can search for the geo coordinates manually at %1$s."
+msgstr "Du kannst die Geo-Koordinaten manuell suchen unter %1$s."
+
+#. 1: The number of search results.
+#: modules/geo/classes/admin.php:659
+msgid "Found %1$d results. Please pick the one, you want to use."
+msgstr "%1$d Ergebnisse gefunden. Bitte wähle aus, welches du verwenden möchtest."
+
+#: modules/geo/classes/admin.php:339
+msgid "kilometers (km)"
+msgstr "Kilometer (km)"
+
+#. 1 is the opening link to the plugins page, 2 the closing link
+#: modules/geo/classes/Advanced_Ads_Geo_Version_Check.php:51
+msgid "The geo-targeting visitor condition moved into Advanced Ads Pro. You can remove Geo Targeting %1$shere%2$s."
+msgstr "Die Besucherbedingung \"Standort\" wurden in Advanced Ads Pro übernommen. Du kannst das Geo Targeting-Add-on %1$shier%2$s entfernen."
+
+#: modules/geo/classes/api.php:385
+msgid "Zimbabwe"
+msgstr "Simbabwe"
+
+#: modules/geo/classes/api.php:384
+msgid "Zambia"
+msgstr "Sambia"
+
+#: modules/geo/classes/admin.php:234
+msgid "Your IP address format is incorrect"
+msgstr "Das Format deiner IP-Adresse ist falsch"
+
+#. %s is an URL.
+#: modules/cache-busting/admin-ui.class.php:179
+msgid "You need a placement to deliver this group using cache busting. <a href=\"%s\" target=\"_blank\">Create a placement now.</a>"
+msgstr "Du benötigst eine Platzierung, um diese Gruppe mit Cache-Busting auszuliefern. <a href=\"%s\" target=\"_blank\">Jetzt eine Platzierung erstellen!</a>"
+
+#: modules/geo/classes/api.php:383
+msgid "Yemen"
+msgstr "Jemen"
+
+#: modules/geo/classes/api.php:382
+msgid "Western Samoa"
+msgstr "West-Samoa"
+
+#: modules/geo/classes/api.php:381
+msgid "Western Sahara"
+msgstr "Westsahara"
+
+#: modules/geo/classes/api.php:380
+msgid "Wallis and Futuna Islands"
+msgstr "Wallis und Futuna"
+
+#: modules/geo/classes/api.php:379
+msgid "Virgin Islands (USA)"
+msgstr "Amerikanische Jungferninseln"
+
+#: modules/geo/classes/api.php:378
+msgid "Virgin Islands (British)"
+msgstr "Britische Jungferninseln"
+
+#: modules/geo/classes/api.php:377
+msgid "Vietnam"
+msgstr "Vietnam"
+
+#: modules/geo/classes/api.php:376
+msgid "Venezuela"
+msgstr "Venezuela"
+
+#: modules/geo/classes/api.php:375
+msgid "Vanuatu"
+msgstr "Vanuatu"
+
+#: modules/geo/classes/api.php:374
+msgid "Uzbekistan"
+msgstr "Usbekistan"
+
+#: modules/geo/classes/api.php:373
+msgid "US Minor Outlying Islands"
+msgstr "Kleinere Amerikanische Überseeinseln"
+
+#: modules/geo/classes/api.php:372
+msgid "Uruguay"
+msgstr "Uruguay"
+
+#: modules/geo/admin/views/setting-download.php:45
+msgid "Update geo location databases"
+msgstr "Geo-Standort-Datenbanken aktualisieren"
+
+#: modules/geo/classes/api.php:124
+msgid "United States"
+msgstr "Vereinigte Staaten"
+
+#: modules/geo/classes/api.php:125
+msgid "United Kingdom"
+msgstr "Vereinigtes Königreich"
+
+#: modules/geo/classes/api.php:371
+msgid "United Arab Emirates"
+msgstr "Vereinigte Arabische Emirate"
+
+#: modules/geo/classes/api.php:370
+msgid "Ukraine"
+msgstr "Ukraine"
+
+#: modules/geo/classes/api.php:369
+msgid "Uganda"
+msgstr "Uganda"
+
+#: modules/geo/classes/api.php:368
+msgid "Tuvalu"
+msgstr "Tuvalu"
+
+#: modules/geo/classes/api.php:367
+msgid "Turks and Caicos Islands"
+msgstr "Turks- und Caicosinseln"
+
+#: modules/geo/classes/api.php:366
+msgid "Turkmenistan"
+msgstr "Turkmenistan"
+
+#: modules/geo/classes/api.php:365
+msgid "Turkey"
+msgstr "Türkei"
+
+#: modules/geo/classes/api.php:364
+msgid "Tunisia"
+msgstr "Tunesien"
+
+#: modules/geo/classes/api.php:363
+msgid "Trinidad and Tobago"
+msgstr "Trinidad und Tobago"
+
+#: modules/geo/classes/api.php:362
+msgid "Tonga"
+msgstr "Tonga"
+
+#: modules/geo/classes/api.php:361
+msgid "Tokelau"
+msgstr "Tokelau"
+
+#: modules/geo/classes/api.php:360
+msgid "Togo"
+msgstr "Togo"
+
+#: modules/geo/classes/api.php:359
+msgid "Timor-Leste"
+msgstr "Timor-Leste (Osttimor)"
+
+#: modules/geo/classes/admin.php:324
+msgid "This option can’t be used if your site is using sucuri.net."
+msgstr "Die Option kann nicht verwendet werden, wenn deine Webseite sucuri.net nutzt."
+
+#: modules/geo/classes/admin.php:401
+msgid "The upload dir is not available"
+msgstr "Das Upload-Verzeichnis ist nicht verfügbar"
+
+#: modules/geo/admin/views/setting-download.php:19
+msgid "The MaxMind license key is missing."
+msgstr "Die MaxMind-Lizenz fehlt."
+
+#: modules/geo/admin/views/setting-download.php:79
+msgid "The databases are updated on the first Tuesday (midnight, GMT) of each month."
+msgstr "Die Datenbanken werden jeweils am ersten Dienstag (Mitternacht, GMT) eines Monats aktualisiert."
+
+#: modules/geo/classes/api.php:358
+msgid "Thailand"
+msgstr "Thailand"
+
+#: modules/geo/classes/api.php:357
+msgid "Tanzania"
+msgstr "Tansania"
+
+#: modules/geo/classes/api.php:356
+msgid "Tajikistan"
+msgstr "Tadschikistan"
+
+#: modules/geo/classes/api.php:355
+msgid "Taiwan"
+msgstr "Taiwan"
+
+#: modules/geo/classes/api.php:354
+msgid "Syrian Arab Republic"
+msgstr "Syrische Arabische Republik"
+
+#: modules/geo/classes/api.php:353
+msgid "Switzerland"
+msgstr "Schweiz"
+
+#: modules/geo/classes/api.php:352
+msgid "Sweden"
+msgstr "Schweden"
+
+#: modules/geo/classes/api.php:351
+msgid "Swaziland"
+msgstr "Swasiland"
+
+#: modules/geo/classes/api.php:350
+msgid "Svalbard and Jan Mayen Islands"
+msgstr "Svalbard und Jan Mayen"
+
+#: modules/geo/classes/api.php:349
+msgid "Suriname"
+msgstr "Surinam"
+
+#: modules/geo/classes/api.php:348
+msgid "Sudan"
+msgstr "Sudan"
+
+#: modules/geo/classes/plugin.php:122
+msgid "Sucuri Header (country only)"
+msgstr "Sucuri Header (nur Länder)"
+
+#: modules/geo/classes/admin.php:307
+msgid "State/Region"
+msgstr "Staat/Region"
+
+#: modules/geo/classes/api.php:347
+msgid "Sri Lanka"
+msgstr "Sri Lanka"
+
+#: modules/geo/classes/api.php:346
+msgid "Spain"
+msgstr "Spanien"
+
+#: modules/geo/classes/api.php:345
+msgid "South Sudan"
+msgstr "Südsudan"
+
+#: modules/geo/classes/api.php:344
+msgid "South Korea"
+msgstr "Südkorea"
+
+#: modules/geo/classes/api.php:343
+msgid "South Georgia"
+msgstr "Südgeorgien"
+
+#: modules/geo/classes/api.php:130
+msgid "South America"
+msgstr "Südamerika"
+
+#: modules/geo/classes/api.php:342
+msgid "South Africa"
+msgstr "Südafrika"
+
+#: modules/geo/classes/api.php:341
+msgid "Somalia"
+msgstr "Somalia"
+
+#: modules/geo/classes/api.php:340
+msgid "Solomon Islands"
+msgstr "Salomonen"
+
+#: modules/geo/classes/api.php:339
+msgid "Slovenia"
+msgstr "Slowenien"
+
+#: modules/geo/classes/api.php:338
+msgid "Slovak Republic"
+msgstr "Slowakei"
+
+#: modules/geo/classes/api.php:337
+msgid "Singapore"
+msgstr "Singapur"
+
+#: modules/geo/classes/api.php:336
+msgid "Sierra Leone"
+msgstr "Sierra Leone"
+
+#: modules/geo/classes/api.php:335
+msgid "Seychelles"
+msgstr "Seychellen"
+
+#: modules/geo/classes/api.php:334
+msgid "Serbia"
+msgstr "Serbien"
+
+#: modules/geo/classes/api.php:333
+msgid "Senegal"
+msgstr "Senegal"
+
+#: modules/geo/classes/admin.php:360
+msgid "Search"
+msgstr "Suchen"
+
+#: modules/geo/classes/api.php:332
+msgid "Saudi Arabia"
+msgstr "Saudi-Arabien"
+
+#: modules/geo/classes/api.php:330
+msgid "San Marino"
+msgstr "San Marino"
+
+#: modules/geo/classes/api.php:329
+msgid "Saint Vincent and the Grenadines"
+msgstr "St. Vincent und die Grenadinen"
+
+#: modules/geo/classes/api.php:328
+msgid "Saint Pierre and Miquelon"
+msgstr "St. Pierre und Miquelon"
+
+#: modules/geo/classes/api.php:326
+msgid "Saint Martin (French)"
+msgstr "St. Martin (Französisch)"
+
+#: modules/geo/classes/api.php:327
+msgid "Saint Martin (Dutch)"
+msgstr "St. Martin (Niederlande)"
+
+#: modules/geo/classes/api.php:325
+msgid "Saint Lucia"
+msgstr "St. Lucia"
+
+#: modules/geo/classes/api.php:324
+msgid "Saint Kitts and Nevis"
+msgstr "St. Kitts und Nevis"
+
+#: modules/geo/classes/api.php:323
+msgid "Saint Helena"
+msgstr "St. Helena"
+
+#: modules/geo/classes/api.php:322
+msgid "Saint Barth&eacute;lemy"
+msgstr "St. Barths"
+
+#: modules/geo/classes/api.php:331
+msgid "S&atilde;o Tom&eacute; and Pr&iacute;ncipe"
+msgstr "São Tomé und Príncipe"
+
+#: modules/geo/classes/api.php:321
+msgid "Rwanda"
+msgstr "Ruanda"
+
+#: modules/geo/classes/api.php:320
+msgid "Russian Federation"
+msgstr "Russische Föderation"
+
+#: modules/geo/classes/api.php:319
+msgid "Romania"
+msgstr "Rumänien"
+
+#: modules/geo/classes/api.php:318
+msgid "Reunion Island"
+msgstr "Réunion"
+
+#: modules/geo/classes/api.php:317
+msgid "Republic of Kosovo"
+msgstr "Kosovo"
+
+#: modules/geo/classes/api.php:316
+msgid "Qatar"
+msgstr "Katar"
+
+#: modules/geo/classes/api.php:315
+msgid "Puerto Rico"
+msgstr "Puerto Rico"
+
+#: modules/geo/classes/api.php:314
+msgid "Portugal"
+msgstr "Portugal"
+
+#: modules/geo/classes/api.php:313
+msgid "Poland"
+msgstr "Polen"
+
+#. 1: opening <a>-tag to Advanced Ads manual, 2: closing <a>-tag
+#: modules/geo/classes/admin.php:227
+#: modules/geo/admin/views/setting-download.php:24
+msgid "Please read the %1$sinstallation instructions%2$s."
+msgstr "Bitte schaue dir auch die %1$sInstallationsanweisungen (engl.)%2$s an."
+
+#: modules/geo/classes/api.php:312
+msgid "Pitcairn Island"
+msgstr "Pitcairninseln"
+
+#: modules/geo/classes/api.php:311
+msgid "Phillipines"
+msgstr "Philippinen"
+
+#: modules/geo/classes/api.php:310
+msgid "Peru"
+msgstr "Peru"
+
+#: modules/geo/classes/api.php:309
+msgid "Paraguay"
+msgstr "Paraguay"
+
+#: modules/geo/classes/api.php:308
+msgid "Papua New Guinea"
+msgstr "Papua-Neuguinea"
+
+#: modules/geo/classes/api.php:307
+msgid "Panama"
+msgstr "Panama"
+
+#: modules/geo/classes/api.php:306
+msgid "Palestinian Territories"
+msgstr "Palästinensische Autonomiegebiete"
+
+#: modules/geo/classes/api.php:305
+msgid "Palau"
+msgstr "Palau"
+
+#: modules/geo/classes/api.php:304
+msgid "Pakistan"
+msgstr "Pakistan"
+
+#: modules/geo/classes/admin.php:306 modules/geo/classes/admin.php:308
+msgid "or"
+msgstr "oder"
+
+#: modules/geo/classes/api.php:303
+msgid "Oman"
+msgstr "Oman"
+
+#: modules/geo/classes/api.php:134
+msgid "Oceania"
+msgstr "Ozeanien"
+
+#: modules/geo/classes/api.php:302
+msgid "Norway"
+msgstr "Norwegen"
+
+#: modules/geo/classes/api.php:301
+msgid "Northern Mariana Islands"
+msgstr "Nördliche Marianen"
+
+#: modules/geo/classes/api.php:300
+msgid "North Korea"
+msgstr "Nordkorea"
+
+#: modules/geo/classes/api.php:129
+msgid "North America"
+msgstr "Nordamerika"
+
+#: modules/geo/classes/api.php:299
+msgid "Norfolk Island"
+msgstr "Norfolkinsel"
+
+#: modules/geo/classes/api.php:298
+msgid "Niue"
+msgstr "Niue"
+
+#: modules/geo/classes/api.php:297
+msgid "Nigeria"
+msgstr "Nigeria"
+
+#: modules/geo/classes/api.php:296
+msgid "Niger"
+msgstr "Niger"
+
+#: modules/geo/classes/api.php:295
+msgid "Nicaragua"
+msgstr "Nicaragua"
+
+#. Timestamp in the localized date_format
+#: modules/geo/admin/views/setting-download.php:72
+msgid "Next possible update on %s."
+msgstr "Nächstes Update möglich am %s."
+
+#: modules/geo/classes/api.php:294
+msgid "New Zealand"
+msgstr "Neuseeland"
+
+#: modules/geo/classes/api.php:293
+msgid "New Caledonia"
+msgstr "Neukaledonien"
+
+#: modules/geo/classes/api.php:292
+msgid "Netherlands Antilles"
+msgstr "Niederländische Antillen"
+
+#: modules/geo/classes/api.php:291
+msgid "Netherlands"
+msgstr "Niederlande"
+
+#: modules/geo/classes/api.php:290
+msgid "Nepal"
+msgstr "Nepal"
+
+#: modules/geo/classes/api.php:289
+msgid "Nauru"
+msgstr "Nauru"
+
+#: modules/geo/classes/api.php:288
+msgid "Namibia"
+msgstr "Namibia"
+
+#: modules/geo/classes/api.php:287
+msgid "Myanmar"
+msgstr "Myanmar"
+
+#: modules/geo/classes/api.php:286
+msgid "Mozambique"
+msgstr "Mosambik"
+
+#: modules/geo/classes/api.php:285
+msgid "Morocco"
+msgstr "Marokko"
+
+#: modules/geo/classes/api.php:284
+msgid "Montserrat"
+msgstr "Montserrat"
+
+#: modules/geo/classes/api.php:283
+msgid "Montenegro"
+msgstr "Montenegro"
+
+#: modules/geo/classes/api.php:282
+msgid "Mongolia"
+msgstr "Mongolei"
+
+#: modules/geo/classes/api.php:281
+msgid "Monaco"
+msgstr "Monaco"
+
+#: modules/geo/classes/api.php:280
+msgid "Moldova, Republic of"
+msgstr "Moldau"
+
+#: modules/geo/classes/api.php:279
+msgid "Micronesia"
+msgstr "Mikronesien"
+
+#: modules/geo/classes/api.php:278
+msgid "Mexico"
+msgstr "Mexiko"
+
+#: modules/geo/classes/admin.php:76
+msgid "Method"
+msgstr "Methode"
+
+#: modules/geo/classes/api.php:277
+msgid "Mayotte"
+msgstr "Mayotte"
+
+#: modules/geo/classes/admin.php:230
+msgid "Maybe you are working on a local or secured environment."
+msgstr "Vielleicht arbeitest du auf einer lokalen oder von externen Zugriffen geschützten Umgebung."
+
+#: modules/geo/classes/admin.php:57
+msgid "MaxMind license key"
+msgstr "MaxMind-Lizenz"
+
+#: modules/geo/classes/plugin.php:116
+msgid "MaxMind database (default)"
+msgstr "MaxMind-Datenbank (Standard)"
+
+#: modules/geo/classes/admin.php:66
+msgid "MaxMind Database"
+msgstr "MaxMind-Datenbank"
+
+#: modules/geo/classes/api.php:276
+msgid "Mauritius"
+msgstr "Mauritius"
+
+#: modules/geo/classes/api.php:275
+msgid "Mauritania"
+msgstr "Mauretanien"
+
+#: modules/geo/classes/api.php:274
+msgid "Martinique"
+msgstr "Martinique"
+
+#: modules/geo/classes/api.php:273
+msgid "Marshall Islands"
+msgstr "Marshallinseln"
+
+#: modules/geo/classes/api.php:272
+msgid "Malta"
+msgstr "Malta"
+
+#: modules/geo/classes/api.php:271
+msgid "Mali"
+msgstr "Mali"
+
+#: modules/geo/classes/api.php:270
+msgid "Maldives"
+msgstr "Malediven"
+
+#: modules/geo/classes/api.php:269
+msgid "Malaysia"
+msgstr "Malaysia"
+
+#: modules/geo/classes/api.php:268
+msgid "Malawi"
+msgstr "Malawi"
+
+#: modules/geo/classes/api.php:267
+msgid "Madagascar"
+msgstr "Madagaskar"
+
+#: modules/geo/classes/api.php:266
+msgid "Macedonia"
+msgstr "Mazedonien"
+
+#: modules/geo/classes/api.php:265
+msgid "Macau"
+msgstr "Macao"
+
+#: modules/geo/classes/api.php:264
+msgid "Luxembourg"
+msgstr "Luxemburg"
+
+#: modules/geo/classes/admin.php:344
+msgid "Longitude"
+msgstr "Länge"
+
+#: modules/geo/classes/api.php:263
+msgid "Lithuania"
+msgstr "Litauen"
+
+#: modules/geo/classes/api.php:262
+msgid "Liechtenstein"
+msgstr "Liechtenstein"
+
+#: modules/geo/classes/api.php:261
+msgid "Libyan Arab Jamahiriya"
+msgstr "Libyen"
+
+#: modules/geo/classes/api.php:260
+msgid "Liberia"
+msgstr "Liberia"
+
+#: modules/geo/classes/api.php:259
+msgid "Lesotho"
+msgstr "Lesotho"
+
+#: modules/geo/classes/api.php:258
+msgid "Lebanon"
+msgstr "Libanon"
+
+#: modules/geo/classes/api.php:257
+msgid "Latvia"
+msgstr "Lettland"
+
+#: modules/geo/classes/admin.php:343
+msgid "Latitude"
+msgstr "Breite"
+
+#. Timestamp in the localized date_format
+#: modules/geo/admin/views/setting-download.php:61
+msgid "Last update: %s"
+msgstr "Letztes Update: %s"
+
+#: modules/geo/classes/api.php:256
+msgid "Lao People's Democratic Republic"
+msgstr "Laos, Demokratische Volksrepublik"
+
+#: modules/geo/classes/admin.php:86
+msgid "Language of names"
+msgstr "Sprache der Orte"
+
+#: modules/geo/classes/api.php:255
+msgid "Kyrgyzstan"
+msgstr "Kirgisistan"
+
+#: modules/geo/classes/api.php:254
+msgid "Kuwait"
+msgstr "Kuwait"
+
+#: modules/geo/classes/api.php:253
+msgid "Kiribati"
+msgstr "Kiribati"
+
+#: modules/geo/classes/api.php:252
+msgid "Kenya"
+msgstr "Kenia"
+
+#: modules/geo/classes/api.php:251
+msgid "Kazakhstan"
+msgstr "Kasachstan"
+
+#: modules/geo/classes/api.php:250
+msgid "Jordan"
+msgstr "Jordanien"
+
+#: modules/geo/classes/api.php:249
+msgid "Jersey"
+msgstr "Jersey"
+
+#: modules/geo/classes/api.php:248
+msgid "Japan"
+msgstr "Japan"
+
+#: modules/geo/classes/api.php:247
+msgid "Jamaica"
+msgstr "Jamaika"
+
+#: modules/geo/classes/api.php:246
+msgid "Italy"
+msgstr "Italien"
+
+#. %s is an URL.
+#: modules/cache-busting/admin-ui.class.php:200
+msgid "It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href=\"%s\" target=\"_blank\">Activate cache busting for this placement.</a>"
+msgstr "Es scheint ein Caching-Plugin aktiviert zu sein. Möglicherweise rotieren deine Anzeigen deswegen nicht richtig, wenn das Cache-Busting für die Platzierung, der du diese Gruppe zugewiesen hast, deaktiviert ist. <a href=\"%s\" target=\"_blank\">Cache-Busting für diese Platzierung aktivieren.</a>"
+
+#. %s is an URL.
+#: modules/cache-busting/admin-ui.class.php:156
+msgid "It seems that a caching plugin is activated. Your ads might not rotate properly while cache busting is disabled. <a href=\"%s\" target=\"_blank\">Activate cache busting.</a>"
+msgstr "Es scheint ein Caching-Plugin aktiviert zu sein. Möglicherweise rotieren deine Anzeigen deswegen nicht richtig, wenn das Cache-Busting deaktiviert ist. <a href=\"%s\" target=\"_blank\">Cache-Busting aktivieren.</a>"
+
+#: modules/geo/classes/api.php:245
+msgid "Israel"
+msgstr "Israel"
+
+#: modules/geo/classes/api.php:244
+msgid "Isle of Man"
+msgstr "Insel Man"
+
+#: modules/geo/classes/api.php:243
+msgid "Ireland"
+msgstr "Irland"
+
+#: modules/geo/classes/api.php:242
+msgid "Iraq"
+msgstr "Irak"
+
+#: modules/geo/classes/api.php:241
+msgid "Iran"
+msgstr "Iran"
+
+#: modules/geo/classes/api.php:240
+msgid "Indonesia"
+msgstr "Indonesien"
+
+#: modules/geo/classes/api.php:239
+msgid "India"
+msgstr "Indien"
+
+#: modules/geo/admin/views/setting-download.php:38
+msgid "In order to use Geo Targeting, please download the geo location databases by clicking on the button below."
+msgstr "Um das Geo-Targeting nutzen zu können, musst du zunächst die Geo-Standort-Datenbank durch einen Klick auf den Button herunterladen."
+
+#: modules/click-fraud-protection/click-fraud-protection.class.php:139
+msgid "Ignore global Click Fraud Protection"
+msgstr "Globalen Schutz vor Klickbetrug ignorieren"
+
+#: modules/geo/classes/api.php:238
+msgid "Iceland"
+msgstr "Island"
+
+#: modules/geo/classes/api.php:237
+msgid "Hungary"
+msgstr "Ungarn"
+
+#: modules/geo/classes/api.php:236
+msgid "Hong Kong"
+msgstr "Hongkong"
+
+#: modules/geo/classes/api.php:235
+msgid "Honduras"
+msgstr "Honduras"
+
+#: modules/geo/classes/api.php:234
+msgid "Holy See (City Vatican State)"
+msgstr "Vatikanstadt"
+
+#: modules/geo/classes/api.php:233
+msgid "Heard and McDonald Islands"
+msgstr "Heard und Mcdonaldinseln"
+
+#: modules/geo/classes/api.php:232
+msgid "Haiti"
+msgstr "Haiti"
+
+#: modules/geo/classes/api.php:231
+msgid "Guyana"
+msgstr "Guyana"
+
+#: modules/geo/classes/api.php:230
+msgid "Guinea-Bissau"
+msgstr "Guinea-Bissau"
+
+#: modules/geo/classes/api.php:229
+msgid "Guinea"
+msgstr "Guinea"
+
+#: modules/geo/classes/api.php:228
+msgid "Guernsey"
+msgstr "Guernsey"
+
+#: modules/geo/classes/api.php:227
+msgid "Guatemala"
+msgstr "Guatemala"
+
+#: modules/geo/classes/api.php:226
+msgid "Guam"
+msgstr "Guam"
+
+#: modules/geo/classes/api.php:225
+msgid "Guadeloupe"
+msgstr "Guadeloupe"
+
+#: modules/geo/classes/api.php:224
+msgid "Grenada"
+msgstr "Grenada"
+
+#: modules/geo/classes/api.php:223
+msgid "Greenland"
+msgstr "Grönland"
+
+#: modules/geo/classes/api.php:220
+msgid "Greece"
+msgstr "Griechenland"
+
+#: modules/geo/classes/api.php:222
+msgid "Gibraltar"
+msgstr "Gibraltar"
+
+#: modules/geo/classes/api.php:221
+msgid "Ghana"
+msgstr "Ghana"
+
+#: modules/geo/classes/admin.php:342
+msgid "get coordinates"
+msgstr "Koordinaten ermitteln"
+
+#: modules/geo/classes/api.php:127 modules/geo/classes/api.php:219
+msgid "Germany"
+msgstr "Deutschland"
+
+#: modules/geo/classes/api.php:218
+msgid "Georgia"
+msgstr "Georgien"
+
+#: modules/geo/classes/admin.php:49
+msgid "Geo Targeting"
+msgstr "Geo-Targeting"
+
+#: modules/geo/classes/plugin.php:97
+msgid "geo location"
+msgstr "Standort"
+
+#: modules/geo/classes/admin.php:227
+#: modules/geo/admin/views/setting-download.php:35
+msgid "Geo Databases not found."
+msgstr "Geo-Datenbanken nicht gefunden."
+
+#: modules/geo/classes/public.php:191
+msgid "Geo Databases not found"
+msgstr "Geo-Datenbanken nicht gefunden"
+
+#: modules/geo/admin/views/setting-download.php:13
+msgid "Geo Databases found."
+msgstr "Geo-Datenbanken gefunden."
+
+#: modules/geo/classes/api.php:217
+msgid "Gambia"
+msgstr "Gambia"
+
+#: modules/geo/classes/api.php:216
+msgid "Gabon"
+msgstr "Gabun"
+
+#: modules/geo/classes/admin.php:341
+msgid "from"
+msgstr "von"
+
+#: modules/geo/classes/api.php:215
+msgid "French Southern Territories"
+msgstr "Französische Süd- und Antarktisgebiete"
+
+#: modules/geo/classes/api.php:214
+msgid "French Polynesia"
+msgstr "Französisch-Polynesien"
+
+#: modules/geo/classes/api.php:213
+msgid "French Guiana"
+msgstr "Französisch-Guayana"
+
+#: modules/geo/classes/api.php:212
+msgid "France"
+msgstr "Frankreich"
+
+#: modules/geo/classes/api.php:211
+msgid "Finland"
+msgstr "Finnland"
+
+#: modules/geo/classes/api.php:210
+msgid "Fiji"
+msgstr "Fidschi"
+
+#: modules/geo/classes/api.php:209
+msgid "Faroe Islands"
+msgstr "Färöer-Inseln"
+
+#: modules/geo/classes/api.php:208
+msgid "Falkland Islands"
+msgstr "Falklandinseln"
+
+#: modules/geo/classes/api.php:126
+msgid "European Union"
+msgstr "Europäische Union"
+
+#: modules/geo/classes/api.php:131
+msgid "Europe"
+msgstr "Europa"
+
+#: modules/geo/classes/api.php:207
+msgid "Ethiopia"
+msgstr "Äthiopien"
+
+#: modules/geo/classes/api.php:206
+msgid "Estonia"
+msgstr "Estland"
+
+#: modules/geo/classes/admin.php:497
+msgid "Error downloading database from: %1$s - %2$s"
+msgstr "Fehler beim Download der Datenbank von %1$s - %2$s"
+
+#: modules/geo/classes/api.php:205
+msgid "Eritrea"
+msgstr "Eritrea"
+
+#: modules/geo/classes/api.php:203
+msgid "Equatorial Guinea"
+msgstr "Äquatorialguinea"
+
+#: modules/geo/classes/admin.php:362
+msgid "Enter the name of the city, click the search button and pick one of the results to set the coordinates of the center."
+msgstr "Gib den Namen einer Stadt ein, klicke den Such-Button und wähle eines der angezeigten Ergebnisse aus, um die Koordinaten des Mittelpunkts automatisch einzufügen."
+
+#: modules/geo/classes/api.php:204
+msgid "El Salvador"
+msgstr "El Salvador"
+
+#: modules/geo/classes/api.php:202
+msgid "Egypt"
+msgstr "Ägypten"
+
+#: modules/geo/classes/api.php:201
+msgid "Ecuador"
+msgstr "Ecuador"
+
+#: modules/geo/classes/api.php:200
+msgid "East Timor"
+msgstr "Osttimor"
+
+#: modules/geo/classes/api.php:199
+msgid "Dominican Republic"
+msgstr "Dominikanische Republik"
+
+#: modules/geo/classes/api.php:198
+msgid "Dominica"
+msgstr "Dominica"
+
+#: modules/geo/classes/api.php:197
+msgid "Djibouti"
+msgstr "Dschibuti"
+
+#: modules/geo/classes/admin.php:349
+msgid "Distance to center"
+msgstr "Entfernung zum Mittelpunkt"
+
+#: modules/geo/classes/admin.php:334
+msgid "Distance is less than or equal to"
+msgstr "Entfernung ist kleiner oder gleich"
+
+#: modules/geo/classes/admin.php:335
+msgid "Distance is greater than"
+msgstr "Entfernung ist größer als"
+
+#: modules/geo/classes/admin.php:337
+msgid "Distance"
+msgstr "Entfernung"
+
+#: modules/geo/classes/plugin.php:98
+msgid "Display ads based on geo location."
+msgstr "Anzeige anhand des Standortes einblenden."
+
+#: modules/geo/classes/api.php:196
+msgid "Denmark"
+msgstr "Dänemark"
+
+#: modules/geo/classes/admin.php:474
+msgid "Database updated successfully!"
+msgstr "Datenbank erfolgreich aktualisiert!"
+
+#: modules/geo/classes/admin.php:492
+msgid "Database update failed"
+msgstr "Update fehlgeschlagen"
+
+#: modules/geo/classes/api.php:195
+msgid "Czech Republic"
+msgstr "Tschechien"
+
+#: modules/geo/classes/api.php:194
+msgid "Cyprus"
+msgstr "Zypern"
+
+#: modules/geo/classes/api.php:193
+msgid "Cura&Ccedil;ao"
+msgstr "Curaçao"
+
+#: modules/geo/classes/api.php:192
+msgid "Cuba"
+msgstr "Kuba"
+
+#: modules/geo/classes/api.php:191
+msgid "Croatia/Hrvatska"
+msgstr "Kroatien"
+
+#: modules/geo/classes/admin.php:521
+msgid "Could not open downloaded database for reading: %s"
+msgstr "Die Datenbank konnte nicht gelesen werden: %s"
+
+#: modules/geo/classes/admin.php:545
+msgid "Could not open database for writing %s"
+msgstr "Datenbank konnte nicht geladen werden: %s"
+
+#: modules/geo/classes/admin.php:535
+msgid "Could not access filesystem"
+msgstr "Dateisystem nicht erreichbar"
+
+#: modules/geo/classes/api.php:190
+msgid "Cote d'Ivoire"
+msgstr "Elfenbeinküste"
+
+#: modules/geo/classes/api.php:189
+msgid "Costa Rica"
+msgstr "Costa Rica"
+
+#: modules/geo/classes/admin.php:241
+#: modules/geo/admin/views/visitor-profile.php:15
+msgid "Coordinates"
+msgstr "Koordinaten"
+
+#: modules/geo/classes/api.php:188
+msgid "Cook Islands"
+msgstr "Cookinseln"
+
+#: modules/geo/classes/api.php:187
+msgid "Congo, Republic of"
+msgstr "Republik Kongo"
+
+#: modules/geo/classes/api.php:186
+msgid "Congo, Democratic People's Republic"
+msgstr "Demokratische Republik Kongo"
+
+#: modules/geo/classes/api.php:185
+msgid "Comoros"
+msgstr "Komoren"
+
+#: modules/geo/classes/api.php:184
+msgid "Colombia"
+msgstr "Kolumbien"
+
+#: modules/geo/classes/api.php:183
+msgid "Cocos Islands"
+msgstr "Kokosinseln (Keeling)"
+
+#: modules/geo/classes/admin.php:309 modules/geo/classes/admin.php:359
+msgid "City"
+msgstr "Stadt"
+
+#: modules/geo/classes/api.php:182
+msgid "Christmas Island"
+msgstr "Weihnachtsinsel"
+
+#: modules/geo/admin/views/setting-locale.php:15
+msgid "Choose the language of the state/region or city entered. If the language is not available in the geo location database, it will check against the English version."
+msgstr "Wähle die Sprache der Angabe von Regionen oder Städten. Wenn die Angabe in der gewählten Sprache nicht in der Datenbank vorhanden ist, dann wird Englisch genutzt."
+
+#: modules/geo/classes/api.php:181
+msgid "China"
+msgstr "China"
+
+#: modules/geo/classes/api.php:180
+msgid "Chile"
+msgstr "Chile"
+
+#: modules/geo/classes/api.php:179
+msgid "Chad"
+msgstr "Tschad"
+
+#: modules/geo/classes/api.php:178
+msgid "Central African Republic"
+msgstr "Zentralafrikanische Republik"
+
+#: modules/geo/classes/api.php:177
+msgid "Cayman Islands"
+msgstr "Kaimaninseln"
+
+#: modules/geo/classes/api.php:176
+msgid "Cape Verde"
+msgstr "Kap Verde"
+
+#: modules/geo/classes/admin.php:361
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: modules/geo/classes/api.php:175
+msgid "Canada"
+msgstr "Kanada"
+
+#: modules/geo/classes/api.php:174
+msgid "Cameroon"
+msgstr "Kamerun"
+
+#: modules/geo/classes/api.php:173
+msgid "Cambodia"
+msgstr "Kambodscha"
+
+#: modules/geo/classes/admin.php:265
+msgid "by specific location"
+msgstr "bestimmte Position"
+
+#: modules/geo/classes/admin.php:269
+msgid "by radius"
+msgstr "Umkreis"
+
+#: modules/geo/classes/api.php:172
+msgid "Burundi"
+msgstr "Burundi"
+
+#: modules/geo/classes/api.php:171
+msgid "Burkina Faso"
+msgstr "Burkina Faso"
+
+#: modules/geo/classes/api.php:170
+msgid "Bulgaria"
+msgstr "Bulgarien"
+
+#: modules/geo/classes/api.php:169
+msgid "Brunei Darrussalam"
+msgstr "Brunei Darussalam"
+
+#: modules/geo/classes/api.php:168
+msgid "British Indian Ocean Territory"
+msgstr "Britisches Territorium im Indischen Ozean"
+
+#: modules/geo/classes/api.php:167
+msgid "Brazil"
+msgstr "Brasilien"
+
+#: modules/geo/classes/api.php:166
+msgid "Bouvet Island"
+msgstr "Bouvetinsel"
+
+#: modules/geo/classes/api.php:165
+msgid "Botswana"
+msgstr "Botswana"
+
+#: modules/geo/classes/api.php:164
+msgid "Bosnia and Herzegovina"
+msgstr "Bosnien und Herzegovina"
+
+#: modules/geo/classes/api.php:163
+msgid "Bonaire, Saint Eustatius and Saba"
+msgstr "Bonaire, Sint Eustatius und Saba"
+
+#: modules/geo/classes/api.php:162
+msgid "Bolivia"
+msgstr "Bolivien"
+
+#: modules/geo/classes/api.php:161
+msgid "Bhutan"
+msgstr "Bhutan"
+
+#: modules/geo/classes/api.php:160
+msgid "Bermuda"
+msgstr "Bermudas"
+
+#: modules/geo/classes/api.php:159
+msgid "Benin"
+msgstr "Benin"
+
+#: modules/geo/classes/api.php:158
+msgid "Belize"
+msgstr "Belize"
+
+#: modules/geo/classes/api.php:157
+msgid "Belgium"
+msgstr "Belgien"
+
+#: modules/geo/classes/api.php:156
+msgid "Belarus"
+msgstr "Weißrußland (Belarus)"
+
+#: modules/geo/classes/api.php:155
+msgid "Barbados"
+msgstr "Barbados"
+
+#: modules/geo/classes/api.php:154
+msgid "Bangladesh"
+msgstr "Bangladesch"
+
+#: modules/geo/classes/api.php:153
+msgid "Bahrain"
+msgstr "Bahrain"
+
+#: modules/geo/classes/api.php:152
+msgid "Bahamas"
+msgstr "Bahamas"
+
+#: modules/geo/classes/api.php:151
+msgid "Azerbaijan"
+msgstr "Aserbaidschan"
+
+#: modules/geo/classes/api.php:150
+msgid "Austria"
+msgstr "Österreich"
+
+#: modules/geo/classes/api.php:149
+msgid "Australia"
+msgstr "Australien"
+
+#: modules/geo/classes/api.php:133
+msgid "Asia"
+msgstr "Asien"
+
+#: modules/geo/classes/api.php:148
+msgid "Aruba"
+msgstr "Aruba"
+
+#: modules/geo/classes/api.php:147
+msgid "Armenia"
+msgstr "Armenien"
+
+#: modules/geo/classes/api.php:146
+msgid "Argentina"
+msgstr "Argentinien"
+
+#: modules/geo/classes/api.php:145
+msgid "Antigua and Barbuda"
+msgstr "Antigua und Barbuda"
+
+#: modules/geo/classes/api.php:144
+msgid "Antarctica"
+msgstr "Antarktis"
+
+#: modules/geo/classes/api.php:143
+msgid "Anguilla"
+msgstr "Anguilla"
+
+#: modules/geo/classes/api.php:142
+msgid "Angola"
+msgstr "Angola"
+
+#: modules/geo/classes/api.php:141
+msgid "Andorra"
+msgstr "Andorra"
+
+#: modules/geo/classes/api.php:140
+msgid "American Samoa"
+msgstr "Amerikanisch-Samoa"
+
+#: modules/geo/classes/api.php:139
+msgid "Algeria"
+msgstr "Algerien"
+
+#: modules/geo/classes/api.php:138
+msgid "Albania"
+msgstr "Albanien"
+
+#: modules/geo/classes/api.php:132
+msgid "Africa"
+msgstr "Afrika"
+
+#: modules/geo/classes/api.php:136
+msgid "Afghanistan"
+msgstr "Afghanistan"
+
+#: modules/geo/classes/public.php:195
+msgid "Address not found: %s"
+msgstr "Adresse nicht gefunden: %s"
+
+#: modules/group-refresh/views/settings_group_refresh.php:20
+msgid "Activate now"
+msgstr "Jetzt aktivieren"
+
+#: modules/geo/classes/admin.php:217 modules/geo/classes/public.php:180
+#: modules/geo/classes/public.php:336
+msgid "(unknown region)"
+msgstr "(unbekannte Region)"
+
+#: modules/geo/classes/admin.php:208 modules/geo/classes/public.php:174
+#: modules/geo/classes/public.php:332
+msgid "(unknown city)"
+msgstr "(Stadt unbekannt)"
+
+#: modules/geo/classes/api.php:137
+msgid "&#197;land Islands"
+msgstr "Falklandinseln (Malvinen)"
+
+#: modules/lazy-load/admin.class.php:23 modules/lazy-load/admin.class.php:56
+msgid "Lazy Loading"
+msgstr "Lazy Loading"
+
+#: views/setting-placement-positioning.php:29
+msgid "This method also works on AMP pages and causes fewer conflicts with website optimization features. However, it can cause critical issues with a few other plugins that use a similar technique (i.e., output buffering). We recommend less technical users test it carefully."
+msgstr "Diese Methode funktioniert auch auf AMP-Seiten und verursacht weniger Konflikte mit Website-Optimierungs-Features. Sie kann jedoch kritische Probleme mit einigen anderen Plugins verursachen, die eine ähnliche Technik verwenden (z.B. Output Buffering). Wir empfehlen technisch weniger versierten Nutzern, diese Methode sorgfältig zu testen."
+
+#: classes/advanced-ads-pro-admin.php:144
+msgid "Placement positioning"
+msgstr "Positionierung bestimmter Platzierungen"
+
+#. %s: Names of placement types
+#: views/setting-placement-positioning.php:13
+msgid "Choose when Advanced Ads will add the following placement types: %s"
+msgstr "Lege fest, wie Advanced Ads die folgenden Platzierungstypen einfügen soll: %s"
+
+#: views/setting-placement-positioning.php:24
+msgid "Before page load using PHP."
+msgstr "Vor dem Laden der Seite mit PHP."
+
+#: views/setting-placement-positioning.php:19
+msgid "After page load using JavaScript"
+msgstr "Nach dem Laden der Seite mit JavaScript"
+
+#: modules/advanced-display-conditions/main.class.php:109
 msgid "post content"
 msgstr "Beitragsinhalt"
 
-#: modules/advanced-display-conditions/main.class.php:109
+#: modules/advanced-display-conditions/main.class.php:110
 msgid "Display ads based on words and phrases within the post or page content. Dynamically added text might not be considered."
 msgstr "Anzeigen auf der Grundlage von Wörtern und Phrasen im Inhalt des Beitrags oder der Seite einblenden. Dynamisch hinzugefügter Text wird möglicherweise nicht berücksichtigt."
 
@@ -32,24 +1444,24 @@ msgid "Choose Achievement Type"
 msgstr "Leistungstyp auswählen"
 
 #: modules/gamipress/admin.class.php:34
-msgid "Display ads based on GamiPress user achievement"
-msgstr "Anzeigen basierend auf GamiPress-Leistung eines Nutzers anzeigen"
+msgid "Display ads based on GamiPress user achievements."
+msgstr "Anzeigen basierend auf den GamiPress-Leistungen eines Nutzers einblenden."
 
 #: modules/gamipress/admin.class.php:33
 msgid "GamiPress Achievement"
 msgstr "GamiPress Leistung"
 
 #: modules/gamipress/admin.class.php:28
-msgid "Display ads based on GamiPress user rank"
-msgstr "Anzeigen basierend auf der Anzahl der GamiPress-Punkte eines Nutzers anzeigen"
+msgid "Display ads based on GamiPress user ranks."
+msgstr "Anzeigen basierend auf dem GamiPress-Rang eines Nutzers einblenden."
 
 #: modules/gamipress/admin.class.php:27
 msgid "GamiPress Rank"
 msgstr "GamiPress Rang"
 
 #: modules/gamipress/admin.class.php:22
-msgid "Display ads based on GamiPress user points"
-msgstr "Anzeigen basierend auf der Anzahl der GamiPress Punkte eines Nutzers anzeigen"
+msgid "Display ads based on GamiPress user points."
+msgstr "Anzeigen basierend auf der Anzahl der GamiPress-Punkte eines Nutzers einblenden"
 
 #: modules/gamipress/admin.class.php:21
 msgid "GamiPress Points"
@@ -76,7 +1488,7 @@ msgstr "Weitere Details findest du in den %1$sAdvanced Ads Cookie-Informationen%
 msgid "Depending on the setup, Advanced Ads Pro and other add-ons use cookies to control which user sees which ad. They also help to reduce expensive server requests."
 msgstr "Je nach Einstellung verwenden Advanced Ads Pro und andere Advanced Ads Add-ons Cookies, um zu steuern, welche Benutzer welche Anzeige sehen. Sie helfen auch dabei, teure Serveranfragen zu reduzieren."
 
-#: classes/advanced-ads-pro-admin.php:522
+#: classes/advanced-ads-pro-admin.php:551
 msgid "Select a Sidebar placement to enable cache-busting."
 msgstr "Verwende hier eine Sidebar-Platzierung, um Cache-Busting zu aktivieren. "
 
@@ -84,7 +1496,7 @@ msgstr "Verwende hier eine Sidebar-Platzierung, um Cache-Busting zu aktivieren. 
 msgid "member timeline"
 msgstr "Mitglieder-Timeline"
 
-#: classes/advanced-ads-pro-admin.php:524
+#: classes/advanced-ads-pro-admin.php:553
 msgid "Learn more"
 msgstr "Erfahre mehr"
 
@@ -92,8 +1504,7 @@ msgstr "Erfahre mehr"
 msgid "group feed"
 msgstr "Gruppen-Feed"
 
-#: modules/buddypress/buddypress.class.php:222
-#: modules/buddypress/buddypress.class.php:223
+#: modules/buddypress/buddypress.class.php:303
 msgid "BuddyBoss group"
 msgstr "BuddyBoss-Gruppe"
 
@@ -105,32 +1516,23 @@ msgstr "alle"
 msgid "activity stream"
 msgstr "Activity Stream"
 
-#: modules/cache-busting/admin-ui.class.php:46
-msgctxt "setting label"
-msgid "AJAX"
-msgstr "AJAX"
-
-#: modules/cache-busting/views/settings.php:35
-msgid "Force passive cache-busting"
+#: modules/cache-busting/views/settings.php:38
+msgid "Force passive cache busting"
 msgstr "Passives Cache-Busting erzwingen"
 
-#: modules/cache-busting/views/settings.php:45
+#: modules/cache-busting/views/settings.php:48
 msgid "Fallback option"
 msgstr "Alternative Methode"
 
-#: modules/cache-busting/views/settings.php:14
+#: modules/cache-busting/views/settings.php:17
 msgid "Default option"
 msgstr "Standardmethode"
 
-#: modules/cache-busting/views/settings.php:15
-msgid "Choose which method to use when cache-busting for a placement is set to “auto”."
-msgstr "Diese Methode wird verwendet, wenn Cache-Busting für Platzierungen auf “auto” steht."
+#: modules/buddypress/buddypress.class.php:114
+msgid "Display ads based on BuddyBoss profile fields."
+msgstr "Anzeigen anhand von BuddyBoss-Profilfeldern einblenden."
 
-#: modules/buddypress/buddypress.class.php:110
-msgid "Display ads based on BuddyBoss profile fields"
-msgstr "Zeigt Anzeigen in Abhängigkeit von BuddyBoss Profilfeldern an."
-
-#: modules/buddypress/buddypress.class.php:109
+#: modules/buddypress/buddypress.class.php:113
 msgid "BuddyBoss profile field"
 msgstr "BuddyBoss Profilfeld"
 
@@ -138,25 +1540,21 @@ msgstr "BuddyBoss Profilfeld"
 msgid "Stream"
 msgstr "Stream"
 
-#: modules/buddypress/admin.class.php:40
+#: modules/buddypress/admin.class.php:37
 msgid "Display ads on BuddyBoss related pages."
 msgstr "Anzeigen auf BuddyBoss-bezogenen Seiten anzeigen."
 
-#: modules/buddypress/admin.class.php:39
+#: modules/buddypress/admin.class.php:36
 msgid "BuddyBoss Content"
 msgstr "BuddyBoss-Inhalt"
 
-#: modules/cache-busting/views/settings.php:39
-msgid "By default, cache-busting only works through placements."
+#: modules/cache-busting/views/settings.php:42
+msgid "By default, cache busting only works through placements."
 msgstr "Cache-Busting funktioniert standardmäßig nur für Platzierungen."
 
-#: modules/cache-busting/views/settings.php:90
+#: modules/cache-busting/views/settings.php:77
 msgid "Update visitor profile"
 msgstr "Besucherprofil aktualisieren"
-
-#: modules/advanced-visitor-conditions/main.class.php:418
-msgid "Set the operator to “match/does not match” and leave the value empty to check only the existence of the cookie."
-msgstr "Wähle \"entspricht/entspricht nicht\" und lasse den Wert leer wenn du nur testen willst ob der Cookie existiert."
 
 #: modules/ad-server/views/placement-usage.php:10
 msgid "Direct URL"
@@ -186,37 +1584,42 @@ msgstr "Mehrere Einträge mit Komma trennen."
 msgid "Top level domains on which the ads will be loaded."
 msgstr "Top-Level-Domains auf welchen die Anzeigen geladen werden."
 
-#: modules/cache-busting/views/settings.php:11
 #: modules/ad-server/views/module-settings.php:13
+#: modules/ads-for-adblockers/views/settings.php:7
+#: modules/advanced-visitor-conditions/views/settings.php:6
+#: modules/cache-busting/views/settings.php:12
+#: modules/click-fraud-protection/views/settings.php:10
+#: modules/lazy-load/views/settings.php:8
+#: modules/rest-api/views/module-enable.php:12
 msgid "Activate module."
 msgstr "Modul aktivieren"
 
-#: modules/ad-server/admin.class.php:133
+#: modules/ad-server/admin.class.php:129
 msgid "Usage"
 msgstr "Nutzung"
 
-#: modules/ad-server/admin.class.php:119
+#: modules/ad-server/admin.class.php:115
 msgid "Public string"
 msgstr "Öffentlicher Name"
 
-#: modules/ad-server/admin.class.php:73
+#: modules/ad-server/admin.class.php:69
 msgid "Display ads on external websites."
 msgstr "Anzeigen auf externen Webseiten einbinden."
 
-#: modules/ad-server/admin.class.php:43 modules/ad-server/admin.class.php:72
+#: modules/ad-server/admin.class.php:39 modules/ad-server/admin.class.php:68
 msgid "Ad Server"
 msgstr "Anzeigenserver"
 
 #. %1$s is the opening link tag, %2$s is closing link tag.
-#: classes/advanced-ads-pro-admin.php:443
+#: classes/advanced-ads-pro-admin.php:472
 msgid "This feature is deprecated. Please find the removal schedule %1$shere%2$s"
 msgstr "Diese Funktion ist veraltet. Weitere Informationen zur Entfernung findest du %1$shier%2$s."
 
-#: modules/advanced-visitor-conditions/main.class.php:146
-msgid "Display ads based on the user’s capabilities."
-msgstr "Zeige Anzeigen basierend auf den Berechtigungen (Capabilities) des jeweiligen Nutzers."
+#: modules/advanced-visitor-conditions/main.class.php:148
+msgid " Display ads based on the user’s capabilities."
+msgstr "Anzeigen anhand von Nutzerberechtigungen einblenden."
 
-#: modules/advanced-visitor-conditions/main.class.php:138
+#: modules/advanced-visitor-conditions/main.class.php:139
 msgid "Display ads based on the user agent."
 msgstr "Zeige Anzeigen basierend auf dem User Agent."
 
@@ -236,7 +1639,7 @@ msgstr "Die Mindestanzahl an Wörtern zwischen automatisch injizierten Anzeigen.
 msgid "Advanced Ads GmbH"
 msgstr "Advanced Ads GmbH"
 
-#: modules/duplicate-ads/admin.class.php:139
+#: modules/duplicate-ads/admin.class.php:134
 msgctxt "noun"
 msgid "copy"
 msgstr "Kopie"
@@ -245,11 +1648,11 @@ msgstr "Kopie"
 msgid "Minimum length of content (in words) before automatically injected ads are allowed in them. Set to zero or leave empty to always display ads, regardless of how long the content is."
 msgstr "Mindestlänge des Inhalts in Wörtern um Anzeigen automatisch zu injizieren. Null oder kein Wert führen dazu, dass Anzeigen unabhängig von der Länge injiziert werden."
 
-#: modules/duplicate-ads/admin.class.php:86
+#: modules/duplicate-ads/admin.class.php:81
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: modules/duplicate-ads/admin.class.php:86
+#: modules/duplicate-ads/admin.class.php:81
 msgid "Create a copy of this ad"
 msgstr "Kopie der Anzeige erstellen"
 
@@ -257,24 +1660,19 @@ msgstr "Kopie der Anzeige erstellen"
 msgid "Disable automatic ad injection into the content"
 msgstr "Automatisches Einfügen von Anzeigen in den Inhalt deaktivieren"
 
-#: modules/cache-busting/views/settings.php:102
+#: modules/cache-busting/views/settings.php:89
 msgid "Update visitor profile when user logs in or out"
 msgstr "Besucherprofile aktualisieren, wenn sich Besucher ein- oder ausloggen"
 
-#: modules/cache-busting/views/settings.php:92
+#: modules/cache-busting/views/settings.php:79
 msgid "You might need to update the page cache if you are using one."
 msgstr "Falls du Caching verwendest, musst du eventuell den Cache deiner Webseite aktualisieren."
 
-#. $1%s is an opening a tag; $2%s is the closing one
-#: modules/cache-busting/views/settings.php:77
-msgid "Learn more about this %1$shere%2$s."
-msgstr "Lerne %1$shier%2$s mehr darüber."
+#: modules/cache-busting/views/settings.php:73
+msgid "Advanced Ads stores some user information in the user’s browser to limit the number of AJAX requests for cache busting. Manual"
+msgstr "Advanced Ads speichert einige Informationen im Browser des Nutzers, um beim Cache-Busting die Anzahl der AJAX-Aufrufe zu reduzieren. Anleitung"
 
 #: modules/cache-busting/views/settings.php:70
-msgid "Advanced Ads stores some user information in the user’s browser to limit the number of AJAX requests for cache-busting."
-msgstr "Advanced Ads speichert einige Nutzerinformationen im Browser, um beim Cache-Busting die Anzahl der AJAX-Aufrufe zu reduzieren. "
-
-#: modules/cache-busting/views/settings.php:67
 msgid "Visitor profile"
 msgstr "Besucherprofil"
 
@@ -282,23 +1680,23 @@ msgstr "Besucherprofil"
 msgid "Display ads based on the current URL parameters (everything following %s), except values following #."
 msgstr "Zeigt Anzeigen basierend auf den Parametern der jeweiligen URL (alles, was nach %s folgt), abgesehen von denjenigen, die einem # folgen. "
 
-#: classes/advanced-ads-pro-admin.php:144
+#: classes/advanced-ads-pro-admin.php:152
 msgid "Disable ads for post types"
 msgstr "Anzeigen in bestimmten Beitragstypen deaktivieren"
 
-#: modules/cache-busting/views/settings.php:94
-msgid "An error occured"
+#: modules/cache-busting/views/settings.php:81
+msgid "An error occurred"
 msgstr "Es ist ein Fehler aufgetreten"
 
-#: modules/cache-busting/views/settings.php:91
+#: modules/cache-busting/views/settings.php:78
 msgid "Updated"
 msgstr "Aktualisiert"
 
-#: modules/advanced-visitor-conditions/main.class.php:153
+#: modules/advanced-visitor-conditions/main.class.php:159
 msgid "Display ads based on the user’s roles. See <a href=\"%s\" target=\"_blank\">List of roles in WordPress</a>."
 msgstr "Zeige Anzeigen basierend auf der Rolle des jeweiligen Nutzers. Finde hier eine <a href=\"%s\" target=\"_blank\">Liste aller Nutzerollen in WordPress</a>."
 
-#: modules/advanced-visitor-conditions/main.class.php:152
+#: modules/advanced-visitor-conditions/main.class.php:158
 msgid "user role"
 msgstr "Nutzerrolle"
 
@@ -311,7 +1709,7 @@ msgstr "Advanced Ads Pro deaktiviert standardmäßig die Bearbeitung von Anzeige
 msgid "Allow optimizers to modify ad codes"
 msgstr "Optimierungswerkzeugen die Bearbeitung von Anzeigencodes erlauben"
 
-#: modules/lazy-load/views/settings.php:13
+#: modules/lazy-load/views/settings.php:15
 msgid "Start loading the ads %s pixels before they are visible on the screen."
 msgstr "Beginne mit dem Laden der Anzeigen %s Pixel bevor sie auf dem Bildschirm sichtbar werden."
 
@@ -328,15 +1726,15 @@ msgid "Full width"
 msgstr "Gesamte Breite"
 
 #. "profile fields" relates to BuddyPress profile fields
-#: modules/buddypress/views/xprofile-condition.php:42
+#: modules/buddypress/views/xprofile-condition.php:53
 msgid "No profile fields found"
 msgstr "Keine Profilfelder gefunden"
 
-#: modules/buddypress/buddypress.class.php:97
-msgid "Display ads based on BuddyPress profile fields"
-msgstr "Zeigt Anzeigen in Abhängigkeit von BuddyPress Profilfeldern an."
+#: modules/buddypress/buddypress.class.php:101
+msgid "Display ads based on BuddyPress profile fields."
+msgstr "Anzeigen anhand von BuddyPress-Profilfeldern einblenden."
 
-#: modules/buddypress/buddypress.class.php:96
+#: modules/buddypress/buddypress.class.php:100
 msgid "BuddyPress profile field"
 msgstr "BuddyPress Profilfeld"
 
@@ -366,7 +1764,7 @@ msgstr "https://wpadvancedads.com/add-ons/advanced-ads-pro/"
 
 #. Description of the plugin
 msgid "Advanced features to boost your ad revenue."
-msgstr "Fortgeschrittene Funktionen für die Optimierung von Einnahmen von Anzeigenwerbung."
+msgstr "Erweiterte Features für die Optimierung von Anzeigenwerbung, um deine Einnahmen zu erhöhen."
 
 #. Name of the plugin
 msgid "Advanced Ads Pro"
@@ -454,10 +1852,6 @@ msgstr "Autor"
 msgid "Placement tests"
 msgstr "Platzierungs-Tests"
 
-#: modules/lazy-load/views/settings.php:7
-msgid "Activate <em>lazy load</em> module."
-msgstr "<em>Lazy Load</em> für Anzeigen aktivieren."
-
 #: modules/lazy-load/views/setting_lazy_load.php:6
 #: modules/lazy-load/views/setting_lazy_load.php:8
 msgid "disabled"
@@ -468,19 +1862,19 @@ msgstr "deaktiviert"
 msgid "enabled"
 msgstr "aktiviert"
 
-#: modules/group-refresh/views/settings_group_refresh.php:9
+#: modules/group-refresh/views/settings_group_refresh.php:26
 msgid "Please use a placement to deliver this group using cache-busting."
 msgstr "Bitte verwende eine Platzierung, damit das Cache-Busting für diese Gruppe angewendet wird."
 
-#: modules/group-refresh/views/settings_group_refresh.php:6
+#: modules/group-refresh/views/settings_group_refresh.php:18
 msgid "Refresh ads on the same spot. Works when cache-busting is used."
 msgstr "Anzeigen automatisch neu laden. Funktioniert nur mit aktiviertem Cache-Busting."
 
-#: modules/group-refresh/views/settings_group_refresh.php:4
+#: modules/group-refresh/views/settings_group_refresh.php:15
 msgid "milliseconds"
 msgstr "Millisekunden"
 
-#: modules/group-refresh/views/settings_group_refresh.php:2
+#: modules/group-refresh/views/settings_group_refresh.php:13
 msgid "Enabled"
 msgstr "Aktiviert"
 
@@ -504,84 +1898,86 @@ msgstr "Zeit, innerhalb der das Klicklimit erreicht werden kann (in Stunden)."
 msgid "Allowed clicks on a single ad before it is removed"
 msgstr "Erlaubte Klicks auf eine Anzeige, bis diese für den Nutzer entfernt wird."
 
-#: modules/advanced-visitor-conditions/main.class.php:138
-#: modules/advanced-visitor-conditions/main.class.php:146
-#: modules/ad-server/views/module-settings.php:14
-#: modules/click-fraud-protection/views/settings.php:11
+#: modules/advanced-display-conditions/main.class.php:499
+#: modules/advanced-visitor-conditions/main.class.php:293
+#: modules/advanced-visitor-conditions/main.class.php:384
+#: modules/advanced-visitor-conditions/main.class.php:441
+#: modules/advanced-visitor-conditions/main.class.php:478
+#: modules/buddypress/buddypress.class.php:352
+#: modules/click-fraud-protection/click-fraud-protection.class.php:133
+#: modules/click-fraud-protection/click-fraud-protection.class.php:141
+#: modules/paid-memberships-pro/main.class.php:134
+#: modules/paid-memberships-pro/main.class.php:253
+#: modules/ad-server/views/module-settings.php:15
+#: modules/ads-for-adblockers/views/settings.php:9
+#: modules/advanced-display-conditions/views/metabox-string.php:12
+#: modules/cache-busting/views/settings.php:14
+#: modules/click-fraud-protection/views/settings.php:12
+#: modules/gamipress/views/visitor-condition-achievement.php:34
+#: modules/gamipress/views/visitor-condition-points.php:41
+#: modules/gamipress/views/visitor-condition-rank.php:41
+#: modules/geo/classes/admin.php:369
+#: modules/group-refresh/views/settings_group_refresh.php:22
+#: modules/lazy-load/views/settings.php:10
+#: modules/parallax-ads/views/placement-options-after.php:24
+#: modules/rest-api/views/module-enable.php:15
+#: modules/geo/admin/views/setting-maxmind-license-key.php:10
 msgid "Manual"
 msgstr "Anleitung"
-
-#: modules/click-fraud-protection/views/settings.php:10
-msgid "Activate <em>click fraud protection</em> module"
-msgstr "<em>Schutz vor Klickbetrug</em> aktivieren."
 
 #: modules/cache-busting/views/settings_check_ad.php:3
 msgid "The code of this ad might not work properly with activated cache-busting. <a href=\"%s\" target=\"_blank\">Manual</a>"
 msgstr "Der Code dieser Anzeige könnte Probleme mit dem Cache-Busting haben. <a href=\"%s\" target=\"_blank\">Mehr Infos</a>"
 
-#: modules/cache-busting/views/settings.php:41
-msgid "Enable passive cache-busting for all ads and groups which are not delivered through a placement, if possible."
+#: modules/cache-busting/views/settings.php:44
+msgid "Enable passive cache busting for all ads and groups which are not delivered through a placement, if possible."
 msgstr "Soweit möglich, passives Cache-Busting für alle Anzeigen und Gruppen aktivieren, die nicht durch Platzierungen ausgeliefert werden."
 
-#: modules/cache-busting/views/settings.php:59
-msgid "No cache-busting"
-msgstr "kein Cache-Busting"
-
-#: modules/cache-busting/views/settings.php:52
-msgid "Use AJAX"
-msgstr "AJAX"
-
-#: modules/cache-busting/views/settings.php:46
-msgid "Choose the fallback if “passive“ cache-busting is not possible."
+#: modules/cache-busting/views/settings.php:49
+msgid "Choose the fallback if “passive“ cache busting is not possible."
 msgstr "Welche Methode soll genutzt werden, wenn passives Cache-Busting nicht verfügbar ist?"
 
-#: modules/cache-busting/views/settings.php:28
+#: modules/cache-busting/admin-ui.class.php:58
+#: modules/cache-busting/views/settings.php:31
+#: modules/cache-busting/views/settings.php:55
 msgid "AJAX"
 msgstr "AJAX"
 
-#: modules/advanced-visitor-conditions/views/settings.php:6
-msgid "Activate <em>advanced visitor conditions</em> module."
-msgstr "<em>Erweiterte Besucherbedingungen</em> aktivieren."
-
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:15
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:15
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:15
 msgid "url of the referrer"
 msgstr "URL des Referrers"
 
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:5
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:5
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:5
 msgid "URL"
 msgstr "URL"
 
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:3
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:3
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:3
 msgid "Display ad depending on the external url the user comes from."
 msgstr "Anzeige basierend auf der URL anzeigen, von welcher der Nutzer kommt."
 
-#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:1
 #: modules/advanced-display-conditions/views/referrer-url-metabox.php:1
+#: modules/advanced-visitor-conditions/views/referrer-url-metabox.php:1
 msgid "Display by referrer url"
 msgstr "Entsprechend der Referrer-URL anzeigen"
-
-#: modules/ads-for-adblockers/views/settings.php:6
-msgid "Activate <em>ads for ad blockers</em> module."
-msgstr "<em>Anzeigen für Ad-Blocker</em> aktivieren."
 
 #: modules/ads-for-adblockers/views/placement-item.php:21
 #: modules/lazy-load/views/setting_lazy_load.php:11
 msgid "Works only with cache-busting enabled"
 msgstr "Funktioniert nur, wenn passives Cache-Busting aktiviert ist."
 
-#: modules/weekdays/weekdays.class.php:146
+#: modules/weekdays/weekdays.class.php:149
 msgid "Never shows up"
 msgstr "Wird nie angezeigt"
 
-#: modules/weekdays/weekdays.class.php:144
+#: modules/weekdays/weekdays.class.php:147
 msgid "Shows up on: %s"
 msgstr "Angezeigt am %s"
 
-#: modules/weekdays/weekdays.class.php:82
-#: modules/weekdays/weekdays.class.php:97
+#: modules/weekdays/weekdays.class.php:85
+#: modules/weekdays/weekdays.class.php:100
 msgid "specific days"
 msgstr "bestimmte Tage"
 
@@ -611,72 +2007,64 @@ msgstr "Abgelaufene Platzierungs-Tests"
 msgid "Save New Test"
 msgstr "Neuen Test speichern"
 
-#: modules/paid-memberships-pro/main.class.php:147
+#: modules/paid-memberships-pro/main.class.php:151
 msgid "Display ads only to users with a specific membership level set with PaidMembershipsPro."
 msgstr "Anzeigen nur für Nutzer einblenden, die eine bestimmte Mitgliederrolle bei PaidMembershipsPro haben."
 
-#: modules/paid-memberships-pro/main.class.php:146
+#: modules/paid-memberships-pro/main.class.php:150
 msgid "PMP user level"
 msgstr "PMP Mitgliedsrollen"
 
-#: modules/paid-memberships-pro/main.class.php:128
-#: modules/paid-memberships-pro/main.class.php:243
+#: modules/paid-memberships-pro/main.class.php:127
+#: modules/paid-memberships-pro/main.class.php:246
 msgid "No membership levels set up yet."
 msgstr "Noch keine Mitgliedsrollen vorhanden."
 
 #: modules/paid-memberships-pro/main.class.php:30
-msgid "Display ads only on pages that need a specific membership level set with PaidMembershipsPro."
-msgstr "Anzeigen nur auf Seiten einblenden, die eine bestimmte Mitgliedrolle bei PaidMembershipsPro erfordern."
+msgid "Display ads only on pages that require a specific membership level set of PaidMembershipsPro."
+msgstr "Anzeigen nur auf Seiten einblenden, die eine bestimmte Mitgliedsrolle von Paid Memberships Pro vorrausetzen."
 
 #: modules/paid-memberships-pro/main.class.php:29
 msgid "PMP page level"
 msgstr "PMP Seitenebene"
 
-#: modules/lazy-load/admin.class.php:56
-msgid "lazy load"
-msgstr "Lazy Load"
-
-#: modules/lazy-load/admin.class.php:23
-msgid "Lazy Load"
-msgstr "Lazy Load"
-
-#: modules/inject-content/inject-content.class.php:87
+#: modules/inject-content/inject-content.class.php:100
 msgid "Display the ad between posts on post lists, e.g. home, archives, search etc."
 msgstr "Anzeige in Artikel-Listen einfügen, z.B. Startseite, Archive, Suche, etc."
 
-#: modules/inject-content/inject-content.class.php:86
+#: modules/inject-content/inject-content.class.php:99
 msgid "Post Lists"
 msgstr "Artikel-Liste"
 
-#: modules/inject-content/inject-content.class.php:79
+#: modules/inject-content/inject-content.class.php:89
 msgid "Attach the ad to any element in the frontend."
 msgstr "Anzeige an einer frei gewählten Position einfügen."
 
-#: modules/inject-content/inject-content.class.php:78
+#: modules/inject-content/inject-content.class.php:88
 msgid "Custom Position"
 msgstr "Eigene Position"
 
-#: modules/inject-content/inject-content.class.php:71
+#: modules/inject-content/inject-content.class.php:81
 msgid "In the middle of the main content based on the number of paragraphs."
 msgstr "In der Mitte des Hauptinhaltes. Ausgehend von der Anzahl der Paragraphen."
 
-#: modules/inject-content/inject-content.class.php:70
+#: modules/inject-content/inject-content.class.php:80
 msgid "Content Middle"
 msgstr "Textmitte"
 
-#: modules/inject-content/inject-content.class.php:63
+#: modules/inject-content/inject-content.class.php:69
 msgid "Above the main headline on the page (&lt;h1&gt;)."
 msgstr "Über der Hauptüberschrift auf der Seite (&lt;h1&gt;)."
 
-#: modules/inject-content/inject-content.class.php:62
+#: modules/inject-content/inject-content.class.php:68
 msgid "Above Headline"
 msgstr "Über der Überschrift"
 
-#: modules/inject-content/inject-content.class.php:55
+#: modules/inject-content/inject-content.class.php:61
 msgid "After a random paragraph in the main content."
 msgstr "Nach einem zufälligen Paragraphen im Hauptinhalt."
 
-#: modules/inject-content/inject-content.class.php:54
+#: modules/inject-content/inject-content.class.php:60
 msgid "Random Paragraph"
 msgstr "Zufälliger Absatz"
 
@@ -761,11 +2149,11 @@ msgstr "über"
 msgid "Refresh interval"
 msgstr "Aktualisierungs-Intervall"
 
-#: modules/grids/grids.class.php:29
+#: modules/grids/grids.class.php:32
 msgid "Display multiple ads in a grid"
 msgstr "Mehrere Anzeigen im Raster anordnen."
 
-#: modules/grids/grids.class.php:28
+#: modules/grids/grids.class.php:31
 msgid "Grid"
 msgstr "Raster"
 
@@ -789,21 +2177,21 @@ msgstr "Innenabstand"
 msgid "Size"
 msgstr "Größe"
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:276
+#: modules/click-fraud-protection/click-fraud-protection.class.php:301
 msgid "Click Fraud Protection enabled"
 msgstr "Schutz vor Klick-Betrug aktivieren"
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:124
+#: modules/click-fraud-protection/click-fraud-protection.class.php:128
 msgid "hours"
 msgstr "Stunden"
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:122
+#: modules/click-fraud-protection/click-fraud-protection.class.php:126
 msgid "within"
 msgstr "innerhalb von"
 
 #: modules/click-fraud-protection/click-fraud-protection.class.php:96
-msgid "Display ad only if a click limit has not been reached"
-msgstr "Die Anzeige nur einblenden, wenn der Nutzer das Klicklimit noch nicht erreicht hat."
+msgid "Display ad only if a click limit has not been reached."
+msgstr "Anzeige nur einblenden, wenn ein bestimmtes Klicklimit noch nicht erreicht wurde."
 
 #: modules/click-fraud-protection/click-fraud-protection.class.php:95
 msgid "max. ad clicks"
@@ -813,29 +2201,29 @@ msgstr "max. Anzeigenklicks"
 msgid "Click Fraud Protection"
 msgstr "Schutz vor Klickbetrug"
 
-#: modules/cache-busting/cache-busting.class.php:1658
+#: modules/cache-busting/cache-busting.class.php:1688
 msgctxt "placement admin label"
 msgid "Cache-busting:"
 msgstr "Cache-Busting:"
 
-#: modules/cache-busting/cache-busting.class.php:1652
+#: modules/cache-busting/cache-busting.class.php:1682
 msgid "The ad is not displayed on the page"
 msgstr "Die Anzeige wird nicht auf der Seite angezeigt."
 
-#: modules/cache-busting/cache-busting.class.php:1651
+#: modules/cache-busting/cache-busting.class.php:1681
 msgid "The ad is displayed on the page"
 msgstr "Die Anzeige wird auf der Seite angezeigt."
 
-#: modules/cache-busting/cache-busting.class.php:1648
-#: modules/cache-busting/views/settings.php:21
+#: modules/cache-busting/cache-busting.class.php:1678
+#: modules/cache-busting/views/settings.php:24
 msgid "passive"
 msgstr "passiv"
 
-#: modules/cache-busting/cache-busting.class.php:1642
+#: modules/cache-busting/cache-busting.class.php:1672
 msgid "The ad can work with passive cache-busting"
 msgstr "Die Anzeige funktioniert mit passivem Cache-Busting."
 
-#: modules/cache-busting/cache-busting.class.php:1640
+#: modules/cache-busting/cache-busting.class.php:1670
 msgid "The ad can not work with passive cache-busting"
 msgstr "Die Anzeige funktioniert nicht mit passivem Cache-Busting"
 
@@ -843,40 +2231,34 @@ msgstr "Die Anzeige funktioniert nicht mit passivem Cache-Busting"
 msgid "Cache Busting"
 msgstr "Cache-Busting"
 
-#: modules/cache-busting/admin-ui.class.php:120
+#: modules/cache-busting/admin-ui.class.php:131
 msgid "The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not passive cache-busting."
 msgstr "Der <em>Anzeigengruppe-Typ</em> kann nur AJAX oder kein Cache-Busting verwenden, jedoch kein passives Cache-Busting."
 
-#: modules/cache-busting/admin-ui.class.php:67
+#: modules/cache-busting/admin-ui.class.php:78
 msgctxt "placement admin label"
 msgid "Cache-busting"
 msgstr "Cache-Busting"
 
-#: modules/cache-busting/admin-ui.class.php:48
-msgctxt "setting label"
-msgid "auto"
-msgstr "auto"
-
-#: modules/cache-busting/admin-ui.class.php:47
-#: modules/cache-busting/cache-busting.class.php:1655
+#: modules/cache-busting/cache-busting.class.php:1685
 msgctxt "setting label"
 msgid "off"
 msgstr "aus"
 
-#: modules/cache-busting/cache-busting.class.php:1646
+#: modules/cache-busting/cache-busting.class.php:1676
 msgctxt "setting label"
 msgid "ajax"
 msgstr "AJAX"
 
-#: modules/buddypress/admin.class.php:105
+#: modules/buddypress/admin.class.php:102
 msgid "Member List"
 msgstr "Mitglieder-Liste"
 
-#: modules/buddypress/admin.class.php:102
+#: modules/buddypress/admin.class.php:99
 msgid "Group List"
 msgstr "Gruppen-Liste"
 
-#: modules/buddypress/admin.class.php:86 modules/buddypress/admin.class.php:94
+#: modules/buddypress/admin.class.php:83 modules/buddypress/admin.class.php:91
 msgid "Activity Entry"
 msgstr "Activity-Eintrag"
 
@@ -885,146 +2267,138 @@ msgstr "Activity-Eintrag"
 msgid "Inject after %s. entry"
 msgstr "Einfügen nach dem %s. Element"
 
-#: modules/buddypress/admin.class.php:50
+#: modules/buddypress/admin.class.php:47
 msgid "Display ads on BuddyPress related pages."
 msgstr "Anzeigen auf BuddyPress-bezogenen Seiten anzeigen."
 
-#: modules/buddypress/admin.class.php:49
+#: modules/buddypress/admin.class.php:46
 msgid "BuddyPress Content"
 msgstr "BuddyPress-Inhalt"
 
-#: modules/bbpress/admin.class.php:90
+#: modules/bbpress/admin.class.php:88
 msgid "forums page"
 msgstr "Foren-Seite"
 
-#: modules/bbpress/admin.class.php:86
+#: modules/bbpress/admin.class.php:84
 msgid "single forum page"
 msgstr "Einzelseite im Forum"
 
-#: modules/bbpress/admin.class.php:82 modules/bbpress/admin.class.php:99
+#: modules/bbpress/admin.class.php:80 modules/bbpress/admin.class.php:97
 msgid "forum topic page"
 msgstr "Foren-Themen-Seite"
 
-#: modules/bbpress/admin.class.php:76
+#: modules/bbpress/admin.class.php:74
 msgid "Inject at %s. post"
 msgstr "Beim %s. Beitrag einfügen."
 
+#: modules/bbpress/admin.class.php:42 modules/bbpress/admin.class.php:58
 #: modules/inject-content/admin.class.php:78
-#: modules/inject-content/admin.class.php:93 modules/bbpress/admin.class.php:44
-#: modules/bbpress/admin.class.php:60
+#: modules/inject-content/admin.class.php:93
 #: modules/buddypress/views/position-option.php:13
 msgid "position"
 msgstr "Position"
 
-#: modules/bbpress/admin.class.php:33
+#: modules/bbpress/admin.class.php:31
 msgid "Display ads in bbPress replies."
 msgstr "Anzeigen auf bbPress \"replies\"-Seiten anzeigen."
 
-#: modules/bbpress/admin.class.php:32
+#: modules/bbpress/admin.class.php:30
 msgid "bbPress Reply Content"
 msgstr "bbPress Nachrichten"
 
-#: modules/bbpress/admin.class.php:27
+#: modules/bbpress/admin.class.php:25
 msgid "Display ads on bbPress related pages."
 msgstr "Anzeigen auf bbPress \"related pages\" anzeigen."
 
-#: modules/bbpress/admin.class.php:26
+#: modules/bbpress/admin.class.php:24
 msgid "bbPress Static Content"
 msgstr "bbPress statische Seiten"
 
-#: modules/background-ads/admin.class.php:40
+#: modules/background-ads/admin.class.php:51
 msgid "background"
 msgstr "Hintergrund"
 
-#: modules/background-ads/admin.class.php:36
+#: modules/background-ads/admin.class.php:47
 msgid "Select a background color in case the background image is not high enough to cover the whole screen."
 msgstr "Wähle eine Hintergrundfarbe die angezeigt wird, wenn das Hintergrundbild nicht hoch genug ist."
 
-#: modules/background-ads/admin.class.php:25
+#: modules/background-ads/admin.class.php:32
 msgid "Background of the website behind the main wrapper."
 msgstr "Hintergrund der Webseite"
 
-#: modules/background-ads/admin.class.php:24
+#: modules/background-ads/admin.class.php:31
 msgid "Background Ad"
 msgstr "Hintergrund-Anzeigen"
 
-#: modules/advanced-visitor-conditions/main.class.php:448
+#: modules/advanced-visitor-conditions/main.class.php:474
 msgid "within %s seconds"
 msgstr "Innerhalb von %s Sekunden"
 
-#: modules/advanced-visitor-conditions/main.class.php:405
+#: modules/advanced-visitor-conditions/main.class.php:425
 msgid "Cookie Value"
 msgstr "Cookie-Wert"
 
-#: modules/advanced-visitor-conditions/main.class.php:404
+#: modules/advanced-visitor-conditions/main.class.php:424
 msgid "Cookie Name"
 msgstr "Cookie-Name"
 
-#: modules/advanced-visitor-conditions/main.class.php:277
-#: modules/advanced-visitor-conditions/main.class.php:317
-#: modules/advanced-visitor-conditions/main.class.php:360
+#: modules/advanced-visitor-conditions/main.class.php:285
+#: modules/advanced-visitor-conditions/main.class.php:331
+#: modules/advanced-visitor-conditions/main.class.php:374
 msgid "-- choose one --"
 msgstr "-- auswählen --"
 
-#: modules/advanced-visitor-conditions/main.class.php:274
+#: modules/advanced-visitor-conditions/main.class.php:282
 msgid "can not"
 msgstr "kann nicht"
 
-#: modules/advanced-visitor-conditions/main.class.php:273
+#: modules/advanced-visitor-conditions/main.class.php:281
 msgid "can"
 msgstr "kann"
 
-#: modules/advanced-visitor-conditions/main.class.php:193
-msgid "Display ads to new or returning visitors only."
-msgstr "Anzeige nur für neue oder wiederkehrende Besucher anzeigen."
-
-#: modules/advanced-visitor-conditions/main.class.php:192
+#: modules/advanced-visitor-conditions/main.class.php:199
 msgid "new visitor"
 msgstr "Neuer Besucher"
 
-#: modules/advanced-visitor-conditions/main.class.php:186
+#: modules/advanced-visitor-conditions/main.class.php:193
 msgid "Display the ad only for a few impressions in a given period per user."
 msgstr "Die Anzeige nur für einige Impressionen pro Nutzer und Periode einblenden."
 
-#: modules/advanced-visitor-conditions/main.class.php:185
+#: modules/advanced-visitor-conditions/main.class.php:192
 msgid "max. ad impressions"
 msgstr "max. Anzeigenimpressionen"
 
-#: modules/advanced-visitor-conditions/main.class.php:179
-msgid "Display ads based on the number of page impressions the user already made (before the current on)."
-msgstr "Anzeige basierend auf der Anzahl an Seitenimpressionen anzeigen, die der Nutzer vor dem aktuellen gemacht hat."
+#: modules/advanced-visitor-conditions/main.class.php:185
+msgid "Display ads based on the number of page impressions the user already made before the current one."
+msgstr "Anzeige anhand der Anzahl der Seitenimpressionen vor der aktuellen Impression des Nutzers einblenden."
 
-#: modules/advanced-visitor-conditions/main.class.php:178
+#: modules/advanced-visitor-conditions/main.class.php:184
 msgid "page impressions"
 msgstr "Seitenimpressionen"
 
-#: modules/advanced-visitor-conditions/main.class.php:171
-msgid "Display ads based on the value of a cookie."
-msgstr "Anzeigen basierend auf dem Wert eines Cookies anzeigen."
-
-#: modules/advanced-visitor-conditions/main.class.php:170
+#: modules/advanced-visitor-conditions/main.class.php:176
 msgid "cookie"
 msgstr "Cookie"
 
-#: modules/advanced-visitor-conditions/main.class.php:163
-msgid "Display ads based on the visitors browser language."
-msgstr "Anzeigen basierend auf der Browsersprache anzeigen."
+#: modules/advanced-visitor-conditions/main.class.php:169
+msgid "Display ads based on the visitor's browser language."
+msgstr "Anzeigen anhand der Browsersprache des Besuchers einblenden."
 
-#: modules/advanced-visitor-conditions/main.class.php:162
+#: modules/advanced-visitor-conditions/main.class.php:168
 msgid "browser language"
 msgstr "Browsersprache"
 
-#: modules/advanced-visitor-conditions/main.class.php:145
+#: modules/advanced-visitor-conditions/main.class.php:147
 msgid "user can (capabilities)"
 msgstr "Nutzerrechte"
 
-#: modules/advanced-visitor-conditions/main.class.php:137
+#: modules/advanced-visitor-conditions/main.class.php:138
 msgid "user agent"
 msgstr "User Agent"
 
 #: modules/advanced-visitor-conditions/main.class.php:130
-msgid "Display ads based on the referrer url."
-msgstr "Anzeigen basierend auf der vorher besuchten URL anzeigen"
+msgid "Display ads based on the referrer URL."
+msgstr "Anzeigen anhand der zuvor besuchten URL einblenden."
 
 #: modules/advanced-visitor-conditions/main.class.php:129
 msgid "referrer url"
@@ -1034,23 +2408,23 @@ msgstr "Referrer URL"
 msgid "Advanced visitor conditions"
 msgstr "Erweiterte Besucherbedingungen"
 
-#: modules/advanced-display-conditions/main.class.php:559
+#: modules/advanced-display-conditions/main.class.php:564
 msgid "count from end"
 msgstr "von unten zählen"
 
-#: modules/advanced-display-conditions/main.class.php:556
+#: modules/advanced-display-conditions/main.class.php:561
 msgid "from %s to %s"
 msgstr "von %s bis %s"
 
-#: modules/advanced-display-conditions/main.class.php:526
+#: modules/advanced-display-conditions/main.class.php:531
 msgid "meta key"
 msgstr "Meta-Schlüssel"
 
-#: modules/advanced-display-conditions/main.class.php:525
+#: modules/advanced-display-conditions/main.class.php:530
 msgid "all of"
 msgstr "alle"
 
-#: modules/advanced-display-conditions/main.class.php:524
+#: modules/advanced-display-conditions/main.class.php:529
 msgid "any of"
 msgstr "irgendeiner"
 
@@ -1058,65 +2432,63 @@ msgstr "irgendeiner"
 msgid "no languages set up in WPML"
 msgstr "keine Sprachen in WPML eingestellt"
 
-#: modules/paid-memberships-pro/main.class.php:113
-#: modules/paid-memberships-pro/main.class.php:228
-#: modules/advanced-visitor-conditions/main.class.php:314
-#: modules/advanced-visitor-conditions/main.class.php:357
 #: modules/advanced-display-conditions/main.class.php:422
 #: modules/advanced-display-conditions/main.class.php:477
+#: modules/advanced-visitor-conditions/main.class.php:328
+#: modules/advanced-visitor-conditions/main.class.php:371
+#: modules/paid-memberships-pro/main.class.php:112
+#: modules/paid-memberships-pro/main.class.php:231
 #: modules/gamipress/views/visitor-condition-achievement.php:17
+#: modules/geo/classes/admin.php:282
 msgid "is not"
 msgstr "ist nicht"
 
-#: modules/paid-memberships-pro/main.class.php:112
-#: modules/paid-memberships-pro/main.class.php:227
-#: modules/advanced-visitor-conditions/main.class.php:313
-#: modules/advanced-visitor-conditions/main.class.php:356
 #: modules/advanced-display-conditions/main.class.php:421
 #: modules/advanced-display-conditions/main.class.php:476
+#: modules/advanced-visitor-conditions/main.class.php:327
+#: modules/advanced-visitor-conditions/main.class.php:370
+#: modules/paid-memberships-pro/main.class.php:111
+#: modules/paid-memberships-pro/main.class.php:230
 #: modules/gamipress/views/visitor-condition-achievement.php:16
+#: modules/geo/classes/admin.php:281
 msgid "is"
 msgstr "ist"
 
-#: modules/advanced-display-conditions/main.class.php:102
+#: modules/advanced-display-conditions/main.class.php:103
 msgid "Display ads based on the index of a split page"
 msgstr "Anzeigen nur für bestimmte paginierte Seiten einblenden"
 
-#: modules/advanced-display-conditions/main.class.php:101
+#: modules/advanced-display-conditions/main.class.php:102
 msgid "pagination"
 msgstr "Pagination"
 
-#: modules/advanced-display-conditions/main.class.php:95
+#: modules/advanced-display-conditions/main.class.php:96
 msgid "Display ads based on post meta."
 msgstr "Anzeigen anhand der Post-Meta-Werte einblenden"
 
-#: modules/advanced-display-conditions/main.class.php:94
+#: modules/advanced-display-conditions/main.class.php:95
 msgid "post meta"
 msgstr "Post Meta"
 
-#: modules/advanced-display-conditions/main.class.php:88
+#: modules/advanced-display-conditions/main.class.php:89
 msgid "Display ads based on parent page."
 msgstr "Anzeigen anhand der Elternseite einblenden"
 
-#: modules/advanced-display-conditions/main.class.php:87
+#: modules/advanced-display-conditions/main.class.php:88
 msgid "parent page"
 msgstr "übergeordnete Seite"
 
 #: modules/advanced-display-conditions/main.class.php:80
-msgid "Display ads based on the page’s language set with WPML."
-msgstr "Anzeigen anhand der mit WPML festgelegten Sprache der Seite einblenden."
-
-#: modules/advanced-display-conditions/main.class.php:79
 msgid "WPML language"
 msgstr "WPML-Sprache"
 
-#: modules/advanced-display-conditions/main.class.php:49
-#: modules/advanced-display-conditions/main.class.php:68
+#: modules/advanced-display-conditions/main.class.php:50
+#: modules/advanced-display-conditions/main.class.php:69
 msgid "Display ads based on the template of the %s post type."
 msgstr "Anzeigen anhand des Templates des %s Post Types einblenden."
 
-#: modules/advanced-display-conditions/main.class.php:48
-#: modules/advanced-display-conditions/main.class.php:67
+#: modules/advanced-display-conditions/main.class.php:49
+#: modules/advanced-display-conditions/main.class.php:68
 msgid "%s template"
 msgstr "%s Template"
 
@@ -1140,23 +2512,23 @@ msgstr "Ad-Blocker-Element"
 msgid "Ads for ad blockers"
 msgstr "Anzeigen für Ad-Blocker"
 
-#: modules/admin-bar/admin-bar.class.php:89
+#: modules/admin-bar/admin-bar.class.php:93
 msgid "placement"
 msgstr "Platzierung"
 
-#: modules/admin-bar/admin-bar.class.php:86
+#: modules/admin-bar/admin-bar.class.php:90
 msgid "group"
 msgstr "Gruppe"
 
-#: modules/admin-bar/admin-bar.class.php:83
+#: modules/admin-bar/admin-bar.class.php:87
 msgid "ad"
 msgstr "Anzeige"
 
-#: modules/admin-bar/admin-bar.class.php:45
+#: modules/admin-bar/admin-bar.class.php:49
 msgid "No Ads found"
 msgstr "Keine Anzeigen gefunden"
 
-#: modules/admin-bar/admin-bar.class.php:37
+#: modules/admin-bar/admin-bar.class.php:41
 msgid "Ads"
 msgstr "Anzeigen"
 
@@ -1168,37 +2540,37 @@ msgstr "Blende die Anzeige nur einmal pro Seite ein"
 msgid "Display only once"
 msgstr "Nur einmal anzeigen"
 
-#: classes/advanced-ads-pro.php:480
+#: classes/advanced-ads-pro.php:490
 msgid "Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities"
 msgstr "Bitte beachte, dass die Rollen \"Ad Admin\" und \"Ad Manager\" allgemein die Rechte \"upload_files\" und \"unfiltered_html\" haben."
 
 #. %s is the plugin’s name.
-#: classes/advanced-ads-pro.php:293
+#: classes/advanced-ads-pro.php:300
 msgid "<strong>%s</strong> requires the <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> plugin to be installed and activated on your site."
 msgstr "<strong>%s</strong> basiert auf dem freien <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> Plugin."
 
-#: classes/advanced-ads-pro.php:308
+#: classes/advanced-ads-pro.php:315
 msgid "Install Now"
 msgstr "Jetzt installieren"
 
-#: classes/advanced-ads-pro.php:306
+#: classes/advanced-ads-pro.php:313
 msgid "Activate Now"
 msgstr "Jetzt aktivieren"
 
 #. %s is a URL.
-#: classes/advanced-ads-pro-admin.php:359
+#: classes/advanced-ads-pro-admin.php:388
 msgid "Enable the Advanced Visitor Conditions <a href=\"%s\" target=\"_blank\">in the settings</a>."
 msgstr "Erweiterte Besucherbedingungen <a href=\"%s\" target=\"_blank\">in den Einstellungen</a> aktivieren."
 
-#: classes/advanced-ads-pro-admin.php:303
+#: classes/advanced-ads-pro-admin.php:332
 msgid "Please note, with the last update, the “Ad Admin“ and “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities."
 msgstr "Bitte beachte, dass die Rollen \"Ad Admin\" und \"Ad Manager\" allgemein die Rechte \"upload_files\" und \"unfiltered_html\" haben."
 
-#: classes/advanced-ads-pro-admin.php:293
+#: classes/advanced-ads-pro-admin.php:322
 msgid "Ad User Role"
 msgstr "Nutzerrolle hinzufügen"
 
-#: classes/advanced-ads-pro-admin.php:290
+#: classes/advanced-ads-pro-admin.php:319
 msgid "Advanced Ads User Role"
 msgstr "Advanced Ads Nutzerrolle"
 
@@ -1206,14 +2578,14 @@ msgstr "Advanced Ads Nutzerrolle"
 msgid "--no role--"
 msgstr "–keine Rolle–"
 
-#: classes/advanced-ads-pro.php:262 classes/advanced-ads-pro-admin.php:41
+#: classes/advanced-ads-pro-admin.php:41 classes/advanced-ads-pro.php:269
 msgid "Ad User"
 msgstr "Anzeigen-Nutzer"
 
-#: classes/advanced-ads-pro.php:249 classes/advanced-ads-pro-admin.php:40
+#: classes/advanced-ads-pro-admin.php:40 classes/advanced-ads-pro.php:256
 msgid "Ad Manager"
 msgstr "Anzeigen-Manager"
 
-#: classes/advanced-ads-pro.php:235 classes/advanced-ads-pro-admin.php:39
+#: classes/advanced-ads-pro-admin.php:39 classes/advanced-ads-pro.php:242
 msgid "Ad Admin"
 msgstr "Anzeigen-Admin"

@@ -1,0 +1,1241 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Poller Master\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-24 17:31+0100\n"
+"PO-Revision-Date: 2014-05-24 17:31+0100\n"
+"Last-Translator: DJMiMi <milutinjaric@gmail.com>\n"
+"Language-Team: DJMiMi <milutinjaric@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: en_US\n"
+"X-Poedit-SearchPath-0: C:\\wamp\\www\\wordpress\\wp-content\\plugins\\poller_master\n"
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:455
+msgid "There is no poll with the provided ID."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:471
+msgid "Poll has been successfully deleted."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:474
+msgid "Could not delete selected poll. Please try again."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:478
+msgid "An error occured. There is no poll with the provided ID."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:504
+msgid "You have successfully reset the poll."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:510
+msgid "Could not update votes in polls table."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:515
+msgid "There is no poll with provided id."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:575
+msgid "There is no poll with the provided id."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:706
+msgid "The poll has been successfully saved."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:709
+msgid "There was an error saving the poll. Please try again."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:741
+msgid "The poll has been successfully edited."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:744
+msgid "There was an error updating the poll. Please try again."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:749
+msgid "There is no poll with the provided ID. Please try again."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:824
+msgid "View / Edit Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:824
+msgid "Edit Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:826
+msgid "Delete Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:826
+msgid "Are you sure you want to delete this poll? All data associated with this poll including the log data will be permanently lost."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:828
+msgid "Reset Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:828
+msgid "Are you sure you want to reset this poll? All  log data will be permanently lost."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:830
+msgid "View Poll Stats"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:832
+msgid "Clone Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:837
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:23
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:130
+msgid "Open"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:840
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:23
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:131
+msgid "Closed"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:843
+msgid "Schedule"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:846
+msgid "Ended"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:915
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1514
+msgid "Poller Master"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:916
+msgid "Manage Polls"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:917
+msgid "Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:918
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_reset.php:21
+msgid "Reset"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:919
+msgid "Export / Import"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1518
+msgid "Content"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1524
+msgid "Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1527
+msgid "Select which poll to display"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1533
+msgid "Extra class"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1536
+msgid "Poll extra class name"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1606
+msgid "Could not save the options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1628
+msgid "Default"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1629
+msgid "Slide"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master.php:1630
+msgid "Fade"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:10
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:29
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:7
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_reset.php:9
+msgid "Sorry, but this request is invalid"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:16
+msgid "Settings have been imported successfully."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:23
+msgid "No settings provided for the import action."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:37
+msgid "Import / Export Poller Master Polls And Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:42
+msgid "Import Poller Master Polls And Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:43
+msgid "Input JSON string in the textarea bellow"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:47
+msgid "Import Options And Polls"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:53
+msgid "Export Poller Master Polls And Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:55
+msgid "Copy the string bellow to back-up the data."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_expimp.php:60
+msgid "Export Options And Polls"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:12
+msgid "Poller Master Manager"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:14
+msgid "Created Polls"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:18
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:194
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:207
+msgid "ID"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:19
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:53
+msgid "Question"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:20
+msgid "Voters"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:21
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:107
+msgid "Start Date"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:22
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:113
+msgid "End Date"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:23
+msgid "Status"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:24
+msgid "Action"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:32
+msgid "Add New Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:32
+msgid "Add New"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:47
+msgid "Poll Name"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:48
+msgid "Poll name can not be empty"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:49
+msgid "Input name of the poll which will help you to indentify each poll."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:55
+msgid "Input question for the poll."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:59
+msgid "You must add at least one answer."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:62
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:167
+msgid "Answer"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:64
+msgid "X"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:68
+msgid "Add New Answer"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:74
+msgid "Multiple Answers"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:76
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:122
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:140
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:148
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:341
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:518
+msgid "No"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:77
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:121
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:139
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:147
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:340
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:517
+msgid "Yes"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:79
+msgid "Check this box if the users can select multiple votes."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:83
+msgid "Poll Template"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:87
+msgid "Select template for this poll."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:91
+msgid "Vote Frequency"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:93
+msgid "Input frequency of the voting in days. 0 means that only one vote is allowed, and -1 that users can vote again and again."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:97
+msgid "Who Can Vote"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:99
+msgid "All Users"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:100
+msgid "Only Registered Users"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:101
+msgid "Only Guests"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:103
+msgid "Select who have acces to vote."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:109
+msgid "Input the date and time when the poll will be available. Blank means available after the creation."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:115
+msgid "Input the date and time from when the poll will be closed. Blank means that it is always available."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:119
+msgid "Show Countdown [If there is end date set]"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:124
+msgid "Show countdown until poll ends."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:128
+msgid "Poll Status"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:133
+msgid "Set poll status to active or closed. This has advanatage over start / end date."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:137
+msgid "Zero Vote"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:142
+msgid "If this is set to yes than the users will be able to see the resulta even if they didn't voted."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:146
+msgid "Save Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:146
+msgid "Building, please wait..."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:167
+msgid "No Chart Data Available"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:169
+msgid "Summary Chart"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:174
+msgid "Registered Users Chart"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:179
+msgid "Guests Chart"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:189
+msgid "Summary Logs"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:192
+msgid "Filter By: "
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:195
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:208
+msgid "Time"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:196
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:209
+msgid "User"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:197
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:210
+msgid "IP"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:198
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:211
+msgid "Answers"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:199
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:212
+msgid "Registered"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:220
+msgid "Grabbing Logs"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_manager.php:220
+msgid "Load More Logs"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:40
+msgid "JavaScript appears to be disabled in your browser. For this plugin to work correctly, please enable JavaScript or switch to a more modern browser."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:46
+msgid "General"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:47
+msgid "Poll Templates"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:52
+msgid "General Settings"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:55
+msgid "Vote Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:56
+msgid "Input text which will appear on the vote button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:60
+msgid "Results Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:61
+msgid "Input text which will appear on the results button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:65
+msgid "Vote Success Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:66
+msgid "Input text which will appear on vote success."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:70
+msgid "Vote Error Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:71
+msgid "Input text which will appear on vote error."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:75
+msgid "Already Voted Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:76
+msgid "Input text which will appear if the user has been already voted."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:80
+msgid "Vote Again Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:81
+msgid "Input text which will appear if the user has been voted but he can vote again."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:85
+msgid "Vote Results Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:86
+msgid "Input text which will appear on results listing. Use <b>{%TOTAL_VOTES%}</b> to place the number of the total votes."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:90
+msgid "Poll Closed Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:91
+msgid "Input text which will appear if the poll is closed."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:95
+msgid "Poll Ended Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:96
+msgid "Input text which will appear if the poll ended."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:100
+msgid "Empty Vote Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:101
+msgid "Input text which will appear if the users clicked on vote and did not selected any answer."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:105
+msgid "Poll For Registered Users Only Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:106
+msgid "Input text which will appear if the poll is only for the registered users."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:110
+msgid "Poll For Guests Only Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:111
+msgid "Input text which will appear if the poll is only for the guests."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:115
+msgid "Results Denied Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:116
+msgid "Input text which will appear if the user has no privilege to see the results."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:120
+msgid "Day Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:121
+msgid "Input translation for the word \"Day\"."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:125
+msgid "Days Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:126
+msgid "Input translation for the word \"Days\"."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:130
+msgid "Hours Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:131
+msgid "Input translation for the word \"Hours\"."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:135
+msgid "Minutes Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:136
+msgid "Input translation for the word \"Minutes\"."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:140
+msgid "Seconds Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:141
+msgid "Input translation for the word \"Seconds\"."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:145
+msgid "Enqueue bootstrap:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:150
+msgid "Select <b>Yes</b> if you want for the pugin to include its bootstrap, or <b>No</b> if you will do it with your theme."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:154
+msgid "Load Logs:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:156
+msgid "10"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:157
+msgid "20"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:158
+msgid "50"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:159
+msgid "100"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:160
+msgid "500"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:161
+msgid "1000"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:162
+msgid "5000"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:163
+msgid "10000"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:164
+msgid "50000"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:165
+msgid "100000"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:166
+msgid "All"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:168
+msgid "Select how many logs to load in the stats window per load more click and on initial state."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:172
+msgid "Stats Chart Colors:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:177
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:669
+msgid "Add A New Color"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:178
+msgid "Manage colors for the stats chart. If there is no colors default one will be used. If there is more answers than the colors, answers after the end of the colors array will all have same color."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:183
+msgid "Poll Templates Settings"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:197
+msgid "Main Poll Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:201
+msgid "Template Name:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:203
+msgid "Input template name."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:207
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:347
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:406
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:460
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:524
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:594
+msgid "Background Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:209
+msgid "Select background color for the poll."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:213
+msgid "Poll Border Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:215
+msgid "Select border color for the poll."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:219
+msgid "Poll Border Radius:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:221
+msgid "Set border radius for the poll. You can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:225
+msgid "Answer Font Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:227
+msgid "Select font color for the poll answers."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:231
+msgid "Answer Checkboxes / Radios: Style"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:233
+msgid "Minimal skin"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:234
+msgid "Square skin"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:235
+msgid "Flat skin"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:236
+msgid "Line skin"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:237
+msgid "Polaris skin"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:238
+msgid "Futurico skin"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:240
+msgid "Select checkbox / radio style."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:244
+msgid "Checkbox / radio preview."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:249
+msgid "Checkboxes / Radios Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:251
+msgid "Black"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:252
+msgid "Red"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:253
+msgid "Green"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:254
+msgid "Blue"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:255
+msgid "Aero"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:256
+msgid "Grey"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:257
+msgid "Orange"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:258
+msgid "Yellow"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:259
+msgid "Pink"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:260
+msgid "Purple"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:263
+msgid "Select color schema for the checkboxes and radios."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:267
+msgid "Answer Font Size:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:269
+msgid "Input font size for the poll answers in <b>px</b> (pixels)."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:273
+msgid "Answer Line Height:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:275
+msgid "Input line height for the poll answers in <b>px</b> (pixels)."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:279
+msgid "Answer Font Weight:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:281
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:438
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:492
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:620
+msgid "Normal"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:282
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:439
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:493
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:621
+msgid "Bold"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:284
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:441
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:495
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:623
+msgid "Select font weight."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:288
+msgid "In Easing:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:292
+msgid "Select easing for displaying the elements. See them in action <b>http://api.jqueryui.com/easings/</b>"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:296
+msgid "In Effect:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:300
+msgid "Select effect for displaying the elements."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:304
+msgid "Out Easing:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:308
+msgid "Select easing for hidding the elements. See them in action <b>http://api.jqueryui.com/easings/</b>"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:312
+msgid "Out Effect:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:316
+msgid "Select effect for hiddig the elements."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:320
+msgid "Loader Image:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:329
+msgid "Add loader"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:330
+msgid "Select loader image."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:335
+msgid "Main Poll Counter Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:338
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:515
+msgid "Show Text:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:343
+msgid "Select yes if you wish to display Days, Hours Minutes and Seconds text."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:349
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:355
+msgid "Select background color for the poll counter."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:353
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:412
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:466
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:530
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:606
+msgid "Border Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:359
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:418
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:472
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:536
+msgid "Hover Background Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:361
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:367
+msgid "Select background color for the poll counter on hover."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:365
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:424
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:478
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:542
+msgid "Hover Border Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:371
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:430
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:484
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:548
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:612
+msgid "Font Color:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:373
+msgid "Select font color for the poll counter."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:377
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:554
+msgid "Font:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:381
+msgid "Select font for the poll counter."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:385
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:562
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:600
+msgid "Font Size:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:387
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:564
+msgid "Input font size for the counter numbers in <b>px</b> (pixels)."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:391
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:568
+msgid "Font Line Height:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:393
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:570
+msgid "Input font line height for the counter numbers in <b>px</b> (pixels)."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:397
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:445
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:499
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:574
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:633
+msgid "Border Radius:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:399
+msgid "Input border radius for the counter boxes. you can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:404
+msgid "Vote Button Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:408
+msgid "Select background color for the vote button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:414
+msgid "Select border color for the vote button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:420
+msgid "Select background color for the vote button on hover."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:426
+msgid "Select border color for the vote button on hover."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:432
+msgid "Select font color for the vote button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:436
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:490
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:618
+msgid "Font Weight:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:447
+msgid "Input border radius for the vote button. You can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:451
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:505
+msgid "Width:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:453
+msgid "Input width for the vote button. You can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:458
+msgid "Result Button Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:462
+msgid "Select background color for the result button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:468
+msgid "Select border color for the result button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:474
+msgid "Select background color for the result button on hover."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:480
+msgid "Select border color for the result button on hover."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:486
+msgid "Select font color for the result button."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:501
+msgid "Input border radius for the result button. You can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:507
+msgid "Input width for the result button. You can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:512
+msgid "Main Vote Counter Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:520
+msgid "Select yes if you wish to display Days, Hours Minutes nad Seconds text."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:526
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:532
+msgid "Select background color for the vote counter."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:538
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:544
+msgid "Select background color for the vote counter on hover."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:550
+msgid "Select font color for the vote counter."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:558
+msgid "Select font for the vote counter."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:576
+msgid "Input border radius for the vote countdown boxes. You can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:581
+msgid "Results Box Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:584
+msgid "Display Results As:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:586
+msgid "Both"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:587
+msgid "Percentage Only"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:588
+msgid "Votes Only"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:590
+msgid "Select how vote results should be displayed."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:596
+msgid "Select background color for the results box."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:602
+msgid "Input font size dor the results in <b>px</b> (pixels)."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:608
+msgid "Select border color for the results box."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:614
+msgid "Select font color for the results box."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:627
+msgid "Background Opacity:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:629
+msgid "Input results box background opaciti in range from 0 to 1."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:635
+msgid "Input border radius for the results box. You can use any form."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:640
+msgid "Progress Bar Options"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:642
+msgid "Style:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:644
+msgid "Active Stripes"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:645
+msgid "Stripes"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:646
+msgid "No Stripes"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:648
+msgid "Select progress bar style."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:658
+msgid "Progress Bar Height:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:660
+msgid "Input height of the progress bar in <b>px</b> (pixels)."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:664
+msgid "Progress Bar Colors:"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:670
+msgid "Manage progress bar colors."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_options.php:675
+msgid "Reset Template"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_reset.php:13
+msgid "Tables and options have been successfully reset."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_reset.php:18
+msgid "Reset Poller Master"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_reset.php:19
+msgid "This can not be undone and this action will empty the plugin's tables and restore its options to defaults."
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_widget.php:4
+msgid "Poller Master Widget"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_widget.php:21
+msgid "Select Poll"
+msgstr ""
+
+#: C:\wamp\www\wordpress\wp-content\plugins\poller_master/poller_master_widget.php:29
+msgid "Extra Class"
+msgstr ""
+

@@ -4,7 +4,7 @@
  */
 class Advanced_Ads_Pro_Module_Placement_Conditions_Admin {
 	public function __construct() {
-		add_action( 'advanced-ads-placement-options-after-advanced', array( $this, 'render_conditions_for_placements' ), 10, 2 );
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'render_conditions_for_placements' ], 10, 2 );
 	}
 
 	/**
@@ -24,7 +24,7 @@ class Advanced_Ads_Pro_Module_Placement_Conditions_Admin {
 		$placement_types = Advanced_Ads_Placements::get_placement_types();
 
 		if ( ! isset( $placement_types[ $placement['type'] ]['options']['placement-display-conditions'] ) || $placement_types[ $placement['type'] ]['options']['placement-display-conditions'] ) {
-			$set_conditions = isset( $placement['options']['placement_conditions']['display'] ) ? $placement['options']['placement_conditions']['display'] : array();
+			$set_conditions = isset( $placement['options']['placement_conditions']['display'] ) ? $placement['options']['placement_conditions']['display'] : [];
 
 			$list_target = 'advads-placement-condition-list-' . $placement_slug;
 			$form_name   = 'advads[placements][' . $placement_slug . '][options][placement_conditions][display]';
@@ -52,7 +52,7 @@ class Advanced_Ads_Pro_Module_Placement_Conditions_Admin {
 
 		if ( ! isset( $placement_types[ $placement['type'] ]['options']['placement-visitor-conditions'] ) || $placement_types[ $placement['type'] ]['options']['placement-visitor-conditions'] ) {
 
-			$set_conditions = isset( $placement['options']['placement_conditions']['visitors'] ) ? $placement['options']['placement_conditions']['visitors'] : array();
+			$set_conditions = isset( $placement['options']['placement_conditions']['visitors'] ) ? $placement['options']['placement_conditions']['visitors'] : [];
 
 			$list_target = 'advads-placement-condition-list-visitor' . $placement_slug;
 			$form_name = 'advads[placements][' . $placement_slug . '][options][placement_conditions][visitors]';

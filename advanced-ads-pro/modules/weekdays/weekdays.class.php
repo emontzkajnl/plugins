@@ -5,16 +5,16 @@ class Advanced_Ads_Pro_Weekdays {
 		$is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
 		if ( ! is_admin() ) {
-			add_filter( 'advanced-ads-pro-passive-cb-for-ad', array( $this, 'add_passive_cb_for_ad' ), 10, 2 );
+			add_filter( 'advanced-ads-pro-passive-cb-for-ad', [ $this, 'add_passive_cb_for_ad' ], 10, 2 );
 		} elseif ( ! $is_ajax ) {
-			add_action( 'post_submitbox_misc_actions', array( $this, 'add_weekday_options' ) );
-			add_filter( 'advanced-ads-save-options', array( $this, 'save_weekday_options' ), 10, 2 );
-			add_filter( 'advanced-ads-ad-list-column-filter', array( $this, 'ad_list_column_filter' ), 10, 3 );
-			add_filter( 'advanced-ads-ad-list-filter', array( $this, 'ad_list_filter' ), 10, 2 );
-			add_action( 'advanced-ads-ad-list-timing-column-after', array( $this, 'render_ad_planning_column' ), 10, 2 );
+			add_action( 'post_submitbox_misc_actions', [ $this, 'add_weekday_options' ] );
+			add_filter( 'advanced-ads-save-options', [ $this, 'save_weekday_options' ], 10, 2 );
+			add_filter( 'advanced-ads-ad-list-column-filter', [ $this, 'ad_list_column_filter' ], 10, 3 );
+			add_filter( 'advanced-ads-ad-list-filter', [ $this, 'ad_list_filter' ], 10, 2 );
+			add_action( 'advanced-ads-ad-list-timing-column-after', [ $this, 'render_ad_planning_column' ], 10, 2 );
 		}
 
-		add_filter( 'advanced-ads-can-display', array( $this, 'can_display_by_weekday' ), 10, 3 );
+		add_filter( 'advanced-ads-can-display', [ $this, 'can_display_by_weekday' ], 10, 3 );
 	}
 
 	/**
@@ -30,7 +30,7 @@ class Advanced_Ads_Pro_Weekdays {
 			if ( ! empty( $ad_options['weekdays']['day_indexes'] ) ) {
 				$passive_cb_for_ad['day_indexes'] = self::sanitize_day_indexes( $ad_options['weekdays']['day_indexes'] );
 			} else {
-				$passive_cb_for_ad['day_indexes'] = array();
+				$passive_cb_for_ad['day_indexes'] = [];
 			}
 		}
 
@@ -49,7 +49,7 @@ class Advanced_Ads_Pro_Weekdays {
 		$options = $ad->options();
 
 		$enabled = ! empty( $options['weekdays']['enabled'] );
-		$day_indexes = ! empty( $options['weekdays']['day_indexes'] ) ? self::sanitize_day_indexes( $options['weekdays']['day_indexes'] ) : array();
+		$day_indexes = ! empty( $options['weekdays']['day_indexes'] ) ? self::sanitize_day_indexes( $options['weekdays']['day_indexes'] ) : [];
 
 		$TZ = Advanced_Ads_Admin::timezone_get_name( Advanced_Ads_Admin::get_wp_timezone() );
 
@@ -70,7 +70,7 @@ class Advanced_Ads_Pro_Weekdays {
 		if ( isset( $_POST['advanced_ad']['weekdays']['day_indexes'] ) ) {
 			$options['weekdays']['day_indexes'] = self::sanitize_day_indexes( $_POST['advanced_ad']['weekdays']['day_indexes'] );
 		} else {
-			$options['weekdays']['day_indexes'] = array();
+			$options['weekdays']['day_indexes'] = [];
 		}
 
 		return $options;
@@ -112,7 +112,7 @@ class Advanced_Ads_Pro_Weekdays {
 	 */
 	public function ad_list_filter( $posts, $all_ads_options ) {
 		if ( isset( $_REQUEST['addate'] ) && 'advads-pro-filter-specific-days' ==  urldecode( $_REQUEST['addate'] ) ) {
-			$new_posts = array();
+			$new_posts = [];
 			foreach ( $posts as $post ) {
 				if ( ! empty( $all_ads_options[ $post->ID ]['weekdays']['enabled'] ) ) {
 					$new_posts[] = $post;
@@ -140,8 +140,8 @@ class Advanced_Ads_Pro_Weekdays {
 
 			$html_classes .= ' advads-pro-filter-specific-days';
 
-			$day_indexes = ! empty( $options['weekdays']['day_indexes'] ) ? self::sanitize_day_indexes( $options['weekdays']['day_indexes'] ) : array();
-			$day_names = array_map( array( $wp_locale, 'get_weekday' ), $day_indexes ); ?>
+			$day_indexes = ! empty( $options['weekdays']['day_indexes'] ) ? self::sanitize_day_indexes( $options['weekdays']['day_indexes'] ) : [];
+			$day_names = array_map( [ $wp_locale, 'get_weekday' ], $day_indexes ); ?>
 			<p><?php
 			if ( $day_names ) :
 				printf( __( 'Shows up on: %s', 'advanced-ads-pro' ), implode( ', ', $day_names ) );
@@ -160,7 +160,7 @@ class Advanced_Ads_Pro_Weekdays {
 	 * @return arr with allowed day indexes
 	 */
 	public static function sanitize_day_indexes( $day_indexes ) {
-		if ( ! is_array( $day_indexes ) ) { return array(); }
+		if ( ! is_array( $day_indexes ) ) { return []; }
 
 		foreach ( $day_indexes as $_key => &$_index ) {
 			$_index = absint( $_index );

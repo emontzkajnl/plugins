@@ -758,7 +758,7 @@ class Ajax
 		}
 		// by default set empty value for users' role (adv. tar.)
 		$savedData['value'] = array();
-		$savedData['hiddenOption'] = @$conditionConfig['hiddenOptionData'][$paramName];
+		$savedData['hiddenOption'] = isset($conditionConfig['hiddenOptionData'][$paramName]) ? $conditionConfig['hiddenOptionData'][$paramName] : '';
 
 		$builderObj->setPopupId($popupId);
 		$builderObj->setGroupId($groupId);

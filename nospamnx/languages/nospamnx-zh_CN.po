@@ -1,0 +1,215 @@
+# Loco Gettext template
+msgid ""
+msgstr ""
+"Project-Id-Version: NoSpamNX\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-06 15:39+0800\n"
+"POT-Revision-Date: Thu Mar 10 2016 12:05:27 GMT+0100\n"
+"PO-Revision-Date: 2017-02-06 16:24+0800\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Generator: Poedit 1.8.11\n"
+"Last-Translator: \n"
+"Language: zh_CN\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#. Name of the plugin
+msgid "NoSpamNX"
+msgstr "NoSpamNX"
+
+#. URI of the plugin
+msgid "http://wordpress.org/extend/plugins/nospamnx"
+msgstr "http://wordpress.org/extend/plugins/nospamnx"
+
+#. Description of the plugin
+msgid ""
+"To protect your blog from automated spambots, this plugin adds invisible "
+"formfields to your comment form."
+msgstr ""
+"本插件将会在您的评论表单中添加不可见的表项，以保护您的博客免受自动垃圾评论机"
+"器人的侵扰。"
+
+#. Author of the plugin
+msgid "Sven Kubiak"
+msgstr "Sven Kubiak"
+
+#. Author URI of the plugin
+msgid "http://svenkubiak.de"
+msgstr "http://svenkubiak.de"
+
+#: ../nospamnx.php:81
+msgid "Your WordPress is to old. NoSpamNX requires at least WordPress 3.0!"
+msgstr "您的 WordPress 版本过旧。NoSpamNX 至少需要 WordPress 3.0 以上的版本！"
+
+#: ../nospamnx.php:276
+msgid "Settings"
+msgstr "设置"
+
+#: ../nospamnx.php:284
+msgid "FAQ"
+msgstr "常见问题"
+
+#: ../nospamnx.php:292
+msgid "Sorry, but you have no permissions to change settings."
+msgstr "很抱歉，您无权修改设置。"
+
+#: ../nospamnx.php:312
+msgid "NoSpamNX settings were saved successfully."
+msgstr "NoSpamNX 设置保存成功。"
+
+#: ../nospamnx.php:317
+msgid "NoSpamNX Counter was reseted successfully."
+msgstr "NoSpamNX 计数器重置成功。"
+
+#: ../nospamnx.php:328
+msgid "NoSpamNX Blacklist was updated successfully."
+msgstr "NoSpamNX 黑名单更新成功。"
+
+#: ../nospamnx.php:344
+msgid "Are you sure you want to reset the counter?"
+msgstr "您确定要重置计数器吗？"
+
+#: ../nospamnx.php:351
+msgid "NoSpamNX Settings"
+msgstr "NoSpamNX 设置"
+
+#: ../nospamnx.php:354
+msgid "Statistic"
+msgstr "统计"
+
+#: ../nospamnx.php:366
+msgid "Reset"
+msgstr "重置"
+
+#: ../nospamnx.php:372
+msgid "Operating mode"
+msgstr "运作模式"
+
+#: ../nospamnx.php:374
+msgid ""
+"By default all Spambots are marked as Spam, but the recommended Mode is "
+"\"block\". If you are uncertain what will be blocked, select \"Mark as Spam"
+"\" at first and switch to \"block\" later on."
+msgstr ""
+"默认情况下，所有的垃圾评论都将被 “标记为垃圾信息”，但更推荐的模式为 “屏蔽”。"
+"如果您还不确定将会有哪些评论被阻止，请先选择 “标记为垃圾信息”，以后再决定是否"
+"切换为“屏蔽”模式。"
+
+#: ../nospamnx.php:378
+msgid "Mode"
+msgstr "模式"
+
+#: ../nospamnx.php:381
+msgid "Block (recommended)"
+msgstr "屏蔽（推荐）"
+
+#: ../nospamnx.php:383
+msgid "Mark as Spam"
+msgstr "标记为垃圾信息"
+
+#: ../nospamnx.php:388 ../nospamnx.php:433
+msgid "Save"
+msgstr "保存"
+
+#: ../nospamnx.php:394
+msgid "Blacklist"
+msgstr "黑名单"
+
+#: ../nospamnx.php:396
+msgid ""
+"By default the Entries in the Blacklist will match Substrings (e.g. 'foobar' "
+"will match, if you have 'foo' in your Blacklist). Uncheck the following "
+"Option to only match exact words."
+msgstr ""
+"默认情况下黑名单中的条目将会采用 “子字符串” 的匹配模式（比如，如果黑名单中有 "
+"“foo”，那么 “foobar” 也将会被匹配）。取消下面的勾选以启用全词精确匹配。"
+
+#: ../nospamnx.php:400
+msgid "Match Substrings"
+msgstr "匹配 “子字符串”"
+
+#: ../nospamnx.php:403
+msgid "Local Blacklist"
+msgstr "本地黑名单"
+
+#: ../nospamnx.php:404
+msgid "Global Blacklist"
+msgstr "全局黑名单"
+
+#: ../nospamnx.php:407
+msgid ""
+"The local Blacklist is comparable to the WordPress Blacklist. However, the "
+"local Blacklist enables you to block comments containing certain values, "
+"instead of putting them in moderation queue. Thus, the local blacklist only "
+"makes sense when using NoSpamNX in blocking mode. The local Blacklist checks "
+"the given values against the ip address, the author, the E-Mail Address, the "
+"comment and the URL field of a comment. If a pattern matches, the comment "
+"will be blocked. Please use one value per line. The local Blacklist is case-"
+"insensitive."
+msgstr ""
+"本地黑名单与 WordPress 的黑名单类似。然而，本地黑名单允许您直接屏蔽含有某些关"
+"键词的评论，而不是将它们加入带审核队列中。因而， 只有当 NoSpamNX 工作在屏蔽模"
+"式时，本地黑名单才会生效。本地黑名单检查包括 IP 地址、作者、电子邮件地址、内"
+"容和 URL 在内的评论项，如果能够匹配，则该评论将会被屏蔽。请一行填写一个值。本"
+"地黑名单是大小写不敏感的。"
+
+#: ../nospamnx.php:408
+msgid ""
+"The global Blacklist gives you the possibility to use one Blacklist for "
+"multiple WordPress Blogs. You need to setup a place where you store your "
+"Blacklist (e.g. Webspace, Dropbox, etc. - but HTTP only) and put it into the "
+"Field \"Update URL\". How you Built up your Blacklist (e.g. PHP-Script with "
+"Database, simple Textfile, etc.) is up to, but you need to make sure, your "
+"Update URL returns one value per line seperated by \"\\n\". Put the Update "
+"URL in all your Blogs where you want your Blacklist, and setup the update "
+"rotation according to your needs. The global Blacklist will be activated by "
+"adding an Update URL. The global Blacklist is case-insensitive."
+msgstr ""
+"全局黑名单使得您可以为多个 WordPress 博客采用统一的黑名单。您需要将自己的黑名"
+"单存储在某个地方（比如，网络空间、Dropbox 等等，但只能是 HTTP），然后把地址填"
+"写在 “上传 URL” 中。您可以自行觉得如何生成这份黑名单（比如，PHP 数据库脚本、"
+"纯文本等等），但您必须保证您的上传 URL 将会返回一行一个值的数据（即用 “\\n” "
+"分割）。在所有您需要使用这份黑名单的博客中填入这份上传 URL，然后按照自己的需"
+"要设置好更新的循环间隔。只要填写上传 URL 后，全局黑名单就会被自动激活。全局黑"
+"名单是大小写不敏感的。"
+
+#: ../nospamnx.php:416 ../nospamnx.php:418
+msgid "Last update"
+msgstr "最后更新"
+
+#: ../nospamnx.php:425
+msgid "Update URL (e.g. http://www.mydomain.com/myblacklist.txt)"
+msgstr "更新 URL （比如，http://www.mydomain.com/myblacklist.txt）"
+
+#: ../nospamnx.php:429
+msgid "Update every"
+msgstr "更新间隔：每"
+
+#: ../nospamnx.php:429
+msgid "minutes."
+msgstr "分钟。"
+
+#: ../nospamnx.php:445
+msgid "Security-Check failed."
+msgstr "安全检查失败。"
+
+#: ../nospamnx.php:584
+msgid "NoSpamNX has stopped no birdbrained Spambots yet."
+msgstr "NoSpamNX 暂未拦截到任何垃圾机器人。"
+
+#: ../nospamnx.php:586
+#, php-format
+msgid "Since %s %s has stopped %s birdbrained Spambot (approx. %s per Day)."
+msgid_plural ""
+"Since %s %s has stopped %s birdbrained Spambots (approx. %s per Day)."
+msgstr[0] "自 %s 起 %s 已拦截 %s 个垃圾机器人（大约每天 %s 个）。"

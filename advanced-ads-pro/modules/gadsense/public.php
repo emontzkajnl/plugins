@@ -10,7 +10,7 @@ class Advanced_Ads_Pro_AdSense_Public {
 	public function __construct() {
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
 		if ( ! empty( $options['cfp']['enabled'] ) ) {
-			add_filter( 'advanced-ads-gadsense-page-level-code', array( $this, 'overwrite_page_level_code' ), 10, 2 );
+			add_filter( 'advanced-ads-gadsense-page-level-code', [ $this, 'overwrite_page_level_code' ], 10, 2 );
 		}
 	}
 

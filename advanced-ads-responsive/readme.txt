@@ -1,8 +1,8 @@
 === Advanced Ads – Responsive Ads ===
 Requires at least: 3.5
-Tested up to: 5.7
+Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 1.10.3
+Stable tag: 1.11.0
 
 Display ads based on the browser size of the visitor’s device.
 
@@ -49,10 +49,34 @@ You can use Advanced Ads along any other ad management plugin and don’t need t
 
 == Changelog ==
 
+= 1.11.0 =
+
+- Improvement: update AdSense code script tags to align with their latest version
+- Improvement: remove an old version of the browser width condition that was deprecated in 2015
+- Improvement: deprecate the Responsive Ads list. See the removal schedule on https://wpadvancedads.com/manual/deprecated-features/.
+- Improvement: update UI of an AMP related notice on the ad edit page
+- Improvement: update Arabic, German, Slovenian translations
+- Fix: pass empty string instead of null to `add_submenu_page()`
+
+= 1.10.6 =
+
+- Improvement: add Slovenian translations
+- Improvement: update Danish translations
+- Fix: prevent undefined index notice
+
+= 1.10.5 =
+
+- Fix: remove workflow directory from plugin
+
+= 1.10.4 =
+
+- Improvement: add German (Austria, Switzerland), Greek translations
+- Fix: prevent removing advanced default size of responsive AdSense ads when re-saving ad
+
 = 1.10.3 =
 
-- Improvement: add Arabic translation
-- Improvement: update Polish translation
+- Improvement: add Arabic translations
+- Improvement: update Polish translations
 - Fix: prevent PHP 8 deprecation notices
 
 = 1.10.2 =
@@ -319,4 +343,4 @@ You can use Advanced Ads along any other ad management plugin and don’t need t
 = 1.0 =
 * first plugin version
 
-Build: 2022-05-96d4353d
+Build: 2023-09-e1b75372

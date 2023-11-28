@@ -7,9 +7,9 @@ $ban_duration = isset( $options['cfp']['ban_duration'] )? Advanced_Ads_Pro_Utils
 ?>
 <input name="<?php echo Advanced_Ads_Pro::OPTION_KEY; ?>[cfp][enabled]" type="checkbox" value="1" <?php checked( $module_enabled ); ?> id="advanced-ads-pro-cfp-enabled" class="advads-has-sub-settings" />
 <label for="advanced-ads-pro-cfp-enabled" class="description">
-	<?php _e( 'Activate <em>click fraud protection</em> module', 'advanced-ads-pro' ); 
-	?> – <a href="<?php echo ADVADS_URL . 'manual/click-fraud-protection/#utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-cfp-manual'; ?>" target="_blank"><?php _e( 'Manual', 'advanced-ads-pro' ); ?></a>
+	<?php esc_html_e( 'Activate module.', 'advanced-ads-pro' ); ?>
 </label>
+<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/click-fraud-protection/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-cfp-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
 
 <div class="advads-sub-settings">
 	<br />

@@ -10,6 +10,7 @@
 /**
  * Access Policy UI manager
  *
+ * @since 6.8.4 https://github.com/aamplugin/advanced-access-manager/issues/211
  * @since 6.5.0 https://github.com/aamplugin/advanced-access-manager/issues/109
  * @since 6.3.0 Enhanced service to be able to generate policy into new policy
  *              post type record
@@ -20,7 +21,7 @@
  * @since 6.0.0 Initial implementation of the class
  *
  * @package AAM
- * @version 6.5.0
+ * @version 6.8.4
  */
 class AAM_Backend_Feature_Main_Policy
 extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAware
@@ -67,7 +68,6 @@ extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAwar
     public function __construct()
     {
         add_filter('aam_iframe_content_filter', array($this, 'renderPrincipalIframe'), 1, 3);
-        add_filter('aam_role_row_actions_filter', array($this, 'renderRoleActions'), 1, 2);
         add_filter('aam_user_row_actions_filter', array($this, 'renderUserActions'), 1, 2);
 
         add_filter('aam_visitor_subject_tab_filter', function ($content, $params) {
@@ -123,30 +123,6 @@ extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAwar
         }
 
         return $content;
-    }
-
-    /**
-     * Render role actions
-     *
-     * @param array  $actions
-     * @param string $id
-     *
-     * @return array
-     *
-     * @access public
-     * @version 6.0.0
-     */
-    public function renderRoleActions($actions, $id)
-    {
-        if ($this->getFromPost('ui') === 'principal') {
-            $object = AAM::api()->getRole($id)->getObject(
-                AAM_Core_Object_Policy::OBJECT_TYPE
-            );
-            $policyId = $this->getFromPost('policyId', FILTER_VALIDATE_INT);
-            $actions = array($object->has($policyId) ? 'detach' : 'attach');
-        }
-
-        return $actions;
     }
 
     /**
@@ -376,43 +352,37 @@ extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAwar
      *
      * @return string
      *
+     * @since 6.8.4 https://github.com/aamplugin/advanced-access-manager/issues/211
      * @since 6.2.1 Added support for the policy_meta property
      * @since 6.2.0 Initial implementation of the method
      *
      * @access public
-     * @version 6.2.1
+     * @version 6.8.4
      */
     public function install()
     {
-        $metadata = json_decode($this->getFromPost('metadata'));
-
-        // Do some basic validation & normalization
-        $title    = esc_js($metadata->title);
-        $excerpt  = esc_js($metadata->description);
-        $assignee = $metadata->assignee;
-        $override = $metadata->override;
-        $consts   = !empty($metadata->policy_meta) ? $metadata->policy_meta: array();
+        $metadata = $this->parsePolicyMetadata();
         $policy   = $this->getFromPost('aam-policy');
 
         $id = wp_insert_post(array(
             'post_type'    => AAM_Service_AccessPolicy::POLICY_CPT,
             'post_content' => $policy,
-            'post_title'   => $title,
-            'post_excerpt' => $excerpt,
+            'post_title'   => $metadata['title'],
+            'post_excerpt' => $metadata['excerpt'],
             'post_status'  => 'publish'
         ));
 
         $errors = array();
 
         if (!is_wp_error($id)) { // Assign & override
-            foreach($assignee as $s) {
+            foreach($metadata['assignee'] as $s) {
                 $error = $this->applyToSubject($s, $id, true);
                 if ($error) {
                     $errors[] = $error;
                 }
             }
 
-            foreach($override as $s) {
+            foreach($metadata['override'] as $s) {
                 $error = $this->applyToSubject($s, $id, false);
                 if ($error) {
                     $errors[] = $error;
@@ -420,7 +390,7 @@ extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAwar
             }
 
             // Insert policy meta values if any
-            foreach($consts as $key => $value) {
+            foreach($metadata['constants'] as $key => $value) {
                 add_post_meta($id, $key, $value);
             }
         } else {
@@ -438,6 +408,52 @@ extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAwar
         }
 
         return wp_json_encode($response);
+    }
+
+    /**
+     * Parse access policy meta
+     *
+     * @return array
+     *
+     * @access protected
+     *
+     * @version 6.8.4
+     */
+    protected function parsePolicyMetadata()
+    {
+        // Extracting the metadata from the payload
+        $metadata = json_decode($this->getFromPost('metadata'));
+
+        // Preparing the metadata
+        $response = array(
+            'title'     => null,
+            'excerpt'   => null,
+            'assignee'  => array(),
+            'override'  => array(),
+            'constants' => array()
+        );
+
+        if (isset($metadata->title) && is_string($metadata->title)) {
+            $response['title'] = esc_js($metadata->title);
+        }
+
+        if (isset($metadata->description) && is_string($metadata->description)) {
+            $response['excerpt'] = esc_js($metadata->description);
+        }
+
+        if (isset($metadata->assignee) && is_array($metadata->assignee)) {
+            $response['assignee'] = array_map('trim', $metadata->assignee);
+        }
+
+        if (isset($metadata->override) && is_array($metadata->override)) {
+            $response['override'] = array_map('trim', $metadata->override);
+        }
+
+        if (isset($metadata->policy_meta) && is_object($metadata->policy_meta)) {
+            $response['constants'] = $metadata->policy_meta;
+        }
+
+        return $response;
     }
 
     /**

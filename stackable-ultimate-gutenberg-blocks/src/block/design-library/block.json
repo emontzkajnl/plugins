@@ -1,12 +1,14 @@
 {
+	"apiVersion": 3,
 	"name": "stackable/design-library",
 	"title": "Design Library",
 	"description": "Choose a layout or block from the Stackable Design Library.",
-	"category": "layout",
+	"category": "stackable",
 	"usesContext": [
 		"postId",
 		"postType",
-		"queryId"
+		"queryId",
+		"stackable/innerBlockOrientation"
 	],
 	"keywords": [
 		"Template"

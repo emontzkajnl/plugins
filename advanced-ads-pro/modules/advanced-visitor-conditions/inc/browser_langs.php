@@ -1,6 +1,6 @@
 <?php
 
-$advads_browser_langs = array(
+$advads_browser_langs = [
     'af' => 'Afrikaans',
     'ar' => 'Arabic',
     'ar-ae' => 'Arabic (U.A.E.)',
@@ -200,4 +200,4 @@ $advads_browser_langs = array(
     'zh-sg' => 'Chinese (Singapore)',
     'zh-tw' => 'Chinese (Taiwan)',
     'zu' => 'Zulu'
-);
+];

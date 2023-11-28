@@ -11,15 +11,15 @@ class Advanced_Ads_Admin_Upgrades {
 	 */
 	public function __construct() {
 		// Show premium ad types on the ad edit page.
-		add_action( 'advanced-ads-ad-types', array( $this, 'ad_types' ), 1000 );
+		add_action( 'advanced-ads-ad-types', [ $this, 'ad_types' ], 1000 );
 		// Show notice in Ad Parameters when someone uses an Ad Manager ad in the plain text code field.
-		add_filter( 'advanced-ads-ad-notices', array( $this, 'ad_notices' ), 10, 3 );
+		add_filter( 'advanced-ads-ad-notices', [ $this, 'ad_notices' ], 10, 3 );
 		// Show AMP options on ad edit page of AdSense ads.
-		add_action( 'advanced-ads-gadsense-extra-ad-param', array( $this, 'adsense_type_amp_options' ) );
+		add_action( 'advanced-ads-gadsense-extra-ad-param', [ $this, 'adsense_type_amp_options' ] );
 		// Add Duplicate link to ad overview list.
-		add_filter( 'post_row_actions', array( $this, 'render_duplicate_link' ), 10, 2 );
+		add_filter( 'post_row_actions', [ $this, 'render_duplicate_link' ], 10, 2 );
 		// Add Duplicate link to post submit box.
-		add_action( 'post_submitbox_start', array( $this, 'render_duplicate_link_in_submit_box' ) );
+		add_action( 'post_submitbox_start', [ $this, 'render_duplicate_link_in_submit_box' ] );
 	}
 
 	/**
@@ -63,11 +63,11 @@ class Advanced_Ads_Admin_Upgrades {
 		$title = ! empty( $title ) ? $title : __( 'Upgrade', 'advanced-ads' );
 		$url   = ! empty( $url ) ? $url : ADVADS_URL . 'add-ons/';
 
-		$url = add_query_arg( array(
+		$url = add_query_arg( [
 			'utm_source'   => 'advanced-ads',
 			'utm_medium'   => 'link',
 			'utm_campaign' => $utm_campaign,
-		), $url );
+		], $url );
 
 		include ADVADS_BASE_PATH . 'admin/views/upgrades/upgrade-link.php';
 	}
@@ -81,7 +81,7 @@ class Advanced_Ads_Admin_Upgrades {
 	public static function pro_feature_link( $utm_campaign = '' ) {
 		self::upgrade_link(
 			__( 'Pro Feature', 'advanced-ads' ),
-			ADVADS_URL . 'add-ons/advanced-ads-pro/',
+			ADVADS_URL . 'advanced-ads-pro/',
 			$utm_campaign
 		);
 	}
@@ -97,16 +97,16 @@ class Advanced_Ads_Admin_Upgrades {
 	public function ad_notices( $notices, $box, $post ) {
 		// Show notice when someone uses an Ad Manager ad in the plain text code field.
 		if ( ! defined( 'AAGAM_VERSION' ) && 'ad-parameters-box' === $box['id'] ) {
-			$ad = new Advanced_Ads_Ad( $post->ID );
+			$ad = \Advanced_Ads\Ad_Repository::get( $post->ID );
 			if ( 'plain' === $ad->type && strpos( $ad->content, 'div-gpt-ad-' ) ) {
-				$notices[] = array(
+				$notices[] = [
 					'text' => sprintf(
 					// Translators: %1$s opening a tag, %2$s closing a tag.
 						esc_html__( 'This looks like a Google Ad Manager ad. Use the %1$sGAM Integration%2$s.', 'advanced' ),
 						'<a href="' . ADVADS_URL . 'add-ons/google-ad-manager/?utm_source=advanced-ads&utm_medium=link&utm_campaign=upgrade-ad-parameters-gam" target="_blank">',
 						'</a>'
 					) . ' ' . __( 'A quick and error-free way of implementing ad units from your Google Ad Manager account.', 'advanced-ads' ),
-				);
+				];
 			}
 		}
 

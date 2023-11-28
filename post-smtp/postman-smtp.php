@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Plugin Name: Post SMTP
  * Plugin URI: https://wordpress.org/plugins/post-smtp/
  * Description: Email not reliable? Post SMTP is the first and only WordPress SMTP plugin to implement OAuth 2.0 for Gmail, Hotmail and Yahoo Mail. Setup is a breeze with the Configuration Wizard and integrated Port Tester. Enjoy worry-free delivery even if your password changes!
- * Version: 2.0.26
+ * Version: 2.6.0
  * Author: Post SMTP
  * Text Domain: post-smtp
  * Author URI: https://postmansmtp.com
@@ -27,6 +27,73 @@ if ( ! defined( 'ABSPATH' ) ) {
 // filter postman_module: implement this filter and return the instance of the module
 // filter postman_register_modules: apply this filter to register the module
 
+/** 
+ * Freemius initialization
+ * 
+ * @since 2.1.1
+ * @version 1.0
+ */
+if ( ! function_exists( 'ps_fs' ) ) {
+    // Create a helper function for easy SDK access.
+    function ps_fs() {
+        global $ps_fs;
+
+        if ( ! isset( $ps_fs ) ) {
+            // Include Freemius SDK.
+            require_once dirname(__FILE__) . '/freemius/start.php';
+
+            $ps_fs = fs_dynamic_init( array(
+                'id'                  => '10461',
+                'slug'                => 'post-smtp',
+                'type'                => 'plugin',
+                'public_key'          => 'pk_28fcefa3d0ae86f8cdf6b7f71c0cc',
+                'is_premium'          => false,
+                'has_addons'          => true,
+				'bundle_id' 		  => '10910',
+				'bundle_public_key'   => 'pk_c5110ef04ba30cd57dd970a269a1a',
+                'has_paid_plans'      => true,
+                'menu'                => array(
+                    'slug'           => 'postman',
+                    'first-path'     => 'admin.php?page=postman',
+                    'account'        => false,
+                ),
+            ) );
+        }
+
+        return $ps_fs;
+    }
+
+    // Init Freemius.
+    ps_fs();
+    // Signal that SDK was initiated.
+    do_action( 'ps_fs_loaded' );
+}
+
+function ps_fs_custom_connect_message_on_update(
+    $message,
+    $user_first_name,
+    $product_title,
+    $user_login,
+    $site_link,
+    $freemius_link
+) {
+    return sprintf(
+		'<div class="ps-optin-popup">' .
+        '<h1>' . __( 'Stay on the safe side', 'post-smtp' ) . '</h1>' .
+		'<p>'.__( 'Receive our plugin\'s alert in case of critical security and feature updates and allow non-sensitive diagnostic tracking.', 'post-smtp' ).'</p>' .
+		'</div>' . 
+		'<div style="clear: both;"></div>'
+    );
+}
+ 
+ps_fs()->add_filter('connect_message', 'ps_fs_custom_connect_message_on_update', 10, 6);
+
+function ps_fs_custom_icon() {
+    return dirname( __FILE__ ) . '/assets/images/icons/optin.png';
+}
+ 
+ps_fs()->add_filter( 'plugin_icon' , 'ps_fs_custom_icon' );
+
 
 /**
  * DO some check and Start Postman
@@ -35,10 +102,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'POST_SMTP_BASE', __FILE__ );
 define( 'POST_SMTP_PATH', __DIR__ );
 define( 'POST_SMTP_URL', plugins_url('', POST_SMTP_BASE ) );
-define( 'POST_SMTP_VER', '2.0.26' );
-define( 'POST_SMTP_SHOW_RELEASE_MESSAGE', true );
-define( 'POST_SMTP_RELEASE_MESSAGE', "THE FUTURE OF Post SMTP - PLEASE READ!" );
-define( 'POST_SMTP_RELEASE_URL', 'https://postmansmtp.com/the-future-of-post-smtp/' );
+define( 'POST_SMTP_VER', '2.6.0' );
+define( 'POST_SMTP_DB_VERSION', '1.0.1' );
+define( 'POST_SMTP_ASSETS', plugin_dir_url( __FILE__ ) . 'assets/' );
 
 $postman_smtp_exist = in_array( 'postman-smtp/postman-smtp.php', (array) get_option( 'active_plugins', array() ) );
 $required_php_version = version_compare( PHP_VERSION, '5.6.0', '<' );
@@ -137,4 +203,3 @@ function post_setupPostman() {
 	$kevinCostner = new Postman( __FILE__, POST_SMTP_VER );
 	do_action( 'post_smtp_init');
 }
-

@@ -24,7 +24,9 @@ class TitleController extends Container implements Module
     use EventsFilters;
     use WpFiltersActions;
 
-    protected $titleRemoveClosure = null;
+    public $titleRemoveClosure;
+    public $removeTitleFilterClosure;
+    public $addTitleFilterClosure;
 
     public function __construct()
     {
@@ -34,13 +36,13 @@ class TitleController extends Container implements Module
         );
 
         //remove the filer before menu title render
-        $this->wpAddFilter(
+        $this->removeTitleFilterClosure = $this->wpAddFilter(
             'wp_nav_menu_args',
             'removeTitleFilter'
         );
 
         //add the filter back after the menu title is rendered
-        $this->wpAddFilter(
+        $this->addTitleFilterClosure = $this->wpAddFilter(
             'wp_nav_menu_items',
             'addTitleFilter'
         );
@@ -73,10 +75,10 @@ class TitleController extends Container implements Module
         $sourceId = $payload['sourceId'];
         $post = get_post($sourceId);
         if (is_object($post)) {
-            $post = vchelper('Preview')->updateSourcePostWithPreviewPost($post);
-            $sourceId = vchelper('Preview')->updateSourceIdWithPreviewId($sourceId);
+            $post = vchelper('Preview')->updateSourcePostWithAutosavePost($post);
+            $sourceId = vchelper('Preview')->updateSourceIdWithAutosaveId($sourceId);
 
-            $pageTitle = $requestHelper->input('vcv-page-title');
+            $pageTitle = esc_html($requestHelper->input('vcv-page-title'));
             $pageTitleDisabled = $requestHelper->input('vcv-page-title-disabled', false);
             if ($requestHelper->exists('vcv-page-title') && !$pageTitle) {
                 $pageTitleDisabled = true;
@@ -120,7 +122,7 @@ class TitleController extends Container implements Module
         if (!is_admin()) {
             $frontendHelper = vchelper('Frontend');
             $requestHelper = vchelper('Request');
-            $post = vchelper('Preview')->updateSourcePostWithPreviewPost(get_post($postId));
+            $post = vchelper('Preview')->updateSourcePostWithAutosavePost(get_post($postId));
 
             if ($post) {
                 $disableMeta = get_post_meta($post->ID, '_' . VCV_PREFIX . 'pageTitleDisabled', true);

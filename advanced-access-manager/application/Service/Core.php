@@ -10,16 +10,21 @@
 /**
  * AAM core service
  *
- * @since 6.7.5 https://github.com/aamplugin/advanced-access-manager/issues/173
- * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/126
- * @since 6.4.2 Fixed https://github.com/aamplugin/advanced-access-manager/issues/82
- * @since 6.4.0 Added "Manage Access" toolbar item to single & multisite network
- * @since 6.0.5 Making sure that only if user is allowed to manage other users
- * @since 6.0.4 Bug fixing. Unwanted "Access Denied" metabox on the Your Profile page
- * @since 6.0.0 Initial implementation of the class
+ * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+ * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/268
+ * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/265
+ * @since 6.9.5  https://github.com/aamplugin/advanced-access-manager/issues/243
+ * @since 6.9.3  https://github.com/aamplugin/advanced-access-manager/issues/236
+ * @since 6.7.5  https://github.com/aamplugin/advanced-access-manager/issues/173
+ * @since 6.5.3  https://github.com/aamplugin/advanced-access-manager/issues/126
+ * @since 6.4.2  https://github.com/aamplugin/advanced-access-manager/issues/82
+ * @since 6.4.0  Added "Manage Access" toolbar item to single & multi-site network
+ * @since 6.0.5  Making sure that only if user is allowed to manage other users
+ * @since 6.0.4  Bug fixing. Unwanted "Access Denied" metabox on the Your Profile page
+ * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.7.5
+ * @version 6.9.10
  */
 class AAM_Service_Core
 {
@@ -38,30 +43,26 @@ class AAM_Service_Core
      *
      * @access protected
      *
-     * @since 6.4.2 Fixed https://github.com/aamplugin/advanced-access-manager/issues/82
-     * @since 6.4.0 Added "Manage Access" toolbar item
-     * @since 6.0.5 Fixed bug when Access Manager metabox is rendered for users that
-     *              have ability to manage other users
-     * @since 6.0.4 Fixed bug when Access Manager metabox is rendered on profile edit
-     *              page
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+     * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/268
+     * @since 6.9.5  https://github.com/aamplugin/advanced-access-manager/issues/243
+     * @since 6.9.3  https://github.com/aamplugin/advanced-access-manager/issues/236
+     * @since 6.4.2  https://github.com/aamplugin/advanced-access-manager/issues/82
+     * @since 6.4.0  Added "Manage Access" toolbar item
+     * @since 6.0.5  Fixed bug when Access Manager metabox is rendered for users that
+     *               have ability to manage other users
+     * @since 6.0.4  Fixed bug when Access Manager metabox is rendered on profile edit
+     *               page
+     * @since 6.0.0  Initial implementation of the method
      *
      * @return void
-     * @version 6.4.2
+     * @version 6.9.10
      */
     protected function __construct()
     {
-        if (AAM_Addon_Repository::getInstance()->hasRegistry()) {
-            // Plugin updates check
-            add_filter('http_response', array($this, 'checkForUpdates'), 10, 3);
-
-            // Plugin release details
-            add_filter('self_admin_url', array($this, 'pluginUpdateDetails'), 10);
-        }
-
         if (is_admin()) {
             $metaboxEnabled = AAM_Core_Config::get(
-                'ui.settings.renderAccessMetabox', true
+                'ui.settings.renderAccessMetabox', false
             );
 
             if ($metaboxEnabled && current_user_can('aam_manager')) {
@@ -70,7 +71,6 @@ class AAM_Service_Core
 
             // Hook that initialize the AAM UI part of the service
             add_action('aam_init_ui_action', function () {
-                AAM_Backend_Feature_Subject_Role::register();
                 AAM_Backend_Feature_Subject_User::register();
 
                 AAM_Backend_Feature_Settings_Service::register();
@@ -78,7 +78,6 @@ class AAM_Service_Core
                 AAM_Backend_Feature_Settings_Content::register();
                 AAM_Backend_Feature_Settings_ConfigPress::register();
                 AAM_Backend_Feature_Settings_Manager::register();
-                AAM_Backend_Feature_Addons_Manager::register();
             }, 1);
         }
 
@@ -136,126 +135,11 @@ class AAM_Service_Core
             AAM::getUser()->setUserExpiration($settings);
         });
 
-        // If there are any license violations. Display the notification for users
-        // that have enough permissions to manage AAM
-        if (is_admin() && current_user_can('aam_manager')) {
-            if (AAM_Addon_Repository::getInstance()->hasViolations()) {
-                if (!AAM::isAAM()) {
-                    add_action('admin_notices', function() {
-                        require __DIR__ . '/../Backend/tmpl/partial/license-violation-notice.php';
-                    });
-                }
+        // Run upgrades if available
+        AAM_Core_Migration::run();
 
-                // Also add all the identified violations to the AAM console
-                foreach(AAM_Addon_Repository::getInstance()->getViolations() as $v) {
-                    AAM_Core_Console::add($v);
-                }
-            }
-        }
-    }
-
-    /**
-     * Check for premium plugin updates
-     *
-     * @param array  $response
-     * @param string $r
-     * @param string $url
-     *
-     * @return array
-     *
-     * @since 6.7.5 https://github.com/aamplugin/advanced-access-manager/issues/173
-     * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/126
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.7.5
-     */
-    public function checkForUpdates($response, $r, $url)
-    {
-        if (strpos($url, self::PLUGIN_CHECK_URI) !== false) {
-            $repository = AAM_Addon_Repository::getInstance();
-
-            // Fetch registry from the AAM server
-            $raw = wp_remote_post(
-                AAM_Core_API::getAPIEndpoint() . '/registry',
-                array(
-                    'headers' => array(
-                        'Accept'       => 'application/json',
-                        'Content-Type' => 'application/json'
-                    ),
-                    'body'    => wp_json_encode($repository->getAddonLicenseMap())
-                )
-            );
-
-            // Making sure that we are getting successful response
-            $is_error = is_wp_error($raw);
-            $is_ok    = intval(wp_remote_retrieve_response_code($raw)) === 200;
-
-            if (!$is_error && $is_ok) {
-                $original = json_decode($response['body'], true);
-                $new_body = json_decode(wp_remote_retrieve_body($raw), true);
-
-                // Looping through each product in the response and comparing to the
-                // currently installed version on the website and if match found,
-                // override the original response to indicate that new version is
-                // available
-                if (!empty($new_body['products']) && is_array($new_body['products'])) {
-                    foreach ($new_body['products'] as $item) {
-                        $v     = $repository->getPluginVersion($item['plugin']);
-                        $new_v = $item['new_version'];
-
-                        if (!empty($v) && (version_compare($v, $new_v) === -1)) {
-                            $original['plugins'][$item['plugin']] = $item;
-                        }
-
-                        if (!empty($item['violation'])) {
-                            $repository->processViolation(
-                                $item['slug'],
-                                $item['violation'],
-                                (isset($item['action']) ? $item['action'] : null)
-                            );
-                        }
-                    }
-                }
-
-                $response['body'] = json_encode($original);
-            }
-        }
-
-        return $response;
-    }
-
-    /**
-     * Generate plugin update/changelog details URL
-     *
-     * @param string $url
-     *
-     * @return string
-     *
-     * @access public
-     * @version 6.0.0
-     */
-    public function pluginUpdateDetails($url)
-    {
-        if (strpos($url, 'plugin-install.php?') !== false) {
-            $args  = parse_url($url);
-            $query = array();
-
-            parse_str($args['query'], $query);
-
-            $plugin  = !empty($query['plugin']) ? $query['plugin'] : null;
-            $aam_ids = array_keys(AAM_Addon_Repository::getInstance()->getList());
-
-            if (in_array($plugin, $aam_ids)) {
-                $url = add_query_arg(array(
-                    'TB_iframe' => true,
-                    'width'     => (isset($query['width']) ? $query['width'] : 640),
-                    'height'    => (isset($query['height']) ? $query['height'] : 662),
-                ), 'https://aamplugin.com/addon/' . $plugin . '/changelog');
-            }
-        }
-
-        return $url;
+        // Bootstrap RESTful API
+        AAM_Core_Restful::bootstrap();
     }
 
     /**
@@ -315,11 +199,12 @@ class AAM_Service_Core
      *
      * @return array
      *
+     * @since 6.9.9 https://github.com/aamplugin/advanced-access-manager/issues/265
      * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/126
      * @since 6.0.0 Initial implementation of the method
      *
      * @access public
-     * @version 6.5.3
+     * @version 6.9.9
      */
     public function mapMetaCaps($caps, $cap, $user_id, $args)
     {
@@ -328,7 +213,7 @@ class AAM_Service_Core
         // Mutate any AAM specific capability if it does not exist
         foreach ((array) $caps as $i => $capability) {
             if (
-                (strpos($capability, 'aam_') === 0)
+                is_string($capability) && (strpos($capability, 'aam_') === 0)
                 && !AAM_Core_API::capExists($capability)
             ) {
                 $caps[$i] = AAM_Core_Config::get(

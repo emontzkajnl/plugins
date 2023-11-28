@@ -143,7 +143,7 @@ if ( ! function_exists( 'generate_post_query_from_stackable_posts_block' ) ) {
 	 *
 	 * @return array post query which will be used for WP_Query.
 	 */
-	function generate_post_query_from_stackable_posts_block( $block_or_attribute ) {
+	function generate_post_query_from_stackable_posts_block( $block_or_attribute, $query_string = '' ) {
 		$is_wp_block = ! is_array( $block_or_attribute ) && get_class( $block_or_attribute ) === 'WP_Block';
 		/**
 		 * If the passed object is an instance of
@@ -185,7 +185,8 @@ if ( ! function_exists( 'generate_post_query_from_stackable_posts_block' ) ) {
 
 		return apply_filters( 'stackable/posts/post_query',
 			$post_query,
-			$context
+			$context,
+			$query_string
 		);
 	}
 }
@@ -222,7 +223,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// Feature image urls.
 				register_rest_field( $post_type, 'featured_image_urls',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_featured_image_urls' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_featured_image_urls' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Different sized featured images', STACKABLE_I18N ),
@@ -234,7 +235,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// Excerpt.
 				register_rest_field( $post_type, 'post_excerpt_stackable',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_excerpt' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_excerpt' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Post excerpt for Stackable', STACKABLE_I18N ),
@@ -246,7 +247,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// Category links.
 				register_rest_field( $post_type, 'category_list',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_category_list' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_category_list' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Category list links', STACKABLE_I18N ),
@@ -258,7 +259,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// Author name.
 				register_rest_field( $post_type, 'author_info',
 					array(
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_author_info' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_author_info' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Author information', STACKABLE_I18N ),
@@ -271,7 +272,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				register_rest_field( $post_type, 'comments_num',
 					array(
 						'get_callback' => 'stackable_commments_number_v2',
-						'get_callback' => array( new Stackable_Posts_Block(), 'get_comments_number' ),
+						'get_callback' => array( 'Stackable_Posts_Block', 'get_comments_number' ),
 						'update_callback' => null,
 						'schema' => array(
 							'description' => __( 'Number of comments', STACKABLE_I18N ),
@@ -283,7 +284,7 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 				// API endpoint for getting all the terms/taxonomies.
 				register_rest_route( 'stackable/v3', '/terms', array(
 					'methods' => 'GET',
-					'callback' => array( new Stackable_Posts_Block(), 'get_terms' ),
+					'callback' => array( 'Stackable_Posts_Block', 'get_terms' ),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_posts' );
 					},
@@ -372,18 +373,29 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 		 * @param string new content.
 		 */
 		public function render_callback( $attributes, $content, $block = null ) {
-			preg_match( '/\&lt;.*?stk-start:posts\/template [^>]*>(.*)\&lt;.*?stk-end:post\/template[^>]*>/', $content, $match );
-			if ( ! isset( $match[ 1 ] ) ) {
+			// We have the odd "–" string here because we have incorrectly used this in previous versions.
+			// Sometimes the "<" & ">" characters get converted into "&lt;" & "&gt;"
+			preg_match( '/(\&lt;|<)[!–\-\s\/]+stk-start:posts\/template[^>;]+(\&gt;|>)(.*?)(\&lt;|<)[!–\-\s\/]+stk-end:post\/template[^>;]+(\&gt;|>)/', $content, $match );
+			if ( ! isset( $match[3] ) ) {
 				return $content;
 			}
+			$matched = $match[0];
+			$single_post_template = $match[3];
+			$query_string = '';
 
 			$attributes = $this->generate_defaults( $attributes );
-			$content = $this->render_post_items( $match, $content, $attributes );
+			foreach ( $block->inner_blocks as $inner_block ) {
+				if ( $inner_block->name === 'stackable/pagination' ) {
+					$query_string = isset( $inner_block->attributes['queryString'] ) ? $inner_block->attributes['queryString'] : '';
+					break;
+				}
+			}
+			$content = $this->render_post_items( $matched, $single_post_template, $content, $attributes, $query_string );
 			$content = apply_filters( 'stackable.posts.output',
 				$content,
 				$attributes,
 				$block,
-				$match
+				$single_post_template
 			);
 			return $content;
 		}
@@ -391,12 +403,9 @@ if ( ! class_exists( 'Stackable_Posts_Block' ) ) {
 		/**
 		 * Render the post items
 		 */
-		public function render_post_items( $match, $content, $attributes ) {
-			$to_replace = $match[ 0 ];
-			$template = $match[ 1 ];
-
+		public function render_post_items( $to_replace, $template, $content, $attributes, $query_string ) {
 			$posts = '';
-			$post_query = generate_post_query_from_stackable_posts_block( $attributes );
+			$post_query = generate_post_query_from_stackable_posts_block( $attributes, $query_string );
 			$recent_posts = wp_get_recent_posts( $post_query );
 			// Manually slice the array based on the number of posts per page.
 			if ( is_array( $recent_posts ) && count( $recent_posts ) > (int) $post_query['numberposts'] ) {

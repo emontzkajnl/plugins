@@ -5,7 +5,10 @@
 $issues = array();
 
 $missingExtensions = array();
+extension_loaded('curl') || $missingExtensions[] = 'curl';
 extension_loaded('exif') || $missingExtensions[] = 'exif';
+extension_loaded('json') || $missingExtensions[] = 'json';
+extension_loaded('zlib') || $missingExtensions[] = 'zlib';
 
 if ($missingExtensions) {
     $issues[] = 'Your Composer dependencies require the following PHP extensions to be installed: ' . implode(', ', $missingExtensions);

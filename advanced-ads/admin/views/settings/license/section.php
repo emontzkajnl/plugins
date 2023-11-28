@@ -7,12 +7,12 @@ printf(
 	wp_kses(
 	// translators: %s is a URL.
 		__( 'See also <a href="%s" target="_blank">Issues and questions about licenses</a>.', 'advanced-ads' ),
-		array(
-			'a' => array(
-				'href'   => array(),
-				'target' => array(),
-			),
-		)
+		[
+			'a' => [
+				'href'   => [],
+				'target' => [],
+			],
+		]
 	),
 	esc_url( ADVADS_URL . 'manual/purchase-licenses/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses' )
 );

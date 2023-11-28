@@ -9,10 +9,10 @@
 <input name="<?php echo esc_attr( Advanced_Ads_Pro::OPTION_KEY ); ?>[ad-server][enabled]"
 	   class="advads-has-sub-settings"
 	   id="advanced-ads-pro-ad-server-enabled" type="checkbox" value="1" <?php checked( $module_enabled ); ?> />
-<label for="advanced-ads-pro-ad-server-enabled"
-	   class="description"><?php esc_html_e( 'Activate module.', 'advanced-ads-pro' );
-	    ?> – <a href="<?php echo esc_url( ADVADS_URL ) . 'ad-server-wordpress/#utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-ad-server-manual'; ?>" target="_blank"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
-	   </label>
+<label for="advanced-ads-pro-ad-server-enabled" class="description">
+	<?php esc_html_e( 'Activate module.', 'advanced-ads-pro' ); ?>
+</label>
+<a href="<?php echo esc_url( ADVADS_URL ) . 'ad-server-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-ad-server-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
 
 <div class="advads-sub-settings">
 	<p class="description"><?php esc_html_e( 'Top level domains on which the ads will be loaded.', 'advanced-ads-pro' ); ?> <?php esc_html_e( 'Separate multiple values with a comma.', 'advanced-ads-pro' ); ?></p>

@@ -1,14 +1,14 @@
 === Visual Composer Website Builder, Landing Page Builder, Custom Theme Builder, Maintenance Mode & Coming Soon Pages ===
-Contributors: VisualComposer,veidenbaums,nikitahl,pavelvisualcomposer,konutis,orkunaybek,mrdollar4444,sqarf,seahunter,alperbulut,slavavc,filipsmasolovs,cagdasdag,cozmoslabs
+Contributors: VisualComposer,veidenbaums,nikitahl,orkunaybek,mrdollar4444,sqarf,dmytrokovalov,pavelvisualcomposer,konutis,seahunter,alperbulut,slavavc,filipsmasolovs,cagdasdag,cozmoslabs
 Tags: page builder, website builder, editor, drag and drop, visual composer, popup builder, sitebuilder, wysiwyg web builder, ecommerce website builder, drag and drop website builder, SEO website builder, landing page, landing page builder, landingpages, SEO landing page, lead generation landing page, ecommerce landing page, event landing page, frontend builder, drag and drop editor, coming soon, under construction, maintenance mode
-Requires PHP: 5.6
-Requires at least: 4.6
-Tested up to: 5.9.3
-Stable tag: 44.0
+Requires PHP: 7.4
+Requires at least: 5.5
+Tested up to: 6.3
+Stable tag: 45.5.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-[New] Easy drag and drop page builder that gives the freedom to design WordPress websites, landing pages, custom themes, maintenance sode & coming soon pages.
+[New] Easy drag and drop page builder that gives the freedom to design WordPress websites, landing pages, custom themes, maintenance mode & coming soon pages.
 
 == Description ==
 
@@ -109,7 +109,7 @@ With the Visual Composer Role Manager, you can set up and control access to any 
 
 = Font Manager =
 
-The [Visual Composer Font Manager] (https://visualcomposer.com/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=free-download&utm_content=visual-composer-text) is a built-in addon for customizing the fonts, sizes, and styles of your headings, paragraphs, and blockquotes. You can also change link color options like underlines or hovering effects to make them stand out from the regular text.
+The [Visual Composer Font Manager](https://visualcomposer.com/blog/font-manager/?utm_source=wordpress.org&utm_medium=readme&utm_campaign=free-download&utm_content=font-manager-text) is a built-in addon for customizing the fonts, sizes, and styles of your headings, paragraphs, and blockquotes. You can also change link color options like underlines or hovering effects to make them stand out from the regular text.
 
 For a more customized experience, you can change the letter spacing and line-height as well as margins. You may also capitalize, lowercase, and uppercase letters.
 
@@ -213,10 +213,6 @@ Yes! The free page builder version comes with a blank page layout option that al
 
 It is both! Visual Composer’s free version works like a page builder where you have full control over the content area defined by your WordPress theme. Want to design a full site including headers and footers? Choose Visual Composer premium as it allows you to go beyond the content area and create a full site just like you want it.
 
-= Do you have an online community? =
-
-Yes, we have an awesome online community that you can join to share your expertise, connect with power-users and the Visual Composer core team – slack.visualcomposer.com
-
 == Screenshots ==
 1. A friendly, intuitive website builder that gives you design freedom and tools to create a beautiful site.
 2. Create any layouts fast and easy with the pixel perfect Visual Composer builder. It helps you structure content in a way that’s exactly how it should be!
@@ -225,6 +221,292 @@ Yes, we have an awesome online community that you can join to share your experti
 5. Endless WordPress site design options - build a website just the way you want it with powerful features for beginners and pros.
 
 == Changelog ==
+
+= 45.5.0 =
+*Release Date - 2023-08-28*
+
+### Premium:
+- Update: Updated the library of available Google Fonts
+- Fix: Maintenance mode works properly with blank layout
+
+= 45.4.1 =
+*Release Date - 2023-08-08*
+
+### Free:
+- Fix: Prevent double text translation in WPML
+
+### Premium:
+- Fix: Video player element works properly and does not affect editor loading
+
+= 45.4.0 =
+*Release Date - 2023-07-13*
+
+### Free:
+- Fix: Insights analysis works properly for the footer part of the website
+- Fix: Gutenberg content editing works properly
+
+### Premium:
+- Fix: Video elements work properly in the editor
+- Fix: The video player element works properly in the editor
+- Fix: The video popup element works properly in the editor
+- Fix: The social icon set works properly within the Icon Button element
+
+= 45.3.0 =
+*Release Date - 2023-06-19*
+
+### Free:
+- Fix: Template download works properly for different environments
+- Fix: Notifications inside the Visual Composer dashboard have been improved for design consistency
+- Fix: Gutenberg content editing works properly
+
+### Premium:
+- New: Role Manager controls user access to the edit element window tabs
+- Fix: Row resizing controls work properly in Popup Builder
+- Fix: Naming consistency improved for the post grid elements
+- Fix: Template import from previous versions of the editor works properly
+- Fix: Sliders work properly when using mouse to switch slides
+
+= 45.2.0 =
+*Release Date - 2023-06-01*
+
+### Free:
+- New: Custom CSS option is available for all elements in the element edit window
+- New: Data attributes are available for all elements  in the element edit window
+- New: Navigation to parent element is available for all elements
+- New: Element window has tabs for content, design, layout, and advanced attributes
+- Update: Improved editor load speed
+- Update: User satisfaction survey updated
+- Compatibility: The editor works properly with Easy Content Tables
+- Compatibility: The editor works properly with the One User Avatar
+- Fix: Visual Composer works properly with a multisite environment
+- Fix: Posts with no content work properly in the editor
+- Fix: Editor works properly on specifically preconfigured server environments
+- Fix: Status check works properly and does not deactivate the plugin
+- Fix: Memory limit displays properly on the system status page
+- Fix: The editor works properly with multiple shortcodes
+- Fix: CSS animations work properly with custom responsiveness enabled
+- Fix: A large amount of content works properly with WPML
+- Fix: Gzip works properly on different server environments
+- Fix: Element update works properly with the newest version of the plugin
+- Fix: Instant update works properly for nested elements
+- Fix: Right-click controls work properly
+- Fix: Hidden elements don't produce extra space
+- Fix: The editor works properly with One-Click Demo Import
+- Fix: The editor works properly with PHP 8.1
+- Fix: The toggle to hide elements in Design Options works properly
+
+### Premium:
+- New: Div container element is available
+- New: Editor recognizes usage of global templates, popups, and layout before deletion
+- Update: The Search element improved for ADA compliance
+- Compatibility: Theme Builder works properly with WooCommerce 7
+- Fix: Custom excerpt length works properly for grid (loop) elements
+- Fix: Adding a popup via link selector works properly
+- Fix: Layout options work properly for posts
+- Fix: Header, footer, and sidebar assigning works properly
+- Fix: Search queries and categorizing work properly in the layout builder
+- Fix: Global template width works properly in page layouts
+- Fix: YouTube videos work properly in the header
+- Fix: Role manager presets work properly on the initial save
+- Fix: Featured Image Post Grid title is clickable
+- Fix: Template importing works properly
+- Fix: HubSpot element works properly for different user roles
+- Fix: Captions work properly with custom fields
+- Fix: Settings reset does not remove the custom header and footer settings
+- Fix: Importing and exporting options work properly with Global Templates
+- Fix: All Google Fonts work properly with the Font Manager
+- Fix: Post list element displays a proper WordPress date format
+- Fix: Custom fields with no value are not displayed publicly
+- Fix: Custom layout controls work properly
+- Fix: Locked elements are not accessible with double-click
+- Fix: Spacing for headers in the header builder works properly
+- Fix: wp_body_open hook is available for the layout builder layouts
+- Fix: Post grid elements work properly with sticky posts enabled
+- Fix: Tab links are working properly when linking to another tab
+
+= 45.1.3 =
+*Release Date - 2023-03-22*
+
+### Free:
+- New: Integration with Atarim for better collaboration when developing websites and working with clients
+
+= 45.1.2 =
+*Release Date - 2023-02-02*
+
+### Free:
+- New: pNPS survey added to the editor to collect your feedback
+- Compatibility: WPML is fully compatible with the editor
+- Fix: gZip works properly on different environments
+- Fix: A proper labels are displayed for all free users considering updating to Premium
+
+= 45.1.1 =
+*Release Date - 2022-11-01*
+
+### Premium:
+- Update: License management mechanism improved
+
+= 45.1.0 =
+*Release Date - 2022-10-19*
+
+### Free:
+- Update: CSS Animations for elements improved (Contribution by Lucas Selsek)
+- Update: Plugin activation process improved
+- Update: Plugin code style updated
+- Compatibility: WPML and Visual Composer compatibility improved
+- Compatibility: Contact Form 7 works properly in Visual Composer
+- Compatibility: Yoast SEO breadcrumbs work properly in Visual Composer
+- Fix: Global Custom CSS works properly
+- Fix: Initial welcome survey works properly
+- Fix: Translation of WordPress works properly with Visual Composer and WooCommerce installed
+
+### Premium:
+- Compatibility: Theme Builder works properly with WooCommerce 7
+- Fix: Font Manager and post grid elements work properly
+- Fix: CounterUp element works properly
+- Fix: Template import works properly
+- Fix: Popups in a sitewide header work properly
+- Fix: Font Manager does not impact the CSS styles of the buttons
+- Fix: Font Manager does not apply unneeded underline for images and widgets
+- Fix: Disabling header and footer works properly
+- Fix: Popups added in the Theme Builder layouts work properly
+- Fix: Bulk import works properly
+- Fix: Dynamic content and ACF works properly
+- Fix: Layout width works properly with the Global Template element
+- Fix: Gap controls work properly in Twenty Twenty One theme
+- Fix: Replace option for headers, footers, and sidebars work properly
+- Fix: Link selection works properly in the Typewriter Heading element
+- Fix: Countdown Timer element works properly
+- Fix: Enabling filters for post grids works properly when working with pages
+- Fix: An empty post title does not take space in the layout
+- Fix: Php directive "allow_url_fopen" works properly with the Visual Composer import/export
+- Fix: Theme Builder layouts work properly in block themes
+- Fix: Tab links are working properly when linking to another tab
+
+= 45.0.1 =
+*Release Date - 2022-09-01*
+
+### Free:
+- Fix: To prevent xss vulnerabilities, all roles without 'unfiltered_html' capability don't have an access to the editor
+
+= 45.0 =
+*Release Date - 2022-08-17*
+
+### Free:
+- New: Blank page wizard added for an easier start
+- New: Option to drag an image or images from your desktop to an empty column added
+- New: Element edit window top menu (dots) introduced for better user experience
+- New: Additional API hooks introduced for the 3rd party vendors
+- Update: New mixin logic introduced for better performance
+- Fix: Layout width settings work properly
+- Fix: Data collections work properly in the editor
+- Fix: The editor recognizes the end of the session
+
+### Premium:
+- New: HubSpot form element added to the Visual Composer Hub for compatibility (HubSpot plugin is required)
+- Fix: Underline option works properly with the Font Manager settings
+- Fix: Accordion element performance improved
+- Fix: Dynamic content works properly
+- Fix: Nested dynamic fields work properly
+- Fix: Tag titles work properly in the archive layouts
+- Fix: The maintenance mode add-on is displayed properly in the Visual Composer Hub
+- Fix: Export error messages improved
+- Fix: The author's profile picture works properly when added as a dynamic background
+
+= 44.3.1 =
+*Release Date - 2022-07-07*
+
+### Free:
+- Fix: Single image element works properly
+
+### Premium:
+- Fix: Global header and footer settings work properly
+
+= 44.3.0 =
+*Release Date - 2022-07-06*
+
+### Free:
+- New: TinyMCE typography options offer Default settings
+- New: Insights check anchor tag texts and inform about issues
+- New: Support for geo: and waze: added to the URL attribute
+- Update: Editor controls updated for better UX
+- Fix: Hub templates category works properly after downloading templates
+- Fix: Attach image attribute works properly
+- Fix: Disabling page title works properly in Weaver Xtreme theme
+- Fix: Improved consistency in Hub tabs
+- Fix: Editor saving works properly with multiple media
+- Fix: WPML compatibility improved
+
+### Premium:
+- New: Font Manager allows controling spaces and margins for bullets
+- Update: Google Fonts updated to feature latest fonts in the Font Manager
+- Fix: Dynamic Content does not remove content on the View page
+- Fix: Theme Builder layouts work properly
+- Fix: Custom excerpt works properly in the post grid elements
+- Fix: Logo Widget has proper image sizes
+- Fix: Essential Grid plugin works with the Theme Builder
+- Fix: WooCommerce related product element works properly
+- Fix: Single image element works properly with the Dynamic Content
+- Fix: Sidebar preview works properly in the Preview mode
+
+= 44.2.2 =
+*Release Date - 2022-06-08*
+
+### Free:
+- Fix: Navigation bar works properly
+- Fix: Free template download works properly
+- Fix: Elements with multiple images work properly
+
+= 44.2.1 =
+*Release Date - 2022-06-02*
+
+### Free:
+- Fix: isDevaddon method works properly
+
+= 44.2 =
+*Release Date - 2022-06-01*
+
+### Free:
+- New: 'Default' value is added to the TinyMCE options to revert back to the default states
+- New: Support for Geo location and Waze added to link selection
+- Update: Option to enable base64 encode saving option only in Settings
+- Fix: Get method called with stops
+- Fix: Disabling Gutenberg editor in Settings works properly
+- Fix: Image size is displayed properly Insights
+- Fix: Substitute element option works properly
+- Fix: Custom scripts work properly
+- Fix: Basic button element works properly with Powerful Addons for Visual Composer - Lite
+- Fix: Basic button colors work properly
+- Fix: Instagram embed works properly
+- Fix: Tutorial template works properly
+- Fix: Preset saving inputs are consistent with the rest of the UI
+
+### Premium:
+- Update: Option to create and edit popups added to the Popup tab in Page Options
+- Fix: Hover image element container sizes work correctly
+- Fix: Dynamic popup works properly with keyboard shortcuts
+- Fix: Sidebar editor works properly in Storefront theme
+- Fix: Double Text button works properly
+- Fix: WooCommerce Shopping Cart element works properly
+
+= 44.1 =
+*Release Date - 2022-05-12*
+
+### Free:
+- Fix: Template image sizes are properly defined in the Media Library
+- Fix: Delete buttons works properly in the Tree View
+- Fix: Esc key works properly in the custom CSS and JavaScript
+- Fix: Disabling page title works properly in the Weaver Xtreme theme
+
+### Premium:
+- New: Option to disable popup background overlay and enable page scroll
+- Update: Popup builder bottom placeholders removed for cleaner user experience
+- Update: "Edit layout" option added to the layout dropdown in the Page Options
+- Fix: Typewriter elements works properly
+- Fix: Post Slider block works properly
+- Fix: News Post Grid element works properly in Safari
+- Fix: Visual Composer works properly with the ACF Pro gallery fields
+- Fix: Dynamically added links work properly when triggering popups
+- Fix: Dynamic fields work properly with the post excerpt
 
 = 44.0 =
 *Release Date - 2022-04-28*

@@ -8,14 +8,18 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 	 * Constructor
 	 */
 	public function __construct() {
+		if ( defined( 'ADVANCED_ADS_PRO_DISABLE_ADS_TOOLBAR_ITEM' ) && ADVANCED_ADS_PRO_DISABLE_ADS_TOOLBAR_ITEM ) {
+			return;
+		}
+
 		// TODO load options
 		// add admin bar item with current ads
 		if ( ! is_admin() ) {
-			add_action( 'admin_bar_menu', array( $this, 'admin_bar_current_ads' ), 999 );
+			add_action( 'admin_bar_menu', [ $this, 'admin_bar_current_ads' ], 999 );
 		}
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 11 );
-		add_action( 'wp_footer', array( $this, 'output_items' ), 21 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 11 );
+		add_action( 'wp_footer', [ $this, 'output_items' ], 21 );
 	}
 
 	/**
@@ -32,19 +36,19 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 		}
 
 		// Add main menu item.
-		$args = array(
+		$args = [
 			'id'    => 'advads_current_ads',
 			'title' => __( 'Ads', 'advanced-ads-pro' ),
 			'href'  => false,
-		);
+		];
 		$wp_admin_bar->add_node( $args );
 
-		$args = array(
+		$args = [
 			'parent' => 'advads_current_ads',
 			'id'     => 'advads_no_ads_found',
 			'title'  => __( 'No Ads found', 'advanced-ads-pro' ),
 			'href'   => false,
-		);
+		];
 		$wp_admin_bar->add_node( $args );
 	}
 
@@ -58,12 +62,16 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 
 		$uri_rel_path = AAP_BASE_URL . 'assets/js/';
 
-		$deps = array( 'jquery' );
+		$deps = [ 'jquery' ];
 		if ( wp_script_is( 'advanced-ads-pro/cache_busting' ) ) {
 			$deps[] = 'advanced-ads-pro/cache_busting';
 		}
 
 		wp_enqueue_script( 'advanced-ads-pro/cache_busting_admin_bar', $uri_rel_path . 'admin_bar.js', $deps, AAP_VERSION, true );
+
+		// scrollable ads listing when ads long then windows height
+		$custom_inline_style = '#wp-admin-bar-advads_current_ads-default { overflow-y: auto; max-height:calc(100vh - 50px); } ';
+		wp_add_inline_style('admin-bar', $custom_inline_style );
 	}
 
 	/**
@@ -72,7 +80,7 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 	public function output_items() {
 		// Add item for each ad
 		$ads   = Advanced_Ads::get_instance()->current_ads;
-		$nodes = array();
+		$nodes = [];
 
 		foreach ( $ads as $_key => $_ad ) {
 			// TODO $type not used .
@@ -90,10 +98,10 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 					break;
 			}
 
-			$nodes[] = array(
+			$nodes[] = [
 				'title' => esc_html( $_ad['title'] ),
 				'type'  => $type,
-			);
+			];
 		}
 
 		$content = sprintf( '<script>window.advads_admin_bar_items = %s;</script>', wp_json_encode( $nodes ) );

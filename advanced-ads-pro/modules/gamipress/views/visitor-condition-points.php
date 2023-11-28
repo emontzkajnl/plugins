@@ -35,6 +35,10 @@
 
 	<input type="number" name="<?php echo esc_attr( $name ); ?>[value]" value="<?php echo (int) $value; ?>" min="0">
 
-
-	<p class="description"><?php echo esc_html( $condition['description'] ); ?></p>
+	<p class="description">
+		<?php echo esc_html( $condition['description'] ); ?>
+		<a href="https://wpadvancedads.com/manual/gamipress-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=condition-gamipress" class="advads-manual-link" target="_blank">
+			<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
+		</a>
+	</p>
 </div>

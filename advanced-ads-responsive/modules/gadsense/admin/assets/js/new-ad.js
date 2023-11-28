@@ -188,8 +188,18 @@
 				var resizeMode = $('#ad-resize-type').val();
 				if ('manual' == resizeMode) {
 					$('#gadsense-css-div').css('display', 'block');
+					$( 'input[name="default-width"], input[name="default-height"]' )
+						.prop( {
+							'required': true,
+							'disabled': false
+						} );
 				} else {
 					$('#gadsense-css-div').css('display', 'none');
+					$( 'input[name="default-width"], input[name="default-height"]' )
+						.prop( {
+							'required': false,
+							'disabled': true
+						} );
 				}
 			} else {
 				$('#gadsense-css-div').css('display', 'none');

@@ -1,0 +1,9 @@
+{
+    "name":     "acf/video-section",
+    "title":    "Video Section",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "video-section.php"
+    }
+}

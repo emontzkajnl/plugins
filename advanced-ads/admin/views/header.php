@@ -2,8 +2,17 @@
 /**
  * Header on admin pages
  *
- * @var string $title page title.
- * @var string $screen_id ID of the current screen.
+ * @var string    $title               page title.
+ * @var WP_Screen $screen              Current screen
+ * @var string    $reset_href          href attribute for the reset button
+ * @var bool      $show_filter_button  if the filter button is visible
+ * @var string    $filter_disabled     if the visible filter button is disabled
+ * @var string    $new_button_label    text displayed on the New button
+ * @var string    $new_button_href     href of the New button
+ * @var string    $new_button_id       id of the New button
+ * @var string    $show_screen_options if to show the Screen Options button
+ * @var string    $manual_url          target of the manual link
+ * @var string    $tooltip             description that will show in a tooltip
  */
 ?>
 <div id="advads-header">
@@ -13,38 +22,37 @@
 			<h1><?php echo esc_html( $title ); ?></h1>
 		</div>
 		<div id="advads-header-actions">
-			<?php
-			// load page-specific information
-			$manual_url = 'manual/';
-			switch ( $screen_id ) :
-				case 'advanced_ads': // ad edit page
-				case 'edit-advanced_ads': // ad overview
-					?>
-					<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=advanced_ads' ) ); ?>" class="header-action button" ><span class="dashicons dashicons-plus"></span><?php esc_html_e( 'New Ad', 'advanced-ads' ); ?></a>
-					<?php
-					$manual_url = 'manual/first-ad/';
-					break;
-				case 'advanced-ads_page_advanced-ads-groups': // ad groups
-					?>
-					<a href="#" id="advads-new-ad-group-link" class="header-action button"><span class="dashicons dashicons-plus"></span><?php esc_html_e( 'New Ad Group', 'advanced-ads' ); ?></a>
-					<?php
-					$manual_url = 'manual/rotate-ad/';
-					break;
-				case 'advanced-ads_page_advanced-ads-placements':
-					?>
-					<a href="#" class="header-action button" title="<?php esc_html_e( 'Create a new placement', 'advanced-ads' ); ?>" onclick="advads_toggle('.advads-placements-new-form'); advads_scroll_to_element('#advads-placements-new-form');"><span class="dashicons dashicons-plus"></span><?php esc_html_e( 'New Placement', 'advanced-ads' ); ?></a>
-					<?php
-					$manual_url = 'manual/placements/';
-					break;
-			endswitch;
-			$manual_url = apply_filters( 'advanced-ads-admin-header-manual-url', $manual_url, $screen_id );
-			?>
+			<?php if ( $new_button_label !== '' ) : ?>
+				<a href="<?php echo esc_url( $new_button_href ); ?>" class="header-action button advads-button-primary" id="<?php echo esc_attr( $new_button_id ); ?>">
+					<span class="dashicons dashicons-plus"></span><?php echo esc_html( $new_button_label ); ?>
+				</a>
+			<?php endif; ?>
+			<?php if ( $tooltip !== '' ) : ?>
+				<span class="advads-help"><span class="advads-tooltip"><?php echo esc_html( $tooltip ); ?></span></span>
+			<?php endif; ?>
 		</div>
 		<div id="advads-header-links">
-			<?php if ( ! defined( 'AAP_VERSION' ) ) : ?>
-			<a class="advads-upgrade" href="<?php echo esc_url( ADVADS_URL ); ?>add-ons/?utm_source=advanced-ads&utm_medium=link&utm_campaign=header-upgrade-<?php echo esc_attr( $screen_id ); ?>" target="_blank"><?php esc_html_e( 'See all Add-ons', 'advanced-ads' ); ?></a>
+			<?php if ( $reset_href !== '' ) : ?>
+				<a href="<?php echo esc_url( $reset_href ); ?>" class="button advads-button-secondary advads-button-icon-right">
+					<?php esc_html_e( 'Reset', 'advanced-ads' ); ?><span class="dashicons dashicons-undo"></span>
+				</a>
 			<?php endif; ?>
-			<a href="<?php echo esc_url( ADVADS_URL . $manual_url ); ?>?utm_source=advanced-ads&utm_medium=link&utm_campaign=header-manual-<?php echo esc_attr( $screen_id ); ?>" target="_blank"><?php esc_html_e( 'Manual', 'advanced-ads' ); ?></a>
+			<?php if ( $show_filter_button ) : ?>
+				<a id="advads-show-filters" class="button advads-button-secondary advads-button-icon-right <?php echo esc_attr( $filter_disabled ); ?>">
+					<?php esc_html_e( 'Filters', 'advanced-ads' ); ?><span class="dashicons dashicons-filter"></span>
+				</a>
+			<?php endif; ?>
+			<?php if ( $show_screen_options ) : ?>
+				<a id="advads-show-screen-options" class="button advads-button-secondary"><?php esc_html_e( 'Screen Options', 'advanced-ads' ); ?></a>
+			<?php endif; ?>
+			<?php if ( ! defined( 'AAP_VERSION' ) ) : ?>
+				<a href="<?php echo esc_url( ADVADS_URL ); ?>add-ons/?utm_source=advanced-ads&utm_medium=link&utm_campaign=header-upgrade-<?php echo esc_attr( $screen->id ); ?>" target="_blank" class="advads-upgrade button advads-button-secondary advads-button-icon-right">
+					<?php esc_html_e( 'See all Add-ons', 'advanced-ads' ); ?><span class="dashicons dashicons-star-filled"></span>
+				</a>
+			<?php endif; ?>
+			<a href="<?php echo esc_url( ADVADS_URL . $manual_url ); ?>?utm_source=advanced-ads&utm_medium=link&utm_campaign=header-manual-<?php echo esc_attr( $screen->id ); ?>" target="_blank" class="button advads-button-secondary advads-button-icon-right">
+				<?php esc_html_e( 'Manual', 'advanced-ads' ); ?><span class="dashicons dashicons-welcome-learn-more"></span>
+			</a>
 		</div>
 	</div>
 </div>

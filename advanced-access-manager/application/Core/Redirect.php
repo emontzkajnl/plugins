@@ -10,13 +10,14 @@
 /**
  * Core AAM redirect handler
  *
- * @since 6.4.3 Fixed https://github.com/aamplugin/advanced-access-manager/issues/94
+ * @since 6.8.5 https://github.com/aamplugin/advanced-access-manager/issues/214
+ * @since 6.4.3 https://github.com/aamplugin/advanced-access-manager/issues/94
  * @since 6.0.5 Fixed bug where URL redirect was incorrectly validating destination
  *              URL
  * @since 6.0.0 Initial implementation of the class
  *
  * @package AAM
- * @version 6.4.3
+ * @version 6.8.5
  */
 class AAM_Core_Redirect
 {
@@ -52,7 +53,7 @@ class AAM_Core_Redirect
      */
     public static function execute($type, $metadata, $halt = false)
     {
-        if (isset(self::$redirectTypes[$type])) {
+        if (array_key_exists($type, self::$redirectTypes)) {
             call_user_func(self::$redirectTypes[$type], $metadata);
         }
 
@@ -87,8 +88,11 @@ class AAM_Core_Redirect
      *
      * @return void
      *
+     * @since 6.8.5 https://github.com/aamplugin/advanced-access-manager/issues/214
+     * @since 6.0.0 Initial implementation of the method
+     *
      * @access public
-     * @version 6.0.0
+     * @version 6.8.5
      */
     public static function doLoginRedirect()
     {
@@ -96,6 +100,12 @@ class AAM_Core_Redirect
             array('reason' => 'restricted'),
             wp_login_url(AAM_Core_Request::server('REQUEST_URI'))
         ));
+
+        // Halt the execution. Redirect should carry user away if this is not
+        // a CLI execution (e.g. Unit Test)
+        if (php_sapi_name() !== 'cli') {
+            exit;
+        }
     }
 
     /**
@@ -105,12 +115,13 @@ class AAM_Core_Redirect
      *
      * @return void
      *
-     * @since 6.4.3 Fixed https://github.com/aamplugin/advanced-access-manager/issues/94
+     * @since 6.8.5 https://github.com/aamplugin/advanced-access-manager/issues/214
+     * @since 6.4.3 https://github.com/aamplugin/advanced-access-manager/issues/94
      * @since 6.1.1 Defining default redirect code `307` if none provided
      * @since 6.0.0 Initial implementation of the method
      *
      * @access public
-     * @version 6.4.3
+     * @version 6.8.5
      */
     public static function doPageRedirect($meta)
     {
@@ -120,6 +131,12 @@ class AAM_Core_Redirect
 
         if (!empty($dest) && (empty($current) || ($current->ID !== intval($dest)))) {
             wp_safe_redirect(get_page_link($dest), $code);
+
+            // Halt the execution. Redirect should carry user away if this is not
+            // a CLI execution (e.g. Unit Test)
+            if (php_sapi_name() !== 'cli') {
+                exit;
+            }
         }
     }
 
@@ -130,13 +147,14 @@ class AAM_Core_Redirect
      *
      * @return void
      *
-     * @since 6.4.3 Fixed https://github.com/aamplugin/advanced-access-manager/issues/94
+     * @since 6.8.5 https://github.com/aamplugin/advanced-access-manager/issues/214
+     * @since 6.4.3 https://github.com/aamplugin/advanced-access-manager/issues/94
      * @since 6.0.5 Fixed bug where destination URL was not properly checked against
      *              current page URI
      * @since 6.0.0 Initial implementation of the method
      *
      * @access public
-     * @version 6.4.3
+     * @version 6.8.5
      */
     public static function doUrlRedirect($meta)
     {
@@ -145,6 +163,12 @@ class AAM_Core_Redirect
 
         if ($dest !== AAM_Core_Request::server('REQUEST_URI')) {
             wp_safe_redirect($dest, $code);
+
+            // Halt the execution. Redirect should carry user away if this is not
+            // a CLI execution (e.g. Unit Test)
+            if (php_sapi_name() !== 'cli') {
+                exit;
+            }
         }
     }
 

@@ -59,6 +59,18 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 		public $css_raw = array();
 
 		/**
+		 * This should be the order of the media queries to prevent wrong overrides.
+		 */
+		const MEDIA_QUERY_ORDER = array(
+			'', // All screens,
+			'@media screen and (min-width:1024px)', // Desktop only.
+			'@media screen and (min-width:768px)', // Desktop & tablet.
+			'@media screen and (min-width:768px) and (max-width:1023px)', // Tablet.
+			'@media screen and (max-width:1023px)', // Tablet & mobile.
+			'@media screen and (max-width:767px)', // Mobile.
+		);
+
+		/**
 		 * Initialize
 		 */
 		function __construct() {
@@ -68,13 +80,16 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 			// Only do this when inline style optimization is enabled.
 			// If stackable_optimize_inline_css === false (or option isn't
 			// present), that's the default value (true) for the option.
-			if ( get_option( 'stackable_optimize_inline_css' ) !== '' ) {
+			if ( ! is_admin() && get_option( 'stackable_optimize_inline_css' ) !== '' ) {
 				// Load the optimized CSS in the head of posts.
 				add_action( 'wp', array( $this, 'load_cached_css_for_post' ) );
 
 				// If the optimized CSS was loaded, then strip out the styles which were in the CSS.
 				add_filter( 'render_block', array( $this, 'strip_optimized_block_styles' ), 10, 2 );
 			}
+
+			// Hide the CSS optimization custom fields because this will clutter the Block Editor.
+			add_filter( 'is_protected_meta', array( $this, 'protect_optimized_css_meta' ), 10, 2 );
 		}
 
 		/**
@@ -97,12 +112,17 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 				return;
 			}
 
+			// If no contents, don't do anything.
+			if ( empty( $post->post_content ) ) {
+				return;
+			}
+
 			// Convert content to blocks.
 			$blocks = parse_blocks( $post->post_content );
 
 			// Go through and gather all the styles.
 			$styles = array(); // Holds unique ids and styles from blocks.
-			$this->parse_blocks( $blocks, $styles );
+			self::parse_blocks( $blocks, $styles );
 
 			// Generate the optimized CSS.
 			$styles_only = array();
@@ -111,9 +131,9 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 					$styles_only[] = $block_style[1];
 				}
 			}
-			$optimized_css = $this->generate_css( $styles_only );
+			$optimized_css = count( $styles_only ) ? self::generate_css( $styles_only ) : '';
 
-			// Save the optimized CSS to the post.
+			// Save the optimized CSS to the post if it changed.
 			update_post_meta( $post_id, 'stackable_optimized_css', $optimized_css );
 			update_post_meta( $post_id, 'stackable_optimized_css_raw', $styles );
 		}
@@ -126,13 +146,14 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 		 *
 		 * @return void
 		 */
-		public function parse_blocks( $blocks, &$style_arr ) {
+		public static function parse_blocks( $blocks, &$style_arr ) {
 			foreach ( $blocks as $block ) {
-				if ( stripos( $block['blockName'], 'stackable/' ) !== false ) {
-					$this->parse_block_style( $block, $style_arr );
+				$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
+				if ( stripos( $block_name, 'stackable/' ) !== false ) {
+					self::parse_block_style( $block, $style_arr );
 				}
 
-				$this->parse_blocks( $block['innerBlocks'], $style_arr );
+				self::parse_blocks( $block['innerBlocks'], $style_arr );
 			}
 		}
 
@@ -144,7 +165,7 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 		 *
 		 * @return void
 		 */
-		public function parse_block_style( $block, &$style_arr ) {
+		public static function parse_block_style( $block, &$style_arr ) {
 			$block_content = $block['innerHTML'];
 			if ( stripos( $block_content, '<style' ) !== false ) {
 
@@ -186,9 +207,9 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 			if ( is_singular() && ! is_preview() && ! is_attachment() ) {
 				$post_id = get_the_ID();
 				$this->optimized_css = get_post_meta( $post_id, 'stackable_optimized_css', true );
-				$this->css_raw = get_post_meta( $post_id, 'stackable_optimized_css_raw', true );
 
 				if ( ! empty( $this->optimized_css ) ) {
+					$this->css_raw = get_post_meta( $post_id, 'stackable_optimized_css_raw', true );
 					add_action( 'wp_head', array( $this, 'print_optimized_styles' ) );
 				}
 			}
@@ -203,7 +224,7 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 			if ( ! empty( $this->optimized_css ) ) {
 				echo "\n";
 				echo '<style class="stk-block-styles">';
-				echo $this->optimized_css;
+				echo apply_filters( 'stackable_frontend_css', $this->optimized_css );
 				echo '</style>';
 			}
 		}
@@ -221,7 +242,7 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 		 *
 		 * @return int -1, 0, 1 to reorder the array
 		 */
-		public function selector_sort( $a, $b ) {
+		public static function selector_sort( $a, $b ) {
 			if ( stripos( $a, '/* */' ) !== false && stripos( $b, '/* */' ) !== false ) {
 				return 0;
 			} else if ( stripos( $a, '/* */' ) !== false ) {
@@ -242,6 +263,10 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 		 * @return String The modified $block_content
 		 */
 		public function strip_optimized_block_styles( $block_content, $block ) {
+			if ( $block_content === null ) {
+				return $block_content;
+			}
+
 			if ( ! is_singular() || is_preview() ) {
 				return $block_content;
 			}
@@ -250,7 +275,8 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 			}
 
 			// Only do this to our blocks.
-			if ( ! empty( $block ) && is_array( $block ) && stripos( $block['blockName'], 'stackable/' ) === 0 ) {
+			$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
+			if ( ! empty( $block ) && is_array( $block ) && stripos( $block_name, 'stackable/' ) === 0 ) {
 				if ( stripos( $block_content, '<style' ) !== false ) {
 
 					// We need the unique id for tracking.
@@ -274,13 +300,61 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 		}
 
 		/**
+		 * Combines similar class selectors in a single :is()
+		 *
+		 * @param Array $selectors
+		 * @return Array Combined selectors
+		 */
+		public static function combine_selectors( $selectors ) {
+			$new_selectors = array();
+			$classes_to_combine = array();
+			foreach( $selectors as $selector ) {
+				$selector = trim( $selector );
+				// Find all the unique id classes of the form ".stk-123bcd"
+				preg_match( '/(.stk-[a-f0-9-]{7})(?=\s|$)/', $selector, $matches );
+
+				// If it doesn't have a block selector that we can combine, just add it.
+				if ( ! count( $matches ) ) {
+					$new_selectors[] = $selector;
+					continue;
+				}
+
+				$match = $matches[1];
+
+				// Don't do this if the selector is only the unique id.
+				if ( $selector === $match ) {
+					$new_selectors[] = $match;
+					continue;
+				}
+
+				// Collect all the selectors we can combine.
+				$selector = preg_replace( "#" . $match . "(?!-)#", '%s', $selector, 1 ); // Don't replace partial classname matches and only do it once.
+				if ( ! array_key_exists( $selector, $classes_to_combine ) ) {
+					$classes_to_combine[ $selector ] = array();
+				}
+				$classes_to_combine[ $selector ][] = $match;
+			}
+
+			// Combine the selectors into a single :is() selector.
+			foreach ( $classes_to_combine as $selector => $classes ) {
+				if ( count( $classes ) === 1 ) {
+					$new_selectors[] = sprintf( $selector, $classes[0] );
+				} else {
+					$new_selectors[] = sprintf( $selector, ':is(' . implode( ', ', $classes ) . ')' );
+				}
+			}
+
+			return $new_selectors;
+		}
+
+		/**
 		 * Generates an optimized version of an array of CSS strings.
 		 *
 		 * @param Array An array of CSS strings.
 		 *
 		 * @return String The optimized CSS.
 		 */
-		public function generate_css( $styles ) {
+		public static function generate_css( $styles ) {
 			// This contains styles as keys and selectors as values for easy
 			// lookups.
 			$all_style_rules = array();
@@ -293,6 +367,13 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 			//     - selector 2
 			//     - ...
 			foreach ( $styles as $style ) {
+				// Spread all media queries.
+				// The CSS generated by blocks can have media queries with multiple selectors & rules inside.
+				// To make optimization easier, we'll spread them out so we can sort the selectors per media queries.
+				$style = preg_replace_callback( '#((@media[^\{]+\{)(.*?)\}})#', function( $style_matches ) {
+					return preg_replace( '#\}([^\}])#', '}}' . $style_matches[2] . '$1', $style_matches[0] );
+				}, $style );
+
 				// Extract all media queries, selectors and rules for optimization.
 				preg_match_all( '#(@\w+.*?\{)?(.*?)(\{[^\}]+\})\}?#', $style, $style_matches );
 				// $style_matches contains:
@@ -319,8 +400,11 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 						$all_style_rules[ $media_query ][ $style_rule ] = array();
 					}
 
-					// We can have multiple selectors for the same rule.
-					$selectors = explode( ',', $selector );
+					// We can have multiple selectors for the same rule.  This
+					// explodes by commas but doesn't do it for strings inside
+					// parenthesis. This handles selectors like
+					// ":is(g,rect,circle)"
+					$selectors = preg_split( '#,(?![^(]+\))#', $selector );
 
 					foreach ( $selectors as $selector ) {
 						$all_style_rules[ $media_query ][ $style_rule ][] = trim( $selector );
@@ -330,24 +414,40 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 
 			// Organize the styles.
 			$css = '';
-			foreach ( $all_style_rules as $media_query => $styles ) {
+			$media_queries = self::MEDIA_QUERY_ORDER;
+
+			// This will also include other media queries that we do not support, but just add those at the end of our CSS.
+			foreach ( array_keys( $all_style_rules ) as $mediq_query ) {
+				if ( ! in_array( $mediq_query, $media_queries ) ) {
+					$media_queries[] = $media_query;
+				}
+			}
+
+			// Go through each media query.
+			foreach ( $media_queries as $media_query ) {
+				if ( ! array_key_exists( $media_query, $all_style_rules ) ) {
+					continue;
+				}
+
+				$styles = $all_style_rules[ $media_query ];
+
 				if ( ! empty( $media_query ) ) {
 					$css .= $media_query . '{';
 				}
 
 				// HOVER STYLES HACK (3/4): Reorder the selectors so hover
 				// styles are put last.
-				uksort( $styles, array( $this, 'selector_sort' ) );
+				uksort( $styles, array( 'Stackable_CSS_Optimize', 'selector_sort' ) );
 
-				// Just combine the selectors.  Note: One possible optimization
-				// here is instead of simply combining all selectors with a
-				// comma, you can combine them using :is(), this will lessen the
-				// selectors.
+				// Combine the selectors.
 				foreach ( $styles as $style_rules => $selector_arr ) {
 
 					// HOVER STYLES HACK (4/4): Remove the placeholder we used
 					// to move the hover styles to the end.
 					$style_rules = str_replace( '/* */', '', $style_rules );
+
+					// Optimize selectors by combining similar ones.
+					$selector_arr = self::combine_selectors( $selector_arr );
 
 					$css .= implode( ',', $selector_arr ) . $style_rules;
 				}
@@ -358,6 +458,20 @@ if ( ! class_exists( 'Stackable_CSS_Optimize' ) ) {
 			}
 
 			return $css;
+		}
+
+		/**
+		 * Hide the CSS optimization custom fields because this will clutter the Block Editor.
+		 *
+		 * @param boolean $protected
+		 * @param string $meta_key
+		 * @return boolean
+		 */
+		public function protect_optimized_css_meta( $protected, $meta_key ) {
+			if ( $meta_key === 'stackable_optimized_css' || $meta_key === 'stackable_optimized_css_raw' ) {
+				return true;
+			}
+			return $protected;
 		}
 	}
 

@@ -27,11 +27,13 @@ class PageTemplatesVariablesController extends Container implements Module
 
     protected function outputCurrentTemplatesLayouts($variables, $payload)
     {
+        /** @var \VisualComposer\Helpers\PageLayout $pageLayoutHelper */
+        $pageLayoutHelper = vchelper('PageLayout');
+
         $post = get_post(isset($payload['sourceId']) ? $payload['sourceId'] : null);
         $variables[] = [
             'key' => 'VCV_PAGE_TEMPLATES_LAYOUTS_CURRENT',
-            'value' => vcfilter(
-                'vcv:editor:settings:pageTemplatesLayouts:current',
+            'value' => $pageLayoutHelper->getCurrentPageLayout(
                 [
                     'type' => 'theme',
                     // @codingStandardsIgnoreLine
@@ -113,6 +115,10 @@ class PageTemplatesVariablesController extends Container implements Module
             [
                 'label' => __('Default', 'visualcomposer'),
                 'value' => 'default',
+            ],
+            [
+                'label' => __('Theme', 'visualcomposer'),
+                'value' => 'theme',
             ],
         ];
         if (!empty($pageTemplates)) {

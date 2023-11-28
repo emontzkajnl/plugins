@@ -28,9 +28,9 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 	public function __construct() {
 		$this->title       = __( 'Plain Text and Code', 'advanced-ads' );
 		$this->description = __( 'Any ad network, Amazon, customized AdSense codes, shortcodes, and code like JavaScript, HTML or PHP.', 'advanced-ads' );
-		$this->parameters  = array(
+		$this->parameters  = [
 			'content' => '',
-		);
+		];
 	}
 
 	/**
@@ -48,8 +48,13 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 
 		?><p class="description"><?php esc_html_e( 'Insert plain text or code into this field.', 'advanced-ads' ); ?></p>
 		<?php $this->error_unfiltered_html( $ad ); ?>
-		<textarea id="advads-ad-content-plain" cols="40" rows="10" name="advanced_ad[content]"
-				onkeyup="Advanced_Ads_Admin.check_ad_source();"><?php echo esc_textarea( $content ); ?></textarea>
+		<textarea
+			id="advads-ad-content-plain"
+			cols="40"
+			rows="10"
+			name="advanced_ad[content]"
+			onkeyup="Advanced_Ads_Admin.check_ad_source()"
+		><?php echo esc_textarea( $content ); ?></textarea>
 		<?php include ADVADS_BASE_PATH . 'admin/views/ad-info-after-textarea.php'; ?>
 		<input type="hidden" name="advanced_ad[output][allow_php]" value="0"/>
 
@@ -89,9 +94,9 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 						<?php
 						echo wp_kses(
 							__( 'Execute PHP code (wrapped in <code>&lt;?php ?&gt;</code>)', 'advanced-ads' ),
-							array(
-								'code' => array(),
-							)
+							[
+								'code' => [],
+							]
 						);
 						?>
 					</span>
@@ -191,13 +196,21 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 				if ( strpos( $image, 'loading=' ) !== false ) {
 					continue;
 				}
-
-				// replace the image string.
-				$content = str_replace( $image, wp_img_tag_add_loading_attr( $image, 'the_content' ), $content );
+				
+				// Optimize image HTML tag with loading attributes based on WordPress filter context.
+				$content = str_replace( $image, $this->img_tag_add_loading_attr( $image, 'the_content' ), $content );
 			}
 		}
 
-		return $this->kses_ad( $content );
+		return (
+			(
+				( defined( 'DISALLOW_UNFILTERED_HTML' ) && DISALLOW_UNFILTERED_HTML ) ||
+				! $this->author_can_unfiltered_html( (int) get_post_field( 'post_author', $ad->id ) )
+			)
+			&& version_compare( $ad->options( 'last_save_version', '0' ), '1.35.0', 'ge' )
+		)
+			? wp_kses( $content, wp_kses_allowed_html( 'post' ) )
+			: $content;
 	}
 
 	/**
@@ -219,19 +232,23 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 	 * @return void
 	 */
 	protected function error_unfiltered_html( Advanced_Ads_Ad $ad ) {
-		$author_id = (int) get_post_field( 'post_author', $ad->id );
+		$author_id       = (int) get_post_field( 'post_author', $ad->id );
+		$current_user_id = get_current_user_id();
 
-		if ( ! ( defined( 'DISALLOW_UNFILTERED_HTML' ) && DISALLOW_UNFILTERED_HTML ) ) {
+		if ($this->author_can_unfiltered_html($author_id)) {
 			return;
 		}
 
 		?>
 		<p class="advads-notice-inline advads-error">
 			<?php
-			if ( $author_id === get_current_user_id() ) {
+			if ( $author_id === $current_user_id ) {
 				esc_html_e( 'You do not have sufficient permissions to include all HTML tags.', 'advanced-ads' );
 			} else {
 				esc_html_e( 'The creator of the ad does not have sufficient permissions to include all HTML tags.', 'advanced-ads' );
+				if ( current_user_can( 'unfiltered_html' ) && $this->user_has_role_on_site() ) {
+					printf( '<button type="button" onclick="(()=>Advanced_Ads_Admin.reassign_ad(%d))();" class="button button-primary">%s</button>', $current_user_id, esc_html__( 'Assign ad to me', 'advanced-ads' ) );
+				}
 			}
 			?>
 			<a href="<?php echo esc_url( ADVADS_URL ) . '/manual/ad-types/#Plain_Text_and_Code'; ?>" target="_blank" rel="noopener">
@@ -245,12 +262,51 @@ class Advanced_Ads_Ad_Type_Plain extends Advanced_Ads_Ad_Type_Abstract {
 	 * Check if the ad content needs filtering.
 	 *
 	 * @param string $content The parsed ad content.
+	 * @deprecated
 	 *
 	 * @return string
 	 */
 	protected function kses_ad( $content ) {
-		return defined( 'DISALLOW_UNFILTERED_HTML' ) && DISALLOW_UNFILTERED_HTML
-			? wp_kses( $content, wp_kses_allowed_html( 'post' ) )
-			: $content;
+		return $content;
+	}
+
+	/**
+	 * Check if the author of the ad can use unfiltered_html.
+	 *
+	 * @param int $author_id User ID of the ad author.
+	 *
+	 * @return bool
+	 */
+	private function author_can_unfiltered_html( $author_id ) {
+		if ( defined( 'DISALLOW_UNFILTERED_HTML' ) && DISALLOW_UNFILTERED_HTML ) {
+			return false;
+		}
+
+		$unfiltered_allowed = user_can( $author_id, 'unfiltered_html' );
+		if ( $unfiltered_allowed || ! is_multisite() ) {
+			return $unfiltered_allowed;
+		}
+
+		$options = Advanced_Ads::get_instance()->options();
+		if ( ! isset( $options['allow-unfiltered-html'] ) ) {
+			$options['allow-unfiltered-html'] = [];
+		}
+		$allowed_roles = $options['allow-unfiltered-html'];
+		$user          = get_user_by( 'id', $author_id );
+
+		return ! empty( array_intersect( $user->roles, $allowed_roles ) );
+	}
+
+	/**
+	 * Check if the current user has a role on this site.
+	 *
+	 * @return bool
+	 */
+	private function user_has_role_on_site() {
+		return in_array(
+			get_current_blog_id(),
+			wp_list_pluck( get_blogs_of_user( get_current_user_id() ), 'userblog_id' ),
+			true
+		);
 	}
 }

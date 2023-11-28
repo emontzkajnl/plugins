@@ -1,12 +1,14 @@
 {
+	"apiVersion": 3,
 	"name": "stackable/image",
 	"title": "Image",
 	"description": "An image with advanced controls to make a visual statement.",
-	"category": "media",
+	"category": "stackable",
 	"usesContext": [
 		"postId",
 		"postType",
-		"queryId"
+		"queryId",
+		"stackable/innerBlockOrientation"
 	],
 	"textdomain": "stackable-ultimate-gutenberg-blocks",
 	"stk-type": "essential",

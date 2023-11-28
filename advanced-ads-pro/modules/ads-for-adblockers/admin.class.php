@@ -2,15 +2,15 @@
 
 class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 	public function __construct() {
-		add_action( 'advanced-ads-settings-init', array( $this, 'settings_init'), 10, 1 );
+		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init'], 10, 1 );
 
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
 		if ( empty( $options['ads-for-adblockers']['enabled'] ) ) {
 			return;
 		}
 
-		add_action( 'advanced-ads-placement-options-after-advanced', array( $this, 'add_placement_setting' ), 10, 2 );
-		add_filter( 'advanced-ads-import-placement', array( $this, 'import_placement' ), 10, 2 );
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'add_placement_setting' ], 10, 2 );
+		add_filter( 'advanced-ads-import-placement', [ $this, 'import_placement' ], 10, 2 );
 	}
 
 	public function settings_init($hook) {
@@ -21,7 +21,7 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 		add_settings_field(
 			'module-ads-for-adblockers',
 			__( 'Ads for ad blockers', 'advanced-ads-pro' ),
-			array( $this, 'render_settings' ),
+			[ $this, 'render_settings' ],
 			Advanced_Ads_Pro::OPTION_KEY . '-settings',
 			Advanced_Ads_Pro::OPTION_KEY . '_modules-enable'
 		);
@@ -79,14 +79,14 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 			return $select;
 		}
 
-		$select = array();
+		$select = [];
 		$model = Advanced_Ads::get_instance()->get_model();
 
 		// Load all ads.
-		$ads = $model->get_ads( array( 'orderby' => 'title', 'order' => 'ASC') );
+		$ads = $model->get_ads( [ 'orderby' => 'title', 'order' => 'ASC'] );
 		foreach ( $ads as $_ad ) {
 			$ad = new Advanced_Ads_Ad( $_ad->ID );
-			if ( in_array( $ad->type, array( 'plain', 'content', 'image' ) ) ) {
+			if ( in_array( $ad->type, [ 'plain', 'content', 'image' ] ) ) {
 				$select['ads']['id_' . $_ad->ID] = $_ad->post_title;
 			}
 		}
@@ -101,7 +101,7 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 	 * @return array $messages Array of strings.
 	 */
 	private function get_messages( $_placement ) {
-		$messages = array();
+		$messages = [];
 
 		if ( ! empty( $_placement['options'] ) ) {
 			$ad = Advanced_Ads_Pro_Module_Ads_For_Adblockers::get_ad_for_adblocker( $_placement['options'] );

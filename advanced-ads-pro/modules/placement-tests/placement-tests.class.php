@@ -19,7 +19,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 	 * 
 	 * @var array 
 	 */
-	public $delivered_tests = array();
+	public $delivered_tests = [];
 
 	/**
 	 * contains placement IDs, that can not be delivered using cache-busting
@@ -27,32 +27,32 @@ class Advanced_Ads_Pro_Placement_Tests {
 	 *
 	 * @var array
 	 */
-	public $no_cb_fallbacks = array();
+	public $no_cb_fallbacks = [];
 
 	protected $random_placements;
 
 	private function __construct() {
 		if ( is_admin() ) {
 			// display weight header in placement table
-			add_action( 'advanced-ads-placements-list-column-header', array( $this, 'display_placement_weight_header' ) );
+			add_action( 'advanced-ads-placements-list-column-header', [ $this, 'display_placement_weight_header' ] );
 			// display weight selector in placement table
-			add_action( 'advanced-ads-placements-list-column', array( $this, 'display_placement_weight_selector' ), 10, 2 );
+			add_action( 'advanced-ads-placements-list-column', [ $this, 'display_placement_weight_selector' ], 10, 2 );
 			// display button in placement table
-			add_filter( 'advanced-ads-placements-list-buttons', array( $this, 'display_save_new_test_button' ) );
+			add_filter( 'advanced-ads-placements-list-buttons', [ $this, 'display_save_new_test_button' ] );
 			// display placement tests table
-			add_action( 'advanced-ads-placements-list-before', array( $this, 'display_placement_tests' ) );
+			add_action( 'advanced-ads-placements-list-before', [ $this, 'display_placement_tests' ] );
 			// update placements and placement tests based on form submission
-			add_filter( 'advanced-ads-update-placements', array( $this, 'update_placements_and_tests' ) );
+			add_filter( 'advanced-ads-update-placements', [ $this, 'update_placements_and_tests' ] );
 
-			add_action( 'advanced-ads-export', array( $this, 'export' ), 10, 2 );
-			add_action( 'advanced-ads-import', array( $this, 'import' ), 10, 3 );
+			add_action( 'advanced-ads-export', [ $this, 'export' ], 10, 2 );
+			add_action( 'advanced-ads-import', [ $this, 'import' ], 10, 3 );
 		}
 		// check if placement can be displayed
-		add_action( 'advanced-ads-can-display-placement', array( $this, 'placement_can_display' ), 13, 2 );
+		add_action( 'advanced-ads-can-display-placement', [ $this, 'placement_can_display' ], 13, 2 );
 		// add ad select arguments: inject test_id
-		add_filter( 'advanced-ads-ad-select-args', array( $this, 'additional_ad_select_args' ), 9, 3 );
+		add_filter( 'advanced-ads-ad-select-args', [ $this, 'additional_ad_select_args' ], 9, 3 );
 		// send emails using CRON
-		add_action( 'advanced-ads-placement-tests-emails', array( $this, 'send_emails' ) );
+		add_action( 'advanced-ads-placement-tests-emails', [ $this, 'send_emails' ] );
 	}
 
 	/**
@@ -116,7 +116,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 			$placements = Advanced_Ads::get_ad_placements_array();
 			// sort by weights
 			arsort( $_POST['advads']['placement_test'] ); 
-			$new_placements = array();
+			$new_placements = [];
 			$test_id = 'pt_' . md5( uniqid( time(), true ) );
 
 			foreach ( $_POST['advads']['placement_test'] as $placement_id => $placement_weight ) {
@@ -127,10 +127,10 @@ class Advanced_Ads_Pro_Placement_Tests {
 			}
 			// save test if it contains > 1 placements
 			if ( count( $new_placements ) > 1 ) {
-				$placement_tests[ $test_id ] = array(
+				$placement_tests[ $test_id ] = [
 					'user_id' => get_current_user_id(),
 					'placements' => $new_placements,
-				);
+				];
 
 				$this->update_placement_tests_array( $placement_tests );
 
@@ -287,11 +287,11 @@ class Advanced_Ads_Pro_Placement_Tests {
 	 */
 	public function get_placement_tests_array(){
 		if ( ! isset( $this->placement_tests ) ) {
-			$this->placement_tests = get_option( 'advads-ads-placement-tests', array() );
+			$this->placement_tests = get_option( 'advads-ads-placement-tests', [] );
 
 			// load default array if not saved yet
 			if ( ! is_array( $this->placement_tests ) ){
-				$this->placement_tests = array();
+				$this->placement_tests = [];
 			}
 		}
 
@@ -306,7 +306,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 	public function get_random_placements() {
 		if ( ! isset( $this->random_placements ) ) {
 			$placement_tests = $this->get_placement_tests_array();
-			$this->random_placements = array();
+			$this->random_placements = [];
 
 			foreach ( $placement_tests as $placement_test_id => $placement_test ) {
 				if ( isset( $placement_test['placements'] ) && is_array( $placement_test['placements'] ) ) {
@@ -350,7 +350,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 	 * @return array $placements_names
 	 */
 	public function get_placement_names( $placement_test ) {
-		$placement_names = array();
+		$placement_names = [];
 		$placements = Advanced_Ads::get_ad_placements_array();
 
 		if ( isset( $placement_test['placements'] ) && is_array( $placement_test['placements'] ) ) {
@@ -447,7 +447,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 	public function send_emails() {
 		$placement_tests = $this->get_placement_tests_array();
 		$expiry_date_format = get_option( 'date_format' ). ', ' . get_option( 'time_format' );
-		$combined_tests = array();
+		$combined_tests = [];
 
 		$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 
@@ -567,9 +567,9 @@ class Advanced_Ads_Pro_Placement_Tests {
 				) { continue; }
 
 				// prevent nodes starting with number
-				$placement_array = array();
+				$placement_array = [];
 				foreach ( $placement_test['placements']  as $placement_id => $placement_weight ) {
-					$placement_array[] = array( 'placement_id' => $placement_id, 'weight' => $placement_weight );
+					$placement_array[] = [ 'placement_id' => $placement_id, 'weight' => $placement_weight ];
 				}
 				$placement_test['placements'] = $placement_array;
 			}
@@ -610,7 +610,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 					$new_test_id = $placement_test_id;
 				}
 
-				$new_test = array_diff_key( $placement_test , array( 'placements' => true ) );
+				$new_test = array_diff_key( $placement_test , [ 'placements' => true ] );
 
 				foreach ( $placement_test['placements'] as $placements_of_test ) {
 					if ( empty( $placements_of_test['placement_id'] ) || empty( $placements_of_test['weight'] ) ) {
@@ -630,7 +630,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 				if ( count( $new_test['placements'] ) > 1 ) {
 					$placement_names = $this->get_placement_names( $new_test );
 					$placement_names = implode( _x( ' vs ', 'placement tests', 'advanced-ads-pro' ), $placement_names );
-					$messages[] = array( 'update', sprintf( __( 'Placement test <em>%s</em> created', 'advanced-ads-pro' ), $placement_names ) );
+					$messages[] = [ 'update', sprintf( __( 'Placement test <em>%s</em> created', 'advanced-ads-pro' ), $placement_names ) ];
 
 					$updated_tests[ $new_test_id ] = $new_test;
 				}

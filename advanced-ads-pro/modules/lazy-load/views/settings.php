@@ -4,8 +4,10 @@ $module_enabled = isset( $options['lazy-load']['enabled'] ) && $options['lazy-lo
 $offset = ! empty( $options['lazy-load']['offset'] ) ? Advanced_Ads_Pro_Utils::absint( $options['lazy-load']['offset'], 0, 99999 ) : 0;
 ?>
 <input name="<?php echo Advanced_Ads_Pro::OPTION_KEY; ?>[lazy-load][enabled]" id="advanced-ads-pro-lazy-load-enabled" type="checkbox" value="1" <?php checked( $module_enabled ); ?> class="advads-has-sub-settings" />
-<label for="advanced-ads-pro-lazy-load-enabled" class="description"><?php _e( 'Activate <em>lazy load</em> module.', 'advanced-ads-pro' ); ?></label>
-
+<label for="advanced-ads-pro-lazy-load-enabled" class="description">
+	<?php esc_html_e( 'Activate module.', 'advanced-ads-pro' ); ?>
+</label>
+<a href="<?php echo esc_url( ADVADS_URL ) . 'lazy-load-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-ll-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
 <div class="advads-sub-settings">
 <br />
 <label>

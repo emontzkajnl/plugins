@@ -100,7 +100,7 @@ class PopupLoader
 			$foundPopup = $post;
 		}
 		if (!empty($foundPopup)) {
-			if (@$foundPopup->post_type == SG_POPUP_POST_TYPE) {
+			if (isset($foundPopup->post_type) && $foundPopup->post_type == SG_POPUP_POST_TYPE) {
 				$events = \SgpbDataConfig::websiteDefaultConfigs()['events'][0];
 				$targets = array(\SgpbDataConfig::websiteDefaultConfigs()['target']);
 				// for any targets preview popup should open

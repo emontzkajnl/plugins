@@ -1,5 +1,7 @@
 <?php
 
+$plugin = plugin_basename( __FILE__ );
+
 /**
  * Strips out disallowed HTML using wp_kses_post() while temporarily allowing 
  * some additional HTML attributes and CSS in a style attribute.
@@ -134,3 +136,29 @@ function addtoany_woocommerce_share() {
 		ADDTOANY_SHARE_SAVE_KIT();
 	}
 }
+
+/**
+ * Exclude AddToAny assets domain from WP Rocket.
+ */
+add_filter( 'rocket_minify_excluded_external_js', 'addtoany_wp_rocket_exclusion' );
+
+function addtoany_wp_rocket_exclusion( $excluded ) {
+	$excluded[] = 'static.addtoany.com';
+	return $excluded;
+}
+
+/**
+ * Support the `wp-consent-api` plugin's feature proposal for a WP Consent API.
+ */
+add_filter( "wp_consent_api_registered_{$plugin}", '__return_true' );
+
+function addtoany_check_3p_consent() {
+	global $A2A_3p_consent;
+    if ( function_exists( 'wp_has_consent' ) ) {
+		$A2A_3p_consent = wp_has_consent( 'marketing' );
+	} elseif ( function_exists( 'cmplz_has_consent' ) ) {
+		$A2A_3p_consent = cmplz_has_consent( 'marketing' );
+	}
+}
+
+add_action( 'plugins_loaded', 'addtoany_check_3p_consent' );

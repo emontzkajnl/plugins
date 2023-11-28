@@ -24,12 +24,12 @@
 			wp_kses(
 			// translators: %s is a URL.
 				__( 'Take a look at more common issues or contact us directly through the <a href="%s" target="_blank">support page</a>.', 'advanced-ads' ),
-				array(
-					'a' => array(
-						'href'   => array(),
-						'target' => array(),
-					),
-				)
+				[
+					'a' => [
+						'href'   => [],
+						'target' => [],
+					],
+				]
 			),
 			esc_url( ADVADS_URL ) . 'support/?utm_source=advanced-ads&utm_medium=link&utm_campaign=support'
 		);
@@ -42,12 +42,12 @@
 			wp_kses(
 			// translators: %s is a URL.
 				__( 'Upgrade to any premium add-on and get <strong>priority email support</strong> or reach out through the <a href="%s" target="_blank">support forum</a> for individual help.', 'advanced-ads' ),
-				array(
-					'a' => array(
-						'href'   => array(),
-						'target' => array(),
-					),
-				)
+				[
+					'a' => [
+						'href'   => [],
+						'target' => [],
+					],
+				]
 			),
 			'https://wordpress.org/support/plugin/advanced-ads'
 		);
@@ -60,7 +60,7 @@
 	<?php
 	echo wp_kses(
 		implode( '</li><li>', $constants ),
-		array( 'li' => array() )
+		[ 'li' => [] ]
 	);
 	?>
 			</li></ul>

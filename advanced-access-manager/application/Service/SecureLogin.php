@@ -7,20 +7,26 @@
  * ======================================================================
  */
 
+use Vectorface\Whip\Whip;
+
 /**
  * Secure Login service
  *
- * @since 6.6.2 https://github.com/aamplugin/advanced-access-manager/issues/139
- * @since 6.6.1 https://github.com/aamplugin/advanced-access-manager/issues/136
- * @since 6.4.2 Enhanced https://github.com/aamplugin/advanced-access-manager/issues/91
- * @since 6.4.0 Enhanced https://github.com/aamplugin/advanced-access-manager/issues/16.
- *              Enhanced https://github.com/aamplugin/advanced-access-manager/issues/71
- * @since 6.3.1 Fixed bug with not being able to lock user
- * @since 6.1.0 Enriched error response with more details
- * @since 6.0.0 Initial implementation of the class
+ * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/284
+ *               https://github.com/aamplugin/advanced-access-manager/issues/244
+ * @since 6.9.11 https://github.com/aamplugin/advanced-access-manager/issues/278
+ * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+ * @since 6.6.2  https://github.com/aamplugin/advanced-access-manager/issues/139
+ * @since 6.6.1  https://github.com/aamplugin/advanced-access-manager/issues/136
+ * @since 6.4.2  https://github.com/aamplugin/advanced-access-manager/issues/91
+ * @since 6.4.0  https://github.com/aamplugin/advanced-access-manager/issues/16
+ *               https://github.com/aamplugin/advanced-access-manager/issues/71
+ * @since 6.3.1  Fixed bug with not being able to lock user
+ * @since 6.1.0  Enriched error response with more details
+ * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.6.2
+ * @version 6.9.12
  */
 class AAM_Service_SecureLogin
 {
@@ -42,6 +48,19 @@ class AAM_Service_SecureLogin
      * @version 6.0.0
      */
     const FEATURE_FLAG = 'core.service.secure-login.enabled';
+
+    /**
+     * Config options aliases
+     *
+     * The option names changed, but to stay backward compatible, we need to support
+     * legacy names.
+     *
+     * @version 6.9.11
+     */
+    const OPTION_ALIAS = array(
+        'service.secure_login.time_window'    => 'service.secureLogin.settings.attemptWindow',
+        'service.secure_login.login_attempts' => 'service.secureLogin.settings.loginAttempts'
+    );
 
     /**
      * Constructor
@@ -85,11 +104,12 @@ class AAM_Service_SecureLogin
      *
      * @return void
      *
-     * @since 6.4.0 Enhanced https://github.com/aamplugin/advanced-access-manager/issues/71
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+     * @since 6.4.0  https://github.com/aamplugin/advanced-access-manager/issues/71
+     * @since 6.0.0  Initial implementation of the method
      *
      * @access protected
-     * @version 6.4.0
+     * @version 6.9.10
      */
     protected function initializeHooks()
     {
@@ -117,7 +137,8 @@ class AAM_Service_SecureLogin
         add_filter('aam_user_row_actions_filter', function($actions, $user) {
             // Move this to the Secure Login Service
             if (current_user_can('aam_toggle_users')) {
-                $actions[] = ($user->user_status ? 'unlock' : 'lock');
+                $status    = get_user_meta($user->ID, 'aam_user_status', true);
+                $actions[] = ($status === 'locked' ? 'unlock' : 'lock');
             }
 
             return $actions;
@@ -134,8 +155,12 @@ class AAM_Service_SecureLogin
         add_action('aam_initialize_user_action', function(AAM_Core_Subject_User $user) {
             $currentId = get_current_user_id();
 
-            if (intval($user->user_status) === 1 && ($currentId === $user->ID)) {
-                wp_logout();
+            if ($currentId === $user->ID) {
+                $status = get_user_meta($user->ID, 'aam_user_status', true);
+
+                if ($status === 'locked') {
+                    wp_logout();
+                }
             }
         });
 
@@ -399,9 +424,8 @@ class AAM_Service_SecureLogin
         } else {
             $attempts = 1;
             $timeout  = strtotime(
-                AAM_Core_Config::get(
-                    'service.secureLogin.settings.attemptWindow',
-                    '20 minutes'
+                $this->_getConfigOption(
+                    'service.secure_login.time_window', '+20 minutes'
                 )
             );
         }
@@ -414,14 +438,17 @@ class AAM_Service_SecureLogin
      *
      * @return string
      *
+     * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/244
+     * @since 6.0.0  Initial implementation of method
+     *
      * @access private
-     * @version 6.0.0
+     * @version 6.9.12
      */
     private function getLoginAttemptTransientName()
     {
-        return sprintf(
-            'aam_failed_login_attempts_%s', $this->getFromServer('REMOTE_ADDR')
-        );
+        $whip = new Whip();
+
+        return 'aam_failed_login_attempts_' . $whip->getValidIpAddress();
     }
 
     /**
@@ -442,7 +469,9 @@ class AAM_Service_SecureLogin
         // Brute Force Lockout
         if (AAM_Core_Config::get('service.secureLogin.feature.bruteForceLockout', false)) {
             $attempts  = get_transient($this->getLoginAttemptTransientName());
-            $threshold = AAM_Core_Config::get('service.secureLogin.settings.loginAttempts', 20);
+            $threshold = $this->_getConfigOption(
+                'service.secure_login.login_attempts', 8
+            );
 
             if ($attempts >= $threshold) {
                 $response = new WP_Error(
@@ -464,20 +493,27 @@ class AAM_Service_SecureLogin
      *
      * @return WP_Error|WP_User
      *
+     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+     * @since 6.0.0  Initial implementation of the method
+     *
      * @access public
-     * @version 6.0.0
+     * @version 6.9.10
      */
     public function validateUserStatus($user)
     {
         // Check if user is blocked
-        if (is_a($user, 'WP_User') && (intval($user->user_status) === 1)) {
-            $user = new WP_Error(
-                405,
-                AAM_Backend_View_Helper::preparePhrase(
-                    '[ERROR]: User is locked. Contact website administrator.',
-                    'strong'
-                )
-            );
+        if (is_a($user, 'WP_User')) {
+            $status = get_user_meta($user->ID, 'aam_user_status', true);
+
+            if ($status === 'locked') {
+                $user = new WP_Error(
+                    405,
+                    AAM_Backend_View_Helper::preparePhrase(
+                        '[ERROR]: User is locked. Contact website administrator.',
+                        'strong'
+                    )
+                );
+            }
         }
 
         return $user;
@@ -490,17 +526,21 @@ class AAM_Service_SecureLogin
      *
      * @return string
      *
+     * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/284
+     * @since 6.0.0  Initial implementation of the method
+     *
      * @access public
-     * @version 6.0.0
+     * @version 6.9.12
      */
     public function loginMessage($message)
     {
         if (empty($message) && ($this->getFromQuery('reason') === 'restricted')) {
-            $message = sprintf(
-                __('%sAccess is restricted. Login to get access.%s', AAM_KEY),
-                '<p class="message">',
-                '</p>'
+            $str = $this->_getConfigOption(
+                'service.secure_login.login_message',
+                __('Access is restricted. Login to get access.', AAM_KEY)
             );
+
+            $message = '<p class="message">' . $str . '</p>';
         }
 
         return $message;
@@ -515,7 +555,7 @@ class AAM_Service_SecureLogin
      *
      * @return mixed
      *
-     * @since 6.3.1 Fixed bug https://github.com/aamplugin/advanced-access-manager/issues/43
+     * @since 6.3.1 https://github.com/aamplugin/advanced-access-manager/issues/43
      * @since 6.0.0 Initial implementation of the method
      *
      * @access public
@@ -543,13 +583,16 @@ class AAM_Service_SecureLogin
      *
      * @return void
      *
+     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+     * @since 6.0.0  Initial implementation of the method
+     *
      * @access public
-     * @version 6.0.0
+     * @version 6.9.10
      */
     public function lockUser(array $trigger, AAM_Core_Subject_User $user)
     {
         if ($trigger['action'] === 'lock') {
-            $this->changeUserStatus($user->getPrincipal(), 1);
+            $this->changeUserStatus($user->getPrincipal(), true);
             wp_logout();
         }
     }
@@ -563,8 +606,11 @@ class AAM_Service_SecureLogin
      *
      * @return void
      *
+     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+     * @since 6.0.0  Initial implementation of the method
+     *
      * @access protected
-     * @version 6.0.0
+     * @version 6.9.10
      */
     protected function toggleUserStatus(AAM_Core_Subject_User $user)
     {
@@ -574,8 +620,9 @@ class AAM_Service_SecureLogin
             if (apply_filters('aam_user_can_manage_level_filter', true, $user->getMaxLevel())) {
                 // User is not allowed to lock himself
                 if (intval($user->getId()) !== get_current_user_id()) {
+                    $status = get_user_meta($user->ID, 'aam_user_status', true);
                     $result = $this->changeUserStatus(
-                        $user->getPrincipal(), ($user->user_status ? 0 : 1)
+                        $user->getPrincipal(), $status !== 'locked'
                     );
                 }
             }
@@ -588,29 +635,52 @@ class AAM_Service_SecureLogin
      * Change user status
      *
      * @param WP_User $user
-     * @param int     $status
+     * @param bool    $lock
      *
      * @return boolean
      *
+     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+     * @since 6.0.0  Initial implementation of the method
+     *
      * @access protected
-     * @version 6.0.0
+     * @version 6.9.10
      */
-    protected function changeUserStatus(WP_User $user, $status)
+    protected function changeUserStatus(WP_User $user, $lock)
     {
-        global $wpdb;
-
-        $result = $wpdb->update(
-            $wpdb->users,
-            array('user_status' => $status),
-            array('ID' => $user->ID)
-        );
-
-        if ($result) {
-            $user->user_status = $status;
-            clean_user_cache($user);
+        if ($lock) {
+            add_user_meta($user->ID, 'aam_user_status', 'locked');
+        } else {
+            delete_user_meta($user->ID, 'aam_user_status');
         }
 
-        return $result;
+        clean_user_cache($user);
+
+        return true;
+    }
+
+    /**
+     * Get configuration option
+     *
+     * @param string $option
+     * @param mixed  $default
+     *
+     * @return mixed
+     *
+     * @since 6.9.12 https://github.com/aamplugin/advanced-access-manager/issues/287
+     * @since 6.9.11 Initial implementation of the method
+     *
+     * @access private
+     * @version 6.9.12
+     */
+    private function _getConfigOption($option, $default = null)
+    {
+        $value = AAM_Core_Config::get($option);
+
+        if (is_null($value) && array_key_exists($option, self::OPTION_ALIAS)) {
+            $value = AAM_Core_Config::get(self::OPTION_ALIAS[$option]);
+        }
+
+        return is_null($value) ? $default : $value;
     }
 
 }

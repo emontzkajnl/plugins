@@ -10,11 +10,12 @@
 /**
  * Backend capability manager
  *
+ * @since 6.8.5 https://github.com/aamplugin/advanced-access-manager/issues/218
  * @since 6.8.0 https://github.com/aamplugin/advanced-access-manager/issues/195
  * @since 6.0.0 Initial implementation of the class
  *
  * @package AAM
- * @version 6.8.0
+ * @version 6.8.5
  */
 class AAM_Backend_Feature_Main_Capability
     extends AAM_Backend_Feature_Abstract implements AAM_Backend_Feature_ISubjectAware
@@ -160,9 +161,8 @@ class AAM_Backend_Feature_Main_Capability
             if ($subjectOnly === true) {
                 $this->getSubject()->removeCapability($capability);
             } else {
-                $roles = AAM_Core_API::getRoles();
-                foreach (array_keys($roles->roles) as $roleId) {
-                    $roles->remove_cap($roleId, $capability);
+                foreach (AAM_Framework_Manager::roles()->get_editable_roles() as $role) {
+                    $role->remove_capability($capability, true);
                 }
             }
             $response = array('status' => 'success');
@@ -176,8 +176,11 @@ class AAM_Backend_Feature_Main_Capability
      *
      * @return string
      *
+     * @since 6.8.5 https://github.com/aamplugin/advanced-access-manager/issues/218
+     * @since 6.0.0 Initial implementation of the method
+     *
      * @access public
-     * @version 6.0.0
+     * @version 6.8.5
      */
     public function getTable()
     {
@@ -195,7 +198,8 @@ class AAM_Backend_Feature_Main_Capability
                     $cap,
                     $this->getGroup($cap),
                     $cap,
-                    $this->prepareActionList($cap)
+                    $this->prepareActionList($cap),
+                    $this->getSubject()->hasCapability($cap)
                 );
             }
         }

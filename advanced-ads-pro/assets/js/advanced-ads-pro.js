@@ -257,12 +257,17 @@
 		_banVisitor: function() {
 			var now = new Date();
 			var d = new Date();
-			d.setTime( d.getTime() + ( advadsCfpBan*24*60*60*1000 ) );
+			d.setTime( d.getTime() + ( advadsCfpInfo.cfpBan * 24 * 60 * 60 * 1000 ) );
 			var ban = ( d.getTime() - now.getTime() ) / 1000;
 			advads.set_cookie_sec( 'advads_pro_cfp_ban', 1, ban, PATH, DOMAIN );
 
-			// Select all top level ad wrappers and delete them.
-			jQuery( '[data-cfptl]' ).remove();
+			// Select ad wrappers and delete them.
+			document.querySelectorAll( '[data-cfpw]:not([data-cfp-exclude])' ).forEach( function( el ) {
+				el.remove();
+			} );
+
+			this.removeEmptyWrappers();
+
 			// Select Google AdSense Auto Ads and delete them.
 			this.wrappers.forEach( function ( wrapper ) {
 				jQuery( wrapper ).remove();
@@ -272,47 +277,84 @@
 			}
 		},
 
+		/**
+		 * Remove top-level wrappers that do not contain ads.
+		 */
+		removeEmptyWrappers: function() {
+			// Select top-level wrappers that are not ads.
+			document.querySelectorAll( '[data-cfptl]:not([data-cfpw])' ).forEach( function( el ) {
+				// If there are no nested ads, remove the top-level wrapper.
+				if ( ! el.querySelectorAll( '[data-cfpw]' ).length ) {
+					el.remove();
+				};
+			} );
+		},
+
+		/**
+		 * Click handler.
+		 *
+		 * @param {string} ID Ad id.
+		 */
 		onClick: function( ID ){
-			var C          = false,
-				C_vc       = false,
-				that       = this;
+			var that       = this,
+				// Module wide cookie
+				cookieVisitor          = false,
+				// Visitor condition cookie.
+				cookieVisitorCondition = false;
 			this.lastClick = this.getTimestamp();
 
 			if ( 'google-auto-placed' !== ID && $( '[data-cfpa="' + ID + '"]' ).attr( 'data-cfph' ) ) {
 				// if there are some visitor conditions, use the vc cookie
-
 				if ( advads.cookie_exists( cname_vc + '_' + ID ) ) {
-					C_vc = advads.get_cookie( cname_vc + '_' + ID );
-					C_vc = jsonDecode( C_vc );
+					cookieVisitorCondition = jsonDecode( advads.get_cookie( cname_vc + '_' + ID ) );
 				}
 
-				if ( C_vc ) {
+
+				const clickLimits = jsonDecode( $( '[data-cfpa="' + ID + '"]' ).attr( 'data-cfph' ) );
+
+				if ( cookieVisitorCondition ) {
 					// Cookie already exists, increment each counter (keep expiration time)
-					for ( var h in C_vc ) {
-						if ( !C_vc.hasOwnProperty( h ) ) continue;
-						if ( 'exp' == h ) continue;
-						var count = parseInt( C_vc[h]['count'] );
-						C_vc[h]['count'] = count + 1;
+					const nowInSeconds = parseInt( new Date().getTime() / 1000, 10 );
+					const adWrapper    = document.querySelectorAll( '[data-cfpw="' + ID + '"]' );
+
+					for ( var h in cookieVisitorCondition ) {
+						if ( ! cookieVisitorCondition.hasOwnProperty( h ) ) {
+							continue;
+						}
+						if ( h === 'exp') {
+							// Ignore the key that contains expiration date.
+							continue;
+						}
+
+						cookieVisitorCondition[h]['count'] = parseInt( cookieVisitorCondition[h]['count'], 10 ) + 1;
+
+						if ( cookieVisitorCondition[h]['ttl'] >= nowInSeconds && cookieVisitorCondition[h]['count'] >= parseInt( clickLimits[h], 10 ) ) {
+							adWrapper.forEach( function( node ) {
+								node.remove();
+							} );
+							// If the ad was wrapper with a top-level wrapper, try to remove it.
+							that.removeEmptyWrappers();
+						}
 					}
 					var now = new Date();
-					var expiry = new Date( C_vc.exp );
+					var expiry = new Date( cookieVisitorCondition.exp );
 					var expirySecs = parseInt( ( expiry.getTime() - now.getTime() ) / 1000 );
-					advads.set_cookie_sec( cname_vc + '_' + ID, JSON.stringify( C_vc, 'false', false ), expirySecs, PATH, DOMAIN );
+					advads.set_cookie_sec( cname_vc + '_' + ID, JSON.stringify( cookieVisitorCondition, 'false', false ), expirySecs, PATH, DOMAIN );
 				} else {
 					// create a new cookie
-					var H = $( '[data-cfpa="' + ID + '"]' ).attr( 'data-cfph' ).split( '_' );
 					var cval = {}, maxHValue = 0;
 
 					var d = new Date();
 					var now = new Date();
 
-					for ( var h in H ) {
-						if ( parseFloat( H[h] ) > maxHValue ) {
-							maxHValue = parseFloat( H[h] );
+					for ( var h in clickLimits ) {
+						h = h.substring( 1 );
+						if ( parseFloat( h ) > maxHValue ) {
+							maxHValue = parseFloat( h );
 						}
-						cval['_' + H[h]] = {
+						cval['_' + h] = {
 							count: 1,
-							ttl: parseInt( ( ( now.getTime() / 1000 ) + ( parseFloat( H[h] ) * 3600 ) ) ),
+							ttl: parseInt( ( ( now.getTime() / 1000 ) + ( parseFloat( h ) * 3600 ) ), 10 ),
 						};
 					}
 
@@ -329,32 +371,28 @@
 
 			// use the module wide CFP cookie
 			if ( advads.cookie_exists( cname + '_' + ID ) ) {
-				C = advads.get_cookie( cname + '_' + ID );
-				C = jsonDecode( C );
+				cookieVisitor = jsonDecode( advads.get_cookie( cname + '_' + ID ) );
 			}
-			if ( C ) {
+			if ( cookieVisitor ) {
 				// Cookie already exists, increment the counter (keep expiration time)
-
-				var count = parseInt( C.count );
-				C.count = count +1;
+				cookieVisitor.count = parseInt( cookieVisitor.count, 10 ) + 1;
 				var now = new Date();
-				var expiry = new Date( C.exp );
+				var expiry = new Date( cookieVisitor.exp );
 				var expirySecs = ( expiry.getTime() - now.getTime() ) / 1000;
-				advads.set_cookie_sec( cname + '_' + ID, JSON.stringify( C, 'false', false ), expirySecs, PATH, DOMAIN );
-				if ( advadsCfpClickLimit <= C.count && 'undefined' != typeof advadsCfpBan ) {
+				advads.set_cookie_sec( cname + '_' + ID, JSON.stringify( cookieVisitor, 'false', false ), expirySecs, PATH, DOMAIN );
+				if ( advadsCfpInfo.cfpClickLimit <= cookieVisitor.count && typeof advadsCfpInfo.cfpBan !== 'undefined' ) {
 					// CFP module enabled - ban this visitor
 					that._banVisitor();
 				}
 			} else {
 				// create a new cookie
-
 				var d = new Date();
 				var now = new Date();
-				d.setTime( d.getTime() + ( advadsCfpExpHours*60*60*1000 ) );
+				d.setTime( d.getTime() + ( advadsCfpInfo.cfpExpHours * 60 * 60 * 1000 ) );
 				var expires = "expires="+ d.toUTCString();
 				var expirySecs = ( d.getTime() - now.getTime() ) / 1000;
 				advads.set_cookie_sec( cname + '_' + ID, '{"count":1,"exp":"' + expires + '"}', expirySecs, PATH, DOMAIN );
-				if ( advadsCfpClickLimit === 1 && 'undefined' != typeof advadsCfpBan ) {
+				if ( advadsCfpInfo.cfpClickLimit === 1 && 'undefined' != typeof advadsCfpInfo.cfpBan ) {
 					// CFP module enabled - ban this visitor
 					that._banVisitor();
 				}
@@ -396,15 +434,15 @@
 		/**
 		 * Click fraud protection module.
 		 */
-		if ( 'undefined' == typeof window.advadsCfpPath ) return;
+		if ( 'undefined' == typeof window.advadsCfpInfo.cfpPath ) return;
 
 		// get the path/domain parameter to use in cookies
-		if ( '' != advadsCfpPath ) {
-			PATH = advadsCfpPath;
+		if ( '' != advadsCfpInfo.cfpPath ) {
+			PATH = advadsCfpInfo.cfpPath;
 		}
 
-		if ( '' != advadsCfpDomain ) {
-			DOMAIN = advadsCfpDomain;
+		if ( '' != advadsCfpInfo.cfpDomain ) {
+			DOMAIN = advadsCfpInfo.cfpDomain;
 		}
 
 

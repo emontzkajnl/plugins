@@ -35,45 +35,45 @@ class Advanced_Ads_Pro_Admin {
 	 * @since   1.0.0
 	 */
 	public function __construct() {
-		$this->roles = array(
+		$this->roles = [
 			'advanced_ads_admin'   => __( 'Ad Admin', 'advanced-ads-pro' ),
 			'advanced_ads_manager' => __( 'Ad Manager', 'advanced-ads-pro' ),
 			'advanced_ads_user'    => __( 'Ad User', 'advanced-ads-pro' ),
 			''                     => __( '--no role--', 'advanced-ads-pro' ),
-		);
+		];
 
 		// Add add-on settings to plugin settings page.
-		add_action( 'advanced-ads-settings-init', array( $this, 'settings_init' ), 9, 1 );
-		add_filter( 'advanced-ads-setting-tabs', array( $this, 'setting_tabs' ) );
+		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ], 9, 1 );
+		add_filter( 'advanced-ads-setting-tabs', [ $this, 'setting_tabs' ] );
 
 		// Add user role selection to users page.
-		add_action( 'show_user_profile', array( $this, 'add_user_role_fields' ) );
-		add_action( 'edit_user_profile', array( $this, 'add_user_role_fields' ) );
+		add_action( 'show_user_profile', [ $this, 'add_user_role_fields' ] );
+		add_action( 'edit_user_profile', [ $this, 'add_user_role_fields' ] );
 
-		add_action( 'profile_update', array( $this, 'save_user_role' ) );
+		add_action( 'profile_update', [ $this, 'save_user_role' ] );
 
 		// Display warning if advanced visitor conditions are not active.
-		add_action( 'advanced-ads-visitor-conditions-after', array( $this, 'show_condition_notice' ), 10, 2 );
+		add_action( 'advanced-ads-visitor-conditions-after', [ $this, 'show_condition_notice' ], 10, 2 );
 		// Display "once per page" field.
-		add_action( 'advanced-ads-output-metabox-after', array( $this, 'render_ad_output_options' ) );
+		add_action( 'advanced-ads-output-metabox-after', [ $this, 'render_ad_output_options' ] );
 		// Load admin style sheet.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_styles' ] );
 		// Render repeat option for Content placement.
-		add_action( 'advanced-ads-placement-post-content-position', array( $this, 'render_placement_repeat_option' ), 10, 2 );
-		add_filter( 'pre_update_option_advanced-ads', array( $this, 'pre_update_advanced_ads_options' ), 10, 2 );
+		add_action( 'advanced-ads-placement-post-content-position', [ $this, 'render_placement_repeat_option' ], 10, 2 );
+		add_filter( 'pre_update_option_advanced-ads', [ $this, 'pre_update_advanced_ads_options' ], 10, 2 );
 
 		// Show/hide warnings for privacy module based on Pro state.
-		add_filter( 'advanced-ads-privacy-custom-show-warning', array( $this, 'show_custom_privacy_warning' ) );
+		add_filter( 'advanced-ads-privacy-custom-show-warning', [ $this, 'show_custom_privacy_warning' ] );
 		add_filter( 'advanced-ads-privacy-tcf-show-warning', '__return_false' );
-		add_filter( 'advanced-ads-privacy-custom-link-attributes', array( $this, 'privacy_link_attributes' ) );
-		add_filter( 'advanced-ads-ad-privacy-hide-ignore-consent', array( $this, 'hide_ignore_consent_checkbox' ), 10, 3 );
+		add_filter( 'advanced-ads-privacy-custom-link-attributes', [ $this, 'privacy_link_attributes' ] );
+		add_filter( 'advanced-ads-ad-privacy-hide-ignore-consent', [ $this, 'hide_ignore_consent_checkbox' ], 10, 3 );
 
 		// Show a warning if cache-busting is enabled, but no placement is used for a widget.
-		add_action( 'in_widget_form', array( $this, 'show_no_placement_in_widget_warning' ), 10, 3 );
-		add_action( 'advanced-ads-export-options', array( $this, 'export_options' ) );
+		add_action( 'in_widget_form', [ $this, 'show_no_placement_in_widget_warning' ], 10, 3 );
+		add_action( 'advanced-ads-export-options', [ $this, 'export_options' ] );
 
 		// Suggest a text for the WP Privacy Policy
-		add_action( 'admin_init', array( $this, 'add_privacy_policy_content' ) );
+		add_action( 'admin_init', [ $this, 'add_privacy_policy_content' ] );
 	}
 
 	/**
@@ -104,7 +104,7 @@ class Advanced_Ads_Pro_Admin {
 		add_settings_field(
 			'pro-license',
 			'Pro',
-			array( $this, 'render_settings_license_callback' ),
+			[ $this, 'render_settings_license_callback' ],
 			'advanced-ads-settings-license-page',
 			'advanced_ads_settings_license_section'
 		);
@@ -113,7 +113,7 @@ class Advanced_Ads_Pro_Admin {
 		add_settings_section(
 			Advanced_Ads_Pro::OPTION_KEY . '_modules-enable',
 			'',
-			array( $this, 'render_modules_enable' ),
+			[ $this, 'render_modules_enable' ],
 			Advanced_Ads_Pro::OPTION_KEY . '-settings'
 		);
 
@@ -121,7 +121,7 @@ class Advanced_Ads_Pro_Admin {
 		add_settings_section(
 			'advanced_ads_pro_settings_section',
 			'',
-			array( $this, 'render_other_settings' ),
+			[ $this, 'render_other_settings' ],
 			Advanced_Ads_Pro::OPTION_KEY . '-settings'
 		);
 		// Setting for Autoptimize support.
@@ -133,7 +133,7 @@ class Advanced_Ads_Pro_Admin {
 			add_settings_field(
 				'autoptimize-support',
 				__( 'Allow optimizers to modify ad codes', 'advanced-ads-pro' ),
-				array( $this, 'render_settings_autoptimize' ),
+				[ $this, 'render_settings_autoptimize' ],
 				Advanced_Ads_Pro::OPTION_KEY . '-settings',
 				'advanced_ads_pro_settings_section'
 			);
@@ -142,7 +142,7 @@ class Advanced_Ads_Pro_Admin {
 		add_settings_field(
 			'placement-positioning',
 			__( 'Placement positioning', 'advanced-ads-pro' ),
-			array( $this, 'render_settings_output_buffering' ),
+			[ $this, 'render_settings_output_buffering' ],
 			Advanced_Ads_Pro::OPTION_KEY . '-settings',
 			'advanced_ads_pro_settings_section'
 		);
@@ -150,7 +150,7 @@ class Advanced_Ads_Pro_Admin {
 		add_settings_field(
 			'disable-by-post-types',
 			__( 'Disable ads for post types', 'advanced-ads-pro' ),
-			array( $this, 'render_settings_disable_post_types' ),
+			[ $this, 'render_settings_disable_post_types' ],
 			$hook,
 			'advanced_ads_setting_section_disable_ads'
 		);
@@ -169,7 +169,7 @@ class Advanced_Ads_Pro_Admin {
 		if ( isset( $options['pro']['general']['disable-by-post-types'] ) && is_array( $options['pro']['general']['disable-by-post-types'] ) ) {
 			$pro['general']['disable-by-post-types'] = $options['pro']['general']['disable-by-post-types'];
 		} else {
-			$pro['general']['disable-by-post-types'] = array();
+			$pro['general']['disable-by-post-types'] = [];
 		}
 		Advanced_Ads_Pro::get_instance()->update_options( $pro );
 		return $options;
@@ -212,11 +212,11 @@ class Advanced_Ads_Pro_Admin {
 	public function render_settings_output_buffering() {
 		$placement_positioning = Advanced_Ads_Pro::get_instance()->get_options()['placement-positioning'] === 'js' ? 'js' : 'php';
 		$placement_types       = Advanced_Ads_Placements::get_placement_types();
-		$allowed_types         = array(
+		$allowed_types         = [
 			'post_above_headline',
 			'custom_position',
-		);
-		$allowed_types_names   = array();
+		];
+		$allowed_types_names   = [];
 
 		foreach ( $allowed_types as $allowed_type ) {
 			if ( isset( $placement_types[ $allowed_type ]['title'] ) ) {
@@ -234,10 +234,10 @@ class Advanced_Ads_Pro_Admin {
 		$selected = $this->get_disable_by_post_type_options();
 
 		$post_types        = get_post_types(
-			array(
+			[
 				'public'             => true,
 				'publicly_queryable' => true,
-			),
+			],
 			'objects',
 			'or'
 		);
@@ -254,7 +254,7 @@ class Advanced_Ads_Pro_Admin {
 		if ( isset( $options['general']['disable-by-post-types'] ) && is_array( $options['general']['disable-by-post-types'] ) ) {
 			$selected = $options['general']['disable-by-post-types'];
 		} else {
-			$selected = array();
+			$selected = [];
 		}
 		return $selected;
 	}
@@ -263,7 +263,7 @@ class Advanced_Ads_Pro_Admin {
 	 * Register license
 	 */
 	public function render_settings_license_callback() {
-		$licenses       = get_option( ADVADS_SLUG . '-licenses', array() );
+		$licenses       = get_option( ADVADS_SLUG . '-licenses', [] );
 		$license_key    = isset( $licenses['pro'] ) ? $licenses['pro'] : '';
 		$license_status = get_option( Advanced_Ads_Pro::OPTION_KEY . '-license-status', false );
 
@@ -293,13 +293,13 @@ class Advanced_Ads_Pro_Admin {
 	 * @return array $tabs setting tabs with AdSense tab attached.
 	 */
 	public function setting_tabs( array $tabs ) {
-		$tabs['pro'] = array(
+		$tabs['pro'] = [
 			// TODO abstract string.
 			'page'  => Advanced_Ads_Pro::OPTION_KEY . '-settings',
 			'group' => Advanced_Ads_Pro::OPTION_KEY,
 			'tabid' => 'pro',
 			'title' => 'Pro',
-		);
+		];
 
 		return $tabs;
 	}
@@ -386,12 +386,12 @@ class Advanced_Ads_Pro_Admin {
 				wp_kses(
 							// Translators: %s is a URL.
 					__( 'Enable the Advanced Visitor Conditions <a href="%s" target="_blank">in the settings</a>.', 'advanced-ads-pro' ),
-					array(
-						'a' => array(
-							'href'   => array(),
-							'target' => array(),
-						),
-					)
+					[
+						'a' => [
+							'href'   => [],
+							'target' => [],
+						],
+					]
 				),
 				esc_url( admin_url( 'admin.php?page=advanced-ads-settings#top#pro' ) )
 			) . '</p>';
@@ -438,7 +438,7 @@ class Advanced_Ads_Pro_Admin {
 		}
 
 		// Enqueue code editor and settings for manipulating HTML.
-		$settings = wp_enqueue_code_editor( array( 'type' => 'text/html' ) );
+		$settings = wp_enqueue_code_editor( [ 'type' => 'text/html' ] );
 
 		if ( ! $settings ) {
 			$settings = false;
@@ -451,7 +451,7 @@ class Advanced_Ads_Pro_Admin {
 	 * Register and enqueue admin-specific style sheet.
 	 */
 	public function enqueue_admin_styles() {
-		wp_enqueue_style( AAP_SLUG . '-admin-styles', AAP_BASE_URL . 'assets/admin.css', array(), AAP_VERSION );
+		wp_enqueue_style( AAP_SLUG . '-admin-styles', AAP_BASE_URL . 'assets/admin.css', [], AAP_VERSION );
 	}
 
 	/**
@@ -499,9 +499,9 @@ class Advanced_Ads_Pro_Admin {
 	 * @return array
 	 */
 	public function privacy_link_attributes() {
-		return array(
+		return [
 			'href' => esc_url( admin_url( 'admin.php?page=advanced-ads-settings#top#pro' ) ),
-		);
+		];
 	}
 
 	/**
@@ -514,7 +514,7 @@ class Advanced_Ads_Pro_Admin {
 	 * @return bool
 	 */
 	public function hide_ignore_consent_checkbox( $hide, Advanced_Ads_Ad $ad ) {
-		if ( ! $hide || ! in_array( $ad->type, array( 'image', 'dummy' ), true ) ) {
+		if ( ! $hide || ! in_array( $ad->type, [ 'image', 'dummy' ], true ) ) {
 			return $hide;
 		}
 

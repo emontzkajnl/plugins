@@ -10,13 +10,8 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	 * Advanced_Ads_Pro_Module_Duplicate_Ads_Admin constructor.
 	 */
 	public function __construct() {
-		// stop, if main plugin doesn’t exist.
-		if ( ! class_exists( 'Advanced_Ads', false ) ) {
-			return;
-		}
-
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
-		add_action( 'admin_action_advanced_ads_duplicate_ad', array( $this, 'duplicate_ad' ) );
+		add_action( 'admin_init', [ $this, 'admin_init' ] );
+		add_action( 'admin_action_advanced_ads_duplicate_ad', [ $this, 'duplicate_ad' ] );
 
 	}
 
@@ -26,9 +21,9 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	public function admin_init() {
 
 		// add Duplicate link to ad overview list.
-		add_filter( 'post_row_actions', array( $this, 'render_duplicate_link' ), 10, 2 );
+		add_filter( 'post_row_actions', [ $this, 'render_duplicate_link' ], 10, 2 );
 		// add Duplicate link to post submit box.
-		add_action( 'post_submitbox_start', array( $this, 'render_duplicate_link_in_submit_box' ) );
+		add_action( 'post_submitbox_start', [ $this, 'render_duplicate_link_in_submit_box' ] );
 
 	}
 
@@ -130,7 +125,7 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 			return $ad->ID;
 		}
 
-		$new_ad = array();
+		$new_ad = [];
 
 		$new_ad['post_type']   = $ad->post_type;
 		$new_ad['post_status'] = isset( $ad->post_status ) ? $ad->post_status : 'draft';

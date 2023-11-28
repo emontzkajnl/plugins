@@ -57,7 +57,7 @@ class Actions
 		add_shortcode('sg_popup', array($this, 'popupShortcode'));
 		add_filter('cron_schedules', array($this, 'cronAddMinutes'), 10, 1);
 		add_action('sgpb_send_newsletter', array($this, 'newsletterSendEmail'), 10, 1);
-		add_action('sgpbGetBannerContentOnce', array($this, 'getBannerContent'), 10, 1);
+		// add_action('sgpbGetBannerContentOnce', array($this, 'getBannerContent'), 10, 1);
 		add_action('plugins_loaded', array($this, 'loadTextDomain'));
 		// for change admin popup list order
 		add_action('pre_get_posts', array($this, 'preGetPosts'));
@@ -601,7 +601,7 @@ class Actions
 		$popup = SGPopup::find($popupId);
 		$popup = apply_filters('sgpbShortCodePopupObj', $popup);
 
-		$event = preg_replace('/on/', '', @$args['event']);
+		$event = preg_replace('/on/', '', (isset($args['event']) ? $args['event'] : ''));
 		// when popup does not exists or popup post status it's not publish ex when popup in trash
 		if (empty($popup) || (!is_object($popup) && $popup != 'publish')) {
 			return $content;
@@ -658,11 +658,11 @@ class Actions
 		}
 
 		$popup->setLoadableModes($loadableMode);
-		$scriptsLoader = new ScriptsLoader();
-		$loadablePopups = array($popup);
+
 		$groupObj = new PopupGroupFilter();
 		$groupObj->setPopups(array($popup));
 		$loadablePopups = $groupObj->filter();
+		$scriptsLoader = new ScriptsLoader();
 		$scriptsLoader->setLoadablePopups($loadablePopups);
 		$scriptsLoader->loadToFooter();
 
@@ -1104,13 +1104,13 @@ class Actions
 		else if ($column == 'options') {
 			$cloneUrl = AdminHelper::popupGetClonePostLink($postId);
 			$actionButtons = '<div class="icon icon_blue">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconEdit.png"  alt="Edit" class="icon_edit" onclick="location.href=\''.get_edit_post_link($postId).'\'">
+								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconEdit.png" title="Edit" alt="Edit" class="icon_edit" onclick="location.href=\''.get_edit_post_link($postId).'\'">
 							</div>';
 			$actionButtons .= '<div class="icon icon_blue">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconClone.png"  alt="Clone" class="icon_clone" onclick="location.href=\''.esc_url($cloneUrl).'\'">
+								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconClone.png"  title="Clone" alt="Clone" class="icon_clone" onclick="location.href=\''.esc_url($cloneUrl).'\'">
 							</div>';
 			$actionButtons .= '<div class="icon icon_pink">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/recycle-bin.svg"  alt="Remove" class="icon_remove" onclick="location.href=\''.get_delete_post_link($postId).'\'">
+								<img src="'.SG_POPUP_PUBLIC_URL.'icons/recycle-bin.svg" title="Remove" alt="Remove" class="icon_remove" onclick="location.href=\''.get_delete_post_link($postId).'\'">
 							</div>';
 
 			echo wp_kses($actionButtons, AdminHelper::allowed_html_tags());
@@ -1453,7 +1453,8 @@ class Actions
 	public function saveSettings()
 	{
 		$allowToAction = AdminHelper::userCanAccessTo();
-		if (!$allowToAction) {
+		$nonce = isset($_POST['sgpb_saveSettings_nonce']) ? sanitize_text_field($_POST['sgpb_saveSettings_nonce']): '';
+		if (!$allowToAction || !wp_verify_nonce($nonce, 'sgpbSaveSettings')) {
 			wp_redirect(get_home_url());
 			exit();
 		}

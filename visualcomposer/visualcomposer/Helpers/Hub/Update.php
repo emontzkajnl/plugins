@@ -45,7 +45,9 @@ class Update implements Helper
             $postsActions = $tempPosts[0]['data'];
         }
 
-        return ['actions' => $requiredActions, 'posts' => $postsActions];
+        $updateList = ['actions' => $requiredActions, 'posts' => $postsActions];
+
+        return apply_filters('vcv:helpers:hub:getRequiredActions', $updateList);
     }
 
     public function createPostUpdateObjects(array $posts)
@@ -88,20 +90,7 @@ class Update implements Helper
      */
     public function getUpdatePosts()
     {
-        $optionsHelper = vchelper('Options');
-        $updatePosts = $optionsHelper->get('hubAction:updatePosts', []);
-        $canUpdate = [];
-
-        $accessUserCapabilitiesHelper = vchelper('AccessUserCapabilities');
-        foreach ($updatePosts as $updatePost) {
-            $post = get_post($updatePost);
-            // @codingStandardsIgnoreLine
-            if ($post && $post->post_status !== 'trash' && $accessUserCapabilitiesHelper->canEdit($post->ID)) {
-                $canUpdate[] = $updatePost;
-            }
-        }
-
-        return $canUpdate;
+        return vchelper('Options')->get('hubAction:updatePosts', []);
     }
 
     public function getVariables()
@@ -279,9 +268,13 @@ class Update implements Helper
         return false;
     }
 
-    protected function processTeasers($actions)
+    /**
+     * Process hub teasers.
+     *
+     * @param array $actions
+     */
+    public function processTeasers($actions)
     {
-
         if (isset($actions['hubTeaser'])) {
             vcevent('vcv:hub:process:action:hubTeaser', ['teasers' => $actions['hubTeaser']]);
             $optionsHelper = vchelper('Options');
@@ -293,5 +286,18 @@ class Update implements Helper
         if (isset($actions['hubTemplates'])) {
             vcevent('vcv:hub:process:action:hubTemplates', ['teasers' => $actions['hubTemplates']]);
         }
+    }
+
+    /**
+     * Check if plugin updates is required.
+     *
+     * @return bool
+     */
+    public function isBundleUpdateRequired()
+    {
+        $licenseHelper = vchelper('License');
+        $optionsHelper = vchelper('Options');
+
+        return $licenseHelper->isPremiumEnabled() && $optionsHelper->get('bundleUpdateRequired');
     }
 }

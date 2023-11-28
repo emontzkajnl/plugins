@@ -11,7 +11,6 @@ if (!defined('ABSPATH')) {
 use VisualComposer\Framework\Container;
 use VisualComposer\Framework\Illuminate\Support\Module;
 use VisualComposer\Helpers\Hub\Update;
-use VisualComposer\Helpers\License;
 use VisualComposer\Helpers\Options;
 use VisualComposer\Helpers\Traits\EventsFilters;
 use VisualComposer\Helpers\Url;
@@ -34,6 +33,8 @@ class UpdateFePage extends Container implements Module
     }
 
     /**
+     * We use it to launch update process in our editor page.
+     *
      * @param $response
      * @param \VisualComposer\Helpers\Options $optionsHelper
      * @param \VisualComposer\Helpers\Hub\Update $updateHelper
@@ -45,13 +46,9 @@ class UpdateFePage extends Container implements Module
     protected function setUpdatingViewFe(
         $response,
         Options $optionsHelper,
-        Update $updateHelper,
-        License $licenseHelper
+        Update $updateHelper
     ) {
-        if (
-            ($licenseHelper->isPremiumActivated() || $optionsHelper->get('agreeHubTerms'))
-            && $optionsHelper->get('bundleUpdateRequired')
-        ) {
+        if ($updateHelper->isBundleUpdateRequired()) {
             $requiredActions = $updateHelper->getRequiredActions();
             if (!empty($requiredActions['actions']) || !empty($requiredActions['posts'])) {
                 $content = implode('', vcfilter('vcv:update:extraOutput', []));

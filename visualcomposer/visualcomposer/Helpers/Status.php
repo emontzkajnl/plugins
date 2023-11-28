@@ -124,12 +124,34 @@ class Status implements Helper
      */
     public function getMemoryLimitStatus()
     {
-        $memoryLimit = $this->getPhpVariable('memory_limit');
+        $memoryLimit = $this->getMemoryLimit();
+
         if ($memoryLimit === '-1') {
             return true;
         }
 
         return ($this->convertMbToBytes($memoryLimit) >= $this->defaultMemoryLimit * 1024 * 1024);
+    }
+
+    /**
+     * Get memory limit value
+     *
+     * @return string
+     */
+    public function getMemoryLimit()
+    {
+        $memoryLimit = (string)get_cfg_var('memory_limit');
+
+        // in case if someone do nusty things and use invalid memory_limit value in php.ini like 'memory_limit = here'
+        $isWrongMemoryLimitValue = wp_convert_hr_to_bytes($memoryLimit) === 0;
+        // we do not rely on get_cfg_var if it has value -1
+        $isInfiniteValue = $memoryLimit === '-1';
+
+        if ($isInfiniteValue || $isWrongMemoryLimitValue) {
+            $memoryLimit = $this->getPhpVariable('memory_limit');
+        }
+
+        return $memoryLimit;
     }
 
     /**
@@ -205,7 +227,9 @@ class Status implements Helper
      */
     public function getFileSystemStatus()
     {
-        return !(defined('FS_METHOD') && FS_METHOD !== 'direct');
+        $status = !(defined('FS_METHOD') && FS_METHOD !== 'direct');
+
+        return apply_filters('vcv:helpers:status:getFileSystemStatus', $status);
     }
 
     /**
@@ -309,17 +333,13 @@ class Status implements Helper
             $this->getWpVersionStatus(),
             $this->getUploadDirAccessStatus(),
             $this->getUploadMaxFileSizeStatus(),
-            $this->getAwsConnection(),
-            $this->getAccountConnection(),
             $this->getPostMaxSizeStatus(),
             $this->getMaxInputNestingLevelStatus(),
             $this->getMaxInputVarsStatus(),
         ];
 
-        foreach ($results as $result) {
-            if ($result === false) {
-                return false;
-            }
+        if (in_array(false, $results, true)) {
+            return false;
         }
 
         return true;
@@ -330,10 +350,10 @@ class Status implements Helper
         $optionsHelper = vchelper('Options');
         $systemStatus = $this->getSystemStatus();
 
-        if (!$systemStatus) {
-            $optionsHelper->set('systemCheckFailing', true);
-        } else {
+        if ($systemStatus) {
             $optionsHelper->delete('systemCheckFailing');
+        } else {
+            $optionsHelper->set('systemCheckFailing', true);
         }
     }
 }

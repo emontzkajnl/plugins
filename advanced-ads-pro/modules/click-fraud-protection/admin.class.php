@@ -3,7 +3,7 @@ class Advanced_Ads_Pro_Module_CFP_Admin
 {
 	
     public function __construct() {
-        add_action( 'advanced-ads-settings-init', array( $this, 'settings_init'), 10, 1 );
+        add_action( 'advanced-ads-settings-init', [ $this, 'settings_init'], 10, 1 );
     }
 
     /**
@@ -17,7 +17,7 @@ class Advanced_Ads_Pro_Module_CFP_Admin
         add_settings_field(
             'module-cfp',
             __( 'Click Fraud Protection', 'advanced-ads-pro' ),
-            array( $this, 'render_settings' ),
+            [ $this, 'render_settings' ],
             Advanced_Ads_Pro::OPTION_KEY . '-settings',
             Advanced_Ads_Pro::OPTION_KEY . '_modules-enable'
         );

@@ -1,14 +1,14 @@
 === Popup Builder - Create highly converting, mobile friendly marketing popups. ===
-Contributors: Popup By Sygnoos, Sygnoos
+Contributors: Popup By Sygnoos
 Author: Popup Builder
 Author URI: https://popup-builder.com
 Plugin URI: https://popup-builder.com
 Donate link: https://popup-builder.com
 Tags: popup, pop up, wordpress popup, popup maker, exit popup, popup builder, wordpress popup plugin
 Requires at least: 4.2
-Tested up to: 5.9
+Tested up to: 6.1
 Requires PHP: 5.3.3
-Stable tag: 4.1.7
+Stable tag: 4.1.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ Popup Builder is a Perfect solution for any WordPress website. With a wide range
 Moreover, our team created a custom JS/CSS coding opportunity for all our WordPress pop up types making any popup unique and fully customizable.
 Use the best WordPress popup plugin and enjoy the popup creation process.
 
-https://www.youtube.com/watch?v=-wFDJDjczeY
+https://www.youtube.com/watch?v=CONvwuTdGYI
 
 **SUPER EASY AND SIMPLE TO USE**
 
@@ -145,6 +145,42 @@ Go to the Popup Builder settings and set your desired options.
 14. Registration popup
 
 == Changelog ==
+
+= Version 4.1.15 =
+* Minor optimization.
+
+= Version 4.1.14 =
+* Bug fixed related to popup order's tooltip
+* Bug fixed related to popup's closing animation's preview
+* Improvement of design in image popup's "Image settings". Size of image frame was decreased
+* Improvement of "Statistics" page. "Reset" button's size was decreased for better UI
+* Improvement of "Live preview" in subscription popup
+
+= Version 4.1.13 =
+* Bug fixed related to tags in Display rules
+* Bug fixed related to PHP warnings that were visible in the plugin
+
+= Version 4.1.12 =
+* Improvement of code: Cross-site request forgery issues have been solved : Credits: @yeraisci_
+
+= Version 4.1.11 =
+* Improvement of code: touch event has been added for mobile devices
+* Bug fixed related to symbols in text area
+* Some minor code improvements
+
+= Version 4.1.10 =
+* Code improvements and bug fixes
+
+= Version 4.1.9 =
+* Bug fixed related to popups that are set to appear with shortcodes and conditions
+
+= Version 4.1.8 =
+* Bug fixed related to popups that are set to appear with shortcodes and conditions
+* Bug fixed related to JS error that blocks popup triggering
+* Bug fixed related to layout on RTL sites
+* Bug fixed related to compatibility error control operator in PHP 8
+* Bug fixed related to conflict with Elementor
+* Bug fixed related to errors that appear after installing the plugin
 
 = Version 4.1.7 =
 * Improvement of Popup Builder button: the button has been added in Gutenberg editor
@@ -388,7 +424,7 @@ After creating your popup, go to the desired page or post and you will see a met
 **Want to insert a popup on a link, that will open up when clicked on the link?**
 
 Simply add the following class to it: sg-confirm-popup-#popupid.
-Ex. `<a href="https://sygnoos.com/" class="sg-confirm-popup-1">Popup</a>`
+Ex. `<a href="https://popup-builder.com/" class="sg-confirm-popup-1">Popup</a>`
 This will open a popup before a user goes to the page from the link.
 
 **How to redirect users after clicking on the popup image?**
@@ -403,7 +439,7 @@ Under the Effects panel you will see 'Popup opening delay' option, all you need 
 **Want to open your links inside the popup without redirecting your users to the other site? (PRO)**
 
 You can simply create an empty iframe popup and add the following class to your link: sg-iframe-popup-#popupid number.
-Ex. `<a href="https://sygnoos.com/" class="sg-iframe-popup-1">Popup</a>`
+Ex. `<a href="https://popup-builder.com/" class="sg-iframe-popup-1">Popup</a>`
 This way, you'll have an iframe popup on your link, so when a user clicks on your link an iframe popup will open up, with the page of the link inside, so the users won't be redirected by the link.
 
 **Can I put a popup to show after clicking something?**
@@ -537,4 +573,4 @@ Leave us a good review :)
 
 == Upgrade Notice ==
 
-Current Version of Popup Builder is 4.1.7
+Current Version of Popup Builder is 4.1.15

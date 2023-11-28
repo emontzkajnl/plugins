@@ -4,7 +4,7 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers {
 	/**
 	 * Holds unique identifiers of each chain. It allows to show only one copy of the alternative ad.
 	 */
-	private $shown_chains = array();
+	private $shown_chains = [];
 
 	public function __construct() {
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
@@ -12,12 +12,12 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers {
 			return;
 		}
 
-		add_filter( 'advanced-ads-pro-ad-needs-backend-request', array( $this, 'ad_needs_backend_request' ), 10, 3 );
+		add_filter( 'advanced-ads-pro-ad-needs-backend-request', [ $this, 'ad_needs_backend_request' ], 10, 3 );
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			add_filter( 'advanced-ads-can-display', array( $this, 'can_display' ), 10, 2 );
-			add_filter( 'advanced-ads-ad-select-args', array( $this, 'save_chain_id' ), 10, 1 );
-			add_filter( 'advanced-ads-ad-select-override-by-ad', array( $this, 'override_ad_select_by_ad' ), 10, 3 );
+			add_filter( 'advanced-ads-can-display', [ $this, 'can_display' ], 10, 2 );
+			add_filter( 'advanced-ads-ad-select-args', [ $this, 'save_chain_id' ], 10, 1 );
+			add_filter( 'advanced-ads-ad-select-override-by-ad', [ $this, 'override_ad_select_by_ad' ], 10, 3 );
 		}
 	}
 

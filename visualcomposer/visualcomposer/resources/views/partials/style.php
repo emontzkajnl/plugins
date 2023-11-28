@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('ABSPATH')) {
     header('Status: 403 Forbidden');
     header('HTTP/1.1 403 Forbidden');
@@ -6,10 +7,10 @@ if (!defined('ABSPATH')) {
 }
 /** @var string $value */
 /** @var string $key */
+$outputHelper = vchelper('Output');
 ?>
 <style id="vcv-style-<?php echo esc_attr(vchelper('Str')->slugify($key)); ?>">
     <?php
-    // @codingStandardsIgnoreLine
-    echo $value;
+    $outputHelper->printNotEscaped($value);
     ?>
 </style>

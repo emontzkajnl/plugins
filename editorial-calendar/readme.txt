@@ -1,11 +1,12 @@
 === Editorial Calendar ===
-Contributors: cvernon, justinstresslimit, jkudish, MaryVogt, zgrossbart
+Contributors: marketingfire, zgrossbart
 Tags: posts, post, calendar, AJAX, admin, administration
 Requires at least: 4.0
-Tested up to: 5.9.3
-Stable tag: 3.7.12
+Tested up to: 6.3
+Requires PHP: 5.6
+Stable tag: 3.8.5
 
-The Editorial Calendar makes it possible to see all your posts and drag and drop them to manage your blog.
+The Editorial Calendar makes it possible to see all your posts and drag and drop them to manage your blog. 
 
 == Description ==
 
@@ -194,6 +195,33 @@ The `edcal_default_status` property controls the default status for new posts in
 7. Use the new unscheduled drafts section to manage drafts before you schedule them.
 
 == Changelog ==
+
+= 3.8.5 =
+
+* Updated the allowed tags to allow script tags.
+
+= 3.8.4 =
+
+* Improved posts sanitization.
+
+= 3.8.3 =
+
+* Improved compatibility with PHP 8 and up. 
+* Fixed sanitization on saving options.
+
+= 3.8.2 =
+
+* Fixed error occurred while loading the calendar: undefined.
+
+= 3.8.1 =
+
+* Fixed Vulnerability type: Cross Site Scripting (XSS).
+
+= 3.8.0 =
+
+* Updated roles and capabilities.
+* Fixed data validation.
+* Fixed security issues.
 
 = 3.7.12 =
 

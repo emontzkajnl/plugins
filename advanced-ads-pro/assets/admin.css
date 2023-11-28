@@ -15,8 +15,7 @@
 /**
  PLACEMENT VISITOR AND DISPLAY CONDITIONS
  */
-.advads-placements-table .advads-conditions-table tbody tr td { width: auto; font-size: inherit; padding: 10px 5px; }
-.advads-placements-table .advads-conditions-table tbody tr { background-color: inherit; }
+.advads-placements-table .advads-conditions-table tbody tr td { width: auto; }
 
 /**
  AD GROUPD PAGE
@@ -41,4 +40,15 @@
 
 input.advads-has-sub-settings:checked ~ .advads-sub-settings {
     display: block;
+}
+
+#advads-settings-hide-by-post-type {
+	-webkit-columns: 200px 5;
+	-moz-columns: 200px 5;
+	columns: 200px 5;
+	column-gap: 10px;
+}
+
+#advads-settings-hide-by-post-type label {
+	display: block;
 }

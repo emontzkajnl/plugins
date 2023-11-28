@@ -10,16 +10,18 @@
 /**
  * Backend Settings area abstract manager
  *
- * @since 6.7.2 https://github.com/aamplugin/advanced-access-manager/issues/164
- * @since 6.7.0 https://github.com/aamplugin/advanced-access-manager/issues/150
- * @since 6.6.0 https://github.com/aamplugin/advanced-access-manager/issues/130
- * @since 6.5.0 https://github.com/aamplugin/advanced-access-manager/issues/109
- *              https://github.com/aamplugin/advanced-access-manager/issues/106
- * @since 6.2.0 Added Import/Export functionality
- * @since 6.0.0 Initial implementation of the class
+ * @since 6.9.14 https://github.com/aamplugin/advanced-access-manager/issues/311
+ * @since 6.9.6  https://github.com/aamplugin/advanced-access-manager/issues/249
+ * @since 6.7.2  https://github.com/aamplugin/advanced-access-manager/issues/164
+ * @since 6.7.0  https://github.com/aamplugin/advanced-access-manager/issues/150
+ * @since 6.6.0  https://github.com/aamplugin/advanced-access-manager/issues/130
+ * @since 6.5.0  https://github.com/aamplugin/advanced-access-manager/issues/109
+ *               https://github.com/aamplugin/advanced-access-manager/issues/106
+ * @since 6.2.0  Added Import/Export functionality
+ * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.7.2
+ * @version 6.9.14
  */
 class AAM_Backend_Feature_Settings_Manager extends AAM_Backend_Feature_Abstract
 {
@@ -38,16 +40,21 @@ class AAM_Backend_Feature_Settings_Manager extends AAM_Backend_Feature_Abstract
      *
      * @return string
      *
-     * @since 6.3.0 Making sure that boolean value is stored
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.14 https://github.com/aamplugin/advanced-access-manager/issues/311
+     * @since 6.3.0  Making sure that boolean value is stored
+     * @since 6.0.0  Initial implementation of the method
      *
      * @access public
-     * @version 6.3.0
+     * @version 6.9.14
      */
     public function save()
     {
         $param = $this->getFromPost('param');
-        $value = $this->getFromPost('value', FILTER_VALIDATE_BOOLEAN);
+        $value = $this->getFromPost('value');
+
+        if (in_array($value, array("true", "false"))) {
+            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        }
 
         AAM_Core_Config::set($param, $value);
 
@@ -74,15 +81,15 @@ class AAM_Backend_Feature_Settings_Manager extends AAM_Backend_Feature_Abstract
      *
      * @return void
      *
+     * @since 6.9.6 https://github.com/aamplugin/advanced-access-manager/issues/249
+     * @since 6.5.0 Initial implementation of the method
+     *
      * @access public
-     * @version 6.5.0
+     * @version 6.9.6
      */
     public function clearSubjectSettings()
     {
-        $subject  = AAM_Backend_Subject::getInstance()->getSubject();
-        $xpath    = $subject::UID . '.' . $subject->getId();
-
-        AAM_Core_AccessSettings::getInstance()->delete($xpath)->save();
+        AAM_Backend_Subject::getInstance()->getSubject()->reset();
 
         return wp_json_encode(array('status' => 'success'));
     }
@@ -141,7 +148,7 @@ class AAM_Backend_Feature_Settings_Manager extends AAM_Backend_Feature_Abstract
 
                 case 'roles':
                     $dataset['roles'] = AAM_Core_API::getOption(
-                        AAM_Core_API::getRoles()->role_key
+                        AAM_Framework_Manager::roles()->role_key
                     );
                     break;
 
@@ -290,7 +297,7 @@ class AAM_Backend_Feature_Settings_Manager extends AAM_Backend_Feature_Abstract
 
                         case 'roles':
                             AAM_Core_API::updateOption(
-                                AAM_Core_API::getRoles()->role_key, $settings
+                                AAM_Framework_Manager::roles()->role_key, $settings
                             );
                             break;
 
