@@ -1,6 +1,6 @@
 <?php 
 /**
- * Recipe Block
+ * ILFB Recipe Block
  */
 
 $id = 'recipe-block-' . $block['id'];
