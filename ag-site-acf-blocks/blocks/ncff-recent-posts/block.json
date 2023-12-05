@@ -1,0 +1,9 @@
+{
+    "name":     "acf/ncff-recent-posts",
+    "title":    "NCFF Recent Posts",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ncff-recent-posts.php"
+    }
+}

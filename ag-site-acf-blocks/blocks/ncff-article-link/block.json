@@ -1,0 +1,9 @@
+{
+    "name":     "acf/ncff-article-link",
+    "title":    "NCFF Article Link",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ncff-article-link.php"
+    }
+}

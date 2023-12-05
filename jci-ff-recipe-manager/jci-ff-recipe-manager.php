@@ -78,7 +78,7 @@ function register_recipe_block() {
 			'title'			=> __('ILFB Recipe Block', 'ff-recipe'),
 			'mode'			=> 'preview',
 			'description'	=> __('Link out to Farm Flavor Recipe', 'ff-recipe'),
-			'render_template'	=> plugin_dir_path(__FILE__) . 'block/recipe-block.php',
+			'render_template'	=> plugin_dir_path(__FILE__) . 'block/ncff-recipe-block.php',
 			'icon'              => 'layout', 
 			'keywords'		=> array()
 		));
