@@ -1,11 +1,11 @@
 <?php 
 /**
- * ILFB Recipe Block
+ * NCFF Recipe Block
  */
 
 $id = 'recipe-block-' . $block['id'];
 
-$className = 'recipe-block';
+$className = 'ncff-recipe-block';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 } 
