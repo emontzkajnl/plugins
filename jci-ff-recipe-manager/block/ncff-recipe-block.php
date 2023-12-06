@@ -19,21 +19,10 @@ $recipe_img_url = get_field('recipe_image_link', $recipe_id);
 ?>
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className);  ?>">
-<div class="ncff-recipe-block__img-container">
-    <img src="<?php echo $recipe_img_url; ?>" />
-</div>
-<div class="ncff-recipe-block__text-container">
-    <h3 class="h2"><?php echo get_the_title($recipe_id); ?></h3>
-    <p><?php echo $text; ?></p>
-    <a href="<?php echo $recipe_url; ?>" target="_blank"><button>See the Recipe on Farmflavor.com</button></a>
-</div>
-</div>
-
-<!-- <div id="<?php //echo esc_attr($id); ?>" class="<?php //echo esc_attr($className);  ?>">
     <h3 class="page-header">Recipe</h3>
     <?php //echo get_the_post_thumbnail($recipe_id ); ?>
-    <img src="<?php //echo esc_attr($recipe_img_url ); ?>" />
-    <?php //echo '<h3 class="recipe-block-title">'.get_the_title($recipe_id ).'</h3>'; ?>
-    <?php //echo '<div class="recipe-block-text">'.$text.'</div>';  ?>
-    <a href="<?php //echo esc_url($recipe_url ); ?>"><button>See the recipe</button></a>
-</div> -->
+    <img src="<?php echo esc_attr($recipe_img_url ); ?>" />
+    <?php echo '<h3 class="recipe-block-title">'.get_the_title($recipe_id ).'</h3>'; ?>
+    <?php echo '<div class="recipe-block-text">'.$text.'</div>';  ?>
+    <a href="<?php echo esc_url($recipe_url ); ?>"><button>See the recipe</button></a>
+</div>
