@@ -1,17 +1,8 @@
 <?php
-/**
- * Represents the view for the administration settings dashboard.
- *
- * This includes the header, options, and other information that should provide
- * The User Interface to the end user.
- *
- * @package   Plugin_Name
- * @author    Your Name <email@example.com>
- * @license   GPL-2.0+
- * @link      http://example.com
- * @copyright 2014 Your Name or Company Name
- */
-
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 <li class='sort-option-item<?php echo $class; ?>'>
 
@@ -34,6 +25,7 @@
 					<option value="parent"<?php $this->set_selected($values['sort_by'], "parent"); ?>><?php _e("Parent ID", $this->plugin_slug); ?></option>
 					<option value="rand"<?php $this->set_selected($values['sort_by'], "rand"); ?>><?php _e("Random Order", $this->plugin_slug); ?></option>
 					<option value="comment_count"<?php $this->set_selected($values['sort_by'], "comment_count"); ?>><?php _e("Comment Count", $this->plugin_slug); ?></option>
+                    <option value="relevance"<?php $this->set_selected($values['sort_by'], "relevance"); ?>><?php _e("Relevance", $this->plugin_slug); ?></option>
 					<option value="menu_order"<?php $this->set_selected($values['sort_by'], "menu_order"); ?>><?php _e("Menu Order", $this->plugin_slug); ?></option>
 					<option value="meta_value"<?php $this->set_selected($values['sort_by'], "meta_value"); ?>><?php _e("Meta Value", $this->plugin_slug); ?></option>
 				</select>
@@ -76,13 +68,20 @@
 			<label for="{0}[{1}][meta_key]">
 				<?php _e("Meta Key: ", $this->plugin_slug); ?><span class="hint--top hint--info" data-hint="<?php _e("choose a meta key to sort by", $this->plugin_slug); ?>"><i class="dashicons dashicons-info"></i></span> 
 				<?php
-					$all_meta_keys = $this->get_all_post_meta_keys();
-					echo '<select name="{0}[{1}][sort_options][{2}][meta_key]" class="meta_key" id="{0}[{1}][sort_options][{2}][meta_key]">';
-					foreach($all_meta_keys as $v)
-					{						
-						echo '<option value="'.$v.'"'.$this->set_selected($values['meta_key'], $v, false).'>'.$v."</option>";
+					$meta_key_text_input = Search_Filter_Helper::get_option( 'meta_key_text_input' );
+					if($meta_key_text_input == 1 ) {
+						?>
+						<input type="text" placeholder="<?php echo esc_attr__( 'Enter a meta key', 'search-filter' ); ?> " style="width: 100%"  name="{0}[{1}][sort_options][{2}][meta_key]" class="meta_key" id="{0}[{1}][sort_options][{2}][meta_key]" value="<?php echo esc_attr($values['meta_key']); ?>" />
+						<?php
+					} else {
+						$all_meta_keys = $this->get_all_post_meta_keys();
+						echo '<select name="{0}[{1}][sort_options][{2}][meta_key]" class="meta_key" id="{0}[{1}][sort_options][{2}][meta_key]">';
+						foreach($all_meta_keys as $v)
+						{						
+							echo '<option value="'.$v.'"'.$this->set_selected($values['meta_key'], $v, false).'>'.$v."</option>";
+						}
+						echo '</select>';
 					}
-					echo '</select>';
 					
 				?>
 			</label>
@@ -92,9 +91,12 @@
 			<label for="{0}[{1}][sort_options][{2}][sort_type]">
 				<?php _e("Sort Type: ", $this->plugin_slug); ?> <br />
 				<select name='{0}[{1}][sort_options][{2}][sort_type]' data-field-template-id='{0}[{1}][sort_options][{2}][sort_type]'>
-					<option value="numeric"<?php $this->set_selected($values['sort_type'], "numeric"); ?>><?php _e("numeric", $this->plugin_slug); ?></option>
-					<option value="alphabetic"<?php $this->set_selected($values['sort_type'], "alphabetic"); ?>><?php _e("alphabetic", $this->plugin_slug); ?></option>
-				</select>
+					<option value="numeric"<?php $this->set_selected($values['sort_type'], "numeric"); ?>><?php _e("Numeric", $this->plugin_slug); ?></option>
+					<option value="alphabetic"<?php $this->set_selected($values['sort_type'], "alphabetic"); ?>><?php _e("Alphabetic", $this->plugin_slug); ?></option>
+                    <option value="date"<?php $this->set_selected($values['sort_type'], "date"); ?>><?php _e("Date", $this->plugin_slug); ?></option>
+                    <option value="datetime"<?php $this->set_selected($values['sort_type'], "datetime"); ?>><?php _e("Datetime", $this->plugin_slug); ?></option>
+
+                </select>
 			</label>
 		</p>
 		

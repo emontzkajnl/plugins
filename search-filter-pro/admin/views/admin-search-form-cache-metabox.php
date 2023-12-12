@@ -7,6 +7,11 @@
  * @link      https://searchandfilter.com
  * @copyright 2018 Search & Filter
  */
+
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
  
 ?>
 
@@ -27,47 +32,11 @@
 		);
 		$values['status'] = "inprogress";
 		$values['enabled'] = 1;
-		
-		/*if($values['enabled']==1)
-		{
-			$view_key = $values['status'];
-			
-		}
-		else
-		{
-			$view_key = "disabled";
-		}
-		
-		if($values['status']=="")
-		{
-			$view_key = "disabled";
-		}
-		
-		$cache_view[$view_key]['style'] = "style='display:block;' ";
-		//echo "STATUS: ".$values['status']."<br />";
-		*/
 	?>
 	<div class="cache-metabox status-wait" style="display:block;">
 		<p class="description-inline">
 			<?php _e("<em>Fetching cache information...</em>", $this->plugin_slug); ?>
 		</p>
-		
-		<?php
-		$enabled_style="";
-		$disabled_style="";
-		
-		/*if($values['enabled']==1)
-		{
-			$enabled_style = " style='display:none;'";
-		}
-		else
-		{
-			$disabled_style = " style='display:none;'";
-		}*/
-		?>
-		<!--<p class="description-inline" style="text-align:right;">
-			<span name="save" type="submit" class="button button-large toggle-cache" data-sfid="<?php echo $post->ID; ?>" data-enable-cache="1"><?php _e("Enable", $this->plugin_slug); ?></span>
-		</p>-->
 	</div>
 	<div class="cache-metabox status-disabled">
 		<p class="description-inline">
@@ -77,15 +46,6 @@
 		<?php
 		$enabled_style="";
 		$disabled_style="";
-		
-		/*if($values['enabled']==1)
-		{
-			$enabled_style = " style='display:none;'";
-		}
-		else
-		{
-			$disabled_style = " style='display:none;'";
-		}*/
 		?>
 		<p class="description-inline" style="text-align:right;">
 			<span name="save" type="submit" class="button button-large toggle-cache" data-sfid="<?php echo $post->ID; ?>" data-enable-cache="1"><?php _e("Enable", $this->plugin_slug); ?></span>
@@ -145,7 +105,7 @@
 			<?php _e("<strong>Error: </strong>Unable to cache posts.", $this->plugin_slug); ?>	
 		</p>
 		<p class="description-inline notice-alert">
-			<?php _e("Something prevented the caching process from running, you can try again by selecting <strong>Rebuild Cache</strong>.<br /><a href='#' target='_blank'>More info</a>", $this->plugin_slug); ?>			
+			<?php _e("Something prevented the caching process from running, you can try again by selecting <strong>Rebuild Cache</strong>.<br /><a href='https://searchandfilter.com/documentation/troubleshooting/#the-cache-won8217t-complete' target='_blank'>More info</a>", $this->plugin_slug); ?>			
 		</p>
 		
 	</div>

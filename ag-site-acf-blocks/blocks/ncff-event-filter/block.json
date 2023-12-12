@@ -1,0 +1,9 @@
+{
+    "name":     "acf/ncff-event-filter",
+    "title":    "NCFF Event Search and Filter Pro",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "ncff-event-filter.php"
+    }
+}
