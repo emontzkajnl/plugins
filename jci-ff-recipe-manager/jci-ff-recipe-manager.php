@@ -75,10 +75,19 @@ function register_recipe_block() {
 	if( function_exists('acf_register_block_type')) {
 		acf_register_block_type(array(
 			'name'			=> 'recipe_block',
-			'title'			=> __('Farm Flavor Recipe Block', 'ff-recipe'),
+			'title'			=> __('ILFB Recipe Block', 'ff-recipe'),
 			'mode'			=> 'preview',
 			'description'	=> __('Link out to Farm Flavor Recipe', 'ff-recipe'),
-			'render_template'	=> plugin_dir_path(__FILE__) . 'block/recipe-block.php',
+			'render_template'	=> plugin_dir_path(__FILE__) . 'block/ncff-recipe-block.php',
+			'icon'              => 'layout', 
+			'keywords'		=> array()
+		));
+		acf_register_block_type(array(
+			'name'			=> 'ncff_recipe_block',
+			'title'			=> __('NCFF Recipe Block', 'ff-recipe'),
+			'mode'			=> 'preview',
+			'description'	=> __('Link out to Farm Flavor Recipe', 'ff-recipe'),
+			'render_template'	=> plugin_dir_path(__FILE__) . 'block/ncff-recipe-block.php',
 			'icon'              => 'layout', 
 			'keywords'		=> array()
 		));
