@@ -24,7 +24,7 @@ $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;
     </div>
     <div class="ncff-article__text-container">
     <p class="ncff-featured__cat"><?php echo $cat_name; ?></p>
-    <h2 class="ncff-recent__title"><a class="unstyle-link" href="<?php echo get_the_permalink($article); ?>"><?php echo get_the_title($article); ?></a></h2>
+    <h2 class="ncff-article__title"><a class="unstyle-link" href="<?php echo get_the_permalink($article); ?>"><?php echo get_the_title($article); ?></a></h2>
     </div>
 </div>
 </div>
