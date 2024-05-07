@@ -21,7 +21,7 @@ $link = get_field('newsletter_link', 'options');
 </div>
 <div class="ncff-newsletter__form-area">
 <p class="ncff-newsletter__description">Get the latest news, recipes, articles and more, right to your inbox.</p>
-<?php gravity_form( 3, false, false, false, '', false ); ?>
+<?php gravity_form( 5, false, false, false, '', false ); ?>
 <p style="margin-bottom: .5em">Connect with us</p>
 <ul class="newsletter-social">
     <?php
