@@ -199,6 +199,7 @@ class CFF_Admin{
 			'plugin_install_activate_btn'     => esc_html__( 'Install and Activate', 'custom-facebook-feed' ),
 			'plugin_install_activate_confirm' => esc_html__( 'needs to be installed and activated to import its forms. Would you like us to install and activate it for you?', 'custom-facebook-feed' ),
 			'plugin_activate_btn'             => esc_html__( 'Activate', 'custom-facebook-feed' ),
+			'oembed_connectionURL'            => cffGetOembedConnectionUrl(),
 		);
 		$strings = apply_filters( 'cff_admin_strings', $strings );
 

@@ -5,7 +5,7 @@ class Updates
 {
 	private $licenses = array();
 	private $licenseClass;
-
+    private $licenseKey;
 	public function setLicenses($licenses)
 	{
 		$this->licenses = $licenses;

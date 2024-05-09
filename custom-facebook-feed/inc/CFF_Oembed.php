@@ -27,7 +27,8 @@ class CFF_Oembed
 	public function __construct() {
 		if ( CFF_Oembed::can_do_oembed() ) {
 			if ( CFF_Oembed::can_check_for_old_oembeds() ) {
-				add_action( 'the_post', array( 'CustomFacebookFeed\CFF_Oembed', 'check_page_for_old_oembeds' ) );
+				add_action('init', array('CustomFacebookFeed\CFF_Oembed', 'clear_checks'));
+				add_action('admin_init', array($this, 'cffOembedNotice'));
 			}
 			add_filter( 'oembed_providers', array( 'CustomFacebookFeed\CFF_Oembed', 'oembed_providers' ), 10, 1 );
 			add_filter( 'oembed_fetch_url', array( 'CustomFacebookFeed\CFF_Oembed', 'oembed_set_fetch_url' ), 10, 3 );
@@ -49,7 +50,7 @@ class CFF_Oembed
 	public static function can_do_oembed() {
 		$oembed_token_settings = get_option( 'cff_oembed_token', array() );
 
-		if ( isset( $oembed_token_settings['disabled'] ) && $oembed_token_settings['disabled'] ) {
+		if (isset($oembed_token_settings['disabled']) && $oembed_token_settings['disabled'] === true) {
 			return false;
 		}
 
@@ -94,9 +95,10 @@ class CFF_Oembed
 	 * @since 2.16/3.16
 	 */
 	public static function can_check_for_old_oembeds() {
-		/**
-		 * TODO: if setting is enabled
-		 */
+		$cff_statuses = get_option('cff_statuses', array());
+		if (isset($cff_statuses['oembed_api_change_notice'])) {
+			return false;
+		}
 		return true;
 	}
 
@@ -303,30 +305,6 @@ class CFF_Oembed
 		return $will_expire;
 	}
 
-	/**
-	 * Before links in the content are processed, old oembed post meta
-	 * records are deleted so new oembed data will be retrieved and saved.
-	 * If this check has been done and no old oembeds are found, a flag
-	 * is saved as post meta to skip the process.
-	 *
-	 * @since 2.16/3.16
-	 */
-	public static function check_page_for_old_oembeds() {
-		if ( is_admin() ) {
-			return;
-		}
-
-		$post_ID = get_the_ID();
-		$done_checking = (int)get_post_meta( $post_ID, '_cff_oembed_done_checking', true ) === 1;
-
-		if ( ! $done_checking ) {
-
-			$num_found = CFF_Oembed::delete_facebook_oembed_caches( $post_ID );
-			if ( $num_found === 0 ) {
-				update_post_meta( $post_ID, '_cff_oembed_done_checking', 1 );
-			}
-		}
-	}
 
 	/**
 	 * Loop through post meta data and if it's an oembed and has content
@@ -422,6 +400,88 @@ class CFF_Oembed
 		    DELETE
 		    FROM $table_name
 		    WHERE meta_key = '_cff_oembed_done_checking';");
+	}
+
+	/**
+	 * Display oembed notice in the plugin's pages
+	 *
+	 * @since 6.3.7
+	 */
+	public function cffOembedNotice()
+	{
+		$allowed_screens = array(
+			'cff-feed-builder',
+			'cff-settings',
+			'cff-oembeds-manager',
+			'cff-extensions-manager',
+			'cff-about-us',
+			'cff-support',
+		);
+		$current_screen  = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+		$is_allowed      = in_array($current_screen, $allowed_screens);
+
+		// We will display the notice only on those allowed screens.
+		if (!$current_screen || ! $is_allowed) {
+			return;
+		}
+
+		// Only display notice to admins.
+		$cap = current_user_can('manage_custom_facebook_feed_options') ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters('cff_settings_pages_capability', $cap);
+		if (!current_user_can($cap)) {
+			return;
+		}
+
+        $cff_statuses = get_option('cff_statuses', array());
+		if (isset($cff_statuses['oembed_api_change_notice'])) {
+			return;
+		}
+
+		global $cff_notices;
+		$title    = __( 'Account reconnection needed for Facebook and Instagram oEmbeds', 'custom-facebook-feed' );
+		$message  = '<p>' . __( 'Starting May of 2024, Facebook is making some changes to their API that will affect your oEmbeds. Make sure to connect to our oEmbed specific Smash Balloon Tools app to avoid disruption.', 'custom-facebook-feed' ) . '</p>';
+
+		$error_args = array(
+			'class'     => 'cff-admin-notices',
+			'title'     => array(
+				'text'  => $title,
+				'class' => 'sb-notice-title',
+				'tag'   => 'h4',
+			),
+			'message'     => $message,
+			'buttons' => array(
+				array(
+					'text'      => __( 'Reconnect', 'custom-facebook-feed' ),
+					'class'     => 'sb-btn sb-reconnect-oembed',
+					'tag'       => 'button',
+				),
+			),
+			'buttons_wrap_start' => '<div class="buttons">',
+			'buttons_wrap_end'   => '</div>',
+			'priority'    => 1,
+			'page'        => array(
+				'cff-feed-builder',
+				'cff-settings',
+				'cff-oembeds-manager',
+				'cff-extensions-manager',
+				'cff-about-us',
+				'cff-support',
+			),
+			'icon' => array(
+				'src'  => CFF_PLUGIN_URL . 'admin/assets/img/cff-exclamation.svg',
+				'wrap' => '<span class="sb-notice-icon sb-error-icon"><img {src}></span>',
+			),
+			'styles' => array(
+				'display' => 'flex',
+				'justify-content' => 'space-between',
+				'gap' => '2rem',
+			),
+			'wrap_schema' => '<div {id} {class}>{icon}<div class="cff-notice-wrap" {styles}><div class="cff-notice-body">{title}{message}</div>{buttons}</div></div>',
+		);
+
+		$cff_notices->add_notice( 'oembed_api_change', 'information', $error_args );
+		$cff_statuses['oembed_api_change_notice'] = true;
+		update_option('cff_statuses', $cff_statuses );
 	}
 }
 

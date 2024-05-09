@@ -190,6 +190,7 @@ class Filters
 
 	public function pluginActionLinks($actions, $pluginFile, $pluginData, $context)
 	{
+		
 		if (empty($pluginFile)) {
 			return $actions;
 		}
@@ -212,7 +213,7 @@ class Filters
 					$links['upgrade'] = '<a style="color: #4364eb;" href="'.SG_POPUP_BUNDLE_URL.'" target="_blank">'.esc_html__('Upgrade', SG_POPUP_TEXT_DOMAIN).'</a>';
 				}
 			}
-			$actions = array_merge($links, $actions);
+			$actions = isset($actions) ? array_merge($links, (array)$actions) : $links;
 		}
 
 		return $actions;
@@ -240,7 +241,7 @@ class Filters
 
 	public function sgpbExtraNotifications($notifications = array())
 	{
-		$license = self::licenseNotification();
+		$license = self::licenseNotification( $notifications );
 		if (!empty($license)) {
 			$notifications[] = $license;
 		}
@@ -305,7 +306,7 @@ class Filters
 		return $alternateNotification;
 	}
 
-	public function licenseNotification()
+	public function licenseNotification( $notifications = array() )
 	{
 		$inactiveExtensionNotice = array();
 		$dontShowLicenseBanner = get_option('sgpb-hide-license-notice-banner');

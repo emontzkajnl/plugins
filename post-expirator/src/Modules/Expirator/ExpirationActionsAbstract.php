@@ -15,4 +15,6 @@ abstract class ExpirationActionsAbstract
     const POST_CATEGORY_SET = 'category';
     const POST_CATEGORY_ADD = 'category-add';
     const POST_CATEGORY_REMOVE = 'category-remove';
+    const POST_CATEGORY_REMOVE_ALL = 'category-remove-all';
+    const CHANGE_POST_STATUS = "change-status";
 }

@@ -54,7 +54,6 @@
 			createFilters: function() {
 				var filters = {};
 				var term_id = 0;
-				var terms = $( $.parseHTML( rlFoldersArgs.terms ) ).find( 'option' );
 
 				// root
 				var root = {
@@ -68,24 +67,34 @@
 				};
 
 				// media folder
-				if ( rlFoldersArgs.terms !== '' && terms.length > 0 ) {
-					filters[0] = root;
+				if ( rlFoldersArgs.terms !== '' ) {
+					var terms = $( $.parseHTML( rlFoldersArgs.terms ) ).find( 'option' );
 
-					$( $.parseHTML( rlFoldersArgs.terms ) ).find( 'option' ).each( function( i, option ) {
-						term_id = parseInt( $( option ).val() );
-						term_id = ( term_id === 0 ? 'all' : term_id );
-						last_priority = i + 2;
+					if ( terms.length > 0 ) {
+						filters[0] = root;
 
-						filters[term_id] = {
-							text: $( option ).text(),
-							priority: last_priority,
-							props: {
-								[rlFoldersArgs.taxonomy]: term_id,
-								'force_update': 0,
-								'include_children': false
-							}
-						};
-					} );
+						terms.each( function( i, option ) {
+							term_id = parseInt( $( option ).val() || 0 );
+							term_id = ( term_id === 0 ? 'all' : term_id );
+							last_priority = i + 2;
+
+							// get html value
+							var text = $( option ).html();
+
+							// set new html as text
+							$( option ).text( text );
+
+							filters[term_id] = {
+								text: $( option ).text(),
+								priority: last_priority,
+								props: {
+									[rlFoldersArgs.taxonomy]: term_id,
+									'force_update': 0,
+									'include_children': false
+								}
+							};
+						} );
+					}
 				// all files
 				} else {
 					filters['all'] = {
@@ -346,11 +355,11 @@
 				if ( term_id === 'all' || term_id === 0 )
 					return false;
 
-				var content = link.html().match( '(<i(?:.+)?/i>)(.+)' ),
-					split = content[2].split( ' ' ),
-					nof = split.pop().match( /\d+/ )[0],
-					name = split.join( ' ' ),
-					tree = $( '#rl-folders-tree' ).jstree( true ).get_json( '#', { 'flat': true } );
+				var content = link.html().match( '(<i(?:.+)?/i>)(.+)' );
+				var split = content[2].split( ' ' );
+				var nof = split.pop().match( /\d+/ )[0];
+				var name = split.join( ' ' );
+				var tree = $( '#rl-folders-tree' ).jstree( true ).get_json( '#', { 'flat': true } );
 
 				// unbind event
 				$( document ).off( 'click', '.jstree-anchor' );
@@ -372,7 +381,15 @@
 				$( '.rl-folders-add-new-folder, .rl-folders-delete-folder, .rl-folders-expand-folder, .rl-folders-collapse-folder' ).addClass( 'disabled-link' );
 
 				// hide node, show input
-				link.hide().after( '<span id="' + node_id + '_span">' + content[1] + '<input id="rl-folders-enter-folder" type="text" value="' + name + '" placeholder="' + name + '" data-term_id="' + parseInt( term_id ) + '" data-nof="' + nof + '" /></span>' );
+				link.hide().after( '<span id="' + node_id + '_span">' + content[1] + '<input id="rl-folders-enter-folder" type="text" value="" placeholder="" data-term_id="' + parseInt( term_id ) + '" data-nof="' + nof + '" /></span>' );
+
+				var input = $( 'span#' + node_id + '_span input' );
+
+				// set value
+				input.val( name );
+
+				// set placeholder
+				input[0].placeholder = name;
 
 				// select text inside input
 				$( '#rl-folders-enter-folder' ).trigger( 'select' );
@@ -382,9 +399,8 @@
 					if ( e.which === 13 ) {
 						save_node( false, 0 );
 					// escape button
-					} else if ( e.which === 27 ) {
+					} else if ( e.which === 27 )
 						restore_node( false, false );
-					}
 				} );
 
 				return false;
@@ -1219,7 +1235,8 @@
 
 					// update upload select
 					update_upload_select( $( response.data.select ).find( 'option' ), new_node ? response.data.term_id : term_id );
-				}
+				} else
+					restore_node( new_node, true );
 
 				restore_node( new_node, false );
 			} catch( e ) {

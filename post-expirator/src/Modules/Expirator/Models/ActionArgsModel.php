@@ -5,6 +5,7 @@
 
 namespace PublishPress\Future\Modules\Expirator\Models;
 
+use PublishPress\Future\Modules\Expirator\ExpirationActionsAbstract;
 use PublishPress\Future\Modules\Expirator\Schemas\ActionArgsSchema;
 
 defined('ABSPATH') or die('Direct access not allowed.');
@@ -73,6 +74,23 @@ class ActionArgsModel
             $this->createdAt = $row->created_at;
             $this->enabled = absint($row->enabled) === 1;
             $this->args = json_decode($row->args, true);
+
+            if (isset($this->args['expireType'])) {
+                if ($this->args['expireType'] === ExpirationActionsAbstract::POST_STATUS_TO_DRAFT) {
+                    $this->args['expireType'] = ExpirationActionsAbstract::CHANGE_POST_STATUS;
+                    $this->args['newStatus'] = 'draft';
+                }
+
+                if ($this->args['expireType'] === ExpirationActionsAbstract::POST_STATUS_TO_PRIVATE) {
+                    $this->args['expireType'] = ExpirationActionsAbstract::CHANGE_POST_STATUS;
+                    $this->args['newStatus'] = 'private';
+                }
+
+                if ($this->args['expireType'] === ExpirationActionsAbstract::POST_STATUS_TO_TRASH) {
+                    $this->args['expireType'] = ExpirationActionsAbstract::CHANGE_POST_STATUS;
+                    $this->args['newStatus'] = 'trash';
+                }
+            }
         }
     }
 
@@ -84,7 +102,7 @@ class ActionArgsModel
     {
         global $wpdb;
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
         $row = $wpdb->get_row(
             $wpdb->prepare(
                 // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -108,7 +126,7 @@ class ActionArgsModel
     {
         global $wpdb;
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
         $row = $wpdb->get_row(
             $wpdb->prepare(
                 // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -130,18 +148,30 @@ class ActionArgsModel
      * @param int $postId
      * @return bool
      */
-    public function loadByPostId($postId)
+    public function loadByPostId($postId, $filterEnabled = false)
     {
         global $wpdb;
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
-        $row = $wpdb->get_row(
-            $wpdb->prepare(
-                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-                "SELECT * FROM {$this->tableName} WHERE post_id = %d ORDER BY enabled DESC, id DESC LIMIT 1",
-                $postId
-            )
-        );
+        $row = null;
+        if ($filterEnabled) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $row = $wpdb->get_row(
+                $wpdb->prepare(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                    "SELECT * FROM {$this->tableName} WHERE post_id = %d AND enabled = 1 ORDER BY enabled DESC, id DESC LIMIT 1",
+                    $postId
+                )
+            );
+        } else {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+            $row = $wpdb->get_row(
+                $wpdb->prepare(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                    "SELECT * FROM {$this->tableName} WHERE post_id = %d ORDER BY enabled DESC, id DESC LIMIT 1",
+                    $postId
+                )
+            );
+        }
 
         if (! empty($row)) {
             $this->setAttributesFromRow($row);
@@ -157,7 +187,7 @@ class ActionArgsModel
         // For now we only support one action per post
         $this->disableAllForPost($this->postId);
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->update(
             $this->tableName,
             [
@@ -176,10 +206,10 @@ class ActionArgsModel
     /**
      * @return int
      */
-    public function add()
+    public function insert()
     {
         global $wpdb;
-
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->insert(
             $this->tableName,
             [
@@ -207,7 +237,7 @@ class ActionArgsModel
             $postId = $this->postId;
         }
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->update(
             $this->tableName,
             [
@@ -223,7 +253,7 @@ class ActionArgsModel
     {
         global $wpdb;
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->delete(
             $this->tableName,
             [
@@ -285,6 +315,11 @@ class ActionArgsModel
         return (array)$this->args;
     }
 
+    public function getArg(string $key): string
+    {
+        return isset($this->args[$key]) ? $this->args[$key] : '';
+    }
+
     public function getAction()
     {
         return isset($this->args['expireType']) ? $this->args['expireType'] : '';
@@ -293,9 +328,15 @@ class ActionArgsModel
     /**
      * @return string
      */
-    public function getActionLabel()
+    public function getActionLabel($postType = '')
     {
-        return $this->expirationActionsModel->getLabelForAction($this->getAction());
+        $label = $this->expirationActionsModel->getLabelForAction($this->getAction(), $postType);
+
+        if (empty($label)) {
+            $label = $this->getArg('actionLabel');
+        }
+
+        return $label;
     }
 
     /**
@@ -303,7 +344,18 @@ class ActionArgsModel
      */
     public function getTaxonomyTerms()
     {
-        return isset($this->args['category']) ? $this->args['category'] : [];
+        $terms = isset($this->args['category']) ? $this->args['category'] : [];
+
+        if (! is_array($terms)) {
+            $terms = explode(',', $terms);
+        }
+
+        return $terms;
+    }
+
+    public function getTaxonomy()
+    {
+        return isset($this->args['categoryTaxonomy']) ? $this->args['categoryTaxonomy'] : '';
     }
 
     /**
@@ -331,6 +383,17 @@ class ActionArgsModel
     public function setArgs($args)
     {
         $this->args = $args;
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return ActionsArgsModel
+     */
+    public function setArg(string $key, $value)
+    {
+        $this->args[$key] = $value;
         return $this;
     }
 
@@ -383,6 +446,7 @@ class ActionArgsModel
      */
     public function getScheduledDateAsUnixTime()
     {
+        // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
         return date('U', strtotime($this->getScheduledDate()));
     }
 

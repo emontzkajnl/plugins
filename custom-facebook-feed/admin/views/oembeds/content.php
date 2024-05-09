@@ -24,10 +24,10 @@
                         <span v-if="fboEmbedLoader" v-html="loaderSVG"></span>
                         {{genericText.disable}}
                     </button>
-                    <a v-else :href="connectionURL" class="cff-btn-blue cff-btn" :class="{loading: fboEmbedLoader}" @click="fboEmbedLoader = true">
-                        <span v-if="fboEmbedLoader" v-html="loaderSVG"></span>
+                    <button v-else @click="enableFboEmbed()" class="cff-btn cff-btn-blue" :class="{loading: fboEmbedLoader}">
+                        <span v-if="fboEmbedLoader" v-html="svgIcons.loaderSVG"></span>
                         {{genericText.enable}}
-                    </a>
+                    </button>
                 </span>
             </div>
             <div class="cff-oembed-plugin-box cff-oembed-instagram">

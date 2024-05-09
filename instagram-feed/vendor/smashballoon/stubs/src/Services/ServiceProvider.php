@@ -2,8 +2,11 @@
 
 namespace Smashballoon\Stubs\Services;
 
-abstract class ServiceProvider implements ServiceProviderInterface {
-	public function register() {
-		// TODO: Implement register() method.
-	}
+/** @internal */
+abstract class ServiceProvider implements \Smashballoon\Stubs\Services\ServiceProviderInterface
+{
+    public function register()
+    {
+        // TODO: Implement register() method.
+    }
 }

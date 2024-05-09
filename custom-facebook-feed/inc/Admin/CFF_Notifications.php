@@ -145,7 +145,8 @@ class CFF_Notifications {
 		// set the transient so it will hide for next 7 days
 		set_transient( 'facebook_feed_dismiss_lite', 'dismiss', 1 * WEEK_IN_SECONDS );
 
-		new CFF_Response( true, array() );
+		$response = new CFF_Response( true, array() );
+		$response->send();
 	}
 
 

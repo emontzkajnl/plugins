@@ -714,7 +714,12 @@ class Responsive_Lightbox_Folders {
 
 		// prepare data
 		$original_slug = $slug = sanitize_title( $_POST['name'] );
+		$name = sanitize_text_field( $_POST['name'] );
 		$parent_id = (int) $_POST['parent_id'];
+
+		// empty name?
+		if ( $original_slug === '' || $name === '' )
+			wp_send_json_error();
 
 		// get all term slugs
 		$terms = get_terms(
@@ -739,7 +744,7 @@ class Responsive_Lightbox_Folders {
 
 		// add new term, name is sanitized inside wp_insert_term with sanitize_term function
 		$term = wp_insert_term(
-			$_POST['name'],
+			$name,
 			$taxonomy,
 			[
 				'parent'	=> $parent_id,

@@ -34,7 +34,7 @@ class CFF_Support {
 	 *
 	 * @since 4.0
 	 */
-	function __construct(){
+	public function __construct(){
 		$this->init();
 	}
 
@@ -57,7 +57,7 @@ class CFF_Support {
 	 *
 	 * @since 4.0
 	 */
-	function register_menu() {
+	public function register_menu() {
         $cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
         $cap = apply_filters( 'cff_settings_pages_capability', $cap );
 
@@ -159,6 +159,7 @@ class CFF_Support {
 			'svgIcons'          => CFF_Feed_Builder::builder_svg_icons(),
 			'socialWallLinks'   => \CustomFacebookFeed\Builder\CFF_Feed_Builder::get_social_wall_links(),
 			'socialWallActivated' => is_plugin_active( 'social-wall/social-wall.php' ),
+            'tempUser' => \CustomFacebookFeed\Admin\CFF_Support_Tool::check_temporary_user_exists(),
 			'genericText'       => array(
 				'help' => __( 'Help', 'custom-facebook-feed' ),
 				'title' => __( 'Support', 'custom-facebook-feed' ),
@@ -174,6 +175,20 @@ class CFF_Support {
 				'exportSettings' => __( 'Export Settings', 'custom-facebook-feed' ),
 				'shareYour' => __( 'Share your plugin settings easily with Support', 'custom-facebook-feed' ),
 				'copiedToClipboard' => __( 'Copied to clipboard', 'custom-facebook-feed' ),
+                'learnMore' => __('Learn More', 'custom-facebook-feed'),
+                'delete' => __('Delete', 'custom-facebook-feed'),
+                'copyLink' => __('Copy Link', 'custom-facebook-feed'),
+                'link' => __('Link', 'custom-facebook-feed'),
+                'expires' => __('Expires in', 'custom-facebook-feed'),
+                'days' => __('Days', 'custom-facebook-feed'),
+                'day' => __('Day', 'custom-facebook-feed'),
+
+                'newTempHeading' => __('Temporary Login', 'custom-facebook-feed'),
+                'newTempDesc' => __('Our team might require temporary login access with limited access to only our plugin to help you test your issues.', 'custom-facebook-feed'),
+                'newTempButton' => __('Create Temporary Login Link', 'custom-facebook-feed'),
+
+                'tempLoginHeading' => __('Temporary Login', 'custom-facebook-feed'),
+                'tempLoginDesc' => __('Temporary Login link for support access created by you. This is auto-destructed 14 days after creation. To create a new link, please delete the old one.', 'custom-facebook-feed'),
             ),
             'buttons'          => array(
 				'searchDoc' => __( 'Search Documentation', 'custom-facebook-feed' ),
@@ -459,8 +474,6 @@ class CFF_Support {
                     if ( $source['account_id'] == $source_id ) {
                         $output .= $source['username'];
                         $output .= ' (' . $source_id . ')';
-                        $output .= "</br>";
-                        $output .= $manager->remote_encrypt( $source['access_token']  );
                     }
                 }
             }
@@ -569,7 +582,7 @@ class CFF_Support {
     public static function get_errors_info() {
         $output = "## ERRORS: ##" . "</br>";
         $errors = \cff_main()->cff_error_reporter->get_errors();
-        if ( ! empty( $errors['resizing'] ) ) :
+        if ( ! empty( $errors['resizing'] ) && is_string( $errors['resizing'] ) ) :
             $output .= '* Resizing *' . "</br>";
             $output .= $errors['resizing'] . "</br>";
         endif;
@@ -707,6 +720,6 @@ class CFF_Support {
 	 * @since 4.0
 	 */
 	public function support_page(){
-		return CFF_View::render( 'support.index' );
+		CFF_View::render( 'support.index' );
 	}
 }

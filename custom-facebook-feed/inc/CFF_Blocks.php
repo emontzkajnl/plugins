@@ -42,7 +42,7 @@ class CFF_Blocks {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 
 		/*
-		* Add smashballoon category and Facebook Feed Block 
+		* Add smashballoon category and Facebook Feed Block
 		* @since 4.1.9
 		*/
 		add_filter( 'block_categories_all', array( $this, 'register_block_category' ), 10, 2 );
@@ -146,6 +146,7 @@ class CFF_Blocks {
 	 * @return string
 	 */
 	public function get_feed_html( $attr ) {
+		$cff_statuses = get_option( 'cff_statuses', array() );
 
 		$return = '';
 
@@ -180,7 +181,7 @@ class CFF_Blocks {
 
 	/**
 	 * Register Block Category
-	 * 
+	 *
 	 * @since 4.1.9
 	 */
 	public function register_block_category( $categories, $context ) {
@@ -189,7 +190,7 @@ class CFF_Blocks {
 		if ( $exists !== false ) {
 			return $categories;
 		}
-		
+
 		return array_merge(
 			$categories,
 			array(
@@ -203,7 +204,7 @@ class CFF_Blocks {
 
 	/**
 	 * Register Block
-	 * 
+	 *
 	 * @since 4.1.9
 	 */
 	public function register_facebook_feed_block() {
@@ -216,7 +217,7 @@ class CFF_Blocks {
 
 	/**
 	 * Render Block
-	 * 
+	 *
 	 * @since 4.1.9
 	 */
 	public function render_facebook_feed_block( $attributes ) {
@@ -231,7 +232,7 @@ class CFF_Blocks {
 
 	/**
 	 * Enqueue Block Assets
-	 * 
+	 *
 	 * @since 4.1.9
 	 */
 	public function enqueue_facebook_feed_block_editor_assets() {
@@ -268,7 +269,7 @@ class CFF_Blocks {
 
 	/**
 	 * Set Script Translations
-	 * 
+	 *
 	 * @since 4.1.9
 	 */
 	public function set_script_translations() {
@@ -277,7 +278,7 @@ class CFF_Blocks {
 
 	/**
 	 * Check if the post has a Facebook Feed block
-	 * 
+	 *
 	 * @since 4.1.9
 	 */
 	public function has_facebook_feed_block() {

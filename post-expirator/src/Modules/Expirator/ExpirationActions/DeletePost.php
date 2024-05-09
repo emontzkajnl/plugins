@@ -43,12 +43,14 @@ class DeletePost implements ExpirationActionInterface
     {
         if (empty($this->log) || ! $this->log['success']) {
             return sprintf(
+                // translators: %s: post type singular label
                 __('%s was not deleted.', 'post-expirator'),
                 $this->postModel->getPostTypeSingularLabel()
             );
         }
 
         return sprintf(
+            // translators: %s: post type singular label
             __('%s has been successfully deleted.', 'post-expirator'),
             $this->postModel->getPostTypeSingularLabel()
         );
@@ -59,7 +61,7 @@ class DeletePost implements ExpirationActionInterface
      */
     public function execute()
     {
-        $result = $this->postModel->delete();
+        $result = $this->postModel->delete(true);
 
         $this->log['success'] = $result;
 
@@ -69,16 +71,13 @@ class DeletePost implements ExpirationActionInterface
     /**
      * @return string
      */
-    public static function getLabel()
+    public static function getLabel(string $postType = ''): string
     {
         return __('Delete', 'post-expirator');
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getDynamicLabel()
+    public function getDynamicLabel($postType = '')
     {
-        return self::getLabel();
+        return self::getLabel($postType);
     }
 }

@@ -102,7 +102,7 @@ class CFF_Post_Set {
 			if ( isset( $previewSettings['playlist'] ) ) {
 				$previewSettings['playlist'] = CFF_Source::extract_id( $previewSettings['playlist'], 'playlist' );
 			}
-			$this->feed_settings = $saver->get_feed_settings_preview( $previewSettings );
+			$this->feed_settings = $previewSettings;
 		} else{
 			$this->feed_settings = $saver->get_feed_settings();
 		}
@@ -118,12 +118,13 @@ class CFF_Post_Set {
 	 */
 	public function fetch() {
 		$settings = $this->converted_settings;
+		$transient = $settings['type'] === 'events' ? $this->feed_id : $this->transient_name;
 
 		$facebook_feed = new \CustomFacebookFeed\CFF_Feed_Pro( $this->transient_name, true );
 
 		if ( $facebook_feed->need_posts( $settings['num'] ) && $facebook_feed->can_get_more_posts() ) {
 			while ( $facebook_feed->need_posts( $settings['num'] ) && $facebook_feed->can_get_more_posts() ) {
-				$facebook_feed->add_remote_posts( $settings );
+				$facebook_feed->add_remote_posts($settings, $this->feed_id);
 			}
 		}
 
@@ -233,7 +234,7 @@ class CFF_Post_Set {
 
 		}
 		$builder_settings['multifeedactive'] = \CustomFacebookFeed\CFF_FB_Settings::check_active_extension( 'multifeed' );
-		$builder_settings['daterangeactive'] = \CustomFacebookFeed\CFF_FB_Settings::check_active_extension( 'date_range' );
+		//$builder_settings['daterangeactive'] = \CustomFacebookFeed\CFF_FB_Settings::check_active_extension( 'date_range' );
 		$builder_settings['daterangeactive'] = false; // Not sure why plugin things date range is active when not
 		$builder_settings['featuredpostactive'] = \CustomFacebookFeed\CFF_FB_Settings::check_active_extension( 'featured_post' );
 		$builder_settings['albumactive'] = \CustomFacebookFeed\CFF_FB_Settings::check_active_extension( 'album' );

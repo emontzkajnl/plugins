@@ -25,7 +25,7 @@ function qsm_generate_admin_results_page() {
 		<div>
 			<h2 id="result_details">
 				<?php esc_html_e( 'Quiz Results', 'quiz-master-next' );
-				if ( "quiz-results" == $active_tab ) { ?>
+				if ( strtolower( str_replace( ' ', '-', __( 'Quiz Results', 'quiz-master-next' ) ) ) == $active_tab ) { ?>
 					<span id="results-screen-option-button" class="button"><?php echo esc_html__( 'Screen Options', 'quiz-master-next' ) ?></span>
 				<?php } ?>
 			</h2>
@@ -75,6 +75,9 @@ function qsm_results_overview_tab() {
 	}
 	if ( ! class_exists( 'QSM_Analysis' ) ) {
 		$mlwQuizMasterNext->pluginHelper->register_admin_results_tab( __( 'Reporting And Analysis', 'quiz-master-next' ), 'qsm_reporting_analysis_tabs_content', 10 );
+	}
+	if ( ! class_exists( 'QSM_Proctoring_Quiz' ) ) {
+		$mlwQuizMasterNext->pluginHelper->register_admin_results_tab( __( 'Proctor Reports', 'quiz-master-next' ), 'qsm_proctor_quiz_tabs_content', 12 );
 	}
 }
 
@@ -149,7 +152,7 @@ function qsm_results_overview_tab_content() {
 	$order_by_sql        = 'ORDER BY time_taken_real DESC';
 	if ( isset( $_GET['qsm_search_phrase'] ) && ! empty( $_GET['qsm_search_phrase'] ) ) {
 		// Sanitizes the search phrase and then uses $wpdb->prepare to properly escape the queries after using $wpdb->esc_like.
-		$sanitized_search_phrase = sanitize_text_field( wp_unslash( $_GET['qsm_search_phrase'] ) );
+		$sanitized_search_phrase = htmlentities( sanitize_text_field( wp_unslash( $_GET['qsm_search_phrase'] ) ) );
 		$search_phrase_percents  = '%' . esc_sql( $wpdb->esc_like( $sanitized_search_phrase ) ) . '%';
 		$search_phrase_sql       = $wpdb->prepare( ' AND (quiz_name LIKE %s OR name LIKE %s OR business LIKE %s OR email LIKE %s OR phone LIKE %s)', $search_phrase_percents, $search_phrase_percents, $search_phrase_percents, $search_phrase_percents, $search_phrase_percents );
 	}
@@ -294,6 +297,7 @@ function qsm_results_overview_tab_content() {
 	if ( isset( $_POST["results-screen_option_nonce"] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST["results-screen_option_nonce"] ) ), 'results_screen_option' ) ) {
 		$results_screen_option['page_url']   = isset( $_POST['page_url'] ) ? sanitize_text_field( wp_unslash( $_POST['page_url'] ) ) : "0";
 		$results_screen_option['page_name']  = isset( $_POST['page_name'] ) ? sanitize_text_field( wp_unslash( $_POST['page_name'] ) ) : "0";
+		$results_screen_option['view_result_page'] = isset( $_POST['view_result_page'] ) ? sanitize_text_field( wp_unslash( $_POST['view_result_page'] ) ) : "0";
 		$results_screen_option['business']   = isset( $_POST['business'] ) ? sanitize_text_field( wp_unslash( $_POST['business'] ) ) : "0";
 		$results_screen_option['phone']      = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : "0";
 		$results_screen_option['ip_address'] = isset( $_POST['ip_address'] ) ? sanitize_text_field( wp_unslash( $_POST['ip_address'] ) ) : "0";
@@ -304,15 +308,15 @@ function qsm_results_overview_tab_content() {
 	} else {
 		$results_screen_option   = get_user_meta( $user_id, 'results_screen_option', true );
 		$results_screen_option   = ! empty( $results_screen_option ) ? $results_screen_option : '';
-		if ( empty( $results_screen_option ) ) {
-			$results_screen_option = array(
-				'page_url'   => '0',
-				'page_name'  => '0',
-				'business'   => '1',
-				'phone'      => '1',
-				'ip_address' => '1',
-			);
-		}
+		$default_results_screen_option = array(
+			'page_url'         => '0',
+			'view_result_page' => '0',
+			'page_name'        => '0',
+			'business'         => '1',
+			'phone'            => '1',
+			'ip_address'       => '1',
+		);
+		$results_screen_option = wp_parse_args( $results_screen_option, $default_results_screen_option );
 		if ( ! isset( $results_screen_option['start_date'] ) ) {
 			$results_screen_option['start_date'] = "0";
 		}
@@ -329,18 +333,19 @@ function qsm_results_overview_tab_content() {
 		wp_nonce_field( 'bulk_delete', 'bulk_delete_nonce' );
 
 		$th_elements = apply_filters( 'mlw_qmn_admin_results_page_headings', array(
-			'score'         => __( 'Score', 'quiz-master-next' ),
-			'time_complete' => __( 'Time To Complete', 'quiz-master-next' ),
-			'name'          => __( 'Name', 'quiz-master-next' ),
-			'business'      => __( 'Business', 'quiz-master-next' ),
-			'email'         => __( 'Email', 'quiz-master-next' ),
-			'phone'         => __( 'Phone', 'quiz-master-next' ),
-			'user'          => __( 'User', 'quiz-master-next' ),
-			'start_date'    => __( 'Start Date', 'quiz-master-next' ),
-			'time_taken'    => __( 'End Date', 'quiz-master-next' ),
-			'ip'            => __( 'IP Address', 'quiz-master-next' ),
-			'page_name'     => __( 'Page Name', 'quiz-master-next' ),
-			'page_url'      => __( 'Page URL', 'quiz-master-next' ),
+			'score'            => __( 'Score', 'quiz-master-next' ),
+			'time_complete'    => __( 'Time To Complete', 'quiz-master-next' ),
+			'name'             => __( 'Name', 'quiz-master-next' ),
+			'business'         => __( 'Business', 'quiz-master-next' ),
+			'email'            => __( 'Email', 'quiz-master-next' ),
+			'phone'            => __( 'Phone', 'quiz-master-next' ),
+			'user'             => __( 'User', 'quiz-master-next' ),
+			'start_date'       => __( 'Start Date', 'quiz-master-next' ),
+			'time_taken'       => __( 'End Date', 'quiz-master-next' ),
+			'ip'               => __( 'IP Address', 'quiz-master-next' ),
+			'page_name'        => __( 'Page Name', 'quiz-master-next' ),
+			'page_url'         => __( 'Page URL', 'quiz-master-next' ),
+			'view_result_page' => __( 'Result Page', 'quiz-master-next' ),
 		) );
 
 		$values      = $quiz_infos   = [];
@@ -371,9 +376,22 @@ function qsm_results_overview_tab_content() {
 		if ( "0" === $results_screen_option['time_taken'] ) {
 			$values['time_taken']['style'] = $display_none;
 		}
-
+		if ( "0" === $results_screen_option['view_result_page'] ) {
+			$values['view_result_page']['style'] = $display_none;
+		}
+		if ( ! class_exists( 'QSM_Proctoring_Quiz' ) ) {
+			$proctor_class = "qsm-quiz-proctor-addon";
+		}else {
+			$proctor_class = "";
+		}
 		if ( $mlw_quiz_data ) {
 			foreach ( $mlw_quiz_data as $mlw_quiz_info ) {
+				$mlw_quiz_info->proctor_report_class = $proctor_class;
+				if ( "" == $proctor_class ) {
+					$mlw_quiz_info->proctor_report_link = "admin.php?page=qsm_quiz_result_details&tab=proctor-results&quiz_id=$mlw_quiz_info->quiz_id&result_id=$mlw_quiz_info->result_id";
+				}else {
+					$mlw_quiz_info->proctor_report_link = "#";
+				}
 				$quiz_infos[]            = $mlw_quiz_info;
 				$mlw_complete_time       = '';
 				$mlw_qmn_results_array   = maybe_unserialize( $mlw_quiz_info->quiz_results );
@@ -467,8 +485,13 @@ function qsm_results_overview_tab_content() {
 					}
 					$values['page_url']['content'][] = '<a href="' . esc_url( $quiz_page_url ) . '">' . esc_html( $quiz_page_url ) . '</a>';
 				}
+				if ( isset( $values['view_result_page']) ) {
+					$quiz_page_url = $mlw_quiz_info->page_url;
+					$unique_id = $mlw_quiz_info->unique_id;
+					$values['view_result_page']['content'][] = '<a target="_blank" class="button" href="' . esc_url( $quiz_page_url ) . '?result_id=' . esc_attr( $unique_id ) . '">' . esc_html__( 'View', 'quiz-master-next' ) . '</a>';
+				}
 				foreach ( $values as $k => $v ) {
-					if ( ! in_array( $k, [ 'score', 'time_complete', 'name', 'business', 'email', 'phone', 'user', 'time_taken', 'ip', 'page_name', 'page_url' ], true ) ) {
+					if ( ! in_array( $k, [ 'score', 'time_complete', 'name', 'business', 'email', 'phone', 'user', 'time_taken', 'ip', 'page_name', 'page_url', 'view_result_page' ], true ) ) {
 						$content = apply_filters( 'mlw_qmn_admin_results_page_column_content', '', $mlw_quiz_info, $k );
 						if ( isset( $values[ $k ] ) && ! empty( $content ) ) {
 							$values[ $k ]['content'][] = $content;
@@ -501,7 +524,7 @@ function qsm_results_overview_tab_content() {
 						?>
 						<tr>
 							<td><input type="checkbox" class="qmn_delete_checkbox" name="delete_results[]" value="<?php echo esc_attr( $quiz_infos[ $x ]->result_id ); ?>" /></td>
-							<td class="<?php echo apply_filters( 'qsm_results_quiz_name_class','', $quiz_infos[ $x ]->result_id ); ?>"><span style="font-size:16px;"><?php echo esc_html( $quiz_infos[ $x ]->quiz_name ); ?></span><div class="row-actions"><span style="color:green;font-size:16px;"><a href="admin.php?page=qsm_quiz_result_details&result_id=<?php echo esc_attr( $quiz_infos[ $x ]->result_id ); ?>"><?php esc_html_e( 'View', 'quiz-master-next' ); ?></a> | <a style="color: red;" class="delete_table_quiz_results_item" data-quiz-id="<?php echo esc_attr( $quiz_infos[ $x ]->result_id ); ?>" data-quiz-name="<?php echo esc_attr( $quiz_infos[ $x ]->quiz_name ); ?>" href='#'><?php esc_html_e( 'Delete', 'quiz-master-next' ); ?></a></span></div></td>
+							<td class="<?php echo apply_filters( 'qsm_results_quiz_name_class','', $quiz_infos[ $x ]->result_id ); ?>"><span style="font-size:16px;"><?php echo esc_html( $quiz_infos[ $x ]->quiz_name ); ?></span><div class="row-actions"><span style="color:green;font-size:16px;"><a href="admin.php?page=qsm_quiz_result_details&result_id=<?php echo esc_attr( $quiz_infos[ $x ]->result_id ); ?>"><?php esc_html_e( 'View Results', 'quiz-master-next' ); ?></a> | <a style="color: red;" class="delete_table_quiz_results_item" data-quiz-id="<?php echo esc_attr( $quiz_infos[ $x ]->result_id ); ?>" data-quiz-name="<?php echo esc_attr( $quiz_infos[ $x ]->quiz_name ); ?>" href='#'><?php esc_html_e( 'Delete', 'quiz-master-next' ); ?></a> | <a class="<?php echo esc_attr( $quiz_infos[ $x ]->proctor_report_class ); ?>"  href='<?php echo esc_attr( $quiz_infos[ $x ]->proctor_report_link ); ?>'><?php esc_html_e( 'Proctor Reports', 'quiz-master-next' ); ?></a></span></div></td>
 							<?php
 							foreach ( $values as $k => $v ) {
 								if ( isset( $v['content'][ $x ] ) ) {
@@ -546,6 +569,10 @@ function qsm_results_overview_tab_content() {
 							<?php esc_html_e( 'Page URL', 'quiz-master-next' ); ?>
 						</label>
 						<label>
+							<input type="checkbox" value="1" name="view_result_page" <?php checked( $results_screen_option['view_result_page'], "1", true ) ?>/>
+							<?php esc_html_e( 'Result Page', 'quiz-master-next' ); ?>
+						</label>
+						<label>
 							<input type="checkbox" name="page_name" value="1" <?php checked( $results_screen_option['page_name'], "1", true ) ?>/>
 							<?php esc_html_e( 'Page Name', 'quiz-master-next' ); ?>
 						</label>
@@ -581,6 +608,20 @@ function qsm_results_overview_tab_content() {
 	</div>
 
 	<?php
+	if ( ! class_exists( 'QSM_Proctoring_Quiz' ) ) {
+		$qsm_pop_up_arguments = array(
+			"id"           => 'modal-proctor-quiz',
+			"title"        => __('Quiz Proctor', 'quiz-master-next'),
+			"description"  => __('Enhance exam fairness using Quiz Proctor: Capture images, monitor tab shifts, and prevent cheating by restricting copy/paste within the quiz. Ensure focus and equity with full-screen mode.', 'quiz-master-next'),
+			"chart_image"  => plugins_url('', dirname(__FILE__)) . '/images/proctor_quiz_chart.png',
+			"information"  => __('QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today OR you can buy Quiz Proctor Addon separately.', 'quiz-master-next'),
+			"buy_btn_text" => __('Buy Quiz Proctor Addon', 'quiz-master-next'),
+			"doc_link"     => qsm_get_plugin_link( 'docs/add-ons/quiz-proctor/', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
+			"upgrade_link" => qsm_get_plugin_link( 'pricing', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
+			"addon_link"   => qsm_get_plugin_link( 'downloads/quiz-proctor', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
+		);
+		qsm_admin_upgrade_popup($qsm_pop_up_arguments);
+	}
 }
 
 function qsm_export_results_tabs_content() {
@@ -610,6 +651,22 @@ function qsm_reporting_analysis_tabs_content() {
 		"doc_link"     => qsm_get_plugin_link( 'docs/add-ons/reporting-analysis', 'result_page', 'result_analysis', 'result-reportanalysis-upsell_read_documentation', 'qsm_plugin_upsell' ),
 		"upgrade_link" => qsm_get_plugin_link( 'pricing', 'result_page', 'result_analysis', 'result-reportanalysis-upsell_upgrade', 'qsm_plugin_upsell' ),
 		"addon_link"   => qsm_get_plugin_link( 'downloads/results-analysis', 'result_page', 'result_analysis', 'result-reportanalysis-ups_buy_addon', 'qsm_plugin_upsell' ),
+	);
+	qsm_admin_upgrade_content( $args, 'page' );
+}
+
+function qsm_proctor_quiz_tabs_content() {
+	$args = array(
+		"id"           => 'proctoring-quiz',
+		"title"        => __( 'Quiz Proctor', 'quiz-master-next' ),
+		"description"  => __( 'Enhance exam fairness using Quiz Proctor: Capture images, monitor tab shifts, and prevent cheating by restricting copy/paste within the quiz. Ensure focus and equity with full-screen mode.', 'quiz-master-next' ),
+		"chart_image"  => plugins_url( '', dirname( __FILE__ ) ) . '/images/proctor_quiz_chart.png',
+		"warning"      => __( 'Missing Feature - Quiz Proctor Add-on required', 'quiz-master-next' ),
+		"information"  => __( 'QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today. OR you can buy Proctoring Quiz Addon separately.', 'quiz-master-next' ),
+		"buy_btn_text" => __( 'Buy Quiz Proctor Addon', 'quiz-master-next' ),
+		"doc_link"     => qsm_get_plugin_link( 'docs/add-ons/quiz-proctor', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
+		"upgrade_link" => qsm_get_plugin_link( 'pricing', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
+		"addon_link"   => qsm_get_plugin_link( 'downloads/quiz-proctor', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
 	);
 	qsm_admin_upgrade_content( $args, 'page' );
 }

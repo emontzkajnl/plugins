@@ -27,7 +27,7 @@ class CFF_About_Us {
 	 *
 	 * @since 4.0
 	 */
-	function __construct(){
+	public function __construct(){
 		$this->init();
 	}
 
@@ -49,7 +49,7 @@ class CFF_About_Us {
 	 *
 	 * @since 4.0
 	 */
-	function register_menu() {
+	public function register_menu() {
         $cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
         $cap = apply_filters( 'cff_settings_pages_capability', $cap );
 
@@ -253,7 +253,7 @@ class CFF_About_Us {
 	 * @since 4.0
 	 */
 	public function about_us(){
-		return CFF_View::render( 'about.index' );
+		CFF_View::render( 'about.index' );
 	}
 
     /**

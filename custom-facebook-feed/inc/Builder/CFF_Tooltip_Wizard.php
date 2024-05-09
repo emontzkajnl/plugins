@@ -14,7 +14,7 @@ class CFF_Tooltip_Wizard {
 	 *
 	 * @since 4.0
 	 */
-	function __construct(){
+	public function __construct(){
 		$this->init();
 	}
 

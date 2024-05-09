@@ -122,6 +122,8 @@ class Admin {
         add_action('wp_ajax_wpp_get_trending', [$this, 'get_popular_items']);
         // Delete plugin data
         add_action('wp_ajax_wpp_clear_data', [$this, 'clear_data']);
+        // Reset plugin's default thumbnail
+        add_action('wp_ajax_wpp_reset_thumbnail', [$this, 'get_default_thumbnail']);
         // Empty plugin's images cache
         add_action('wp_ajax_wpp_clear_thumbnail', [$this, 'clear_thumbnails']);
         // Flush cached thumbnail on featured image change/deletion
@@ -850,6 +852,7 @@ class Admin {
                 // Check if custom date range has been requested
                 $dates = null;
 
+                // phpcs:disable WordPress.Security.NonceVerification.Recommended -- 'dates' are date strings, and we're validating those below
                 if ( isset($_GET['dates']) ) {
                     $dates = explode(' ~ ', esc_html($_GET['dates']));
 
@@ -871,6 +874,7 @@ class Admin {
                         $end_date = $dates[1] . ' 23:59:59';
                     }
                 }
+                // phpcs:enable
 
                 break;
 
@@ -1241,11 +1245,29 @@ class Admin {
 
         if ( $wpp_transients && is_array($wpp_transients) && ! empty($wpp_transients) ) {
             foreach( $wpp_transients as $wpp_transient ) {
-                delete_transient($wpp_transient->tkey);
+                try {
+                    delete_transient($wpp_transient->tkey);
+                } catch (\Throwable $e) {
+                    if ( defined('WP_DEBUG') && WP_DEBUG ) {
+                        error_log( "Error: " . $e->getMessage() );
+                    }
+                    continue;
+                }
             }
 
             $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}popularpoststransients;");
         }
+    }
+
+    /**
+     * Returns WPP's default thumbnail.
+     *
+     * @since 6.3.4
+     */
+    public function get_default_thumbnail()
+    {
+        echo esc_url(plugins_url('assets/images/no_thumb.jpg', dirname(__FILE__, 2)));
+        wp_die();
     }
 
     /**

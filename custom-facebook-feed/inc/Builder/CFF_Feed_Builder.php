@@ -221,6 +221,7 @@ class CFF_Feed_Builder {
 		    'upgradeUrl'		=> $upgrade_url,
 		    'adminPostURL'		=> 	admin_url( 'post.php' ),
 		    'widgetsPageURL'	=> 	admin_url( 'widgets.php' ),
+			'groupSourcesNumber' => CFF_Db::check_group_source(),
 		    'genericText'       => self::get_generic_text(),
 		    'welcomeScreen' => array(
 			    'mainHeading' => __( 'All Feeds', 'custom-facebook-feed' ),
@@ -1030,6 +1031,15 @@ class CFF_Feed_Builder {
 			'feed' => __( 'feed', 'custom-facebook-feed' ),
 			'sourceNotUsedYet' => __( 'Source is not used yet', 'custom-facebook-feed' ),
 			'exitSetup'             			=> __( 'Exit Setup', 'instagram-feed' ),
+			'issue' => __( 'Issue', 'custom-facebook-feed' ),
+			'issueFound' => __( 'Issue Found', 'custom-facebook-feed' ),
+			'fix' => __( 'Fix', 'custom-facebook-feed' ),
+			'deperecatedGroupText' =>
+			sprintf(
+				__( 'Due to changes with the Facebook API, which we use to create feeds, group feeds will no longer update after April of 2024 %sLearn More%s','custom-facebook-feed' ),
+				'<a href="https://smashballoon.com/doc/facebook-api-changes-affecting-groups-april-2024" target="_blank">',
+				'</a>'
+			),
 			'notification' => array(
 				'feedSaved' => array(
 					'type' => 'success',

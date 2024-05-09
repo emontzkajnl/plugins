@@ -125,7 +125,7 @@ class Helper {
      */
     public static function curdate()
     {
-        return current_time('Y-m-d', false);
+        return current_datetime()->format('Y-m-d');
     }
 
     /**
@@ -137,7 +137,7 @@ class Helper {
      */
     public static function now()
     {
-        return current_time('mysql');
+        return current_datetime()->format('Y-m-d H:i:s');
     }
 
     /**
@@ -148,8 +148,7 @@ class Helper {
      */
     public static function timestamp()
     {
-        // current_datetime() is WP 5.3+
-        return ( function_exists('current_datetime') ) ? current_datetime()->getTimestamp() : current_time('timestamp');
+        return current_datetime()->getTimestamp();
     }
 
     /**
@@ -320,7 +319,7 @@ class Helper {
         $file_name = basename($path);
         $file_name = sanitize_file_name($file_name);
         $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
         if ( ! in_array($ext, $allowed_ext) ) {
             return false;
@@ -329,8 +328,40 @@ class Helper {
         // sanitize URL, just in case
         $image_url = esc_url($url);
         // remove querystring
-        preg_match('/[^\?]+\.(jpg|JPG|jpe|JPE|jpeg|JPEG|gif|GIF|png|PNG)/', $image_url, $matches);
+        preg_match('/[^\?]+\.(jpg|jpeg|gif|png|webp)/i', $image_url, $matches);
 
         return ( is_array($matches) && ! empty($matches) ) ? $matches : false;
+    }
+
+    /**
+     * Sanitizes HTML output.
+     *
+     * @since   6.3.3
+     * @param   string  $html
+     * @param   array   $options  Public options
+     * @return  string  $html     The (sanitized) HTML code
+     */
+    public static function sanitize_html(string $html, array $options)
+    {
+        $allowed_tags = wp_kses_allowed_html('post');
+
+        if ( isset($allowed_tags['form']) ) {
+            unset($allowed_tags['form']);
+        }
+
+        if (
+            isset($options['theme']['name'])
+            && $options['theme']['name']
+        ) {
+            $allowed_tags['style'] = [
+                'id' => 1,
+                'nonce' => 1
+            ];
+        }
+
+        $allowed_tags['img']['decoding'] = true;
+        $allowed_tags['img']['srcset'] = true;
+
+        return wp_kses($html, $allowed_tags);
     }
 }

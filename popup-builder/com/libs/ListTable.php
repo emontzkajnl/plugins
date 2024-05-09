@@ -162,6 +162,7 @@ class SGPBListTable {
 		if ( in_array( $name, $this->compat_fields ) ) {
 			return $this->$name;
 		}
+		return false;
 	}
 
 	/**
@@ -178,6 +179,7 @@ class SGPBListTable {
 		if ( in_array( $name, $this->compat_fields ) ) {
 			return $this->$name = $value;
 		}
+		return false;
 	}
 
 	/**
@@ -193,6 +195,7 @@ class SGPBListTable {
 		if ( in_array( $name, $this->compat_fields ) ) {
 			return isset( $this->$name );
 		}
+		return false;
 	}
 
 	/**
@@ -292,6 +295,8 @@ class SGPBListTable {
 
 		if ( isset( $this->_pagination_args[$key] ) )
 			return $this->_pagination_args[$key];
+		
+		return false;
 	}
 
 	/**
@@ -894,7 +899,7 @@ class SGPBListTable {
 		// If the primary column doesn't exist fall back to the
 		// first non-checkbox column.
 		if ( ! isset( $columns[ $default ] ) ) {
-			$default = WPCListTable::get_default_primary_column_name();
+			$default = $this->get_default_primary_column_name();
 		}
 
 		/**

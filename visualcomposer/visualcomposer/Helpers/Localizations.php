@@ -1272,10 +1272,6 @@ class Localizations extends Container implements Helper
                 'Share Usage Data',
                 'visualcomposer'
             ),
-            'dataCollectionText' => __(
-                'Help to make Visual Composer better by sharing anonymous usage data. We appreciate your help.',
-                'visualcomposer'
-            ),
             'readMoreText' => __(
                 'Read more',
                 'visualcomposer'
@@ -2277,6 +2273,22 @@ class Localizations extends Container implements Helper
             ),
             'reviewNegative' => __(
                 'What problems do you experience when using Visual Composer?',
+                'visualcomposer'
+            ),
+            'dontHaveMenu' => __(
+                'You don’t have any menus yet. Create your first menu',
+                'visualcomposer'
+            ),
+            'dontHaveMenuHere' => __(
+                'here',
+                'visualcomposer'
+            ),
+            'selectNinjaFormsSource' => __(
+                'Select Ninja Forms source',
+                'visualcomposer'
+            ),
+            'logoIsNotSet' => __(
+                'Logo is not set. Please set a logo.',
                 'visualcomposer'
             ),
         ];

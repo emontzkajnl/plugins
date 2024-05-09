@@ -478,7 +478,12 @@ class CFF_Db {
 		global $wpdb;
 		$feeds_table_name = $wpdb->prefix . 'cff_feeds';
 		$feed_caches_table_name = $wpdb->prefix . 'cff_feed_caches';
-		$feed_ids_array = implode(',', array_map( 'absint', $feed_ids_array ) );
+		$sanitized_feed_ids_array = array();
+		foreach ( $feed_ids_array as $id ) {
+			$sanitized_feed_ids_array[] = absint( $id );
+		}
+		$feed_ids_array = implode( ',', $sanitized_feed_ids_array );
+
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM $feeds_table_name WHERE id IN ($feed_ids_array)"
@@ -982,5 +987,66 @@ class CFF_Db {
 			WHERE feed_id LIKE '*%';" );
 
 		update_option( 'cff_statuses', $cff_statuses_option );
+	}
+
+
+	/**
+	 * Query the cff_sources table
+	 *
+	 * @param array $args
+	 *
+	 * @return array|bool
+	 *
+	 * @since 4.0
+	 */
+	public static function source_query_byid($args = array())
+	{
+		global $wpdb;
+		$sources_table_name = $wpdb->prefix . 'cff_sources';
+		$sql = $wpdb->prepare("
+			SELECT * FROM $sources_table_name
+			WHERE id = %s OR account_id = %s
+		 ", $args['id'], $args['id']);
+		return $wpdb->get_results($sql, ARRAY_A);
+	}
+
+	/**
+	 * Query to Remove Source from Database
+	 *
+	 * @param array $args
+	 *
+	 * @return array|bool
+	 *
+	 * @since 4.0
+	 */
+	public static function delete_source_by_id($source_id)
+	{
+		global $wpdb;
+		$sources_table_name = $wpdb->prefix . 'cff_sources';
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM $sources_table_name WHERE id = %d; ", $source_id
+			)
+		);
+	}
+
+	/**
+	 * Check if there is a Group Source
+	 *
+	 * @param array $args
+	 *
+	 * @return int
+	 *
+	 * @since 4.0
+	 */
+	public static function check_group_source()
+	{
+		global $wpdb;
+		$sources_table_name = $wpdb->prefix . 'cff_sources';
+		$number = $wpdb->get_var("
+			SELECT count(*) FROM $sources_table_name
+			WHERE account_type = 'group'"
+		);
+		return $number;
 	}
 }

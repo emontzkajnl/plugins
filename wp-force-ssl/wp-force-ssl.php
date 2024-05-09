@@ -5,13 +5,13 @@
   Description: Redirect all traffic from HTTP to HTTPS and fix other SSL issues.
   Author: WebFactory Ltd
   Author URI: https://www.webfactoryltd.com/
-  Version: 1.65
+  Version: 1.66
   Text Domain: wp-force-ssl
   Requires at least: 4.6
   Requires PHP: 5.2
-  Tested up to: 5.8
+  Tested up to: 6.5
 
-  Copyright 2019 - 2022  WebFactory Ltd  (email: support@webfactoryltd.com)
+  Copyright 2019 - 2024  WebFactory Ltd  (email: support@webfactoryltd.com)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as

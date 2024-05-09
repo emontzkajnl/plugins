@@ -42,12 +42,14 @@ class UnstickPost implements ExpirationActionInterface
     {
         if (empty($this->log) || ! $this->log['success']) {
             return sprintf(
+                // translators: %s: post type singular label
                 __('%s didn\'t change.', 'post-expirator'),
                 $this->postModel->getPostTypeSingularLabel()
             );
         }
 
         return sprintf(
+            // translators: %s: post type singular label
             __('%s has been removed from stickies list.', 'post-expirator'),
             $this->postModel->getPostTypeSingularLabel()
         );
@@ -68,16 +70,13 @@ class UnstickPost implements ExpirationActionInterface
     /**
      * @return string
      */
-    public static function getLabel()
+    public static function getLabel(string $postType = ''): string
     {
         return __('Unstick', 'post-expirator');
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getDynamicLabel()
+    public function getDynamicLabel($postType = '')
     {
-        return self::getLabel();
+        return self::getLabel($postType);
     }
 }

@@ -15,7 +15,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_author(){
+	public static function post_styling_author(){
 		return [
 			[
 				'type' 				=> 'separator',
@@ -54,7 +54,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_text(){
+	public static function post_styling_text(){
 		return [
 			[
 				'type' 				=> 'separator',
@@ -118,7 +118,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_date(){
+	public static function post_styling_date(){
 		return [
 			[
 				'type' 				=> 'separator',
@@ -226,7 +226,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_media(){
+	public static function post_styling_media(){
 
 		return [
 			[
@@ -248,7 +248,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_social(){
+	public static function post_styling_social(){
 		return [
 			[
 				'type' 				=> 'separator',
@@ -372,7 +372,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_eventtitle(){
+	public static function post_styling_eventtitle(){
 		return [
 			[
 				'type' 				=> 'separator',
@@ -405,7 +405,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_eventdetails(){
+	public static function post_styling_eventdetails(){
 		return [
 			[
 				'type' 				=> 'separator',
@@ -438,7 +438,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_link(){
+	public static function post_styling_link(){
 		return [
 			[
 				'type' 				=> 'separator',
@@ -535,7 +535,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_desc(){
+	public static function post_styling_desc(){
 
 		return [
 			[
@@ -567,7 +567,7 @@ class CFF_Styling_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function post_styling_sharedlinks(){
+	public static function post_styling_sharedlinks(){
 		return [
 			[
 				'type' 				=> 'separator',

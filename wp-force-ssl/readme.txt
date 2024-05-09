@@ -1,10 +1,10 @@
 === WP Force SSL & HTTPS SSL Redirect ===
 Contributors: WebFactory
-Tags: ssl, force ssl, add ssl, install ssl, https, ssl certificate, ssl redirect, mixed content, hsts, lets encrypt
+Tags: ssl, force ssl, https, ssl certificate, mixed content
 Requires at least: 4.6
-Tested up to: 5.8
+Tested up to: 6.5
 Requires PHP: 5.2
-Stable Tag: 1.65
+Stable Tag: 1.66
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ Enable SSL & HTTPS redirect with 1 click! Add SSL certificate & WP Force SSL to 
 
 <a href="https://wpforcessl.com/?ref=wporg">WP Force SSL</a> helps you redirect insecure HTTP traffic to secure HTTPS and fix SSL errors **without touching any code**. Activate Force SSL and everything will be set and SSL enabled. The entire site will move to HTTPS using your SSL certificate. It works with any SSL certificate. It can be free SSL certificate from Let's Encrypt or a paid SSL certificate.
 
-How to add SSL & enable SSL? Most hosting companies support the free SSL certificate from Let's Encrypt, so login to your hosting panel and add SSL certificate. You'll see a button labeled "Add SSL Certificate" or "Add Let's Encrypt Certificate" and after that it's 1 click to have the SSL enabled on your site with WP Force SSL. If that doesn't work get <a href="https://wpforcessl.com/">WP Force SSL PRO</a> and it'll generate a free SSL certificate for your site.
+How to add SSL & enable SSL? Most hosting companies support the free SSL certificate from Let's Encrypt, so login to your hosting panel and add SSL certificate. You'll see a button labeled "Add SSL Certificate" or "Add Let's Encrypt Certificate" and after that it's 1 click to have the SSL enabled on your site with WP Force SSL. If that doesn't work get <a href="https://wpforcessl.com/">WP Force SSL PRO</a> and it'll generate free SSL certificate for your site. And will regenerate SSL certificate every 90 days.
 
 Access WP Force SSL settings via the main Settings menu -> WP Force SSL.
 
@@ -43,6 +43,7 @@ Access WP Force SSL settings via the main Settings menu -> WP Force SSL.
 * expect CT header
 * X-Frame options
 * show WP Force SSL menu in admin bar
+* show WP Force SSL widget in admin dashboard
 
 = SSL certificate testing tool =
 WP Force SSL comes with an SSL certificate testing tool. It tests if the SSL certificate is valid, properly installed & up-to date.
@@ -65,6 +66,9 @@ Yes, you do need an SSL certificate. If you don't have one you can buy <a href="
 = After activating WP Force SSL, do I need to do anything else? =
 No, nothing. After activating WP Force SSL, the main option "redirect SSL" will already be active. What you can do is use our tests to make sure everything related to SSL is working.
 
+= How can I report security bugs? =
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/wp-force-ssl)
+
 == Screenshots ==
 
 1. Built-in tests verify your SSL configuration
@@ -80,6 +84,10 @@ No, nothing. After activating WP Force SSL, the main option "redirect SSL" will 
 
 
 == Changelog ==
+
+= v1.66 =
+- 2024/03/26
+- WordPress 6.5 and PHP 8.2 compatibility
 
 = v1.65 =
 - 2022/01/12

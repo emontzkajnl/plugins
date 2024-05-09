@@ -9,6 +9,7 @@
 
 namespace CustomFacebookFeed;
 use CustomFacebookFeed\CFF_Education;
+use CustomFacebookFeed\Builder\CFF_Source;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -50,7 +51,8 @@ class CFF_Error_Reporter
 				'upload_dir' 			=> [],
 				'accounts' 				=> [],
 				'error_log' 			=> [],
-				'action_log' 			=> []
+				'action_log' 			=> [],
+				'revoked' 			=> []
 			);
 		}
 
@@ -58,10 +60,13 @@ class CFF_Error_Reporter
 		$this->display_error = [];
 		$this->frontend_error = '';
 
-		add_action( 'cff_feed_issue_email', [ $this, 'maybe_trigger_report_email_send']  );
-		add_action( 'wp_ajax_cff_dismiss_critical_notice', [ $this, 'dismiss_critical_notice']  );
-		add_action( 'wp_footer', [ $this, 'critical_error_notice'] , 300 );
-		add_action( 'cff_admin_notices', [ $this, 'admin_error_notices']  );
+		add_action('cff_feed_issue_email', [$this, 'maybe_trigger_report_email_send']);
+		add_action('wp_ajax_cff_dismiss_critical_notice', [$this, 'dismiss_critical_notice']);
+		add_action('wp_footer', [$this, 'critical_error_notice'], 300);
+		add_action('cff_admin_notices', [$this, 'admin_error_notices']);
+		add_action('cff_admin_notices', [$this, 'platform_data_deleted_notice']);
+		add_action('cff_admin_notices', [$this, 'group_deprecation_notice']);
+		add_action('cff_admin_notices', [$this, 'platform_unused_feed_notice']);
 	}
 
 	/**
@@ -79,98 +84,116 @@ class CFF_Error_Reporter
 	 *
 	 * @since 2.0/4.0
 	 */
-	public function add_error( $type, $args, $connected_account_term = false ) {
+	public function add_error($type, $args, $connected_account_term = false)
+	{
 		$connected_account = false;
 
-		$log_item = date( 'm-d H:i:s' ) . ' - ';
-
-		if( $connected_account_term !== false ){
-			if ( ! is_array( $connected_account_term ) ) {
-
+		$log_item = date('m-d H:i:s') . ' - ';
+		if ($connected_account_term !== false) {
+			if (!is_array($connected_account_term)) {
+				$connected_account = CFF_Source::get_single_source_info($connected_account_term);
 			} else {
 				$connected_account = $connected_account_term;
-				$log_item .= $args['error']['message'];
-				$this->add_connected_account_error( $connected_account, $type, $args );
 			}
 
+			$this->add_connected_account_error($connected_account, $type, $args);
 		}
 
 		//Access Token Error
-		if( $type === 'accesstoken' ){
+		if ($type === 'accesstoken') {
 			$accesstoken_error_exists = false;
-			if ( isset( $this->errors['accounts'] ) ) {
-				foreach ($this->errors['accounts'] as $account ) {
-					if ( $args['accesstoken'] === $account['accesstoken'] ) {
+			if (isset($this->errors['accounts'])) {
+				foreach ($this->errors['accounts'] as $account) {
+					if ($args['accesstoken'] === $account['accesstoken']) {
 						$accesstoken_error_exists = true;
 					}
 				}
 			}
-			if ( !$accesstoken_error_exists ) {
-				$this->errors['accounts'][ $connected_account['id'] ][] = array(
-					'accesstoken' 	=> $args['accesstoken'],
-					'post_id' 		=> $args['post_id'],
-					'critical' 		=> true,
-					'type'			=> $type,
-					'errorno' 		=> $args['errorno']
+			if (!$accesstoken_error_exists && isset($this->errors['accounts'])) {
+				$this->errors['accounts'][$connected_account['id']][] = array(
+					'accesstoken' => $args['accesstoken'],
+					'post_id' => $args['post_id'],
+					'critical' => true,
+					'type' => $type,
+					'errorno' => $args['errorno']
 				);
 
 			}
 		}
 
 		//Connection Error API & WP REMOTE CALL
-		if( $type === 'api'  || $type === 'wp_remote_get' ){
+		if ($type === 'api' || $type === 'wp_remote_get') {
 			$connection_details = array(
 				'error_id' => ''
 			);
 			$connection_details['critical'] = false;
 
-			if( isset( $args['error']['code'] ) ){
+			if (isset($args['error']['code'])) {
 				$connection_details['error_id'] = $args['error']['code'];
-				if ( $this->is_critical_error( $args ) ) {
+				if ($this->is_critical_error($args)) {
 					$connection_details['critical'] = true;
 				}
 
-			}elseif( isset( $args['response'] ) && is_wp_error( $args['response'] )){
-				foreach ( $args['response']->errors as $key => $item ) {
+				if ($this->is_app_permission_related($args)) {
+					if (!isset($this->errors['revoked']) || (!is_array($this->errors['revoked']))) {
+						$this->errors['revoked'] = array();
+					}
+					if (isset($connected_account['account_id']) && !in_array($connected_account['account_id'], $this->errors['revoked'], true)) {
+						$this->errors['revoked'][] = $connected_account['account_id'];
+					}
+					/**
+					 * Fires when an app permission related error is encountered
+					 *
+					 * @param array $connected_account The connected account that encountered the error
+					 *
+					 * @since
+					 */
+					do_action('cff_app_permission_revoked', $connected_account);
+				}
+
+			} elseif (isset($args['response']) && is_wp_error($args['response'])) {
+				foreach ($args['response']->errors as $key => $item) {
 					$connection_details['error_id'] = $key;
 				}
 				$connection_details['critical'] = true;
 			}
 
-			$connection_details['error_message'] = $this->generate_error_message( $args, $connected_account );
+			$connection_details['error_message'] = $this->generate_error_message($args, $connected_account);
 			$log_item .= $connection_details['error_message']['admin_message'];
 			$this->errors['connection'] = $connection_details;
-			#var_dump($connection_details);
 		}
 
-		if ( $type === 'image_editor'
-		     || $type === 'storage' ) {
-
+		if ($type === 'image_editor' || $type === 'storage') {
 			$this->errors['resizing'] = $args;
-			$log_item .= $args;
+			$log_item .= is_array($args) ? wp_json_encode($args) : $args;
 		}
 
-		if ( $type === 'database_create' ) {
+		if ($type === 'database_create') {
 			$this->errors['database_create'] = $args;
 			$log_item .= $args;
 		}
 
-		if ( $type === 'upload_dir' ) {
+		if ($type === 'upload_dir') {
 			$this->errors['upload_dir'] = $args;
 			$log_item .= $args;
 		}
 
+		if ($type === 'platform_data_deleted') {
+			$this->errors['platform_data_deleted'] = $args[0];
+			$log_item .= is_array($args) ? wp_json_encode($args) : $args;
+		}
+
+
 		$current_log = $this->errors['error_log'];
-		if ( is_array( $current_log ) && count( $current_log ) >= 10 ) {
-			reset( $current_log );
-			unset( $current_log[ key( $current_log ) ] );
+		if (is_array($current_log) && count($current_log) >= 10) {
+			reset($current_log);
+			unset($current_log[key($current_log)]);
 		}
 		$current_log[] = $log_item;
 		$this->errors['error_log'] = $current_log;
-		update_option( $this->reporter_key, $this->errors, false );
+		update_option($this->reporter_key, $this->errors, false);
 
 	}
-
 
 	/**
 	 * Stores information about an encountered error related to a connected account
@@ -298,18 +321,28 @@ class CFF_Error_Reporter
 	/**
 	 * @param $type
 	 *
-	 * @since 2.19
+	 * @since X.X.X
 	 */
-	public function remove_error( $type, $connected_account = false  ) {
+	public function remove_error($type, $connected_account = false)
+	{
 		$update = false;
-		if ( ! empty( $this->errors[ $type ] ) ) {
-			$this->errors[ $type ] = array();
-			$this->add_action_log( 'Cleared ' . $type .' error.' );
+		if (!empty($this->errors[$type])) {
+			$this->errors[$type] = array();
+			$this->add_action_log('Cleared ' . $type . ' error.');
 			$update = true;
 		}
 
-		if ( $update ) {
-			update_option( $this->reporter_key, $this->errors, false );
+		if (!empty($this->errors['revoked'])) {
+			if (!is_array($this->errors['revoked'])) {
+				$this->errors['revoked'] = array();
+			}
+			if (isset($connected_account['account_id']) && ($key = array_search($connected_account['account_id'], $this->errors['revoked'])) !== false) {
+				unset($this->errors['revoked'][$key]);
+			}
+		}
+
+		if ($update) {
+			update_option($this->reporter_key, $this->errors, false);
 		}
 
 	}
@@ -347,51 +380,82 @@ class CFF_Error_Reporter
 		return $this->frontend_error;
 	}
 
-	public function get_critical_errors() {
-		if ( ! $this->are_critical_errors() ) {
+
+	public function get_critical_errors()
+	{
+		if (!$this->are_critical_errors()) {
 			return '';
 		}
-		$error_message = $directions = false;
-		if ( isset( $this->errors['connection']['critical'] ) ) {
-			$errors 				= $this->get_errors();
-			$error 					= $errors['connection'];
-			$error_message_array 	= $error['error_message'];
 
-			$error_message 			= $error_message_array['admin_message'];
+		$accounts_revoked_string = '';
+		$accounts_revoked = '';
 
-			$directions = '<p class="cff-error-directions">';
-			$directions .= $error_message_array['backend_directions'];
-			$directions .= '<button data-url="'.get_the_permalink( $error_message_array['post_id'] ).'" class="cff-clear-errors-visit-page cff-space-left cff-btn cff-notice-btn cff-btn-grey">' . __( 'View Feed and Retry', 'custom-facebook-feed' )  . '</button>';
-			$directions .=	'</p>';
-		}else{
-
+		if ($this->was_app_permission_related_error()) {
+			$accounts_revoked = $this->get_app_permission_related_error_ids();
+			if (count($accounts_revoked) > 1) {
+				$accounts_revoked = implode(', ', $accounts_revoked);
+			} else {
+				$accounts_revoked = $accounts_revoked[0];
+			}
+			$accounts_revoked_string = sprintf(__('Facebook Feed related data for the account(s) %s was removed due to permission for the Smash Balloon App on Facebook being revoked. <br><br> To prevent the automated data deletion for the account, please reconnect your account within 7 days.', 'custom-facebook-feed'), $accounts_revoked);
 		}
 
+		$error_message = $directions = false;
+		if (isset($this->errors['connection']['critical'])) {
+			$errors = $this->get_errors();
+			$error_message = '';
+			$error = $errors['connection'];
+			if ($errors['connection']['error_id'] === 190) {
+				$error_message .= '<strong>' . __('Action Required Within 7 Days', 'custom-facebook-feed') . '</strong><br>';
+				$error_message .= __('An account admin has deauthorized the Smash Balloon app used to power the Facebook Feed plugin.', 'custom-facebook-feed');
+				$error_message .= ' ' . sprintf(__('If the Facebook source is not reconnected within 7 days then all Facebook data will be automatically deleted on your website for this account (ID: %s) due to Facebook data privacy rules.', 'custom-facebook-feed'), $accounts_revoked);
+				$error_message .= __('<br><br>To prevent the automated data deletion for the account, please reconnect your account within 7 days.', 'custom-facebook-feed');
+				$error_message .= '<br><br><a href="https://smashballoon.com/doc/action-required-within-7-days/?facebook&utm_campaign=facebook-pro&utm_source=permissionerror&utm_medium=notice&utm_content=More Information" target="_blank" rel="noopener">' . __('More Information', 'custom-facebook-feed') . '</a>';
+				$directions = '';
+			} else {
+				$error_message_array = $error['error_message'];
+				$error_message = $error_message_array['admin_message'];
+				if (!empty($accounts_revoked_string)) {
+					$error_message .= $accounts_revoked_string . '<br><br>';
+				}
 
+				$directions = '<p class="cff-error-directions">';
+				$directions .= $error_message_array['backend_directions'];
+				if (!empty($error_message_array['post_id'])) {
+					$directions .= '<button data-url="' . get_the_permalink($error_message_array['post_id']) . '" class="cff-clear-errors-visit-page cff-space-left cff-btn cff-notice-btn cff-btn-grey">' . __('View Feed and Retry', 'custom-facebook-feed') . '</button>';
+				}
+				$directions .= '</p>';
+			}
+		} else {
+
+		}
 		return [
 			'error_message' => $error_message,
 			'directions' => $directions
 		];
 	}
 
-	public function are_critical_errors() {
+	public function are_critical_errors()
+	{
 		$are_errors = false;
 		$errors = $this->get_errors();
-		if( isset( $errors['connection']['critical'] ) && $errors['connection']['critical'] === true){
+		if (
+			(isset($errors['connection']['critical']) && $errors['connection']['critical'] === true) ||
+			CFF_Source::should_show_group_deprecation()
+		) {
 			return true;
-		}else{
+		} else {
 			$connected_accounts = CFF_Utils::cff_get_connected_accounts();
-			foreach ( $connected_accounts as $connected_account ) {
-				$connected_account = (array)$connected_account;
-				if ( isset(  $this->errors['accounts'][ $connected_account['id' ] ]['api'] ) ) {
-					if ( isset( $this->errors['accounts'][ $connected_account['id'] ]['api']['error'] ) ) {
-						return $this->is_critical_error( $this->errors['accounts'][ $connected_account['id'] ]['api'] );
+			foreach ($connected_accounts as $connected_account) {
+				$connected_account = (array) $connected_account;
+
+				if (isset($connected_account['account_id']) && isset($this->errors['accounts'][$connected_account['account_id']]['api'])) {
+					if (isset($this->errors['accounts'][$connected_account['account_id']]['api']['error'])) {
+						return $this->is_critical_error($this->errors['accounts'][$connected_account['account_id']]['api']);
 					}
 				}
 			}
 		}
-
-
 		return $are_errors;
 	}
 
@@ -429,7 +493,7 @@ class CFF_Error_Reporter
 	/**
 	 * Load the critical notice for logged in users.
 	 */
-	function critical_error_notice() {
+	public function critical_error_notice() {
 		// Don't do anything for guests.
 		if ( ! is_user_logged_in() ) {
 			return;
@@ -645,12 +709,30 @@ class CFF_Error_Reporter
 		$educator = new CFF_Education();
 		$dyk_message = $educator->dyk_display();
 		ob_start();
-		include CFF_PLUGIN_DIR . 'email.php';
+		include_once CFF_PLUGIN_DIR . 'email.php';
 		$email_body = ob_get_contents();
 		ob_get_clean();
 		$sent = wp_mail( $to_array, $title, $email_body, $headers );
 
 		return $sent;
+	}
+
+	/**
+	 * Should clear platform data
+	 *
+	 * @param $details
+	 *
+	 * @return bool
+	 *
+	 * @since 2.7/5.10
+	 */
+	public function is_app_permission_related($details)
+	{
+		$error_code = (int) $details['error']['code'];
+		$critical_codes = array(
+			190, // access token or permissions
+		);
+		return in_array($error_code, $critical_codes, true) && strpos($details['error']['message'], 'user has not authorized application') !== false;
 	}
 
 	public function maybe_trigger_report_email_send() {
@@ -754,4 +836,152 @@ class CFF_Error_Reporter
 
 	}
 
+	/**
+	 * Whether or not there was a platform data clearing error
+	 *
+	 * @return bool
+	 */
+	public function was_app_permission_related_error()
+	{
+		return !empty($this->errors['revoked']);
+	}
+
+	public function get_app_permission_related_error_ids()
+	{
+		return $this->errors['revoked'];
+	}
+
+
+	public function platform_data_deleted_notice()
+	{
+		$errors = $this->get_errors();
+		if (!empty($errors) && (!empty($errors['platform_data_deleted']))) {
+			?>
+						<div class="cff-admin-notices cff-critical-error-notice">
+							<span class="sb-notice-icon sb-error-icon">
+								<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="#D72C2C"/>
+								</svg>
+							</span>
+							<div class="cff-notice-body">
+								<h3 class="sb-notice-title">
+									<?php echo esc_html__('All Facebook Data has Been Removed:', 'custom-facebook-feed'); ?>
+								</h3>
+								<p><?php echo $errors['platform_data_deleted']; ?></p>
+								<p><?php echo esc_html__('To fix your feeds, reconnect all accounts that were in use on the Settings page.', 'custom-facebook-feed'); ?></p>
+
+							</div>
+						</div>
+					<?php
+		}
+
+	}
+
+	public function platform_unused_feed_notice()
+	{
+		$errors = $this->get_errors();
+		if (!empty($errors) && (!empty($errors['unused_feed']))) {
+			?>
+						<div class="cff-admin-notices cff-critical-error-notice">
+							<span class="sb-notice-icon sb-error-icon">
+								<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="#D72C2C"/>
+								</svg>
+							</span>
+							<div class="cff-notice-body">
+								<h3 class="sb-notice-title">
+									<?php echo esc_html__('Action Required Within 7 Days:', 'custom-facebook-feed'); ?>
+								</h3>
+
+								<p><?php echo $errors['unused_feed']; ?></p>
+								<p><?php echo esc_html__('Or you can simply press the "Fix Usage" button to fix this issuee.', 'custom-facebook-feed'); ?></p>
+								<div class="license-action-btns">
+									<button class="sbi-reset-unused-feed-usage sbi-space-left sbi-btn sbi-notice-btn sbi-btn-blue"><?php echo __('Fix Usage', 'custom-facebook-feed'); ?></button>
+								</div>
+							</div>
+						</div>
+					<?php
+		}
+	}
+	/**
+	 * Should Add deprecation error for Groups
+	 *
+	 * @param $group_id
+	 *
+	 * @since X.X.X
+	 */
+	public function add_group_deprecation_error($group_id)
+	{
+		$group_deprecation_error = [
+			'group_ids' => []
+		];
+		if (isset($this->errors['group_deprecation'])) {
+			$group_deprecation_error['group_ids'] = $this->errors['group_deprecation']['group_ids'];
+		}
+		if (!in_array($group_id, $group_deprecation_error['group_ids'])) {
+			$group_deprecation_error['dimissed'] = false;
+			array_push($group_deprecation_error['group_ids'], $group_id);
+		}
+		$this->errors['group_deprecation'] = $group_deprecation_error;
+
+		update_option($this->reporter_key, $this->errors, false);
+	}
+
+	/**
+	 * Dismiss Group Notice
+	 *
+	 * @param $group_id
+	 *
+	 * @since X.X.X
+	 */
+	public function dismiss_group_deprecation_error()
+	{
+		if (isset($this->errors['group_deprecation'])) {
+			$this->errors['group_deprecation']['dismissed'] = true;
+			update_option($this->reporter_key, $this->errors, false);
+		}
+	}
+	public function group_deprecation_notice()
+	{
+		$errors = $this->get_errors();
+		if (
+			!empty($errors) && !empty($errors['group_deprecation']) &&
+			(!isset($errors['group_deprecation']['dismissed']) || $errors['group_deprecation']['dismissed'] !== true)
+		) {
+			$close_href = add_query_arg(array('cff_dismiss_notice' => 'group_deprecation'));
+		?>
+			<div class="cff-admin-notices cff-critical-error-notice">
+				<span class="sb-notice-icon sb-error-icon">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="#D72C2C"/>
+					</svg>
+				</span>
+				<div class="cff-notice-body">
+					<h3 class="sb-notice-title sb-noticegroup-title">
+						<?php echo esc_html__('Group feeds will no longer update as of April 22, 2024 :', 'custom-facebook-feed') ; ?>
+					</h3>
+					<p>
+						<?php
+							echo
+							__('You have one or more feeds that will no longer update after April 22, 2024. This is caused by a change in Facebook\'s API, which we use to get new data for feed updates.', 'custom-facebook-feed') ;
+						?>
+					</p>
+					<br/>
+
+					<p class="cff-error-directions">
+						<a
+							class="cff-notice-btn cff-btn-blue" target="_blank" rel="noopener"
+							href="https://smashballoon.com/doc/facebook-api-changes-affecting-groups-april-2024">
+							<?php echo esc_html__('Learn More', 'custom-facebook-feed') ; ?>
+						</a>
+						<a class="cff-notice-btn" href="<?php echo esc_attr($close_href); ?>" rel="noopener"><?php echo esc_html__('Dismiss', 'custom-facebook-feed') ; ?></a>
+					</p>
+
+
+				</div>
+			</div>
+		<?php
+		}
+
+	}
 }

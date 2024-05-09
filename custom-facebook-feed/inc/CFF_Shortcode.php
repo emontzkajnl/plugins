@@ -8,6 +8,7 @@
 namespace CustomFacebookFeed;
 
 use CustomFacebookFeed\Builder\CFF_Source;
+use CustomFacebookFeed\Integrations\CFF_Graph_Data;
 use CustomFacebookFeed\SB_Facebook_Data_Encryption;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -147,9 +148,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	 */
 	public function get_post_limit($show_posts){
 		$cff_post_limit = $this->atts['limit'];
-		if ( isset($cff_post_limit) && $cff_post_limit !== '' ) {
-			$cff_post_limit = $cff_post_limit;
-		} else {
+		if ( !isset($cff_post_limit) || empty($cff_post_limit) ) {
 			if( intval($show_posts) >= 50 ) $cff_post_limit = intval(intval($show_posts) + 7);
 			if( intval($show_posts) < 50 ) $cff_post_limit = intval(intval($show_posts) + 5);
 			if( intval($show_posts) < 25  ) $cff_post_limit = intval(intval($show_posts) + 4);
@@ -162,7 +161,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	}
 
 
-	function cff_get_shortcode_data_attribute_html( $feed_options ) {
+	public function cff_get_shortcode_data_attribute_html( $feed_options ) {
 
 	    //If an access token is set in the shortcode then set "use own access token" to be enabled
 	    if( isset($feed_options['accesstoken']) ){
@@ -196,7 +195,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 
 	}
 
-	function cff_get_processed_options($feed_options){
+	public function cff_get_processed_options($feed_options){
 		$feed_id = empty( $feed_options['feed'] ) ? 'default' : intval( $feed_options['feed'] );
 		$feed_options = $this->get_settings_for_feed( $feed_options );
 
@@ -208,7 +207,11 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 			return $feed_options;
 		}
 
-		$page_id = $feed_options['id'];
+		$page_id = is_array($feed_options['id']) ? implode('', $feed_options['id']) : $feed_options['id'];
+		if (empty($page_id) || is_null($page_id)) {
+			return;
+		}
+
 		$cff_facebook_string = 'facebook.com';
 		( stripos($page_id, $cff_facebook_string) !== false) ? $cff_page_id_url_check = true : $cff_page_id_url_check = false;
 		if ( $cff_page_id_url_check === true ) {
@@ -295,9 +298,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 		$this->options 			= get_option('cff_style_settings');
 		$data_att_html 			= $this->cff_get_shortcode_data_attribute_html( $atts );
 		$feed_id = empty( $atts['feed'] ) ? 'default' : intval( $atts['feed'] );
-		$feed_options = $this->get_settings_for_feed( $atts );
+		$feed_options = $this->get_settings_for_feed($atts);
 
-		if ( empty( $feed_options ) ) {
+		if (empty($feed_options)) {
 			$this->fb_feed_settings = new CFF_FB_Settings($atts, $this->options);
 			$this->atts 			= $this->fb_feed_settings->get_settings();
 			$id_and_token 			= $this->fb_feed_settings->get_id_and_token();
@@ -326,8 +329,12 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 			$this->atts  = $feed_options;
 		}
 
+		if (empty($this->atts['sources']) || $this->atts['sources'] === null) {
+			return;
+		}
+
 		$this->cff_add_translations();
-		#var_dump($this->atts);
+
 
 		//Vars for the templates
 		$atts 			= $this->atts;
@@ -486,7 +493,6 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 
 
 
-
 	    //Misc Settings
 		$cff_nofollow = CFF_Utils::check_if_on( $this->atts['nofollow'] );
 		( $cff_nofollow ) ? $cff_nofollow = ' rel="nofollow noopener"' : $cff_nofollow = '';
@@ -541,18 +547,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 		$cff_posts_array = array();
 	    //ALL POSTS
 
-		$FBdata = $this->get_feed_json( $graph_query, $cff_post_limit, $cff_locale, $cff_show_access_token, $cache_seconds, $cff_cache_time, $show_posts_by, $data_att_html );
-		if( $cff_is_group ){
-			$cff_ssl = is_ssl() ? '&return_ssl_resources=true' : '';
-			$attachments_desc = ( $this->atts['salesposts'] == 'true' ) ? '' : ',description';
-			$cff_posts_json_url = 'https://graph.facebook.com/v4.0/' . $this->page_id . '/' . $graph_query . '?fields=id,updated_time,from{picture,id,name,link},message,message_tags,story,story_tags,status_type,created_time,backdated_time,call_to_action,attachments{title'. $attachments_desc . ',media_type,unshimmed_url,target{id},media{source}}&access_token=' . $this->access_token . '&limit=' . $cff_post_limit . '&locale=' . $cff_locale . $cff_ssl;
-			$this->atts['type'] = 'links_events_videos_photos_albums_statuses_';
-			$groups_post = new CFF_Group_Posts($this->page_id, $this->atts, $cff_posts_json_url, $data_att_html, false);
-			$groups_post_result = $groups_post->init_group_posts(json_encode($FBdata), false, $show_posts_number);
-			$posts_json = $groups_post_result['posts_json'];
-			$FBdata = json_decode($posts_json);
-		}
-
+		#$FBdata = $this->get_feed_json( $graph_query, $cff_post_limit, $cff_locale, $cff_show_access_token, $cache_seconds, $cff_cache_time, $show_posts_by, $data_att_html );
+		$data_json = CFF_Shortcode::cff_get_json_data($this->atts, null, $data_att_html);
+		$FBdata = isset($data_json[$this->page_id]) ? $data_json[$this->page_id] : [];
 
 		global $current_user;
 		$user_id = $current_user->ID;
@@ -568,6 +565,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 				$numeric_page_id = $first_post_id[0];
 			}
 		}
+
 
 		$posts_wrap_box_shadow_class = $cff_box_shadow && $this->atts['feedlayout'] === 'list' ? ' cff-posts-wrap-box-shadow' : '';
         $cff_content .= '<div class="cff-posts-wrap'.$posts_wrap_box_shadow_class.'">';
@@ -588,6 +586,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	            //Explode News and Page ID's into 2 values
 				$PostID = '';
 				$cff_post_id = '';
+
 				if( isset($news->id) ){
 					$cff_post_id = $news->id;
 					$PostID = explode("_", $cff_post_id);
@@ -623,31 +622,8 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 			    //Are we showing ONLY events?
 			    if ($cff_show_event_type && !$cff_show_links_type && !$cff_show_video_type && !$cff_show_photos_type && !$cff_show_status_type) $cff_events_only = true;
                 //Should we show this post or not?
-				$cff_show_post = false;
-				switch ($cff_post_type) {
-                    case 'link':
-                        if ( $cff_show_links_type ) $cff_show_post = true;
-                        break;
-                    case 'event':
-                        if ( $cff_show_event_type ) $cff_show_post = true;
-                        break;
-                    case 'video':
-                         if ( $cff_show_video_type ) $cff_show_post = true;
-                        break;
-                    case 'swf':
-                         if ( $cff_show_video_type ) $cff_show_post = true;
-                        break;
-                    case 'photo':
-                         if ( $cff_show_photos_type ) $cff_show_post = true;
-                        break;
-                    case 'offer':
-                         $cff_show_post = true;
-                        break;
-                    default:
-                        //Check whether it's a status (author comment or like)
-                        if ( $cff_show_status_type && !empty($news->message) ) $cff_show_post = true;
-                        break;
-                }
+				$cff_show_post = true;
+
                 //Is it a duplicate post?
 				if (!isset($prev_post_message)) $prev_post_message = '';
 				if (!isset($prev_post_link)) $prev_post_link = '';
@@ -655,14 +631,6 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 				isset($news->message) ? $pm = $news->message : $pm = '';
 				isset($news->link) ? $pl = $news->link : $pl = '';
 				isset($news->description) ? $pd = $news->description : $pd = '';
-
-				if ( ($prev_post_message == $pm) && ($prev_post_link == $pl) && ($prev_post_description == $pd) ) $cff_show_post = false;
-
-	            //Offset. If the post index ($i_post) is less than the offset then don't show the post
-				if( intval($i_post) < intval($this->atts['offset']) ){
-					$cff_show_post = false;
-					$i_post++;
-				}
 
 				//Check post type and display post if selected
 				if ( $cff_show_post ) {
@@ -688,8 +656,8 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 					if ( $shared_album ) {
 						$link = str_replace('photo.php?','media/set/?',$link);
 					}
-	                    //Check the post type
-					isset($cff_post_type) ? $cff_post_type = $cff_post_type : $cff_post_type = '';
+
+
 					if ($cff_post_type == 'link') {
 						isset($news->story) ? $story = $news->story : $story = '';
 	                        //Check whether it's an event
@@ -704,7 +672,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 					if(isset($news->link)){
 						if( CFF_Utils::stripos($news->link, "events/") && $cff_post_type == 'event' ){
 	                            //Facebook changed the event link from absolute to relative, and so if the link isn't absolute then add facebook.com to front
-							( CFF_Utils::stripos($link, 'facebook.com') ) ? $link = $link : $link = 'https://facebook.com' . $link;
+							if( !CFF_Utils::stripos($link, 'facebook.com') ){
+								$link = 'https://facebook.com' . $link;
+							}
 						}
 					}
 
@@ -766,7 +736,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	                                //Loop through the tags
 								foreach($text_tags as $message_tag ) {
 
-									( isset($message_tag->id) ) ? $message_tag = $message_tag : $message_tag = $message_tag[0];
+									if (!isset($message_tag->id)) {
+										$message_tag = $message_tag[0];
+									}
 
 									$tag_name = $message_tag->name;
 									$tag_link = '<a href="https://facebook.com/' . $message_tag->id . '">' . $message_tag->name . '</a>';
@@ -782,7 +754,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 								$tag = 0;
 								foreach($text_tags as $message_tag ) {
 									$tag++;
-									( isset($message_tag->id) ) ? $message_tag = $message_tag : $message_tag = $message_tag[0];
+									if (!isset($message_tag->id)) {
+										$message_tag = $message_tag[0];
+									}
 
 									isset($message_tag->type) ? $tag_type = $message_tag->type : $tag_type = '';
 
@@ -843,7 +817,6 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 
 	                    //POST AUTHOR
 	                    $cff_author = CFF_Utils::print_template_part( 'item/author', get_defined_vars(), $this);
-
 	                    //Get the actual post text
 	                    //Which content should we use?
 	                    //Use the message
@@ -866,7 +839,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	                                //Loop through the tags
 	                    			foreach($text_tags as $message_tag ) {
 
-	                    				( isset($message_tag->id) ) ? $message_tag = $message_tag : $message_tag = $message_tag[0];
+	                    				if ( ! isset($message_tag->id) ) {
+											$message_tag = $message_tag[0];
+					                    }
 
 	                    				$tag_name = $message_tag->name;
 	                    				$tag_link = '<a href="https://facebook.com/' . $message_tag->id . '">' . $message_tag->name . '</a>';
@@ -882,7 +857,9 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	                    			foreach($text_tags as $message_tag ) {
 	                    				$tag++;
 
-	                    				( isset($message_tag->id) ) ? $message_tag = $message_tag : $message_tag = $message_tag[0];
+					                    if ( ! isset($message_tag->id) ) {
+						                    $message_tag = $message_tag[0];
+					                    }
 
 	                    				$message_tags_arr = CFF_Utils::cff_array_push_assoc(
 	                    					$message_tags_arr,
@@ -1010,6 +987,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 		                //If it's a shared video post then add the video name after the post text above the video description so it's all one chunk
 	                    if ($cff_post_type == 'video'){
 	                    	if( !empty($cff_description) && $cff_description != '' ){
+			                    $cff_video_name = ''; // the video name is never set. Is this still available in the API?
 	                    		if( (!empty($post_text) && $post_text != '') && !empty($cff_video_name) ) $post_text .= '<br /><br />';
 	                    		$post_text .=  $cff_video_name;
 	                    	}
@@ -1610,7 +1588,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	 *
 	 * @since 4.0
 	 */
-	function get_settings_for_feed( $feed_options ) {
+	public function get_settings_for_feed( $feed_options ) {
 		if ( ! is_array( $feed_options ) ) {
 			$feed_options = array();
 		}
@@ -1850,317 +1828,23 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 		return \CustomFacebookFeed\Builder\CFF_Post_Set::builder_to_general_settings_convert( $settings );
 	}
 
-	/**********
-	 * Ported from Pro version, could use cleanup
-	 *
-	 * TODO: Remove all or part of functions not needed for free
-	 *************/
-
-	/**
-	 * this where you could take the feed options to get the feed data for the first set
-	 * of posts or, if the $before and $after parameters are set, get the next set of posts
-	 *
-	 * @since 3.18
-	 */
-	static function cff_get_json_data( $feed_options, $next_urls_arr_safe, $data_att_html, $is_customizer = false ) {
-		//Define vars
-		$access_token = $feed_options['accesstoken'];
-		//If the 'Enter my own Access Token' box is unchecked then don't use the user's access token, even if there's one in the field
-		$feed_options['ownaccesstoken'] ? $cff_show_access_token = true : $cff_show_access_token = true;
-		//Reviews Access Token
+	public static function cff_get_json_data( $feed_options, $next_urls_arr_safe, $data_att_html, $is_customizer = false ) {
 		$page_access_token = $feed_options['pagetoken'];
-		$cff_show_access_token = true;
-		$page_id = trim( $feed_options['id'] );
-		$show_posts = isset( $feed_options['minnum'] ) ? $feed_options['minnum'] : $feed_options['num'];
-		$show_posts_number = isset( $feed_options['minnum'] ) ? $feed_options['minnum'] : $feed_options['num'];
-
-		$cff_post_limit = $feed_options['limit'];
-		$cff_page_type = $feed_options[ 'pagetype' ];
-		$show_others = $feed_options['others'];
-		$show_posts_by = $feed_options['showpostsby'];
-		$cff_caching_type = $feed_options['cachetype'];
-		$cff_cache_time = $feed_options['cachetime'];
-		$cff_cache_time_unit = $feed_options['cacheunit'];
-		$cff_locale = $feed_options['locale'];
-		//Post types
-		$cff_types = $feed_options['type'];
-		$cff_events_source = $feed_options[ 'eventsource' ];
-		$cff_event_offset = $feed_options[ 'eventoffset' ];
-		$cff_albums_source = $feed_options[ 'albumsource' ];
-		$cff_photos_source = $feed_options[ 'photosource' ];
-		$cff_videos_source = $feed_options[ 'videosource' ];
-		//Past events
-		$cff_past_events = $feed_options['pastevents'];
-		//Active extensions
-		$cff_ext_multifeed_active = $feed_options[ 'multifeedactive' ];
-		#$cff_ext_date_active = $feed_options[ 'daterangeactive' ];
-		$cff_ext_date_active = CFF_FB_Settings::check_active_extension( 'date_range' ) && CFF_Utils::check_if_on($feed_options['daterange']);
-
-		$cff_featured_post_active = $feed_options[ 'featuredpostactive' ];
-		$cff_album_active = $feed_options[ 'albumactive' ];
-		$cff_masonry_columns_active = false; //Deprecated
-		$cff_carousel_active = $feed_options[ 'carouselactive' ];
-		$cff_reviews_active = $feed_options[ 'reviewsactive' ];
-		//Extension settings
-		$cff_album_id = $feed_options['album'];
-		$cff_featured_post_id = $feed_options['featuredpost'];
-		$include_extras = isset( $feed_options['include_extras'] );
-
-		//Get show posts attribute. If not set then default to 25
-		if (empty($show_posts)) $show_posts = 25;
-		if ( $show_posts == 0 || $show_posts == 'undefined' ) $show_posts = 25;
-
-		//Set the page type
-		$cff_is_group = false;
-		if ($cff_page_type == 'group') $cff_is_group = true;
-
-		//Look for non-plural version of string in the types string in case user specifies singular in shortcode
-		$cff_show_links_type = true;
-		$cff_show_event_type = true;
-		$cff_show_video_type = true;
-		$cff_show_photos_type = true;
-		$cff_show_status_type = true;
-		$cff_show_albums_type = true;
-
-		$cff_events_only = false;
-		$cff_albums_only = false;
-		$cff_photos_only = false;
-		$cff_videos_only = false;
-
-		//Is it SSL?
-		$cff_ssl = '';
-		if (is_ssl()) $cff_ssl = '&return_ssl_resources=true';
-
-		//Use posts? or feed?
-		$graph_query = 'posts';
-		$cff_show_only_others = false;
-
-		//If 'others' shortcode option is used then it overrides any other option
-		if ($show_others) {
-			//Show posts by everyone
-			if ( $show_others == 'on' || $show_others == 'true' || $show_others == true || $cff_is_group ) $graph_query = 'feed';
-			//Only show posts by me
-			if ( $show_others == 'false' ) $graph_query = 'posts';
-		} else {
-			//Else use the settings page option or the 'showpostsby' shortcode option
-			//Only show posts by me
-			if ( $show_posts_by == 'me' ) $graph_query = 'posts';
-			//Show posts by everyone
-			if ( $show_posts_by == 'others' || $cff_is_group ) $graph_query = 'feed';
-			//Show posts ONLY by others
-			if ( $show_posts_by == 'onlyothers' && !$cff_is_group ) {
-				$graph_query = 'visitor_posts';
-				$cff_show_only_others = true;
-			}
-		}
-
-
-		//Calculate the cache time in seconds
-		if($cff_cache_time_unit == 'minutes') $cff_cache_time_unit = 60;
-		if($cff_cache_time_unit == 'hour' || $cff_cache_time_unit == 'hours') $cff_cache_time_unit = 60*60;
-		if($cff_cache_time_unit == 'days') $cff_cache_time_unit = 60*60*24;
-		if ( intval( $cff_cache_time ) < 1 ) {
-			$cff_cache_time = 1;
-		}
-		$cache_seconds = intval( $cff_cache_time ) * intval( $cff_cache_time_unit );
-
-
-		//********************************************//
-		//*****************GET POSTS******************//
-		//********************************************//
-		$FBdata_arr = array(); //Use an array to store the data for each page ID (for multifeed)
-		$page_ids = array($page_id);
-
-
-		//If the limit isn't set then set it to be 7 more than the number of posts defined
-		if ( isset($cff_post_limit) && $cff_post_limit !== '' ) {
-			$cff_post_limit = $cff_post_limit;
-		} else {
-			if( intval($show_posts) >= 50 ) $cff_post_limit = intval(intval($show_posts) + 7);
-			if( intval($show_posts) < 50 ) $cff_post_limit = intval(intval($show_posts) + 5);
-			if( intval($show_posts) < 25  ) $cff_post_limit = intval(intval($show_posts) + 4);
-			if( intval($show_posts) < 10  ) $cff_post_limit = intval(intval($show_posts) + 3);
-			if( intval($show_posts) < 6  ) $cff_post_limit = intval(intval($show_posts) + 2);
-			if( intval($show_posts) < 2  ) $cff_post_limit = intval(intval($show_posts) + 1);
-
-			//If using multifeed then set the limit dynamically based on the number of pages if it isn't set
-			if( $cff_ext_multifeed_active && count($page_ids) > 1 ){
-				$cff_post_limit = ( ceil(intval($show_posts) / count($page_ids)) ) + 1;
-			}
-		}
-		if( $cff_post_limit >= 100 ) $cff_post_limit = 100;
-
-		//If the number of posts is set to zero then don't show any and set limit to one
-		if ( ($show_posts == '0' || $show_posts == 0) && $show_posts !== ''){
-			$show_posts = 0;
-			$cff_post_limit = 1;
-		}
-
-		//If the timeline pagination method is set to use the API paging method then set the limit to be the number of posts displayed so that posts aren't skipped when loading more
-		if( $feed_options['timelinepag'] == 'paging' ) $cff_post_limit = $show_posts;
-
-
+		$page_id = trim($feed_options['id']);
+		$page_ids =  [$page_id];
+		$feed_id = isset($feed_options['the_feed_id']) && $feed_options['the_feed_id'] !== false ? $feed_options['the_feed_id'] : false;
+		$FBdata_arr = [];
 		//Loop through page IDs
-		foreach ( $page_ids as $page_id ) {
-
-			//********************************************//
-			//********CREATE THE API REQUEST URL**********//
-			//********************************************//
-
-			//ALL POSTS
-
-			//Add option to remove attachments description field to workaround Facebook "Unsupported Get Request" bug caused by sales posts in the API request
-			$attachments_desc = ( $feed_options['salesposts'] == 'true' ) ? '' : ',description';
-
-			//Add option to remove story_tags to workaround Facebook "Unknown Error" message returned by API for certain posts
-			$story_tags = ( $feed_options['storytags'] == 'true' ) ? '' : ',story_tags';
-			$cff_posts_json_url = 'https://graph.facebook.com/v4.0/' . $page_id . '/' . $graph_query . '?fields=id,updated_time,from{picture,id,name,link},message,message_tags,story'. $story_tags .',picture,full_picture,status_type,created_time,backdated_time,attachments{title'. $attachments_desc .',media_type,unshimmed_url,target{id},multi_share_end_card,media{source,image},subattachments},shares,call_to_action,privacy&access_token=' . $access_token . '&limit=' . $cff_post_limit . '&locale=' . $cff_locale . $cff_ssl;
-
-
-			//********************************************//
-			//*********CREATE THE TRANSIENT NAME**********//
-			//********************************************//
-
-
-
-			//ALL POSTS
-			if (!$cff_events_only || ($cff_events_only && $cff_events_source == 'timeline') ){
-
-				//If it's a playlist then use the playlist ID instead of the Page ID
-				$page_id_caching = $page_id;
-				if( $feed_options['playlist'] ){
-					$page_id_caching = $feed_options['playlist'];
-				}
-
-				$trans_items_arr = array(
-					'page_id' => $page_id_caching,
-					'post_limit' => substr($cff_post_limit, 0, 3),
-					'show_posts_by' => substr($show_posts_by, 0, 2),
-					'locale' => $cff_locale
-				);
-
-				$trans_arr_item_count = 1;
-				if( $cff_featured_post_active && !empty($cff_featured_post_id) ){
-					$trans_items_arr['featured_post'] = $cff_featured_post_id;
-					$trans_arr_item_count++;
-				}
-				if($cff_albums_only) $trans_items_arr['albums_source'] = $cff_albums_source;
-				$trans_items_arr['albums_only'] = intval($cff_albums_only);
-				$trans_items_arr['photos_only'] = intval($cff_photos_only);
-				$trans_items_arr['videos_only'] = intval($cff_videos_only);
-
-				$arr_item_max_length = floor( 28/$trans_arr_item_count ); //40 minus the 12 needed for the other 7 values shown below equals 28
-				$arr_item_max_length_half = floor($arr_item_max_length/2);
-
-				$transient_name = 'cff_';
-				foreach ($trans_items_arr as $key => $value) {
-					if($value !== false){
-						if( $key == 'page_id' || $key == 'featured_post' || $key == 'from' || $key == 'until' ) $transient_name .= substr($value, 0, $arr_item_max_length_half) . substr($value, $arr_item_max_length_half*-1);  //-10
-						if( $key == 'locale' ) $transient_name .= substr($value, 0, 2);
-						if( $key == 'post_limit' || $key == 'show_posts_by' ) $transient_name .= substr($value, 0, 3);
-						if( $key == 'albums_only' || $key == 'photos_only' || $key == 'videos_only' || $key == 'albums_source' || $key == 'reviews' ) $transient_name .= substr($value, 0, 1);
-					}
-				}
-				//Make sure it's not more than 45 chars
-				$transient_name = substr($transient_name, 0, 45);
-
-				//ALBUM EMBED
-				if( $cff_album_active && !empty($cff_album_id) ) {
-					$transient_name = 'cff_album_' . $cff_album_id . '_' . $cff_post_limit;
-					$transient_name = substr($transient_name, 0, 45);
-				}
-
-			} //END ALL POSTS
-
-
-
+		foreach ($page_ids as $page_id) {
 			//Are there more posts to get for this ID?
-			$cff_more_posts = true;
-
-			//If the cron caching is enabled then set the caching time to be long so that it doesn't expire before rechecked in the cron function
-			if( false == 'background' ) $cache_seconds = 7 * DAY_IN_SECONDS;
-
-
-			//ALL POSTS
-			$posts_json = CFF_Utils::cff_get_set_cache($cff_posts_json_url, $transient_name, $cff_cache_time, $cache_seconds, $data_att_html, $cff_show_access_token, $access_token, true);
-			if( $cff_is_group ){
-				$groups_post = new CFF_Group_Posts($page_id, $feed_options, $cff_posts_json_url, $data_att_html, false);
-				$groups_post_result = $groups_post->init_group_posts($posts_json, false, $show_posts_number);
-				$posts_json = $groups_post_result['posts_json'];
-			}
-			//ALBUM EMBED
-			if( $cff_album_active && !empty($cff_album_id) ) $album_json = $posts_json;
-
-			//Interpret data with JSON
-			$FBdata = json_decode($posts_json);
-
-			if ( false /*$is_customizer*/ ) {
-				//Get more data about single events since timelines don't have it
-				$can_check_for_events = false;
-				$event_supporting_access_tokens = array();
-				if ( isset( $feed_options['sources'][0] ) ) {
-					foreach ( $feed_options['sources'] as $source ) {
-						#if ( $source['privilege'] === 'events' ) {
-						$can_check_for_events = true;
-						$event_supporting_access_tokens[ $source['account_id'] ] = $source['access_token'];
-						# }
-					}
-				}
-
-
-				if ( $can_check_for_events ) {
-					if ( isset( $FBdata->data ) ) {
-						$post_index = 0;
-						foreach ( $FBdata->data as $post ) {
-							$type = CFF_Parse::get_status_type( $post );
-
-							if ( $type === 'created_event' ) {
-								$account_id = CFF_Parse::get_from_id( $post );
-								$post_id = CFF_Parse::get_post_id( $post );
-								$event_id = explode( '_', $post_id );
-								$event_id = $event_id[1];
-
-								if ( ! empty( $event_supporting_access_tokens[ $account_id ] ) ) {
-									$single_data = CFF_Shortcode::get_single_event_data( $event_id, $event_supporting_access_tokens[ $account_id ] );
-									foreach( $single_data as $property => $value ) {
-										$FBdata->data[ $post_index ]->$property = $value;
-									}
-
-								}
-							}
-							$post_index++;
-						}
-					}
-				}
-			}
-
-
-			if( $cff_more_posts ){
-				//Add the data to the array to be returned and parsed into HTML
-				$FBdata_arr[$page_id] = $FBdata;
-			} else {
-				//Add something to the array for the ID if there's no posts to prevent any PHP notices
-				$FBdata_arr[$page_id] = 'no_more_posts';
-			}
-
-			//Add the API URL to the json array so that we can grab it and add to the button if needed
-			if( isset($FBdata_arr[$page_id]) ){
-				if( !isset($FBdata_arr[$page_id]->api_url) && $FBdata_arr[$page_id] != 'no_more_posts' ){
-					//Replace the actual token with the Access Token placeholder
-					$cff_api_url = str_replace($access_token,"x_cff_hide_token_x",$cff_posts_json_url);
-					//Add it to the json array
-					$FBdata_arr[$page_id]->api_url = $cff_api_url;
-				}
-			}
-
+			$graph_data = new CFF_Graph_Data($page_id, $page_ids, $feed_id, $feed_options, $data_att_html, $next_urls_arr_safe, $is_customizer, $FBdata_arr);
+			$feed_data = $graph_data->get_feed_data();
+			$FBdata = $feed_data !== 'no_more_posts' ? json_decode($feed_data) : $feed_data;
+			$FBdata_arr[$page_id] = $FBdata;
 		} //End page_id loop
-
-		if($cff_is_group && isset($FBdata_arr[$page_id]) && $FBdata_arr[$page_id] != 'no_more_posts'){
-			$FBdata_arr[$page_id]->is_load_cache = (isset($groups_post_result['latest_record_date'])) && $groups_post_result['latest_record_date'] !== 0 && $groups_post_result['load_from_cache'] !== false ? $groups_post_result['load_from_cache'] : false;
-			$FBdata_arr[$page_id]->latest_record_date = $groups_post_result['latest_record_date'];
-		}
 		return $FBdata_arr;
 	}
+
 
 	/**
 	 * this function breaks up the "next" url from the json data into an array of parts to load into
@@ -2168,7 +1852,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 	 *
 	 * @since 3.18
 	 */
-	static function cff_get_next_url_parts( $json_data_arr ) {
+	public static function cff_get_next_url_parts( $json_data_arr ) {
 		$next_urls_arr_safe = '{';
 		$next_urls_arr_safe .= '}';
 		//If the array ends in a comma then remove the comma
@@ -2260,7 +1944,7 @@ class CFF_Shortcode extends CFF_Shortcode_Display{
 
 	}
 
-	function cff_add_translations() {
+	public function cff_add_translations() {
 		$this->atts = CFF_Shortcode::add_translations( $this->atts );
 	}
 

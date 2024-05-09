@@ -841,7 +841,7 @@ class WP_Import extends WP_Importer
 	 * @param array $item Menu item details from WXR file
 	 */
 	public function process_menu_item($item)
-	{
+	{		
 		// skip draft, orphaned menu items
 		if ('draft' == $item['status'])
 			return;
@@ -876,11 +876,11 @@ class WP_Import extends WP_Importer
 		foreach ($item['postmeta'] as $meta) {
 			${$meta['key']} = $meta['value'];
 		}
-
-		if ('taxonomy' == $_menu_item_type && isset($this->processed_terms[intval($_menu_item_object_id)])) {
+		
+		if ('taxonomy' == $_menu_item_type && isset( $_menu_item_object_id ) && isset($this->processed_terms[intval($_menu_item_object_id)])) {
 			$_menu_item_object_id = $this->processed_terms[intval($_menu_item_object_id)];
 		}
-		else if ('post_type' == $_menu_item_type && isset($this->processed_posts[intval($_menu_item_object_id)])) {
+		else if ('post_type' == $_menu_item_type && isset( $_menu_item_object_id ) && isset($this->processed_posts[intval($_menu_item_object_id)])) {
 			$_menu_item_object_id = $this->processed_posts[intval($_menu_item_object_id)];
 		}
 		else if ('custom' != $_menu_item_type) {

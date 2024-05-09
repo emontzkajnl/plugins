@@ -102,7 +102,8 @@ class CFF_Feed_Pro{
 		return ($one_type_and_term_has_more_ages && $max_concurrent_api_calls_not_met);
 	}
 
-	public function add_remote_posts( $settings ) {
+	public function add_remote_posts($settings, $feed_id = false)
+	{
 		$new_post_sets = array();
 		$next_pages = $this->next_pages;
 
@@ -110,6 +111,7 @@ class CFF_Feed_Pro{
 
 		$one_post_found = false;
 		$next_page_found = false;
+		$settings['the_feed_id'] = $feed_id;
 
 		if ( ! empty( $next_pages ) && $next_pages !== '{}' ) {
 

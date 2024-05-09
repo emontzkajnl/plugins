@@ -2,9 +2,9 @@
 Contributors: quizsurvey,expresstech
 Tags: quiz, survey, lead, test, score, exam, questionnaire, question,wordpress quiz plugin
 Requires at least: 4.9
-Tested up to: 6.3
+Tested up to: 6.5
 Requires PHP: 5.4
-Stable tag: 8.1.16
+Stable tag: 9.0.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -163,6 +163,72 @@ This is usually a theme conflict. You can [checkout out our common conflict solu
 18. Database
 
 == Changelog ==
+= 9.0.1 (April 25, 2024) =
+* Bug: Fixed date format in %ANSWER_X% variable
+* Bug: Resolved PHP warning in Quiz Block editor
+* Bug: Fixed an issue in showing the correct answers in a quiz while using random answers
+* Enhancement: Improved text feature to accept other language characters in quiz page names
+* Enhancement: Added support for using emojis in quiz questions, result pages, and email templates
+
+= 9.0.0 (March 27, 2024) =
+* Feature: Implemented a minimum length requirement for text-based question types
+* Feature: Introduced a placeholder option for contact fields
+* Feature: Added option to set default setting to multiple quizzes
+* Feature: Added keyboard navigation functionality to quizzes
+* Feature: Implemented support for rounding off points-based variables
+* Feature: Integrated APIs for submitting and accessing quizzes and results
+* Feature: Added option to duplicate result and email templates
+* Bug: Fixed multiple option contact fields translation issue
+* Bug: Fixed fill in the blanks question type translation issue
+* Bug: Fixed an issue related to quiz submission when using the same quiz twice on the same page
+* Bug: Fixed issue with limit questions categorized incorrectly
+* Enhancement: Enhanced the user interface of option tabs for improved usability
+* Enhancement: Improved the user interface of the upload files question type
+* Enhancement: Improve result and email page UI
+
+= 8.2.3 (March 12, 2024) =
+* Bug: Fixed issue with inline result while duplicating quizzes
+* Bug: Patched a vulnerability related to the result page
+* Enhancement: Improve contact fields UI
+
+= 8.2.2 (January 18, 2024) =
+* Feature: Added an option to mark texts as code snippets in the question description
+* Bug: Fixed the issue of skipping question validation after the quiz timer ends
+* Bug: Fixed issue when using apostrophe in fill-in-the-blanks questions
+* Bug: Fixed the quiz navigation problem with reCAPTCHA
+* Enhancement: Improved auto-pause logic for embedded audio when shifting pages.
+
+= 8.2.1 (January 05, 2024) =
+* Feature: Added option to delete bulk questions
+* Bug: Resolved JavaScript conflicts
+* Bug: Fixed translation issue on quiz result page
+* Enhancement: Improved logic to auto pause emabded video after changing page
+
+= 8.2.0 (December 15, 2023) =
+* Feature: Added option to change deselect answer text
+* Feature: Added option to duplicate quiz theme settings
+* Bug: Fixed issue related to limiting random questions by category
+* Bug: Fixed issue with images and video tags in the correct answer info
+* Enhancement: Improved login form validations
+* Enhancement: Improved performance by optimizing cookies
+
+= 8.1.19 (November 08, 2023) =
+* Feature: Added an option to display result URLs on the admin result page
+* Bug: Resolved Cross Site Request Forgery vulnerability
+* Enhancement: Improved quiz timer performance
+* Enhancement: Added a user alert message for cases where results will not be stored in the database
+
+= 8.1.18 (October 26, 2023) =
+* Enhancement: Updated the message when you submit a quiz in draft mode
+
+= 8.1.17 (October 11, 2023) =
+* Feature: Added option to include custom text when the answer choice limit exceeds in multiple response type questions.
+* Feature: Added a new feature to accept shortcodes in the text set to display at the end of quizzes.
+* Bug: Fixed issues with HTML tags in exported PDFs
+* Bug: Fixed issues with HTML tags in question descriptions
+* Bug: Fixed issue with the 'Required box' unchecking itself
+* Bug: Patched a vulnerability related to draft quiz submissions
+
 = 8.1.16 (September 20, 2023) =
 * Feature: Added option to use random question and answer with manual pagination
 * Bug: Fix quiz score calculation issue with file upload question types

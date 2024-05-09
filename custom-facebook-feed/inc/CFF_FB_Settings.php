@@ -329,7 +329,7 @@ class CFF_FB_Settings {
 		return $id_and_token;
 	}
 
-	function set_page_id($page_id){
+	public function set_page_id($page_id){
 		$this->settings['id'] = $page_id;
 	}
 
@@ -340,7 +340,7 @@ class CFF_FB_Settings {
 	 * @return array
 	 * @since 2.19
 	 */
-	function check_page_id( $page_id ){
+	public function check_page_id( $page_id ){
 		 //If user pastes their full URL into the Page ID field then strip it out
 	    $cff_page_id_url_check = CFF_Utils::stripos($page_id, 'facebook.com' );
 	    if ( $cff_page_id_url_check ) {

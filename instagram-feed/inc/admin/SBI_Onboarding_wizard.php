@@ -215,12 +215,7 @@ class SBI_Onboarding_wizard extends SBI_Feed_Builder
 							'text' => __( 'Upgrade to Instagram Feed Pro', 'instagram-feed' ),
 							'link'	=> 'https://smashballoon.com/pricing/instagram-feed/?license_key&upgrade=true&utm_campaign=instagram-free&utm_source=setup&utm_medium=upgrade-license'
 						],
-						'upgradeCouppon' => sprintf(
-							__( 'Upgrade today and %ssave 50%% on a Pro License!%s%s (auto-applied at checkout)', 'instagram-feed' ),
-							'<strong>',
-							'</strong>',
-							'<br>'
-						),
+						'upgradeCouppon' => 'Upgrade today and save 50% on a Pro License! (auto-applied at checkout)',
 						'banner' => SBI_BUILDER_URL . 'assets/img/success-banner.jpg',
 
 						'upgradeFeaturesList' => [
@@ -511,7 +506,7 @@ class SBI_Onboarding_wizard extends SBI_Feed_Builder
 				'description' => __( 'A simple and powerful theme builder, landing page builder, "coming soon" page builder, and maintenance mode notice builder', 'instagram-feed' ),
 				'color'	=> 'blue',
 				'active'	=> true,
-				'icon' => SBI_BUILDER_URL . 'assets/img/seedprod.png'
+				'icon' => SBI_BUILDER_URL . 'assets/img/seedProd.png'
 			],
 			[
 				'plugin' => 'optinmonster',

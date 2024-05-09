@@ -7,8 +7,8 @@ Donate link: https://www.paypal.me/vaakash/
 License: GPLv2 or later
 Requires PHP: 5.3
 Requires at least: 4.9.0
-Tested up to: 6.3
-Stable tag: 6.3
+Tested up to: 6.4.2
+Stable tag: 6.3.2
 
 Create custom "Shortcodes" easily for HTML, JavaScript, CSS code snippets and use the shortcodes within posts, pages & widgets
 
@@ -129,6 +129,12 @@ Yes, this feature is available in the PRO version. You can upgrade to the [PRO v
 
 
 ## Changelog
+
+### 6.3.2
+* Fix: Verify permissions while closing Shortcoder changelog.
+
+### 6.3.1
+* Fix: Admin ajax vulnerability with nonce.
 
 ### 6.3
 * New: Set default value for the custom field parameters.

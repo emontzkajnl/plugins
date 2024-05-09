@@ -202,7 +202,7 @@ class CFF_Upgrader {
 	 *
 	 * @since 4.0
 	 */
-	function install_upgrade() {
+	public static function install_upgrade() {
 		$error = esc_html__( 'Could not install upgrade. Please download from smashballoon.com and install manually.', 'custom-facebook-feed' );
 		// verify params present (oth & download link).
 		$post_oth = ! empty( $_REQUEST['oth'] ) ? sanitize_text_field( $_REQUEST['oth'] ) : '';

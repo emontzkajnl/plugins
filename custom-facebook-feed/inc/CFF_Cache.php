@@ -100,7 +100,6 @@ class CFF_Cache {
 		} else {
 			$this->suffix = '_' . $this->page;
 		}
-
 		$this->feed_id = $feed_id;
 		$this->encryption = new SB_Facebook_Data_Encryption();
 	}

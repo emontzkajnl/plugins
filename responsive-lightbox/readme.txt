@@ -3,8 +3,8 @@ Contributors: dfactory
 Donate link: http://www.dfactory.co/
 Tags: gallery, galleries, image, images, responsive, lightbox, photo, photography, masonry, video, builder
 Requires at least: 5.0
-Tested up to: 6.2
-Stable tag: 2.4.5
+Tested up to: 6.4.3
+Stable tag: 2.4.7
 Requires PHP: 5.4
 License: MIT License
 License URI: http://opensource.org/licenses/MIT
@@ -139,6 +139,13 @@ Responsive Lightbox and Gallery plugin comes with many styles and effects alread
 2. screenshot-2.jpg
 
 == Changelog ==
+
+= 2.4.7 =
+* Fix: Unauthorized access to private rl_gallery shortcodes
+
+= 2.4.6 =
+* Fix: Editing folder names
+* Tweak: Updated jsTree to 3.3.16
 
 = 2.4.5 =
 * New: WordPress 6.2 compatibility
@@ -525,6 +532,5 @@ Initial release
 
 == Upgrade Notice ==
 
-= 2.4.5 =
-* New: WordPress 6.2 compatibility
-* New: PHP 8.2 compatibility
+= 2.4.7 =
+* Fix: Unauthorized access to private rl_gallery shortcodes

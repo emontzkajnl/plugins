@@ -1983,7 +1983,7 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
 	color: #72777c;
 	content: "\f335";
 	display: block;
-	font: normal 20px/20px dashicons;
+	font: normal 20px/20px dashicons, serif;
 	speak: none;
 	height: 20px;
 	text-align: center;
@@ -3589,7 +3589,6 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
   position: relative;
   box-shadow: 0px 26.7377px 77.2886px rgb(0 0 0 / 11%), 0px 14.2952px 41.3222px rgb(0 0 0 / 9%), 0px 8.01379px 23.1649px rgb(0 0 0 / 8%), 0px 4.25607px 12.3027px rgb(0 0 0 / 6%), 0px 1.77104px 5.11942px rgb(0 0 0 / 4%);
   border-radius: 2px;
-  overflow-y: auto;
   max-height: 80vh;
 }
 .cff-fb-feedtypes-pp-ctn .cff-fb-popup-inside {
@@ -3688,4 +3687,40 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
   font-weight: 600;
   line-height: 160%;
   cursor: pointer;
+}
+.sb-notice-title.sb-noticegroup-title {
+	padding-bottom: 10px;
+}
+
+#oembed_api_change.cff-admin-notices {
+	box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+	border: 1px solid rgb(255, 239, 204);
+	background: rgb(255, 247, 229);
+}
+
+.sb-btn.sb-reconnect-oembed {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 9px 38px;
+	font-style: normal;
+	font-size: 14px;
+	line-height: 17px;
+	cursor: pointer;
+	outline: none;
+	font-weight: bold;
+	border-radius: 4px;
+	border: 1px solid #E6E6EB;
+	box-shadow: 0px -1px 1px 0px #0000001F inset;
+	background: #F9F9FA;
+	color: #141B38;
+}
+
+#oembed_api_change_reconnect.cff-admin-notices {
+	border-radius: 3px;
+	border: 1px solid #D6ECD1;
+	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05), 0px 4px 5px 0px rgba(0, 0, 0, 0.05);
+	background: #E6F4E3;
+	color: #203E1A;
 }

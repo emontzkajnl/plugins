@@ -5,9 +5,11 @@
 
 namespace PublishPress\Future\Modules\Settings;
 
-use PublishPress\Future\Core\DI\ServicesAbstract as Services;
 use PublishPress\Future\Core\HookableInterface;
+use PublishPress\Future\Core\HooksAbstract as CoreHooksAbstract;
 use PublishPress\Future\Framework\WordPress\Facade\OptionsFacade;
+use PublishPress\Future\Modules\Expirator\ExpirationActions\ChangePostStatus;
+use PublishPress\Future\Modules\Expirator\ExpirationActionsAbstract;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -33,7 +35,12 @@ class SettingsFacade
      */
     private $cache = [];
 
+    /**
+     * @deprecated version 3.2.0 Use self::DEFAULT_CUSTOM_DATE_OFFSET instead.
+     */
     const DEFAULT_CUSTOM_DATE = '+1 week';
+
+    const DEFAULT_CUSTOM_DATE_OFFSET = '+1 week';
 
     /**
      * @param HookableInterface $hooks
@@ -45,6 +52,13 @@ class SettingsFacade
         $this->hooks = $hooks;
         $this->options = $options;
         $this->defaultData = $defaultData;
+
+        $this->hooks->addAction(CoreHooksAbstract::ACTION_PURGE_PLUGIN_CACHE, [$this, 'purgeCache']);
+    }
+
+    public function purgeCache()
+    {
+        $this->cache = [];
     }
 
     public function deleteAllSettings()
@@ -67,24 +81,30 @@ class SettingsFacade
         foreach ($allOptions as $optionName) {
             $this->options->deleteOption($optionName);
         }
+
+        $this->hooks->doAction(CoreHooksAbstract::ACTION_PURGE_PLUGIN_CACHE);
     }
 
-    public function setDefaultSettings()
+    // We can't use services from the container here because it is called before they are available, on plugin activation.
+    public static function setDefaultSettings()
     {
         $defaultValues = [
-            'expirationdateDefaultDateFormat' => $this->defaultData[Services::DEFAULT_DATE_FORMAT],
-            'expirationdateDefaultTimeFormat' => $this->defaultData[Services::DEFAULT_TIME_FORMAT],
-            'expirationdateFooterContents' => $this->defaultData[Services::DEFAULT_FOOTER_CONTENT],
-            'expirationdateFooterStyle' => $this->defaultData[Services::DEFAULT_FOOTER_STYLE],
-            'expirationdateDisplayFooter' => $this->defaultData[Services::DEFAULT_FOOTER_DISPLAY],
-            'expirationdateDebug' => $this->defaultData[Services::DEFAULT_DEBUG],
-            'expirationdateDefaultDate' => $this->defaultData[Services::DEFAULT_EXPIRATION_DATE],
-            'expirationdateGutenbergSupport' => 1,
+            'expirationdateDefaultDateFormat' => __('l F jS, Y', 'post-expirator'),
+            'expirationdateDefaultTimeFormat' => __('g:ia', 'post-expirator'),
+            'expirationdateFooterContents' => __(
+                'Post expires at EXPIRATIONTIME on ACTIONDATE',
+                'post-expirator'
+            ),
+            'expirationdateFooterStyle' => 'font-style: italic;',
+            'expirationdateDisplayFooter' => '0',
+            'expirationdateDebug' => '0',
+            'expirationdateDefaultDate' => 'null',
+            'expirationdateTimeFormatForDatePicker' => 'inherited',
         ];
 
         foreach ($defaultValues as $optionName => $defaultValue) {
-            if ($this->options->getOption($optionName) === false) {
-                $this->options->updateOption($optionName, $defaultValue);
+            if (get_option($optionName) === false) {
+                update_option($optionName, $defaultValue);
             }
         }
     }
@@ -138,6 +158,10 @@ class SettingsFacade
 
     public function getPostTypeDefaults($postType)
     {
+        if (isset($this->cache['postTypeDefaults']) && isset($this->cache['postTypeDefaults'][$postType])) {
+            return $this->cache['postTypeDefaults'][$postType];
+        }
+
         $defaults = [
             'expireType' => null,
             'autoEnable' => null,
@@ -146,6 +170,8 @@ class SettingsFacade
             'emailnotification' => null,
             'default-expire-type' => null,
             'default-custom-date' => null,
+            'terms' => [],
+            'newStatus' => null,
         ];
 
         $defaults = array_merge(
@@ -154,7 +180,28 @@ class SettingsFacade
         );
 
         if (empty($defaults['expireType'])) {
-            $defaults['expireType'] = 'draft';
+            $defaults['expireType'] = ExpirationActionsAbstract::CHANGE_POST_STATUS;
+        }
+
+        if ($defaults['expireType'] === ExpirationActionsAbstract::CHANGE_POST_STATUS) {
+            if (empty($defaults['newStatus'])) {
+                $defaults['newStatus'] = 'draft';
+            }
+        }
+
+        if ($defaults['expireType'] === ExpirationActionsAbstract::POST_STATUS_TO_DRAFT) {
+            $defaults['expireType'] = ExpirationActionsAbstract::CHANGE_POST_STATUS;
+            $defaults['newStatus'] = 'draft';
+        }
+
+        if ($defaults['expireType'] === ExpirationActionsAbstract::POST_STATUS_TO_PRIVATE) {
+            $defaults['expireType'] = ExpirationActionsAbstract::CHANGE_POST_STATUS;
+            $defaults['newStatus'] = 'private';
+        }
+
+        if ($defaults['expireType'] === ExpirationActionsAbstract::POST_STATUS_TO_TRASH) {
+            $defaults['expireType'] = ExpirationActionsAbstract::CHANGE_POST_STATUS;
+            $defaults['newStatus'] = 'trash';
         }
 
         if ($defaults['default-expire-type'] === 'null' || empty($defaults['default-expire-type'])) {
@@ -162,16 +209,26 @@ class SettingsFacade
         }
 
         if (empty($defaults['taxonomy'])) {
-            // Get the first hierarchical taxonomy of the post as the default value.
+            // Get the first taxonomy of the post as the default value.
             $taxonomies = get_object_taxonomies($postType, 'object');
-            $taxonomies = wp_filter_object_list($taxonomies, array('hierarchical' => true));
 
             if (! empty($taxonomies)) {
                 $defaults['taxonomy'] = array_keys($taxonomies)[0];
             }
         }
 
-        return $defaults;
+        // Enable by default for post and page.
+        if (is_null($defaults['activeMetaBox'])) {
+            $defaults['activeMetaBox'] = in_array($postType, ['post', 'page'], true) ? '1' : '0';
+        }
+
+        if (! isset($this->cache['postTypeDefaults'])) {
+            $this->cache['postTypeDefaults'] = [];
+        }
+
+        $this->cache['postTypeDefaults'][$postType] = $defaults;
+
+        return $this->cache['postTypeDefaults'][$postType];
     }
 
     /**
@@ -194,17 +251,26 @@ class SettingsFacade
 
     public function getGeneralDateTimeOffset()
     {
-        $defaultDateOption = $this->options->getOption('expirationdateDefaultDateCustom');
+        $defaultDateOffsetOption = $this->options->getOption('expirationdateDefaultDateCustom');
 
-        if (empty($defaultDateOption)) {
-            $defaultDateOption = self::DEFAULT_CUSTOM_DATE;
+        $defaultDateOffsetOption = html_entity_decode($defaultDateOffsetOption, ENT_QUOTES);
+        $defaultDateOffsetOption = preg_replace('/["\'`]/', '', $defaultDateOffsetOption);
+        $defaultDateOffsetOption = trim($defaultDateOffsetOption);
+
+        if (empty($defaultDateOffsetOption)) {
+            $defaultDateOffsetOption = self::DEFAULT_CUSTOM_DATE_OFFSET;
         }
 
-        return $defaultDateOption;
+        return $defaultDateOffsetOption;
     }
 
     public function getColumnStyle()
     {
         return $this->options->getOption('expirationdateColumnStyle', 'verbose');
+    }
+
+    public function getTimeFormatForDatePicker()
+    {
+        return $this->options->getOption('expirationdateTimeFormatForDatePicker', 'inherited');
     }
 }

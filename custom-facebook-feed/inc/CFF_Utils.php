@@ -20,8 +20,10 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_fetchUrl( $url, $check_admin = true){
+	public static function cff_fetchUrl( $url, $check_admin = true){
 		$response = wp_remote_get( $url );
+		do_action('cff_api_connect_response', $response, $url);
+
 		if ( ! CFF_Utils::cff_is_wp_error( $response ) ) {
 			$feedData = wp_remote_retrieve_body( $response );
 
@@ -81,7 +83,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_desc_tags($description){
+	public static function cff_desc_tags($description){
 		preg_match_all( "/@\[(.*?)\]/", $description, $cff_tag_matches );
 		$replace_strings_arr = array();
 		foreach ( $cff_tag_matches[1] as $cff_tag_match ) {
@@ -110,7 +112,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cffSortTags($a, $b){
+	public static function cffSortTags($a, $b){
 		return $a['offset'] - $b['offset'];
 	}
 
@@ -121,7 +123,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_is_wp_error( $response ) {
+	public static function cff_is_wp_error( $response ) {
 		return is_wp_error( $response );
 	}
 
@@ -132,7 +134,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_log_wp_error( $response, $url ) {
+	public static function cff_log_wp_error( $response, $url ) {
 		if ( is_wp_error( $response ) ) {
 
 			delete_option( 'cff_dismiss_critical_notice' );
@@ -170,7 +172,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_is_fb_error( $response ) {
+	public static function cff_is_fb_error( $response ) {
 		return (strpos( $response, '{"error":' ) === 0);
 	}
 
@@ -181,7 +183,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_log_fb_error( $response, $url, $check_admin = true ) {
+	public static function cff_log_fb_error( $response, $url, $check_admin = true ) {
 		if ( is_admin() && $check_admin == true ) {
 			return;
 		}
@@ -222,7 +224,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_wrap_span($text) {
+	public static function cff_wrap_span($text) {
 		$pattern  = '#\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))#';
 		return preg_replace_callback($pattern, array('CustomFacebookFeed\CFF_Utils','cff_wrap_span_callback'), $text);
 	}
@@ -232,7 +234,7 @@ class CFF_Utils{
 	 *
 	 * @since 2.1.1
 	 */
-	static function cff_json_encode( $thing ) {
+	public static function cff_json_encode( $thing ) {
 		return wp_json_encode( $thing );
 	}
 
@@ -242,7 +244,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_wrap_span_callback($matches) {
+	public static function cff_wrap_span_callback($matches) {
 		$max_url_length = 100;
 		$max_depth_if_over_length = 2;
 		$ellipsis = '&hellip;';
@@ -287,7 +289,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_set_timezone($original, $cff_timezone){
+	public static function cff_set_timezone($original, $cff_timezone){
 		$cff_date_time = new \DateTime(date('m/d g:i a'), new \DateTimeZone('UTC'));
 		$cff_date_time->setTimeZone(new \DateTimeZone($cff_timezone));
 		$cff_date_time_offset = $cff_date_time->getOffset();
@@ -304,7 +306,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_getdate($original, $date_format, $custom_date, $cff_date_translate_strings, $cff_timezone) {
+	public static function cff_getdate($original, $date_format, $custom_date, $cff_date_translate_strings, $cff_timezone) {
     	//Offset the date by the timezone
 		$new_time = CFF_Utils::cff_set_timezone($original, $cff_timezone);
 		switch ($date_format) {
@@ -422,7 +424,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_eventdate($original, $date_format, $custom_date) {
+	public static function cff_eventdate($original, $date_format, $custom_date) {
 		switch ($date_format) {
 			case '2':
 	            $print = date_i18n('<k>F jS, </k>g:ia', $original);
@@ -501,10 +503,15 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function stripos($haystack, $needle){
-		if( empty( stristr( $haystack, $needle ) ) )
+	public static function stripos($haystack, $needle)
+	{
+		if (empty(stristr($haystack, $needle)))
+			$haystack = is_array($haystack) ? implode(" ", $haystack) : $haystack;
+		if (empty(stristr($haystack, $needle))) {
 			return false;
-		return strpos($haystack, stristr( $haystack, $needle ) );
+			return strpos($haystack, stristr($haystack, $needle));
+		}
+		return strpos($haystack, stristr($haystack, $needle));
 	}
 
 
@@ -514,7 +521,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_stripos_arr($haystack, $needle) {
+	public static function cff_stripos_arr($haystack, $needle) {
 		if(!is_array($needle)) $needle = array($needle);
 		foreach($needle as $what) {
 			if(($pos = CFF_Utils::stripos($haystack, ltrim($what) ))!==false) return $pos;
@@ -529,7 +536,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_mb_substr_replace($string, $replacement, $start, $length=NULL) {
+	public static function cff_mb_substr_replace($string, $replacement, $start, $length=NULL) {
 		if (is_array($string)) {
 			$num = count($string);
        	 	// $replacement
@@ -572,7 +579,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_array_push_assoc($array, $key, $value){
+	public static function cff_array_push_assoc($array, $key, $value){
 		$array[$key] = $value;
 		return $array;
 	}
@@ -584,7 +591,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_to_slug($string){
+	public static function cff_to_slug($string){
 		return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string)));
 	}
 
@@ -595,12 +602,12 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_get_utc_offset() {
+	public static function cff_get_utc_offset() {
 		return get_option( 'gmt_offset', 0 ) * HOUR_IN_SECONDS;
 	}
 
 
-	static function cff_schedule_report_email() {
+	public static function cff_schedule_report_email() {
 		$options = get_option('cff_style_settings');
 		$input = isset( $options[ 'email_notification' ] ) ? $options[ 'email_notification' ] : 'monday';
 		$timestamp = strtotime( 'next ' . $input );
@@ -616,7 +623,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_is_pro_version() {
+	public static function cff_is_pro_version() {
 		return defined( 'CFFWELCOME_VER' );
 	}
 
@@ -626,7 +633,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function cff_get_set_cache($cff_posts_json_url, $transient_name, $cff_cache_time, $cache_seconds, $data_att_html, $cff_show_access_token, $access_token, $backup=false) {
+	public static function cff_get_set_cache($cff_posts_json_url, $transient_name, $cff_cache_time, $cache_seconds, $data_att_html, $cff_show_access_token, $access_token, $backup=false) {
 		$cache_seconds = max( $cache_seconds, 60 );
 
 		// Trying to use new cache table
@@ -679,7 +686,9 @@ class CFF_Utils{
 			$posts_json = '{"api_url":"'.$cff_posts_json_url.'", "shortcode_options":"'.$data_att_html.'", ' . $posts_json;
 
 			//If it's a featured post then it doesn't contain 'data'
-			( $cff_featured_post ) ? $FBdata = $FBdata : $FBdata = $FBdata->data;
+			if (!$cff_featured_post) {
+				$FBdata = $FBdata->data;
+			}
 
 			//Check the API response
 			if( !empty($FBdata) ) {
@@ -691,8 +700,8 @@ class CFF_Utils{
 					//See if a backup cache exists
 					if ( false !== $feed_cache->get( $cache_type . '_backup' ) ) {
 
-						$posts_json = $feed_cache->get( $cache_type . '_backup' );
-
+						$posts_cache = $feed_cache->get( $cache_type . '_backup' );
+						$posts_json = is_null($posts_cache) ? '{}' : $posts_cache;
 						//Add error message to backup cache so can be displayed at top of feed
 						isset( $FBdata->error->message ) ? $error_message = $FBdata->error->message : $error_message = '';
 						isset( $FBdata->error->type ) ? $error_type = $FBdata->error->type : $error_type = '';
@@ -744,7 +753,7 @@ class CFF_Utils{
 	 * @since 2.19
 	 * @return boolean
 	 */
-	static function check_if_on( $value ){
+	public static function check_if_on( $value ){
 		return ( isset( $value ) && !empty( $value ) && ( $value == 'true' || $value == 'on') ) ?  true : false;
 	}
 
@@ -757,7 +766,7 @@ class CFF_Utils{
 	 * @since 2.19
 	 * @return boolean
 	 */
-	static function check_if_onexist( $value ){
+	public static function check_if_onexist( $value ){
 		return ( ( isset( $value ) )  ) ?  true : false;
 	}
 
@@ -770,7 +779,7 @@ class CFF_Utils{
 	 * @since 2.19
 	 * @return mixed
 	 */
-	static function return_value( $value , $default = ''){
+	public static function return_value( $value , $default = ''){
 		return ( isset( $value ) && !empty( $value ) ) ?  $value  : $default;
 	}
 
@@ -784,7 +793,7 @@ class CFF_Utils{
 	 * @since 2.19
 	 * @return string
 	 */
-	static function get_css_distance( $value ){
+	public static function get_css_distance( $value ){
 		return ( is_numeric(substr($value, -1, 1)) ) ? $value . 'px' : $value;
 	}
 
@@ -799,7 +808,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function fetch_header_data( $page_id, $cff_is_group, $access_token, $cff_cache_time, $cff_multifeed_active = false, $data_att_html = array() ){
+	public static function fetch_header_data( $page_id, $cff_is_group, $access_token, $cff_cache_time, $cff_multifeed_active = false, $data_att_html = array() ){
 		 // Create Transient Name
 		    $transient_name = 'cff_header_' . $page_id;
 		    $transient_name = substr($transient_name, 0, 45);
@@ -836,8 +845,7 @@ class CFF_Utils{
   	 * @static
 	 * @since 2.19
 	 */
-	static function print_template_part( $template_name, $args = array(), $this_class = null){
-		$this_class = $this_class;
+	public static function print_template_part( $template_name, $args = array(), $this_class = null){
 		extract($args);
 		ob_start();
 		include trailingslashit( CFF_PLUGIN_DIR ) . 'templates/' . $template_name . '.php';
@@ -851,15 +859,35 @@ class CFF_Utils{
 	 * Get Connected Accounts
 	 * @since 2.19
 	 */
-	static function cff_get_connected_accounts() {
+	public static function cff_get_connected_accounts()
+	{
 		$cff_connected_accounts = get_option('cff_connected_accounts', array());
-		if( !empty($cff_connected_accounts) ){
-			$cff_connected_accounts = str_replace('\"','"', $cff_connected_accounts);
-            $cff_connected_accounts = str_replace("\'","'", $cff_connected_accounts);
-            $cff_connected_accounts = json_decode( $cff_connected_accounts, true );
+		if (!is_array($cff_connected_accounts) && !empty($cff_connected_accounts)) {
+			$cff_connected_accounts = str_replace('\"', '"', $cff_connected_accounts);
+			$cff_connected_accounts = str_replace("\'", "'", $cff_connected_accounts);
+			$cff_connected_accounts = json_decode($cff_connected_accounts, true);
 		}
-		if(!is_array($cff_connected_accounts) || $cff_connected_accounts == null){
+		if (!is_array($cff_connected_accounts) || $cff_connected_accounts == null) {
 			$cff_connected_accounts = [];
+		}
+		return $cff_connected_accounts;
+	}
+	/**
+	 *
+	 * Get Connected Accounts
+	 * @since 3.18
+	 */
+	public static function cff_get_connected_accounts_object()
+	{
+		$cff_connected_accounts = get_option('cff_connected_accounts', array());
+		if (!empty($cff_connected_accounts)) {
+			$cff_connected_accounts = str_replace('\"', '"', $cff_connected_accounts);
+			$cff_connected_accounts = str_replace("\'", "'", $cff_connected_accounts);
+			$cff_connected_accounts = json_decode($cff_connected_accounts);
+		}
+		$check_array = (array) $cff_connected_accounts;
+		if (empty($check_array)) {
+			$cff_connected_accounts = false;
 		}
 		return $cff_connected_accounts;
 	}

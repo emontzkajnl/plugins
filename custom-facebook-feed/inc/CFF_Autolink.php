@@ -11,14 +11,14 @@ namespace CustomFacebookFeed;
 class CFF_Autolink{
 
 
-	static function cff_autolink($text, $link_color='', $span_tag = false, $limit=100, $tagfill='class="cff-break-word"', $auto_title = true){
+	public static function cff_autolink($text, $link_color='', $span_tag = false, $limit=100, $tagfill='class="cff-break-word"', $auto_title = true){
 	    $text = self::cff_autolink_do($text, $link_color, '![a-z][a-z-]+://!i',    $limit, $tagfill, $auto_title, $span_tag);
 	    $text = self::cff_autolink_do($text, $link_color, '!(mailto|skype):!i',    $limit, $tagfill, $auto_title, $span_tag);
 	    $text = self::cff_autolink_do($text, $link_color, '!www\\.!i',         $limit, $tagfill, $auto_title, 'http://', $span_tag);
 	    return $text;
 	}
 
-	static function cff_autolink_do($text, $link_color, $sub, $limit, $tagfill, $auto_title, $span_tag, $force_prefix=null){
+	public static function cff_autolink_do($text, $link_color, $sub, $limit, $tagfill, $auto_title, $span_tag, $force_prefix=null){
 
 	    $text_l = StrToLower($text);
 	    $cursor = 0;
@@ -184,7 +184,7 @@ class CFF_Autolink{
 	}
 
 
-	static function cff_autolink_label($text, $limit){
+	public static function cff_autolink_label($text, $limit){
 
 	    if (!$limit){ return $text; }
 
@@ -196,7 +196,7 @@ class CFF_Autolink{
 	}
 
 
-	static function cff_autolink_email($text, $tagfill=''){
+	public static function cff_autolink_email($text, $tagfill=''){
 
 	    $atom = '[^()<>@,;:\\\\".\\[\\]\\x00-\\x20\\x7f]+'; # from RFC822
 

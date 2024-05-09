@@ -5,8 +5,16 @@
 
 namespace PublishPress\Future\Framework\WordPress\Models;
 
+use PublishPress\Future\Core\DI\Container;
+use PublishPress\Future\Core\DI\ServicesAbstract;
+use PublishPress\Future\Core\HookableInterface;
 use PublishPress\Future\Framework\WordPress\Exceptions\NonexistentPostException;
+use PublishPress\Future\Framework\WordPress\Exceptions\NonexistentTermException;
+use PublishPress\Future\Modules\Debug\DebugInterface;
+use PublishPress\Future\Modules\Expirator\HooksAbstract;
 use WP_Post;
+
+use function wp_update_post;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -28,10 +36,21 @@ class PostModel
     protected $termModelFactory;
 
     /**
+     * @var DebugInterface
+     */
+    protected $debug;
+
+    /**
+     * @var HookableInterface
+     */
+    protected $hooks;
+
+    /**
      * @param int|\WP_Post $post
      * @param \Closure $termModelFactory
+     * @param DebugInterface $debug
      */
-    public function __construct($post, $termModelFactory)
+    public function __construct($post, $termModelFactory, DebugInterface $debug, HookableInterface $hooks)
     {
         if (is_object($post)) {
             $this->postInstance = $post;
@@ -43,6 +62,8 @@ class PostModel
         }
 
         $this->termModelFactory = $termModelFactory;
+        $this->debug = $debug;
+        $this->hooks = $hooks;
     }
 
     /**
@@ -74,17 +95,25 @@ class PostModel
             $data
         );
 
-        return \wp_update_post($data) > 0;
+        return wp_update_post($data) > 0;
     }
 
     /**
      * @param string $metaKey
      * @param mixed $metaValue
+     * @param bool $unique
+     *
      * @return false|int
      */
-    public function addMeta($metaKey, $metaValue = null)
+    public function addMeta($metaKey, $metaValue = null, $unique = true)
     {
-        return add_post_meta($this->getPostId(), $metaKey, $metaValue);
+        $metaKey = $this->hooks->applyFilters(
+            HooksAbstract::FILTER_ACTION_META_KEY,
+            $metaKey,
+            $this->getPostId()
+        );
+
+        return add_post_meta($this->getPostId(), $metaKey, $metaValue, $unique);
     }
 
     /**
@@ -98,16 +127,21 @@ class PostModel
             $metaKey = [$metaKey => $metaValue];
         }
 
-        $callback = function ($value, $key) {
+        $postId = $this->getPostId();
+
+        foreach ($metaKey as $key => $value) {
+            $key = $this->hooks->applyFilters(
+                HooksAbstract::FILTER_ACTION_META_KEY,
+                $key,
+                $postId
+            );
+
             \update_post_meta(
-                $this->getPostId(),
+                $postId,
                 \sanitize_key($key),
                 $value
             );
-        };
-
-        // TODO: Replace array_walk with foreach.
-        array_walk($metaKey, $callback);
+        }
     }
 
     /**
@@ -120,20 +154,46 @@ class PostModel
             $metaKey = [$metaKey];
         }
 
-        $callback = function ($key) {
+        $postId = $this->getPostId();
+
+        foreach ($metaKey as $key) {
+            $key = $this->hooks->applyFilters(
+                HooksAbstract::FILTER_ACTION_META_KEY,
+                $key,
+                $postId
+            );
+
             \delete_post_meta(
-                $this->getPostId(),
+                $postId,
                 \sanitize_key($key)
             );
-        };
-
-        // TODO: Replace array_walk with foreach.
-        array_walk($metaKey, $callback);
+        }
     }
 
     public function getMeta($metaKey, $single = false)
     {
-        return get_post_meta($this->getPostId(), $metaKey, $single);
+        $postId = $this->getPostId();
+
+        $metaKey = $this->hooks->applyFilters(
+            HooksAbstract::FILTER_ACTION_META_KEY,
+            $metaKey,
+            $postId
+        );
+
+        return get_post_meta($postId, $metaKey, $single);
+    }
+
+    public function metadataExists($metaKey)
+    {
+        $postId = $this->getPostId();
+
+        $metaKey = $this->hooks->applyFilters(
+            HooksAbstract::FILTER_ACTION_META_KEY,
+            $metaKey,
+            $postId
+        );
+
+        return metadata_exists('post', $postId, $metaKey);
     }
 
     /**
@@ -189,9 +249,9 @@ class PostModel
         return get_edit_post_link($this->getPostId());
     }
 
-    public function getPostId()
+    public function getPostId(): int
     {
-        return $this->postId;
+        return (int)$this->postId;
     }
 
     public function getTerms($taxonomy = 'post_tag', $args = [])
@@ -208,10 +268,20 @@ class PostModel
 
     public function getTermNames($taxonomy = 'post_tag', $args = [])
     {
+        $debugIsEnabled = $this->debug->isEnabled();
         $terms = $this->getTerms($taxonomy, $args);
 
         foreach ($terms as &$term) {
-            $term = $term->getName();
+            try {
+                $term = $term->getName();
+            } catch (NonexistentTermException $e) {
+                if ($debugIsEnabled) {
+                    // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_print_r
+                    error_log('Error: Nonexistent term: ' . print_r($term, true) . ' in ' . __METHOD__);
+                }
+
+                continue;
+            }
         }
 
         return $terms;
@@ -238,9 +308,14 @@ class PostModel
         return wp_set_object_terms($this->getPostId(), $termIDs, $taxonomy, false);
     }
 
-    public function delete()
+    public function delete(bool $force = true): bool
     {
-        return wp_delete_post($this->getPostId()) !== false;
+        return wp_delete_post($this->getPostId(), $force) !== false;
+    }
+
+    public function trash()
+    {
+        return wp_trash_post($this->getPostId());
     }
 
     public function stick()

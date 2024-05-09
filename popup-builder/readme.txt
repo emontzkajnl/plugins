@@ -6,9 +6,9 @@ Plugin URI: https://popup-builder.com
 Donate link: https://popup-builder.com
 Tags: popup, pop up, wordpress popup, popup maker, exit popup, popup builder, wordpress popup plugin
 Requires at least: 4.2
-Tested up to: 6.1
+Tested up to: 6.5
 Requires PHP: 5.3.3
-Stable tag: 4.1.15
+Stable tag: 4.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,6 +145,32 @@ Go to the Popup Builder settings and set your desired options.
 14. Registration popup
 
 == Changelog ==
+
+= Version 4.2.7 =
+* Fix vulnerabilities issue of Authenticated (Contributor+) Stored Cross-Site Scripting via Shortcode.
+
+= Version 4.2.6 =
+* Fix vulnerabilities on import file feature.
+
+= Version 4.2.5 =
+* Some minor code improvements
+
+= Version 4.2.4 =
+* Fixed another administrator security issue. 
+
+= Version 4.2.3 =
+* Fixed another security issue. 
+
+= Version 4.2.2 =
+* Fixed issue with special characters/language in the external URL.
+
+= Version 4.2.1 =
+* Fixed another vulnerabilities. 
+
+= Version 4.2.0 =
+* Fixed vulnerabilities
+* Bug fixed exit intent deactivation that triggers an error.
+* Bug fixed related to PHP 8.x errors that were visible.
 
 = Version 4.1.15 =
 * Minor optimization.

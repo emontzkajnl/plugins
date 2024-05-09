@@ -2,12 +2,12 @@
 
 use PublishPress\Future\Core\DI\Container;
 use PublishPress\Future\Core\DI\ServicesAbstract;
+use PublishPress\Future\Modules\Expirator\CapabilitiesAbstract;
 use PublishPress\Future\Modules\Expirator\Migrations\V30000WPCronToActionsScheduler;
 use PublishPress\Future\Modules\Expirator\Migrations\V30001RestorePostMeta;
 use PublishPress\Future\Modules\Expirator\Schemas\ActionArgsSchema;
 use PublishPress\Future\Modules\Settings\HooksAbstract as SettingsHooksAbstract;
 use PublishPress\Future\Modules\Expirator\HooksAbstract as ExpiratorHooksAbstract;
-use PublishPress\Future\Core\HooksAbstract as CoreHooksAbstract;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -28,15 +28,21 @@ class PostExpirator_Display
     private $cron;
 
     /**
+     * @var PublishPress\Future\Core\HookableInterface
+     */
+    private $hooks;
+
+    /**
      * Constructor.
      */
     private function __construct()
     {
-        $this->hooks();
-
         $container = Container::getInstance();
 
         $this->cron = $container->get(ServicesAbstract::CRON);
+        $this->hooks = $container->get(ServicesAbstract::HOOKS);
+
+        $this->hooks();
     }
 
     /**
@@ -44,7 +50,7 @@ class PostExpirator_Display
      */
     private function hooks()
     {
-        add_action('init', [$this, 'init']);
+        $this->hooks->addAction('init', [$this, 'init']);
     }
 
     /**
@@ -76,7 +82,7 @@ class PostExpirator_Display
             $this->$function();
         }
 
-        do_action(SettingsHooksAbstract::ACTION_LOAD_TAB, $tab);
+        $this->hooks->doAction(SettingsHooksAbstract::ACTION_LOAD_TAB, $tab);
     }
 
     /**
@@ -88,28 +94,26 @@ class PostExpirator_Display
             wp_die(esc_html__('You do not have permission to configure PublishPress Future.', 'post-expirator'));
         }
 
-        PostExpirator_Facade::load_assets('settings');
+        $allowed_tabs = ['defaults', 'general', 'display', 'advanced', 'diagnostics', 'viewdebug', ];
 
-        $allowed_tabs = array('general', 'display', 'defaults', 'advanced', 'diagnostics', 'viewdebug', );
-
-        $allowed_tabs = apply_filters(SettingsHooksAbstract::FILTER_ALLOWED_TABS, $allowed_tabs);
+        $allowed_tabs = $this->hooks->applyFilters(SettingsHooksAbstract::FILTER_ALLOWED_TABS, $allowed_tabs);
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : '';
         if (empty($tab) || ! in_array($tab, $allowed_tabs, true)) {
-            $tab = 'general';
+            $tab = 'defaults';
         }
 
         ob_start();
         $this->load_tab($tab);
         $html = ob_get_clean();
 
-        $debugIsEnabled = (bool)apply_filters(SettingsHooksAbstract::FILTER_DEBUG_ENABLED, false);
+        $debugIsEnabled = (bool)$this->hooks->applyFilters(SettingsHooksAbstract::FILTER_DEBUG_ENABLED, false);
         if (! $debugIsEnabled) {
             unset($allowed_tabs['viewdebug']);
         }
 
-        $this->render_template('tabs', array('tabs' => $allowed_tabs, 'html' => $html, 'tab' => $tab));
+        $this->render_template('tabs', ['tabs' => $allowed_tabs, 'html' => $html, 'tab' => $tab]);
 
         $this->publishpress_footer();
     }
@@ -117,7 +121,7 @@ class PostExpirator_Display
     private function menu_defaults()
     {
         $params = [
-            'showSideBar' => apply_filters(
+            'showSideBar' => $this->hooks->applyFilters(
                 SettingsHooksAbstract::FILTER_SHOW_PRO_BANNER,
                 ! defined('PUBLISHPRESS_FUTURE_LOADED_BY_PRO')
             ),
@@ -140,19 +144,18 @@ class PostExpirator_Display
                 print 'Form Validation Failure: Sorry, your nonce did not verify.';
                 exit;
             } else {
-                // Filter Content
-                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
                 // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-                update_option('expirationdateDisplayFooter', $_POST['expired-display-footer']);
-                update_option('expirationdateFooterContents', $_POST['expired-footer-contents']);
-                update_option('expirationdateFooterStyle', $_POST['expired-footer-style']);
+                update_option('expirationdateDefaultDateFormat', sanitize_text_field($_POST['expired-default-date-format']));
+                update_option('expirationdateDefaultTimeFormat', sanitize_text_field($_POST['expired-default-time-format']));
+                update_option('expirationdateDisplayFooter', (int)$_POST['expired-display-footer']);
+                update_option('expirationdateFooterContents', wp_kses($_POST['expired-footer-contents'], []));
+                update_option('expirationdateFooterStyle', wp_kses($_POST['expired-footer-style'], []));
                 // phpcs:enable
             }
         }
 
         $params = [
-            'showSideBar' => apply_filters(
+            'showSideBar' => $this->hooks->applyFilters(
                 SettingsHooksAbstract::FILTER_SHOW_PRO_BANNER,
                 ! defined('PUBLISHPRESS_FUTURE_LOADED_BY_PRO')
             ),
@@ -212,7 +215,7 @@ class PostExpirator_Display
                 );
                 echo '</p></div>';
             } elseif (isset($_POST['fix-db-schema'])) {
-                ActionArgsSchema::createTableIfNotExists();
+                ActionArgsSchema::fixSchema();
 
                 echo "<div id='message' class='updated fade'><p>";
                 if (ActionArgsSchema::tableExists()) {
@@ -231,7 +234,7 @@ class PostExpirator_Display
         }
 
         $params = [
-            'showSideBar' => apply_filters(
+            'showSideBar' => $this->hooks->applyFilters(
                 SettingsHooksAbstract::FILTER_SHOW_PRO_BANNER,
                 ! defined('PUBLISHPRESS_FUTURE_LOADED_BY_PRO')
             ),
@@ -248,7 +251,7 @@ class PostExpirator_Display
         require_once POSTEXPIRATOR_LEGACYDIR . '/debug.php';
 
         $params = [
-            'showSideBar' => apply_filters(
+            'showSideBar' => $this->hooks->applyFilters(
                 SettingsHooksAbstract::FILTER_SHOW_PRO_BANNER,
                 ! defined('PUBLISHPRESS_FUTURE_LOADED_BY_PRO')
             ),
@@ -272,12 +275,7 @@ class PostExpirator_Display
                 print 'Form Validation Failure: Sorry, your nonce did not verify.';
                 exit;
             } else {
-                // Filter Content
-                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
                 // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-                update_option('expirationdateDefaultDateFormat', sanitize_text_field($_POST['expired-default-date-format']));
-                update_option('expirationdateDefaultTimeFormat', sanitize_text_field($_POST['expired-default-time-format']));
                 update_option('expirationdateEmailNotification', sanitize_text_field($_POST['expired-email-notification']));
                 update_option('expirationdateEmailNotificationAdmins', sanitize_text_field($_POST['expired-email-notification-admins']));
                 update_option('expirationdateEmailNotificationList', trim(sanitize_text_field($_POST['expired-email-notification-list'])));
@@ -287,7 +285,12 @@ class PostExpirator_Display
                     isset($_POST['expirationdate_category']) ? PostExpirator_Util::sanitize_array_of_integers($_POST['expirationdate_category']) : []
                 );
                 update_option('expirationdateDefaultDate', 'custom');
-                update_option('expirationdateDefaultDateCustom', sanitize_text_field($_POST['expired-custom-expiration-date']));
+
+                $customExpirationDate = sanitize_text_field($_POST['expired-custom-expiration-date']);
+                $customExpirationDate = html_entity_decode($customExpirationDate, ENT_QUOTES);
+                $customExpirationDate = preg_replace('/["\'`]/', '', $customExpirationDate);
+
+                update_option('expirationdateDefaultDateCustom', trim($customExpirationDate));
                 // phpcs:enable
 
                 if (! isset($_POST['allow-user-roles']) || ! is_array($_POST['allow-user-roles'])) {
@@ -305,20 +308,20 @@ class PostExpirator_Display
 
                     // TODO: only allow roles that can edit posts. Filter in the form as well, adding a description.
                     if ($role_name === 'administrator' || in_array($role_name, $_POST['allow-user-roles'], true)) {
-                        $role->add_cap(PostExpirator_Facade::DEFAULT_CAPABILITY_EXPIRE_POST);
+                        $role->add_cap(CapabilitiesAbstract::EXPIRE_POST);
                     } else {
-                        $role->remove_cap(PostExpirator_Facade::DEFAULT_CAPABILITY_EXPIRE_POST);
+                        $role->remove_cap(CapabilitiesAbstract::EXPIRE_POST);
                     }
                 }
 
                 echo "<div id='message' class='updated fade'><p>";
-                _e('Saved Options!', 'post-expirator');
+                esc_html_e('Saved Options!', 'post-expirator');
                 echo '</p></div>';
             }
         }
 
         $params = [
-            'showSideBar' => apply_filters(
+            'showSideBar' => $this->hooks->applyFilters(
                 SettingsHooksAbstract::FILTER_SHOW_PRO_BANNER,
                 ! defined('PUBLISHPRESS_FUTURE_LOADED_BY_PRO')
             ),
@@ -342,15 +345,12 @@ class PostExpirator_Display
                 print 'Form Validation Failure: Sorry, your nonce did not verify.';
                 exit;
             } else {
-                // Filter Content
-                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-                update_option('expirationdateGutenbergSupport', sanitize_text_field($_POST['gutenberg-support']));
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
                 update_option('expirationdatePreserveData', (int)$_POST['expired-preserve-data-deactivating']);
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
                 update_option('expirationdateColumnStyle', sanitize_key($_POST['future-action-column-style']));
+                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                update_option('expirationdateTimeFormatForDatePicker', sanitize_key($_POST['future-action-time-format']));
 
                 if (! isset($_POST['allow-user-roles']) || ! is_array($_POST['allow-user-roles'])) {
                     $_POST['allow-user-roles'] = array();
@@ -366,20 +366,20 @@ class PostExpirator_Display
                     }
 
                     if ($role_name === 'administrator' || in_array($role_name, $_POST['allow-user-roles'], true)) {
-                        $role->add_cap(PostExpirator_Facade::DEFAULT_CAPABILITY_EXPIRE_POST);
+                        $role->add_cap(CapabilitiesAbstract::EXPIRE_POST);
                     } else {
-                        $role->remove_cap(PostExpirator_Facade::DEFAULT_CAPABILITY_EXPIRE_POST);
+                        $role->remove_cap(CapabilitiesAbstract::EXPIRE_POST);
                     }
                 }
 
                 echo "<div id='message' class='updated fade'><p>";
-                _e('Saved Options!', 'post-expirator');
+                esc_html_e('Saved Options!', 'post-expirator');
                 echo '</p></div>';
             }
         }
 
         $params = [
-            'showSideBar' => apply_filters(
+            'showSideBar' => $this->hooks->applyFilters(
                 SettingsHooksAbstract::FILTER_SHOW_PRO_BANNER,
                 ! defined('PUBLISHPRESS_FUTURE_LOADED_BY_PRO')
             ),
@@ -399,7 +399,7 @@ class PostExpirator_Display
          * @param string $name
          * @return null|array<string,mixed>
          */
-        $params = apply_filters(
+        $params = $this->hooks->applyFilters(
             ExpiratorHooksAbstract::FILTER_LEGACY_TEMPLATE_PARAMS,
             $params,
             $name
@@ -412,7 +412,7 @@ class PostExpirator_Display
          * @param null|array<string,mixed> $params
          * @return null|array<string,mixed>
          */
-        $template = apply_filters(
+        $template = $this->hooks->applyFilters(
             ExpiratorHooksAbstract::FILTER_LEGACY_TEMPLATE_FILE,
             POSTEXPIRATOR_BASEDIR . "/src/Views/{$name}.php",
             $name,
@@ -458,7 +458,8 @@ class PostExpirator_Display
                    rel="noopener noreferrer">
                     <?php
                     printf(
-                        esc_html__('If you like %s, please leave us a %s rating. Thank you!', 'post-expirator'),
+                        // translators: %1$s is the plugin name, %2$s is the star rating markup
+                        esc_html__('If you like %1$s, please leave us a %2$s rating. Thank you!', 'post-expirator'),
                         '<strong>PublishPress Future</strong>',
                         '<span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span>'
                     );
@@ -473,35 +474,25 @@ class PostExpirator_Display
                     <li>
                         <a href="https://publishpress.com/future/" target="_blank" rel="noopener noreferrer"
                            title="<?php
-                           _e('About PublishPress Future', 'post-expirator'); ?>">
+                           esc_attr_e('About PublishPress Future', 'post-expirator'); ?>">
                             <?php
-                            _e('About', 'post-expirator'); ?>
+                            esc_html_e('About', 'post-expirator'); ?>
                         </a>
                     </li>
                     <li>
-                        <a href="https://publishpress.com/knowledge-base/introduction-future/" target="_blank"
+                        <a href="https://publishpress.com/knowledge-base/future-introduction/" target="_blank"
                            rel="noopener noreferrer" title="<?php
-                        _e('Future Documentation', 'post-expirator'); ?>">
+                        esc_attr_e('Future Documentation', 'post-expirator'); ?>">
                             <?php
-                            _e('Documentation', 'post-expirator'); ?>
+                            esc_html_e('Documentation', 'post-expirator'); ?>
                         </a>
                     </li>
                     <li>
-                        <a href="https://publishpress.com/contact" target="_blank" rel="noopener noreferrer"
+                        <a href="https://publishpress.com/publishpress-support/" target="_blank" rel="noopener noreferrer"
                            title="<?php
-                           _e('Contact the PublishPress team', 'post-expirator'); ?>">
+                           esc_attr_e('Contact the PublishPress team', 'post-expirator'); ?>">
                             <?php
-                            _e('Contact', 'post-expirator'); ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://twitter.com/publishpresscom" target="_blank" rel="noopener noreferrer">
-                            <span class="dashicons dashicons-twitter"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://facebook.com/publishpress" target="_blank" rel="noopener noreferrer">
-                            <span class="dashicons dashicons-facebook"></span>
+                            esc_html_e('Contact', 'post-expirator'); ?>
                         </a>
                     </li>
                 </ul>

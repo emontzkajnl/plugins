@@ -2,7 +2,7 @@
 /*
 Plugin Name: Responsive Lightbox & Gallery
 Description: Responsive Lightbox & Gallery allows users to create galleries and view larger versions of images, galleries and videos in a lightbox (overlay) effect optimized for mobile devices.
-Version: 2.4.5
+Version: 2.4.7
 Author: dFactory
 Author URI: http://www.dfactory.co/
 Plugin URI: http://www.dfactory.co/products/responsive-lightbox/
@@ -12,7 +12,7 @@ Text Domain: responsive-lightbox
 Domain Path: /languages
 
 Responsive Lightbox & Gallery
-Copyright (C) 2013-2023, Digital Factory - info@digitalfactory.pl
+Copyright (C) 2013-2024, Digital Factory - info@digitalfactory.pl
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -44,7 +44,7 @@ include_once( RESPONSIVE_LIGHTBOX_PATH . 'includes' . DIRECTORY_SEPARATOR . 'fun
  * Responsive Lightbox class.
  *
  * @class Responsive_Lightbox
- * @version	2.4.5
+ * @version	2.4.7
  */
 class Responsive_Lightbox {
 
@@ -305,7 +305,7 @@ class Responsive_Lightbox {
 			'origin_left'		=> true,
 			'origin_top'		=> true
 		],
-		'version' => '2.4.5',
+		'version' => '2.4.7',
 		'activation_date' => ''
 	];
 	public $options = [];
@@ -797,9 +797,8 @@ class Responsive_Lightbox {
 				update_option( 'responsive_lightbox_settings', $this->options['settings'] );
 			}
 
-			if ( ( ! empty( $this->options['settings']['update_delay_date'] ) ? (int) $this->options['settings']['update_delay_date'] : $current_time ) <= $current_time ) {
+			if ( ( ! empty( $this->options['settings']['update_delay_date'] ) ? (int) $this->options['settings']['update_delay_date'] : $current_time ) <= $current_time )
 				$this->add_notice( sprintf( __( "Hey, you've been using <strong>Responsive Lightbox & Gallery</strong> for more than %s", 'responsive-lightbox' ), human_time_diff( $activation_date, $current_time ) ) . '<br />' . esc_html__( 'Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation.', 'responsive-lightbox' ) . '<br /><br />' . esc_html__( 'Your help is much appreciated. Thank you very much', 'responsive-lightbox' ) . ' ~ <strong>Bartosz Arendt</strong>, ' . sprintf( __( 'founder of <a href="%s" target="_blank">dFactory</a> plugins.', 'responsive-lightbox' ), 'http://www.dfactory.co' ) . '<br /><br />' . sprintf( __( '<a href="%s" class="rl-dismissible-notice" target="_blank" rel="noopener">Ok, you deserve it</a><br /><a href="#" class="rl-dismissible-notice rl-delay-notice" rel="noopener">Nope, maybe later</a><br /><a href="#" class="rl-dismissible-notice" rel="noopener">I already did</a>', 'responsive-lightbox' ), 'https://wordpress.org/support/plugin/responsive-lightbox/reviews/?filter=5#new-post' ), 'notice notice-info is-dismissible rl-notice' );
-			}
 		}
 	}
 
@@ -884,34 +883,38 @@ class Responsive_Lightbox {
 	public function admin_inline_js() {
 		if ( ! current_user_can( 'install_plugins' ) )
 			return;
-		?>
-		<script type="text/javascript">
+
+		// register and enqueue styles
+		wp_register_script( 'rl-notices', false );
+		wp_enqueue_script( 'rl-notices' );
+
+		// add styles
+		wp_add_inline_script( 'rl-notices', "
 			( function( $ ) {
 				// ready event
 				$( function() {
 					// save dismiss state
 					$( '.rl-notice.is-dismissible' ).on( 'click', '.notice-dismiss, .rl-dismissible-notice', function( e ) {
-						if ( $(this).attr( 'target' ) !== '_blank' )
+						if ( e.currentTarget.target !== '_blank' )
 							e.preventDefault();
 
 						var notice_action = 'hide';
 
-						if ( $( e.currentTarget ).hasClass( 'rl-delay-notice' ) )
+						if ( e.currentTarget.classList.contains( 'rl-delay-notice' ) )
 							notice_action = 'delay';
 
 						$.post( ajaxurl, {
 							action: 'rl_dismiss_notice',
 							notice_action: notice_action,
-							url: '<?php echo esc_url_raw( admin_url( 'admin-ajax.php' ) ); ?>',
-							nonce: '<?php echo wp_create_nonce( 'rl_dismiss_notice' ); ?>'
+							url: '" . esc_url_raw( admin_url( 'admin-ajax.php' ) ) . "',
+							nonce: '" . esc_attr( wp_create_nonce( 'rl_dismiss_notice' ) ) . "'
 						} );
 
 						$( e.delegateTarget ).slideUp( 'fast' );
 					} );
 				} );
 			} )( jQuery );
-		</script>
-		<?php
+		", 'after' );
 	}
 
 	/**

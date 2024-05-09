@@ -365,19 +365,19 @@ class CFF_Shortcode_Display {
 	 * -----------------------------------------
 	 */
 
-	static function get_author_name( $news ){
+	public static function get_author_name( $news ){
 		return isset($news->from->name) ? str_replace('"', "", $news->from->name) : '';
 	}
 
-	static function get_author_link_atts( $news, $target, $cff_nofollow, $cff_author_styles ){
+	public static function get_author_link_atts( $news, $target, $cff_nofollow, $cff_author_styles ){
 	 	return !isset($news->from->link) ? '' : ' href="https://facebook.com/' . $news->from->id . '" '.$target.$cff_nofollow.' '.$cff_author_styles;
 	}
 
-	static function get_author_link_el( $news ){
+	public static function get_author_link_el( $news ){
 		return !isset($news->from->link) ? 'span' : 'a';
 	}
 
-	static function get_author_post_text_story( $post_text_story, $cff_author_name ){
+	public static function get_author_post_text_story( $post_text_story, $cff_author_name ){
 		if( !empty($cff_author_name) ){
 			$cff_author_name_pos = strpos($post_text_story, $cff_author_name);
 			if ($cff_author_name_pos !== false) {
@@ -387,7 +387,7 @@ class CFF_Shortcode_Display {
 		return $post_text_story;
 	}
 
-	static function get_author_pic_src_class( $news, $atts ){
+	public static function get_author_pic_src_class( $news, $atts ){
 		$cff_author_src = $cff_author_img_src = isset($news->from->picture->data->url) ? $news->from->picture->data->url : '';
 		$img_class = '';
 		if ( CFF_GDPR_Integrations::doing_gdpr( $atts ) ){
@@ -410,7 +410,7 @@ class CFF_Shortcode_Display {
 	 * @since 2.19
 	 * -----------------------------------------
 	 */
-	static function get_date( $options, $atts, $news ){
+	public static function get_date( $options, $atts, $news ){
 		$cff_date_before = isset($atts[ 'beforedate' ]) && CFF_Utils::check_if_on($atts['beforedateenabled']) ? $atts[ 'beforedate' ] : '';
 		$cff_date_after = isset($atts[ 'afterdate' ]) && CFF_Utils::check_if_on($atts['afterdateenabled']) ? $atts[ 'afterdate' ] : '';
 		//Timezone. The post date is adjusted by the timezone offset in the cff_getdate function.
@@ -450,13 +450,13 @@ class CFF_Shortcode_Display {
 	 * @since 2.19
 	 * -----------------------------------------
 	 */
-	static function get_media_link_text( $atts, $cff_post_type, $cff_album ){
+	public static function get_media_link_text( $atts, $cff_post_type, $cff_album ){
 		$cff_translate_photo_text = CFF_Utils::return_value($atts['phototext'], esc_html__('Photo', 'custom-facebook-feed'));
 		$cff_translate_video_text = CFF_Utils::return_value($atts['videotext'], esc_html__('Video', 'custom-facebook-feed'));
 		return ( $cff_post_type == 'photo' || $cff_album ) ? $cff_translate_photo_text : $cff_translate_video_text;
 	}
 
-	static function get_media_link_icon( $cff_post_type, $cff_album ){
+	public static function get_media_link_icon( $cff_post_type, $cff_album ){
 		return ( $cff_post_type == 'photo' || $cff_album ) ? 'picture-o fa-image' : 'video-camera fa-video';
 	}
 
@@ -469,7 +469,7 @@ class CFF_Shortcode_Display {
 	 * @since 2.19
 	 * -----------------------------------------
 	 */
-	static function get_post_link_social_links( $link, $cff_post_text_to_share ){
+	public static function get_post_link_social_links( $link, $cff_post_text_to_share ){
 		return [
 			'facebook' => [
 				'icon' => 'facebook-square',
@@ -494,7 +494,7 @@ class CFF_Shortcode_Display {
 		];
 	}
 
-	static function get_post_link_text_to_share( $cff_post_text ){
+	public static function get_post_link_text_to_share( $cff_post_text ){
 		$cff_post_text_to_share = '';
 		if( strpos($cff_post_text, '<span class="cff-expand">') !== false ){
 			$cff_post_text_to_share = explode('<span class="cff-expand">', $cff_post_text);
@@ -503,7 +503,7 @@ class CFF_Shortcode_Display {
 		return $cff_post_text_to_share;
 	}
 
-	static function get_post_link_text_link( $atts, $cff_post_type ){
+	public static function get_post_link_text_link( $atts, $cff_post_type ){
 		$cff_facebook_link_text = $atts[ 'facebooklinktext' ];
 		$link_text = ($cff_facebook_link_text != '' && !empty($cff_facebook_link_text))  ? $cff_facebook_link_text : esc_html__('View on Facebook', 'custom-facebook-feed');
 		//If it's an offer post then change the text
@@ -511,7 +511,7 @@ class CFF_Shortcode_Display {
 		return $link_text;
 	}
 
-	static function get_post_link_fb_share_text( $atts ){
+	public static function get_post_link_fb_share_text( $atts ){
 		return ( $atts[ 'sharelinktext' ] ) ? $atts[ 'sharelinktext' ]  : esc_html__('Share', 'custom-facebook-feed');
 	}
 
@@ -524,15 +524,15 @@ class CFF_Shortcode_Display {
 	 * @since 2.19
 	 * -----------------------------------------
 	 */
-	static function get_post_text_title_format( $atts ){
+	public static function get_post_text_title_format( $atts ){
 		return ( empty($atts[ 'textformat' ]) || $atts[ 'textformat' ] == 'p' ) ? 'div' : sanitize_key( $atts[ 'textformat' ] );
 	}
 
-	static function get_post_text_link( $cff_post_type, $this_class, $link, $PostID ){
+	public static function get_post_text_link( $cff_post_type, $this_class, $link, $PostID ){
 		return ( $cff_post_type == 'link' || $cff_post_type == 'video' ) ? "https://www.facebook.com/" . $this_class->page_id . "/posts/" . $PostID[1] : $link;
 	}
 
-	static function get_post_text_contenttext( $post_text, $cff_linebreak_el, $cff_title_link ){
+	public static function get_post_text_contenttext( $post_text, $cff_linebreak_el, $cff_title_link ){
 		//Replace line breaks in text (needed for IE8 and to prevent lost line breaks in HTML minification)
 		$post_text = preg_replace("/\r\n|\r|\n/",$cff_linebreak_el, $post_text);
 		//If the text is wrapped in a link then don't hyperlink any text within
@@ -545,7 +545,7 @@ class CFF_Shortcode_Display {
 		endif;
 	}
 
-	static function get_post_text_call_to_actions( $atts, $news, $cff_title_styles, $cff_posttext_link_color, $cff_nofollow_referrer){
+	public static function get_post_text_call_to_actions( $atts, $news, $cff_title_styles, $cff_posttext_link_color, $cff_nofollow_referrer){
 		//Add a call to action button if included
 		if( isset($news->call_to_action->value->link) ){
 			$cff_cta_link = $news->call_to_action->value->link;
@@ -596,7 +596,7 @@ class CFF_Shortcode_Display {
 	 * @since 2.19
 	 * -----------------------------------------
 	 */
-	static function get_shared_link_caption( $news ){
+	public static function get_shared_link_caption( $news ){
 		$cff_link_caption = '';
 		if( !empty($news->link) ){
 			$cff_link_caption = htmlentities($news->link, ENT_QUOTES, 'UTF-8');
@@ -606,16 +606,16 @@ class CFF_Shortcode_Display {
 		return $cff_link_caption;
 	}
 
-	static function get_shared_link_title_format( $atts ){
+	public static function get_shared_link_title_format( $atts ){
 		return ( empty( $atts[ 'linktitleformat' ] ) ) ? 'p' : $atts[ 'linktitleformat' ];
 	}
 
-	static function get_shared_link_title_styles( $atts ){
+	public static function get_shared_link_title_styles( $atts ){
 		return ( !empty($atts[ 'linktitlesize' ]) && $atts[ 'linktitlesize' ] != 'inherit' ) ? 'style="font-size:' . $atts[ 'linktitlesize' ] . 'px;"' : '';
 	}
 
 
-	static function get_shared_link_description_text( $body_limit, $description_text, $cff_title_link, $cff_posttext_link_color ){
+	public static function get_shared_link_description_text( $body_limit, $description_text, $cff_title_link, $cff_posttext_link_color ){
 		//Truncate desc
 		if (!empty($body_limit)) {
 			if (strlen($description_text) > $body_limit) $description_text = substr($description_text, 0, $body_limit) . '...';
@@ -627,7 +627,7 @@ class CFF_Shortcode_Display {
 		return $description_text;
 	}
 
-	static function get_shared_link_description( $cff_title_link, $description_text ){
+	public static function get_shared_link_description( $cff_title_link, $description_text ){
 		$cff_link_description = '';
 		if ($cff_title_link) {
 			$cff_link_description =  CFF_Utils::cff_wrap_span( htmlspecialchars($description_text) );
@@ -648,7 +648,7 @@ class CFF_Shortcode_Display {
 	 * -----------------------------------------
 	 */
 
-	static function get_error_check( $page_id, $user_id, $access_token ){
+	public static function get_error_check( $page_id, $user_id, $access_token ){
 		$cff_ppca_check_error = false;
 		if( ! get_user_meta($user_id, 'cff_ppca_check_notice_dismiss') ){
 			$cff_posts_json_url = 'https://graph.facebook.com/v8.0/'.$page_id.'/posts?limit=1&access_token='.$access_token;
@@ -665,13 +665,13 @@ class CFF_Shortcode_Display {
 		return $cff_ppca_check_error;
 	}
 
-	static function get_error_message_cap( ){
+	public static function get_error_message_cap( ){
 		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
 		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
 		return $cap;
 	}
 
-	static function get_error_check_ppca( $FBdata ){
+	public static function get_error_check_ppca( $FBdata ){
 		//Is it a PPCA error from the API?
 		return ( isset($FBdata->error->message) && strpos($FBdata->error->message, 'Public Content Access') !== false ) ? true : false;
 	}
@@ -687,7 +687,7 @@ class CFF_Shortcode_Display {
 	 * -----------------------------------------
 	 */
 
-	static function get_likebox_height( $atts, $cff_like_box_small_header, $cff_like_box_faces ){
+	public static function get_likebox_height( $atts, $cff_like_box_small_header, $cff_like_box_faces ){
 		$cff_likebox_height = $atts[ 'likeboxheight' ];
 		$cff_likebox_height = preg_replace('/px$/', '', $cff_likebox_height);
 		//Calculate the like box height
@@ -699,17 +699,17 @@ class CFF_Shortcode_Display {
 	}
 
 
-	static function get_likebox_width( $atts ){
+	public static function get_likebox_width( $atts ){
 		$cff_likebox_custom_width =  isset( $atts[ 'likeboxcustomwidth' ] ) ? CFF_Utils::check_if_on($atts[ 'likeboxcustomwidth' ]) : false;
 		$cff_likebox_width = $cff_likebox_custom_width &&  isset($atts[ 'likeboxwidth' ]) && !empty($atts[ 'likeboxwidth' ]) ? $atts[ 'likeboxwidth' ] : 300;
 		return $cff_likebox_width;
 	}
 
-	static function get_likebox_classes( $atts ){
+	public static function get_likebox_classes( $atts ){
 		return "cff-likebox" . ( CFF_Utils::check_if_on($atts[ 'likeboxoutside' ]) ? " cff-outside" : '' ) . ( $atts[ 'likeboxpos' ] == 'top' ? ' cff-top' : ' cff-bottom' );
 	}
 
-	static function get_likebox_tag( $atts ){
+	public static function get_likebox_tag( $atts ){
 		return ( $atts[ 'likeboxpos' ] == 'top') ? 'section' : 'div';
 	}
 
@@ -722,12 +722,12 @@ class CFF_Shortcode_Display {
 	 * @since 2.19
 	 * -----------------------------------------
 	 */
-	static function get_header_txt_classes( $cff_header_outside ){
+	public static function get_header_txt_classes( $cff_header_outside ){
 		return ($cff_header_outside) ? " cff-outside" : '';
 	}
 
 
-	static function get_header_parts( $atts ){
+	public static function get_header_parts( $atts ){
 		if ( !empty( $atts['headerinc'] ) || !empty( $atts['headerexclude'] ) ) {
 			if ( !empty( $atts['headerinc'] ) ) {
 				$header_inc = explode( ',', str_replace( ' ', '', strtolower( $atts['headerinc'] ) ) );
@@ -753,17 +753,17 @@ class CFF_Shortcode_Display {
 		];
 	}
 
-	static function get_header_height_style( $atts ){
+	public static function get_header_height_style( $atts ){
 		$cff_header_cover_height = ! empty( $atts['headercoverheight'] ) ? (int)$atts['headercoverheight'] : 300;
 		$header_hero_style = $cff_header_cover_height !== 300 ? ' style="height: '.$cff_header_cover_height.'px";' : '';
 		return $header_hero_style;
 	}
 
-	static function get_header_font_size( $atts ){
+	public static function get_header_font_size( $atts ){
 		return !empty($atts['headertextsize']) ? 'style="font-size:'. esc_attr( $atts['headertextsize'] ) .'px;"'  : '';
 	}
 
-	static function get_header_link( $header_data, $page_id ){
+	public static function get_header_link( $header_data, $page_id ){
 		$link = CFF_Parse::get_link( $header_data );
 		if( $link == 'https://facebook.com' ) $link .= '/'.$page_id;
 		return $link;
@@ -788,7 +788,7 @@ class CFF_Shortcode_Display {
 	* PRINT THE GDPR NTOCE FOR ADMINS IN THE FRON END
 	*
 	*/
-	static function print_gdpr_notice($element_name, $custom_class = ''){
+	public static function print_gdpr_notice($element_name, $custom_class = ''){
 		if ( ! is_user_logged_in()  || ! current_user_can( 'edit_posts' )) {
 			return;
 		}

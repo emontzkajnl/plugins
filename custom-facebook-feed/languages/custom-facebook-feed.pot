@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Smash Balloon Custom Facebook Feed 4.1.8\n"
+"Project-Id-Version: Smash Balloon Custom Facebook Feed 4.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/custom-facebook-feed\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-22T19:40:03+00:00\n"
+"POT-Creation-Date: 2023-10-30T20:21:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.0\n"
 "X-Domain: custom-facebook-feed\n"
@@ -27,6 +27,7 @@ msgid "Add completely customizable Facebook feeds to your WordPress site"
 msgstr ""
 
 #. Author of the plugin
+#: inc/Admin/CFF_Onboarding_Wizard.php:110
 #: inc/CFF_Blocks.php:198
 #: inc/CFF_Elementor_Base.php:79
 msgid "Smash Balloon"
@@ -61,7 +62,7 @@ msgid "Could not activate addon. Please activate from the Plugins page."
 msgstr ""
 
 #: admin/addon-functions.php:90
-#: admin/enqueu-script.php:63
+#: admin/enqueu-script.php:65
 #: inc/Admin/CFF_Admin.php:189
 msgid "Could not install addon. Please download from smashballoon.com and install manually."
 msgstr ""
@@ -84,126 +85,126 @@ msgstr ""
 msgid "Addon installed."
 msgstr ""
 
-#: admin/admin-functions.php:67
+#: admin/admin-functions.php:68
 msgid "Try the Pro Demo"
 msgstr ""
 
-#: admin/admin-functions.php:274
+#: admin/admin-functions.php:275
 msgid "Facebook oEmbeds will no longer be handled by Custom Facebook Feed."
 msgstr ""
 
-#: admin/admin-functions.php:276
+#: admin/admin-functions.php:277
 msgid "An error occurred when trying to disable your oEmbed token."
 msgstr ""
 
-#: admin/admin-functions.php:317
+#: admin/admin-functions.php:318
 msgid "You are currently using Custom CSS or JavaScript in the Custom Facebook Feed plugin, however, these settings have now been deprecated. To continue using any custom code, please go to the Custom CSS and JS settings %shere%s and follow the directions."
 msgstr ""
 
-#: admin/admin-functions.php:319
+#: admin/admin-functions.php:320
 msgid "You are currently using Custom CSS in the Custom Facebook Feed plugin, however, this setting has now been deprecated. Your CSS has been moved to the \"Additional CSS\" field in the WordPress Customizer %shere%s instead."
 msgstr ""
 
-#: admin/admin-functions.php:321
+#: admin/admin-functions.php:322
 msgid "Dismiss"
 msgstr ""
 
 #: admin/builder/templates/sections/footer.php:39
-#: admin/views/sections/sticky_widget.php:18
+#: admin/views/sections/sticky_widget.php:19
 msgid "Our Feeds for other platforms"
 msgstr ""
 
 #: admin/builder/templates/sections/footer.php:55
-#: admin/views/sections/sticky_widget.php:34
+#: admin/views/sections/sticky_widget.php:35
 msgid "Follow Us"
 msgstr ""
 
-#: admin/enqueu-script.php:57
-#: admin/enqueu-script.php:75
+#: admin/enqueu-script.php:59
+#: admin/enqueu-script.php:77
 #: inc/Admin/CFF_About.php:400
 #: inc/Admin/CFF_About_Us.php:234
 #: inc/Admin/CFF_Admin.php:183
 #: inc/Admin/CFF_Admin.php:201
 #: inc/Admin/CFF_Global_Settings.php:913
-#: inc/Builder/CFF_Feed_Builder.php:149
-#: inc/Builder/CFF_Feed_Builder.php:1055
+#: inc/Builder/CFF_Feed_Builder.php:153
+#: inc/Builder/CFF_Feed_Builder.php:1069
 msgid "Activate"
 msgstr ""
 
-#: admin/enqueu-script.php:58
+#: admin/enqueu-script.php:60
 #: inc/Admin/CFF_About.php:392
 #: inc/Admin/CFF_Admin.php:184
 #: assets/dist/blocks.js:1
 msgid "Activated"
 msgstr ""
 
-#: admin/enqueu-script.php:59
+#: admin/enqueu-script.php:61
 #: inc/Admin/CFF_About.php:389
 #: inc/Admin/CFF_Admin.php:185
 msgid "Active"
 msgstr ""
 
-#: admin/enqueu-script.php:60
+#: admin/enqueu-script.php:62
 #: inc/Admin/CFF_About_Us.php:235
 #: inc/Admin/CFF_Admin.php:186
 #: inc/Admin/CFF_Global_Settings.php:912
 msgid "Deactivate"
 msgstr ""
 
-#: admin/enqueu-script.php:61
+#: admin/enqueu-script.php:63
 #: inc/Admin/CFF_About.php:397
 #: inc/Admin/CFF_Admin.php:187
 msgid "Inactive"
 msgstr ""
 
-#: admin/enqueu-script.php:62
+#: admin/enqueu-script.php:64
 #: inc/Admin/CFF_Admin.php:188
 msgid "Install Addon"
 msgstr ""
 
-#: admin/enqueu-script.php:64
+#: admin/enqueu-script.php:66
 #: inc/Admin/CFF_Admin.php:190
 msgid "Could not install a plugin. Please download from WordPress.org and install manually."
 msgstr ""
 
-#: admin/enqueu-script.php:65
+#: admin/enqueu-script.php:67
 #: inc/Admin/CFF_Admin.php:191
 msgid "Searching Addons"
 msgstr ""
 
-#: admin/enqueu-script.php:67
+#: admin/enqueu-script.php:69
 #: inc/Admin/CFF_Admin.php:193
 #: inc/Admin/CFF_oEmbeds.php:204
-#: inc/Builder/CFF_Feed_Builder.php:1000
+#: inc/Builder/CFF_Feed_Builder.php:1013
 msgid "Cancel"
 msgstr ""
 
-#: admin/enqueu-script.php:68
+#: admin/enqueu-script.php:70
 #: inc/Admin/CFF_Admin.php:194
 msgid "Close"
 msgstr ""
 
-#: admin/enqueu-script.php:70
+#: admin/enqueu-script.php:72
 #: inc/Admin/CFF_Admin.php:196
 msgid "Almost Done"
 msgstr ""
 
-#: admin/enqueu-script.php:71
+#: admin/enqueu-script.php:73
 #: inc/Admin/CFF_Admin.php:197
 msgid "Oops!"
 msgstr ""
 
-#: admin/enqueu-script.php:72
+#: admin/enqueu-script.php:74
 #: inc/Admin/CFF_Admin.php:198
 msgid "OK"
 msgstr ""
 
-#: admin/enqueu-script.php:73
+#: admin/enqueu-script.php:75
 #: inc/Admin/CFF_Admin.php:199
 msgid "Install and Activate"
 msgstr ""
 
-#: admin/enqueu-script.php:74
+#: admin/enqueu-script.php:76
 #: inc/Admin/CFF_Admin.php:200
 msgid "needs to be installed and activated to import its forms. Would you like us to install and activate it for you?"
 msgstr ""
@@ -227,20 +228,20 @@ msgid "Sources"
 msgstr ""
 
 #: admin/templates/locator-summary.php:31
-#: inc/Builder/CFF_Feed_Builder.php:578
-#: inc/Builder/CFF_Feed_Builder.php:977
-#: inc/Builder/CFF_Feed_Builder.php:1004
+#: inc/Builder/CFF_Feed_Builder.php:586
+#: inc/Builder/CFF_Feed_Builder.php:990
+#: inc/Builder/CFF_Feed_Builder.php:1017
 msgid "Shortcode"
 msgstr ""
 
 #: admin/templates/locator-summary.php:32
-#: inc/Builder/CFF_Feed_Builder.php:985
+#: inc/Builder/CFF_Feed_Builder.php:998
 msgid "Location"
 msgstr ""
 
 #: admin/templates/locator-summary.php:74
-#: inc/Builder/CFF_Feed_Builder.php:1085
-#: inc/Builder/CFF_Feed_Builder.php:1086
+#: inc/Builder/CFF_Feed_Builder.php:1099
+#: inc/Builder/CFF_Feed_Builder.php:1100
 #: inc/Builder/Tabs/CFF_Settings_Tab.php:231
 msgid "Show"
 msgstr ""
@@ -249,35 +250,35 @@ msgstr ""
 msgid "Locations of your feeds are currently being detected. You'll see more information posted here soon!"
 msgstr ""
 
-#: custom-facebook-feed.php:96
+#: custom-facebook-feed.php:101
 msgid "Important:"
 msgstr ""
 
-#: custom-facebook-feed.php:96
+#: custom-facebook-feed.php:101
 msgid "Your website is using an outdated version of PHP. The Custom Facebook Feed plugin requires PHP version 5.6 or higher and so has been temporarily deactivated."
 msgstr ""
 
-#: custom-facebook-feed.php:100
+#: custom-facebook-feed.php:105
 msgid "To continue using the plugin"
 msgstr ""
 
-#: custom-facebook-feed.php:103
+#: custom-facebook-feed.php:108
 msgid "either use the button below to revert back to the previous version"
 msgstr ""
 
-#: custom-facebook-feed.php:105
+#: custom-facebook-feed.php:110
 msgid "you can either manually reinstall the previous version of the plugin (%s) "
 msgstr ""
 
-#: custom-facebook-feed.php:105
+#: custom-facebook-feed.php:110
 msgid "download"
 msgstr ""
 
-#: custom-facebook-feed.php:108
+#: custom-facebook-feed.php:113
 msgid "or contact your host to request that they upgrade your PHP version to 5.6 or higher."
 msgstr ""
 
-#: custom-facebook-feed.php:113
+#: custom-facebook-feed.php:118
 msgid "Revert Back to Previous Version"
 msgstr ""
 
@@ -290,7 +291,7 @@ msgid "Post Source"
 msgstr ""
 
 #: inc/Admin/CFF_About.php:79
-#: inc/Builder/CFF_Feed_Builder.php:1873
+#: inc/Builder/CFF_Feed_Builder.php:1887
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:185
 msgid "Number of Posts"
 msgstr ""
@@ -300,7 +301,7 @@ msgid "Filtering"
 msgstr ""
 
 #: inc/Admin/CFF_About.php:84
-#: inc/Builder/CFF_Feed_Builder.php:1859
+#: inc/Builder/CFF_Feed_Builder.php:1873
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:38
 msgid "Feed Layout"
 msgstr ""
@@ -314,7 +315,7 @@ msgid "Comments"
 msgstr ""
 
 #: inc/Admin/CFF_About.php:87
-#: inc/Builder/CFF_Feed_Builder.php:2687
+#: inc/Builder/CFF_Feed_Builder.php:2701
 msgid "Extensions"
 msgstr ""
 
@@ -326,7 +327,7 @@ msgstr ""
 #: inc/Admin/CFF_About_Us.php:58
 #: inc/Admin/CFF_About_Us.php:59
 #: inc/Admin/CFF_About_Us.php:151
-#: inc/Builder/CFF_Feed_Builder.php:2688
+#: inc/Builder/CFF_Feed_Builder.php:2702
 msgid "About Us"
 msgstr ""
 
@@ -511,7 +512,7 @@ msgstr ""
 #: inc/Admin/CFF_About_Us.php:320
 #: inc/Admin/CFF_Admin.php:95
 #: inc/Admin/CFF_Admin.php:96
-#: inc/Builder/CFF_Feed_Builder.php:2290
+#: inc/Builder/CFF_Feed_Builder.php:2304
 msgid "Instagram Feed"
 msgstr ""
 
@@ -521,8 +522,8 @@ msgid "Instagram Feed is a clean and beautiful way to add your Instagram posts t
 msgstr ""
 
 #: inc/Admin/CFF_About.php:811
-#: inc/Builder/CFF_Feed_Builder.php:335
-#: inc/Builder/CFF_Feed_Builder.php:1694
+#: inc/Builder/CFF_Feed_Builder.php:343
+#: inc/Builder/CFF_Feed_Builder.php:1708
 msgid "Instagram Feed Pro"
 msgstr ""
 
@@ -533,18 +534,18 @@ msgstr ""
 
 #: inc/Admin/CFF_About.php:821
 #: inc/Admin/CFF_About.php:827
-#: inc/Builder/CFF_Feed_Builder.php:2304
+#: inc/Builder/CFF_Feed_Builder.php:2318
 msgid "Custom Twitter Feeds is a highly customizable way to display tweets from your Twitter account. Promote your latest content and update your site content automatically."
 msgstr ""
 
 #: inc/Admin/CFF_About.php:826
-#: inc/Builder/CFF_Feed_Builder.php:334
+#: inc/Builder/CFF_Feed_Builder.php:342
 msgid "Custom Twitter Feeds Pro"
 msgstr ""
 
 #: inc/Admin/CFF_About.php:835
 #: inc/Admin/CFF_About_Us.php:340
-#: inc/Builder/CFF_Feed_Builder.php:2314
+#: inc/Builder/CFF_Feed_Builder.php:2328
 msgid "Feeds for YouTube"
 msgstr ""
 
@@ -560,6 +561,7 @@ msgstr ""
 #: inc/Admin/CFF_About.php:850
 #: inc/Admin/CFF_About.php:856
 #: inc/Admin/CFF_About_Us.php:177
+#: inc/Admin/CFF_Onboarding_Wizard.php:501
 msgid "WPForms"
 msgstr ""
 
@@ -586,6 +588,7 @@ msgstr ""
 
 #: inc/Admin/CFF_About.php:880
 #: inc/Admin/CFF_About_Us.php:195
+#: inc/Admin/CFF_Onboarding_Wizard.php:527
 msgid "OptinMonster"
 msgstr ""
 
@@ -812,8 +815,8 @@ msgstr ""
 #: inc/Admin/CFF_About_Us.php:150
 #: inc/Admin/CFF_oEmbeds.php:173
 #: inc/Admin/CFF_Support.php:163
-#: inc/Builder/CFF_Feed_Builder.php:991
-#: inc/Builder/CFF_Feed_Builder.php:1836
+#: inc/Builder/CFF_Feed_Builder.php:1004
+#: inc/Builder/CFF_Feed_Builder.php:1850
 msgid "Help"
 msgstr ""
 
@@ -846,8 +849,8 @@ msgid "Smash Balloon Team"
 msgstr ""
 
 #: inc/Admin/CFF_About_Us.php:166
-#: inc/Builder/CFF_Feed_Builder.php:324
-#: inc/Builder/CFF_Feed_Builder.php:1249
+#: inc/Builder/CFF_Feed_Builder.php:332
+#: inc/Builder/CFF_Feed_Builder.php:1263
 msgid "Social Wall"
 msgstr ""
 
@@ -860,27 +863,29 @@ msgid "All in One SEO Pack"
 msgstr ""
 
 #: inc/Admin/CFF_About_Us.php:223
+#: inc/Admin/CFF_Onboarding_Wizard.php:478
 msgid "Out-of-the-box SEO for WordPress. Features like XML Sitemaps, SEO for custom post types, SEO for blogs, business sites, or ecommerce sites, and much more."
 msgstr ""
 
 #: inc/Admin/CFF_About_Us.php:230
-#: inc/Builder/CFF_Feed_Builder.php:965
+#: inc/Builder/CFF_Feed_Builder.php:978
 msgid "Add"
 msgstr ""
 
 #: inc/Admin/CFF_About_Us.php:231
-#: inc/Builder/CFF_Feed_Builder.php:968
+#: inc/Builder/CFF_Feed_Builder.php:981
 msgid "View Demo"
 msgstr ""
 
 #: inc/Admin/CFF_About_Us.php:232
-#: inc/Builder/CFF_Feed_Builder.php:140
-#: inc/Builder/CFF_Feed_Builder.php:1053
+#: inc/Admin/CFF_Onboarding_Wizard.php:293
+#: inc/Builder/CFF_Feed_Builder.php:144
+#: inc/Builder/CFF_Feed_Builder.php:1067
 msgid "Install"
 msgstr ""
 
 #: inc/Admin/CFF_About_Us.php:233
-#: inc/Builder/CFF_Feed_Builder.php:1054
+#: inc/Builder/CFF_Feed_Builder.php:1068
 msgid "Installed"
 msgstr ""
 
@@ -890,8 +895,8 @@ msgstr ""
 
 #: inc/Admin/CFF_About_Us.php:237
 #: inc/Admin/CFF_Admin.php:71
-#: inc/Builder/CFF_Feed_Builder.php:1090
-#: inc/Builder/CFF_Feed_Builder.php:1683
+#: inc/Builder/CFF_Feed_Builder.php:1104
+#: inc/Builder/CFF_Feed_Builder.php:1697
 msgid "Upgrade to Pro"
 msgstr ""
 
@@ -927,7 +932,7 @@ msgstr ""
 
 #: inc/Admin/CFF_Admin.php:107
 #: inc/Admin/CFF_Admin.php:108
-#: inc/Builder/CFF_Feed_Builder.php:2302
+#: inc/Builder/CFF_Feed_Builder.php:2316
 msgid "Twitter Feed"
 msgstr ""
 
@@ -955,7 +960,7 @@ msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:718
 #: inc/Admin/CFF_Global_Settings.php:911
-#: inc/Builder/CFF_Feed_Builder.php:960
+#: inc/Builder/CFF_Feed_Builder.php:973
 msgid "Upgrade"
 msgstr ""
 
@@ -976,11 +981,11 @@ msgid "This license is invalid."
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:775
-#: inc/Builder/CFF_Feed_Builder.php:951
-#: inc/Builder/CFF_Feed_Builder.php:961
-#: inc/Builder/CFF_Feed_Builder.php:1815
-#: inc/Builder/CFF_Feed_Builder.php:1856
-#: inc/Builder/CFF_Feed_Builder.php:2685
+#: inc/Builder/CFF_Feed_Builder.php:963
+#: inc/Builder/CFF_Feed_Builder.php:974
+#: inc/Builder/CFF_Feed_Builder.php:1829
+#: inc/Builder/CFF_Feed_Builder.php:1870
+#: inc/Builder/CFF_Feed_Builder.php:2699
 #: inc/Builder/Tabs/CFF_Builder_Customizer_Tab.php:33
 msgid "Settings"
 msgstr ""
@@ -1087,11 +1092,12 @@ msgid "Export"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:937
+#: inc/Admin/CFF_Onboarding_Wizard.php:173
 msgid "Localization"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:941
-#: inc/Builder/CFF_Feed_Builder.php:1958
+#: inc/Builder/CFF_Feed_Builder.php:1972
 msgid "Timezone"
 msgstr ""
 
@@ -1262,20 +1268,20 @@ msgid "Context"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1009
-#: inc/Builder/CFF_Feed_Builder.php:1937
+#: inc/Builder/CFF_Feed_Builder.php:1951
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1450
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1454
 msgid "Post Text"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1010
-#: inc/Builder/CFF_Feed_Builder.php:2128
+#: inc/Builder/CFF_Feed_Builder.php:2142
 #: inc/CFF_Shortcode.php:2223
 msgid "See More"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1011
-#: inc/Builder/CFF_Feed_Builder.php:2129
+#: inc/Builder/CFF_Feed_Builder.php:2143
 #: inc/CFF_Shortcode.php:2224
 msgid "See Less"
 msgstr ""
@@ -1285,7 +1291,7 @@ msgid "Used when truncating the post text"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1013
-#: inc/Builder/CFF_Feed_Builder.php:1208
+#: inc/Builder/CFF_Feed_Builder.php:1222
 msgid "Events"
 msgstr ""
 
@@ -1330,8 +1336,8 @@ msgid "Shown when there is a link to buy event tickets"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1024
-#: inc/Builder/CFF_Feed_Builder.php:1943
-#: inc/Builder/CFF_Feed_Builder.php:2608
+#: inc/Builder/CFF_Feed_Builder.php:1957
+#: inc/Builder/CFF_Feed_Builder.php:2622
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1507
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1511
 msgid "Post Action Links"
@@ -1372,7 +1378,7 @@ msgid "Media"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1032
-#: inc/Builder/CFF_Feed_Builder.php:971
+#: inc/Builder/CFF_Feed_Builder.php:984
 #: inc/CFF_Shortcode_Display.php:454
 msgid "Photo"
 msgstr ""
@@ -1404,8 +1410,8 @@ msgid "Used when there are no more posts to load"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1039
-#: inc/Builder/CFF_Feed_Builder.php:1940
-#: inc/Builder/CFF_Feed_Builder.php:2528
+#: inc/Builder/CFF_Feed_Builder.php:1954
+#: inc/Builder/CFF_Feed_Builder.php:2542
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1575
 msgid "Likes, Shares and Comments"
 msgstr ""
@@ -1419,7 +1425,7 @@ msgid "Used in the comments section (when applicable)"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1042
-#: inc/Builder/CFF_Feed_Builder.php:2145
+#: inc/Builder/CFF_Feed_Builder.php:2159
 msgid "Comment on Facebook"
 msgstr ""
 
@@ -1501,7 +1507,7 @@ msgid "Call to Action Buttons"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1062
-#: inc/Builder/CFF_Feed_Builder.php:984
+#: inc/Builder/CFF_Feed_Builder.php:997
 #: inc/Builder/CFF_Tooltip_Wizard.php:129
 #: inc/CFF_Shortcode.php:2228
 msgid "Learn More"
@@ -1539,7 +1545,7 @@ msgid "Get Directions"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1070
-#: inc/Builder/CFF_Feed_Builder.php:1938
+#: inc/Builder/CFF_Feed_Builder.php:1952
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1465
 #: inc/Builder/Tabs/CFF_Settings_Tab.php:590
 msgid "Date"
@@ -1547,7 +1553,7 @@ msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1071
 #: inc/Admin/CFF_Global_Settings.php:1072
-#: inc/Builder/CFF_Feed_Builder.php:2130
+#: inc/Builder/CFF_Feed_Builder.php:2144
 msgid "second"
 msgstr ""
 
@@ -1609,67 +1615,67 @@ msgid "Used for “Posted __ years ago”"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1088
-#: inc/Builder/CFF_Feed_Builder.php:2132
+#: inc/Builder/CFF_Feed_Builder.php:2146
 msgid "minute"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1089
-#: inc/Builder/CFF_Feed_Builder.php:2133
+#: inc/Builder/CFF_Feed_Builder.php:2147
 msgid "minutes"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1090
-#: inc/Builder/CFF_Feed_Builder.php:2134
+#: inc/Builder/CFF_Feed_Builder.php:2148
 msgid "hour"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1091
-#: inc/Builder/CFF_Feed_Builder.php:2135
+#: inc/Builder/CFF_Feed_Builder.php:2149
 msgid "hours"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1092
-#: inc/Builder/CFF_Feed_Builder.php:2136
+#: inc/Builder/CFF_Feed_Builder.php:2150
 msgid "day"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1093
-#: inc/Builder/CFF_Feed_Builder.php:2137
+#: inc/Builder/CFF_Feed_Builder.php:2151
 msgid "days"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1094
-#: inc/Builder/CFF_Feed_Builder.php:2138
+#: inc/Builder/CFF_Feed_Builder.php:2152
 msgid "week"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1095
-#: inc/Builder/CFF_Feed_Builder.php:2139
+#: inc/Builder/CFF_Feed_Builder.php:2153
 msgid "weeks"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1096
-#: inc/Builder/CFF_Feed_Builder.php:2140
+#: inc/Builder/CFF_Feed_Builder.php:2154
 msgid "month"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1097
-#: inc/Builder/CFF_Feed_Builder.php:2141
+#: inc/Builder/CFF_Feed_Builder.php:2155
 msgid "months"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1098
-#: inc/Builder/CFF_Feed_Builder.php:2142
+#: inc/Builder/CFF_Feed_Builder.php:2156
 msgid "year"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1099
-#: inc/Builder/CFF_Feed_Builder.php:2143
+#: inc/Builder/CFF_Feed_Builder.php:2157
 msgid "years"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1100
-#: inc/Builder/CFF_Feed_Builder.php:2144
+#: inc/Builder/CFF_Feed_Builder.php:2158
 msgid "ago"
 msgstr ""
 
@@ -1682,7 +1688,7 @@ msgid "This will create multiple local copies of images in different sizes. The 
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1107
-#: inc/Builder/CFF_Feed_Builder.php:994
+#: inc/Builder/CFF_Feed_Builder.php:1007
 msgid "Reset"
 msgstr ""
 
@@ -1787,12 +1793,14 @@ msgid "Delete all Platform Data"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1174
-#: inc/Builder/CFF_Feed_Builder.php:658
-#: inc/Builder/CFF_Feed_Builder.php:662
+#: inc/Builder/CFF_Feed_Builder.php:666
+#: inc/Builder/CFF_Feed_Builder.php:670
+#: inc/Builder/CFF_Feed_Builder.php:682
 msgid "Delete \"#\"?"
 msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:1175
+#: inc/Builder/CFF_Feed_Builder.php:683
 msgid "This source is being used in a feed on your site. If you delete this source then new posts can no longer be retrieved for these feeds."
 msgstr ""
 
@@ -1902,7 +1910,7 @@ msgstr ""
 #: inc/Admin/CFF_oEmbeds.php:62
 #: inc/Admin/CFF_oEmbeds.php:63
 #: inc/Admin/CFF_oEmbeds.php:174
-#: inc/Builder/CFF_Feed_Builder.php:2686
+#: inc/Builder/CFF_Feed_Builder.php:2700
 msgid "oEmbeds"
 msgstr ""
 
@@ -1927,7 +1935,7 @@ msgid "Instagram oEmbeds are turned on"
 msgstr ""
 
 #: inc/Admin/CFF_oEmbeds.php:180
-#: inc/Builder/CFF_Feed_Builder.php:1840
+#: inc/Builder/CFF_Feed_Builder.php:1854
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:513
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:948
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1112
@@ -1983,10 +1991,229 @@ msgstr ""
 msgid "Activate Plugin"
 msgstr ""
 
+#: inc/Admin/CFF_Onboarding_Wizard.php:88
+#: inc/Admin/CFF_Onboarding_Wizard.php:89
+#: inc/Builder/CFF_Feed_Builder.php:965
+msgid "Setup"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:111
+msgid "Facebook Feed by"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:118
+msgid "Connect a Facebook Account!"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:119
+msgid "Setup Features!"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:120
+msgid "Feed plugins for # installed"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:126
+msgid "Let's set up your plugin!"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:127
+msgid "Ready to add a dash of Facebook to your website? Setting up your first feed is quick and easy. We'll get you up and running in no time."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:128
+msgid "Launch the Setup Wizard"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:136
+msgid "Connect your Facebook Account"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:137
+msgid "STEP 1"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:142
+msgid "Configure features"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:143
+msgid "STEP 2"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:146
+msgid "Facebook User Feed"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:147
+msgid "Create and display Facebook feeds from connected accounts"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:158
+msgid "Downtime Prevention"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:159
+msgid "Prevent downtime in the event your feed is unable to update"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:174
+msgid "This controls the language of any predefined text strings provided by Facebook."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:183
+msgid "Images and Videos"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:184
+msgid "Display images and play videos from your Facebook posts."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:190
+msgid "Albums, Events, and More"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:191
+msgid "Create feeds from your albums page. Show upcoming and past events."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:197
+msgid "Load More Posts"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:198
+msgid "Visitors can load more posts to see more of your content."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:208
+msgid "You might also be interested in..."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:209
+msgid "Enable your favorite features and disable the ones you don't need"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:215
+msgid "Awesome. You are all set up!"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:216
+msgid "Here's an overview of everything that is setup"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:218
+msgid "Upgrade to unlock hashtag feeds, tagged feeds, a popup lightbox and more"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:219
+msgid "To unlock these features and much more, upgrade to Pro and enter your license key below."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:221
+msgid "Upgrade to Facebook Feed Pro"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:225
+msgid "Upgrade today and %ssave 50%% on a Pro License!%s%s (auto-applied at checkout)"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:234
+msgid "Hashtag Feeds"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:238
+msgid "Tagged Feeds"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:242
+#: inc/Builder/Tabs/CFF_Customize_Tab.php:95
+msgid "Lightbox"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:246
+msgid "And many more"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:292
+msgid "Social Feed Collection"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:293
+msgid "feed plugins for more fresh content"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:447
+msgid "Customer Reviews Plugin"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:448
+msgid "Install Reviews Feed to display customer reviews from Google or Yelp and build trust"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:475
+msgid "All in One SEO"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:477
+msgid "All in One SEO Toolkit"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:488
+msgid "Monster Insights"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:490
+msgid "Analytics by MonsterInsights"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:491
+msgid "Make it “effortless” to connect your WordPress site with Google Analytics, so you can start making data-driven decisions to grow your business."
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:503
+msgid "Forms by WPForms"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:504
+msgid "Create contact, subscription or payment forms with the most beginner friendly drag & drop WordPress forms plugin"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:514
+msgid "SeedProd"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:516
+msgid "SeedProd Website Builder"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:517
+msgid "A simple and powerful theme builder, landing page builder, \"coming soon\" page builder, and maintenance mode notice builder"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:529
+msgid "OptinMonster Popup Builder"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:530
+msgid "Make popups & opt-in forms to build your email newsletter subscribers, generate leads, and close sales"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:540
+msgid "PushEngage"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:542
+msgid "PushEngage Notifications"
+msgstr ""
+
+#: inc/Admin/CFF_Onboarding_Wizard.php:543
+msgid "Create and send high-converting web push notifications to your website visitors."
+msgstr ""
+
 #: inc/Admin/CFF_Support.php:66
 #: inc/Admin/CFF_Support.php:67
 #: inc/Admin/CFF_Support.php:164
-#: inc/Builder/CFF_Feed_Builder.php:2689
+#: inc/Builder/CFF_Feed_Builder.php:2703
 msgid "Support"
 msgstr ""
 
@@ -2056,7 +2283,7 @@ msgstr ""
 
 #: inc/Admin/CFF_Support.php:184
 #: inc/Admin/CFF_Support.php:186
-#: inc/Builder/CFF_Feed_Builder.php:973
+#: inc/Builder/CFF_Feed_Builder.php:986
 msgid "Copy"
 msgstr ""
 
@@ -2162,206 +2389,80 @@ msgstr ""
 msgid "We encountered a problem unlocking the PRO features. Please install the PRO version manually."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:155
+#: inc/Builder/CFF_Feed_Builder.php:159
 msgid "Plugin installed & activated"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:175
-#: inc/Builder/CFF_Feed_Builder.php:176
-#: inc/Builder/CFF_Feed_Builder.php:218
-#: inc/Builder/CFF_Feed_Builder.php:575
-#: inc/Builder/CFF_Feed_Builder.php:2684
+#: inc/Builder/CFF_Feed_Builder.php:179
+#: inc/Builder/CFF_Feed_Builder.php:180
+#: inc/Builder/CFF_Feed_Builder.php:226
+#: inc/Builder/CFF_Feed_Builder.php:583
+#: inc/Builder/CFF_Feed_Builder.php:2698
 msgid "All Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:219
+#: inc/Builder/CFF_Feed_Builder.php:227
 msgid "Create your Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:220
+#: inc/Builder/CFF_Feed_Builder.php:228
 msgid "Select your feed type and connect your Facebook page or group"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:221
+#: inc/Builder/CFF_Feed_Builder.php:229
 msgid "Customize your feed type"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:222
+#: inc/Builder/CFF_Feed_Builder.php:230
 msgid "Choose layouts, color schemes, and more"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:223
+#: inc/Builder/CFF_Feed_Builder.php:231
 msgid "Embed your feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:224
+#: inc/Builder/CFF_Feed_Builder.php:232
 msgid "Easily add the feed anywhere on your website"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:229
+#: inc/Builder/CFF_Feed_Builder.php:237
 msgid "Create a Facebook Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:230
+#: inc/Builder/CFF_Feed_Builder.php:238
 msgid "Select Feed Type"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:231
+#: inc/Builder/CFF_Feed_Builder.php:239
 msgid "Advanced Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:232
+#: inc/Builder/CFF_Feed_Builder.php:240
 msgid "Update Feed Type"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:235
+#: inc/Builder/CFF_Feed_Builder.php:243
 msgid "Start with a template"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:236
+#: inc/Builder/CFF_Feed_Builder.php:244
 msgid "Select a starting point for your feed. You can customize this later."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:237
+#: inc/Builder/CFF_Feed_Builder.php:245
 msgid "Select another template"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:238
+#: inc/Builder/CFF_Feed_Builder.php:246
 msgid "Changing a template will override your layout, header and button settings"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:243
+#: inc/Builder/CFF_Feed_Builder.php:251
 msgid "Upgrade to display Facebook Reviews"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:244
-msgid "Add compelling social proof to your site by displaying reviews and recommendations from your Facebook Pages. Easily filter by rating to only show your best reviews."
-msgstr ""
-
-#: inc/Builder/CFF_Feed_Builder.php:247
-#: inc/Builder/CFF_Feed_Builder.php:266
-#: inc/Builder/CFF_Feed_Builder.php:286
-#: inc/Builder/CFF_Feed_Builder.php:306
-#: inc/Builder/CFF_Feed_Builder.php:345
-#: inc/Builder/CFF_Feed_Builder.php:368
-#: inc/Builder/CFF_Feed_Builder.php:389
-#: inc/Builder/CFF_Feed_Builder.php:410
-#: inc/Builder/CFF_Feed_Builder.php:431
-#: inc/Builder/CFF_Feed_Builder.php:452
-#: inc/Builder/CFF_Feed_Builder.php:473
-#: inc/Builder/CFF_Feed_Builder.php:494
-#: inc/Builder/CFF_Feed_Builder.php:515
-#: inc/Builder/CFF_Feed_Builder.php:536
-#: inc/Builder/CFF_Feed_Builder.php:557
-msgid "And much more!"
-msgstr ""
-
-#: inc/Builder/CFF_Feed_Builder.php:249
-#: inc/Builder/CFF_Feed_Builder.php:268
-#: inc/Builder/CFF_Feed_Builder.php:288
-#: inc/Builder/CFF_Feed_Builder.php:308
-#: inc/Builder/CFF_Feed_Builder.php:347
-#: inc/Builder/CFF_Feed_Builder.php:370
-#: inc/Builder/CFF_Feed_Builder.php:391
-#: inc/Builder/CFF_Feed_Builder.php:412
-#: inc/Builder/CFF_Feed_Builder.php:433
-#: inc/Builder/CFF_Feed_Builder.php:454
-#: inc/Builder/CFF_Feed_Builder.php:475
-#: inc/Builder/CFF_Feed_Builder.php:496
-#: inc/Builder/CFF_Feed_Builder.php:517
-#: inc/Builder/CFF_Feed_Builder.php:538
-#: inc/Builder/CFF_Feed_Builder.php:559
-msgid "Display images & videos in posts"
-msgstr ""
-
-#: inc/Builder/CFF_Feed_Builder.php:250
-#: inc/Builder/CFF_Feed_Builder.php:269
-#: inc/Builder/CFF_Feed_Builder.php:289
-#: inc/Builder/CFF_Feed_Builder.php:309
-#: inc/Builder/CFF_Feed_Builder.php:348
-#: inc/Builder/CFF_Feed_Builder.php:371
-#: inc/Builder/CFF_Feed_Builder.php:392
-#: inc/Builder/CFF_Feed_Builder.php:413
-#: inc/Builder/CFF_Feed_Builder.php:434
-#: inc/Builder/CFF_Feed_Builder.php:455
-#: inc/Builder/CFF_Feed_Builder.php:476
-#: inc/Builder/CFF_Feed_Builder.php:497
-#: inc/Builder/CFF_Feed_Builder.php:518
-#: inc/Builder/CFF_Feed_Builder.php:539
-#: inc/Builder/CFF_Feed_Builder.php:560
-msgid "Show likes, reactions, comments"
-msgstr ""
-
-#: inc/Builder/CFF_Feed_Builder.php:251
-#: inc/Builder/CFF_Feed_Builder.php:270
-#: inc/Builder/CFF_Feed_Builder.php:290
-#: inc/Builder/CFF_Feed_Builder.php:310
-#: inc/Builder/CFF_Feed_Builder.php:349
-#: inc/Builder/CFF_Feed_Builder.php:372
-#: inc/Builder/CFF_Feed_Builder.php:393
-#: inc/Builder/CFF_Feed_Builder.php:414
-#: inc/Builder/CFF_Feed_Builder.php:435
-#: inc/Builder/CFF_Feed_Builder.php:456
-#: inc/Builder/CFF_Feed_Builder.php:477
-#: inc/Builder/CFF_Feed_Builder.php:498
-#: inc/Builder/CFF_Feed_Builder.php:519
-#: inc/Builder/CFF_Feed_Builder.php:540
-#: inc/Builder/CFF_Feed_Builder.php:561
-msgid "Advanced feed types"
-msgstr ""
-
 #: inc/Builder/CFF_Feed_Builder.php:252
-#: inc/Builder/CFF_Feed_Builder.php:271
-#: inc/Builder/CFF_Feed_Builder.php:291
-#: inc/Builder/CFF_Feed_Builder.php:311
-#: inc/Builder/CFF_Feed_Builder.php:350
-#: inc/Builder/CFF_Feed_Builder.php:373
-#: inc/Builder/CFF_Feed_Builder.php:394
-#: inc/Builder/CFF_Feed_Builder.php:415
-#: inc/Builder/CFF_Feed_Builder.php:436
-#: inc/Builder/CFF_Feed_Builder.php:457
-#: inc/Builder/CFF_Feed_Builder.php:478
-#: inc/Builder/CFF_Feed_Builder.php:499
-#: inc/Builder/CFF_Feed_Builder.php:520
-#: inc/Builder/CFF_Feed_Builder.php:541
-#: inc/Builder/CFF_Feed_Builder.php:562
-msgid "Filter Posts"
-msgstr ""
-
-#: inc/Builder/CFF_Feed_Builder.php:253
-#: inc/Builder/CFF_Feed_Builder.php:272
-#: inc/Builder/CFF_Feed_Builder.php:292
-#: inc/Builder/CFF_Feed_Builder.php:312
-#: inc/Builder/CFF_Feed_Builder.php:351
-#: inc/Builder/CFF_Feed_Builder.php:374
-#: inc/Builder/CFF_Feed_Builder.php:395
-#: inc/Builder/CFF_Feed_Builder.php:416
-#: inc/Builder/CFF_Feed_Builder.php:437
-#: inc/Builder/CFF_Feed_Builder.php:458
-#: inc/Builder/CFF_Feed_Builder.php:479
-#: inc/Builder/CFF_Feed_Builder.php:500
-#: inc/Builder/CFF_Feed_Builder.php:521
-#: inc/Builder/CFF_Feed_Builder.php:542
-#: inc/Builder/CFF_Feed_Builder.php:563
-msgid "Popup photo/video lightbox"
-msgstr ""
-
-#: inc/Builder/CFF_Feed_Builder.php:254
-#: inc/Builder/CFF_Feed_Builder.php:273
-#: inc/Builder/CFF_Feed_Builder.php:293
-#: inc/Builder/CFF_Feed_Builder.php:313
-#: inc/Builder/CFF_Feed_Builder.php:352
-#: inc/Builder/CFF_Feed_Builder.php:375
-#: inc/Builder/CFF_Feed_Builder.php:396
-#: inc/Builder/CFF_Feed_Builder.php:417
-#: inc/Builder/CFF_Feed_Builder.php:438
-#: inc/Builder/CFF_Feed_Builder.php:459
-#: inc/Builder/CFF_Feed_Builder.php:480
-#: inc/Builder/CFF_Feed_Builder.php:501
-#: inc/Builder/CFF_Feed_Builder.php:522
-#: inc/Builder/CFF_Feed_Builder.php:543
-#: inc/Builder/CFF_Feed_Builder.php:564
-msgid "Ability to load more posts"
+msgid "Add compelling social proof to your site by displaying reviews and recommendations from your Facebook Pages. Easily filter by rating to only show your best reviews."
 msgstr ""
 
 #: inc/Builder/CFF_Feed_Builder.php:255
@@ -2379,27 +2480,7 @@ msgstr ""
 #: inc/Builder/CFF_Feed_Builder.php:523
 #: inc/Builder/CFF_Feed_Builder.php:544
 #: inc/Builder/CFF_Feed_Builder.php:565
-#: inc/Builder/CFF_Feed_Builder.php:1081
-msgid "Multiple post layout options"
-msgstr ""
-
-#: inc/Builder/CFF_Feed_Builder.php:256
-#: inc/Builder/CFF_Feed_Builder.php:275
-#: inc/Builder/CFF_Feed_Builder.php:295
-#: inc/Builder/CFF_Feed_Builder.php:315
-#: inc/Builder/CFF_Feed_Builder.php:354
-#: inc/Builder/CFF_Feed_Builder.php:377
-#: inc/Builder/CFF_Feed_Builder.php:398
-#: inc/Builder/CFF_Feed_Builder.php:419
-#: inc/Builder/CFF_Feed_Builder.php:440
-#: inc/Builder/CFF_Feed_Builder.php:461
-#: inc/Builder/CFF_Feed_Builder.php:482
-#: inc/Builder/CFF_Feed_Builder.php:503
-#: inc/Builder/CFF_Feed_Builder.php:524
-#: inc/Builder/CFF_Feed_Builder.php:545
-#: inc/Builder/CFF_Feed_Builder.php:566
-#: inc/Builder/CFF_Feed_Builder.php:1082
-msgid "Video player (HD, 360, Live)"
+msgid "And much more!"
 msgstr ""
 
 #: inc/Builder/CFF_Feed_Builder.php:257
@@ -2417,575 +2498,721 @@ msgstr ""
 #: inc/Builder/CFF_Feed_Builder.php:525
 #: inc/Builder/CFF_Feed_Builder.php:546
 #: inc/Builder/CFF_Feed_Builder.php:567
-#: inc/Builder/CFF_Feed_Builder.php:1080
-msgid "30 day money back guarantee"
+msgid "Display images & videos in posts"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:258
+#: inc/Builder/CFF_Feed_Builder.php:277
+#: inc/Builder/CFF_Feed_Builder.php:297
+#: inc/Builder/CFF_Feed_Builder.php:317
+#: inc/Builder/CFF_Feed_Builder.php:356
+#: inc/Builder/CFF_Feed_Builder.php:379
+#: inc/Builder/CFF_Feed_Builder.php:400
+#: inc/Builder/CFF_Feed_Builder.php:421
+#: inc/Builder/CFF_Feed_Builder.php:442
+#: inc/Builder/CFF_Feed_Builder.php:463
+#: inc/Builder/CFF_Feed_Builder.php:484
+#: inc/Builder/CFF_Feed_Builder.php:505
+#: inc/Builder/CFF_Feed_Builder.php:526
+#: inc/Builder/CFF_Feed_Builder.php:547
+#: inc/Builder/CFF_Feed_Builder.php:568
+msgid "Show likes, reactions, comments"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:259
+#: inc/Builder/CFF_Feed_Builder.php:278
+#: inc/Builder/CFF_Feed_Builder.php:298
+#: inc/Builder/CFF_Feed_Builder.php:318
+#: inc/Builder/CFF_Feed_Builder.php:357
+#: inc/Builder/CFF_Feed_Builder.php:380
+#: inc/Builder/CFF_Feed_Builder.php:401
+#: inc/Builder/CFF_Feed_Builder.php:422
+#: inc/Builder/CFF_Feed_Builder.php:443
+#: inc/Builder/CFF_Feed_Builder.php:464
+#: inc/Builder/CFF_Feed_Builder.php:485
+#: inc/Builder/CFF_Feed_Builder.php:506
+#: inc/Builder/CFF_Feed_Builder.php:527
+#: inc/Builder/CFF_Feed_Builder.php:548
+#: inc/Builder/CFF_Feed_Builder.php:569
+msgid "Advanced feed types"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:260
+#: inc/Builder/CFF_Feed_Builder.php:279
+#: inc/Builder/CFF_Feed_Builder.php:299
+#: inc/Builder/CFF_Feed_Builder.php:319
+#: inc/Builder/CFF_Feed_Builder.php:358
+#: inc/Builder/CFF_Feed_Builder.php:381
+#: inc/Builder/CFF_Feed_Builder.php:402
+#: inc/Builder/CFF_Feed_Builder.php:423
+#: inc/Builder/CFF_Feed_Builder.php:444
+#: inc/Builder/CFF_Feed_Builder.php:465
+#: inc/Builder/CFF_Feed_Builder.php:486
+#: inc/Builder/CFF_Feed_Builder.php:507
+#: inc/Builder/CFF_Feed_Builder.php:528
+#: inc/Builder/CFF_Feed_Builder.php:549
+#: inc/Builder/CFF_Feed_Builder.php:570
+msgid "Filter Posts"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:261
+#: inc/Builder/CFF_Feed_Builder.php:280
+#: inc/Builder/CFF_Feed_Builder.php:300
+#: inc/Builder/CFF_Feed_Builder.php:320
+#: inc/Builder/CFF_Feed_Builder.php:359
+#: inc/Builder/CFF_Feed_Builder.php:382
+#: inc/Builder/CFF_Feed_Builder.php:403
+#: inc/Builder/CFF_Feed_Builder.php:424
+#: inc/Builder/CFF_Feed_Builder.php:445
+#: inc/Builder/CFF_Feed_Builder.php:466
+#: inc/Builder/CFF_Feed_Builder.php:487
+#: inc/Builder/CFF_Feed_Builder.php:508
+#: inc/Builder/CFF_Feed_Builder.php:529
+#: inc/Builder/CFF_Feed_Builder.php:550
+#: inc/Builder/CFF_Feed_Builder.php:571
+msgid "Popup photo/video lightbox"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:262
+#: inc/Builder/CFF_Feed_Builder.php:281
+#: inc/Builder/CFF_Feed_Builder.php:301
+#: inc/Builder/CFF_Feed_Builder.php:321
+#: inc/Builder/CFF_Feed_Builder.php:360
+#: inc/Builder/CFF_Feed_Builder.php:383
+#: inc/Builder/CFF_Feed_Builder.php:404
+#: inc/Builder/CFF_Feed_Builder.php:425
+#: inc/Builder/CFF_Feed_Builder.php:446
+#: inc/Builder/CFF_Feed_Builder.php:467
+#: inc/Builder/CFF_Feed_Builder.php:488
+#: inc/Builder/CFF_Feed_Builder.php:509
+#: inc/Builder/CFF_Feed_Builder.php:530
+#: inc/Builder/CFF_Feed_Builder.php:551
+#: inc/Builder/CFF_Feed_Builder.php:572
+msgid "Ability to load more posts"
 msgstr ""
 
 #: inc/Builder/CFF_Feed_Builder.php:263
-msgid "Upgrade to display Single Featured Posts"
+#: inc/Builder/CFF_Feed_Builder.php:282
+#: inc/Builder/CFF_Feed_Builder.php:302
+#: inc/Builder/CFF_Feed_Builder.php:322
+#: inc/Builder/CFF_Feed_Builder.php:361
+#: inc/Builder/CFF_Feed_Builder.php:384
+#: inc/Builder/CFF_Feed_Builder.php:405
+#: inc/Builder/CFF_Feed_Builder.php:426
+#: inc/Builder/CFF_Feed_Builder.php:447
+#: inc/Builder/CFF_Feed_Builder.php:468
+#: inc/Builder/CFF_Feed_Builder.php:489
+#: inc/Builder/CFF_Feed_Builder.php:510
+#: inc/Builder/CFF_Feed_Builder.php:531
+#: inc/Builder/CFF_Feed_Builder.php:552
+#: inc/Builder/CFF_Feed_Builder.php:573
+#: inc/Builder/CFF_Feed_Builder.php:1095
+msgid "Multiple post layout options"
 msgstr ""
 
 #: inc/Builder/CFF_Feed_Builder.php:264
+#: inc/Builder/CFF_Feed_Builder.php:283
+#: inc/Builder/CFF_Feed_Builder.php:303
+#: inc/Builder/CFF_Feed_Builder.php:323
+#: inc/Builder/CFF_Feed_Builder.php:362
+#: inc/Builder/CFF_Feed_Builder.php:385
+#: inc/Builder/CFF_Feed_Builder.php:406
+#: inc/Builder/CFF_Feed_Builder.php:427
+#: inc/Builder/CFF_Feed_Builder.php:448
+#: inc/Builder/CFF_Feed_Builder.php:469
+#: inc/Builder/CFF_Feed_Builder.php:490
+#: inc/Builder/CFF_Feed_Builder.php:511
+#: inc/Builder/CFF_Feed_Builder.php:532
+#: inc/Builder/CFF_Feed_Builder.php:553
+#: inc/Builder/CFF_Feed_Builder.php:574
+#: inc/Builder/CFF_Feed_Builder.php:1096
+msgid "Video player (HD, 360, Live)"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:265
+#: inc/Builder/CFF_Feed_Builder.php:284
+#: inc/Builder/CFF_Feed_Builder.php:304
+#: inc/Builder/CFF_Feed_Builder.php:324
+#: inc/Builder/CFF_Feed_Builder.php:363
+#: inc/Builder/CFF_Feed_Builder.php:386
+#: inc/Builder/CFF_Feed_Builder.php:407
+#: inc/Builder/CFF_Feed_Builder.php:428
+#: inc/Builder/CFF_Feed_Builder.php:449
+#: inc/Builder/CFF_Feed_Builder.php:470
+#: inc/Builder/CFF_Feed_Builder.php:491
+#: inc/Builder/CFF_Feed_Builder.php:512
+#: inc/Builder/CFF_Feed_Builder.php:533
+#: inc/Builder/CFF_Feed_Builder.php:554
+#: inc/Builder/CFF_Feed_Builder.php:575
+#: inc/Builder/CFF_Feed_Builder.php:1094
+msgid "30 day money back guarantee"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:271
+msgid "Upgrade to display Single Featured Posts"
+msgstr ""
+
+#: inc/Builder/CFF_Feed_Builder.php:272
 msgid "Easily highlight any single post or event from your Facebook page. Enter the URL of the post and let the plugin do the rest."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:283
+#: inc/Builder/CFF_Feed_Builder.php:291
 msgid "Upgrade to embed Single Album Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:284
+#: inc/Builder/CFF_Feed_Builder.php:292
 msgid "Embed all of the photos from inside any single Facebook album directly into your website, choosing from several attractive layouts."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:303
+#: inc/Builder/CFF_Feed_Builder.php:311
 msgid "Upgrade to get the Carousel layout"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:304
+#: inc/Builder/CFF_Feed_Builder.php:312
 msgid "The Carousel layout is perfect for when you either want to display a lot of content in a small space or want to catch your visitors attention."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:324
+#: inc/Builder/CFF_Feed_Builder.php:332
 msgid "<span class=\"sb-social-wall\">Combine all your social media channels into one"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:325
+#: inc/Builder/CFF_Feed_Builder.php:333
 msgid "<span class=\"sb-social-wall\">A dash of Instagram, a sprinkle of Facebook, a spoonful of Twitter, and a dollop of YouTube, all in the same feed.</span>"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:326
+#: inc/Builder/CFF_Feed_Builder.php:334
 msgid "Lite Feed Users get 50% OFF"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:330
+#: inc/Builder/CFF_Feed_Builder.php:338
 msgid "Upgrade to the All Access Bundle and get:"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:332
+#: inc/Builder/CFF_Feed_Builder.php:340
 msgid "Custom Facebook Feed Pro"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:333
+#: inc/Builder/CFF_Feed_Builder.php:341
 msgid "All Pro Facebook Extensions"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:336
+#: inc/Builder/CFF_Feed_Builder.php:344
 msgid "YouTube Feeds Pro"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:337
+#: inc/Builder/CFF_Feed_Builder.php:345
 msgid "Social Wall Pro"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:342
+#: inc/Builder/CFF_Feed_Builder.php:350
 msgid "Upgrade to filter content by Date Range"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:343
+#: inc/Builder/CFF_Feed_Builder.php:351
 msgid "Filter posts based on a start and end date. Use relative dates (such as \"1 month ago\" or \"now\") or absolute dates (such as 01/01/21) to curate your feeds to specific date ranges."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:364
+#: inc/Builder/CFF_Feed_Builder.php:372
 msgid "Upgrade to Pro to enable the popup Lightbox"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:365
+#: inc/Builder/CFF_Feed_Builder.php:373
 msgid "Display photos and videos in your feed and allow visitors to view them in a beautiful full size lightbox, keeping them on your site for longer to discover more of your content."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:385
+#: inc/Builder/CFF_Feed_Builder.php:393
 msgid "Upgrade to Pro to get Advanced Filters"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:386
+#: inc/Builder/CFF_Feed_Builder.php:394
 msgid "Filter your posts using specific words, hashtags, or phrases to ensure only the content you want is displayed. Choose to hide or show specific types of posts in your timeline feeds."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:406
+#: inc/Builder/CFF_Feed_Builder.php:414
 msgid "Upgrade to Pro to get Post Layouts"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:407
+#: inc/Builder/CFF_Feed_Builder.php:415
 msgid "Display your timeline posts in 3 easy layout options with photos and videos included to make your posts pop, keeping your visitors engaged on your site for longer."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:427
+#: inc/Builder/CFF_Feed_Builder.php:435
 msgid "Upgrade to Pro to add Media, Likes, & Comments"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:428
+#: inc/Builder/CFF_Feed_Builder.php:436
 msgid "Display any likes, shares, comments, and reactions in a customizable drop-down box below each timeline post, including comment replies and image attachments."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:448
+#: inc/Builder/CFF_Feed_Builder.php:456
 msgid "Upgrade to Pro to add Load More functionality"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:449
+#: inc/Builder/CFF_Feed_Builder.php:457
 msgid "Add a Load More button at the bottom of each feed to infinitely load more content. Customize the button text, colors, and font to look exactly as you'd like."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:469
+#: inc/Builder/CFF_Feed_Builder.php:477
 msgid "Upgrade to Pro to<br/>get Photo Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:470
+#: inc/Builder/CFF_Feed_Builder.php:478
 msgid "Save time by displaying beautiful photo feeds which pull right from your Facebook Photos page. List, grid, masonry, and carousels, with different layouts for both desktop and mobile, and a full size photo lightbox."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:490
+#: inc/Builder/CFF_Feed_Builder.php:498
 msgid "Upgrade to Pro to<br/>get Video Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:491
+#: inc/Builder/CFF_Feed_Builder.php:499
 msgid "Automatically feed videos from your Facebook Videos page right to your website. List, grid, masonry, and carousel layouts, played in stunning HD with a full size video lightbox."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:511
+#: inc/Builder/CFF_Feed_Builder.php:519
 msgid "Upgrade to Pro to<br/>get Album Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:512
+#: inc/Builder/CFF_Feed_Builder.php:520
 msgid "Display a feed of the albums from your Facebook Photos page. Show photos within each album inside a beautiful album lightbox to increase discovery of your content to your website visitors."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:532
+#: inc/Builder/CFF_Feed_Builder.php:540
 msgid "Upgrade to Pro to<br/>get Event Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:533
+#: inc/Builder/CFF_Feed_Builder.php:541
 msgid "Promote your Facebook events to your website visitors to help boost attendance. Display both upcoming and past events in a list, masonry layout, or carousel."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:553
+#: inc/Builder/CFF_Feed_Builder.php:561
 msgid "Upgrade to Pro to get<br/>one-click templates!"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:554
+#: inc/Builder/CFF_Feed_Builder.php:562
 msgid "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:577
-#: inc/Builder/CFF_Feed_Builder.php:996
-#: inc/Builder/CFF_Feed_Builder.php:1934
+#: inc/Builder/CFF_Feed_Builder.php:585
+#: inc/Builder/CFF_Feed_Builder.php:1009
+#: inc/Builder/CFF_Feed_Builder.php:1948
 msgid "Name"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:579
+#: inc/Builder/CFF_Feed_Builder.php:587
 msgid "Instances"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:580
+#: inc/Builder/CFF_Feed_Builder.php:588
 msgid "Actions"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:582
+#: inc/Builder/CFF_Feed_Builder.php:590
 msgid "Bulk Actions"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:584
-#: inc/Builder/CFF_Feed_Builder.php:1611
+#: inc/Builder/CFF_Feed_Builder.php:592
+#: inc/Builder/CFF_Feed_Builder.php:1625
 #: inc/Builder/CFF_Feed_Saver.php:295
 #: inc/Builder/CFF_Feed_Saver.php:296
 msgid "Legacy Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:585
+#: inc/Builder/CFF_Feed_Builder.php:593
 msgid "What are Legacy Feeds?"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:587
+#: inc/Builder/CFF_Feed_Builder.php:595
 msgid "Legacy feeds are older feeds from before the version 4 update. You can edit settings for these feeds by using the \"Settings\" button to the right. These settings will apply to all legacy feeds, just like the settings before version 4, and work in the same way that they used to."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:588
+#: inc/Builder/CFF_Feed_Builder.php:596
 msgid "You can also create a new feed, which will now have it's own individual settings. Modifying settings for new feeds will not affect other feeds."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:591
+#: inc/Builder/CFF_Feed_Builder.php:599
 msgid "Legacy feeds represent shortcodes of old feeds found on your website before <br/>the version 4 update."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:592
+#: inc/Builder/CFF_Feed_Builder.php:600
 msgid "To edit Legacy feed settings, you will need to use the \"Settings\" button above <br/>or edit their shortcode settings directly. To delete them, simply remove the <br/>shortcode wherever it is being used on your site."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:594
+#: inc/Builder/CFF_Feed_Builder.php:602
 msgid "Show Legacy Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:595
+#: inc/Builder/CFF_Feed_Builder.php:603
 msgid "Hide Legacy Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:601
+#: inc/Builder/CFF_Feed_Builder.php:609
 msgid "Add Featured Post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:602
-#: inc/Builder/CFF_Feed_Builder.php:614
+#: inc/Builder/CFF_Feed_Builder.php:610
+#: inc/Builder/CFF_Feed_Builder.php:622
 msgid "Add the URL or ID of the post you want to feature"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:603
+#: inc/Builder/CFF_Feed_Builder.php:611
 msgid "Could not fetch post preview"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:604
+#: inc/Builder/CFF_Feed_Builder.php:612
 msgid "Post URL or ID"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:605
+#: inc/Builder/CFF_Feed_Builder.php:613
 msgid "Unable to retrieve post. Please make sure the link is correct. See %shere%s for more help."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:606
+#: inc/Builder/CFF_Feed_Builder.php:614
 msgid "Unable to retrieve post. Please make sure the link<br/>entered is correct."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:607
+#: inc/Builder/CFF_Feed_Builder.php:615
 msgid "Post Preview"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:608
+#: inc/Builder/CFF_Feed_Builder.php:616
 msgid "Once you enter a post URL or ID, click next and the preview will show up here"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:609
+#: inc/Builder/CFF_Feed_Builder.php:617
 msgid "Add a Featured Post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:610
+#: inc/Builder/CFF_Feed_Builder.php:618
 msgid "To add a featured post, add it's URL or ID in the<br/>\"Featured Post URL or ID\" field on the left sidebar."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:613
+#: inc/Builder/CFF_Feed_Builder.php:621
 msgid "Customize Video Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:618
+#: inc/Builder/CFF_Feed_Builder.php:626
 msgid "Show all Videos"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:619
+#: inc/Builder/CFF_Feed_Builder.php:627
 msgid "I want to show all the videos from my Facebook page or group \"Videos\" page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:623
+#: inc/Builder/CFF_Feed_Builder.php:631
 msgid "Show from a specific Playlist"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:624
+#: inc/Builder/CFF_Feed_Builder.php:632
 msgid "I want to show videos from a specific playlist"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:627
+#: inc/Builder/CFF_Feed_Builder.php:635
 msgid "Add Playlist URL"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:628
+#: inc/Builder/CFF_Feed_Builder.php:636
 msgid "Add your Facebook playlist URL here. It should look something like: https://facebook.com/videos/v1.124959697/"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:629
+#: inc/Builder/CFF_Feed_Builder.php:637
 msgid "Couldn't fetch the playlist, please make sure it's a valid URL"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:632
+#: inc/Builder/CFF_Feed_Builder.php:640
 msgid "Choose Album to Embed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:633
+#: inc/Builder/CFF_Feed_Builder.php:641
 msgid "Add the URL or ID of the album you want to feature"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:634
+#: inc/Builder/CFF_Feed_Builder.php:642
 msgid "Could not fetch album preview"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:635
+#: inc/Builder/CFF_Feed_Builder.php:643
 msgid "Album URL or ID"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:636
+#: inc/Builder/CFF_Feed_Builder.php:644
 msgid "Unable to retrieve album. Please make sure the link is correct. See %shere%s for more help."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:637
+#: inc/Builder/CFF_Feed_Builder.php:645
 msgid "Unable to retrieve album. Please make sure the link<br/>entered is correct."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:638
+#: inc/Builder/CFF_Feed_Builder.php:646
 msgid "Album Preview"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:639
+#: inc/Builder/CFF_Feed_Builder.php:647
 msgid "Once you enter an album URL or ID, click next and the preview will show up here"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:640
+#: inc/Builder/CFF_Feed_Builder.php:648
 msgid "Add an Album"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:641
+#: inc/Builder/CFF_Feed_Builder.php:649
 msgid "To add a single album, add it's URL or ID in the \"Album<br/>URL or ID\" field on the left sidebar."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:644
+#: inc/Builder/CFF_Feed_Builder.php:652
 msgid "Upgrade to the %sAll Access Bundle%s to get all of our Pro Plugins"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:645
+#: inc/Builder/CFF_Feed_Builder.php:653
 msgid "Includes all Smash Balloon plugins for one low price: Instagram, Facebook, Twitter, YouTube, and Social Wall"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:646
+#: inc/Builder/CFF_Feed_Builder.php:654
 msgid "%sBonus%s Lite users get %s50&#37; Off%s automatically applied at checkout"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:649
+#: inc/Builder/CFF_Feed_Builder.php:657
 msgid "Embed Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:650
+#: inc/Builder/CFF_Feed_Builder.php:658
 msgid "Add the unique shortcode to any page, post, or widget:"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:651
+#: inc/Builder/CFF_Feed_Builder.php:659
 msgid "Or use the built in WordPress block or widget"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:652
+#: inc/Builder/CFF_Feed_Builder.php:660
 msgid "Add to a Page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:653
+#: inc/Builder/CFF_Feed_Builder.php:661
 msgid "Add to a Widget"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:654
+#: inc/Builder/CFF_Feed_Builder.php:662
 msgid "Select Page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:659
+#: inc/Builder/CFF_Feed_Builder.php:667
 msgid "You are going to delete this source. To retrieve it, you will need to add it again. Are you sure you want to continue?"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:663
+#: inc/Builder/CFF_Feed_Builder.php:671
 msgid "You are going to delete this feed. You will lose all the settings. Are you sure you want to continue?"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:666
+#: inc/Builder/CFF_Feed_Builder.php:674
 msgid "Delete Feeds?"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:667
+#: inc/Builder/CFF_Feed_Builder.php:675
 msgid "You are going to delete these feeds. You will lose all the settings. Are you sure you want to continue?"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:670
+#: inc/Builder/CFF_Feed_Builder.php:678
 msgid "Are you Sure?"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:671
+#: inc/Builder/CFF_Feed_Builder.php:679
 msgid "Are you sure you want to leave this page, all unsaved settings will be lost, please make sure to save before leaving."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:950
+#: inc/Builder/CFF_Feed_Builder.php:962
 #: inc/Builder/CFF_Tooltip_Wizard.php:131
 msgid "Done"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:952
+#: inc/Builder/CFF_Feed_Builder.php:964
 msgid "Dashboard"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:953
+#: inc/Builder/CFF_Feed_Builder.php:966
 msgid "Add New"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:954
-#: inc/Builder/CFF_Feed_Builder.php:1143
+#: inc/Builder/CFF_Feed_Builder.php:967
+#: inc/Builder/CFF_Feed_Builder.php:1157
 msgid "Add Source"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:955
+#: inc/Builder/CFF_Feed_Builder.php:968
 msgid "Previous"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:956
+#: inc/Builder/CFF_Feed_Builder.php:969
 msgid "Next"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:957
+#: inc/Builder/CFF_Feed_Builder.php:970
 msgid "Finish"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:958
+#: inc/Builder/CFF_Feed_Builder.php:971
 msgid "New"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:959
+#: inc/Builder/CFF_Feed_Builder.php:972
 msgid "Update"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:962
+#: inc/Builder/CFF_Feed_Builder.php:975
 msgid "Back"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:963
+#: inc/Builder/CFF_Feed_Builder.php:976
 msgid "Back to all feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:964
+#: inc/Builder/CFF_Feed_Builder.php:977
 msgid "Create Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:966
+#: inc/Builder/CFF_Feed_Builder.php:979
 msgid "Change"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:967
+#: inc/Builder/CFF_Feed_Builder.php:980
 msgid "Get Extension"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:969
+#: inc/Builder/CFF_Feed_Builder.php:982
 msgid "Includes"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:970
-#: inc/Builder/CFF_Feed_Builder.php:1190
-#: inc/Builder/CFF_Feed_Builder.php:2146
+#: inc/Builder/CFF_Feed_Builder.php:983
+#: inc/Builder/CFF_Feed_Builder.php:1204
+#: inc/Builder/CFF_Feed_Builder.php:2160
 msgid "Photos"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:972
+#: inc/Builder/CFF_Feed_Builder.php:985
 msgid "Apply"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:974
-#: inc/Builder/CFF_Feed_Builder.php:1935
+#: inc/Builder/CFF_Feed_Builder.php:987
+#: inc/Builder/CFF_Feed_Builder.php:1949
 msgid "Edit"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:975
+#: inc/Builder/CFF_Feed_Builder.php:988
 msgid "Duplicate"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:976
+#: inc/Builder/CFF_Feed_Builder.php:989
 msgid "Delete"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:978
+#: inc/Builder/CFF_Feed_Builder.php:991
 msgid "Click to view Instances"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:979
+#: inc/Builder/CFF_Feed_Builder.php:992
 msgid "Used in"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:980
+#: inc/Builder/CFF_Feed_Builder.php:993
 msgid "place"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:981
+#: inc/Builder/CFF_Feed_Builder.php:994
 msgid "places"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:982
+#: inc/Builder/CFF_Feed_Builder.php:995
 msgid "Item"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:983
+#: inc/Builder/CFF_Feed_Builder.php:996
 msgid "Items"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:986
-#: inc/Builder/CFF_Feed_Builder.php:1167
+#: inc/Builder/CFF_Feed_Builder.php:999
+#: inc/Builder/CFF_Feed_Builder.php:1181
 msgid "Page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:987
+#: inc/Builder/CFF_Feed_Builder.php:1000
 msgid "Copied to Clipboard"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:988
+#: inc/Builder/CFF_Feed_Builder.php:1001
 msgid "Feed imported successfully"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:989
+#: inc/Builder/CFF_Feed_Builder.php:1002
 msgid "Failed to import feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:990
-#: inc/Builder/CFF_Feed_Builder.php:1184
+#: inc/Builder/CFF_Feed_Builder.php:1003
+#: inc/Builder/CFF_Feed_Builder.php:1198
 msgid "Timeline"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:992
+#: inc/Builder/CFF_Feed_Builder.php:1005
 msgid "Admin"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:993
+#: inc/Builder/CFF_Feed_Builder.php:1006
 msgid "Member"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:995
-#: inc/Builder/CFF_Feed_Builder.php:1835
+#: inc/Builder/CFF_Feed_Builder.php:1008
+#: inc/Builder/CFF_Feed_Builder.php:1849
 msgid "Preview"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:997
+#: inc/Builder/CFF_Feed_Builder.php:1010
 msgid "ID"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:998
+#: inc/Builder/CFF_Feed_Builder.php:1011
 msgid "Token"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:999
+#: inc/Builder/CFF_Feed_Builder.php:1012
 msgid "Confirm"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1001
+#: inc/Builder/CFF_Feed_Builder.php:1014
 msgid "Clear Feed Cache"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1002
+#: inc/Builder/CFF_Feed_Builder.php:1015
 msgid "Save Changes"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1003
+#: inc/Builder/CFF_Feed_Builder.php:1016
 msgid "Feed Name"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1005
+#: inc/Builder/CFF_Feed_Builder.php:1018
 msgid "General"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1006
+#: inc/Builder/CFF_Feed_Builder.php:1019
 msgid "Feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1007
+#: inc/Builder/CFF_Feed_Builder.php:1020
 msgid "Translation"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1008
+#: inc/Builder/CFF_Feed_Builder.php:1021
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1548
 #: inc/Builder/Tabs/CFF_Settings_Tab.php:44
 msgid "Advanced"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1009
+#: inc/Builder/CFF_Feed_Builder.php:1022
 msgid "Error:"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1010
+#: inc/Builder/CFF_Feed_Builder.php:1023
 msgid "There was an error when trying to connect to Facebook."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1011
+#: inc/Builder/CFF_Feed_Builder.php:1024
 #: inc/CFF_Error_Reporter.php:252
 #: inc/CFF_Error_Reporter.php:253
 #: inc/CFF_Error_Reporter.php:256
@@ -2995,583 +3222,583 @@ msgstr ""
 msgid "Directions on How to Resolve This Issue"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1012
+#: inc/Builder/CFF_Feed_Builder.php:1025
 msgid "Source Invalid"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1013
+#: inc/Builder/CFF_Feed_Builder.php:1026
 msgid "Encryption Error"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1014
+#: inc/Builder/CFF_Feed_Builder.php:1027
 msgid "Update Required"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1015
+#: inc/Builder/CFF_Feed_Builder.php:1028
 msgid "Invalid"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1016
+#: inc/Builder/CFF_Feed_Builder.php:1029
 msgid "Reconnect"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1017
+#: inc/Builder/CFF_Feed_Builder.php:1030
 #: assets/dist/blocks.js:1
 msgid "feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1018
+#: inc/Builder/CFF_Feed_Builder.php:1031
 msgid "Source is not used yet"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1022
+#: inc/Builder/CFF_Feed_Builder.php:1036
 msgid "Feed saved successfully"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1026
+#: inc/Builder/CFF_Feed_Builder.php:1040
 msgid "Error saving Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1030
+#: inc/Builder/CFF_Feed_Builder.php:1044
 msgid "Preview updated successfully"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1034
+#: inc/Builder/CFF_Feed_Builder.php:1048
 msgid "Carousel updated successfully"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1038
+#: inc/Builder/CFF_Feed_Builder.php:1052
 msgid "Unknown error occurred"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1042
+#: inc/Builder/CFF_Feed_Builder.php:1056
 msgid "Feed cache cleared"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1046
+#: inc/Builder/CFF_Feed_Builder.php:1060
 msgid "Please select a source for your feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1050
+#: inc/Builder/CFF_Feed_Builder.php:1064
 msgid "Couldn't connect one or more sources!"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1056
+#: inc/Builder/CFF_Feed_Builder.php:1070
 msgid "Installed & Activated"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1057
+#: inc/Builder/CFF_Feed_Builder.php:1071
 msgid "Free"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1058
+#: inc/Builder/CFF_Feed_Builder.php:1072
 msgid "Invalid license key"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1059
+#: inc/Builder/CFF_Feed_Builder.php:1073
 msgid "License activated"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1060
+#: inc/Builder/CFF_Feed_Builder.php:1074
 msgid "License Deactivated"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1063
+#: inc/Builder/CFF_Feed_Builder.php:1077
 msgid "Carousel Layout updated"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1065
+#: inc/Builder/CFF_Feed_Builder.php:1079
 msgid "Get more features with Custom Facebook Feed Pro"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1066
+#: inc/Builder/CFF_Feed_Builder.php:1080
 msgid "Lite Feed Users get a 50% OFF (auto-applied at checkout)"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1067
+#: inc/Builder/CFF_Feed_Builder.php:1081
 msgid "Lite Feed Users get a 50% OFF"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1068
+#: inc/Builder/CFF_Feed_Builder.php:1082
 msgid "auto-applied at checkout"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1069
+#: inc/Builder/CFF_Feed_Builder.php:1083
 msgid "Try Demo"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1070
+#: inc/Builder/CFF_Feed_Builder.php:1084
 msgid "See the Pro Demo"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1071
+#: inc/Builder/CFF_Feed_Builder.php:1085
 msgid "See the Demo"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1072
+#: inc/Builder/CFF_Feed_Builder.php:1086
 msgid "Display images and videos in posts"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1073
+#: inc/Builder/CFF_Feed_Builder.php:1087
 msgid "View likes, shares and comments"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1074
+#: inc/Builder/CFF_Feed_Builder.php:1088
 msgid "All Feed Types: Photos, Albums, Events and more"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1075
+#: inc/Builder/CFF_Feed_Builder.php:1089
 msgid "Ability to “Load More” posts"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1076
+#: inc/Builder/CFF_Feed_Builder.php:1090
 msgid "And Much More!"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1078
+#: inc/Builder/CFF_Feed_Builder.php:1092
 msgid "Filter posts"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1079
+#: inc/Builder/CFF_Feed_Builder.php:1093
 msgid "Popup photo/video lighbox"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1083
+#: inc/Builder/CFF_Feed_Builder.php:1097
 msgid "Fast, friendly and effective support"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1088
+#: inc/Builder/CFF_Feed_Builder.php:1102
 msgid "Show Features"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1089
+#: inc/Builder/CFF_Feed_Builder.php:1103
 msgid "Hide Features"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1091
+#: inc/Builder/CFF_Feed_Builder.php:1105
 msgid "clicking here"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1094
+#: inc/Builder/CFF_Feed_Builder.php:1108
 msgid "Redirecting to connect.smashballoon.com"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1095
+#: inc/Builder/CFF_Feed_Builder.php:1109
 msgid "You will be redirected to our app so you can connect your account in 5 seconds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1111
+#: inc/Builder/CFF_Feed_Builder.php:1125
 msgid "Select a Source"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1112
+#: inc/Builder/CFF_Feed_Builder.php:1126
 msgid "Sources are Facebook pages or groups your feed will fetch posts, photos, or videos from"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1114
+#: inc/Builder/CFF_Feed_Builder.php:1128
 msgid "To display events from a Facebook Page<br/>you need to create your own Facebook app."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1115
+#: inc/Builder/CFF_Feed_Builder.php:1129
 msgid "Click \"+ Add New\" to get started."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1118
-#: inc/Builder/CFF_Feed_Builder.php:1162
+#: inc/Builder/CFF_Feed_Builder.php:1132
+#: inc/Builder/CFF_Feed_Builder.php:1176
 msgid "Due to Facebook limitations, it's not possible to display photo feeds from a Group, only a Page."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1120
+#: inc/Builder/CFF_Feed_Builder.php:1134
 msgid "Update Source"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1121
+#: inc/Builder/CFF_Feed_Builder.php:1135
 msgid "Select a source from your connected Facebook Pages and Groups. Or, use \"Add New\" to connect a new one."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1122
+#: inc/Builder/CFF_Feed_Builder.php:1136
 msgid "Add multiple Facebook Pages or Groups to a feed with our Multifeed extension"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1123
+#: inc/Builder/CFF_Feed_Builder.php:1137
 msgid "Please add a source in order to display a feed. Go to the \"Settings\" tab -> \"Sources\" section -> Click \"Add New\" to connect a source."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1126
+#: inc/Builder/CFF_Feed_Builder.php:1140
 msgid "Add a New Source"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1127
+#: inc/Builder/CFF_Feed_Builder.php:1141
 msgid "Select Source Type"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1128
+#: inc/Builder/CFF_Feed_Builder.php:1142
 msgid "Connect a Facebook Account"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1129
+#: inc/Builder/CFF_Feed_Builder.php:1143
 msgid "This does not give us permission to manage your Facebook Pages or Groups, it simply allows the plugin to see a list of them and retrieve their public content from the API."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1130
+#: inc/Builder/CFF_Feed_Builder.php:1144
 msgid "Connect"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1131
+#: inc/Builder/CFF_Feed_Builder.php:1145
 msgid "Enter Events Access Token"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1132
+#: inc/Builder/CFF_Feed_Builder.php:1146
 msgid "Due to restrictions by Facebook, you need to create a Facebook app and then paste that app Access Token here. We have a guide to help you with just that, which you can read %shere%s"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1133
+#: inc/Builder/CFF_Feed_Builder.php:1147
 msgid "Already have a Facebook Access Token for your Page or Group?"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1134
+#: inc/Builder/CFF_Feed_Builder.php:1148
 msgid "Add Account Manually"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1135
+#: inc/Builder/CFF_Feed_Builder.php:1149
 msgid "Select a Facebook Page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1136
+#: inc/Builder/CFF_Feed_Builder.php:1150
 msgid "Select a Facebook Group"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1137
+#: inc/Builder/CFF_Feed_Builder.php:1151
 msgid "Showing"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1138
+#: inc/Builder/CFF_Feed_Builder.php:1152
 msgid "Facebook"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1139
+#: inc/Builder/CFF_Feed_Builder.php:1153
 msgid "Pages"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1140
+#: inc/Builder/CFF_Feed_Builder.php:1154
 msgid "Groups"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1141
+#: inc/Builder/CFF_Feed_Builder.php:1155
 msgid "connected to"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1142
+#: inc/Builder/CFF_Feed_Builder.php:1156
 msgid "Add a Source Manually"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1144
+#: inc/Builder/CFF_Feed_Builder.php:1158
 msgid "Source Type"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1145
+#: inc/Builder/CFF_Feed_Builder.php:1159
 msgid "Facebook Page or Group ID"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1146
+#: inc/Builder/CFF_Feed_Builder.php:1160
 msgid "Facebook Page ID"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1147
+#: inc/Builder/CFF_Feed_Builder.php:1161
 msgid "Event Access Token"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1148
+#: inc/Builder/CFF_Feed_Builder.php:1162
 msgid "Enter ID"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1149
+#: inc/Builder/CFF_Feed_Builder.php:1163
 msgid "Facebook Access Token"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1150
+#: inc/Builder/CFF_Feed_Builder.php:1164
 msgid "Enter Token"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1151
+#: inc/Builder/CFF_Feed_Builder.php:1165
 msgid "Add Facebook App to your group"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1152
+#: inc/Builder/CFF_Feed_Builder.php:1166
 msgid "To get posts from your group, Facebook requires the \"Smash Balloon Wordpress\" app to be added in your group settings. Just follow the directions here:"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1154
+#: inc/Builder/CFF_Feed_Builder.php:1168
 msgid "Go to your group settings page by "
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1155
+#: inc/Builder/CFF_Feed_Builder.php:1169
 msgid "Search for \"Smash Balloon WordPress\" and select our app %s(see screenshot)%s"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1156
+#: inc/Builder/CFF_Feed_Builder.php:1170
 msgid "Click \"Add\" and you are done."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1158
+#: inc/Builder/CFF_Feed_Builder.php:1172
 msgid "If you are reconnecting an existing Group then make sure to follow the directions above to add this new app to your Group settings. The previous app will no longer work. This is required in order for new posts to be retrieved."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1159
+#: inc/Builder/CFF_Feed_Builder.php:1173
 msgid "To display a feed form this group, Facebook requires the admin to add the Smash Balloon app in the group settings. Please ask an admin to follow the %sdirections here%s to add the app."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1159
+#: inc/Builder/CFF_Feed_Builder.php:1173
 msgid "Once this is done, you will be able to display a feed from this group."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1160
+#: inc/Builder/CFF_Feed_Builder.php:1174
 msgid "For groups you are not an administrator of"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1161
+#: inc/Builder/CFF_Feed_Builder.php:1175
 msgid "Please note: There are Facebook limitations to displaying group content which may prevent older posts from being displayed. Please %ssee here%s for more information."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1165
+#: inc/Builder/CFF_Feed_Builder.php:1179
 msgid "Add feeds for popular social platforms with our other plugins"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1168
+#: inc/Builder/CFF_Feed_Builder.php:1182
 msgid "Group"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1185
+#: inc/Builder/CFF_Feed_Builder.php:1199
 msgid "Fetch posts from your Facebook timeline"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1191
+#: inc/Builder/CFF_Feed_Builder.php:1205
 msgid "Display photos from your Facebook Photos page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1196
-#: inc/Builder/CFF_Feed_Builder.php:2147
+#: inc/Builder/CFF_Feed_Builder.php:1210
+#: inc/Builder/CFF_Feed_Builder.php:2161
 msgid "Videos"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1197
+#: inc/Builder/CFF_Feed_Builder.php:1211
 msgid "Display videos from your Facebook Videos page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1202
+#: inc/Builder/CFF_Feed_Builder.php:1216
 msgid "Albums"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1203
+#: inc/Builder/CFF_Feed_Builder.php:1217
 msgid "Display all albums from your Facebook Photos page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1209
+#: inc/Builder/CFF_Feed_Builder.php:1223
 msgid "Display events from your Facebook Events page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1228
+#: inc/Builder/CFF_Feed_Builder.php:1242
 #: inc/Builder/Tabs/CFF_Settings_Tab.php:102
 msgid "Reviews"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1229
+#: inc/Builder/CFF_Feed_Builder.php:1243
 msgid "Show reviews or recommendations from your Facebook page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1235
+#: inc/Builder/CFF_Feed_Builder.php:1249
 msgid "Single Featured Post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1236
+#: inc/Builder/CFF_Feed_Builder.php:1250
 msgid "Display a single post from your Facebook page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1242
+#: inc/Builder/CFF_Feed_Builder.php:1256
 msgid "Single Album"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1243
+#: inc/Builder/CFF_Feed_Builder.php:1257
 msgid "Display the contents of a single Album from your Facebook page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1250
+#: inc/Builder/CFF_Feed_Builder.php:1264
 msgid "Create a feed which combines sources from multiple social platforms"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1270
+#: inc/Builder/CFF_Feed_Builder.php:1284
 msgid "Default"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1275
+#: inc/Builder/CFF_Feed_Builder.php:1289
 msgid "Simple Masonry"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1280
+#: inc/Builder/CFF_Feed_Builder.php:1294
 msgid "Widget"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1285
+#: inc/Builder/CFF_Feed_Builder.php:1299
 msgid "Simple Cards"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1290
+#: inc/Builder/CFF_Feed_Builder.php:1304
 msgid "Latest Post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1295
+#: inc/Builder/CFF_Feed_Builder.php:1309
 msgid "Showcase Carousel"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1300
+#: inc/Builder/CFF_Feed_Builder.php:1314
 msgid "Simple Carousel"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1349
-#: inc/Builder/CFF_Feed_Builder.php:1472
-#: inc/Builder/CFF_Feed_Builder.php:1861
+#: inc/Builder/CFF_Feed_Builder.php:1363
+#: inc/Builder/CFF_Feed_Builder.php:1486
+#: inc/Builder/CFF_Feed_Builder.php:1875
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:52
 #: inc/CFF_Feed_Locator.php:564
 msgid "Header"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1351
-#: inc/Builder/CFF_Feed_Builder.php:1474
+#: inc/Builder/CFF_Feed_Builder.php:1365
+#: inc/Builder/CFF_Feed_Builder.php:1488
 #: inc/CFF_Feed_Locator.php:574
 msgid "Footer"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1353
-#: inc/Builder/CFF_Feed_Builder.php:1476
+#: inc/Builder/CFF_Feed_Builder.php:1367
+#: inc/Builder/CFF_Feed_Builder.php:1490
 #: inc/CFF_Feed_Locator.php:569
 msgid "Sidebar"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1355
-#: inc/Builder/CFF_Feed_Builder.php:1478
+#: inc/Builder/CFF_Feed_Builder.php:1369
+#: inc/Builder/CFF_Feed_Builder.php:1492
 #: inc/CFF_Feed_Locator.php:560
 msgid "Content"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1564
-#: inc/Builder/CFF_Feed_Builder.php:1565
+#: inc/Builder/CFF_Feed_Builder.php:1578
+#: inc/Builder/CFF_Feed_Builder.php:1579
 msgid "Legacy Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1564
-#: inc/Builder/CFF_Feed_Builder.php:1565
+#: inc/Builder/CFF_Feed_Builder.php:1578
+#: inc/Builder/CFF_Feed_Builder.php:1579
 msgid "(unknown location)"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1689
+#: inc/Builder/CFF_Feed_Builder.php:1703
 msgid "Twitter Feed Pro"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1699
+#: inc/Builder/CFF_Feed_Builder.php:1713
 msgid "YouTube Feed Pro"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1704
+#: inc/Builder/CFF_Feed_Builder.php:1718
 msgid "Social Wall Plugin"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1746
+#: inc/Builder/CFF_Feed_Builder.php:1760
 msgid "Legacy Feed Settings"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1747
+#: inc/Builder/CFF_Feed_Builder.php:1761
 msgid "These settings will impact %s legacy feeds on your site. You can learn more about what legacy feeds are and how they differ from new feeds %shere%s."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1749
+#: inc/Builder/CFF_Feed_Builder.php:1763
 msgid "You can now create and customize feeds individually. Click \"Add New\" to get started."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1756
-#: inc/Builder/CFF_Feed_Builder.php:1771
+#: inc/Builder/CFF_Feed_Builder.php:1770
+#: inc/Builder/CFF_Feed_Builder.php:1785
 msgid "How you create a feed has changed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1757
-#: inc/Builder/CFF_Feed_Builder.php:1772
+#: inc/Builder/CFF_Feed_Builder.php:1771
+#: inc/Builder/CFF_Feed_Builder.php:1786
 msgid "You can now create and customize feeds individually without using shortcode options."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1757
-#: inc/Builder/CFF_Feed_Builder.php:1772
+#: inc/Builder/CFF_Feed_Builder.php:1771
+#: inc/Builder/CFF_Feed_Builder.php:1786
 msgid "Click \"Add New\" to get started."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1762
+#: inc/Builder/CFF_Feed_Builder.php:1776
 msgid "Your existing feed is here"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1763
+#: inc/Builder/CFF_Feed_Builder.php:1777
 msgid "You can edit your existing feed from here, and all changes will only apply to this feed."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1777
+#: inc/Builder/CFF_Feed_Builder.php:1791
 msgid "Your existing feeds are under \"Legacy\" feeds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1778
+#: inc/Builder/CFF_Feed_Builder.php:1792
 msgid "You can edit the settings for any existing \"legacy\" feed (i.e. any feed created prior to this update) here."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1778
+#: inc/Builder/CFF_Feed_Builder.php:1792
 msgid "This works just like the old settings page and affects all legacy feeds on your site."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1782
+#: inc/Builder/CFF_Feed_Builder.php:1796
 msgid "Existing feeds work as normal"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1783
+#: inc/Builder/CFF_Feed_Builder.php:1797
 msgid "You don't need to update or change any of your existing feeds. They will continue to work as usual."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1783
+#: inc/Builder/CFF_Feed_Builder.php:1797
 msgid "This update only affects how new feeds are created and customized."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1803
+#: inc/Builder/CFF_Feed_Builder.php:1817
 msgid "Embedding a Feed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1804
+#: inc/Builder/CFF_Feed_Builder.php:1818
 msgid "After you are done customizing the feed, click here to add it to a page or a widget."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1809
-#: inc/Builder/CFF_Feed_Builder.php:1855
+#: inc/Builder/CFF_Feed_Builder.php:1823
+#: inc/Builder/CFF_Feed_Builder.php:1869
 #: inc/Builder/Tabs/CFF_Builder_Customizer_Tab.php:28
 msgid "Customize"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1810
+#: inc/Builder/CFF_Feed_Builder.php:1824
 msgid "Change your feed layout, color scheme, or customize individual feed sections here."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1816
+#: inc/Builder/CFF_Feed_Builder.php:1830
 msgid "Update your feed source, filter your posts, or change advanced settings here."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1837
+#: inc/Builder/CFF_Feed_Builder.php:1851
 msgid "Embed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1838
+#: inc/Builder/CFF_Feed_Builder.php:1852
 msgid "Save"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1839
+#: inc/Builder/CFF_Feed_Builder.php:1853
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:48
 msgid "Sections"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1841
-#: inc/Builder/CFF_Feed_Builder.php:2553
-#: inc/Builder/CFF_Feed_Builder.php:2660
+#: inc/Builder/CFF_Feed_Builder.php:1855
+#: inc/Builder/CFF_Feed_Builder.php:2567
+#: inc/Builder/CFF_Feed_Builder.php:2674
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:402
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:845
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1160
@@ -3581,13 +3808,13 @@ msgstr ""
 msgid "Background"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1842
-#: inc/Builder/CFF_Feed_Builder.php:2473
-#: inc/Builder/CFF_Feed_Builder.php:2497
-#: inc/Builder/CFF_Feed_Builder.php:2521
-#: inc/Builder/CFF_Feed_Builder.php:2545
-#: inc/Builder/CFF_Feed_Builder.php:2577
-#: inc/Builder/CFF_Feed_Builder.php:2625
+#: inc/Builder/CFF_Feed_Builder.php:1856
+#: inc/Builder/CFF_Feed_Builder.php:2487
+#: inc/Builder/CFF_Feed_Builder.php:2511
+#: inc/Builder/CFF_Feed_Builder.php:2535
+#: inc/Builder/CFF_Feed_Builder.php:2559
+#: inc/Builder/CFF_Feed_Builder.php:2591
+#: inc/Builder/CFF_Feed_Builder.php:2639
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:426
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:541
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:800
@@ -3602,12 +3829,12 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1843
+#: inc/Builder/CFF_Feed_Builder.php:1857
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:370
 msgid "Inherit from Theme"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1844
+#: inc/Builder/CFF_Feed_Builder.php:1858
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:568
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:608
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:814
@@ -3619,7 +3846,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1845
+#: inc/Builder/CFF_Feed_Builder.php:1859
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:581
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:621
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:785
@@ -3636,468 +3863,468 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1846
+#: inc/Builder/CFF_Feed_Builder.php:1860
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:657
 msgid "Height"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1847
+#: inc/Builder/CFF_Feed_Builder.php:1861
 msgid "Placeholder"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1848
+#: inc/Builder/CFF_Feed_Builder.php:1862
 msgid "Select"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1849
+#: inc/Builder/CFF_Feed_Builder.php:1863
 msgid "Enter Text"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1850
+#: inc/Builder/CFF_Feed_Builder.php:1864
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1174
 msgid "Hover State"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1851
+#: inc/Builder/CFF_Feed_Builder.php:1865
 msgid "Combine sources from multiple platforms using our Social Wall plugin"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1860
+#: inc/Builder/CFF_Feed_Builder.php:1874
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:43
 msgid "Color Scheme"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1862
+#: inc/Builder/CFF_Feed_Builder.php:1876
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:58
 msgid "Posts"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1863
+#: inc/Builder/CFF_Feed_Builder.php:1877
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:80
 msgid "Like Box"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1864
+#: inc/Builder/CFF_Feed_Builder.php:1878
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:86
 msgid "Load More Button"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1867
+#: inc/Builder/CFF_Feed_Builder.php:1881
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:148
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:885
 msgid "Layout"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1868
+#: inc/Builder/CFF_Feed_Builder.php:1882
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:154
 msgid "List"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1869
+#: inc/Builder/CFF_Feed_Builder.php:1883
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:160
 msgid "Grid"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1870
+#: inc/Builder/CFF_Feed_Builder.php:1884
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:165
 msgid "Masonry"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1871
+#: inc/Builder/CFF_Feed_Builder.php:1885
 msgid "Carousel"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1872
+#: inc/Builder/CFF_Feed_Builder.php:1886
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:180
 msgid "Feed Height"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1874
+#: inc/Builder/CFF_Feed_Builder.php:1888
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:213
 msgid "Columns"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1875
+#: inc/Builder/CFF_Feed_Builder.php:1889
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:195
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:225
 msgid "Desktop"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1876
+#: inc/Builder/CFF_Feed_Builder.php:1890
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:245
 msgid "Tablet"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1877
+#: inc/Builder/CFF_Feed_Builder.php:1891
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:204
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:264
 msgid "Mobile"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1879
+#: inc/Builder/CFF_Feed_Builder.php:1893
 msgid "Tweak Post Styles"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1880
+#: inc/Builder/CFF_Feed_Builder.php:1894
 msgid "Change post background, border radius, shadow etc."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1884
+#: inc/Builder/CFF_Feed_Builder.php:1898
 msgid "Scheme"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1885
-#: inc/Builder/CFF_Feed_Builder.php:1972
+#: inc/Builder/CFF_Feed_Builder.php:1899
+#: inc/Builder/CFF_Feed_Builder.php:1986
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:375
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:271
 msgid "Light"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1886
-#: inc/Builder/CFF_Feed_Builder.php:1973
+#: inc/Builder/CFF_Feed_Builder.php:1900
+#: inc/Builder/CFF_Feed_Builder.php:1987
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:380
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:276
 msgid "Dark"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1887
-#: inc/Builder/CFF_Feed_Builder.php:1952
+#: inc/Builder/CFF_Feed_Builder.php:1901
+#: inc/Builder/CFF_Feed_Builder.php:1966
 #: inc/Builder/Tabs/CFF_Builder_Customizer_Tab.php:138
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:385
 msgid "Custom"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1888
+#: inc/Builder/CFF_Feed_Builder.php:1902
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:393
 msgid "Custom Palette"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1889
+#: inc/Builder/CFF_Feed_Builder.php:1903
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:414
 msgid "Background 2"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1890
+#: inc/Builder/CFF_Feed_Builder.php:1904
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:438
 msgid "Text 2"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1891
-#: inc/Builder/CFF_Feed_Builder.php:2549
+#: inc/Builder/CFF_Feed_Builder.php:1905
+#: inc/Builder/CFF_Feed_Builder.php:2563
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:450
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1271
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:303
 msgid "Link"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1893
+#: inc/Builder/CFF_Feed_Builder.php:1907
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:495
 msgid "Overrides"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1894
+#: inc/Builder/CFF_Feed_Builder.php:1908
 msgid "Colors that have been overridden from individual post element settings will not change. To change them, you will have to reset overrides."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1895
+#: inc/Builder/CFF_Feed_Builder.php:1909
 msgid "Reset Overrides."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1899
+#: inc/Builder/CFF_Feed_Builder.php:1913
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:531
 msgid "Header Type"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1900
+#: inc/Builder/CFF_Feed_Builder.php:1914
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:536
 msgid "Visual"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1901
-#: inc/Builder/CFF_Feed_Builder.php:1914
+#: inc/Builder/CFF_Feed_Builder.php:1915
+#: inc/Builder/CFF_Feed_Builder.php:1928
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:639
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:994
 msgid "Cover Photo"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1902
+#: inc/Builder/CFF_Feed_Builder.php:1916
 msgid "Name and avatar"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1903
+#: inc/Builder/CFF_Feed_Builder.php:1917
 msgid "About (bio and Likes)"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1904
-#: inc/Builder/CFF_Feed_Builder.php:1922
+#: inc/Builder/CFF_Feed_Builder.php:1918
+#: inc/Builder/CFF_Feed_Builder.php:1936
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:717
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1089
 msgid "Display outside scrollable area"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1905
+#: inc/Builder/CFF_Feed_Builder.php:1919
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:740
 msgid "Icon"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1906
+#: inc/Builder/CFF_Feed_Builder.php:1920
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:757
 msgid "Icon Image"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1907
+#: inc/Builder/CFF_Feed_Builder.php:1921
 msgid "Icon Color"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1912
+#: inc/Builder/CFF_Feed_Builder.php:1926
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:965
 msgid "Small"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1913
+#: inc/Builder/CFF_Feed_Builder.php:1927
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:969
 msgid "Large"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1915
+#: inc/Builder/CFF_Feed_Builder.php:1929
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1015
 msgid "Custom Width"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1916
+#: inc/Builder/CFF_Feed_Builder.php:1930
 msgid "By default, it is set to auto"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1917
+#: inc/Builder/CFF_Feed_Builder.php:1931
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1033
 msgid "Width"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1918
+#: inc/Builder/CFF_Feed_Builder.php:1932
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1047
 msgid "Custom CTA"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1919
+#: inc/Builder/CFF_Feed_Builder.php:1933
 msgid "This toggles the custom CTA like \"Show now\" and \"Contact\""
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1920
+#: inc/Builder/CFF_Feed_Builder.php:1934
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1068
 msgid "Show Fans"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1921
+#: inc/Builder/CFF_Feed_Builder.php:1935
 msgid "Show visitors which of their friends follow your page"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1923
+#: inc/Builder/CFF_Feed_Builder.php:1937
 msgid "Make the like box fixed by moving it outside the scrollable area"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1926
+#: inc/Builder/CFF_Feed_Builder.php:1940
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:901
 msgid "Thumbnail"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1927
+#: inc/Builder/CFF_Feed_Builder.php:1941
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:906
 msgid "Half width"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1928
+#: inc/Builder/CFF_Feed_Builder.php:1942
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:911
 msgid "Full width"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1929
+#: inc/Builder/CFF_Feed_Builder.php:1943
 msgid "Use full width layout when post width is less than 500px"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1930
+#: inc/Builder/CFF_Feed_Builder.php:1944
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:63
 msgid "Post Style"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1931
+#: inc/Builder/CFF_Feed_Builder.php:1945
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:70
 msgid "Edit Individual Elements"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1933
+#: inc/Builder/CFF_Feed_Builder.php:1947
 msgid "Hide or show individual elements of a post or edit their options"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1936
-#: inc/Builder/CFF_Feed_Builder.php:2456
+#: inc/Builder/CFF_Feed_Builder.php:1950
+#: inc/Builder/CFF_Feed_Builder.php:2470
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1435
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1440
 msgid "Post Author"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1939
+#: inc/Builder/CFF_Feed_Builder.php:1953
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1561
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1565
 msgid "Photos/Videos"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1941
-#: inc/Builder/CFF_Feed_Builder.php:2560
+#: inc/Builder/CFF_Feed_Builder.php:1955
+#: inc/Builder/CFF_Feed_Builder.php:2574
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1479
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1483
 msgid "Event Title"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1942
+#: inc/Builder/CFF_Feed_Builder.php:1956
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1592
 msgid "Event Details"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1944
+#: inc/Builder/CFF_Feed_Builder.php:1958
 msgid "Shared Post Text"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1945
-#: inc/Builder/CFF_Feed_Builder.php:2643
+#: inc/Builder/CFF_Feed_Builder.php:1959
+#: inc/Builder/CFF_Feed_Builder.php:2657
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1537
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1541
 msgid "Shared Link Box"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1946
+#: inc/Builder/CFF_Feed_Builder.php:1960
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1455
 msgid "The main text of the Facebook post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1947
+#: inc/Builder/CFF_Feed_Builder.php:1961
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:702
 msgid "Maximum Text Length"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1948
+#: inc/Builder/CFF_Feed_Builder.php:1962
 msgid "Characters"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1949
+#: inc/Builder/CFF_Feed_Builder.php:1963
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:104
 msgid "Link text to Facebook post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1950
+#: inc/Builder/CFF_Feed_Builder.php:1964
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1470
 msgid "The date of the post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1951
+#: inc/Builder/CFF_Feed_Builder.php:1965
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:131
 msgid "Format"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1953
+#: inc/Builder/CFF_Feed_Builder.php:1967
 msgid "Learn more about custom formats"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1954
+#: inc/Builder/CFF_Feed_Builder.php:1968
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:158
 msgid "Add text before date"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1955
+#: inc/Builder/CFF_Feed_Builder.php:1969
 msgid "E.g. Posted"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1956
+#: inc/Builder/CFF_Feed_Builder.php:1970
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:176
 msgid "Add text after date"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1957
+#: inc/Builder/CFF_Feed_Builder.php:1971
 msgid "E.g. - posted date"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1959
+#: inc/Builder/CFF_Feed_Builder.php:1973
 msgid "Timezone settings are global across all feeds. To update it use the global settings."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1960
+#: inc/Builder/CFF_Feed_Builder.php:1974
 msgid "Go to Global Settings"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1961
+#: inc/Builder/CFF_Feed_Builder.php:1975
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1566
 msgid "Any photos or videos in your posts"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1962
+#: inc/Builder/CFF_Feed_Builder.php:1976
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:235
 msgid "Use only one image per post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1963
+#: inc/Builder/CFF_Feed_Builder.php:1977
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1512
 msgid "The \"View on Facebook\" and \"Share\" links at the bottom of each post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1964
+#: inc/Builder/CFF_Feed_Builder.php:1978
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:481
 msgid "View on Facebook link"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1965
+#: inc/Builder/CFF_Feed_Builder.php:1979
 msgid "Toggle \"View on Facebook\" link below each post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1966
+#: inc/Builder/CFF_Feed_Builder.php:1980
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:498
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:527
 msgid "Customize Text"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1967
+#: inc/Builder/CFF_Feed_Builder.php:1981
 msgid "Share Link"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1968
+#: inc/Builder/CFF_Feed_Builder.php:1982
 msgid "Toggle \"Share\" link below each post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1969
+#: inc/Builder/CFF_Feed_Builder.php:1983
 msgid "The comments box displayed at the bottom of each timeline post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1970
+#: inc/Builder/CFF_Feed_Builder.php:1984
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:261
 msgid "Icon Theme"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1971
+#: inc/Builder/CFF_Feed_Builder.php:1985
 #: inc/Builder/Tabs/CFF_Settings_Tab.php:609
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:266
 msgid "Auto"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1974
+#: inc/Builder/CFF_Feed_Builder.php:1988
 msgid "Expand comments box by default"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1975
+#: inc/Builder/CFF_Feed_Builder.php:1989
 msgid "Hide comment avatars"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1976
+#: inc/Builder/CFF_Feed_Builder.php:1990
 msgid "Show comments in lightbox"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1977
+#: inc/Builder/CFF_Feed_Builder.php:1991
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1484
 msgid "The title of an event"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1978
+#: inc/Builder/CFF_Feed_Builder.php:1992
 msgid "The information associated with an event"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1979
+#: inc/Builder/CFF_Feed_Builder.php:1993
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:386
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:419
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:550
@@ -4107,7 +4334,7 @@ msgstr ""
 msgid "Text Size"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1980
+#: inc/Builder/CFF_Feed_Builder.php:1994
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:395
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:428
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:558
@@ -4117,123 +4344,123 @@ msgstr ""
 msgid "Text Color"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1981
+#: inc/Builder/CFF_Feed_Builder.php:1995
 msgid "The link info box that's created when a link is shared in a Facebook post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1982
+#: inc/Builder/CFF_Feed_Builder.php:1996
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:579
 msgid "Box Style"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1983
+#: inc/Builder/CFF_Feed_Builder.php:1997
 msgid "Remove background/border"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1984
+#: inc/Builder/CFF_Feed_Builder.php:1998
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:618
 msgid "Link Title"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1985
+#: inc/Builder/CFF_Feed_Builder.php:1999
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:646
 msgid "Link URL"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1986
+#: inc/Builder/CFF_Feed_Builder.php:2000
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:674
 msgid "Link Description"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1987
+#: inc/Builder/CFF_Feed_Builder.php:2001
 msgid "chars"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1988
+#: inc/Builder/CFF_Feed_Builder.php:2002
 msgid "The description text associated with shared photos, videos, or links"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1990
+#: inc/Builder/CFF_Feed_Builder.php:2004
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1319
 msgid "Post Type"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1991
+#: inc/Builder/CFF_Feed_Builder.php:2005
 msgid "boxed"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1992
+#: inc/Builder/CFF_Feed_Builder.php:2006
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1329
 msgid "Regular"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1993
+#: inc/Builder/CFF_Feed_Builder.php:2007
 msgid "Indvidual Properties"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1994
+#: inc/Builder/CFF_Feed_Builder.php:2008
 #: inc/Builder/Tabs/CFF_Styling_Tab.php:587
 msgid "Background Color"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1995
+#: inc/Builder/CFF_Feed_Builder.php:2009
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1365
 msgid "Border Radius"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:1996
+#: inc/Builder/CFF_Feed_Builder.php:2010
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1381
 msgid "Box Shadow"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2131
+#: inc/Builder/CFF_Feed_Builder.php:2145
 msgid "seconds"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2289
+#: inc/Builder/CFF_Feed_Builder.php:2303
 msgid "Instagram"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2291
-#: inc/Builder/CFF_Feed_Builder.php:2303
-#: inc/Builder/CFF_Feed_Builder.php:2315
+#: inc/Builder/CFF_Feed_Builder.php:2305
+#: inc/Builder/CFF_Feed_Builder.php:2317
+#: inc/Builder/CFF_Feed_Builder.php:2329
 msgid "By Smash Balloon"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2292
+#: inc/Builder/CFF_Feed_Builder.php:2306
 msgid "To display an Instagram feed, our Instagram plugin is required. </br> It provides a clean and beautiful way to add your Instagram posts to your website. Grab your visitors attention and keep them engaged with your site longer."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2301
+#: inc/Builder/CFF_Feed_Builder.php:2315
 msgid "Twitter"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2313
+#: inc/Builder/CFF_Feed_Builder.php:2327
 msgid "YouTube"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2316
+#: inc/Builder/CFF_Feed_Builder.php:2330
 msgid "To display a YouTube feed, our YouTube plugin is required. It provides a simple yet powerful way to display videos from YouTube on your website, Increasing engagement with your channel while keeping visitors on your website."
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2480
+#: inc/Builder/CFF_Feed_Builder.php:2494
 msgid "Post"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2504
+#: inc/Builder/CFF_Feed_Builder.php:2518
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:1469
 msgid "Post Date"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2664
+#: inc/Builder/CFF_Feed_Builder.php:2678
 msgid "Title"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2668
+#: inc/Builder/CFF_Feed_Builder.php:2682
 msgid "Description"
 msgstr ""
 
-#: inc/Builder/CFF_Feed_Builder.php:2672
+#: inc/Builder/CFF_Feed_Builder.php:2686
 msgid "Url"
 msgstr ""
 
@@ -4306,10 +4533,6 @@ msgstr ""
 
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:87
 msgid "Upgrade to Pro to Load posts asynchronously with Load more button."
-msgstr ""
-
-#: inc/Builder/Tabs/CFF_Customize_Tab.php:95
-msgid "Lightbox"
 msgstr ""
 
 #: inc/Builder/Tabs/CFF_Customize_Tab.php:96

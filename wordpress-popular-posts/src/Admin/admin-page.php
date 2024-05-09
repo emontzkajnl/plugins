@@ -52,7 +52,7 @@ if ( isset($_POST['section']) ) {
                 $_POST['thumb_source'] == 'custom_field'
                 && ( ! isset($_POST['thumb_field']) || empty($_POST['thumb_field']) )
             ) {
-                echo '<div id="wpp-message" class="error fade"><p>' . esc_html(__('Please provide the name of your custom field.', 'wordpress-popular-posts')) . '</p></div>';
+                echo '<div class="notice notice-error"><p>' . esc_html(__('Please provide the name of your custom field.', 'wordpress-popular-posts')) . '</p></div>';
             }
             else {
                 // thumbnail settings changed, flush transients
@@ -62,7 +62,7 @@ if ( isset($_POST['section']) ) {
 
                 $this->config['tools']['thumbnail']['source'] = sanitize_text_field($_POST['thumb_source']);
                 $this->config['tools']['thumbnail']['field'] = ( ! empty($_POST['thumb_field']) ) ? sanitize_text_field($_POST['thumb_field']) : 'wpp_thumbnail';
-                $this->config['tools']['thumbnail']['default'] = ( ! empty($_POST['upload_thumb_src']) ) ? $_POST['upload_thumb_src'] : '';
+                $this->config['tools']['thumbnail']['default'] = ( ! empty($_POST['upload_thumb_src']) ) ? $_POST['upload_thumb_src'] : $this->config['tools']['thumbnail']['default'];
                 $this->config['tools']['thumbnail']['resize'] = (bool) $_POST['thumb_field_resize'];
                 $this->config['tools']['thumbnail']['lazyload'] = (bool) $_POST['thumb_lazy_load'];
 

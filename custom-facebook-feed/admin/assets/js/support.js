@@ -27,6 +27,13 @@ var support_data = {
         text : '',
         shown : null
     },
+    viewsActive : {
+        tempLoginAboutPopup : false
+    },
+     //Tenmp User Account
+    tempUser : cff_support.tempUser,
+    createStatus : null,
+    deleteStatus : null,
     isSetupPage : false
 }
 
@@ -118,5 +125,104 @@ var cffsupport = new Vue({
          toggleStickyWidget: function() {
             this.stickyWidget = !this.stickyWidget;
         },
+         /**
+		 * Copy text to clipboard
+		 *
+		 * @since 4.0
+		 */
+         copyToClipBoard : function(value){
+			var self = this;
+			const el = document.createElement('textarea');
+			el.className = 'cff-fb-cp-clpboard';
+			el.value = value;
+			document.body.appendChild(el);
+			el.select();
+			document.execCommand('copy');
+			document.body.removeChild(el);
+			self.notificationElement =  {
+				type : 'success',
+				text : this.genericText.copiedToClipboard,
+				shown : "shown"
+			};
+			setTimeout(function(){
+				self.notificationElement.shown =  "hidden";
+			}, 3000);
+		},
+         /**
+         * Activate View
+         *
+         * @since 4.0
+        */
+         activateView : function(viewName){
+             var self = this;
+            self.viewsActive[viewName] = (self.viewsActive[viewName] == false ) ? true : false;
+        },
+          /**
+         * Create New Temp User
+         *
+         * @since 4.0
+         */
+        createTempUser: function() {
+            const self = this;
+            self.createStatus = 'loading';
+            let data = new FormData();
+            data.append( 'action', 'cff_create_temp_user' );
+            data.append( 'nonce', cff_support.nonce );
+            fetch(cff_support.ajax_handler, {
+                method: "POST",
+                credentials: 'same-origin',
+                body: data
+            })
+            .then(response => response.json())
+            .then(data => {
+                self.createStatus = null;
+                if( data.success ){
+                    self.tempUser = data.user;
+                }
+                self.notificationElement =  {
+                    type : data.success === true ? 'success' : 'error',
+                    text : data.message,
+                    shown : "shown"
+                };
+                setTimeout(function(){
+                    self.notificationElement.shown =  "hidden";
+                }, 5000);
+            });
+
+        },
+
+        /**
+         * Delete Temp User
+         *
+         * @since 4.0
+         */
+        deleteTempUser: function() {
+            const self = this;
+            self.deleteStatus = 'loading';
+            let data = new FormData();
+            data.append( 'action', 'cff_delete_temp_user' );
+            data.append( 'nonce', cff_support.nonce );
+            data.append( 'userId', self.tempUser.id );
+            fetch(cff_support.ajax_handler, {
+                method: "POST",
+                credentials: 'same-origin',
+                body: data
+            })
+            .then(response => response.json())
+            .then(data => {
+                self.deleteStatus = null;
+                if( data.success ){
+                    self.tempUser = null;
+                }
+                self.notificationElement =  {
+                    type : data.success === true ? 'success' : 'error',
+                    text : data.message,
+                    shown : "shown"
+                };
+                setTimeout(function(){
+                    self.notificationElement.shown =  "hidden";
+                }, 5000);
+            });
+        }
     },
 })

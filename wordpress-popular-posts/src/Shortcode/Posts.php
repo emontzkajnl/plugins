@@ -116,7 +116,8 @@ class Posts extends Shortcode {
             'header_start' => '<h2>',
             'header_end' => '</h2>',
             'post_html' => '',
-            'theme' => ''
+            'theme' => '',
+            'ajaxify' => 1
         ], $attributes, 'wpp'));
 
         // possible values for "Time Range" and "Order by"
@@ -125,7 +126,7 @@ class Posts extends Shortcode {
         $order_by_values = ['comments', 'views', 'avg'];
 
         $shortcode_ops = [
-            'title' => strip_tags($header),
+            'title' => strip_tags($header), // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- We want the behavior of strip_tags
             'limit' => ( ! empty($limit ) && Helper::is_number($limit) && $limit > 0 ) ? $limit : 10,
             'offset' => ( ! empty($offset) && Helper::is_number($offset) && $offset >= 0 ) ? $offset : 0,
             'range' => ( in_array($range, $range_values) ) ? $range : 'daily',
@@ -215,11 +216,18 @@ class Posts extends Shortcode {
             && ! empty($header_end)
         ) {
             $shortcode_content .= htmlspecialchars_decode($header_start, ENT_QUOTES) . $header . htmlspecialchars_decode($header_end, ENT_QUOTES);
+            $shortcode_content = Helper::sanitize_html($shortcode_content, $shortcode_ops);
         }
 
-        $isAdmin = isset($_GET['isSelected']) ? $_GET['isSelected'] : false;
+        $isAdmin = isset($_GET['isSelected']) ? $_GET['isSelected'] : false; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- isSelected is a boolean from wp-admin
 
-        if ( $this->config['tools']['ajax'] && ! is_customize_preview() && ! $isAdmin ) {
+        $load_via_ajax = $this->config['tools']['ajax'];
+
+        if ( isset($attributes['ajaxify']) && is_numeric($attributes['ajaxify']) ) {
+            $load_via_ajax = (bool) absint($attributes['ajaxify']);
+        }
+
+        if ( $load_via_ajax && ! is_customize_preview() && ! $isAdmin ) {
             $shortcode_content .= '<div class="wpp-shortcode">';
             $shortcode_content .= '<script type="application/json">' . wp_json_encode($shortcode_ops) . '</script>';
             $shortcode_content .= '<div class="wpp-shortcode-placeholder"></div>';

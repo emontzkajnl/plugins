@@ -412,26 +412,10 @@ class QMNPluginHelper {
 		}
 		$answers_original = $answers;
 		if ( 2 === intval( $quiz_options->randomness_order ) || 3 === intval( $quiz_options->randomness_order ) ) {
-			if ( empty($_COOKIE[ 'answer_ids_'.$question_id ]) ) {
-				$answers = self::qsm_shuffle_assoc( $answers );
-				$answer_ids = array_keys($answers);
-				$answer_ids = implode( ',', $answer_ids );
-				?>
-				<script>
-					var ans_d = new Date();
-					ans_d.setTime(ans_d.getTime() + (365*24*60*60*1000));
-					var ans_expires = "expires="+ ans_d.toUTCString();
-					document.cookie = "answer_ids_<?php echo esc_attr( $question_id ); ?> = <?php echo esc_attr( $answer_ids ) ?>; "+ans_expires+"; path=/";
-				</script>
-				<?php
-			}else {
-				$answer_ids = explode( ',', sanitize_text_field( wp_unslash( $_COOKIE[ 'answer_ids_'.$question_id ] ) ) );
-				$answers_random = array();
-				foreach ( $answer_ids as $key ) {
-					$answers_random[ $key ] = $answers[ $key ];
-				}
-				$answers = $answers_random;
-			}
+			$answers = self::qsm_shuffle_assoc( $answers );
+			global $quiz_answer_random_ids;
+			$answer_ids = array_keys($answers);
+			$quiz_answer_random_ids[ $question_id ] = $answer_ids;
 		}
 
 		// convert answer array into key value pair
@@ -570,6 +554,7 @@ class QMNPluginHelper {
 			'retake_quiz_button_text'          => __('Retake Quiz', 'quiz-master-next'),
 			'previous_button_text'             => __('Previous', 'quiz-master-next'),
 			'next_button_text'                 => __('Next', 'quiz-master-next'),
+			'deselect_answer_text'             => __('Deselect Answer', 'quiz-master-next'),
 			'empty_error_text'                 => __('Please complete all required fields!', 'quiz-master-next'),
 			'email_error_text'                 => __('Not a valid e-mail address!', 'quiz-master-next'),
 			'number_error_text'                => __('This field must be a number!', 'quiz-master-next'),
@@ -582,6 +567,7 @@ class QMNPluginHelper {
 			'quick_result_correct_answer_text' => __('Correct! You have selected correct answer.', 'quiz-master-next'),
 			'quick_result_wrong_answer_text'   => __('Wrong! You have selected wrong answer.', 'quiz-master-next'),
 			'quiz_processing_message'          => '',
+			'quiz_limit_choice'                => __('Limit of choice is reached.', 'quiz-master-next'),
 			'name_field_text'                  => __('Name', 'quiz-master-next'),
 			'business_field_text'              => __('Business', 'quiz-master-next'),
 			'email_field_text'                 => __('Email', 'quiz-master-next'),
@@ -870,8 +856,7 @@ class QMNPluginHelper {
 		 * Sort tabs by priority
 		 */
 		array_multisort( array_column($this->admin_results_tabs, 'priority'), SORT_ASC, $this->admin_results_tabs);
-
-		return $this->admin_results_tabs;
+		return apply_filters( 'qmn_admin_results_tabs', $this->admin_results_tabs );
 	}
 
 	/**
@@ -1145,5 +1130,50 @@ class QMNPluginHelper {
 		}
 		$question_type_categorized = array_merge( $question_type_categorized, $question_type_uncategorized );
 		return $question_type_categorized;
+	}
+
+	public function description_array() {
+		return array(
+			array(
+				'question_type_id' => 11,
+				'description'      => __( 'For this question type, users will see a file upload field on front end.', 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '14',
+				'description'      => __( 'Use %BLANK% variable in the description field to display input boxes.', 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '12',
+				'description'      => __( 'For this question type, users will see a date input field on front end.', 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '3',
+				'description'      => __( 'For this question type, users will see a standard input box on front end.', 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '5',
+				'description'      => __( 'For this question type, users will see a standard textarea input box on front end.', 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '6',
+				'description'      => __( 'Displays a simple section on front end. Description is mandatory. ', 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '7',
+				'description'      => __( 'For this question type, users will see an input box which accepts only number values on front end.', 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '8',
+				'description'      => __( "For this question type, users will see a checkbox on front end. The text in description field will act like it's label.", 'quiz-master-next' ),
+			),
+			array(
+				'question_type_id' => '9',
+				'description'      => __( 'For this question type, users will see a Captcha field on front end.', 'quiz-master-next' ),
+			),
+			// array(
+			// 'question_type_id' => '13',
+			// 'description'      => __( 'Use points based grading system for Polar questions.', 'quiz-master-next' ),
+			// ),
+		);
 	}
 }

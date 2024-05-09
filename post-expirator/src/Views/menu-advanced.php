@@ -1,7 +1,8 @@
 <?php
 
-use PublishPressFuture\Core\DI\Container;
-use PublishPressFuture\Core\DI\ServicesAbstract;
+use PublishPress\Future\Core\DI\Container as DIContainer;
+use PublishPress\Future\Core\DI\ServicesAbstract;
+use PublishPress\Future\Modules\Settings\HooksAbstract;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -10,7 +11,8 @@ $preserveData = (bool)get_option('expirationdatePreserveData', true);
 
 $user_roles = wp_roles()->get_names();
 $plugin_facade = PostExpirator_Facade::getInstance();
-$container = Container::getInstance();
+$container = DIContainer::getInstance();
+$hooks = $container->get(ServicesAbstract::HOOKS);
 
 ?>
 <div class="pp-columns-wrapper<?php echo $showSideBar ? ' pp-enable-sidebar' : ''; ?>">
@@ -25,33 +27,12 @@ $container = Container::getInstance();
                 esc_html_e(
                     'Please do not update anything here unless you know what it entails. For advanced users only.',
                     'post-expirator'
-                ); ?></p>
-            <?php
-            $gutenberg = get_option('expirationdateGutenbergSupport', 1);
-            ?>
+                ); ?>
+            </p>
             <table class="form-table">
-                <tr valign="top">
-                    <th scope="row"><?php
-                        esc_html_e('Block Editor Support', 'post-expirator'); ?></th>
-                    <td>
-                        <input type="radio" name="gutenberg-support" id="gutenberg-support-enabled"
-                               value="1" <?php
-                        echo intval($gutenberg) === 1 ? 'checked' : ''; ?>/> <label
-                                for="gutenberg-support-enabled"><?php
-                            esc_html_e('Show Gutenberg style box', 'post-expirator'); ?></label>
-                        &nbsp;&nbsp;
-                        <input type="radio" name="gutenberg-support" id="gutenberg-support-disabled"
-                               value="0" <?php
-                        echo intval($gutenberg) === 0 ? 'checked' : ''; ?>/> <label
-                                for="gutenberg-support-disabled"><?php
-                            esc_html_e('Show Classic Editor style box', 'post-expirator'); ?></label>
-                        <p class="description"><?php
-                            esc_html_e(
-                                'Toggle between native support for the Block Editor or the backward compatible Classic Editor style metabox.',
-                                'post-expirator'
-                            ); ?></p>
-                    </td>
-                </tr>
+
+                <?php $hooks->doAction(HooksAbstract::ACTION_SETTINGS_TAB_ADVANCED_BEFORE); ?>
+
                 <tr valign="top">
                     <th scope="row"><?php
                         esc_html_e('Future Action Column Style', 'post-expirator'); ?></th>
@@ -59,24 +40,66 @@ $container = Container::getInstance();
                         <?php
                         $columnStyle = $container->get(ServicesAbstract::SETTINGS)->getColumnStyle();
                         ?>
-                        <input type="radio" name="future-action-column-style"
-                               id="future-action-column-style-verbose"
-                               value="verbose" <?php
-                        echo $columnStyle === 'verbose' ? 'checked' : ''; ?>/>
-                        <label for="future-action-column-style-verbose"><?php
-                            esc_html_e('Detailed', 'post-expirator'); ?></label>
-                        &nbsp;&nbsp;
-                        <input type="radio" name="future-action-column-style"
-                               id="future-action-column-style-simple"
-                               value="simple" <?php
-                        echo $columnStyle === 'simple' ? 'checked' : ''; ?>/>
-                        <label for="future-action-column-style-simple"><?php
-                            esc_html_e('Simplified', 'post-expirator'); ?></label>
-                        <p class="description"><?php
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="future-action-column-style"
+                                id="future-action-column-style-verbose"
+                                value="verbose" <?php
+                            echo $columnStyle === 'verbose' ? 'checked' : ''; ?>/>
+                            <label for="future-action-column-style-verbose"><?php
+                                esc_html_e('Detailed', 'post-expirator'); ?></label>
+                            <p class="description offset"><?php
                             esc_html_e(
-                                '"Detailed" will display all information in the Future Action column. "Simplified" will display only the icon and date/time.',
+                                'Displays all information in the Future Action column.',
                                 'post-expirator'
                             ); ?></p>
+                        </div>
+
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="future-action-column-style"
+                                id="future-action-column-style-simple"
+                                value="simple" <?php
+                            echo $columnStyle === 'simple' ? 'checked' : ''; ?>/>
+                            <label for="future-action-column-style-simple"><?php
+                                esc_html_e('Simplified', 'post-expirator'); ?></label>
+                            <p class="description offset"><?php
+                            esc_html_e(
+                                'Displays only the icon and date/time.',
+                                'post-expirator'
+                            ); ?></p>
+                        </div>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row"><?php
+                        esc_html_e('Time format in the date picker', 'post-expirator'); ?></th>
+                    <td>
+                        <?php
+                        $timeFormat = $container->get(ServicesAbstract::SETTINGS)->getTimeFormatForDatePicker();
+                        ?>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="future-action-time-format"
+                                id="future-action-time-format-inherited"
+                                value="inherited" <?php
+                            echo $timeFormat === 'inherited' ? 'checked' : ''; ?>/>
+                            <label for="future-action-time-format-inherited"><?php
+                                esc_html_e('Inherit from Site Settings', 'post-expirator'); ?></label>
+                        </div>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="future-action-time-format"
+                                id="future-action-time-format-24h"
+                                value="24h" <?php
+                            echo $timeFormat === '24h' ? 'checked' : ''; ?>/>
+                            <label for="future-action-time-format-24h"><?php
+                                esc_html_e('24 hours', 'post-expirator'); ?></label>
+                        </div>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="future-action-time-format"
+                                id="future-action-time-format-12h"
+                                value="12h" <?php
+                            echo $timeFormat === '12h' ? 'checked' : ''; ?>/>
+                            <label for="future-action-time-format-12h"><?php
+                                esc_html_e('AM/PM', 'post-expirator'); ?></label>
+                        </div>
                     </td>
                 </tr>
                 <tr valign="top">
@@ -116,23 +139,26 @@ $container = Container::getInstance();
                         esc_html_e('Preserve Data After Deactivating the Plugin', 'post-expirator'); ?>
                     </th>
                     <td>
-                        <input type="radio" name="expired-preserve-data-deactivating"
-                               id="expired-preserve-data-deactivating-true"
-                               value="1" <?php
-                        echo $preserveData ? ' checked="checked"' : ''; ?>/>
-                        <label for="expired-preserve-data-deactivating-true">
-                            <?php
-                            esc_html_e('Preserve data', 'post-expirator'); ?>
-                        </label>
-                        &nbsp;&nbsp;
-                        <input type="radio" name="expired-preserve-data-deactivating"
-                               id="expired-preserve-data-deactivating-false"
-                               value="0" <?php
-                        echo ! $preserveData ? ' checked="checked"' : ''; ?>/>
-                        <label for="expired-preserve-data-deactivating-false">
-                            <?php
-                            esc_html_e('Delete data', 'post-expirator'); ?>
-                        </label>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="expired-preserve-data-deactivating"
+                                id="expired-preserve-data-deactivating-true"
+                                value="1" <?php
+                            echo $preserveData ? ' checked="checked"' : ''; ?>/>
+                            <label for="expired-preserve-data-deactivating-true">
+                                <?php
+                                esc_html_e('Preserve data', 'post-expirator'); ?>
+                            </label>
+                        </div>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="expired-preserve-data-deactivating"
+                                id="expired-preserve-data-deactivating-false"
+                                value="0" <?php
+                            echo ! $preserveData ? ' checked="checked"' : ''; ?>/>
+                            <label for="expired-preserve-data-deactivating-false">
+                                <?php
+                                esc_html_e('Delete data', 'post-expirator'); ?>
+                            </label>
+                        </div>
                         <p class="description">
                             <?php
                             esc_html_e(

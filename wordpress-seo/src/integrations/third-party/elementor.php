@@ -26,7 +26,7 @@ use Yoast\WP\SEO\Helpers\Options_Helper;
 use Yoast\WP\SEO\Integrations\Integration_Interface;
 use Yoast\WP\SEO\Introductions\Infrastructure\Wistia_Embed_Permission_Repository;
 use Yoast\WP\SEO\Presenters\Admin\Meta_Fields_Presenter;
-use Yoast\WP\SEO\Promotions\Application\Promotion_Manager_Interface;
+use Yoast\WP\SEO\Promotions\Application\Promotion_Manager;
 
 /**
  * Integrates the Yoast SEO metabox in the Elementor editor.
@@ -36,7 +36,7 @@ class Elementor implements Integration_Interface {
 	/**
 	 * The identifier for the elementor tab.
 	 */
-	const YOAST_TAB = 'yoast-tab';
+	public const YOAST_TAB = 'yoast-tab';
 
 	/**
 	 * Represents the post.
@@ -102,11 +102,11 @@ class Elementor implements Integration_Interface {
 	protected $inclusive_language_analysis;
 
 	/**
-	 * The promotions manager.
+	 * Holds the promotion manager.
 	 *
-	 * @var Promotion_Manager_Interface
+	 * @var Promotion_Manager
 	 */
-	private $promotion_manager;
+	protected $promotion_manager;
 
 	/**
 	 * Returns the conditionals based in which this loadable should be active.
@@ -120,16 +120,16 @@ class Elementor implements Integration_Interface {
 	/**
 	 * Constructor.
 	 *
-	 * @param WPSEO_Admin_Asset_Manager   $asset_manager The asset manager.
-	 * @param Options_Helper              $options       The options helper.
-	 * @param Capability_Helper           $capability    The capability helper.
-	 * @param Promotion_Manager_Interface $promotion_manager The promotions manager.
+	 * @param WPSEO_Admin_Asset_Manager $asset_manager     The asset manager.
+	 * @param Options_Helper            $options           The options helper.
+	 * @param Capability_Helper         $capability        The capability helper.
+	 * @param Promotion_Manager         $promotion_manager The promotion manager.
 	 */
 	public function __construct(
 		WPSEO_Admin_Asset_Manager $asset_manager,
 		Options_Helper $options,
 		Capability_Helper $capability,
-		Promotion_Manager_Interface $promotion_manager
+		Promotion_Manager $promotion_manager
 	) {
 		$this->asset_manager     = $asset_manager;
 		$this->options           = $options;
@@ -160,6 +160,8 @@ class Elementor implements Integration_Interface {
 	/**
 	 * Registers our Elementor hooks.
 	 * This is done for pages with metabox on page load and not on ajax request.
+	 *
+	 * @return void
 	 */
 	public function register_elementor_hooks() {
 
@@ -192,6 +194,8 @@ class Elementor implements Integration_Interface {
 
 	/**
 	 * Register a panel tab slug, in order to allow adding controls to this tab.
+	 *
+	 * @return void
 	 */
 	public function add_yoast_panel_tab() {
 		Controls_Manager::add_tab( $this::YOAST_TAB, 'Yoast SEO' );
@@ -201,6 +205,8 @@ class Elementor implements Integration_Interface {
 	 * Register additional document controls.
 	 *
 	 * @param PageBase $document The PageBase document.
+	 *
+	 * @return void
 	 */
 	public function register_document_controls( $document ) {
 		// PageBase is the base class for documents like `post` `page` and etc.
@@ -434,8 +440,8 @@ class Elementor implements Integration_Interface {
 				'has_taxonomies'           => $this->current_post_type_has_taxonomies(),
 			],
 			'shortcodes'  => [
-				'wpseo_filter_shortcodes_nonce' => \wp_create_nonce( 'wpseo-filter-shortcodes' ),
 				'wpseo_shortcode_tags'          => $this->get_valid_shortcode_tags(),
+				'wpseo_filter_shortcodes_nonce' => \wp_create_nonce( 'wpseo-filter-shortcodes' ),
 			],
 		];
 
@@ -468,7 +474,7 @@ class Elementor implements Integration_Interface {
 			],
 			'dismissedAlerts'           => $dismissed_alerts,
 			'webinarIntroElementorUrl'  => WPSEO_Shortlinker::get( 'https://yoa.st/webinar-intro-elementor' ),
-			'blackFridayBlockEditorUrl' => ( $this->promotion_manager->is( 'black_friday_2023_checklist' ) ) ? WPSEO_Shortlinker::get( 'https://yoa.st/black-friday-checklist' ) : '',
+			'currentPromotions'         => $this->promotion_manager->get_current_promotions(),
 			'usedKeywordsNonce'         => \wp_create_nonce( 'wpseo-keyword-usage-and-post-types' ),
 			'linkParams'                => WPSEO_Shortlinker::get_query_params(),
 			'pluginUrl'                 => \plugins_url( '', \WPSEO_FILE ),
@@ -613,7 +619,23 @@ class Elementor implements Integration_Interface {
 			$values['cornerstoneActive'] = false;
 		}
 
+		$values['elementorMarkerStatus'] = $this->is_highlighting_available() ? 'enabled' : 'hidden';
+
 		return $values;
+	}
+
+	/**
+	 * Checks whether the highlighting functionality is available for Elementor:
+	 * - in Free it's always available (as an upsell).
+	 * - in Premium it's available as long as the version is 21.8-RC0 or above.
+	 *
+	 * @return bool Whether the highlighting functionality is available.
+	 */
+	private function is_highlighting_available() {
+		$is_premium      = \YoastSEO()->helpers->product->is_premium();
+		$premium_version = \YoastSEO()->helpers->product->get_premium_version();
+
+		return ! $is_premium || \version_compare( $premium_version, '21.8-RC0', '>=' );
 	}
 
 	/**

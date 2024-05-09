@@ -382,21 +382,40 @@ class CFF_Source {
 	 * @since 4.0
 	 */
 	public static function get_connection_urls($is_settings = false) {
-		$urls            = array();
-		$admin_url_state = ($is_settings) ?  admin_url( 'admin.php?page=cff-settings' ) : admin_url( 'admin.php?page=cff-feed-builder' );
+		$urls            	= array();
+		$admin_url_state 	= $is_settings ?  admin_url('admin.php?page=cff-settings') : admin_url('admin.php?page=cff-feed-builder');
+		$sb_admin_email 	= get_option('admin_email');
+		$nonce           	= wp_create_nonce('cff_con');
+		$sw_flag         	= !empty($_GET['sw-feed']) ? true : false;
+        $groups_number      = CFF_Db::check_group_source() > 0 ? true : false;
+
+
 		//If the admin_url isn't returned correctly then use a fallback
-		if ( $admin_url_state == '/wp-admin/admin.php?page=cff-feed-builder'
-		     || $admin_url_state == '/wp-admin/admin.php?page=cff-feed-builder&tab=configuration' ) {
+		if ($admin_url_state == '/wp-admin/admin.php?page=cff-feed-builder'
+		     || $admin_url_state == '/wp-admin/admin.php?page=cff-feed-builder&tab=configuration') {
 			$admin_url_state = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 		}
-		#$urls['page']  = 'https://api.smashballoon.com/v2/facebook-login.php?state=' . $admin_url_state;
-		#$urls['group'] = 'https://api.smashballoon.com/v2/facebook-group-login.php?state=' . $admin_url_state;
 
-		$sb_admin_email = get_option('admin_email');
-		$urls['page']  = 'https://connect.smashballoon.com/auth/fb/?wordpress_user=' . $sb_admin_email . '&vn=' . CFFVER . '&state=';
-		$urls['group'] = 'https://connect.smashballoon.com/auth/fb/?wordpress_user=' . $sb_admin_email . '&vn=' . CFFVER . '&state=';
+		$urls['page'] 	= [
+			'connect' 			=> CFF_CONNECT_URL,
+			'wordpress_user'   => $sb_admin_email,
+			'v'                => 'free',
+			'vn'               => CFFVER,
+            'has_group'        => $groups_number,
+			'cff_con'          => $nonce,
+			'sw_feed'          => $sw_flag
+		];
+
+		$urls['group'] 	= [
+			'connect' 			=> CFF_CONNECT_URL,
+			'wordpress_user'   => $sb_admin_email,
+			'v'                => 'free',
+			'vn'               => CFFVER,
+            'has_group'        => $groups_number,
+			'cff_con'          => $nonce,
+			'sw_feed'          => $sw_flag
+		];
 		$urls['stateURL'] = $admin_url_state;
-
 		return $urls;
 	}
 
@@ -410,6 +429,11 @@ class CFF_Source {
 	 * @since 4.0
 	 */
 	public static function maybe_source_connection_data() {
+		$nonce = !empty($_GET['cff_con']) ? sanitize_key($_GET['cff_con']) : '';
+		if (!wp_verify_nonce($nonce, 'cff_con')) {
+			return false;
+		}
+
 		if ( isset( $_GET['cff_access_token'] )
 		     && isset( $_GET['cff_final_response'] )
 		     && $_GET['cff_final_response'] == 'true' ) {
@@ -475,8 +499,6 @@ class CFF_Source {
 				]
 			];
 		}
-
-		return false;
 	}
 
 	/**
@@ -568,8 +590,6 @@ class CFF_Source {
 				]
 			];
 		}
-
-		return false;
 	}
 
 	/**
@@ -1085,5 +1105,37 @@ class CFF_Source {
 			CFF_Utils::cff_fetchUrl($url, false);
 		}
 
+	}
+
+
+	/**
+	 * Get single source info By Id
+	 *
+	 * @since 4.2.0
+	 */
+	public static function get_single_source_info($source_id)
+	{
+		$query_args = array(
+			'id' => sanitize_text_field(wp_unslash($source_id))
+		);
+		$results = CFF_Db::source_query_byid($query_args);
+		if (!isset($results[0])) {
+			return false;
+		}
+		return $results[0];
+	}
+
+	/**
+     * Should show group Notice
+     *
+     * @since 4.2.0
+     */
+	public static function should_show_group_deprecation()
+	{
+	 	$cff_statuses = get_option( 'cff_statuses', array() );
+		return (
+				!isset($cff_statuses['cff_group_deprecation_dismiss']) ||
+				$cff_statuses['cff_group_deprecation_dismiss'] !== true
+			) && CFF_Db::check_group_source() > 0;
 	}
 }

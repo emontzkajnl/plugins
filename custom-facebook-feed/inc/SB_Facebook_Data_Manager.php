@@ -84,6 +84,7 @@ class SB_Facebook_Data_Manager {
 		$statuses = $this->get_statuses();
 
 		$data_was_deleted = false;
+		do_action('cff_before_delete_old_data', $statuses);
 
 		if ( $statuses['last_used'] < cff_get_current_time() - (21 * DAY_IN_SECONDS) ) {
 
@@ -466,68 +467,5 @@ class SB_Facebook_Data_Manager {
 			'last_used' => cff_get_current_time() - DAY_IN_SECONDS,
 			'num_db_updates' => 0
 		);
-	}
-
-	/**
-	 * Encrypt using Smash Balloon's support key and salt
-	 *
-	 * @param string $encrypted_value
-	 *
-	 * @return bool|string
-	 *
-	 * @since 2.9.4/5.12.4
-	 */
-	public function remote_encrypt( $encrypted_value ) {
-		$local_encrypt = new SB_Facebook_Data_Encryption();
-		$raw_value = $local_encrypt->decrypt( $encrypted_value );
-		if ( $this->key_salt === null ) {
-			$url = 'https://secure.smashballoon.com/';
-			$args = array(
-				'timeout' => 20
-			);
-			$response = wp_remote_get( $url, $args );
-
-			if ( ! is_wp_error( $response ) ) {
-				$this->key_salt = $response['body'];
-			}
-		}
-
-		$key = substr( $this->key_salt, 0, 64 );
-		$salt = substr( $this->key_salt, 64, 64 );
-
-		$args = array(
-			'key' => $key,
-			'salt' => $salt
-		);
-
-		$remote_encrypt = new SB_Facebook_Data_Encryption( $args );
-
-		return $remote_encrypt->encrypt( $raw_value );
-	}
-
-	public function remote_decrypt( $encrypted_value ) {
-		if ( $this->key_salt === null ) {
-			$url = 'https://secure.smashballoon.com/';
-			$args = array(
-				'timeout' => 20
-			);
-			$response = wp_remote_get( $url, $args );
-
-			if ( ! is_wp_error( $response ) ) {
-				$this->key_salt = $response['body'];
-			}
-		}
-
-		$key = substr( $this->key_salt, 0, 64 );
-		$salt = substr( $this->key_salt, 64, 64 );
-
-		$args = array(
-			'key' => $key,
-			'salt' => $salt
-		);
-
-		$remote_encrypt = new SB_Facebook_Data_Encryption( $args );
-
-		return $remote_encrypt->decrypt( $encrypted_value );
 	}
 }

@@ -107,11 +107,11 @@ class Image {
      * @param   int         $post_id        Post ID
      * @param   array       $size           Image size (width & height)
      * @param   string      $source         Image source
-     * @param   bool        $crop           Whether to crop the image or not
+     * @param   bool|array  $crop           Whether to crop the image or not, and if so how
      * @param   string      $build          Whether to build the image or get an existing one
      * @return  string
      */
-    public function get(int $post_id, array $size, string $source, bool $crop = true, ?string $build = 'manual')
+    public function get(int $post_id, array $size, string $source, $crop = true, ?string $build = 'manual') /** @TODO: starting PHP 8.0 $crop can be declared as mixed $crop */
     {
         // Bail, $post_id is not an integer
         if ( ! is_numeric($post_id) ) {
@@ -691,7 +691,7 @@ class Image {
                 }
 
                 // Valid image, save it
-                if ( in_array($image_type, [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG]) ) {
+                if ( in_array($image_type, [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP]) ) {
                     // move file to Uploads
                     if ( @rename($tmp, $full_image_path) ) {
                         // borrowed from WP - set correct file permissions

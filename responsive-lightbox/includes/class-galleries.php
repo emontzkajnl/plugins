@@ -920,6 +920,10 @@ class Responsive_Lightbox_Galleries {
 		if ( get_post_type( $args['id'] ) !== 'rl_gallery' )
 			return '';
 
+		// private gallery?
+		if ( get_post_status( $args['id'] ) === 'private' && ! current_user_can( 'read_private_posts' ) )
+			return '';
+
 		$images_args = [ 'exclude' => true ];
 
 		if ( isset( $args['preview'] ) )

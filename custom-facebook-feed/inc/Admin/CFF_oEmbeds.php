@@ -28,7 +28,7 @@ class CFF_oEmbeds {
 	 *
 	 * @since 4.0
 	 */
-	function __construct(){
+	public function __construct(){
 		$this->init();
 	}
 
@@ -53,7 +53,7 @@ class CFF_oEmbeds {
 	 *
 	 * @since 4.0
 	 */
-	function register_menu() {
+	public function register_menu() {
         $cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
         $cap = apply_filters( 'cff_settings_pages_capability', $cap );
 
@@ -84,9 +84,10 @@ class CFF_oEmbeds {
 		$oembed_settings['disabled'] = true;
 		update_option( 'cff_oembed_token', $oembed_settings );
 
-		new CFF_Response( true, array(
+		$response = new CFF_Response( true, array(
 			'connectionUrl' => $this->get_connection_url()
 		) );
+		$response->send();
 	}
 
 	/**
@@ -104,9 +105,10 @@ class CFF_oEmbeds {
 		$oembed_settings['disabled'] = true;
 		update_option( 'sbi_oembed_token', $oembed_settings );
 
-		new CFF_Response( true, array(
+		$response = new CFF_Response( true, array(
 			'connectionUrl' => $this->get_connection_url()
 		) );
+		$response->send();
 	}
 
    	/**
@@ -212,7 +214,7 @@ class CFF_oEmbeds {
 
 		$oembed_token_settings = get_option( 'cff_oembed_token', array() );
 		$saved_access_token_data = isset( $oembed_token_settings['access_token'] ) ? $oembed_token_settings['access_token'] : false;
-		$newly_retrieved_oembed_connection_data = $this->maybe_connection_data( $saved_access_token_data );
+		$newly_retrieved_oembed_connection_data = $this->maybeConnectionData($saved_access_token_data);
 		if ( ! empty( $newly_retrieved_oembed_connection_data['access_token'] ) ) {
 			$oembed_token_settings = $newly_retrieved_oembed_connection_data;
 			$return['newOembedData'] = $newly_retrieved_oembed_connection_data;
@@ -252,27 +254,24 @@ class CFF_oEmbeds {
 	 * Connection URLs are based on the website connecting accounts so that is
 	 * configured here and returned
 	 *
-	 * @return string
+	 * @return array
 	 *
 	 * @since 4.0
 	 */
-	public static function get_connection_url() {
+	public static function get_connection_url()
+	{
 
-		$admin_url_state = admin_url( 'admin.php?page=cff-oembeds-manager' );
-		//If the admin_url isn't returned correctly then use a fallback
-		if( $admin_url_state == '/wp-admin/admin.php?page=cff-oembeds-manager' ){
+		$admin_url_state = admin_url('admin.php?page=cff-oembeds-manager');
+		$nonce           = wp_create_nonce('cff_con');
+		// If the admin_url isn't returned correctly then use a fallback.
+		if ($admin_url_state === '/wp-admin/admin.php?page=cff-oembeds-manager') {
 			$admin_url_state = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 		}
-
-		if ( class_exists( '\SB_Instagram_Oembed' ) ) {
-			$sbi_oembed_token = \SB_Instagram_Oembed::last_access_token();
-
-			if ( ! empty( $sbi_oembed_token ) ) {
-				return add_query_arg( 'transfer', '1', $admin_url_state );
-			}
-		}
-
-		return 'https://api.smashballoon.com/v2/facebook-login.php?state=' . $admin_url_state;
+		return array(
+			'connect' => CFF_OEMBED_CONNECT_URL,
+			'cff_con' => $nonce,
+			'stateURL' => $admin_url_state
+		);
 	}
 
 	/**
@@ -284,59 +283,105 @@ class CFF_oEmbeds {
 	 *
 	 * @since 4.0
 	 */
-	public static function maybe_connection_data( $saved_access_token_data ) {
+	public static function maybeConnectionData($saved_access_token_data)
+	{
+		global $cff_notices;
 		$screen = get_current_screen();
+		$return = false;
 
-		if ( ! $screen ) {
+		if (!$screen || $screen->id !== 'facebook-feed_page_cff-oembeds-manager') {
 			return false;
 		}
-		if ( $screen->id !== 'facebook-feed_page_cff-oembeds-manager') {
-			return false;
-		}
-		if ( ! empty( $_GET['transfer'] ) ) {
-			if ( class_exists( '\SB_Instagram_Oembed' ) ) {
-				$sbi_oembed_token = \SB_Instagram_Oembed::last_access_token();
-				$return = get_option( 'sbi_oembed_token', array() );
 
-				$return['access_token'] = $sbi_oembed_token;
-				$return['disabled'] = false;
-				return $return;
-			}
-		} if ( isset( $_GET['cff_access_token'] ) ) {
-			$access_token = $_GET['cff_access_token'];
-
-			$return = [];
-			$valid_new_access_token = ! empty( $access_token ) && strlen( $access_token ) > 20 && $saved_access_token_data !== $access_token ? sanitize_text_field( $_GET['cff_access_token'] ) : false;
-			if ( $valid_new_access_token ) {
-				$url = esc_url_raw( 'https://graph.facebook.com/me/accounts?limit=500&access_token=' . $valid_new_access_token );
-				$pages_data_connection = wp_remote_get( $url );
-				$return['access_token'] = $valid_new_access_token;
-				$return['disabled'] = false;
-				if ( ! is_wp_error( $pages_data_connection ) && isset( $pages_data_connection['body'] ) ) {
-					$pages_data = json_decode( $pages_data_connection['body'], true );
-					if ( isset( $pages_data['data'][0]['access_token'] ) ) {
-						$return['expiration_date'] = 'never';
-					} else {
-						$return['expiration_date'] = time() + (60 * DAY_IN_SECONDS);
-					}
-				} else {
-					$return['expiration_date'] = 'unknown';
-				}
-			} else {
-				if ( $saved_access_token_data === $access_token ) {
-					$return['error'] = 'Not New';
-				} else {
-					$return['error'] = 'Not Valid';
-				}
-			}
-
-			return $return;
-
+		$oembed_success_notice = $cff_notices->get_notice('oembed_api_change_reconnect');
+		if ($oembed_success_notice) {
+			$cff_notices->remove_notice('oembed_api_change_reconnect');
 		}
 
-		return false;
+		if (!empty($_GET['transfer']) && class_exists('\SB_Instagram_Oembed')) {
+			$sbi_oembed_token = \SB_Instagram_Oembed::last_access_token();
+			$return = get_option('sbi_oembed_token', array());
+			$return['access_token'] = $sbi_oembed_token;
+			$return['disabled'] = false;
+		}
+
+		if (isset($_GET['cff_access_token'])) {
+			$return = self::processCffOembedAccessToken($saved_access_token_data);
+		}
+		return $return;
 	}
 
+	/**
+	 * Process oEmbed Access Token
+	 *
+	 * @return array
+	 *
+	 * @since 4.0
+	 */
+	public static function processCffOembedAccessToken($saved_access_token_data)
+	{
+		global $cff_notices;
+		$return = [];
+		$access_token = $_GET['cff_access_token'];
+
+		$valid_new_access_token = !empty($access_token) && strlen($access_token) > 20 && $saved_access_token_data !== $access_token ?
+									sanitize_text_field($_GET['cff_access_token']) : false;
+
+		if ($valid_new_access_token) {
+			$return['access_token'] = $valid_new_access_token;
+			$return['disabled']     = false;
+			$return['expiration_date'] = 'never';
+
+			$oembed_notice = $cff_notices->get_notice('oembed_api_change');
+			if ($oembed_notice) {
+				$cff_notices->remove_notice('oembed_api_change');
+			}
+
+			$message  = '<p><strong>' .
+				__('oEmbed account successfully connected. You are all set to continue creating oEmbeds.', 'custom-facebook-feed')
+				. '</strong></p>';
+			$success_args = array(
+				'class'     => 'cff-admin-notices',
+				'message'     => $message,
+				'dismissible' => true,
+				'dismiss'     => array(
+					'class' => 'cff-notice-dismiss',
+						'icon'  => CFF_PLUGIN_URL . 'admin/assets/img/cff-dismiss-icon.svg',
+					'tag'   => 'a',
+					'href' => '#',
+				),
+				'priority'    => 1,
+				'page'        => array(
+					'cff-oembeds-manager',
+				),
+				'icon' => array(
+					'src'  => CFF_PLUGIN_URL . 'admin/assets/img/cff-exclamation.svg',
+					'wrap' => '<span class="sb-notice-icon"><img {src}></span>',
+				),
+				'styles' => array(
+						'display' => 'flex',
+					'justify-content' => 'space-between',
+					'gap' => '2rem',
+				),
+				'wrap_schema' => '<div {id} {class}>{icon}<div class="cff-notice-wrap" {styles}><div class="cff-notice-body">{message}</div>{dismiss}</div></div>',
+			);
+
+			$cff_notices->add_notice('oembed_api_change_reconnect', 'information', $success_args);
+			$cff_statuses = get_option('cff_statuses', array());
+			$cff_statuses['oembed_api_change_notice'] = true;
+
+			update_option('cff_statuses', $cff_statuses);
+
+		} else {
+			if ($saved_access_token_data === $access_token) {
+				$return['error'] = 'Not New';
+			} else {
+				$return['error'] = 'Not Valid';
+			}
+		}
+
+		return $return;
+	}
 	/**
 	 * Check if Facebook oEmbed is enabled or not
 	 *
@@ -408,6 +453,6 @@ class CFF_oEmbeds {
 	 * @since 4.0
 	 */
 	public function oembeds_manager(){
-		return CFF_View::render( 'oembeds.index' );
+		CFF_View::render( 'oembeds.index' );
 	}
 }

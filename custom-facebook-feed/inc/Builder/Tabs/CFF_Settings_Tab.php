@@ -22,7 +22,7 @@ class CFF_Settings_Tab{
 	 *
 	 * @return array
 	*/
-	static function get_sections(){
+	public static function get_sections(){
 		return [
 			'settings_sources' => [
 				'heading' 	=> __( 'Sources', 'custom-facebook-feed' ),
@@ -55,7 +55,7 @@ class CFF_Settings_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_settings_sources_controls(){
+	public static function get_settings_sources_controls(){
 		return [
 			[
 				'type' 				=> 'customview',
@@ -71,7 +71,7 @@ class CFF_Settings_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_settings_filters_controls(){
+	public static function get_settings_filters_controls(){
 		return [
 			[
 				'type' 				=> 'select',
@@ -577,7 +577,7 @@ class CFF_Settings_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_settings_advanced_controls(){
+	public static function get_settings_advanced_controls(){
 		return [
 			[
 				'type' 				=> 'select',

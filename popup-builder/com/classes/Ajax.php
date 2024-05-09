@@ -496,7 +496,9 @@ class Ajax
 		$options = $obj->getOptions();
 		$options['sgpb-is-active'] = isset($_POST['popupStatus'])? sanitize_text_field($_POST['popupStatus']) : '';
 
-		unset($options['sgpb-conditions']);
+		if( isset( $options['sgpb-conditions'] ) ){
+			unset( $options['sgpb-conditions'] );
+		}
 		update_post_meta($popupId, 'sg_popup_options'.$isDraft, $options);
 
 		wp_die(esc_html($popupId));

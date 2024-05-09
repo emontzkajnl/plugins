@@ -1156,6 +1156,39 @@ jQuery(document).ready(function($) {
         }); // ajax call
     }); // clear_error_log click
 
+	// oEmbed Reconnect
+  $(document).on('click', '.sb-reconnect-oembed', function() {
+    let oembedConnectUrl = cff_admin.oembed_connectionURL.connect,
+      appendURL = cff_admin.oembed_connectionURL.stateURL;
+
+    const urlParams = {
+      'cff_con': cff_admin.oembed_connectionURL.cff_con,
+      'state': "{'{url=" + appendURL + "}'}"
+    }
+
+    let form = document.createElement('form');
+    form.setAttribute('method', 'post');
+    form.setAttribute('action', oembedConnectUrl);
+
+    for (const key in urlParams) {
+      if (urlParams.hasOwnProperty(key)) {
+        let hiddenField = document.createElement('input');
+        hiddenField.setAttribute('type', 'hidden');
+        hiddenField.setAttribute('name', key);
+        hiddenField.setAttribute('value', urlParams[key]);
+        form.appendChild(hiddenField);
+      }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  });
+
+  $(document).on('click', '#oembed_api_change_reconnect .cff-notice-dismiss', function(e) {
+    e.preventDefault();
+    $('#oembed_api_change_reconnect').remove();
+  });
+
 });
 
 

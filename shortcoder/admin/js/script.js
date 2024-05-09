@@ -253,7 +253,7 @@ $(document).ready(function(){
     });
 
     $('.sc_changelog .dismiss_btn').on('click', function(){
-        var url = SC_VARS.ajax_url + '?action=sc_admin_ajax&do=close_changelog';
+        var url = SC_VARS.ajax_url + '?action=sc_admin_ajax&do=close_changelog&_wpnonce=' + SC_VARS.nonce;
         $.get(url, function( data ){
             if(data.search( /done/g ) == -1){
                 $( '.sc_changelog article' ).html('Failed to close window. <a href="' + url + '" target="_blank">Please click here to close</a>');

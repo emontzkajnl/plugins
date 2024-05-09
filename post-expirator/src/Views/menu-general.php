@@ -63,40 +63,6 @@ $plugin_facade = PostExpirator_Facade::getInstance();
                 esc_html_e('Defaults', 'post-expirator'); ?></h3>
             <table class="form-table">
                 <tr valign="top">
-                    <th scope="row"><label for="expired-default-date-format"><?php
-                            esc_html_e('Date Format', 'post-expirator'); ?></label></th>
-                    <td>
-                        <input type="text" name="expired-default-date-format" id="expired-default-date-format" value="<?php
-                        echo esc_attr($expirationdateDefaultDateFormat); ?>" size="25"/> <span class="description">(<?php
-                            echo esc_html(PostExpirator_Util::get_wp_date($expirationdateDefaultDateFormat, time())); ?>)</span>
-                        <p class="description"><?php
-                            echo sprintf(
-                                esc_html__(
-                                    'The default format to use when displaying the action date within a post using the shortcode or within the footer.  For information on valid formatting options, see: %s.',
-                                    'post-expirator'
-                                ),
-                                '<a href="https://www.php.net/manual/en/function.date.php" target="_blank">' . esc_html__('PHP Date Function', 'post-expirator') . '</a>'
-                            ); ?></p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row"><label for="expired-default-time-format"><?php
-                            esc_html_e('Time Format', 'post-expirator'); ?></label></th>
-                    <td>
-                        <input type="text" name="expired-default-time-format" id="expired-default-time-format" value="<?php
-                        echo esc_attr($expirationdateDefaultTimeFormat); ?>" size="25"/> <span class="description">(<?php
-                            echo esc_html(PostExpirator_Util::get_wp_date($expirationdateDefaultTimeFormat, time())); ?>)</span>
-                        <p class="description"><?php
-                        echo sprintf(
-                            esc_html__(
-                                'The default format to use when displaying the action time within a post using the shortcode or within the footer.  For information on valid formatting options, see: %s.',
-                                'post-expirator'
-                            ),
-                            '<a href="https://www.php.net/manual/en/function.date.php" target="_blank">'. esc_html__('PHP Date Function', 'post-expirator') . '</a>'
-
-                        ); ?></td>
-                </tr>
-                <tr valign="top">
                     <th scope="row"><label for="expired-default-expiration-date"><?php
                             esc_html_e('Default Date/Time Offset', 'post-expirator'); ?></label></th>
                     <td>
@@ -106,17 +72,13 @@ $plugin_facade = PostExpirator_Facade::getInstance();
                                    id="expired-custom-expiration-date"/>
                             <p class="description"><?php
                                 echo sprintf(
-                                        // translator: Please, do not translate the date format text, since PHP will not be able to calculate using non-english terms.
+                                    // translators: %1$s is the link to the PHP strtotime function documentation, %2$s and %3$s are the opening and closing code tags. Please, do not translate the date format text, since PHP will not be able to calculate using non-english terms.
                                     esc_html__(
                                         'Set the offset to use for the default action date and time. For information on formatting, see %1$s
-                                        . For example, you could enter %2$s+1 month%3$s or %4$s+1 week 2 days 4 hours 2 seconds%5$s or %6$snext Thursday%7$s. Please, use only terms in English.',
+                                        . For example, you could enter %2$s+1 month%3$s or %2$s+1 week 2 days 4 hours 2 seconds%3$s or %2$snext Thursday%3$s. Please, use only terms in English.',
                                         'post-expirator'
                                     ),
                                     '<a href="https://www.php.net/manual/en/function.strtotime.php" target="_new">' . esc_html__('PHP strtotime function', 'post-expirator') . '</a>',
-                                    '<code>',
-                                    '</code>',
-                                    '<code>',
-                                    '</code>',
                                     '<code>',
                                     '</code>'
                                 ); ?></p>
@@ -137,19 +99,22 @@ $plugin_facade = PostExpirator_Facade::getInstance();
                     <th scope="row"><?php
                         esc_html_e('Enable Email Notification?', 'post-expirator'); ?></th>
                     <td>
-                        <input type="radio" name="expired-email-notification" id="expired-email-notification-true"
-                               value="1" <?php
-                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                        echo $expiredemailnotificationenabled; ?>/> <label
-                                for="expired-email-notification-true"><?php
-                            esc_html_e('Enabled', 'post-expirator'); ?></label>
-                        &nbsp;&nbsp;
-                        <input type="radio" name="expired-email-notification" id="expired-email-notification-false"
-                               value="0" <?php
-                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                        echo $expiredemailnotificationdisabled; ?>/> <label
-                                for="expired-email-notification-false"><?php
-                            esc_html_e('Disabled', 'post-expirator'); ?></label>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="expired-email-notification" id="expired-email-notification-true"
+                                value="1" <?php
+                            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            echo $expiredemailnotificationenabled; ?>/> <label
+                                    for="expired-email-notification-true"><?php
+                                esc_html_e('Enabled', 'post-expirator'); ?></label>
+                        </div>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="expired-email-notification" id="expired-email-notification-false"
+                                value="0" <?php
+                            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            echo $expiredemailnotificationdisabled; ?>/> <label
+                                    for="expired-email-notification-false"><?php
+                                esc_html_e('Disabled', 'post-expirator'); ?></label>
+                        </div>
                         <p class="description"><?php
                             esc_html_e(
                                 'This will enable or disable the send of email notification on future action.',
@@ -161,21 +126,24 @@ $plugin_facade = PostExpirator_Facade::getInstance();
                     <th scope="row"><?php
                         esc_html_e('Include Blog Administrators?', 'post-expirator'); ?></th>
                     <td>
-                        <input type="radio" name="expired-email-notification-admins"
-                               id="expired-email-notification-admins-true"
-                               value="1" <?php
-                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                        echo $expiredemailnotificationadminsenabled; ?>/> <label
-                                for="expired-email-notification-admins-true"><?php
-                            esc_html_e('Enabled', 'post-expirator'); ?></label>
-                        &nbsp;&nbsp;
-                        <input type="radio" name="expired-email-notification-admins"
-                               id="expired-email-notification-admins-false"
-                               value="0" <?php
-                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-                        echo $expiredemailnotificationadminsdisabled; ?>/> <label
-                                for="expired-email-notification-admins-false"><?php
-                            esc_html_e('Disabled', 'post-expirator'); ?></label>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="expired-email-notification-admins"
+                                id="expired-email-notification-admins-true"
+                                value="1" <?php
+                            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            echo $expiredemailnotificationadminsenabled; ?>/> <label
+                                    for="expired-email-notification-admins-true"><?php
+                                esc_html_e('Enabled', 'post-expirator'); ?></label>
+                        </div>
+                        <div class="pp-settings-field-row">
+                            <input type="radio" name="expired-email-notification-admins"
+                                id="expired-email-notification-admins-false"
+                                value="0" <?php
+                            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            echo $expiredemailnotificationadminsdisabled; ?>/> <label
+                                    for="expired-email-notification-admins-false"><?php
+                                esc_html_e('Disabled', 'post-expirator'); ?></label>
+                        </div>
                         <p class="description"><?php
                             esc_html_e(
                                 'This will include all users with the role of "Administrator" in the email.',

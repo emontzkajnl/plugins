@@ -45,7 +45,7 @@ var cffoEmbeds = new Vue({
         InstagramShouldInstallOrEnable: function() {
             // if the plugin is activated and installed then just enable oEmbed
             if( this.isIntagramActivated ) {
-                this.enableInstagramOembed();
+                this.enableFboEmbed();
                 return;
             }
             // if the plugin is not activated and installed then open the modal to install and activate the plugin
@@ -84,8 +84,30 @@ var cffoEmbeds = new Vue({
         },
         enableFboEmbed: function() {
             this.fboEmbedLoader = true;
-            window.location = this.connectionURL;
-            return;
+
+            let oembedConnectUrl = this.connectionURL.connect,
+            appendURL = this.connectionURL.stateURL;
+
+            const urlParams = {
+                'cff_con' : this.connectionURL.cff_con,
+                'state': "{'{url=" + appendURL + "}'}"
+            }
+
+            let form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('action', oembedConnectUrl);
+
+            for (const key in urlParams) {
+                if (urlParams.hasOwnProperty(key)) {
+                    let hiddenField = document.createElement('input');
+                    hiddenField.setAttribute('type', 'hidden');
+                    hiddenField.setAttribute('name', key);
+                    hiddenField.setAttribute('value', urlParams[key]);
+                    form.appendChild(hiddenField);
+                }
+            }
+            document.body.appendChild(form);
+            form.submit();
         },
         enableInstagramOembed: function() {
             this.instaoEmbedLoader = true;

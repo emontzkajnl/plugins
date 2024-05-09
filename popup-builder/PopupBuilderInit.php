@@ -35,6 +35,7 @@ class PopupBuilderInit
 		$this->actions();
 		$this->filters();
 		$this->versionDetection();
+		
 	}
 
 	private function includeData()
@@ -104,14 +105,27 @@ class PopupBuilderInit
 	}
 
 	public function deactivate()
-	{
-		Functions::clearAllTransients();
-		AdminHelper::removeSelectedTypeOptions('cron');
+	{		
+		Functions::clearAllTransients();		
+		AdminHelper::removeSelectedTypeOptions('cron');		
 		AdminHelper::filterUserCapabilitiesForTheUserRoles('deactivate');
 		require_once(SG_POPUP_EXTENSION_PATH.'SgpbPopupExtensionRegister.php');
 		$pluginName = SG_POPUP_FILE_NAME;
 		// remove AWeber extension from registered extensions
-		SgpbPopupExtensionRegister::remove($pluginName);
+		SgpbPopupExtensionRegister::remove($pluginName);				
+		
+		//Deactivate all related plugin when POPUP BUILDER is deactivate
+		remove_action('deactivate_popup-builder/popup-builder.php',array($this, 'deactivate'));
+		if ( function_exists( 'is_multisite' ) && ! is_multisite() ) {
+			$plugins = get_plugins();			
+			foreach($plugins as $name => $data) {				
+				if ( strpos($data['Name'], 'Popup Builder') !== false && strpos($data['PluginURI'], 'popup-builder.com') !== false) {
+					deactivate_plugins($name);
+				}   
+			}			
+			wp_redirect( admin_url() . 'plugins.php?deactivate=true' );
+			exit;
+		}
 	}
 }
 

@@ -11,6 +11,8 @@ defined('ABSPATH') or die('Direct access not allowed.');
 
 class PostCategoryAdd implements ExpirationActionInterface
 {
+    use TaxonomyRelatedTrait;
+
     const SERVICE_NAME = 'expiration.actions.post_category_add';
 
     /**
@@ -29,13 +31,21 @@ class PostCategoryAdd implements ExpirationActionInterface
     private $log = [];
 
     /**
+     * @var string
+     */
+    private $taxonomy;
+
+    /**
      * @param ExpirablePostModel $postModel
      * @param \PublishPress\Future\Framework\WordPress\Facade\ErrorFacade $errorFacade
+     * @param \PublishPress\Future\Modules\Expirator\Models\PostTypeDefaultDataModelFactory $postTypeDefaultDataModelFactory
      */
-    public function __construct($postModel, $errorFacade)
+    public function __construct($postModel, $errorFacade, $postTypeDefaultDataModelFactory)
     {
         $this->postModel = $postModel;
         $this->errorFacade = $errorFacade;
+
+        $this->taxonomy = $postTypeDefaultDataModelFactory->create($postModel->getPostType())->getTaxonomy();
     }
 
     public function __toString()
@@ -50,6 +60,7 @@ class PostCategoryAdd implements ExpirationActionInterface
     {
         if (empty($this->log)) {
             return sprintf(
+                // translators: %s is the post type singular label
                 __('No terms were added to the %s.', 'post-expirator'),
                 strtolower($this->postModel->getPostTypeSingularLabel())
             );
@@ -60,8 +71,9 @@ class PostCategoryAdd implements ExpirationActionInterface
         $termsModel = new TermsModel();
 
         return sprintf(
+            // translators: %1$s is the taxonomy label, %2$s is the post type singular label, %3$s is the list of terms added, %4$s is the list of terms on the post
             __(
-                'The following terms (%s) were added to the %s: "%s". The full list of terms on the post is: %s.',
+                'The following terms (%1$s) were added to the %2$s: "%3$s". The full list of terms on the post is: %4$s.',
                 'post-expirator'
             ),
             $this->log['expiration_taxonomy'],
@@ -100,19 +112,22 @@ class PostCategoryAdd implements ExpirationActionInterface
         return ! $resultIsError;
     }
 
-    /**
-     * @return string
-     */
-    public static function getLabel()
+    public static function getLabel(string $postType = ''): string
     {
-        return __('Keep all current terms and add new terms', 'post-expirator');
+        // translators: %s is the taxonomy name (plural)
+        $label = __('Add extra %s', 'post-expirator');
+
+        if (! empty($postType)) {
+            $taxonomy = self::getTaxonomyLabel($postType);
+
+            $label = sprintf($label, $taxonomy);
+        }
+
+        return $label;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getDynamicLabel()
+    public function getDynamicLabel($postType = '')
     {
-        return self::getLabel();
+        return self::getLabel($postType);
     }
 }

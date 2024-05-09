@@ -14,24 +14,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '45.5.x-dev',
-    'version' => '45.5.9999999.9999999-dev',
+    'pretty_version' => '45.8.x-dev',
+    'version' => '45.8.9999999.9999999-dev',
     'aliases' => 
     array (
     ),
-    'reference' => 'b7828f04a47b6f121a73ab731365908722f77907',
+    'reference' => '9ee0e5ce23d17310c62c0a9f2bd3bb114d046d29',
     'name' => '__root__',
   ),
   'versions' => 
   array (
     '__root__' => 
     array (
-      'pretty_version' => '45.5.x-dev',
-      'version' => '45.5.9999999.9999999-dev',
+      'pretty_version' => '45.8.x-dev',
+      'version' => '45.8.9999999.9999999-dev',
       'aliases' => 
       array (
       ),
-      'reference' => 'b7828f04a47b6f121a73ab731365908722f77907',
+      'reference' => '9ee0e5ce23d17310c62c0a9f2bd3bb114d046d29',
     ),
   ),
 );

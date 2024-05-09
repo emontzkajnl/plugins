@@ -2408,6 +2408,8 @@ class Responsive_Lightbox_Settings {
 				// merge scripts settings
 				$input = array_merge( $rl->options['settings'], $input );
 
+				$input['update_notice'] = $rl->options['settings']['update_notice'];
+
 				// woocommerce lightbox has to be enabled when using rl gallery
 				if ( $input['default_woocommerce_gallery'] !== 'default' )
 					$input['woocommerce_gallery_lightbox'] = true;

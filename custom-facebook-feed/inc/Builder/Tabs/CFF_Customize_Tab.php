@@ -22,7 +22,7 @@ class CFF_Customize_Tab{
 	 *
 	 * @return array
 	*/
-	static function get_sections(){
+	public static function get_sections(){
 		return [
 			'settings_feedtemplate' => [
 				'heading' 	=> __( 'Template', 'custom-facebook-feed' ),
@@ -109,7 +109,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_settings_feedtemplates_controls() {
+	public static function get_settings_feedtemplates_controls() {
 		return [
 			[
 				'type' 				=> 'customview',
@@ -123,7 +123,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_settings_feedtype_controls(){
+	public static function get_settings_feedtype_controls(){
 		return [
 			[
 				'type' 				=> 'customview',
@@ -138,7 +138,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_customize_feedlayout_controls(){
+	public static function get_customize_feedlayout_controls(){
 		$svg_icons = CFF_Feed_Builder::builder_svg_icons();
 		$svg_rocket_icon = $svg_icons['rocketPremiumBlue'];
 		return [
@@ -357,7 +357,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_customize_colorscheme_controls(){
+	public static function get_customize_colorscheme_controls(){
 		$color_scheme_array =
 		[
 			[
@@ -505,7 +505,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_customize_header_controls(){
+	public static function get_customize_header_controls(){
 		return [
 			[
 				'type' 				=> 'switcher',
@@ -878,7 +878,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_customize_posts_controls(){
+	public static function get_customize_posts_controls(){
 		return [
 			[
 				'type' 				=> 'heading',
@@ -940,7 +940,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_customize_likebox_controls(){
+	public static function get_customize_likebox_controls(){
 		return [
 			[
 				'type' 				=> 'switcher',
@@ -1104,7 +1104,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_customize_loadmorebutton_controls(){
+	public static function get_customize_loadmorebutton_controls(){
 		return [
 			[
 				'type' 				=> 'switcher',
@@ -1197,7 +1197,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_customize_lightbox_controls(){
+	public static function get_customize_lightbox_controls(){
 		return [
 			/*
 			*/
@@ -1311,7 +1311,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_nested_post_style_controls(){
+	public static function get_nested_post_style_controls(){
 		return [
 			[
 				'type' 		=> 'toggleset',
@@ -1425,7 +1425,7 @@ class CFF_Customize_Tab{
 	 * @since 4.0
 	 * @return array
 	*/
-	static function get_nested_individual_elements_controls(){
+	public static function get_nested_individual_elements_controls(){
 		return [
 			[
 				'type' 		=> 'checkboxsection',

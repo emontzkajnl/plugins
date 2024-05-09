@@ -1,7 +1,11 @@
 function SGPBFloatingButton() {
 
 }
-
+function htmlEncode(str){
+    return String(str).replace(/[^\w. ]/gi, function(c){
+        return '&#'+c.charCodeAt(0)+';';
+    });
+}
 SGPBFloatingButton.prototype.adminInit = function()
 {
 	var that = this;
@@ -77,7 +81,7 @@ SGPBFloatingButton.prototype.createButton = function()
 	var borderRadius = document.getElementById('sgpb-floating-button-border-radius').value;
 	var borderSize = document.getElementById('sgpb-floating-button-border-size').value;
 	var fontSize = document.getElementById('sgpb-floating-button-font-size').value;
-	var text = document.getElementById('sgpb-floating-button-text').value;
+	var text = htmlEncode( document.getElementById('sgpb-floating-button-text').value );
 	var button = document.createElement('div');
 	button.innerHTML = '<span class="sgpb-'+buttonStyle+'-floating-button-text">'+text+'</span>';
 	button.id = 'sgpb-floating-button';

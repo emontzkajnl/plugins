@@ -302,7 +302,7 @@ class CFF_Tracking {
 			'email_notification' => 'monday',
 			'email_notification_addresses' => get_option( 'admin_email' )
 		);
-		
+
 		$normal_bools = array(
 			'cff_show_links_type',
 			'cff_show_event_type',
@@ -487,7 +487,6 @@ class CFF_Tracking {
 		$data['url']           = home_url();
 		$data['themename']     = $theme_data->Name;
 		$data['themeversion']  = $theme_data->Version;
-		$data['settings']      = array();
 		$data['pro']           = CFF_Utils::cff_is_pro_version() ? '1' : '';
 		$data['sites']         = $count_b;
 		$data['usagetracking'] = get_option( 'cff_usage_tracking_config', false );
@@ -533,7 +532,7 @@ class CFF_Tracking {
 		$oembed_token = get_option( 'cff_oembed_token', false );
 
 		$settings_to_send['oembed_expiring_token'] = isset( $oembed_token['access_token'] ) ? (int)$oembed_token['access_token'] > 0 : false;
-		
+
 		global $wpdb;
 		$feed_caches = array();
 
@@ -552,7 +551,7 @@ class CFF_Tracking {
 
 		// Retrieve current plugin information
 		if( ! function_exists( 'get_plugins' ) ) {
-			include ABSPATH . '/wp-admin/includes/plugin.php';
+			include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		}
 
 		$plugins = get_plugins();

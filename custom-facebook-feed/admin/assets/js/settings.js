@@ -210,11 +210,7 @@ var cffSettings = new Vue({
             };
         },
         chooseDirection: function() {
-            if (settings_data.forwards == true) {
-                return "slide-fade";
-            } else {
-                return "slide-fade";
-            }
+            return "slide-fade";
         }
     },
     methods:  {

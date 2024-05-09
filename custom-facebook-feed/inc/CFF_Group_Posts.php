@@ -8,6 +8,7 @@
  */
 namespace CustomFacebookFeed;
 
+use CustomFacebookFeed\Integrations\CFF_Graph_Data;
 use CustomFacebookFeed\SB_Facebook_Data_Encryption;
 
 if (!defined('ABSPATH'))
@@ -78,7 +79,7 @@ class CFF_Group_Posts
      * @since 3.19.3
      * @access public
      */
-    function __construct($group_id, $feed_options, $api_call_url, $data_att_html, $is_event_page)
+    public function __construct($group_id, $feed_options, $api_call_url, $data_att_html, $is_event_page)
     {
         $this->encryption = new SB_Facebook_Data_Encryption();
 
@@ -109,7 +110,7 @@ class CFF_Group_Posts
      *
      * @access public
      */
-    function init_group_posts($json_data, $load_more_date, $show_posts)
+    public function init_group_posts($json_data, $load_more_date, $show_posts)
     {
         $this->json_data = json_decode($json_data);
         $this->json_data = (isset($this->json_data->data) && $this->json_data->data > 0) ? $this->json_data->data : [];
@@ -149,7 +150,7 @@ class CFF_Group_Posts
      *
      * @access public
      */
-    function init_group_posts_events($json_data, $load_more_date, $show_posts)
+    public function init_group_posts_events($json_data, $load_more_date, $show_posts)
     {
 
     }
@@ -162,7 +163,7 @@ class CFF_Group_Posts
      * @access public
      */
 
-    static function check_duplicated_posts($prev_post, $ac_post)
+    public static function check_duplicated_posts($prev_post, $ac_post)
     {
         $ac_message = isset($ac_post->message) ? $ac_post->message : '';
         $ac_link = isset($ac_post->link) ? $ac_post->link : '';
@@ -186,7 +187,7 @@ class CFF_Group_Posts
      *
      * @access public
      */
-    function check_posts_returned($json_data, $show_posts)
+    public function check_posts_returned($json_data, $show_posts)
     {
         if (isset($json_data->data)) {
             $prev_post = [];
@@ -220,7 +221,7 @@ class CFF_Group_Posts
      * It can add or update
      * @access public
      */
-    function add_update_posts()
+    public function add_update_posts()
     {
         $new_cached_posts = $this->posts_array;
         $posts_array_api = $this->json_data;
@@ -243,7 +244,7 @@ class CFF_Group_Posts
      * @since 3.19.3
      * @access public
      */
-    function get_data_json($is_load_more, $next_urls_arr_safe)
+    public function get_data_json($is_load_more, $next_urls_arr_safe)
     {
         if ($is_load_more && isset($next_urls_arr_safe)) {
             $this->next_urls_arr_safe = $next_urls_arr_safe;
@@ -278,7 +279,7 @@ class CFF_Group_Posts
      * @since 3.19.3
      * @access public
      */
-    function update_cache()
+    public function update_cache()
     {
         usort($this->posts_array, function ($post_1, $post_2) {
             $time_1 = isset($post_1->updated_time) ? $post_1->updated_time : $post_1->created_time;
@@ -295,7 +296,7 @@ class CFF_Group_Posts
 
 
 
-    static function create_next_pagination($json_data_arr, $show_posts)
+    public static function create_next_pagination($json_data_arr, $show_posts)
     {
         if (isset($json_data_arr) && sizeof((array) $json_data_arr) > 0) {
             $result_array = [];
@@ -327,7 +328,7 @@ class CFF_Group_Posts
      * Get the latest 100 Posts from groups and Update in
      * @access public
      */
-    static function cron_update_group_persistent_cache()
+    public static function cron_update_group_persistent_cache()
     {
         global $wpdb;
         $encryption = new SB_Facebook_Data_Encryption();
@@ -349,7 +350,7 @@ class CFF_Group_Posts
      * @since 3.19.3
      * @access public
      */
-    static function update_or_add_group($cache_name, $group_cache)
+    public static function update_or_add_group($cache_name, $group_cache)
     {
         $api_url = $group_cache['api_url'];
         $cached_posts = $group_cache['data'];
@@ -400,7 +401,7 @@ class CFF_Group_Posts
     }
 
 
-    static function get_feed_id_from_name($cache_name)
+    public static function get_feed_id_from_name($cache_name)
     {
         $cache_name = str_replace('!cff_group_', '', $cache_name);
         $cache_name = explode(" ", $cache_name);
@@ -413,7 +414,7 @@ class CFF_Group_Posts
      * @since 3.19.3
      * @access public
      */
-    static function api_call($api_url, $data_att_html)
+    public static function api_call($api_url, $data_att_html)
     {
         $api_url_100 = $api_url . '&limit=100';
         $posts_json = CFF_Utils::cff_fetchUrl($api_url_100);
@@ -424,7 +425,9 @@ class CFF_Group_Posts
         if (substr($posts_json, 0, strlen($prefix)) == $prefix)
             $posts_json = substr($posts_json, strlen($prefix));
         $posts_json = '{"api_url":"' . $api_url . '", "shortcode_options":"' . $data_att_html . '", ' . $posts_json;
-        ($cff_featured_post) ? $FBdata = $FBdata : $FBdata = $FBdata->data;
+        if (!$cff_featured_post) {
+            $FBdata = $FBdata->data;
+        }
 
         if (!empty($FBdata)) {
             if (!isset($FBdata->error)) {
@@ -435,23 +438,27 @@ class CFF_Group_Posts
         return '{"data":[]}';
     }
 
-    static function group_schedule_event($cff_cache_cron_time_unix, $cff_cron_schedule)
+    public static function group_schedule_event($cff_cache_cron_time_unix, $cff_cron_schedule)
     {
-        if (!wp_next_scheduled('group_post_scheduler_cron')) {
-            wp_schedule_event($cff_cache_cron_time_unix, $cff_cron_schedule, 'group_post_scheduler_cron');
-        }
+		if (CFF_Graph_Data::should_make_group_call()) {
+			if (!wp_next_scheduled('group_post_scheduler_cron')) {
+				wp_schedule_event($cff_cache_cron_time_unix, $cff_cron_schedule, 'group_post_scheduler_cron');
+			}
+		}
     }
 
-    static function group_reschedule_event($cff_cache_cron_time_unix, $cff_cron_schedule)
+    public static function group_reschedule_event($cff_cache_cron_time_unix, $cff_cron_schedule)
     {
-        $timestamp = wp_next_scheduled('group_post_scheduler_cron');
-        if ($timestamp) {
-            wp_clear_scheduled_hook('group_post_scheduler_cron');
-            wp_unschedule_event($timestamp, 'group_post_scheduler_cron');
-        }
-        if (!wp_next_scheduled('group_post_scheduler_cron')) {
-            wp_schedule_event($cff_cache_cron_time_unix, $cff_cron_schedule, 'group_post_scheduler_cron');
-        }
+        if (CFF_Graph_Data::should_make_group_call()) {
+			$timestamp = wp_next_scheduled('group_post_scheduler_cron');
+			if ($timestamp) {
+				wp_clear_scheduled_hook('group_post_scheduler_cron');
+				wp_unschedule_event($timestamp, 'group_post_scheduler_cron');
+			}
+			if (!wp_next_scheduled('group_post_scheduler_cron')) {
+				wp_schedule_event($cff_cache_cron_time_unix, $cff_cron_schedule, 'group_post_scheduler_cron');
+			}
+		}
     }
 
 }

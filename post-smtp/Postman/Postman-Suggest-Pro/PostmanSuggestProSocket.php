@@ -26,15 +26,22 @@ class PostmanSuggestProSocket {
 
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
         $this->fs->add_action( 'addons/after_addons', array( $this, 'promote_bundles_fs' ) );
+        
+        
+        if( !post_smtp_has_pro() ) {
 
-        if( !$hide_notice ) {
+            add_action( 'admin_menu', array( $this, 'add_menu' ), 22 );
+        
+        }
+        if( !post_smtp_has_pro() && !$hide_notice ){
 
             add_action( 'post_smtp_dashboard_after_config', array( $this, 'promote_bundles_dashboard' ) );
-
+        
         }
         
         add_filter( 'gettext', array( $this, 'change_fs_submenu_text' ), 10, 3 );
         add_action( 'admin_action_ps_skip_pro_banner', array( $this, 'skip_pro_banner' ) );
+        add_action( 'init', array( $this, 'init' ) );
         
     }
 
@@ -102,16 +109,24 @@ class PostmanSuggestProSocket {
      * Promote bundles HTML
      * 
      * @since 2.5.9.3
-     * @version 1.0
+     * @version 1.0.1
      */
     public function promote_bundles_html() {
 
         ?>
-        <a href="<?php echo esc_url( admin_url( 'admin.php?page=postman-pricing' ) ); ?>">
-            <div style="color:#000;background: #fed90f;display: inline-block;padding: 23px;border-radius: 14px;font-size: 16px;font-weight: 400;box-shadow: 5px 5px 8px #c7c7c7;" >
-                🎉 GET ACCESS TO ALL CURRENT AND FUTURE EXTENSIONS STARTING FROM <b>$5/MONTH</b>&nbsp;&nbsp;&nbsp;<span style="background: #000;color: #fff;text-decoration: none;padding: 10px;border-radius: 10px;">👉 <?php printf( '%s <b>%s</b> ', esc_html( 'GET', 'post-smtp' ), esc_html( 'PRO BUNDLE', 'post-smtp' ) ); ?></span>
+        <div style="color:#000;background: #fed90f;display: inline-block;padding: 23px;border-radius: 14px;font-size: 16px;font-weight: 400;box-shadow: 5px 5px 8px #c7c7c7; padding-bottom:10px; display: flex; width: 84%;" >
+            <div style="width: 75%;">
+                <div>
+                    <a style="text-decoration:none; color:#231F20;" href="<?php echo esc_url( 'https://postmansmtp.com/pricing/?utm_source=plugin&utm_medium=banner&utm_campaign=plugin' ); ?>">🎉 UNLOCK THE FULL POTENTIAL OF POST SMTP WITH PRO FEATURES</a>
+                </div>                
+                <div style="margin-top:8px">
+                    <a style="font-size:10px; color:#0019ff;" href="<?php echo admin_url( 'admin.php?action=ps_skip_pro_banner' ); ?>">Not interested, Hide for now.</a>
+                </div>
             </div>
-        </a>
+            <div style="margin: 11px 0;">
+                <a style="text-decoration:none; color:#231F20; font-size: 12px; display: block;" href="<?php echo esc_url( 'https://postmansmtp.com/pricing/?utm_source=plugin&utm_medium=banner&utm_campaign=plugin' ); ?>"><span style="background: #000;color: #fff;text-decoration: none;padding: 10px;border-radius: 10px;">👉 <?php printf( '%s', esc_html( 'LEARN MORE', 'post-smtp' ) ); ?></span> </a>
+            </div>
+        </div>
         <?php
 
     }
@@ -137,19 +152,17 @@ class PostmanSuggestProSocket {
      * Promote bundles Dashboard
      * 
      * @since 2.5.9.3
-     * @version 1.0
+     * @version 1.0.1
      */
     public function promote_bundles_dashboard() {
 
-        ?>
+    ?>
         <div style="margin-top: 10px; float: left;">
             <?php $this->promote_bundles_html(); ?>
         </div>
-        <div style="padding: 30px 0; margin-left: 10px; float: left;">
-            <a href="<?php echo admin_url( 'admin.php?action=ps_skip_pro_banner' ); ?>">Not interested, Skip for now.</a>
-        </div>
         <div style="clear: both;"></div>
-        <?php
+        
+    <?php
 
     }
 
@@ -191,6 +204,43 @@ class PostmanSuggestProSocket {
 
         }
 
+    }
+
+    /**
+     * Redirect
+     * 
+     * @since 2.6.3
+     * @version 1.0.0
+     */
+    public function init() {
+        
+        if ( isset( $_GET['page'] ) && 'postman-pricing' === $_GET['page'] ) {
+
+            wp_redirect( 'https://postmansmtp.com/pricing/?utm_source=plugin&utm_medium=submenu&utm_campaign=plugin' );
+            exit;
+
+        }
+        
+    }
+
+    /**
+     * Add menu
+     * 
+     * @since 2.8.6
+     * @version 1.0.0
+     */
+    public function add_menu() {
+        
+        add_submenu_page( 
+            PostmanViewController::POSTMAN_MENU_SLUG, 
+            __( '👉 Get Pro Bundle', 'post-smtp' ), 
+            sprintf( '<span class="dashicons dashicons-superhero-alt ps-pro-icon"></span> %1$s <b>%2$s</b>&nbsp;&nbsp;➤', __( 'Get', 'post-smtp' ), __( 'Pro Bundle', 'post-smtp' ) ),
+            'manage_options', 
+            esc_url( 'https://postmansmtp.com/pricing/?utm_source=plugin&utm_medium=submenu&utm_campaign=plugin' ),
+            '',
+            99
+        );
+        
     }
 
 }

@@ -1184,7 +1184,7 @@
     height: 64px;
     border: 1px solid #E7E7E9;
     min-height: 60px;
-    overflow: auto;
+    /*overflow: auto;*/
     margin-top: 15px;
 }
 .sb-srcs-item.expanded {
@@ -1263,7 +1263,9 @@
     max-height: 32px;
     line-height: 1.1;
     padding-bottom: 2px;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    /*overflow: hidden;*/
 }
 
 .sb-srcs-item-used{

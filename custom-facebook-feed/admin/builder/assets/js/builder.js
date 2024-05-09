@@ -169,7 +169,7 @@ cffBuilder = new Vue({
 		legacyFeedsList   : cff_builder.legacyFeeds,
 		activeExtensions  : cff_builder.activeExtensions,
 		advancedFeedTypes : cff_builder.advancedFeedTypes,
-
+		groupSourcesNumber : cff_builder.groupSourcesNumber,
 		//Selected Feed type => TimeLine / Photos ... or Advanced ones!
 		selectedFeed : 'timeline',
 
@@ -1589,7 +1589,7 @@ cffBuilder = new Vue({
 		checkControlCondition : function(conditionsArray = [], checkExtensionActive = false, checkExtensionActiveDimmed = false){
 			var self = this,
 			isConditionTrue = 0;
-			Object.keys(conditionsArray).map(function(condition, index){
+			Object.keys(conditionsArray).forEach(function(condition, index){
 				if(conditionsArray[condition].indexOf(self.customizerFeedData.settings[condition]) !== -1)
 					isConditionTrue += 1
 			});
@@ -1607,7 +1607,7 @@ cffBuilder = new Vue({
 		checkControlOverrideColor : function(overrideConditionsArray = []){
 			var self = this,
 			isConditionTrue = 0;
-			overrideConditionsArray.map(function(condition, index){
+			overrideConditionsArray.forEach(function(condition, index){
 				if(self.checkNotEmpty(self.customizerFeedData.settings[condition]) && self.customizerFeedData.settings[condition].replace(/ /gi,'') != '#'){
 					isConditionTrue += 1
 				}
@@ -3271,7 +3271,26 @@ cffBuilder = new Vue({
 				});
 			}
 
-		}
+		},
+
+		//Source Ative
+		isSourceSelectActive : function(source){
+			if(this.selectedSources.includes(source.account_id)){
+				return (this.selectedFeed == 'events' && (source.privilege == 'events' || source.account_type == 'group')) || (this.selectedFeed != 'events' && source.privilege != 'events');
+			}
+			return false;
+		},
+
+		//Source Ative
+		isSourceSelectActivePopup : function(source){
+			if(this.selectedSources.includes(source.account_id)){
+				return (this.customizerFeedData.settings.feedtype == 'events' && source.privilege == 'events') || (this.customizerFeedData.settings.feedtype != 'events' && source.privilege != 'events');
+			}
+			return false;
+		},
+		checkTypeForGroupPopup : function(source){
+			return source.account_type === 'group' && this.customizerFeedData.settings.feedtype === 'photos';
+		},
 
 	}
 

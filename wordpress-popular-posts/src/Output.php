@@ -190,26 +190,7 @@ class Output {
         }
 
         // Sanitize HTML
-        $allowed_tags = wp_kses_allowed_html('post');
-
-        if ( isset($allowed_tags['form']) ) {
-            unset($allowed_tags['form']);
-        }
-
-        if (
-            isset($this->public_options['theme']['name'])
-            && $this->public_options['theme']['name']
-        ) {
-            $allowed_tags['style'] = [
-                'id' => 1,
-                'nonce' => 1,
-            ];
-        }
-
-        $allowed_tags['img']['decoding'] = true;
-        $allowed_tags['img']['srcset'] = true;
-
-        $this->output = wp_kses($this->output, $allowed_tags);
+        $this->output = Helper::sanitize_html($this->output, $this->public_options);
 
         return $this->output;
     }
@@ -245,7 +226,7 @@ class Output {
                     $theme_stylesheet = $this->themer->get_theme($this->public_options['theme']['name'])['path'] . '/style.css';
                 }
 
-                $theme_css_rules = wp_strip_all_tags(file_get_contents($theme_stylesheet), true);
+                $theme_css_rules = wp_strip_all_tags(file_get_contents($theme_stylesheet), true); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- We're loading a local file
                 $additional_styles = '';
 
                 if ( has_filter('wpp_additional_theme_styles') ) {
@@ -422,7 +403,12 @@ class Output {
         $post_meta_separator = esc_html(apply_filters('wpp_post_meta_separator', ' | '));
         $post_meta = join($post_meta_separator, $meta_arr);
 
-        $prettify_numbers = apply_filters('wpp_pretiffy_numbers', true);
+        $prettify_numbers = apply_filters('wpp_prettify_numbers', true);
+
+        /** Legacy, should be removed */
+        if ( has_filter('wpp_pretiffy_numbers') ) {
+            $prettify_numbers = apply_filters('wpp_pretiffy_numbers', true);
+        }
 
         // Build custom HTML output
         if ( $this->public_options['markup']['custom_html'] ) {
@@ -693,7 +679,7 @@ class Output {
                     __('%s ago', 'wordpress-popular-posts'),
                     human_time_diff(
                         strtotime($post_object->date),
-                        current_time('timestamp')
+                        Helper::timestamp()
                     )
                 );
             } else {
@@ -852,7 +838,12 @@ class Output {
     {
         $stats = [];
 
-        $prettify_numbers = apply_filters('wpp_pretiffy_numbers', true);
+        $prettify_numbers = apply_filters('wpp_prettify_numbers', true);
+
+        /* Legacy, should be removed */
+        if ( has_filter('wpp_pretiffy_numbers') ) {
+            $prettify_numbers = apply_filters('wpp_pretiffy_numbers', true);
+        }
 
         // comments
         if ( $this->public_options['stats_tag']['comment_count'] ) {

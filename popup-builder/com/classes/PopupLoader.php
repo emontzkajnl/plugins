@@ -141,8 +141,9 @@ class PopupLoader
 			if (empty($popup) || !is_object($popup)) {
 				continue;
 			}
-
-			if (($popup->getOptions()['sgpb-is-active'] && $popup->allowToLoad()) || (is_preview() && get_post_type() == SG_POPUP_POST_TYPE)) {
+			$popup_options = $popup->getOptions();			
+			if (( isset( $popup_options['sgpb-is-active'] ) && $popup_options['sgpb-is-active'] && $popup->allowToLoad()) 
+				|| (is_preview() && get_post_type() == SG_POPUP_POST_TYPE)) {
 				$this->addLoadablePopup($popup);
 			}
 		}

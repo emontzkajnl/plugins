@@ -1,20 +1,16 @@
 === Meta Tag Manager ===
-Contributors: netweblogic
-Tags: google, SEO, yahoo, tags, webmaster tools, meta, meta tags, meta-tags, og, ogp, open graph, twitter cards, schema, rich-snippets, structured-data
+Contributors: pxlite, msykes, netweblogic
+Tags: meta, tags, meta tags, open graph, seo
 Text Domain: meta-tag-manager
 Requires at least: 3.6
-Tested up to: 5.8.1
-Stable tag: 3.0.2
+Tested up to: 6.5
+Stable tag: 3.1
 
 Easily add and manage custom meta tags to various parts of your site or on individual posts, such as Yahoo and Google verification tags.
 
 == Description ==
 
-<blockquote>Meta Tag Manager 3.0 builds on the great success of 2.0 and also marks the launch of our <a href="https://metatagmanager/gopro/?utm_source=plugin-readme&utm_medium=plugin&utm_campaign=plugin">new Pro Add-on</a>. Since 2009 we've provided a freely available, regularly maintained plugin with support and we hope to continue doing so for many years to come!
-
-We have plenty of ideas of what to add to the plugin, we'd love to hear your suggestions too, please let us know on our <a href="https://wordpress.org/support/plugin/meta-tag-manager">support forums</a>.</blockquote>
-
-Meta Tags Manager is a simple, lightweight plugin which allows you to add custom meta tags to your site. Features include:
+Meta Tags Manager is a powerful yet simple, lightweight plugin which allows you to add custom meta tags to your site. Features include:
 
 * Supports meta tags including the name, property, http-equiv, charset and itemprop attributes.
 * Choose from predefined types, such as 'name="keyword"' or create your own by typing it in.
@@ -30,7 +26,7 @@ Use cases include:
 * Adding Google and Yahoo site verification tags
 * Adding additional open graph, twitter card or other social media meta info not supported by other SEO/Meta plugins
 
-<a href="https://metatagmanager/gopro/?utm_source=plugin-readme&utm_medium=plugin&utm_campaign=plugin">Go Pro</a> for many newly added features, including:
+<a href="https://metatagmanager.com/gopro/?utm_source=plugin-readme&utm_medium=plugin&utm_campaign=plugin">Go Pro</a> for many newly added features, including:
 
 * Dynamic placeholders to include data about the page being displayed, such as page title, comment count, thumbnail URLs and more!
 * Additional contexts to add global meta tags, as well as exclusion rules for finer-grained controls.
@@ -83,6 +79,12 @@ Please visit our <a href="https://wordpress.org/support/plugin/meta-tag-manager"
 3. If enabled you can add meta tags to a specific post in it's own meta box
 
 == Changelog ==
+= 3.1 =
+* fixed PHP 8.x warnings
+* fixed minor PHP warning
+* fixed minor security vulnerability where admin notices can be dismissed by unauthenitcated user (reported by Patchstack)
+* fixed security vulnerability where arbritrary code could be exeuted by unserialize (kudos to Wordfence Security)
+
 = 3.0.2 =
 * fixed bug preventing settings from saving if schema settings are not selected
 * added backward compatibility to 4.9 by allowing determine_locale() > get_locale() fallback

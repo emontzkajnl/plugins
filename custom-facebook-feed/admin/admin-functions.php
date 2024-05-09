@@ -114,6 +114,8 @@ function cff_delete_cache(){
         LiteSpeed_Cache_API::purge( 'esi.custom-facebook-feed' );
     }
 
+    \CustomFacebookFeed\Admin\CFF_Support_Tool::delete_expired_users();
+
 }
 
 //Cron job to clear transients
@@ -455,4 +457,99 @@ function cff_delete_all_platform_data(){
 	$manager->delete_caches();
 	\cff_main()->cff_error_reporter->add_action_log( 'Deleted all platform data.' );
 	\cff_main()->cff_error_reporter->reset_api_errors();
+}
+
+
+function cff_encrypt_decrypt($action, $string)
+{
+    $output = false;
+
+    $encrypt_method = "AES-256-CBC";
+    $secret_key = 'SMA$H.BA[[OON#23121';
+    $secret_iv = '1231394873342102221';
+
+    // hash
+    $key = hash('sha256', $secret_key);
+
+    // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+    $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+    if ($action === 'encrypt') {
+        $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+        $output = base64_encode($output);
+    } else if ($action === 'decrypt') {
+        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+    }
+
+    return $output;
+}
+
+function update_connected_accounts($connected_accounts)
+{
+    update_option('cff_connected_accounts', $connected_accounts);
+    return $connected_accounts;
+}
+
+/**
+ * Return a combination of legacy and new sources with new sources
+ * overriding legacy sources.
+ *
+ * @return StdClass
+ *
+ * @since 4.0
+ */
+function get_connected_accounts_list()
+{
+    $connected_accounts = CustomFacebookFeed\CFF_Utils::cff_get_connected_accounts_object();
+
+    if (empty($connected_accounts)) {
+        $connected_accounts = [];
+    }
+
+    $new_sources = \CustomFacebookFeed\Builder\CFF_Feed_Builder::get_source_list();
+
+    $encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
+    foreach ($new_sources as $new_source) {
+        if (!empty($new_source['account_id'])) {
+            $account_id = $new_source['account_id'];
+            array_push(
+                $connected_accounts,
+                [
+                    'id' => $account_id,
+                    'accesstoken' => $encryption->decrypt($new_source['access_token']) ? $encryption->decrypt($new_source['access_token']) : $new_source['access_token'],
+                    'pagetype' => $new_source['account_type'],
+                    'name' => $new_source['username'],
+                    'avatar' => $new_source['avatar_url']
+                ]
+            );
+        }
+
+    }
+
+    return $connected_accounts;
+}
+
+
+/**
+ * oEmbed Connection App URL
+ *
+ * @return StdClass
+ *
+ * @since 4.0
+ */
+function cffGetOembedConnectionUrl()
+{
+	$admin_url_state = admin_url('admin.php?page=cff-oembeds-manager');
+	$nonce           = wp_create_nonce('cff_con');
+	// If the admin_url isn't returned correctly then use a fallback
+	if ($admin_url_state == '/wp-admin/admin.php?page=cff-oembeds-manager') {
+		$admin_url_state = "http://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+	}
+
+	return array(
+		'connect' => CFF_OEMBED_CONNECT_URL,
+		'cff_con' => $nonce,
+		'stateURL' => $admin_url_state
+	);
 }

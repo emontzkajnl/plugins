@@ -1218,7 +1218,7 @@ Source Screen
     padding-right: 44px;
 }
 
-#cff-builder-app .cff-fb-srcs-item .cff-fb-srcs-item-inf .cff-fb-srcs-item-name span {
+#cff-builder-app .cff-fb-srcs-item .cff-fb-srcs-item-inf .cff-fb-srcs-item-name > span {
     max-height: 30px;
     display: block;
     overflow: hidden;

@@ -30,6 +30,7 @@ class SGPBFeedback
 
 	public function sgpbDeactivateFeedback()
 	{
+		$message = '';
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
 		if (!empty($_POST['formData'])) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized

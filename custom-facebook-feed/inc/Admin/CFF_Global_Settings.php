@@ -41,7 +41,7 @@ class CFF_Global_Settings {
 	 *
 	 * @since 4.0
 	 */
-	function __construct(){
+	public function __construct(){
 		$this->init();
 	}
 
@@ -214,9 +214,10 @@ class CFF_Global_Settings {
 		// clear cron caches
 		$this->cff_clear_cache();
 
-		new CFF_Response( true, array(
+		$response = new CFF_Response( true, array(
 			'cronNextCheck' => $this->get_cron_next_check()
 		) );
+		$response->send();
 	}
 
 	/**
@@ -238,9 +239,10 @@ class CFF_Global_Settings {
 
 		// do the form validation to check if license_key is not empty
 		if ( empty( $_POST[ 'license_key' ] ) ) {
-			new CFF_Response( false, array(
+			$response = new CFF_Response( false, array(
 				'message' => __( 'License key required!', 'custom-facebook-feed' ),
 			) );
+			$response->send();
 		}
 		$license_key = sanitize_text_field( $_POST[ 'license_key' ] );
 		// make the remote api call and get license data
@@ -262,7 +264,8 @@ class CFF_Global_Settings {
 			'licenseStatus' => $cff_license_data['license'],
 			'licenseData' => $cff_license_data
 		);
-		new CFF_Response( true, $data );
+		$response = new CFF_Response( true, $data );
+		$response->send();
 	}
 
 	/**
@@ -289,7 +292,8 @@ class CFF_Global_Settings {
 			update_option( 'cff_license_data', $cff_license_data );
 		}
 		if ( ! $cff_license_data['success'] ) {
-			new CFF_Response( false, array() );
+			$response = new CFF_Response( false, array() );
+			$response->send();
 		}
 		// remove the license keys and update license key status
 		if( $cff_license_data['license'] == 'deactivated' ) {
@@ -297,7 +301,8 @@ class CFF_Global_Settings {
 			$data = array(
 				'licenseStatus' => 'inactive'
 			);
-			new CFF_Response( true, $data );
+			$response = new CFF_Response( true, $data );
+			$response->send();
 		}
 	}
 
@@ -320,9 +325,10 @@ class CFF_Global_Settings {
 
 		// do the form validation to check if license_key is not empty
 		if ( empty( $_POST[ 'license_key' ] ) ) {
-			new CFF_Response( false, array(
+			$response = new CFF_Response( false, array(
 				'message' => __( 'License key required!', 'custom-facebook-feed' ),
 			) );
+			$response->send();
 		}
 		$license_key = sanitize_text_field( $_POST[ 'license_key' ] );
 		$extension_name = sanitize_text_field( $_POST[ 'extension_name' ] );
@@ -340,7 +346,8 @@ class CFF_Global_Settings {
 			'licenseStatus' => $cff_license_data['license'],
 			'licenseData' => $cff_license_data
 		);
-		new CFF_Response( true, $data );
+		$response = new CFF_Response( true, $data );
+		$response->send();
 	}
 
 	/**
@@ -368,7 +375,8 @@ class CFF_Global_Settings {
 		$cff_license_data = $this->get_license_data( $license_key, 'deactivate_license', $extension_item_name );
 
 		if ( ! $cff_license_data['success'] ) {
-			new CFF_Response( false, array() );
+			$response = new CFF_Response( false, array() );
+			$response->send();
 		}
 
 		// remove the license keys and update license key status
@@ -377,7 +385,8 @@ class CFF_Global_Settings {
 			$data = array(
 				'licenseStatus' => $cff_license_data['license']
 			);
-			new CFF_Response( true, $data );
+			$response = new CFF_Response( true, $data );
+			$response->send();
 		}
 	}
 
@@ -413,14 +422,16 @@ class CFF_Global_Settings {
 		$request = CFF_HTTP_Request::request( 'GET', $url, $args );
 		if ( CFF_HTTP_Request::is_error( $request ) ) {
 			ray($request);
-			new CFF_Response( false, array(
+			$response = new CFF_Response( false, array(
 				'hasError' => true
 			) );
+			$response->send();
 		}
 
-		new CFF_Response( true, array(
+		$response = new CFF_Response( true, array(
 			'hasError' => false
 		) );
+		$response->send();
 	}
 
 	/**
@@ -443,17 +454,20 @@ class CFF_Global_Settings {
 		$filename = $_FILES['file']['name'];
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 		if ( 'json' !== $ext ) {
-			new CFF_Response( false, [] );
+			$response = new CFF_Response( false, [] );
+			$response->send();
 		}
 		$imported_settings = file_get_contents( $_FILES["file"]["tmp_name"] );
 		// check if the file is empty
 		if ( empty( $imported_settings ) ) {
-			new CFF_Response( false, [] );
+			$response = new CFF_Response( false, [] );
+			$response->send();
 		}
 		$feed_return = CFF_Feed_Saver_Manager::import_feed( $imported_settings );
 		// check if there's error while importing
 		if ( ! $feed_return['success'] ) {
-			new CFF_Response( false, [] );
+			$response = new CFF_Response( false, [] );
+			$response->send();
 		}
 		// Once new feed has imported lets export all the feeds to update in front end
 		$exported_feeds = CFF_Db::feeds_query();
@@ -465,9 +479,10 @@ class CFF_Global_Settings {
 			);
 		}
 
-		new CFF_Response( true, array(
+		$response = new CFF_Response( true, array(
 			'feeds' => $feeds
 		) );
+		$response->send();
 	}
 
 	/**
@@ -554,7 +569,8 @@ class CFF_Global_Settings {
 
 			$this->clear_stored_caches();
 
-			new CFF_Response( true, array() );
+			$response = new CFF_Response( true, array() );
+			$response->send();
 		}
 
 		// Get the updated cron schedule interval and time settings from user input and update the database
@@ -606,9 +622,10 @@ class CFF_Global_Settings {
 		CFF_Group_Posts::group_reschedule_event($cff_cache_cron_time_unix, $cff_cron_schedule);
 		wp_schedule_event($cff_cache_cron_time_unix, $cff_cron_schedule, 'cff_cache_cron');
 
-		new CFF_Response( true, array(
+		$response = new CFF_Response( true, array(
 			'cronNextCheck' => $this->get_cron_next_check()
 		) );
+	$response->send();
 	}
 
 	/**
@@ -648,7 +665,8 @@ class CFF_Global_Settings {
 			return;
 		}
 
-		new CFF_Response( true, [] );
+		$response = new CFF_Response( true, [] );
+		$response->send();
 	}
 
 	/**
@@ -758,7 +776,7 @@ class CFF_Global_Settings {
 	 *
 	 * @since 4.0
 	 */
-	function register_menu() {
+	public function register_menu() {
 		// remove admin page update footer
 		add_filter( 'update_footer', [$this, 'remove_admin_footer_text'] );
 
@@ -1669,7 +1687,7 @@ class CFF_Global_Settings {
 	 * @since 4.0
 	 */
 	public function global_settings(){
-		return CFF_View::render( 'settings.index' );
+		CFF_View::render( 'settings.index' );
 	}
 
 	/**
@@ -1688,6 +1706,7 @@ class CFF_Global_Settings {
 		}
 
 		cff_delete_all_platform_data();
-		new CFF_Response( true, [] );
+		$response = new CFF_Response( true, [] );
+		$response->send();
 	}
 }

@@ -23,7 +23,7 @@ if ( ! empty( $locator_summary ) ) : ?>
         if ( ! empty( $locator_section['results'] ) ) : ?>
 	<div class="cff-single-location">
 		<h4><?php echo esc_html( $locator_section['label'] ); ?></h4>
-		<table class="widefat striped">
+		<table aria-hidden="true" class="widefat striped">
 			<thead>
 			<tr>
                 <th><?php esc_html_e( 'Type', 'custom-facebook-feed' ); ?></th>

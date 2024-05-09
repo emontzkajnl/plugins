@@ -119,14 +119,14 @@ if ($isEmpty) {
 		</div>
 		<div class="formItem">
 			<div class="formItem__title">
-				<?php esc_html_e('Import Subscribers from file:', SG_POPUP_TEXT_DOMAIN); ?>
+				<?php esc_html_e('Import Subscribers from csv file:', SG_POPUP_TEXT_DOMAIN); ?>
 			</div>
 		</div>
 		<div class="formItem">
-			<input class="formItem__input formItem__input_sgpb-popup-overlay" id="js-import-subscriber-file-url" type="text" size="36" name="js-import-subscriber-file-url" value="">
+			<input class="formItem__input formItem__input_sgpb-popup-overlay" id="js-import-subscriber-file-url" type="text" size="36" name="js-import-subscriber-file-url" value="" readonly>
 			<div class="easy-icons-wrapper">
 				<div class="icons__item">
-					<img id="js-import-subscriber-button" class="sgpb-cursor-pointer" src="<?php echo esc_url_raw(SG_POPUP_PUBLIC_URL.'icons/cloud.svg'); ?>" alt="<?php esc_html_e('Select file', SG_POPUP_TEXT_DOMAIN)?>">
+					<img id="js-import-subscriber-button" class="sgpb-cursor-pointer" src="<?php echo esc_url_raw(SG_POPUP_PUBLIC_URL.'icons/cloud.svg'); ?>" title="<?php esc_html_e('Select file', SG_POPUP_TEXT_DOMAIN)?>" alt="<?php esc_html_e('Select file', SG_POPUP_TEXT_DOMAIN)?>">
 				</div>
 			</div>
 		</div>

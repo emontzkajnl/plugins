@@ -1379,14 +1379,35 @@ class Responsive_Lightbox_Frontend {
 	}
 
 	/**
-	 * Get attachment id by url function, adjusted to work for cropped and scaled images.
+	 * Get attachment ID by url, adjusted to work for cropped and scaled images.
 	 *
 	 * @param string $url
 	 * @return int
 	 */
 	public function get_attachment_id_by_url( $url ) {
+		$org_url = $url;
+
 		// parse url
 		$url = ! empty( $url ) ? esc_url_raw( $url ) : '';
+
+		// get url with both schemes
+		$url_http = set_url_scheme( $url, 'http' );
+		$url_https = set_url_scheme( $url, 'https' );
+
+		// https? set scheme order
+		if ( is_ssl() )
+			$urls = [ $url_https, $url_http ];
+		else
+			$urls = [ $url_http, $url_https ];
+
+		// get upload dir
+		$dir = wp_get_upload_dir();
+
+		// set base url
+		$base_url = $dir['baseurl'];
+
+		if ( is_ssl() )
+			$base_url = set_url_scheme( $base_url, 'https' );
 
 		// set post id
 		$post_id = 0;
@@ -1394,28 +1415,41 @@ class Responsive_Lightbox_Frontend {
 		// get cached data
 		$post_ids = get_transient( 'rl-attachment_ids_by_url' );
 
-		// cached url not found?
-		if ( $post_ids === false || ! in_array( $url, array_keys( $post_ids ) ) ) {
-			// try to get post id
-			$post_id = (int) attachment_url_to_postid( $url );
+		// set default flag
+		$update_transient = false;
 
-			// no post id?
-			if ( ! $post_id ) {
-				$dir = wp_upload_dir();
-				$path = $url;
+		// check url with forced scheme based on is_ssl(), then fallback to second one
+		foreach ( $urls as $url_with_scheme ) {
+			// set current url
+			$url = $url_with_scheme;
 
-				if ( strpos( $path, $dir['baseurl'] . '/' ) === 0 )
-					$path = substr( $path, strlen( $dir['baseurl'] . '/' ) );
+			// cached url not found?
+			if ( $post_ids === false || ! in_array( $url_with_scheme, array_keys( $post_ids ), true ) ) {
+				// try to get post id
+				$post_id = $this->_get_attachment_id_by_url( $url_with_scheme, $base_url );
 
-				// try to check full size image
-				if ( preg_match( '/^(.*)(\-\d*x\d*)(\.\w{1,})/i', $path, $matches ) )
-					$post_id = (int) attachment_url_to_postid( $dir['baseurl'] . '/' . $matches[1] . $matches[3] );
+				// set flag
+				$update_transient = true;
+			// cached url found
+			} elseif ( ! empty( $post_ids[$url_with_scheme] ) )
+				$post_id = (int) $post_ids[$url_with_scheme];
+			// found post id but it is zero
+			else {
+				// try to refresh post id
+				$post_id = $this->_get_attachment_id_by_url( $url_with_scheme, $base_url );
 
-				// try to check scaled size image
-				if ( ! $post_id && ! empty( $matches[1] ) && ! empty( $matches[3] ) )
-					$post_id = (int) attachment_url_to_postid( $dir['baseurl'] . '/' . $matches[1] . '-scaled' . $matches[3] );
+				// set flag
+				$update_transient = true;
 			}
 
+			if ( $post_id )
+				break;
+
+			// set default flag
+			$update_transient = false;
+		}
+
+		if ( $update_transient ) {
 			// set the cache expiration, 24 hours by default
 			$expire = (int) apply_filters( 'rl_object_cache_expire', DAY_IN_SECONDS );
 
@@ -1427,11 +1461,39 @@ class Responsive_Lightbox_Frontend {
 
 			// set transient
 			set_transient( 'rl-attachment_ids_by_url', $post_ids, $expire );
-		// cached url found
-		} elseif ( ! empty( $post_ids[$url] ) )
-			$post_id = (int) $post_ids[$url];
+		}
 
-		return (int) apply_filters( 'rl_get_attachment_id_by_url', $post_id, $url );
+		return (int) apply_filters( 'rl_get_attachment_id_by_url', $post_id, $org_url );
+	}
+
+	/**
+	 * Get attachment ID by url.
+	 *
+	 * @param string $url
+	 * @param string $base_url
+	 * @return int
+	 */
+	private function _get_attachment_id_by_url( $url, $base_url ) {
+		// try to get post id
+		$post_id = (int) attachment_url_to_postid( $url );
+
+		// no post id?
+		if ( ! $post_id ) {
+			$path = $url;
+
+			if ( strpos( $path, $base_url . '/' ) === 0 )
+				$path = substr( $path, strlen( $base_url . '/' ) );
+
+			// try to check full size image
+			if ( preg_match( '/^(.*)(\-\d*x\d*)(\.\w{1,})/i', $path, $matches ) )
+				$post_id = (int) attachment_url_to_postid( $base_url . '/' . $matches[1] . $matches[3] );
+
+			// try to check scaled size image
+			if ( ! $post_id && ! empty( $matches[1] ) && ! empty( $matches[3] ) )
+				$post_id = (int) attachment_url_to_postid( $base_url . '/' . $matches[1] . '-scaled' . $matches[3] );
+		}
+
+		return $post_id;
 	}
 
 	/**
@@ -1497,6 +1559,10 @@ class Responsive_Lightbox_Frontend {
 	 * @return string
 	 */
 	public function gallery_attributes( $content, $shortcode_atts ) {
+		// private gallery?
+		if ( isset( $shortcode_atts['rl_gallery_id'] ) && get_post_status( $shortcode_atts['rl_gallery_id'] ) === 'private' && ! current_user_can( 'read_private_posts' ) )
+			return '';
+
 		// check forced gallery number
 		if ( isset( $shortcode_atts['rl_gallery_no'] ) ) {
 			$shortcode_atts['rl_gallery_no'] = (int) $shortcode_atts['rl_gallery_no'];
@@ -1792,6 +1858,10 @@ class Responsive_Lightbox_Frontend {
 		// is it rl gallery?
 		$rl_gallery = $rl->options['builder']['gallery_builder'] && $rl_gallery_id && get_post_type( $rl_gallery_id ) === 'rl_gallery';
 
+		// private gallery?
+		if ( $rl_gallery && get_post_status( $rl_gallery_id ) === 'private' && ! current_user_can( 'read_private_posts' ) )
+			return '';
+
 		if ( ! array_key_exists( 'type', $shortcode_atts ) )
 			$shortcode_atts['type'] = '';
 
@@ -2012,6 +2082,10 @@ class Responsive_Lightbox_Frontend {
 		// is it rl gallery?
 		$rl_gallery = $rl->options['builder']['gallery_builder'] && $rl_gallery_id && get_post_type( $rl_gallery_id ) === 'rl_gallery';
 
+		// private gallery?
+		if ( $rl_gallery && get_post_status( $rl_gallery_id ) === 'private' && ! current_user_can( 'read_private_posts' ) )
+			return '';
+
 		if ( ! array_key_exists( 'type', $shortcode_atts ) )
 			$shortcode_atts['type'] = '';
 
@@ -2207,6 +2281,10 @@ class Responsive_Lightbox_Frontend {
 
 		// is it rl gallery?
 		$rl_gallery = $rl->options['builder']['gallery_builder'] && $rl_gallery_id && get_post_type( $rl_gallery_id ) === 'rl_gallery';
+
+		// private gallery?
+		if ( $rl_gallery && get_post_status( $rl_gallery_id ) === 'private' && ! current_user_can( 'read_private_posts' ) )
+			return '';
 
 		if ( ! array_key_exists( 'type', $shortcode_atts ) )
 			$shortcode_atts['type'] = '';

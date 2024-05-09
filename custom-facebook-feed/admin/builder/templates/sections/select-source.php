@@ -11,7 +11,7 @@
                 </svg>
                 <span class="sb-small-p sb-bold">{{genericText.addNew}}</span>
 			</div>
-			<div :class="checkSourceForEvents(source) || checkTypeForGroup(source) ? ' cff-fb-onbrd-tltp-parent cff-fb-onbrd-tltp-center-top cff-fb-onbrd-tltp-hover ' : ''" class="cff-fb-srcs-item" v-for="(source, sourceIndex) in sourcesList" @click.prevent.default="selectSource(source)" :data-type="source.account_type" :data-active="selectedSources.includes(source.account_id)" :data-disabled="checkSourceForEvents(source) || checkTypeForGroup(source)">
+			<div :class="checkSourceForEvents(source) || checkTypeForGroup(source) ? ' cff-fb-onbrd-tltp-parent cff-fb-onbrd-tltp-center-top cff-fb-onbrd-tltp-hover ' : ''" class="cff-fb-srcs-item" v-for="(source, sourceIndex) in sourcesList" :data-lastitem="(sourceIndex - 1) % 3 === 0 ? 'last' : false" @click.prevent.default="selectSource(source)" :data-type="source.account_type" :data-active="isSourceSelectActive(source)" :data-disabled="checkSourceForEvents(source) || checkTypeForGroup(source)">
 				<div class="cff-fb-onbrd-tltp-elem">
 					<p v-if="checkSourceForEvents(source)" class="cff-fb-onbrd-tltp-txt" v-for="eventsToolTipTxt in selectSourceScreen.eventsToolTip" v-html="eventsToolTipTxt.replace(/ /g,' ')"></p>
                     <p v-if="checkTypeForGroup(source)" class="cff-fb-onbrd-tltp-txt" v-for="groupsToolTipTxt in selectSourceScreen.groupsToolTip" v-html="groupsToolTipTxt.replace(/ /g,' ')"></p>
@@ -23,7 +23,27 @@
 					<img :src="typeof source.avatar_url !== 'undefined' && source.account_type === 'group' ? source.avatar_url : 'https://graph.facebook.com/'+source.account_id+'/picture'" alt="Page Source Avatar">
 				</div>
 				<div class="cff-fb-srcs-item-inf">
-                    <div class="cff-fb-srcs-item-name sb-small-p sb-bold"><span>{{source.username}}</span> <span class="cff-fb-srcs-item-name-event" v-if="source.privilege == 'events'">(events)</span></div>
+                    <div class="cff-fb-srcs-item-name sb-small-p sb-bold">
+                        <span>
+                            <span>{{source.username}}</span>
+                            <div class="sb-group-small-notice" v-if="source?.account_type === 'group' && !checkTypeForGroup(source)">
+                                <svg width="16" height="16" viewBox="0 0 13 13" fill="none">
+								    <path d="M6.50008 0.666664C3.28008 0.666664 0.666748 3.28 0.666748 6.5C0.666748 9.72 3.28008 12.3333 6.50008 12.3333C9.72008 12.3333 12.3334 9.72 12.3334 6.5C12.3334 3.28 9.72008 0.666664 6.50008 0.666664ZM7.08342 9.41667H5.91675V8.25H7.08342V9.41667ZM7.08342 7.08333H5.91675V3.58333H7.08342V7.08333Z" fill="#D72C2C"/>
+								</svg>
+                                <div class="cff-fb-onbrd-tltp-elem cff-fb-onbrd-tltp-elem-2 sb-tr-2" data-active="true">
+                                    <div class="sb-pointer">
+                                        <svg width="21" height="11" viewBox="0 0 21 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.59642 0.811655C9.39546 -0.135356 10.8545 -0.135357 11.6536 0.811654L20.25 11H0L8.59642 0.811655Z" fill="white"/>
+                                        </svg>
+                                    </div>
+                                    <div class="cff-fb-onbrd-tltp-txt sb-small-p sb-dark-text ">
+                                        <span v-html="genericText.deperecatedGroupText"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
+                        <span class="cff-fb-srcs-item-name-event" v-if="source.privilege == 'events'">(events)</span>
+                    </div>
                     <div class="cff-fb-left-boss">
                         <div class="cff-fb-srcs-item-type">
                             <div v-html="source.account_type == 'group' ? svgIcons['users'] : svgIcons['flag']"></div>

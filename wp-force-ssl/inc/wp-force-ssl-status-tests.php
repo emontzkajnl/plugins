@@ -662,7 +662,7 @@ class wpForceSSL_status_tests
 
   function test_htaccess()
   {
-    $server = strtolower(filter_var($_SERVER['SERVER_SOFTWARE'], FILTER_SANITIZE_STRING));
+    $server = strtolower(filter_var($_SERVER['SERVER_SOFTWARE'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
 
     if (stripos($server, 'apache') === false && stripos($server, 'litespeed') === false) {
       return false;

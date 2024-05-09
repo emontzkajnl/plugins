@@ -230,17 +230,49 @@ Vue.component('sb-add-source-component', {
          */
          processFBConnect : function(){
             var self = this,
-            fbConnectURL = self.addNewSource.typeSelected == 'page' ? self.sourceConnectionURLs.page : self.sourceConnectionURLs.group,
+            accountType = self.addNewSource.typeSelected,
+            params = accountType === 'page' ? self.sourceConnectionURLs.page : self.sourceConnectionURLs.group,
+            ifConnectURL = params.connect,
             screenType = (self.$parent.customizerFeedData != undefined) ? 'customizer'  : 'creationProcess',
             appendURL = ( screenType == 'customizer' ) ? self.sourceConnectionURLs.stateURL + ',feed_id='+ self.$parent.customizerFeedData.feed_info.id : self.sourceConnectionURLs.stateURL;
             if(screenType != 'customizer'){
                 self.createLocalStorage(screenType);
             }
+
             if( self.$parent.isSetupPage === 'true'){
                 appendURL = appendURL+ ',is_setup_page=yes';
             }
-            var finalUrl = fbConnectURL + "{'{url=" + appendURL + "}'}";
-            window.location = finalUrl;
+
+            const urlParams = {
+                'wordpress_user' : params.wordpress_user,
+                'v' : params.v,
+                'vn' : params.vn,
+                'cff_con' : params.cff_con,
+                'has_group' : params.has_group,
+                'state' : "{'{url=" + appendURL + "}'}"
+            };
+
+            if(params.sw_feed) {
+                urlParams['sw-feed'] = 'true';
+            }
+
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = ifConnectURL;
+            form.action = ifConnectURL + (params.has_group === true ? '?has_group=true' : '');
+
+            for (const param in urlParams) {
+                if (urlParams.hasOwnProperty(param)) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = param;
+                    input.value = urlParams[param];
+                    form.appendChild(input);
+                }
+            }
+
+            document.body.appendChild(form);
+            form.submit();
         },
 
         /**

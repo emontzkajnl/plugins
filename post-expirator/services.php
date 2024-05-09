@@ -1,20 +1,18 @@
 <?php
 
-defined('ABSPATH') or die('Direct access not allowed.');
+defined("ABSPATH") or die("Direct access not allowed.");
 
-use PublishPress\Future\Core\DI\ContainerInterface;
 use PublishPress\Future\Core\DI\ServicesAbstract;
 use PublishPress\Future\Core\HooksAbstract;
 use PublishPress\Future\Core\Paths;
 use PublishPress\Future\Core\Plugin;
 use PublishPress\Future\Framework\Logger\Logger;
-use PublishPress\Future\Framework\Logger\LoggerInterface;
-use PublishPress\Future\Framework\ModuleInterface;
 use PublishPress\Future\Framework\WordPress\Facade\DatabaseFacade;
 use PublishPress\Future\Framework\WordPress\Facade\DateTimeFacade;
 use PublishPress\Future\Framework\WordPress\Facade\EmailFacade;
 use PublishPress\Future\Framework\WordPress\Facade\ErrorFacade;
 use PublishPress\Future\Framework\WordPress\Facade\HooksFacade;
+use PublishPress\Future\Framework\WordPress\Facade\NoticeFacade;
 use PublishPress\Future\Framework\WordPress\Facade\OptionsFacade;
 use PublishPress\Future\Framework\WordPress\Facade\RequestFacade;
 use PublishPress\Future\Framework\WordPress\Facade\SanitizationFacade;
@@ -25,9 +23,11 @@ use PublishPress\Future\Framework\WordPress\Models\TermModel;
 use PublishPress\Future\Framework\WordPress\Models\UserModel;
 use PublishPress\Future\Modules\Debug\Module as ModuleDebug;
 use PublishPress\Future\Modules\Expirator\Adapters\CronToWooActionSchedulerAdapter;
+use PublishPress\Future\Modules\Expirator\ExpirationActions\ChangePostStatus;
 use PublishPress\Future\Modules\Expirator\ExpirationActions\DeletePost;
 use PublishPress\Future\Modules\Expirator\ExpirationActions\PostCategoryAdd;
 use PublishPress\Future\Modules\Expirator\ExpirationActions\PostCategoryRemove;
+use PublishPress\Future\Modules\Expirator\ExpirationActions\PostCategoryRemoveAll;
 use PublishPress\Future\Modules\Expirator\ExpirationActions\PostCategorySet;
 use PublishPress\Future\Modules\Expirator\ExpirationActions\PostStatusToDraft;
 use PublishPress\Future\Modules\Expirator\ExpirationActions\PostStatusToPrivate;
@@ -37,13 +37,11 @@ use PublishPress\Future\Modules\Expirator\ExpirationActions\UnstickPost;
 use PublishPress\Future\Modules\Expirator\ExpirationActionsAbstract;
 use PublishPress\Future\Modules\Expirator\ExpirationScheduler;
 use PublishPress\Future\Modules\Expirator\HooksAbstract as ExpirationHooksAbstract;
-use PublishPress\Future\Modules\Expirator\Interfaces\SchedulerInterface;
 use PublishPress\Future\Modules\Expirator\Migrations\V30000ReplaceFooterPlaceholders;
 use PublishPress\Future\Modules\Expirator\Migrations\V30000WPCronToActionsScheduler;
 use PublishPress\Future\Modules\Expirator\Migrations\V30001RestorePostMeta;
 use PublishPress\Future\Modules\Expirator\Models\ActionArgsModel;
 use PublishPress\Future\Modules\Expirator\Models\CurrentUserModel;
-use PublishPress\Future\Modules\Expirator\Models\DefaultDataModel;
 use PublishPress\Future\Modules\Expirator\Models\ExpirablePostModel;
 use PublishPress\Future\Modules\Expirator\Models\ExpirationActionsModel;
 use PublishPress\Future\Modules\Expirator\Module as ModuleExpirator;
@@ -55,28 +53,34 @@ use PublishPress\Future\Modules\Settings\Module as ModuleSettings;
 use PublishPress\Future\Modules\Settings\SettingsFacade;
 use PublishPress\Future\Modules\VersionNotices\Module as ModuleVersionNotices;
 use PublishPress\Future\Modules\WooCommerce\Module as ModuleWooCommerce;
-use PublishPressFuture\Modules\Expirator\Migrations\V30000ActionArgsSchema;
+use PublishPress\Future\Modules\Expirator\Migrations\V30000ActionArgsSchema;
+use PublishPress\Future\Modules\Expirator\Migrations\V30104ArgsColumnLength;
+use PublishPress\Future\Modules\Expirator\Models\PostTypeDefaultDataModelFactory;
+use PublishPress\Psr\Container\ContainerInterface;
 
 return [
     ServicesAbstract::PLUGIN_VERSION => PUBLISHPRESS_FUTURE_VERSION,
 
     ServicesAbstract::PLUGIN_SLUG => 'post-expirator',
 
-    ServicesAbstract::PLUGIN_NAME => 'PublishPress Future',
+    ServicesAbstract::PLUGIN_NAME => "PublishPress Future",
 
     ServicesAbstract::DEFAULT_DATA => [
-        ServicesAbstract::DEFAULT_DATE_FORMAT => __('l F jS, Y', 'post-expirator'),
-        ServicesAbstract::DEFAULT_TIME_FORMAT => __('g:ia', 'post-expirator'),
-        ServicesAbstract::DEFAULT_FOOTER_CONTENT => __(
-            'Post expires at EXPIRATIONTIME on ACTIONDATE',
-            'post-expirator'
+        ServicesAbstract::DEFAULT_DATE_FORMAT => __(
+            "l F jS, Y",
+            "post-expirator"
         ),
-        ServicesAbstract::DEFAULT_FOOTER_STYLE => 'font-style: italic;',
-        ServicesAbstract::DEFAULT_FOOTER_DISPLAY => '0',
-        ServicesAbstract::DEFAULT_EMAIL_NOTIFICATION => '0',
-        ServicesAbstract::DEFAULT_EMAIL_NOTIFICATION_ADMINS => '0',
-        ServicesAbstract::DEFAULT_DEBUG => '0',
-        ServicesAbstract::DEFAULT_EXPIRATION_DATE => 'null',
+        ServicesAbstract::DEFAULT_TIME_FORMAT => __("g:ia", "post-expirator"),
+        ServicesAbstract::DEFAULT_FOOTER_CONTENT => __(
+            "Post expires at EXPIRATIONTIME on ACTIONDATE",
+            "post-expirator"
+        ),
+        ServicesAbstract::DEFAULT_FOOTER_STYLE => "font-style: italic;",
+        ServicesAbstract::DEFAULT_FOOTER_DISPLAY => "0",
+        ServicesAbstract::DEFAULT_EMAIL_NOTIFICATION => "0",
+        ServicesAbstract::DEFAULT_EMAIL_NOTIFICATION_ADMINS => "0",
+        ServicesAbstract::DEFAULT_DEBUG => "0",
+        ServicesAbstract::DEFAULT_EXPIRATION_DATE => "null",
     ],
 
     ServicesAbstract::BASE_PATH => __DIR__,
@@ -121,7 +125,8 @@ return [
             $container->get(ServicesAbstract::LEGACY_PLUGIN),
             $container->get(ServicesAbstract::HOOKS),
             $container->get(ServicesAbstract::PLUGIN_SLUG),
-            $container->get(ServicesAbstract::BASE_PATH)
+            $container->get(ServicesAbstract::BASE_PATH),
+            $container->get(ServicesAbstract::NOTICES)
         );
     },
 
@@ -214,6 +219,15 @@ return [
     },
 
     /**
+     * @return \PublishPress\Future\Framework\WordPress\Facade\NoticeFacade
+     */
+    ServicesAbstract::NOTICES => static function (ContainerInterface $container) {
+        return new NoticeFacade(
+            $container->get(ServicesAbstract::HOOKS)
+        );
+    },
+
+    /**
      * @return EmailFacade
      */
     ServicesAbstract::EMAIL => static function (ContainerInterface $container) {
@@ -266,7 +280,8 @@ return [
             $container->get(ServicesAbstract::LOGGER),
             $container->get(ServicesAbstract::DATETIME),
             $container->get(ServicesAbstract::EXPIRABLE_POST_MODEL_FACTORY),
-            $container->get(ServicesAbstract::ACTION_ARGS_MODEL_FACTORY)
+            $container->get(ServicesAbstract::ACTION_ARGS_MODEL_FACTORY),
+            $container->get(ServicesAbstract::EXPIRATION_ACTIONS_MODEL)
         );
     },
 
@@ -325,7 +340,7 @@ return [
             $container->get(ServicesAbstract::REQUEST),
             $container->get(ServicesAbstract::ACTION_ARGS_MODEL_FACTORY),
             $container->get(ServicesAbstract::SCHEDULED_ACTIONS_TABLE_FACTORY),
-            $container->get(ServicesAbstract::POST_TYPE_SETTINGS_MODEL_FACTORY)
+            $container->get(ServicesAbstract::NOTICES)
         );
     },
 
@@ -347,7 +362,9 @@ return [
         return function ($postId) use ($container) {
             return new PostModel(
                 $postId,
-                $container->get(ServicesAbstract::TERM_MODEL_FACTORY)
+                $container->get(ServicesAbstract::TERM_MODEL_FACTORY),
+                $container->get(ServicesAbstract::DEBUG),
+                $container->get(ServicesAbstract::HOOKS)
             );
         };
     },
@@ -370,10 +387,11 @@ return [
         };
     },
 
-    ServicesAbstract::DEFAULT_DATA_MODEL => static function (ContainerInterface $container) {
-        return new DefaultDataModel(
+    ServicesAbstract::POST_TYPE_DEFAULT_DATA_MODEL_FACTORY => static function (ContainerInterface $container) {
+        return new PostTypeDefaultDataModelFactory(
             $container->get(ServicesAbstract::SETTINGS),
-            $container->get(ServicesAbstract::OPTIONS)
+            $container->get(ServicesAbstract::OPTIONS),
+            $container->get(ServicesAbstract::HOOKS)
         );
     },
 
@@ -395,7 +413,7 @@ return [
                 $container->get(ServicesAbstract::TERM_MODEL_FACTORY),
                 $container->get(ServicesAbstract::EXPIRATION_ACTION_FACTORY),
                 $container->get(ServicesAbstract::ACTION_ARGS_MODEL_FACTORY),
-                $container->get(ServicesAbstract::DEFAULT_DATA_MODEL)
+                $container->get(ServicesAbstract::POST_TYPE_DEFAULT_DATA_MODEL_FACTORY)
             );
         };
     },
@@ -429,6 +447,9 @@ return [
     ServicesAbstract::EXPIRATION_ACTION_FACTORY => static function (ContainerInterface $container) {
         return function ($actionName, $postModel) use ($container) {
             switch ($actionName) {
+                case ExpirationActionsAbstract::CHANGE_POST_STATUS:
+                    return new ChangePostStatus($postModel);
+
                 case ExpirationActionsAbstract::POST_STATUS_TO_DRAFT:
                     return new PostStatusToDraft($postModel);
 
@@ -450,7 +471,8 @@ return [
                 case ExpirationActionsAbstract::POST_CATEGORY_ADD:
                     return new PostCategoryAdd(
                         $postModel,
-                        $container->get(ServicesAbstract::ERROR)
+                        $container->get(ServicesAbstract::ERROR),
+                        $container->get(ServicesAbstract::POST_TYPE_DEFAULT_DATA_MODEL_FACTORY)
                     );
 
                 case ExpirationActionsAbstract::POST_CATEGORY_REMOVE:
@@ -461,6 +483,12 @@ return [
 
                 case ExpirationActionsAbstract::POST_CATEGORY_SET:
                     return new PostCategorySet(
+                        $postModel,
+                        $container->get(ServicesAbstract::ERROR)
+                    );
+
+                case ExpirationActionsAbstract::POST_CATEGORY_REMOVE_ALL:
+                    return new PostCategoryRemoveAll(
                         $postModel,
                         $container->get(ServicesAbstract::ERROR)
                     );
@@ -533,6 +561,9 @@ return [
                     $container->get(ServicesAbstract::EXPIRABLE_POST_MODEL_FACTORY),
                     $container->get(ServicesAbstract::ACTION_SCHEDULER_STORE)
                 ),
+                new V30104ArgsColumnLength(
+                    $container->get(ServicesAbstract::HOOKS)
+                )
             ];
         };
     },

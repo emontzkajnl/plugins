@@ -315,7 +315,7 @@ class CFF_About {
 					<div class="addon-container">
 						<div class="addon-item">
 							<div class="details cff-clear">
-								<img src="<?php echo esc_url( $plugin_data['details']['icon'] ); ?>">
+								<img src="<?php echo esc_url( $plugin_data['details']['icon'] ); ?>" alt="Details Icon">
 								<h5 class="addon-name">
 									<?php echo esc_html( $plugin_data['details']['name'] ); ?>
 								</h5>
@@ -474,7 +474,7 @@ class CFF_About {
 			</div>
 
 			<div class="cff-admin-about-section-first-form-video">
-				<iframe src="https://www.youtube-nocookie.com/embed/0gykYq3JSrY?rel=0" width="540" height="304" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+				<iframe title="About Plugin" src="https://www.youtube-nocookie.com/embed/0gykYq3JSrY?rel=0" width="540" height="304" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 			</div>
 
 		</div>
@@ -575,12 +575,8 @@ class CFF_About {
 
 					<h3 class="call-to-action">
 						<?php
-						if ( 'lite' === $license ) {
 							echo '<a href="https://smashballoon.com/custom-facebook-feed/pricing/?utm_campaign=facebook-free&utm_source=gettingstarted&utm_medium=profeaturescompare" target="_blank" rel="noopener noreferrer">';
-						} else {
-							echo '<a href="https://smashballoon.com/custom-facebook-feed/pricing/?utm_campaign=facebook-free&utm_source=gettingstarted&utm_medium=profeaturescompare" target="_blank" rel="noopener noreferrer">';
-						}
-						esc_html_e( 'Get Custom Facebook Feed Pro Today and Unlock all the Powerful Features', 'custom-facebook-feed' );
+							esc_html_e( 'Get Custom Facebook Feed Pro Today and Unlock all the Powerful Features', 'custom-facebook-feed' );
 						?>
 						</a>
 					</h3>
@@ -656,17 +652,18 @@ class CFF_About {
 	 * @return string Next license type slug.
 	 */
 	protected function get_next_license( $current ) {
+		/*
+			 $current       = ucfirst( $current );
+			$license_pairs = array(
+				'Lite'  => 'Pro',
+				'Basic' => 'Pro',
+				'Plus'  => 'Pro',
+				'Pro'   => 'Elite',
+			);
 
+			return ! empty( $license_pairs[ $current ] ) ? $license_pairs[ $current ] : 'Elite';
+		 */
 	    return 'Pro';
-		$current       = ucfirst( $current );
-		$license_pairs = array(
-			'Lite'  => 'Pro',
-			'Basic' => 'Pro',
-			'Plus'  => 'Pro',
-			'Pro'   => 'Elite',
-		);
-
-		return ! empty( $license_pairs[ $current ] ) ? $license_pairs[ $current ] : 'Elite';
 	}
 
 	/**
@@ -713,7 +710,7 @@ class CFF_About {
 			</div>
 			<div class="cff-admin-about-section-hero-extra no-padding cff-admin-columns">
 
-				<table>
+				<table aria-hidden="true">
 					<?php
 					foreach ( self::$licenses_features as $slug => $name ) {
 						$current = $this->get_license_data( $slug, $license );
@@ -755,11 +752,7 @@ class CFF_About {
 			<div class="cff-admin-about-section-hero-main no-border">
 				<h3 class="call-to-action centered">
 					<?php
-					if ( 'lite' === $license ) {
 						echo '<a href="https://smashballoon.com/custom-facebook-feed/pricing/?utm_campaign=facebook-free&utm_source=gettingstarted&utm_medium=profeaturescompare" target="_blank" rel="noopener noreferrer">';
-					} else {
-						echo '<a href="https://smashballoon.com/custom-facebook-feed/pricing/?utm_campaign=facebook-free&utm_source=gettingstarted&utm_medium=profeaturescompare" target="_blank" rel="noopener noreferrer">';
-					}
 					printf( /* translators: %s - next license level. */
 						esc_html__( 'Get Custom Facebook Feed Pro Today and Unlock all the Powerful Features', 'custom-facebook-feed' ),
 						esc_html( $next_license )

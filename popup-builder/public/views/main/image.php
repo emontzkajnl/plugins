@@ -4,7 +4,7 @@
         <input class="formItem__input formItem__input_sgpb-popup-overlay"
                id="js-upload-image"
                type="text" size="36" name="sgpb-image-url"
-               value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-image-url')); ?>" required>
+               value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-image-url')); ?>" readonly required>
     </div>
     <div class="formItem formItem_last">
         <div id="js-upload-image-button" class="sgpb-icons icons_blue">K</div>

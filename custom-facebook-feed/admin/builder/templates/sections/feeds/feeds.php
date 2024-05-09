@@ -18,7 +18,7 @@
 		</div>
 	</div>
     <div class="cff-table-wrap" v-bind:class="{ 'sb-onboarding-highlight' : viewsActive.onboardingStep === 2 && allFeedsScreen.onboarding.type === 'single' }">
-	<table>
+	<table aria-hidden="true">
 		<thead class="cff-fd-lst-thtf cff-fd-lst-thead">
 			<tr>
 				<th>

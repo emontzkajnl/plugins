@@ -384,10 +384,12 @@ class CFF_Feed_Saver_Manager {
 		}
 
 		if( isset( $_POST['feedID'] ) &&  isset( $_POST['previewSettings'] ) ){
+			$feed_id = filter_var($_POST['feedID'], FILTER_VALIDATE_INT);
+
 			$return = array(
 				'posts' => array()
 			);
-			$post_set = new CFF_Post_Set( $_POST['feedID'] );
+			$post_set = new CFF_Post_Set($feed_id);
 			$post_set->init( true, $_POST['previewSettings'] );
 			$post_set->fetch();
 
@@ -398,7 +400,7 @@ class CFF_Feed_Saver_Manager {
 
 			if ( isset( $settings['sources'][0] ) ) {
 				$args = array(
-					'id' => $settings['sources'][0]
+					'id' => $settings['sources'][0]['account_id']
 				);
 				$results = CFF_Db::source_query( $args );
 				$header_details = \CustomFacebookFeed\CFF_Utils::fetch_header_data( $results[0]['account_id'], $results[0]['account_type'] === 'group', $results[0]['access_token'], 0, false, '' );
