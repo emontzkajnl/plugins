@@ -1,3 +1,21 @@
+##### [Version 2.6.11](https://github.com/Codeinwp/wp-maintenance-mode/compare/v2.6.10...v2.6.11) (2024-04-18)
+
+### Improvements
+​- **Updated internal dependencies:​​** Enhanced performance and security.
+
+##### [Version 2.6.10](https://github.com/Codeinwp/wp-maintenance-mode/compare/v2.6.9...v2.6.10) (2024-02-28)
+
+### Fixes
+- Updated dependencies
+
+##### [Version 2.6.9](https://github.com/Codeinwp/wp-maintenance-mode/compare/v2.6.8...v2.6.9) (2023-12-22)
+
+### Bug Fixes
+- Fixed compatibility issue with WP 6.4
+- Fixed broken templates layout issue on the Safari browser
+- Enhanced security
+- Fixed compatibility issue with WP-Optimize
+
 ##### [Version 2.6.8](https://github.com/Codeinwp/wp-maintenance-mode/compare/v2.6.7...v2.6.8) (2023-06-07)
 
 - Fix the Save button Module tab not working

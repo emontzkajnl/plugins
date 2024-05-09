@@ -3,14 +3,17 @@ Contributors: tillkruess
 Donate link: https://github.com/sponsors/tillkruss
 Tags: antispam, anti spam, spam, email, e-mail, mail, spider, crawler, harvester, robots, spambot, block, obfuscate, obfuscation, encode, encoder, encoding, encrypt, encryption, protect, protection
 Requires at least: 2.0
-Tested up to: 5.6
+Tested up to: 6.4
 Requires PHP: 5.3
-Stable tag: 1.0.22
+Stable tag: 1.0.23
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 A lightweight plugin that protects email addresses from email-harvesting robots, by encoding them into decimal and hexadecimal entities.
 
+- add "encoding" gutenberg block
+- Show premium upgrade page inside wordpress?
+- Dashboard widget with scanner results?
 
 == Description ==
 
@@ -72,9 +75,9 @@ You can use the "Page Scanner" found under _Settings -> Email Encoder_ to see wh
 
 == Changelog ==
 
-- add "encoding" gutenberg block
-- Show premium upgrade page inside wordpress?
-- Dashboard widget with scanner results?
+= 1.0.23 =
+
+* Fixed potential XSS vulnerability when using `link` shortcode attribute
 
 = 1.0.22 =
 

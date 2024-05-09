@@ -1,4 +1,7 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * User interface for managing the 'ads.txt' file.
  */
@@ -137,11 +140,9 @@ class Advanced_Ads_Ads_Txt_Admin {
 			$hook,
 			'advanced_ads_ads_txt_setting_section'
 		);
-
 	}
 
-	public function render_ads_txt_section_callback() {
-	}
+	public function render_ads_txt_section_callback() {}
 
 	/**
 	 * Render toggle settings.
@@ -151,7 +152,7 @@ class Advanced_Ads_Ads_Txt_Admin {
 		$domain = isset( $current_blog->domain ) ? $current_blog->domain : '';
 
 		$can_process_all_network = $this->can_process_all_network();
-		$is_all_network = $this->strategy->is_all_network();
+		$is_all_network          = $this->strategy->is_all_network();
 
 		$is_enabled = $this->strategy->is_enabled();
 		include dirname( __FILE__ ) . '/views/setting-create.php';
@@ -187,15 +188,15 @@ class Advanced_Ads_Ads_Txt_Admin {
 	 * @return array Array of notices.
 	 */
 	public function get_notices() {
-		$url = home_url( '/' );
+		$url        = home_url( '/' );
 		$parsed_url = wp_parse_url( $url );
-		$notices = [];
+		$notices    = [];
 
 		if ( ! isset( $parsed_url['scheme'] ) || ! isset ( $parsed_url['host'] ) ) {
 			return $notices;
 		}
 
-		$link = sprintf( '<a href="%1$s" target="_blank">%1$s</a>', esc_url( $url . 'ads.txt' ) );
+		$link   = sprintf( '<a href="%1$s" target="_blank">%1$s</a>', esc_url( $url . 'ads.txt' ) );
 		$button = ' <button type="button" class="advads-ads-txt-action button" style="vertical-align: middle;" id="%s">%s</button>';
 
 		if ( ! $this->strategy->is_enabled() ) {
@@ -203,28 +204,37 @@ class Advanced_Ads_Ads_Txt_Admin {
 		}
 
 		if ( Advanced_Ads_Ads_Txt_Utils::is_subdir() ) {
-			$notices[] = [ 'advads-error-message', sprintf(
-				esc_html__( 'The ads.txt file cannot be placed because the URL contains a subdirectory. You need to make the file available at %s', 'advanced-ads' ),
-				sprintf( '<a href="%1$s" target="_blank">%1$s</a>', esc_url( $parsed_url['scheme'] . '://' . $parsed_url['host'] ) )
-			) ];
+			$notices[] = [
+				'advads-error-message',
+				sprintf(
+					/* translators: %s homepage link */
+					esc_html__( 'The ads.txt file cannot be placed because the URL contains a subdirectory. You need to make the file available at %s', 'advanced-ads' ),
+					sprintf( '<a href="%1$s" target="_blank">%1$s</a>', esc_url( $parsed_url['scheme'] . '://' . $parsed_url['host'] ) )
+				),
+			];
 		} else {
 			if ( null === ( $file = $this->get_notice( 'get_file_info', $url ) ) ) {
 				$this->notices_are_stale = true;
 				return $notices;
 			}
 
-			if ( ! is_wp_error( $file )) {
+			if ( ! is_wp_error( $file ) ) {
 				if ( $file['exists'] ) {
-					$notices[] = [ '', sprintf(
-						esc_html__( 'The file is available on %s.', 'advanced-ads' ),
-						$link
-					) ];
+					$notices[] = [
+						'',
+						sprintf(
+							/* translators: %s link of ads.txt */
+							esc_html__( 'The file is available on %s.', 'advanced-ads' ),
+							$link
+						),
+					];
 				} else {
 					$notices[] = [ '', esc_html__( 'The file was not created.', 'advanced-ads' ) ];
 				}
 
 				if ( $file['is_third_party'] ) {
-					$message = sprintf( esc_html__( 'A third-party file exists: %s' ), $link);
+					/* translators: %s link */
+					$message = sprintf( esc_html__( 'A third-party file exists: %s', 'advanced-ads' ), $link );
 
 					if ( $this->can_edit_real_file() ) {
 						$message .= sprintf( $button, 'advads-ads-txt-remove-real', __( 'Import & Replace', 'advanced-ads' ) );
@@ -235,25 +245,32 @@ class Advanced_Ads_Ads_Txt_Admin {
 					$notices['is_third_party'] = [ 'advads-error-message', $message ];
 				}
 			} else {
-				$notices[] = [ 'advads-error-message', sprintf(
-					esc_html__( 'An error occured: %s.', 'advanced-ads' ),
-					esc_html( $file->get_error_message() ) )
+				$notices[] = [
+					'advads-error-message',
+					sprintf(
+						/* translators: %s is replaced with an error message. */
+						esc_html__( 'An error occured: %s.', 'advanced-ads' ),
+						esc_html( $file->get_error_message() )
+					),
 				];
 			}
 
-
-			if ( null === ( $need_file_on_root_domain = $this->get_notice( 'need_file_on_root_domain', $url ) ) ) {
+			$need_file_on_root_domain = $this->get_notice( 'need_file_on_root_domain', $url );
+			if ( null === $need_file_on_root_domain ) {
 				$this->notices_are_stale = true;
 				return $notices;
 			}
 
 			if ( $need_file_on_root_domain ) {
-				$notices[] = [ 'advads-ads-txt-nfor', sprintf(
-					/* translators: %s the line that may need to be added manually */
-					esc_html__( 'If your site is located on a subdomain, you need to add the following line to the ads.txt file of the root domain: %s', 'advanced-ads' ),
-					// Without http://.
-					'<code>subdomain=' . esc_html( $parsed_url['host'] ) . '</code>'
-				) ];
+				$notices[] = [
+					'advads-ads-txt-nfor',
+					sprintf(
+						/* translators: %s the line that may need to be added manually */
+						esc_html__( 'If your site is located on a subdomain, you need to add the following line to the ads.txt file of the root domain: %s', 'advanced-ads' ),
+						// Without http://.
+						'<code>subdomain=' . esc_html( $parsed_url['host'] ) . '</code>'
+					),
+				];
 			}
 		}
 
@@ -273,7 +290,7 @@ class Advanced_Ads_Ads_Txt_Admin {
 		}
 
 		$r = '<ul id="advads-ads-txt-notices">';
-		foreach( $notices as $notice ) {
+		foreach ( $notices as $notice ) {
 			$r .= sprintf( '<li class="%s">%s</li>', $notice[0], $notice[1] );
 		}
 		$r .= '</ul>';
@@ -304,8 +321,8 @@ class Advanced_Ads_Ads_Txt_Admin {
 			return false;
 		}
 
-		$url = $url ? $url : home_url( '/' );
-		$key = self::get_transient_key();
+		$url       = $url ? $url : home_url( '/' );
+		$key       = self::get_transient_key();
 		$transient = get_transient( $key );
 
 		if ( ! wp_doing_ajax() || ! doing_action( self::ACTION ) ) {
@@ -314,16 +331,16 @@ class Advanced_Ads_Ads_Txt_Admin {
 
 		$r = call_user_func( [ 'Advanced_Ads_Ads_Txt_Utils', $func ], $url );
 
-		$transient = is_array( $transient ) ? $transient : [];
+		$transient          = is_array( $transient ) ? $transient : [];
 		$transient[ $func ] = $r;
 		set_transient( $key, $transient, WEEK_IN_SECONDS );
 		return $r;
 	}
 
-
-
 	/**
 	 * Get Adsense data.
+	 *
+	 * @param array $new New data.
 	 *
 	 * @return string
 	 */
@@ -341,7 +358,7 @@ class Advanced_Ads_Ads_Txt_Admin {
 			'domain'                  => 'google.com',
 			'account_id'              => $adsense_id,
 			'account_type'            => 'DIRECT',
-			'certification_authority' => 'f08c47fec0942fa0'
+			'certification_authority' => 'f08c47fec0942fa0',
 		];
 		$result = implode( ', ', $data );
 
@@ -355,35 +372,38 @@ class Advanced_Ads_Ads_Txt_Admin {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options') ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
-		$response = [];
+		$response       = [];
 		$action_notices = [];
+
 		if ( isset( $_REQUEST['type'] ) ) {
-			if (  'remove_real_file' === $_REQUEST['type'] ) {
+			if ( 'remove_real_file' === $_REQUEST['type'] ) {
 				$remove = $this->remove_real_file();
 				if ( is_wp_error( $remove ) ) {
 					$action_notices[] = [ 'advads-ads-txt-updated advads-notice-inline advads-error', $remove->get_error_message() ];
 				} else {
-					$action_notices[] = [ 'advads-ads-txt-updated', __( 'The ads.txt is now managed with Advanced Ads.', 'advanced-ads' ) ];
-					$options = $this->strategy->get_options();
+					$action_notices[]               = [
+						'advads-ads-txt-updated',
+						__( 'The ads.txt is now managed with Advanced Ads.', 'advanced-ads' )
+					];
+					$options                        = $this->strategy->get_options();
 					$response['additional_content'] = esc_textarea( $options['custom'] );
 				}
 			}
+
 			if ( 'create_real_file' === $_REQUEST['type'] ) {
 				$action_notices[] = $this->create_real_file();
 			}
 		}
 
-
-		$notices = $this->get_notices();
-		$notices = array_merge( $notices, $action_notices );
+		$notices             = $this->get_notices();
+		$notices             = array_merge( $notices, $action_notices );
 		$response['notices'] = $this->get_notices_markup( $notices );
 
-		echo wp_send_json( $response );
-		exit;
+		wp_send_json( $response );
 	}
 
 	/**
@@ -410,18 +430,20 @@ class Advanced_Ads_Ads_Txt_Admin {
 	/**
 	 * Remove existing real ads.txt file.
 	 */
-	function remove_real_file() {
+	public function remove_real_file() {
+		global $wp_filesystem;
+
 		if ( ! $this->can_edit_real_file() ) {
-			new WP_Error( 'not_main_site', __( 'Not the main blog', 'advanced-ads' ) );
+			return new WP_Error( 'not_main_site', __( 'Not the main blog', 'advanced-ads' ) );
 		}
 
-		if ( is_wp_error( $this->fs_connect() ) ) {
+		$fs_connect = $this->fs_connect();
+		if ( is_wp_error( $fs_connect ) ) {
 			return $fs_connect;
 		}
 
-		global $wp_filesystem;
 		$abspath = trailingslashit( $wp_filesystem->abspath() );
-		$file = $abspath . 'ads.txt';
+		$file    = $abspath . 'ads.txt';
 		if ( $wp_filesystem->exists( $file ) && $wp_filesystem->is_file( $file ) ) {
 			$data = $wp_filesystem->get_contents( $file );
 
@@ -437,7 +459,6 @@ class Advanced_Ads_Ads_Txt_Admin {
 			$this->strategy->set_additional_content( $output );
 			$this->strategy->save_options();
 
-
 			if ( $wp_filesystem->delete( $file ) ) {
 				return true;
 			} else {
@@ -447,7 +468,6 @@ class Advanced_Ads_Ads_Txt_Admin {
 			return new WP_Error( 'not_found', __( 'Could not find the existing ads.txt file', 'advanced-ads' ) );
 		}
 	}
-
 
 	/**
 	 * Check if the user is alowed to edit real file.
@@ -463,5 +483,4 @@ class Advanced_Ads_Ads_Txt_Admin {
 	public static function get_transient_key() {
 		return 'advanced_ads_ads_txt_ctp' . home_url( '/') ;
 	}
-
 }

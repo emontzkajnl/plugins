@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 /**
  * The view for the import & export page
  */
@@ -54,7 +54,7 @@ class_exists( 'Advanced_Ads', false ) || exit();
 				</p>
 			<?php else: ?>
 				<p>
-					<input type="file" id="upload" name="import" size="25" /> (<?php printf( __( 'Maximum size: %s', 'advanced-ads' ), $size ); ?>)
+					<input type="file" id="upload" name="import" size="25" /> (<?php /* translators: %s maximum size allowed */ printf( __( 'Maximum size: %s', 'advanced-ads' ), $size ); ?>)
 					<input type="hidden" name="max_file_size" value="<?php echo $bytes; ?>" />
 				</p>
 			<?php endif; ?>

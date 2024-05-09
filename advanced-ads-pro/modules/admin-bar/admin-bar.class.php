@@ -1,5 +1,7 @@
 <?php
 
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Admin bar functionality.
  */
@@ -29,7 +31,14 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 	 * @param WP_Admin_Bar $wp_admin_bar Admin bar class.
 	 */
 	public function admin_bar_current_ads( $wp_admin_bar ) {
-		$cap = method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ? Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) : 'manage_options';
+
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_edit_ads' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' );
+		}
 
 		if ( ! current_user_can( $cap ) ) {
 			return;

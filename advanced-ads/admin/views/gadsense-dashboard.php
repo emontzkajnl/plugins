@@ -1,6 +1,13 @@
 <?php
+/**
+ * AdSense Earnings Widget Content
+ *
+ * @package    AdvancedAds
+ * @var string $report_type    Value is 'domain'.
+ * @var string $report_filter  Filter to be used.
+ * @var string $pub_id         Adsense ID.
+ */
 
-$pub_id = Advanced_Ads_AdSense_Data::get_instance()->get_adsense_id();
 if ( $pub_id ) {
 	Advanced_Ads_Overview_Widgets_Callbacks::adsense_stats_js( $pub_id );
 	$arguments = [
@@ -15,4 +22,3 @@ if ( $pub_id ) {
 } else {
 	echo esc_html__( 'There is an error in your AdSense setup.', 'advanced-ads' );
 }
-?>

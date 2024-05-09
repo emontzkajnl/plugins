@@ -95,7 +95,7 @@ function monsterinsights_admin_menu()
 		$submenu_base . '#/userfeedback'
 	);
 
-	// Add About us page.
+	// then About Us page.
 	add_submenu_page($hook, __('About Us:', 'google-analytics-for-wordpress'), __('About Us', 'google-analytics-for-wordpress'), 'manage_options', $submenu_base . '#/about');
 
 	if (!monsterinsights_is_pro_version() && !strstr(plugin_basename(__FILE__), 'dashboard-for')) {
@@ -105,9 +105,20 @@ function monsterinsights_admin_menu()
 
 	add_submenu_page($hook, __('Growth Tools:', 'google-analytics-for-wordpress'), __('Growth Tools', 'google-analytics-for-wordpress'), 'manage_options', $submenu_base . '#/growth-tools');
 
-
+	// then Upgrade To Pro.
 	if (!monsterinsights_is_pro_version()) {
 		add_submenu_page($hook, __('Upgrade to Pro:', 'google-analytics-for-wordpress'), '<span class="monsterinsights-upgrade-submenu"> ' . __('Upgrade to Pro', 'google-analytics-for-wordpress') . '</span>', 'monsterinsights_save_settings', monsterinsights_get_upgrade_link('admin-menu', 'submenu', "https://www.monsterinsights.com/lite/"));
+	}
+
+	if ( class_exists( 'WooCommerce' ) ) {
+		// Show the Payments submenu only when WooCommerce is active.
+		add_submenu_page(
+			$hook,
+			__('Payments:', 'google-analytics-for-wordpress'),
+			__('Payments', 'google-analytics-for-wordpress'),
+			'manage_options',
+			$submenu_base . '#/payments'
+		);
 	}
 }
 
@@ -175,10 +186,6 @@ function monsterinsights_automated_menu($hook){
 			break;
 		}
 	}
-	
-
-
-	
 }
 
 /**
@@ -186,17 +193,16 @@ function monsterinsights_automated_menu($hook){
  */
 function monsterinsights_woocommerce_menu_item()
 {
-	// Add "Insights" sub menu item for WooCommerce Analytics menu
 	if (class_exists('WooCommerce')) {
+		// Add "Insights" sub menu item for WooCommerce Analytics menu
 		if (class_exists('MonsterInsights_eCommerce')) {
 			add_submenu_page('wc-admin&path=/analytics/overview', __('Insights', 'google-analytics-for-wordpress'), __('Insights', 'google-analytics-for-wordpress'), 'monsterinsights_view_dashboard', admin_url('admin.php?page=monsterinsights_reports#/ecommerce'), '', 2);
 		} else {
 			$submenu_base = add_query_arg('page', 'monsterinsights_settings', admin_url('admin.php'));
 			add_submenu_page('wc-admin&path=/analytics/overview', __('Insights', 'google-analytics-for-wordpress'), __('Insights', 'google-analytics-for-wordpress'), 'manage_options', $submenu_base . '#/woocommerce-insights', '', 1);
-		}
+		}		
 	}
 }
-
 add_action('admin_menu', 'monsterinsights_woocommerce_menu_item', 11);
 
 function monsterinsights_get_menu_hook()
@@ -654,33 +660,46 @@ function monsterinsights_admin_setup_notices()
 	// 8. WooUpsell
 	if (!monsterinsights_is_pro_version() && class_exists('WooCommerce') && $is_plugins_page) {
 		if (!isset($notices['monsterinsights_woocommerce_tracking_available'])) {
-			echo '<div class="notice notice-success is-dismissible monsterinsights-notice monsterinsights-wooedd-upsell-row" data-notice="monsterinsights_woocommerce_tracking_available">';
-			echo '<div class="monsterinsights-wooedd-upsell-left">';
-			echo '<p><strong>';
-			echo esc_html('Enhanced Ecommerce Analytics for Your WooCommerce Store', 'google-analytics-for-wordpress');
-			echo '</strong></p>';
-			echo '<img class="monsterinsights-wooedd-upsell-image monsterinsights-wooedd-upsell-image-small" src="' . esc_url(trailingslashit(MONSTERINSIGHTS_PLUGIN_URL)) . 'assets/images/upsell/woo-edd-upsell.png">';
-			echo '<p>';
-			echo esc_html('MonsterInsights Pro gives you detailed stats and insights about your customers.', 'google-analytics-for-wordpress');
-			echo '</p>';
-			echo '<p>';
-			echo esc_html('This helps you make data-driven decisions about your content, and marketing strategy so you can increase your website traffic, leads, and sales.', 'google-analytics-for-wordpress');
-			echo '</p>';
-			echo '<p>';
-			echo esc_html('Pro customers also get Form Tracking, Custom Dimensions Tracking, UserID Tracking and much more.', 'google-analytics-for-wordpress');
-			echo '</p>';
-			echo '<p>';
-			echo esc_html('Start making data-driven decisions to grow your business.', 'google-analytics-for-wordpress');
-			echo '</p>';
-			// Translators: Placeholders add a link to the MonsterInsights website.
-			echo sprintf(esc_html__('%1$sGet MonsterInsights Pro%2$s', 'google-analytics-for-wordpress'), '<a class="button button-primary button-hero" target="_blank" href="' . esc_url(monsterinsights_get_upgrade_link('admin-notices', 'woocommerce-upgrade')) . '">', ' &raquo;</a>');
-			echo '</p>';
-			echo '</div><div class="monsterinsights-wooedd-upsell-right">';
-			echo '<img class="monsterinsights-wooedd-upsell-image monsterinsights-wooedd-upsell-image-large" src="' . esc_url(trailingslashit(MONSTERINSIGHTS_PLUGIN_URL)) . 'assets/images/upsell/woo-edd-upsell.png">';
-			echo '</div>';
-			echo '</div>';
-			echo '<style type="text/css">.monsterinsights-wooedd-upsell-left{width:50%;display:table-cell;float:left}.monsterinsights-wooedd-upsell-right{width:50%;display:table-cell;float:left}.monsterinsights-wooedd-upsell-image{width:100%;height:auto;padding:20px}.monsterinsights-wooedd-upsell-image-small{display:none}.monsterinsights-wooedd-upsell-row{display:table}.monsterinsights-wooedd-upsell-left p{margin:1em 0;font-size:16px}@media (max-width:900px){.monsterinsights-wooedd-upsell-left{width:100%}.monsterinsights-wooedd-upsell-right{display:none}.monsterinsights-wooedd-upsell-image-small{display:block}.monsterinsights-wooedd-upsell-image-large{display:none}}</style>';
+			$woo_notice_template = '<div class="notice notice-success is-dismissible monsterinsights-notice monsterinsights-wooedd-upsell-row" data-notice="monsterinsights_woocommerce_tracking_available">
+				%1$s
+				<div class="monsterinsights-wooedd-upsell-left">
+					<p><strong>%2$s</strong></p>
+					<p>%3$s</p>
+					<p>%4$s</p>
+					<p>%5$s</p>
+					<p>%6$s</p>
+					%7$s
+					%8$s
+				</div>
+			</div>';
 
+			$woo_notice_button = sprintf(
+				// Translators: Placeholders add a link to the MonsterInsights website.
+				esc_html__('%1$sGet MonsterInsights Pro%2$s', 'google-analytics-for-wordpress'),
+				'<a class="button button-primary button-hero" target="_blank" href="' . esc_url(monsterinsights_get_upgrade_link('admin-notices', 'woocommerce-upgrade')) . '">',
+				' &raquo;</a>'
+			);
+
+			$woo_notice_offer = sprintf(
+				'<div class="monsterinsights-wooedd-upsell-offer">%1$s</div>',
+				__('Save <span>50%</span> Off MonsterInsights Pro', 'google-analytics-for-wordpress')
+			);
+
+			$woo_notice_bg = esc_url(trailingslashit(MONSTERINSIGHTS_PLUGIN_URL)) . 'assets/images/upsell/monsterinsights-woo-edd-upsell.svg';
+			$woo_notice_offer_icon = esc_url(trailingslashit(MONSTERINSIGHTS_PLUGIN_URL)) . 'assets/images/upsell/woo-offer-icon.svg';
+			$woo_notice_style = "<style>.monsterinsights-wooedd-upsell-left .button-hero,.monsterinsights-wooedd-upsell-offer{width:270px;margin-bottom:20px;text-align:center}.monsterinsights-wooedd-upsell-row{display:flex;background-image:url($woo_notice_bg);background-repeat:no-repeat;background-position:96% bottom}.monsterinsights-wooedd-upsell-left{margin-left:20px}.monsterinsights-wooedd-upsell-offer{background:#fafeb0;padding:6px 0;position:relative;font-weight:700;font-size:15px;line-height:28px}.monsterinsights-wooedd-upsell-offer span{color:#338eef}.monsterinsights-wooedd-upsell-offer:before{content:url('$woo_notice_offer_icon');position:absolute;left:-23px;bottom:-30px}@media (max-width:1300px){.monsterinsights-wooedd-upsell-row{background-size:60%}}@media (max-width:900px){.monsterinsights-wooedd-upsell-row{background-image:none}.monsterinsights-wooedd-upsell-left,.monsterinsights-wooedd-upsell-left .button-hero,.monsterinsights-wooedd-upsell-offer{width:100%}}</style>";
+
+			echo sprintf(
+				$woo_notice_template,
+				$woo_notice_style,
+				__('Add eCommerce Analytics to your WooCommerce Store', 'google-analytics-for-wordpress'),
+				__('Unlock all of our advanced eCommerce features specifically designed to help your store make more money..', 'google-analytics-for-wordpress'),
+				__('MonsterInsights Pro users instantly gain access to valuable insights such as average order value, conversion rates, as well as marketing performance with UTM tracking.', 'google-analytics-for-wordpress'),
+				__('And by upgrading, Pro users also get enhanced tracking for Forms, User Journeys, PPC Pixels, Custom UserID tracking, SEO Reports, and much more.', 'google-analytics-for-wordpress'),
+				__('Start making better data-driven decisions today!', 'google-analytics-for-wordpress'),
+				$woo_notice_offer,
+				$woo_notice_button
+			);
 			return;
 		}
 	}
@@ -789,6 +808,7 @@ function monsterinsights_empty_measurement_protocol_token()
 	}
 
 	$message = sprintf(
+		/* translators: Placeholders add a link to an article. */
 		esc_html__(
 			'Your Measurement Protocol API Secret is currently left blank. To see more advanced analytics please enter a Measurement API Secret. %1$sLearn how to find your API Secret%2$s.',
 			'google-analytics-for-wordpress'
@@ -801,3 +821,17 @@ function monsterinsights_empty_measurement_protocol_token()
 
 add_action( 'admin_notices', 'monsterinsights_empty_measurement_protocol_token' );
 add_action( 'network_admin_notices', 'monsterinsights_admin_setup_notices' );
+
+/**
+ * Check if the plugin is MI Lite.
+ *
+ * @return bool
+ */
+function check_is_it_monsterinsights_lite() {
+    return 'googleanalytics.php' == basename( MONSTERINSIGHTS_PLUGIN_FILE );
+}
+
+/**
+ * Add EEA Compliance file.
+ */
+require_once __DIR__ . '/eea-compliance.php';

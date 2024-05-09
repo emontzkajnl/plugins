@@ -6,6 +6,7 @@
  * @var bool         $correct_databases
  * @var string|false $last_update
  * @var int          $next_update
+ * @var bool         $use_filters
  */
 if ( $correct_databases ) :
 	?>
@@ -13,7 +14,12 @@ if ( $correct_databases ) :
 		<?php esc_html_e( 'Geo Databases found.', 'advanced-ads-pro' ); ?>
 	</p>
 <?php endif; ?>
-
+<?php if ( $use_filters ) : ?>
+	<div class="advads-notice-inline advads-idea">
+		<p><?php esc_html_e( 'You are currently using filter hooks to load custom database files.', 'advanced-ads-pro' ); ?></p>
+	</div>
+	<?php return; ?>
+<?php endif; ?>
 	<p id="advanced-ads-geo-license-missing-warning" style="display: none;">
 		<span class="advads-notice-inline advads-error">
 			<?php esc_html_e( 'The MaxMind license key is missing.', 'advanced-ads-pro' ); ?>

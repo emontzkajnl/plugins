@@ -101,24 +101,20 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 			$section_id
 		);
 
-		// Add setting field for adsense limit.
-		// Deprecated of January, 2019; will be removed one year later.
-		$limit_per_page = $this->data->get_limit_per_page();
-		if ( $limit_per_page ) {
-			add_settings_field(
-				'adsense-limit',
-				__( 'Limit to 3 ads', 'advanced-ads' ),
-				[ $this, 'render_settings_adsense_limit' ],
-				$hook,
-				$section_id
-			);
-		};
-
 		// Disable AdSense violation warnings.
 		add_settings_field(
 			'adsense-warnings-disable',
 			__( 'Disable violation warnings', 'advanced-ads' ),
 			[ $this, 'render_settings_adsense_warnings_disable' ],
+			$hook,
+			$section_id
+		);
+
+		// Show AdSense widget on WP Dashboard.
+		add_settings_field(
+			'adsense_wp_dashboard',
+			__( 'Show AdSense Earnings', 'advanced-ads' ),
+			[ $this, 'render_settings_adsense_wp_dashboard' ],
 			$hook,
 			$section_id
 		);
@@ -162,38 +158,6 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 	}
 
 	/**
-	 * Render AdSense limit setting
-	 *
-	 * @since 1.5.1
-	 * @deprecated January, 2019 – let’s give users one year until we remove the whole logic completely
-	 */
-	public function render_settings_adsense_limit() {
-		$limit_per_page = $this->data->get_limit_per_page();
-
-		?><label><input type="checkbox" name="<?php echo esc_attr( GADSENSE_OPT_NAME ); ?>[limit-per-page]" value="1" <?php checked( $limit_per_page ); ?> />
-		<?php
-		printf(
-		// Translators: $d a number of ads.
-			esc_html( __( 'Limit to %d AdSense ads', 'advanced-ads' ) ),
-			3
-		);
-		?>
-		</label>
-		<p class="description">
-			<?php
-			esc_html_e( 'There is no explicit limit for AdSense ads anymore, but you can still use this setting to prevent too many AdSense ads to show accidentally on your site.', 'advanced-ads' );
-			?>
-		</p>
-		<?php
-		if ( defined( 'AAP_VERSION' ) ) :
-			// Give warning when cache-busting in Pro is active.
-			?>
-			<p class="advads-notice-inline advads-error"><?php esc_html_e( 'Due to technical restrictions, the limit does not work on placements with cache-busting enabled.', 'advanced-ads' ); ?></p>
-			<?php
-		endif;
-	}
-
-	/**
 	 * Render top anchor ad setting
 	 */
 	public function render_settings_adsense_top_anchor_ad() {
@@ -223,6 +187,20 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 	}
 
 	/**
+	 * Render setting to hide AdSense stats showing in the backend
+	 */
+	public function render_settings_adsense_wp_dashboard() {
+		$options     = $this->data->get_options();
+		$show_widget = isset( $options['adsense-wp-widget'] );
+		?>
+		<label>
+			<input type="checkbox" name="<?php echo esc_attr( GADSENSE_OPT_NAME ); ?>[adsense-wp-widget]" value="1" <?php checked( $show_widget ); ?> />
+			<?php esc_html_e( 'Show Earnings widget on the WordPress dashboard.', 'advanced-ads' ); ?>
+		</label>
+		<?php
+	}
+
+	/**
 	 * Render page-level ads setting
 	 *
 	 * @since 1.6.9
@@ -236,8 +214,8 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 			<?php esc_attr_e( 'Insert the AdSense header code to enable Auto ads and verify your website.', 'advanced-ads' ); ?>
 		</label>
 		<ul>
-			<li><a href="<?php echo esc_url( ADVADS_URL ) . 'adsense-auto-ads-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-adsense-specific-pages#Display_AdSense_Auto_Ads_only_on_specific_pages'; ?>" target="_blank"><?php esc_attr_e( 'Display Auto ads only on specific pages', 'advanced-ads' ); ?></a></li>
-			<li><a href="<?php echo esc_url( ADVADS_URL ) . 'adsense-in-random-positions-auto-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=backend-autoads-ads'; ?>" target="_blank"><?php esc_attr_e( 'Why are ads appearing in random positions?', 'advanced-ads' ); ?></a></li>
+			<li><a href="https://wpadvancedads.com/adsense-auto-ads-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-adsense-specific-pages#Display_AdSense_Auto_Ads_only_on_specific_pages" target="_blank"><?php esc_attr_e( 'Display Auto ads only on specific pages', 'advanced-ads' ); ?></a></li>
+			<li><a href="https://wpadvancedads.com/adsense-in-random-positions-auto-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=backend-autoads-ads" target="_blank"><?php esc_attr_e( 'Why are ads appearing in random positions?', 'advanced-ads' ); ?></a></li>
 			<?php
 			if ( ! empty( $options['adsense-id'] ) ) :
 				?>
@@ -303,7 +281,7 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 						],
 					]
 				),
-				esc_url( ADVADS_URL ) . 'manual/ad-health/?utm_source=advanced-ads&utm_medium=link&utm_campaign=backend-autoads-ads'
+				'https://wpadvancedads.com/manual/ad-health/?utm_source=advanced-ads&utm_medium=link&utm_campaign=backend-autoads-ads'
 			);
 			?>
 		</p>
@@ -558,21 +536,21 @@ class Advanced_Ads_Network_Adsense extends Advanced_Ads_Ad_Network {
 		if ( ! $adense_ad || 'adsense' !== ( $adense_ad->type ?? '' ) || ! isset( $adense_ad->content ) ) {
 			return null;
 		}
-		
+
 		$ad_units = $this->get_external_ad_units();
 		if ( empty( $ad_units ) ) {
 			return null;
 		}
-	
+
 		$json_content = json_decode( $adense_ad->content );
 		$unit_code = $json_content->slotId ?? null;
-	
+
 		foreach( $ad_units as $ad_unit ) {
 			if( $ad_unit->slot_id === $unit_code){
 				return $ad_unit;
 			}
 		}
-	
+
 		return null;
 	}
 }

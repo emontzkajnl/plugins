@@ -1,5 +1,7 @@
 <?php
 
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Provide public ajax interface.
  *
@@ -169,7 +171,7 @@ class Advanced_Ads_Ajax {
 
 		check_ajax_referer( 'advanced-ads-ad-health-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 

@@ -19,7 +19,7 @@
 					],
 				]
 			),
-			esc_url( ADVADS_URL ) . 'manual/placements/#utm_source=advanced-ads&utm_medium=link&utm_campaign=placements'
+			'https://wpadvancedads.com/manual/placements/#utm_source=advanced-ads&utm_medium=link&utm_campaign=placements'
 		);
 		?>
 	</p>
@@ -28,7 +28,7 @@
 
 	// show Pro placements if Pro is not activated.
 	if ( ! defined( 'AAP_VERSION' ) ) :
-		include ADVADS_BASE_PATH . 'admin/views/upgrades/pro-placements.php';
+		include ADVADS_ABSPATH . 'admin/views/upgrades/pro-placements.php';
 	else :
 		?>
 		<div class="clear"></div>

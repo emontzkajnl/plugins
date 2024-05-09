@@ -10,19 +10,22 @@
 /**
  * AAM policy manager for a specific subject
  *
- * @since 5.5.4 https://github.com/aamplugin/advanced-access-manager/issues/128
- * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/122
- *              https://github.com/aamplugin/advanced-access-manager/issues/124
- * @since 6.4.0 Supporting Param's "Value" to be an array
- * @since 6.3.1 Fixed bug where draft policies get applied to assignees
- * @since 6.2.1 Added support for the POLICY_META token
- * @since 6.2.0 Fetched the way access policies are fetched
- * @since 6.1.0 Implemented `=>` operator. Improved inheritance mechanism
- * @since 6.0.4 Potential bug fix with improperly merged Param option:* values
- * @since 6.0.0 Initial implementation of the class
+ * @since 6.9.25 https://github.com/aamplugin/advanced-access-manager/issues/353
+ *               https://github.com/aamplugin/advanced-access-manager/issues/355
+ * @since 6.9.24 https://github.com/aamplugin/advanced-access-manager/issues/351
+ * @since 5.5.4  https://github.com/aamplugin/advanced-access-manager/issues/128
+ * @since 6.5.3  https://github.com/aamplugin/advanced-access-manager/issues/122
+ *               https://github.com/aamplugin/advanced-access-manager/issues/124
+ * @since 6.4.0  Supporting Param's "Value" to be an array
+ * @since 6.3.1  Fixed bug where draft policies get applied to assignees
+ * @since 6.2.1  Added support for the POLICY_META token
+ * @since 6.2.0  Fetched the way access policies are fetched
+ * @since 6.1.0  Implemented `=>` operator. Improved inheritance mechanism
+ * @since 6.0.4  Potential bug fix with improperly merged Param option:* values
+ * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.5.3
+ * @version 6.9.25
  */
 class AAM_Core_Policy_Manager
 {
@@ -38,16 +41,6 @@ class AAM_Core_Policy_Manager
     protected $object;
 
     /**
-     * Current subject
-     *
-     * @var AAM_Core_Subject
-     *
-     * @access protected
-     * @version 6.0.0
-     */
-    protected $subject;
-
-    /**
      * Parsed policy tree
      *
      * @var array
@@ -61,245 +54,39 @@ class AAM_Core_Policy_Manager
     );
 
     /**
+     * Effect stemming map
+     *
+     * @var array
+     *
+     * @access private
+     * @version 6.9.24
+     */
+    private $_effects = array();
+
+    /**
      * Constructor
      *
      * @param AAM_Core_Subject $subject
-     * @param boolean          $skipInheritance
+     * @param boolean          $skip_inheritance
      *
      * @access protected
      *
-     * @since 6.1.0 Added new `$skipInheritance` mandatory argument
+     * @since 6.1.0 Added new `$skip_inheritance` mandatory argument
      * @since 6.0.0 Initial implementation of the method
      *
      * @return void
      * @version 6.1.0
      */
-    public function __construct(AAM_Core_Subject $subject, $skipInheritance)
+    public function __construct(AAM_Core_Subject $subject, $skip_inheritance)
     {
         $this->object  = $subject->getObject(
-            AAM_Core_Object_Policy::OBJECT_TYPE, null, $skipInheritance
+            AAM_Core_Object_Policy::OBJECT_TYPE, null, $skip_inheritance
         );
 
-        $this->subject = $subject;
-    }
-
-    /**
-     * Get policy parameter
-     *
-     * @param string $name
-     * @param array  $args
-     *
-     * @return mixed
-     *
-     * @since 6.4.1 Fixed https://github.com/aamplugin/advanced-access-manager/issues/84
-     * @since 6.4.0 Supporting "Value" to be an array
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.4.1
-     */
-    public function getParam($id, $args = array())
-    {
-        $value = null;
-
-        if (isset($this->tree['Param'][$id])) {
-            $param = $this->tree['Param'][$id];
-
-            if ($this->isApplicable($param, $args)) {
-                $value = $param['Value'];
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * Find all params that match provided search criteria
-     *
-     * @param string|array $s
-     * @param array        $args
-     *
-     * @return array
-     *
-     * @since 6.4.1 Fixed https://github.com/aamplugin/advanced-access-manager/issues/84
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.4.1
-     */
-    public function getParams($s, $args = array())
-    {
-        if (is_array($s)) {
-            $regex = '/^(' . implode('|', $s) . ')$/i';
-        } else {
-            $regex = "/^{$s}$/i";
-        }
-
-        $params = array();
-
-        foreach ($this->tree['Param'] as $key => $param) {
-            if (preg_match($regex, $key) && $this->isApplicable($param, $args)) {
-                $params[$key] = $param;
-            }
-        }
-
-        return $params;
-    }
-
-    /**
-     * Find all statements that match provided resource of list of resources
-     *
-     * @param string|array $s
-     * @param array        $args
-     *
-     * @return array
-     *
-     * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/124
-     * @since 6.4.1 https://github.com/aamplugin/advanced-access-manager/issues/84
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.5.3
-     */
-    public function getResources($s, $args = array())
-    {
-        if (is_array($s)) {
-            $regex = '/^(' . implode('|', $s) . '):/i';
-        } else {
-            $regex = "/^{$s}:/i";
-        }
-
-        $statements = array();
-
-        foreach ($this->tree['Statement'] as $key => $stms) {
-            if (preg_match($regex, $key)) {
-                $stm = $this->getCandidateStatement($stms, $args);
-
-                if (!is_null($stm)) {
-                    // Remove the resource type to keep it clean
-                    $statements[preg_replace($regex, '', $key)] = $stm;
-                }
-            }
-        }
-
-        return $statements;
-    }
-
-    /**
-     * Hook into WP core function to override WP options
-     *
-     * @param mixed  $res
-     * @param string $option
-     *
-     * @return mixed
-     *
-     * @since 6.0.4 Fixed the potential bug with improperly merged options when Value
-     *              is defined as multi-dimensional array
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.0.4
-     */
-    public function getOption($res, $option)
-    {
-        $param = $this->tree['Param']["option:{$option}"];
-
-        if ($this->isApplicable($param)) {
-            if (is_array($res) && is_array($param['Value'])) {
-                $res = array_replace_recursive($res, $param['Value']);
-            } else {
-                $res = $param['Value'];
-            }
-        }
-
-        return $res;
-    }
-
-    /**
-     * Check if specified action is allowed for resource
-     *
-     * This method is working with "Statement" array.
-     *
-     * @param string $resource Resource name
-     * @param array  $args     Args that will be injected during condition evaluation
-     *
-     * @return boolean|null
-     *
-     * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/124
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.5.3
-     */
-    public function isAllowed($resource, $args = array())
-    {
-        $allowed = null;
-        $id      = strtolower($resource);
-
-        if (isset($this->tree['Statement'][$id])) {
-            $stm = $this->getCandidateStatement(
-                $this->tree['Statement'][$id], $args
-            );
-
-            if (!is_null($stm)) {
-                $allowed = (strtolower($stm['Effect']) === 'allow');
-            }
-        }
-
-        return $allowed;
-    }
-
-    /**
-     * Based on multiple competing statements, get the best candidate
-     *
-     * @param array $statements
-     * @param array $args
-     *
-     * @return array|null
-     *
-     * @since 5.5.4 https://github.com/aamplugin/advanced-access-manager/issues/128
-     * @since 6.5.3 Initial implementation of the method
-     *
-     * @access protected
-     * @version 6.5.4
-     */
-    protected function getCandidateStatement($statements, $args = array())
-    {
-        $candidate = null;
-
-        if (is_array($statements) && isset($statements[0])) {
-            // Take in consideration ONLY currently applicable statements and select
-            // either the last statement or the one that is enforced
-            $enforced = false;
-
-            foreach($statements as $stm) {
-                if ($this->isApplicable($stm, $args)) {
-                    if (!empty($stm['Enforce'])) {
-                        $candidate = $stm;
-                        $enforced  = true;
-                    } elseif ($enforced === false) {
-                        $candidate = $stm;
-                    }
-                }
-            }
-        } else if ($this->isApplicable($statements, $args)) {
-            $candidate = $statements;
-        }
-
-        return $candidate;
-    }
-
-    /**
-     * Get parsed policy tree
-     *
-     * @return array
-     *
-     * @access public
-     * @version 6.0.0
-     */
-    public function getTree()
-    {
-        return $this->tree;
+        $this->_effects = apply_filters('aam_access_policy_effects_filter', array(
+            'allowed' => 'allow',
+            'denied'  => 'deny',
+        ));
     }
 
     /**
@@ -367,6 +154,305 @@ class AAM_Core_Policy_Manager
         do_action('aam_post_policy_fetch_action');
 
         return $posts;
+    }
+
+    /**
+     * Evaluate unknown method
+     *
+     * Tries to process methods like isAllowed or isDeniedTo. This method recognizes
+     * and executes the following methods /^(is)([a-z]+)(To)?$/
+     *
+     * @param string $name
+     * @param array  $args
+     *
+     * @return boolean|null
+     *
+     * @since 6.9.25 https://github.com/aamplugin/advanced-access-manager/issues/353
+     * @since 6.9.24 Initial implementation of the method
+     *
+     * @access public
+     * @version 6.9.25
+     */
+    public function __call($name, $args)
+    {
+        $result = null;
+
+        // We are calling method like isAllowed, isAttached or isDeniedTo
+        if (strpos($name, 'is') === 0) {
+            $resource = array_shift($args);
+
+            if (strpos($name, 'To') === (strlen($name) - 2)) {
+                $effect = substr($name, 2, -2);
+                $action = array_shift($args);
+            } else {
+                $effect = substr($name, 2);
+                $action = null;
+            }
+
+            $context_args = array_shift($args);
+
+            // Method overload. If the next argument is boolean, then this indicates
+            // the $default response. Otherwise, the $default is null and whatever is
+            // in the $context_args is considered to be actual inline args
+            if (is_bool($context_args)) {
+                $default      = $context_args;
+                $context_args = array_shift($args);
+            } else {
+                $default = null;
+            }
+
+            $result = $this->is(
+                $resource,
+                $this->_stemEffect($effect),
+                $action,
+                $default,
+                is_array($context_args) ? $context_args : array()
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get policy parameter
+     *
+     * @param string $name
+     * @param array  $args
+     *
+     * @return mixed
+     *
+     * @since 6.4.1 https://github.com/aamplugin/advanced-access-manager/issues/84
+     * @since 6.4.0 Supporting "Value" to be an array
+     * @since 6.0.0 Initial implementation of the method
+     *
+     * @access public
+     * @version 6.4.1
+     */
+    public function getParam($id, $args = array())
+    {
+        $value = null;
+
+        if (isset($this->tree['Param'][$id])) {
+            $param = $this->getBestCandidate($this->tree['Param'][$id], $args);
+            $value = is_null($param) ? null : $param['Value'];
+        }
+
+        return $value;
+    }
+
+    /**
+     * Find all params that match provided search criteria
+     *
+     * @param string|array $s
+     * @param array        $args
+     *
+     * @return array
+     *
+     * @since 6.4.1 https://github.com/aamplugin/advanced-access-manager/issues/84
+     * @since 6.0.0 Initial implementation of the method
+     *
+     * @access public
+     * @version 6.4.1
+     */
+    public function getParams($s, $args = array())
+    {
+        if (is_array($s)) {
+            $regex = '/^(' . implode('|', $s) . ')$/i';
+        } else {
+            $regex = "/^{$s}$/i";
+        }
+
+        $params = array();
+
+        foreach (array_keys($this->tree['Param']) as $id) {
+            if (preg_match($regex, $id)) {
+                $params[$id] = $this->getBestCandidate(
+                    $this->tree['Param'][$id], $args
+                );
+            }
+        }
+
+        return $params;
+    }
+
+    /**
+     * Find all statements that match provided resource of list of resources
+     *
+     * @param string|array $s
+     * @param array        $args
+     *
+     * @return array
+     *
+     * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/124
+     * @since 6.4.1 https://github.com/aamplugin/advanced-access-manager/issues/84
+     * @since 6.0.0 Initial implementation of the method
+     *
+     * @access public
+     * @version 6.5.3
+     */
+    public function getResources($s, $args = array())
+    {
+        if (is_array($s)) {
+            $regex = '/^(' . implode('|', $s) . '):/i';
+        } else {
+            $regex = "/^{$s}:/i";
+        }
+
+        $statements = array();
+
+        foreach ($this->tree['Statement'] as $key => $stms) {
+            if (preg_match($regex, $key)) {
+                $stm = $this->getBestCandidate($stms, $args);
+
+                if (!is_null($stm)) {
+                    // Remove the resource type to keep it clean
+                    $statements[preg_replace($regex, '', $key)] = $stm;
+                }
+            }
+        }
+
+        return $statements;
+    }
+
+    /**
+     * Hook into WP core function to override WP options
+     *
+     * @param mixed  $res
+     * @param string $option
+     *
+     * @return mixed
+     *
+     * @since 6.0.4 Fixed the potential bug with improperly merged options when Value
+     *              is defined as multi-dimensional array
+     * @since 6.0.0 Initial implementation of the method
+     *
+     * @access public
+     * @version 6.0.4
+     */
+    public function getOption($res, $option)
+    {
+        if (isset($this->tree['Param']["option:{$option}"])) {
+            $param = $this->getBestCandidate(
+                $this->tree['Param']["option:{$option}"]
+            );
+        }
+
+        if (is_null($param)) {
+            $res = null;
+        } elseif (is_array($res) && is_array($param['Value'])) {
+            $res = array_replace_recursive($res, $param['Value']);
+        } else {
+            $res = $param['Value'];
+        }
+
+        return $res;
+    }
+
+    /**
+     * Get parsed policy tree
+     *
+     * @return array
+     *
+     * @access public
+     * @version 6.0.0
+     */
+    public function getTree()
+    {
+        return $this->tree;
+    }
+
+    /**
+     * Check if resource and/or action is allowed
+     *
+     * @param mixed     $resource Resource name or resource object
+     * @param string    $effect   Constraint effect (e.g. allow, deny)
+     * @param string    $action   Any specific action upon provided resource
+     * @param bool|null $default  Default response
+     * @param array     $args     Inline arguments that are added to the context
+     *
+     * @return boolean|null The `null` is returned if there is no applicable statements
+     *                      that explicitly define effect
+     *
+     * @access protected
+     * @version 6.9.24
+     */
+    protected function is($resource, $effect, $action, $default, $args)
+    {
+        $result = $default;
+        $id     = strtolower($resource . (!empty($action) ? ':' . $action : ''));
+
+        if (isset($this->tree['Statement'][$id])) {
+            $stm = $this->getBestCandidate(
+                $this->tree['Statement'][$id], $args
+            );
+
+            if (!is_null($stm)) {
+                $result = (strtolower($stm['Effect']) === $effect);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Stem the effect
+     *
+     * Basically try to stem the effect from something like "Allowed" to "allow", or
+     * "Denied" to "deny".
+     *
+     * @param string $effect
+     *
+     * @return string
+     *
+     * @access private
+     * @version 6.9.24
+     */
+    private function _stemEffect($effect)
+    {
+        $n = strtolower($effect);
+
+        return (isset($this->_effects[$n]) ? $this->_effects[$n] : $n);
+    }
+
+    /**
+     * Based on multiple competing statements or params, get the best candidate
+     *
+     * @param array $candidates
+     * @param array $args
+     *
+     * @return array|null
+     *
+     * @since 6.9.25 https://github.com/aamplugin/advanced-access-manager/issues/355
+     * @since 5.5.4  https://github.com/aamplugin/advanced-access-manager/issues/128
+     * @since 6.5.3  Initial implementation of the method
+     *
+     * @access protected
+     * @version 6.9.25
+     */
+    protected function getBestCandidate($candidates, $args = array())
+    {
+        $candidate = null;
+
+        if (is_array($candidates) && isset($candidates[0])) {
+            // Take in consideration ONLY currently applicable candidates and select
+            // either the last one or the one that is enforced
+            $enforced = false;
+
+            foreach($candidates as $c) {
+                if ($this->isApplicable($c, $args)) {
+                    if (!empty($c['Enforce'])) {
+                        $candidate = $c;
+                        $enforced  = true;
+                    } elseif ($enforced === false) {
+                        $candidate = $c;
+                    }
+                }
+            }
+        } else if ($this->isApplicable($candidates, $args)) {
+            $candidate = $candidates;
+        }
+
+        return $candidate;
     }
 
     /**
@@ -448,16 +534,17 @@ class AAM_Core_Policy_Manager
      *
      * @return array
      *
-     * @since 6.5.3 https://github.com/aamplugin/advanced-access-manager/issues/122
-     *              https://github.com/aamplugin/advanced-access-manager/issues/124
-     * @since 6.4.1 Simplified by removing &$tree first param
-     * @since 6.4.0 Supporting Param's Value to be more than just a scalar value
-     * @since 6.2.1 Typecasting param's value
-     * @since 6.1.0 Added support for the `=>` (map to) operator
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.25 https://github.com/aamplugin/advanced-access-manager/issues/355
+     * @since 6.5.3  https://github.com/aamplugin/advanced-access-manager/issues/122
+     *               https://github.com/aamplugin/advanced-access-manager/issues/124
+     * @since 6.4.1  Simplified by removing &$tree first param
+     * @since 6.4.0  Supporting Param's Value to be more than just a scalar value
+     * @since 6.2.1  Typecasting param's value
+     * @since 6.1.0  Added support for the `=>` (map to) operator
+     * @since 6.0.0  Initial implementation of the method
      *
      * @access protected
-     * @version 6.5.3
+     * @version 6.9.25
      */
     protected function updatePolicyTree($addition)
     {
@@ -473,7 +560,11 @@ class AAM_Core_Policy_Manager
 
                 foreach($this->evaluatePolicyKey($param['Key']) as $key) {
                     if (!isset($params[$key]) || empty($params[$key]['Enforce'])) {
-                        $params[$key] = $param;
+                        if (!isset($params[$key])) {
+                            $params[$key] = array();
+                        }
+
+                        array_push($params[$key], $param);
 
                         // If "option:" - hooks to the WP core for override
                         if (strpos($key, 'option:') === 0) {
@@ -499,15 +590,11 @@ class AAM_Core_Policy_Manager
                     foreach ($actions as $act) {
                         $id = strtolower($resource . (!empty($act) ? ":{$act}" : ''));
 
-                        if (isset($stmts[$id])) {
-                            if (isset($stmts[$id][0])) {
-                                $stmts[$id][] = $stm;
-                            } else {
-                                $stmts[$id] = array($stmts[$id], $stm);
-                            }
-                        } else {
-                            $stmts[$id] = $stm;
+                        if (!isset($stmts[$id])) {
+                            $stmts[$id] = array();
                         }
+
+                        array_push($stmts[$id], $stm);
                     }
                 }
             }

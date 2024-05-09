@@ -169,11 +169,15 @@ class MonsterInsights_Popular_Posts {
 		}
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
+		$url = apply_filters(
+			'monsterinsights_frontend_style_url',
+			plugins_url( 'assets/css/frontend' . $suffix . '.css', MONSTERINSIGHTS_PLUGIN_FILE )
+		);
+
 		// Load Popular Posts styles.
-		wp_register_style( 'monsterinsights-popular-posts-style', plugins_url( 'assets/css/frontend' . $suffix . '.css', MONSTERINSIGHTS_PLUGIN_FILE ), array(), monsterinsights_get_asset_version() );
+		wp_register_style( 'monsterinsights-editor-frontend-style', $url, array(), monsterinsights_get_asset_version() );
 
 		$this->add_theme_specific_styles();
-
 	}
 
 	/**
@@ -202,7 +206,7 @@ class MonsterInsights_Popular_Posts {
 	public function add_theme_specific_styles() {
 
 		if ( ! self::$styles_printed ) {
-			wp_add_inline_style( 'monsterinsights-popular-posts-style', $this->get_inline_styles() );
+			wp_add_inline_style( 'monsterinsights-editor-frontend-style', $this->get_inline_styles() );
 			self::$styles_printed = true;
 		}
 
@@ -240,7 +244,7 @@ class MonsterInsights_Popular_Posts {
 	 */
 	public function shortcode_output( $args ) {
 		// Load frontend.css file when shortcode is available
-		wp_enqueue_style( 'monsterinsights-popular-posts-style' );
+		wp_enqueue_style( 'monsterinsights-editor-frontend-style' );
 
 		if ( $this->ajaxify ) {
 			return $this->get_ajax_json_data( $args );
@@ -370,9 +374,10 @@ class MonsterInsights_Popular_Posts {
 	private function get_query_args() {
 
 		$args = array(
-			'numberposts'         => $this->posts_count,
+			'numberposts'         => 25,
 			'ignore_sticky_posts' => true,
 			'fields'              => 'ids',
+			'orderby'              => 'rand',
 		);
 		$args = wp_parse_args( $this->query_args(), $args );
 
@@ -403,13 +408,16 @@ class MonsterInsights_Popular_Posts {
 	 * @return array
 	 */
 	protected function get_query_args_comments() {
-
-		$query_args = array(
-			'orderby' => 'comment_count',
-			'order'   => 'DESC',
+		return array(
+			'orderby'    => 'comment_count',
+			'order'      => 'DESC',
+			'date_query' => array(
+				array(
+					'after'     => '-1 month',
+					'inclusive' => true,
+				),
+			)
 		);
-
-		return $query_args;
 	}
 
 	/**

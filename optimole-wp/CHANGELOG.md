@@ -1,3 +1,134 @@
+##### [Version 3.12.10](https://github.com/Codeinwp/optimole-wp/compare/v3.12.9...v3.12.10) (2024-04-19)
+
+- Addressed an issue with offloading/rollback transfers getting stuck by adding a check for scheduled cron jobs. If no cron is scheduled and a transfer is in progress, the cron will be rescheduled.
+
+##### [Version 3.12.9](https://github.com/Codeinwp/optimole-wp/compare/v3.12.8...v3.12.9) (2024-04-18)
+
+- Fixed an issue where offload logs failed to load in some cases.
+- Adjusted the conditions for displaying early upgrade notices to prevent premature notifications.
+
+##### [Version 3.12.8](https://github.com/Codeinwp/optimole-wp/compare/v3.12.7...v3.12.8) (2024-04-16)
+
+- Hotfix for a compatibility issue with one of the dependencies affecting a small subset of users.
+
+##### [Version 3.12.7](https://github.com/Codeinwp/optimole-wp/compare/v3.12.6...v3.12.7) (2024-04-16)
+
+- Resolved an issue where the admin style was loaded prematurely.
+- Enhanced Largest Contentful Paint (LCP) by prioritizing the loading of initial images that are not affected by lazyload.
+- Improved support for multiple languages and enhanced plugin translations.
+- Remove WP_DISABLE_CRON false positive detection of a not working wp-cron.
+
+##### [Version 3.12.6](https://github.com/Codeinwp/optimole-wp/compare/v3.12.5...v3.12.6) (2024-03-22)
+
+* Corrected inaccuracies in notification text.
+* Compatibility was confirmed with WordPress for version 6.5.
+* Dependencies updated.
+
+##### [Version 3.12.5](https://github.com/Codeinwp/optimole-wp/compare/v3.12.4...v3.12.5) (2024-02-14)
+
+* Update dependencies
+* Harden Security
+
+##### [Version 3.12.4](https://github.com/Codeinwp/optimole-wp/compare/v3.12.3...v3.12.4) (2024-01-25)
+
+### Enhancements
+
+- **Add Filter for Overriding DISABLE_WP_CRON Check**: Introduced a filter for overriding the DISABLE_WP_CRON check in the context  - optml_offload_wp_cron_disabled.
+
+##### [Version 3.12.3](https://github.com/Codeinwp/optimole-wp/compare/v3.12.2...v3.12.3) (2024-01-16)
+
+### Enhancements
+
+- **Improve default settings**: Ensure default settings for image optimization and lazyloading are optimal.
+
+##### [Version 3.12.2](https://github.com/Codeinwp/optimole-wp/compare/v3.12.1...v3.12.2) (2024-01-08)
+
+### Bug Fixes
+
+- **Optimization Exclusions Fix**: Resolved an issue where some pages were excluded from optimization due to AJAX requests exclusions.
+
+### Enhancements
+
+- **Lazyloading Menu Item**: Ensure that turning off lazyloading now disables the lazyloading settings menu item in the plugin dashboard.
+- **Lazyload Support for Group Blocks**: Added lazyload support for group blocks background for improved performance.
+- **Cap Offloading Log**: Capped offloading log read lines to 10,000 for better performance and manageability.
+
+##### [Version 3.12.1](https://github.com/Codeinwp/optimole-wp/compare/v3.12.0...v3.12.1) (2023-12-21)
+
+### Enhancements
+
+- **Add Retries for Offloading Common Errors**: Implemented a feature to add retries to address common errors in the offloading process.
+
+
+### Fixes
+
+- **Fix Replacement in Elementor**: Resolved an issue where replacement in Elementor was not working in some cases
+
+#### [Version 3.12.0](https://github.com/Codeinwp/optimole-wp/compare/v3.11.3...v3.12.0) (2023-12-19)
+
+### New Features
+- **Handshake Mechanism**: Implemented a handshake mechanism to ensure that the website can use Optimole when connecting.
+- **New Cloud Library UI/UX**: Introduced a new and improved UI and experience for the Cloud Library.
+
+### Enhancements
+
+- **Improved Optimole Dashboard UX**: Enhancements to improve the user experience of the Optimole dashboard.
+- **Cohesive UI on Plugin Dashboard**: Improved the overall UI on the plugin dashboard for a more cohesive look and feel.
+- **Revamped Offloading User Experience**: Revamped the UI/UX for offloading operations, making it more intuitive and user-friendly.
+- **Cloud Library Access by Default**: Enabled Cloud Library access by default for all users, enhancing accessibility to Optimoles features.
+- **Notice for Offloaded Images Limit**: Added a notice if the count of offloaded images exceeds the limit, keeping users informed.
+
+##### [Version 3.11.3](https://github.com/Codeinwp/optimole-wp/compare/v3.11.2...v3.11.3) (2023-12-05)
+
+### Bug Fixes
+
+- **Division by zero**: Addressed an edge case where a division by zero was happening when resizing images.
+- **WPML Duplicated Attachments**: Resolved an issue where WPML duplicated attachments were not being accounted for as offloaded.
+- **Offload Batch Size**: Lowered the batch size of images processed for offloading/rollback to address timeout issues on some servers.
+
+### Improvements
+
+- **Action Scheduler Integration**: The offloading/rollback process will use Action Scheduler if available.
+
+##### [Version 3.11.2](https://github.com/Codeinwp/optimole-wp/compare/v3.11.1...v3.11.2) (2023-11-23)
+
+### Bug Fixes
+
+- **Rollback Issue**: Fixed an issue where rolling back images would not point the attachments to the correct uploads folder path.
+
+##### [Version 3.11.1](https://github.com/Codeinwp/optimole-wp/compare/v3.11.0...v3.11.1) (2023-11-20)
+
+### Bug Fixes
+
+- **Cache for Offloaded Attachments**: Fixed an issue with caching for offloaded attachments when the object cache extension isnt enabled.
+- **Error on Older WordPress Versions**: Resolved an error occurring on WordPress versions lower than 6.0.0.
+- **Performance Issue on Large Instances**: Fixed a performance issue affecting instances with a large number of images.
+- **Offload Rollback Issue**: Addressed a problem where offloading was trying to rollback Cloud Library images.
+
+#### [Version 3.11.0](https://github.com/Codeinwp/optimole-wp/compare/v3.10.0...v3.11.0) (2023-11-15)
+
+### New Features
+
+- **Image Optimization for ICO Files**: Added support for optimizing ICO files, ensuring that these can benefit from Optimoles optimization capabilities.
+- **Toast Notifications in Optimole Dashboard**: Introduced a toast notifications system within the Optimole dashboard, informing users when settings are saved.
+- **Offload Images Without Database Replacement**: Images are now offloaded without the need to perform a database replacement, improving the speed of the process and reducing complexity.
+- **Logging for Offloading Process**: Implemented logging for the image offloading process, allowing users to track progress more effectively.
+- **Faster Zip Generation Routine**: Optimized the zip files generation routine from the Optimole Dashboard, making it faster and more efficient. Additionally, split the Zip files per each source website when downloading images, providing a smoother experience.
+- **Motion.page Compatibility**: Addressed compatibility issues to ensure smooth integration with the Motion.page.
+
+### Improvements
+
+- **Remove Redundant Setting**: Removed redundant settings related to resizing large images from the original source, simplifying the user interface.
+- **Review of Settings Descriptions and Documentation**: Reviewed and refined settings descriptions and documentation to make it easier for users to understand what each setting does, and to configure Optimole to their specific needs.
+- **Beaver Builder Compatibility with Cloud Library**: Optimoles Cloud Library is now compatible with Beaver Builder,  allowing users to import and use images from their Optimole account.
+- **Progress Bar Design Consistency**: Refined the design of progress bars for a more consistent and polished user interface.
+
+### Bug Fixes
+
+- **Scheduled Crons Removal During Uninstall**: Fixed an issue where scheduled cron jobs were not being removed when uninstalling Optimole.
+- **Cloud Library in Safari**: Resolved an issue where the Cloud Library was not functioning correctly in Safari.
+- **Guidance on Third-Party Cookies for Cloud Library**: Added instructions on how to allow third-party cookies to ensure seamless functionality of the Cloud Library.
+
 #### [Version 3.10.0](https://github.com/Codeinwp/optimole-wp/compare/v3.9.2...v3.10.0) (2023-09-18)
 
 ### New Features

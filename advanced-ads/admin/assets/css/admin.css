@@ -1,13 +1,19 @@
 :root {
-	--advads-ci-lightblue: #0474A2;
+	--advads-ci-lightblue: #0474a2;
 	--advads-ci-darkblue: #1B183A;
 }
 /**
 * DASHBOARD WIDGET
 */
-#advads_dashboard_widget h4 { margin-top: .5em; }
-#advads_dashboard_widget a.rsswidget { font-weight: 400; }
-#advads_dashboard_widget .rss-widget ul li { margin-bottom: 6px; }
+#advads_dashboard_widget h4 {
+	margin-top: .5em;
+}
+#advads_dashboard_widget a.rsswidget {
+	font-weight: 400;
+}
+#advads_dashboard_widget .rss-widget ul li {
+	margin-bottom: 6px;
+}
 
 /**
 * OVERVIEW PAGE
@@ -68,7 +74,9 @@
 .post-type-advanced_ads #screen-meta { position: absolute; z-index: 1000; border-color: #000; }
 .post-type-advanced_ads #adv-settings .submit button { margin-left: 10px; }
 .post-type-advanced_ads #advads-show-filters span { line-height: 30px; }
-.post-type-advanced_ads .button:not(.button-primary):not(.advads-button-primary):not(:hover) { border-color: #0474A2; color: #0474A2; }
+.post-type-advanced_ads .button:not(.button-primary):not(.advads-button-primary):not(:hover) { border-color: #0474a2; color: #0474a2; }
+.post-type-advanced_ads .wp-list-table th.sortable:last-of-type a,.post-type-advanced_ads .wp-list-table th.sorted:last-of-type a { display: inline-block; vertical-align: middle }
+.post-type-advanced_ads .wp-list-table th.sortable:last-of-type .dashicons-edit,.post-type-advanced_ads .wp-list-table th.sorted:last-of-type .dashicons-edit { display: inline; line-height: 1.6em; }
 .post-type-advanced_ads .wp-list-table thead tr .dashicons-edit { float: right; visibility: hidden; cursor: pointer; }
 .post-type-advanced_ads .wp-list-table thead tr:hover .dashicons-edit { visibility: visible; }
 .post-type-advanced_ads .column-ad_type { width: 50px; }
@@ -257,7 +265,7 @@ select + .advads-conditions-single { display: inline-flex; flex-wrap: wrap; alig
 #ad-targeting-box hr { margin-top: 25px; }
 #advads-display-conditions, #advads-visitor-conditions { margin-top: 0; }
 #ad-targeting-box .advads-conditions-terms-show-search { height: 22px; line-height: 22px; font-weight: bold; font-size: 1.5em; }
-.advads-conditions-terms-search { display: none; }
+.advads-conditions-terms-search, .advads-conditions-authors-search { display: none; }
 #advads-ad-usage .advads-usage input { width: 300px; }
 .post-type-advanced_ads #ad-parameters-box .advads-ad-parameters-spinner { display: block; float: none; }
 .post-type-advanced_ads #advanced-ads-ad-parameters-size label + label { margin-left: 1em; }
@@ -367,8 +375,15 @@ body.rtl .aa-select-list .aa-select-list-update { left: 47px; right: auto;}
 #advads-ad-group-list .row-actions span + span::before { content: '|'; padding: 0 3px; }
 #advads-ad-group-list ul, #advads-ad-group-list ol { margin: 0; list-style-position: inside; }
 #advads-ad-group-list .advads-group-ads tr:nth-child(odd) { background: #f9f9f9; }
-#advads-ad-group-list .column-group-type { width: 50px; }
-#advads-ad-group-list .column-group-type img { width: 50px; height: 50px; }
+.advads-table .advads-group-ads tbody tr td:first-child {
+	width: auto;
+}
+.advads-group-ads .advads-ad-status-icon {
+	display: inline-block;
+	vertical-align: middle;
+}
+#advads-ad-group-list .column-type { width: 50px; }
+#advads-ad-group-list .column-type img { width: 50px; height: 50px; }
 .advads-ad-group-list-ads > div { margin: 0; padding: 3px 0; }
 .advads-ad-group-list-ads > div:hover { background: #eee; }
 .advads-ad-group-list-ads-weight { text-align: right; }
@@ -537,21 +552,21 @@ tr:hover .on-hover { display: block; }
 .advads-ad-status-icon-future {
 	background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="103" height="103" viewBox="-11.455 -0.269 103 103" overflow="visible" fill="%23d7d7d9"%3E%3Cpath d="M65.176 11.187V7.458A7.46 7.46 0 0 0 57.718 0a7.46 7.46 0 0 0-7.457 7.458v3.729h-20.43V7.458A7.46 7.46 0 0 0 22.374 0a7.46 7.46 0 0 0-7.458 7.458v3.729H0v65.177c0 8.224 6.69 14.914 14.915 14.914l65.176-.002V26.102c0-8.225-6.691-14.915-14.915-14.915zM53.465 7.458a4.26 4.26 0 0 1 4.253-4.255 4.26 4.26 0 0 1 4.254 4.255v7.457a4.26 4.26 0 0 1-4.254 4.254 4.26 4.26 0 0 1-4.253-4.254V7.458zm-35.345 0a4.26 4.26 0 0 1 4.254-4.255 4.26 4.26 0 0 1 4.253 4.255v7.457a4.26 4.26 0 0 1-4.253 4.254 4.26 4.26 0 0 1-4.254-4.254V7.458zm58.767 80.614l-61.972.002c-6.457 0-11.711-5.253-11.711-11.71V29.306h73.683v58.766zm-36.84-52.91c-12.993 0-23.528 10.533-23.528 23.527s10.535 23.527 23.528 23.527a23.53 23.53 0 0 0 23.526-23.527 23.53 23.53 0 0 0-23.526-23.527zm8.882 26.453h-8.883a2.93 2.93 0 0 1-2.928-2.928V46.875a2.93 2.93 0 0 1 2.928-2.928 2.93 2.93 0 0 1 2.928 2.928v8.885h5.955a2.93 2.93 0 0 1 2.928 2.928 2.93 2.93 0 0 1-2.928 2.927z"/%3E%3C/svg%3E') no-repeat center/20px;
 }
-.advads-ad-group-list-ads > div:hover .advads-ad-status-icon-future {
+.advads-ad-group-list-ads > div:hover .advads-ad-status-icon-future, .advads-group-ads span.advads-ad-status-icon-future:hover {
 	background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="103" height="103" viewBox="-11.455 -0.269 103 103" overflow="visible" fill="%230074a2"%3E%3Cpath d="M65.176 11.187V7.458A7.46 7.46 0 0 0 57.718 0a7.46 7.46 0 0 0-7.457 7.458v3.729h-20.43V7.458A7.46 7.46 0 0 0 22.374 0a7.46 7.46 0 0 0-7.458 7.458v3.729H0v65.177c0 8.224 6.69 14.914 14.915 14.914l65.176-.002V26.102c0-8.225-6.691-14.915-14.915-14.915zM53.465 7.458a4.26 4.26 0 0 1 4.253-4.255 4.26 4.26 0 0 1 4.254 4.255v7.457a4.26 4.26 0 0 1-4.254 4.254 4.26 4.26 0 0 1-4.253-4.254V7.458zm-35.345 0a4.26 4.26 0 0 1 4.254-4.255 4.26 4.26 0 0 1 4.253 4.255v7.457a4.26 4.26 0 0 1-4.253 4.254 4.26 4.26 0 0 1-4.254-4.254V7.458zm58.767 80.614l-61.972.002c-6.457 0-11.711-5.253-11.711-11.71V29.306h73.683v58.766zm-36.84-52.91c-12.993 0-23.528 10.533-23.528 23.527s10.535 23.527 23.528 23.527a23.53 23.53 0 0 0 23.526-23.527 23.53 23.53 0 0 0-23.526-23.527zm8.882 26.453h-8.883a2.93 2.93 0 0 1-2.928-2.928V46.875a2.93 2.93 0 0 1 2.928-2.928 2.93 2.93 0 0 1 2.928 2.928v8.885h5.955a2.93 2.93 0 0 1 2.928 2.928 2.93 2.93 0 0 1-2.928 2.927z"/%3E%3C/svg%3E') no-repeat center/20px;
 }
 
 .advads-ad-status-icon-expiring {
 	background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="103" height="103" viewBox="-11.454 -0.269 103 103" overflow="visible" fill="%23d7d7d9"%3E%3Cpath d="M65.176 11.187V7.458A7.46 7.46 0 0 0 57.718 0a7.46 7.46 0 0 0-7.457 7.458v3.729h-20.43V7.458A7.46 7.46 0 0 0 22.374 0a7.46 7.46 0 0 0-7.458 7.458v3.729H0v65.177c0 8.224 6.69 14.914 14.915 14.914l65.176-.002V26.102c0-8.225-6.691-14.915-14.915-14.915zM53.465 7.458a4.26 4.26 0 0 1 4.253-4.255 4.26 4.26 0 0 1 4.254 4.255v7.457a4.26 4.26 0 0 1-4.254 4.254 4.26 4.26 0 0 1-4.253-4.254V7.458zm-35.345 0a4.26 4.26 0 0 1 4.254-4.255 4.26 4.26 0 0 1 4.253 4.255v7.457a4.26 4.26 0 0 1-4.253 4.254 4.26 4.26 0 0 1-4.254-4.254V7.458zm58.767 80.614l-61.972.002c-6.457 0-11.711-5.253-11.711-11.71V29.306h73.683v58.766zM51.872 76.369c0 3.229 2.627 5.856 5.855 5.856s5.856-2.627 5.856-5.856V41.005c0-3.229-2.627-5.856-5.856-5.856s-5.855 2.627-5.855 5.856v35.364zM40.046 64.543c-3.229 0-5.856-2.627-5.856-5.855s2.627-5.857 5.856-5.857 5.856 2.628 5.856 5.857-2.627 5.855-5.856 5.855zm-17.684 0c-3.229 0-5.855-2.627-5.855-5.855s2.627-5.857 5.855-5.857 5.856 2.628 5.856 5.857-2.626 5.855-5.856 5.855z"/%3E%3C/svg%3E') no-repeat center/20px;
 }
-.advads-ad-group-list-ads > div:hover .advads-ad-status-icon-expiring {
+.advads-ad-group-list-ads > div:hover .advads-ad-status-icon-expiring, .advads-group-ads span.advads-ad-status-icon-expiring:hover {
 	background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="103" height="103" viewBox="-11.454 -0.269 103 103" overflow="visible" fill="%230074a2"%3E%3Cpath d="M65.176 11.187V7.458A7.46 7.46 0 0 0 57.718 0a7.46 7.46 0 0 0-7.457 7.458v3.729h-20.43V7.458A7.46 7.46 0 0 0 22.374 0a7.46 7.46 0 0 0-7.458 7.458v3.729H0v65.177c0 8.224 6.69 14.914 14.915 14.914l65.176-.002V26.102c0-8.225-6.691-14.915-14.915-14.915zM53.465 7.458a4.26 4.26 0 0 1 4.253-4.255 4.26 4.26 0 0 1 4.254 4.255v7.457a4.26 4.26 0 0 1-4.254 4.254 4.26 4.26 0 0 1-4.253-4.254V7.458zm-35.345 0a4.26 4.26 0 0 1 4.254-4.255 4.26 4.26 0 0 1 4.253 4.255v7.457a4.26 4.26 0 0 1-4.253 4.254 4.26 4.26 0 0 1-4.254-4.254V7.458zm58.767 80.614l-61.972.002c-6.457 0-11.711-5.253-11.711-11.71V29.306h73.683v58.766zM51.872 76.369c0 3.229 2.627 5.856 5.855 5.856s5.856-2.627 5.856-5.856V41.005c0-3.229-2.627-5.856-5.856-5.856s-5.855 2.627-5.855 5.856v35.364zM40.046 64.543c-3.229 0-5.856-2.627-5.856-5.855s2.627-5.857 5.856-5.857 5.856 2.628 5.856 5.857-2.627 5.855-5.856 5.855zm-17.684 0c-3.229 0-5.855-2.627-5.855-5.855s2.627-5.857 5.855-5.857 5.856 2.628 5.856 5.857-2.626 5.855-5.856 5.855z"/%3E%3C/svg%3E') no-repeat center/20px;
 }
 
 .advads-ad-status-icon-expired {
 	background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="103" height="103" viewBox="-11.455 -0.269 103 103" overflow="visible" fill="%23d7d7d9"%3E%3Cpath d="M65.176 11.187V7.458A7.46 7.46 0 0 0 57.718 0a7.46 7.46 0 0 0-7.457 7.458v3.729h-20.43V7.458A7.46 7.46 0 0 0 22.374 0a7.46 7.46 0 0 0-7.458 7.458v3.729H0v65.177c0 8.224 6.69 14.914 14.915 14.914l65.176-.002V26.102c0-8.225-6.691-14.915-14.915-14.915zM53.465 7.458a4.26 4.26 0 0 1 4.253-4.255 4.26 4.26 0 0 1 4.254 4.255v7.457a4.26 4.26 0 0 1-4.254 4.254 4.26 4.26 0 0 1-4.253-4.254V7.458zm-35.345 0a4.26 4.26 0 0 1 4.254-4.255 4.26 4.26 0 0 1 4.253 4.255v7.457a4.26 4.26 0 0 1-4.253 4.254 4.26 4.26 0 0 1-4.254-4.254V7.458zm58.767 80.614l-61.972.002c-6.457 0-11.711-5.253-11.711-11.71V29.306h73.683v58.766zm-19.164-5.853c-1.563 0-3.033-.609-4.139-1.715L40.046 66.966 26.509 80.503c-1.105 1.105-2.575 1.715-4.139 1.715a5.81 5.81 0 0 1-4.138-1.714c-2.281-2.281-2.281-5.995 0-8.277L31.77 58.691 18.233 45.155c-2.282-2.282-2.282-5.996-.001-8.278a5.81 5.81 0 0 1 4.137-1.713c1.564 0 3.033.608 4.14 1.715l13.537 13.536 13.537-13.537c1.104-1.104 2.574-1.713 4.138-1.713s3.034.608 4.14 1.714a5.81 5.81 0 0 1 1.714 4.138 5.82 5.82 0 0 1-1.715 4.139L48.322 58.691 61.86 72.228c2.281 2.281 2.28 5.995-.001 8.277-1.105 1.106-2.574 1.714-4.136 1.714h0z"/%3E%3C/svg%3E') no-repeat center/20px;
 }
-.advads-ad-group-list-ads > div:hover .advads-ad-status-icon-expired {
+.advads-ad-group-list-ads > div:hover .advads-ad-status-icon-expired, .advads-group-ads span.advads-ad-status-icon-expired:hover {
 	background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="103" height="103" viewBox="-11.455 -0.269 103 103" overflow="visible" fill="%230074a2"%3E%3Cpath d="M65.176 11.187V7.458A7.46 7.46 0 0 0 57.718 0a7.46 7.46 0 0 0-7.457 7.458v3.729h-20.43V7.458A7.46 7.46 0 0 0 22.374 0a7.46 7.46 0 0 0-7.458 7.458v3.729H0v65.177c0 8.224 6.69 14.914 14.915 14.914l65.176-.002V26.102c0-8.225-6.691-14.915-14.915-14.915zM53.465 7.458a4.26 4.26 0 0 1 4.253-4.255 4.26 4.26 0 0 1 4.254 4.255v7.457a4.26 4.26 0 0 1-4.254 4.254 4.26 4.26 0 0 1-4.253-4.254V7.458zm-35.345 0a4.26 4.26 0 0 1 4.254-4.255 4.26 4.26 0 0 1 4.253 4.255v7.457a4.26 4.26 0 0 1-4.253 4.254 4.26 4.26 0 0 1-4.254-4.254V7.458zm58.767 80.614l-61.972.002c-6.457 0-11.711-5.253-11.711-11.71V29.306h73.683v58.766zm-19.164-5.853c-1.563 0-3.033-.609-4.139-1.715L40.046 66.966 26.509 80.503c-1.105 1.105-2.575 1.715-4.139 1.715a5.81 5.81 0 0 1-4.138-1.714c-2.281-2.281-2.281-5.995 0-8.277L31.77 58.691 18.233 45.155c-2.282-2.282-2.282-5.996-.001-8.278a5.81 5.81 0 0 1 4.137-1.713c1.564 0 3.033.608 4.14 1.715l13.537 13.536 13.537-13.537c1.104-1.104 2.574-1.713 4.138-1.713s3.034.608 4.14 1.714a5.81 5.81 0 0 1 1.714 4.138 5.82 5.82 0 0 1-1.715 4.139L48.322 58.691 61.86 72.228c2.281 2.281 2.28 5.995-.001 8.277-1.105 1.106-2.574 1.714-4.136 1.714h0z"/%3E%3C/svg%3E') no-repeat center/20px;
 }
 
@@ -866,7 +881,7 @@ a.advads-modal-close-background {
 .advanced-ads-feedback-review { background-color: #fbfbfb; border: 1px solid #eee; padding: 0.5em; }
 .advanced-ads-feedback-review-text { font-size: 1.2em; font-weight: 400; }
 .advanced-ads-feedback-review .dashicons { color: #ffb900; }
-.row-actions .aa-get-pro { font-weight: bold; color: #0474A2; }
+.row-actions .aa-get-pro { font-weight: bold; color: #0474a2; }
 
 /**
 - GENERAL
@@ -905,7 +920,7 @@ p:hover > .advads-help:before,
 td:hover > .advads-help:before, /* for settings page */
 li:hover > .advads-help:before,
 h3:hover > .advads-help:before {
-	color: #0474A2;
+	color: #0474a2;
 }
 .advads-help .advads-tooltip {
 	display: none;
@@ -933,8 +948,8 @@ h3:hover > .advads-help:before {
 	border-left-color: #1B183A;
 }
 .wp-core-ui .notice.advads-notice .button, .wp-core-ui  .notice.advads-notice p button {
-	background-color: #0474A2;
-	border-color: #0474A2;
+	background-color: #0474a2;
+	border-color: #0474a2;
 	color: #FFF;
 }
 
@@ -951,6 +966,24 @@ h3:hover > .advads-help:before {
 	border: 0;
 	text-align: center;
 	color: #fff;
+	overflow: visible;
+	padding: 1px 60px;
+	background: url('../img/promo-background.svg' );
+}
+.advads-notice.notice-promo > p {
+	position: relative;
+	margin: .5em auto;
+	width: fit-content;
+}
+.advads-notice.notice-promo > p:before {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 70px;
+	height: 70px;
+	top: calc(-.5em - 10px);
+	left: -65px;
+	background: url('../img/aa-promo-icon.svg') center left/contain no-repeat;
 }
 .advads-notice.notice.notice-promo .button{
 	background-color: transparent;
@@ -969,7 +1002,7 @@ h3:hover > .advads-help:before {
 }
 .advads-notice-block:before {
 	font-family: dashicons;
-	color: #0474A2;
+	color: #0474a2;
 	position: absolute;
 	top: 25px; left: 16px;
 	margin-right: 5px;
@@ -990,7 +1023,7 @@ span.advads-notice-inline {
 }
 .advads-notice-inline:before {
 	font-family: dashicons;
-	color: #0474A2;
+	color: #0474a2;
 	float: left;
 	margin-right: 5px;
 	line-height: 1;
@@ -1074,10 +1107,6 @@ a.advads-manual-icon, .advads-manual-link, .advads-external-link { text-decorati
 
 div.advads-flex{
 	display: flex;
-	align-items: top;
-	justify-content: top;
-	flex-direction: row;
-	flex-wrap: wrap;
 	flex-flow: row wrap;
 	align-content: flex-end;
 }
@@ -1090,6 +1119,13 @@ div.advads-flex{
 .advads-flex3{
 	flex: 3;
 }
+/* WP Dashboard */
+.index-php #advads_overview_adsense_stats { border: none; box-shadow: none; margin-bottom: 0; }
+.index-php #advads_overview_adsense_stats .inside { padding-bottom: 0; }
+.index-php div.advads-stats-box { flex: 0 0 calc(33.33% - 8pt); margin:0; }
+.index-php div.advads-stats-dd-container { float: left; text-align: left; }
+.index-php div.advads-stats-box .advads-stats-age { clear: left; float: left; text-align: left; }
+/* END WP Dashboard */
 div.advads-stats-box{
 	margin:4pt;
 	padding:4pt;
@@ -1307,39 +1343,47 @@ tr.advads-clickable-row:hover{
 /**
  * Buttons
  */
-.button.advads-button-primary {
-	background-color: #0474A2;
+.button.advads-button-primary, .post-type-advanced_ads .button.button-primary {
+	background-color: #0474a2;
 	color: #fff;
-	border: 1px solid #0474A2;
+	border: 1px solid #0474a2;
 }
+
 .button.advads-button-primary a {
 	color: #fff;
 }
+
 .button.advads-button-secondary {
-	border-color: #0474A2;
-	color: #0474A2;
+	border-color: #0474a2;
+	color: #0474a2;
 	background-color: #fff;
 }
+
 .button.advads-button-secondary a {
-	color: #0474A2;
-	color: #0474A2;
+	color: #0474a2;
+	color: #0474a2;
 }
-.button.advads-button-primary:hover {
+
+.button.advads-button-primary:hover, .post-type-advanced_ads .button.button-primary:hover {
 	background-color: #1B183A;
 	border-color: #1B183A;
 	color: #fff;
 }
+
 .button.advads-button-secondary:hover {
 	background-color: #fff;
 	border-color: #1B183A;
 	color: #1B183A;
 }
+
 .button.advads-button-primary:hover a {
 	color: #fff;
 }
+
 .button.advads-button-secondary:hover a {
 	color: #1B183A;
 }
+
 /* Actionable buttons have icons on the left */
 .advads-button-primary .dashicons,
 .advads-button-secondary .dashicons {
@@ -1347,6 +1391,7 @@ tr.advads-clickable-row:hover{
 	margin-left: -5px;
 	padding-right: 5px;
 }
+
 /* Decorative icons are on the right */
 .advads-button-icon-right .dashicons {
 	line-height: 30px;
@@ -1355,6 +1400,7 @@ tr.advads-clickable-row:hover{
 	margin-right: -5px;
 	padding-left: 5px;
 }
+
 .button .dashicons.dashicons-star-filled {
 	margin-top: -2px;
 }
@@ -1381,5 +1427,10 @@ Gutenberg block
  * DEPRECATED
  */
 /* use "advads-notice-inline advads-error" classes instead */
-.advads-error-message { color: #dc3232 !important; }
-.advads-error-message a { color: #dc3232; text-decoration: underline; }
+.advads-error-message {
+	color: #dc3232 !important;
+}
+.advads-error-message a {
+	color: #dc3232;
+	text-decoration: underline;
+}

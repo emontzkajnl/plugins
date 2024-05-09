@@ -15,7 +15,7 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 
 	public function settings_init($hook) {
 		$admin = Advanced_Ads_Admin::get_instance();
-		$hook = $admin->plugin_screen_hook_suffix;
+		$hook  = $admin->plugin_screen_hook_suffix;
 
 		// add new section
 		add_settings_field(
@@ -28,7 +28,11 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 	}
 
 	public function render_settings() {
-		include dirname( __FILE__ ) . '/views/settings.php';
+		$options           = Advanced_Ads_Pro::get_instance()->get_options();
+		$module_enabled    = isset( $options['ads-for-adblockers']['enabled'] ) && $options['ads-for-adblockers']['enabled'];
+		$cb_dashicon_class = ! empty( $options['cache-busting']['enabled'] ) ? 'dashicons-yes advads-color-green' : 'dashicons-no color-red';
+		$ab_dashicon_class = ! empty( Advanced_Ads::get_instance()->options()['use-adblocker'] ) ? 'dashicons-yes advads-color-green' : 'dashicons-no color-red';
+		include_once dirname( __FILE__ ) . '/views/settings.php';
 	}
 
 	/**
@@ -46,23 +50,30 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
 		$items = $this->items_for_select();
 		$messages = $this->get_messages( $_placement );
-		$cb_off = empty( $options['cache-busting']['enabled'] ) 
-		|| ( isset( $_placement['options']['cache-busting'] ) && $_placement['options']['cache-busting'] === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF );
+		$cb_off = empty( $options['cache-busting']['enabled'] ) || ( isset( $_placement['options']['cache-busting'] ) && $_placement['options']['cache-busting'] === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF );
 
 		ob_start();
 		include dirname( __FILE__ ) . '/views/placement-item.php';
 		$item_option_content = ob_get_clean();
 
 		if ( ! class_exists( 'Advanced_Ads_Admin_Options' ) ){
-			echo 'Please update to Advanced Ads 1.8';
+			echo esc_html__('Please update to Advanced Ads 1.8', 'advanced-ads-pro');
 			return;
 		}
+
+		$ad_blocker_description = sprintf(
+			'%1s. %2s (<a href="%3s" target="_blank">%4s</a>)',
+			__( 'Displayed to visitors with an ad blocker', 'advanced-ads-pro' ),
+			__( 'Cache Busting and Ad blocker fix need to be enabled', 'advanced-ads-pro' ),
+			esc_url( get_admin_url('/','admin.php?page=advanced-ads-settings#top#pro') ),
+			__( 'Settings', 'advanced-ads-pro' )
+		);
 
 		Advanced_Ads_Admin_Options::render_option(
 			'placement-item-alternative',
 			__( 'Ad blocker item', 'advanced-ads-pro' ),
 			$item_option_content,
-			__( 'Displayed to visitors with an ad blocker', 'advanced-ads-pro' )
+			$ad_blocker_description
 		);
 	}
 

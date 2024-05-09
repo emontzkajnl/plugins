@@ -8,7 +8,8 @@ use ACA\WC\Search;
 use ACA\WC\Sorting;
 use ACP;
 
-class EndDate extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable, ACP\Sorting\Sortable
+class EndDate extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable, ACP\Sorting\Sortable,
+                                           ACP\Editing\Editable
 {
 
     public function __construct()
@@ -27,9 +28,14 @@ class EndDate extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exp
         return new WC\Export\OrderSubscription\SubscriptionDate('end');
     }
 
+    public function editing()
+    {
+        return new WC\Editing\OrderSubscription\Date('end', true);
+    }
+
     public function search()
     {
-        return new Search\Meta\Date\ISO($this->get_meta_key(), 'order_subscription');
+        return new Search\OrderMeta\IsoDate($this->get_meta_key());
     }
 
     public function sorting()

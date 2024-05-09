@@ -4,11 +4,13 @@ namespace ACA\WC\Column\OrderSubscription\Original;
 
 use AC;
 use ACA\WC;
+use ACA\WC\Editing;
 use ACA\WC\Search;
 use ACA\WC\Sorting;
 use ACP;
 
-class TrialEndDate extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable, ACP\Sorting\Sortable
+class TrialEndDate extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable, ACP\Editing\Editable,
+                                                ACP\Sorting\Sortable
 {
 
     public function __construct()
@@ -27,9 +29,14 @@ class TrialEndDate extends AC\Column implements ACP\Search\Searchable, ACP\Expor
         return new WC\Export\OrderSubscription\SubscriptionDate('trial_end');
     }
 
+    public function editing()
+    {
+        return new Editing\OrderSubscription\Date('trial_end', true);
+    }
+
     public function search()
     {
-        return new Search\Meta\Date\ISO($this->get_meta_key(), 'order_subscription');
+        return new Search\OrderMeta\IsoDate($this->get_meta_key());
     }
 
     public function sorting()

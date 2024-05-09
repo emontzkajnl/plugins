@@ -138,6 +138,44 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 */
 	private $ajax_queries_args = [];
 
+	/**
+	 * Is module enabled.
+	 *
+	 * @var bool
+	 */
+	private $is_enabled = false;
+
+	/**
+	 * Lazy load enabled.
+	 *
+	 * @var bool
+	 */
+	private $lazy_load_enabled = false;
+
+	/**
+	 * The fallback method.
+	 *
+	 * @var string
+	 */
+	public $fallback_method = 'ajax';
+
+	/**
+	 * Lazy load offset.
+	 *
+	 * @var integer
+	 */
+	public $lazy_load_offset = 0;
+
+	/**
+	 * Holds the server info class.
+	 *
+	 * @var Advanced_Ads_Pro_Cache_Busting_Server_Info
+	 */
+	public $server_info = null;
+
+	/**
+	 * Constructor
+	 */
     private function __construct() {
         // Load options (and only execute when enabled).
         $options = Advanced_Ads_Pro::get_instance()->get_options();
@@ -150,14 +188,14 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 			new Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI();
 		}
 
-        $this->cache_busting_module_enabled = isset( $this->options['enabled'] ) && $this->options['enabled'];
+        $this->is_enabled = $this->options['enabled'] ?? false;
 		if ( ! $this->should_init_cb() ) {
 			add_action('wp_enqueue_scripts', [$this, 'check_for_tcf_privacy']);
 			return;
 		}
 
-		$this->lazy_load_module_enabled = ! empty( $options['lazy-load']['enabled'] );
-		$this->lazy_load_module_offset = ! empty( $options['lazy-load']['offset'] ) ? absint( $options['lazy-load']['offset'] ) : 0;
+		$this->lazy_load_enabled = $options['lazy-load']['enabled'] ?? false;
+		$this->lazy_load_offset = absint( $options['lazy-load']['offset'] ?? 0 );
 
         $this->is_ajax = ( defined( 'DOING_AJAX' ) && DOING_AJAX )
             // An AJAX request but not to `/admin-ajax.php`.
@@ -188,9 +226,10 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 * @see self::add_simple_js_item
 	 */
 	private function should_init_cb() {
-		if ( $this->cache_busting_module_enabled ) {
+		if ( $this->is_enabled ) {
 			return true;
 		}
+
 		$placements = Advanced_Ads::get_ad_placements_array();
 		foreach ( $placements as $placement ) {
 			if (
@@ -244,13 +283,14 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         add_action( 'wp_footer', [ $this, 'passive_cache_busting_output' ], 21 );
         add_filter( 'advanced-ads-can-display', [ $this, 'can_display_by_display_limit' ], 10, 3 );
 
-        if ( ! $this->cache_busting_module_enabled ) {
-            return;
-        }
-        add_filter( 'advanced-ads-ad-select-args', [ $this, 'override_ad_select' ], 100 );
-        add_filter( 'advanced-ads-ad-select-args', [ $this, 'disable_global_output' ], 101 );
-        add_action( 'advanced-ads-can-display-placement', [ $this, 'placement_can_display' ], 12, 2 );
-    }
+		if ( ! $this->is_enabled ) {
+			return;
+		}
+
+		add_filter( 'advanced-ads-ad-select-args', [ $this, 'override_ad_select' ], 100 );
+		add_filter( 'advanced-ads-ad-select-args', [ $this, 'disable_global_output' ], 101 );
+		add_action( 'advanced-ads-can-display-placement', [ $this, 'placement_can_display' ], 12, 2 );
+	}
 
     /**
      * Output passive cache-busting array
@@ -298,6 +338,11 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         echo $content;
     }
 
+	/**
+	 * Enqueue frontend scripts
+	 *
+	 * @return void
+	 */
     public function enqueue_scripts() {
 	    // Include in footer to prevent conflict when Autoptimize and NextGen Gallery are used at the same time.
 	    $uri_rel_path = AAP_BASE_URL . 'assets/js/';
@@ -318,13 +363,15 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
 		$info = [
 			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
-			'lazy_load_module_enabled' => $this->lazy_load_module_enabled,
+			'lazy_load_module_enabled' => $this->lazy_load_enabled,
 			'lazy_load'                => [
-				'default_offset' => $this->lazy_load_module_offset,
+				'default_offset' => $this->lazy_load_offset,
 				'offsets'        => apply_filters( 'advanced-ads-lazy-load-placement-offsets', [] ),
 			],
 			'moveintohidden'           => defined( 'ADVANCED_ADS_PRO_CUSTOM_POSITION_MOVE_INTO_HIDDEN' ),
-			'wp_timezone_offset'       => Advanced_Ads_Utils::get_wp_timezone()->getOffset(date_create()),
+			'wp_timezone_offset'       => Advanced_Ads_Utils::get_wp_timezone()->getOffset( date_create() ),
+			'the_id'                   => get_the_ID(),
+			'is_singular'              => is_singular(),
 		];
         if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
             $current_lang = apply_filters( 'wpml_current_language', null );
@@ -464,7 +511,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             return $overriden_ad;
         }
 
-        if ( $this->cache_busting_module_enabled ) {
+        if ( $this->is_enabled ) {
             // Cache busting 'auto'.
             $overriden_ad = $this->cache_busting_auto_for_ad( $overriden_ad, $ad, $args );
         }
@@ -491,7 +538,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             return $overriden_group;
         }
 
-        if ( $this->cache_busting_module_enabled ) {
+        if ( $this->is_enabled ) {
             // Cache busting 'auto'.
             $overriden_group = $this->cache_busting_auto_for_group( $overriden_group, $adgroup, $ordered_ad_ids, $args );
         }
@@ -1235,7 +1282,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         $has_shortcode = ! empty( $ad_options['output']['has_shortcode'] )
             // The Rich Content ad type saved long time ago.
             || ( ! isset( $ad_options['output']['has_shortcode'] ) && $ad->type === 'content' );
-        $is_lazy_load = $this->lazy_load_module_enabled && isset( $ad_options['lazy_load'] ) && 'enabled' === $ad_options['lazy_load'];
+        $is_lazy_load = $this->lazy_load_enabled && 'enabled' === ( $ad_options['lazy_load'] ?? '' );
         // Check if there is conditions that need backend request.
         $has_not_js_conditions = false;
 		if ( ! empty( $visitors ) ) {

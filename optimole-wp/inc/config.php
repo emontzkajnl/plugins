@@ -19,6 +19,7 @@ class Optml_Config {
 		'jpe'  => 'image/jpeg',
 		'png'  => 'image/png',
 		'heic' => 'image/heif',
+		'ico'  => 'image/x-icon',
 		'avif' => 'image/avif',
 		'webp' => 'image/webp',
 		'svg'  => 'image/svg+xml',
@@ -42,6 +43,7 @@ class Optml_Config {
 		'jpg|jpeg|jpe' => 'image/jpeg',
 		'png'          => 'image/png',
 		'webp'         => 'image/webp',
+		'ico'          => 'image/x-icon',
 		'heic'         => 'image/heif',
 		'avif'         => 'image/avif',
 		'svg'          => 'image/svg+xml',
@@ -97,15 +99,15 @@ class Optml_Config {
 			throw new \InvalidArgumentException( 'Optimole SDK requires service secret key.' ); // @codeCoverageIgnore
 		}
 
-		if ( defined( 'OPTML_KEY' ) && constant( 'OPTML_KEY' ) ) {
+		if ( defined( 'OPTML_KEY' ) ) {
 			self::$key = constant( 'OPTML_KEY' );
 		}
 
-		if ( defined( 'OPTML_SECRET' ) && constant( 'OPTML_SECRET' ) ) {
+		if ( defined( 'OPTML_SECRET' ) ) {
 			self::$secret = constant( 'OPTML_SECRET' );
 		}
 
-		if ( defined( 'OPTML_BASE_DOMAIN' ) && constant( 'OPTML_BASE_DOMAIN' ) ) {
+		if ( defined( 'OPTML_BASE_DOMAIN' ) ) {
 			self::$base_domain = constant( 'OPTML_BASE_DOMAIN' );
 		}
 
@@ -119,7 +121,7 @@ class Optml_Config {
 		self::$service_url = sprintf( 'https://%s.%s', self::$key, self::$base_domain );
 		if ( isset( $service_settings['domain'] ) && ! empty( $service_settings['domain'] ) ) {
 			self::$service_url = sprintf( 'https://%s', $service_settings['domain'] );
-		} elseif ( defined( 'OPTML_CUSTOM_DOMAIN' ) && constant( 'OPTML_CUSTOM_DOMAIN' ) ) {
+		} elseif ( defined( 'OPTML_CUSTOM_DOMAIN' ) ) {
 			self::$service_url = constant( 'OPTML_CUSTOM_DOMAIN' );
 		}
 	}

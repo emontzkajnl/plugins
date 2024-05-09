@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:ignoreFile
 /**
  * Advanced Ads
  *
@@ -9,6 +9,9 @@
  * @link      https://wpadvancedads.com
  * @copyright 2014 Thomas Maier, Advanced Ads GmbH
  */
+
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * Grouping placements functions
@@ -37,10 +40,13 @@ class Advanced_Ads_Placements {
 	/**
 	 * Return placement page description
 	 *
+	 * @deprecated 1.47.0
+	 *
 	 * @return string
 	 */
 	public static function get_description() {
-		return __( 'Placements are customizable ad spots on your site. Use them to see and change all the assigned ads and groups on this page. Furthermore, you can set up exclusive features like Cache Busting, Lazy Loading, AdBlocker fallbacks, or Parallax effects.', 'advanced-ads' );
+		_deprecated_function( __METHOD__, '1.47.0', '\AdvancedAds\Entities::get_placement_description()' );
+		return Entities::get_placement_description();
 	}
 
 	/**
@@ -141,7 +147,7 @@ class Advanced_Ads_Placements {
 	public static function update_placements() {
 
 		// check user permissions.
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_placements' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_placements' ) ) {
 			return;
 		}
 
@@ -566,7 +572,7 @@ class Advanced_Ads_Placements {
 
 		ob_start();
 
-		include ADVADS_BASE_PATH . 'admin/views/placements-item.php';
+		include ADVADS_ABSPATH . 'admin/views/placements-item.php';
 
 		return ob_get_clean();
 	}

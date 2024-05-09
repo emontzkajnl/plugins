@@ -1,5 +1,8 @@
 <?php
 
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Class Advanced_Ads_Admin_Ad_Type
  */
@@ -64,7 +67,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		add_action( 'wp_loaded', [ $this, 'save_screen_options' ] );
 		add_action( 'load-edit.php', [ $this, 'set_screen_options' ] );
 
-		$this->post_type = constant( 'Advanced_Ads::POST_TYPE_SLUG' );
+		$this->post_type = Entities::POST_TYPE_AD;
 	}
 
 	/**
@@ -184,7 +187,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		$columns['ad_date'] = 'ad_date';
 		return $columns;
 	}
-	
+
 
 	/**
 	 * Add ad list column content
@@ -253,7 +256,7 @@ class Advanced_Ads_Admin_Ad_Type {
 
 		$size = $this->get_ad_size_string( $ad );
 
-		include ADVADS_BASE_PATH . 'admin/views/ad-list/type.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list/type.php';
 	}
 
 	/**
@@ -266,7 +269,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	private function ad_list_columns_description( Advanced_Ads_Ad $ad ) {
 		$description = wp_trim_words( $ad->description, 50 );
 
-		include ADVADS_BASE_PATH . 'admin/views/ad-list/description.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list/description.php';
 	}
 
 	/**
@@ -309,7 +312,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		$dateTimeRegex = get_option('date_format').' \\a\\t '.get_option('time_format');
 		$published_date =  get_the_date( $dateTimeRegex, $id );
 		$modified_date  =  get_the_modified_date( $dateTimeRegex, $id );
-		include ADVADS_BASE_PATH . 'admin/views/ad-list/date.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list/date.php';
 	}
 
 	/**
@@ -326,7 +329,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			return;
 		}
 
-		include ADVADS_BASE_PATH . 'admin/views/ad-list/size.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list/size.php';
 	}
 
 	/**
@@ -366,7 +369,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		);
 		$content_after = ob_get_clean();
 
-		include ADVADS_BASE_PATH . 'admin/views/ad-list/timing.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list/timing.php';
 	}
 
 	/**
@@ -377,7 +380,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	 * @return void
 	 */
 	public function ad_list_columns_shortcode( $ad ) {
-		include ADVADS_BASE_PATH . 'admin/views/ad-list/shortcode.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list/shortcode.php';
 	}
 
 	/**
@@ -389,7 +392,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	 * @return array
 	 */
 	public function hide_ad_list_columns( $hidden, $screen ) {
-		if ( isset( $screen->id ) && 'edit-' . Advanced_Ads::POST_TYPE_SLUG === $screen->id ) {
+		if ( isset( $screen->id ) && 'edit-' . Entities::POST_TYPE_AD === $screen->id ) {
 			$hidden[] = 'ad_description';
 			$hidden[] = 'author';
 			$hidden[] = 'ad_size';
@@ -410,7 +413,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		if ( ! isset( $screen->id ) || 'edit-advanced_ads' !== $screen->id ) {
 			return;
 		}
-		include ADVADS_BASE_PATH . 'admin/views/ad-list-filters.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list-filters.php';
 	}
 
 	/**
@@ -426,7 +429,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	public function ad_bulk_update_messages( array $messages, array $counts ) {
 		$post = get_post();
 
-		$messages[ Advanced_Ads::POST_TYPE_SLUG ] = [
+		$messages[ Entities::POST_TYPE_AD ] = [
 			// translators: %s is the number of ads.
 			'updated'   => _n( '%s ad updated.', '%s ads updated.', $counts['updated'], 'advanced-ads' ),
 			// translators: %s is the number of ads.
@@ -474,7 +477,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		// if we shouldn't filter this return $vars array.
 		if (
 			! isset( $vars['post_type'] )
-			|| $vars['post_type'] !== Advanced_Ads::POST_TYPE_SLUG
+			|| $vars['post_type'] !== Entities::POST_TYPE_AD
 			|| ! is_admin()
 			|| wp_doing_ajax()
 		) {
@@ -531,7 +534,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		// only display if there are no more than 2 ads.
 		if ( 3 > $existing_ads ) {
 			echo '<div class="advads-ad-metabox postbox" style="clear: both; margin: 10px 20px 0 2px;">';
-			include ADVADS_BASE_PATH . 'admin/views/ad-list-no-ads.php';
+			include ADVADS_ABSPATH . 'admin/views/ad-list-no-ads.php';
 			echo '</div>';
 		}
 	}
@@ -544,7 +547,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	 */
 	public function save_ad( $post_id ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) // only use for ads, no other post type.
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) // only use for ads, no other post type.
 			 || ! isset( $_POST['post_type'] )
 			 || $this->post_type !== $_POST['post_type']
 			 || ! isset( $_POST['advanced_ad']['type'] )
@@ -678,7 +681,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	 * @return array
 	 */
 	public static function prepare_insert_post_data( $data ) {
-		if ( Advanced_Ads::POST_TYPE_SLUG === $data['post_type']
+		if ( Entities::POST_TYPE_AD === $data['post_type']
 			&& '' === $data['post_title'] ) {
 			if ( function_exists( 'wp_date' ) ) {
 				// The function wp_date was added in WP 5.3.
@@ -750,7 +753,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		$placements      = Advanced_Ads::get_ad_placements_array(); // -TODO use model
 
 		// display general and wizard information.
-		include ADVADS_BASE_PATH . 'admin/views/ad-info-top.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-info-top.php';
 		// Don’t show placement options if this is an ad translated with WPML since the placement might exist already.
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
 			$trid         = apply_filters( 'wpml_element_trid', null, $post->ID );
@@ -766,7 +769,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		 */
 		if ( isset( $_GET['message'] ) && 6 === $_GET['message'] && apply_filters( 'advanced-ads-ad-edit-show-placement-injection', true ) ) {
 			$latest_post = $this->get_latest_post();
-			include ADVADS_BASE_PATH . 'admin/views/placement-injection-top.php';
+			include ADVADS_ABSPATH . 'admin/views/placement-injection-top.php';
 		}
 	}
 
@@ -792,7 +795,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			return;
 		}
 
-		include ADVADS_BASE_PATH . 'admin/views/ad-info-bottom.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-info-bottom.php';
 	}
 
 	/**
@@ -803,7 +806,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	public function add_submit_box_meta() {
 		global $post, $wp_locale;
 
-		if ( Advanced_Ads::POST_TYPE_SLUG !== $post->post_type ) {
+		if ( Entities::POST_TYPE_AD !== $post->post_type ) {
 			return;
 		}
 
@@ -828,7 +831,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		list( $curr_year, $curr_month, $curr_day, $curr_hour, $curr_minute ) = explode( '-', $exp_time->format( 'Y-m-d-H-i' ) );
 		$enabled = 1 - empty( $ad->expiry_date );
 
-		include ADVADS_BASE_PATH . 'admin/views/ad-submitbox-meta.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-submitbox-meta.php';
 	}
 
 	/**
@@ -876,7 +879,7 @@ class Advanced_Ads_Admin_Ad_Type {
 			return $messages;
 		}
 
-		$messages[ Advanced_Ads::POST_TYPE_SLUG ] = [
+		$messages[ Entities::POST_TYPE_AD ] = [
 			0  => '', // Unused. Messages start at index 1.
 			1  => __( 'Ad updated.', 'advanced-ads' ),
 			4  => __( 'Ad updated.', 'advanced-ads' ), /* translators: %s: date and time of the revision */
@@ -947,7 +950,7 @@ class Advanced_Ads_Admin_Ad_Type {
 
 		if ( isset( $typenow ) && 'You need a higher level of permission.' === $untranslated_text && $typenow === $this->post_type ) {
 			$translated_text = __( 'You don’t have access to ads. Please deactivate and re-enable Advanced Ads again to fix this.', 'advanced-ads' )
-							   . '&nbsp;<a href="' . ADVADS_URL . 'manual/user-capabilities/?utm_source=advanced-ads&utm_medium=link&utm_campaign=wrong-user-role#You_dont_have_access_to_ads" target="_blank">' . __( 'Get help', 'advanced-ads' ) . '</a>';
+							   . '&nbsp;<a href="https://wpadvancedads.com/manual/user-capabilities/?utm_source=advanced-ads&utm_medium=link&utm_campaign=wrong-user-role#You_dont_have_access_to_ads" target="_blank">' . __( 'Get help', 'advanced-ads' ) . '</a>';
 		}
 
 		return $translated_text;
@@ -1005,7 +1008,7 @@ class Advanced_Ads_Admin_Ad_Type {
 	 * @return string
 	 */
 	public function pre_wp_unique_post_slug( $override_slug, $slug, $post_ID, $post_status, $post_type, $post_parent ) {
-		if ( Advanced_Ads::POST_TYPE_SLUG !== $post_type ) {
+		if ( Entities::POST_TYPE_AD !== $post_type ) {
 			return $override_slug;
 		}
 
@@ -1075,7 +1078,7 @@ class Advanced_Ads_Admin_Ad_Type {
 		// If the default WordPress screen options don't exist, we have to force the submit button to show.
 		add_filter( 'screen_options_show_submit', '__return_true' );
 		ob_start();
-		require ADVADS_BASE_PATH . 'admin/views/ad-list/screen-options.php';
+		require ADVADS_ABSPATH . 'admin/views/ad-list/screen-options.php';
 
 		return $options . ob_get_clean();
 	}
@@ -1197,9 +1200,12 @@ class Advanced_Ads_Admin_Ad_Type {
 			}
 		}
 
-		$status_type = ! $status_type ? 'published' : $status_type;
+		if ( ! $status_type ) {
+			$status_type      = 'published';
+			$status_strings[] = __( 'Published', 'advanced-ads' );
+		}
 
-		include ADVADS_BASE_PATH . 'admin/views/ad/status-icon.php';
+		include ADVADS_ABSPATH . 'admin/views/ad/status-icon.php';
 
 		return ob_get_clean();
 	}

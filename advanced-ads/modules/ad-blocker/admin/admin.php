@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 /**
  * Ad blocker admin functionality.
  */
@@ -228,6 +228,7 @@ class Advanced_Ads_Ad_Blocker_Admin {
 					$new_folder_normalized = Advanced_Ads_Filesystem::get_instance()->normalize_path( trailingslashit( $this->upload_dir['basedir'] ) ) . $new_folder_name;
 
 					if ( ! $wp_filesystem->move( $old_folder_normalized, $new_folder_normalized ) ) {
+						/* translators: %s old folder name */
 						$message = sprintf( __( 'Unable to rename "%s" directory', 'advanced-ads' ), $old_folder_normalized );
 						$this->error_messages->add( 'create_dummy_2', $message);
 						return false;
@@ -244,6 +245,7 @@ class Advanced_Ads_Ad_Blocker_Admin {
 				if ( $is_rebuild_needed ) {
 					$lookup_table = $this->copy_assets( $new_options['folder_name'], $need_assign_new_name );
 					if ( ! $lookup_table ) {
+						/* translators: %s folder name */
 						$message = sprintf( __( 'Unable to copy assets to the "%s" directory', 'advanced-ads' ), $new_options['folder_name'] );
 						$this->error_messages->add( 'create_dummy_3', $message);
 						return false;
@@ -257,6 +259,7 @@ class Advanced_Ads_Ad_Blocker_Admin {
 				// old folder does not exist, let's create it
 				$lookup_table = $this->copy_assets( $new_options['folder_name'] );
 				if ( ! $lookup_table ) {
+					/* translators: %s folder name */
 					$message = sprintf( __( 'Unable to copy assets to the "%s" directory', 'advanced-ads' ), $new_options['folder_name'] );
 					$this->error_messages->add( 'create_dummy_4', $message);
 					return false;
@@ -307,6 +310,7 @@ class Advanced_Ads_Ad_Blocker_Admin {
 			if ( $wp_filesystem->exists( $asset_path_normalized ) ) {
 				// Remove the old directory and its contents
 				if ( ! $wp_filesystem->rmdir( trailingslashit( $asset_path_normalized ), true ) ) {
+					/* translators: %s directory path */
 					$message = sprintf( __( 'We do not have direct write access to the "%s" directory', 'advanced-ads' ), $asset_path_normalized );
 					$this->error_messages->add( 'copy_assets_1', $message);
 					return false;
@@ -403,6 +407,7 @@ class Advanced_Ads_Ad_Blocker_Admin {
 
 			// Copy the file to our new magic directory,
 			if ( ! $wp_filesystem->copy( $file_normalized, $new_abs_file, true, FS_CHMOD_FILE ) ) {
+				/* translators: %s directory path */
 				$message = sprintf( __( 'Unable to copy files to %s', 'advanced-ads' ), $asset_path_normalized );
 				$this->error_messages->add( 'copy_assets_5', $message);
 				return false;
@@ -428,11 +433,10 @@ class Advanced_Ads_Ad_Blocker_Admin {
 
 		$tree = glob( rtrim( $dir, '/' ) . '/*' );
 		if ( is_array( $tree ) ) {
-			foreach( $tree as $file ) {
+			foreach ( $tree as $file ) {
 				if ( is_dir( $file ) && ! preg_match( $this->exclude_dir_pattern, $file ) ) {
 					$assets = array_merge( $assets, $this->recursive_search_assets( $file ) );
-				}
-				elseif ( is_file( $file )  && preg_match( $this->search_file_pattern, $file ) ) {
+				} elseif ( is_file( $file )  && preg_match( $this->search_file_pattern, $file ) ) {
 					$assets[ $file ] = @filemtime( $file );
 				}
 			}

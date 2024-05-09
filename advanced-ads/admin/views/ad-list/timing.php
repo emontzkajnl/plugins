@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 /**
  * Render content of the Ad Schedule column in the ad overview list
  *
@@ -55,7 +55,7 @@
 				<p>
 				<?php
 				printf(
-					// translators: %s is a time and date string.
+					// translators: %s is a date.
 					esc_html__( 'expires %s', 'advanced-ads' ),
 					esc_html( $expiry_date_string )
 				);

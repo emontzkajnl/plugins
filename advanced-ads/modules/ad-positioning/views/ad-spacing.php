@@ -32,7 +32,7 @@
 			<div class="advads-ad-positioning-spacing-direction <?php echo esc_attr( $input_id ); ?>" aria-hidden="true">
 				<?php
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- allow inline svg
-				echo preg_replace( '/\s+/', ' ', file_get_contents( ADVADS_BASE_PATH . 'modules/ad-positioning/assets/img/advads-bknd-ui-pos-margin.svg' ) );
+				echo preg_replace( '/\s+/', ' ', file_get_contents( ADVADS_ABSPATH . 'modules/ad-positioning/assets/img/advads-bknd-ui-pos-margin.svg' ) );
 				?>
 			</div>
 		<?php endforeach; ?>

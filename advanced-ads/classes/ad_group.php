@@ -1,5 +1,8 @@
 <?php
 
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * An ad group object
  *
@@ -86,7 +89,7 @@ class Advanced_Ads_Group {
 	/**
 	 * Array with post type objects (ads)
 	 */
-	private $ads = [];
+	private $ads = false;
 
 	/**
 	 * Multidimensional array contains information about the wrapper
@@ -109,6 +112,13 @@ class Advanced_Ads_Group {
 	private $is_head_placement;
 
 	/**
+	 * True, if this is an Advanced Ads Ad Group
+	 *
+	 * @var bool
+	 */
+	public $is_group = false;
+
+	/**
 	 * The decorated WP_Term object.
 	 *
 	 * @var \WP_Term
@@ -124,18 +134,19 @@ class Advanced_Ads_Group {
 	 * @since 1.0.0
 	 */
 	public function __construct( $group, iterable $ad_args = [] ) {
-		$this->taxonomy = Advanced_Ads::AD_GROUP_TAXONOMY;
+		$this->taxonomy = Entities::TAXONOMY_AD_GROUP;
 
 		$this->group = get_term( $group, $this->taxonomy );
 		if ( $this->group === null || is_wp_error( $this->group ) ) {
 			return;
 		}
 
+		$this->is_group                = true;
 		$this->id                      = $this->group->term_id;
 		$this->name                    = $this->group->name;
 		$this->slug                    = $this->group->slug;
 		$this->description             = $this->group->description;
-		$this->post_type               = Advanced_Ads::POST_TYPE_SLUG;
+		$this->post_type               = Entities::POST_TYPE_AD;
 		$this->ad_args                 = $ad_args;
 		$this->is_head_placement       = isset( $this->ad_args['placement_type'] ) && $this->ad_args['placement_type'] === 'header';
 		$this->ad_args['is_top_level'] = ! isset( $this->ad_args['is_top_level'] );
@@ -333,10 +344,7 @@ class Advanced_Ads_Group {
 	 * @since 1.0.0
 	 */
 	public function get_all_ads() {
-		if ( count( $this->ads ) > 0 ) {
-			return $this->ads; }
-		else {
-			return $this->load_all_ads(); }
+		return $this->load_all_ads();
 	}
 
 	/**
@@ -346,7 +354,7 @@ class Advanced_Ads_Group {
 	 * @update 1.1.0 load only public ads
 	 * @update allow to cache groups for few minutes
 	 *
-	 * @return WP_Post[] $ads array with ad (post) objects
+	 * @return bool|WP_Post[] $ads array with ad (post) objects
 	 */
 	private function load_all_ads() {
 
@@ -354,31 +362,26 @@ class Advanced_Ads_Group {
 			return [];
 		}
 
-		// reset
-		$this->ads = [];
+		if ( false !== $this->ads ) {
+			return $this->ads;
+		}
 
-		// much more complex than needed: one of the three queries is not needed and the last query gets slow quiet fast
+		// Much more complex than needed: one of the three queries is not needed and the last query gets slow quiet fast.
 		$args = [
-			'post_type' => $this->post_type,
-			'post_status' => 'publish',
+			'post_type'      => $this->post_type,
+			'post_status'    => 'publish',
 			'posts_per_page' => -1,
-			'taxonomy' => $this->taxonomy,
-			'term' => $this->slug,
-			'orderby' => 'id' // might want to avoid sorting as not needed for most calls and fast in PHP; slight I/O blocking concern
+			'taxonomy'       => $this->taxonomy,
+			'term'           => $this->slug,
+			'orderby'        => 'id', // Might want to avoid sorting as not needed for most calls and fast in PHP; slight I/O blocking concern.
 		];
 
-		$found = false;
-		$key = 'ad_group_all_ads_' . $this->post_type . '_' . $this->taxonomy . '_' . $this->slug;
-		$ads = wp_cache_get( $key, Advanced_Ads_Model::OBJECT_CACHE_GROUP, false, $found );
-		if ( $found && is_array( $ads ) ) {
-			$this->ads = $ads;
-		} else {
-			$ads = new WP_Query( $args );
+		$ads = new WP_Query( $args );
 
-			if ( $ads->have_posts() ) {
-				$this->ads = $this->add_post_ids( $ads->posts );
-			}
-			wp_cache_set( $key, $this->ads, Advanced_Ads_Model::OBJECT_CACHE_GROUP, Advanced_Ads_Model::OBJECT_CACHE_TTL);
+		if ( $ads->have_posts() ) {
+			$this->ads = $this->add_post_ids( $ads->posts );
+		} else {
+			$this->ads = [];
 		}
 
 		return $this->ads;
@@ -388,18 +391,19 @@ class Advanced_Ads_Group {
 	 * Use post ids as keys for ad array
 	 *
 	 * @since 1.0.0
-	 * @param arr $ads array with post objects
-	 * @return arr $ads array with post objects with post id as their key
-	 * @todo check, if there isn’t a WP function for this already
+	 * @param array $ads array with post objects.
+	 * @return array $ads array with post objects with post id as their key.
 	 */
-	private function add_post_ids(array $ads){
+	private function add_post_ids( array $ads ) {
+		return array_reduce(
+			$ads,
+			function( $ads, $ad ) {
+				$ads[ $ad->ID ] = $ad;
 
-		$ads_with_id = [];
-		foreach ( $ads as $_ad ){
-			$ads_with_id[$_ad->ID] = $_ad;
-		}
-
-		return $ads_with_id;
+				return $ads;
+			},
+			[]
+		);
 	}
 
 	/**
@@ -564,6 +568,12 @@ class Advanced_Ads_Group {
 				$this->wrapper['class'] = $this->ad_args['output']['class'];
 			}
 
+			// ad Health Tool add class wrapper
+			if ( WordPress::user_can('advanced_ads_edit_ads') ) {
+				$frontend_prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
+				$this->wrapper['class'][] = $frontend_prefix . 'highlight-wrapper';
+			}
+
 			if ( isset( $this->ad_args['output']['wrapper_attrs'] ) && is_array( $this->ad_args['output']['wrapper_attrs'] ) ) {
 				foreach ( $this->ad_args['output']['wrapper_attrs'] as $key => $value ) {
 					$this->wrapper[$key] = $value;
@@ -639,7 +649,7 @@ class Advanced_Ads_Group {
 				$link       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-pro/advanced-ads-pro.php', 'activate-plugin_advanced-ads-pro/advanced-ads-pro.php' );
 				$link_title = __( 'Activate now', 'advanced-ads' );
 			} else {
-				$link       = ADVADS_URL . 'add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=groups-CB';
+				$link       = 'https://wpadvancedads.com/add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=groups-CB';
 				$link_title = __( 'Get this add-on', 'advanced-ads' );
 			}
 

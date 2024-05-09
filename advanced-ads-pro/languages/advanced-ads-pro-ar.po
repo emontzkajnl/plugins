@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Advanced Ads Pro package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-08-31 20:20:09+0000\n"
+"PO-Revision-Date: 2023-11-21 20:28:10+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -11,24 +11,74 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: Advanced Ads Pro\n"
 
-#: modules/cache-busting/admin-ui.class.php:59
+#: modules/responsive-ads/views/setting_reload_ads.php:19
+msgid "You need to enable cache-busting in order to use this feature."
+msgstr "يجب تمكين تفادي التخزين المؤقت لاستخدام هذه الميزة"
+
+#. 1 is the opening link to the Advanced Ads website, 2 the closing link
+#: classes/advanced-ads-pro.php:508
+msgid "We have renamed the Responsive Ads add-on to ‘Advanced Ads AMP Ads’. With this change, the Browser Width visitor condition moved from that add-on into Advanced Ads Pro. You can deactivate ‘Advanced Ads AMP Ads’ if you don’t utilize AMP ads or the custom sizes feature for responsive AdSense ad units. %1$sRead more%2$s."
+msgstr "لقد قمنا بإعادة تسمية الإضافة المتعلقة بالإعلانات المتجاوبة إلى 'إعلانات AMP'. مع هذا التغيير، انتقل شرط زائر عرض المتصفح من تلك الإضافة إلى الإعلانات المتقدمة Pro. يمكنك إيقاف 'إعلانات AMP' إذا لم تستخدم إعلانات AMP أو ميزة الأحجام المخصصة لوحدات إعلانات AdSense المتجاوبة. %1$sاقرأ المزيد%2$s."
+
+#: modules/responsive-ads/includes/class-admin.php:45
+msgid "Responsive Image Ads"
+msgstr "الإعلانات صورية المتجاوبة"
+
+#: modules/responsive-ads/includes/class-admin.php:38
+msgid "Responsive Ads"
+msgstr "الإعلانات متجاوبة"
+
+#: modules/responsive-ads/views/setting_reload_ads.php:16
+msgid "Reload ads when the screen resizes."
+msgstr "إعادة تحميل الإعلانات عند تغيير حجم الشاشة"
+
+#: modules/responsive-ads/includes/class-admin.php:53
+msgid "Reload ads on resize"
+msgstr "إعادة تحميل الإعلانات عند التغيير في حجم المتصفح"
+
+#: modules/responsive-ads/includes/class-admin.php:61
+msgid "Fallback width"
+msgstr "العرض الاحتياطي للعنصر"
+
+#: modules/responsive-ads/includes/class-common.php:39
+msgid "Display ads based on the browser width."
+msgstr "عرض الإعلانات بناءً على عرض المتصفح."
+
+#: modules/cache-busting/admin-ui.class.php:56
+msgid "Couldn't find the placement."
+msgstr "تعذر العثور على الموضع."
+
+#: modules/responsive-ads/views/setting_responsive_images.php:15
+msgid "Check this option if the size of image ads is not adjusted responsively by your theme."
+msgstr "حدد هذا الخيار إذا لم يتم ضبط حجم صور الإعلانات بشكل مستجيب حسب قالب ووردبريس المستخدم"
+
+#: modules/cache-busting/admin-ui.class.php:53
+msgid "Cache busting has been successfully enabled for the assigned placement."
+msgstr "تم تفعيل تفادي التخزين المؤقت للموضع المخصص بنجاح."
+
+#: modules/responsive-ads/includes/class-common.php:38
+msgid "browser width"
+msgstr "عرض المتصفح"
+
+#: modules/cache-busting/admin-ui.class.php:102
 #: modules/cache-busting/views/settings.php:62
 msgid "off"
 msgstr "إيقاف"
 
 #: modules/cache-busting/views/settings.php:18
 msgid "Choose which method to use when a placement needs cache busting and the option is set to “auto”."
-msgstr "اختر الطريقة التي تُستخدم عندما يكون هناك حاجة لإزالة ذاكرة التخزين المؤقت للموقع و الخيار مُعيَّنًا على 'تلقائي'"
+msgstr "اختر الطريقة التي تُستخدم عندما يكون هناك حاجة لتفادي التخزين المؤقت للموقع و الخيار مُعيَّنًا على 'تلقائي'"
 
-#: modules/cache-busting/admin-ui.class.php:57
+#: modules/cache-busting/admin-ui.class.php:100
 msgid "auto"
 msgstr "تلقائيًا"
 
-#: modules/geo/classes/admin.php:397
+#: modules/cache-busting/admin-ui.class.php:45
+#: modules/geo/classes/admin.php:407
 msgid "You are not allowed to do this."
 msgstr "ليس لديك الإذن للقيام بذلك."
 
-#: modules/geo/classes/admin.php:405
+#: modules/geo/classes/admin.php:415
 msgid "Please provide a MaxMind license key"
 msgstr "يرجى تقديم مفتاح ترخيص MaxMind."
 
@@ -79,7 +129,7 @@ msgstr "إعادة تعيين ملف تعريف الزائر"
 msgid "Location based on your visitor profile cookie:"
 msgstr "الموقع بناءً على ملف تعريف الزائر الخاص بك:"
 
-#: modules/geo/classes/admin.php:374
+#: modules/geo/classes/admin.php:376
 msgid "Location based on your IP address"
 msgstr "الموقع على أساس عنوان IP الخاص بك"
 
@@ -100,29 +150,29 @@ msgstr "اعرض الإعلانات بناءً على لغة الصفحة الت
 msgid "Display ads based on existing BuddyBoss groups."
 msgstr "عرض الإعلانات على أساس مجموعات BuddyBoss الحالية."
 
-#: modules/geo/classes/admin.php:340
+#: modules/geo/classes/admin.php:342
 msgid "miles (mi)"
 msgstr "ميل"
 
-#: modules/geo/classes/admin.php:661
+#: modules/geo/classes/admin.php:678
 msgid "There was an error connecting to the search service."
 msgstr "حدث خطأ في الاتصال بخدمة البحث."
 
-#: modules/geo/classes/admin.php:660
+#: modules/geo/classes/admin.php:677
 msgid "Your search did not return any results."
 msgstr "ان بحثك لم يعد باي نتائج."
 
 #. 1: A link to the geo location service.
-#: modules/geo/classes/admin.php:663
+#: modules/geo/classes/admin.php:680
 msgid "You can search for the geo coordinates manually at %1$s."
 msgstr "مكنك البحث عن الإحداثيات الجغرافية يدويًا على %1$s."
 
 #. 1: The number of search results.
-#: modules/geo/classes/admin.php:659
+#: modules/geo/classes/admin.php:676
 msgid "Found %1$d results. Please pick the one, you want to use."
 msgstr "تم العثور على %1$d نتيجة. الرجاء اختيار واحد تريد استخدامه."
 
-#: modules/geo/classes/admin.php:339
+#: modules/geo/classes/admin.php:341
 msgid "kilometers (km)"
 msgstr "كيلومترات (كم)"
 
@@ -139,14 +189,14 @@ msgstr "زيمبابوي"
 msgid "Zambia"
 msgstr "زامبيا"
 
-#: modules/geo/classes/admin.php:234
+#: modules/geo/classes/admin.php:236
 msgid "Your IP address format is incorrect"
 msgstr "تنسيق عنوان IP الخاص بك غير صحيح"
 
 #. %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:179
+#: modules/cache-busting/admin-ui.class.php:228
 msgid "You need a placement to deliver this group using cache busting. <a href=\"%s\" target=\"_blank\">Create a placement now.</a>"
-msgstr "تحتاج إلى موضع لتسليم هذه المجموعة باستخدام إزالة التخزين المؤقت. <a href=\"%s\" target=\"_blank\">أنشئ موضعًا الآن.</a>"
+msgstr "تحتاج إلى موضع لتسليم هذه المجموعة باستخدام تفادي التخزين المؤقت. <a href=\"%s\" target=\"_blank\">أنشئ موضعًا الآن.</a>"
 
 #: modules/geo/classes/api.php:383
 msgid "Yemen"
@@ -260,11 +310,11 @@ msgstr "توغو"
 msgid "Timor-Leste"
 msgstr "تيمور الشرقية"
 
-#: modules/geo/classes/admin.php:324
+#: modules/geo/classes/admin.php:326
 msgid "This option can’t be used if your site is using sucuri.net."
 msgstr "لا يمكن استخدام هذا الخيار إذا كان موقعك يستخدم Sucuri.net."
 
-#: modules/geo/classes/admin.php:401
+#: modules/geo/classes/admin.php:411
 msgid "The upload dir is not available"
 msgstr "دليل التحميل غير متوفر"
 
@@ -324,7 +374,7 @@ msgstr "السودان"
 msgid "Sucuri Header (country only)"
 msgstr "رأس Sucuri (الدولة فقط)"
 
-#: modules/geo/classes/admin.php:307
+#: modules/geo/classes/admin.php:309
 msgid "State/Region"
 msgstr "الولاية / المنطقة"
 
@@ -392,7 +442,7 @@ msgstr "صربيا\t"
 msgid "Senegal"
 msgstr "السنغال\t"
 
-#: modules/geo/classes/admin.php:360
+#: modules/geo/classes/admin.php:362
 msgid "Search"
 msgstr "بحث"
 
@@ -477,7 +527,7 @@ msgid "Poland"
 msgstr "بولندا"
 
 #. 1: opening <a>-tag to Advanced Ads manual, 2: closing <a>-tag
-#: modules/geo/classes/admin.php:227
+#: modules/geo/classes/admin.php:229
 #: modules/geo/admin/views/setting-download.php:24
 msgid "Please read the %1$sinstallation instructions%2$s."
 msgstr "الرجاء قراءة %1$sإرشادات التثبيت%2$s"
@@ -518,7 +568,7 @@ msgstr "بالاو"
 msgid "Pakistan"
 msgstr "باكستان\t"
 
-#: modules/geo/classes/admin.php:306 modules/geo/classes/admin.php:308
+#: modules/geo/classes/admin.php:308 modules/geo/classes/admin.php:310
 msgid "or"
 msgstr "أو"
 
@@ -639,7 +689,7 @@ msgstr "ميكرونيزيا"
 msgid "Mexico"
 msgstr "المكسيك"
 
-#: modules/geo/classes/admin.php:76
+#: modules/geo/classes/admin.php:78
 msgid "Method"
 msgstr "طريقة"
 
@@ -647,11 +697,11 @@ msgstr "طريقة"
 msgid "Mayotte"
 msgstr "مايوت"
 
-#: modules/geo/classes/admin.php:230
+#: modules/geo/classes/admin.php:232
 msgid "Maybe you are working on a local or secured environment."
 msgstr "ربما تعمل في بيئة محلية أو آمنة."
 
-#: modules/geo/classes/admin.php:57
+#: modules/geo/classes/admin.php:59
 msgid "MaxMind license key"
 msgstr "مفتاح ترخيص MaxMind"
 
@@ -659,7 +709,7 @@ msgstr "مفتاح ترخيص MaxMind"
 msgid "MaxMind database (default)"
 msgstr "قاعدة بيانات MaxMind (افتراضي)"
 
-#: modules/geo/classes/admin.php:66
+#: modules/geo/classes/admin.php:68
 msgid "MaxMind Database"
 msgstr "قاعدة بيانات MaxMind"
 
@@ -715,7 +765,7 @@ msgstr "ماكاو"
 msgid "Luxembourg"
 msgstr "لوكسمبورغ"
 
-#: modules/geo/classes/admin.php:344
+#: modules/geo/classes/admin.php:346
 msgid "Longitude"
 msgstr "خط الطول"
 
@@ -747,7 +797,7 @@ msgstr "لبنان"
 msgid "Latvia"
 msgstr "لاتفيا"
 
-#: modules/geo/classes/admin.php:343
+#: modules/geo/classes/admin.php:345
 msgid "Latitude"
 msgstr "خط العرض"
 
@@ -760,7 +810,7 @@ msgstr "التحديث الأخير: %s"
 msgid "Lao People's Democratic Republic"
 msgstr "جمهورية لاو الديمقراطية الشعبية"
 
-#: modules/geo/classes/admin.php:86
+#: modules/geo/classes/admin.php:88
 msgid "Language of names"
 msgstr "لغة الأسماء"
 
@@ -805,14 +855,14 @@ msgid "Italy"
 msgstr "إيطاليا\t"
 
 #. %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:200
-msgid "It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href=\"%s\" target=\"_blank\">Activate cache busting for this placement.</a>"
-msgstr "يبدو أنه تم تفعيل إضافة التخزين المؤقت (الكاش). ربما لا تتناوب إعلاناتك بشكل صحيح، مالم يتم تفعيل إزالة التخزين المؤقت للموضع الذي يستخدمه مجموعتك. <a href=\"%s\" target=\"_blank\">تفعيل إزالة التخزين المؤقت لهذا الموضع.</a>"
+#: modules/cache-busting/admin-ui.class.php:249
+msgid "It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href=\"#\" data-placement=\"%s\" class=\"js-placement-activate-cb\">Activate cache busting for this placement.</a>"
+msgstr "يبدو أنه تم تفعيل إضافة التخزين المؤقت (الكاش). ربما لا تتناوب إعلاناتك بشكل صحيح، مالم يتم تفعيل تفادي التخزين المؤقت للموضع الذي يستخدمه مجموعتك. <a href=\"#\" data-placement=\"%s\" class=\"js-placement-activate-cb\">تفعيل إزالة التخزين المؤقت لهذا الموضع.</a>"
 
 #. %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:156
+#: modules/cache-busting/admin-ui.class.php:205
 msgid "It seems that a caching plugin is activated. Your ads might not rotate properly while cache busting is disabled. <a href=\"%s\" target=\"_blank\">Activate cache busting.</a>"
-msgstr "يبدو أنه تم تفعيل إضافة التخزين المؤقت (الكاش). ربما لا تتناوب إعلاناتك بشكل صحيح مالم يتم تفعيل إزالة التخزين المؤقت. <a href=\"%s\" target=\"_blank\">تفعيل إزالة التخزين المؤقت (Cache busting).</a>"
+msgstr "يبدو أنه تم تفعيل إضافة التخزين المؤقت (الكاش). ربما لا تتناوب إعلاناتك بشكل صحيح مالم يتم تفعيل تفادي التخزين المؤقت. <a href=\"%s\" target=\"_blank\">تفعيل إزالة التخزين المؤقت (Cache busting).</a>"
 
 #: modules/geo/classes/api.php:245
 msgid "Israel"
@@ -926,7 +976,7 @@ msgstr "جبل طارق"
 msgid "Ghana"
 msgstr "غانا"
 
-#: modules/geo/classes/admin.php:342
+#: modules/geo/classes/admin.php:344
 msgid "get coordinates"
 msgstr "الحصول على الإحداثيات"
 
@@ -938,7 +988,7 @@ msgstr "ألمانيا"
 msgid "Georgia"
 msgstr "جورجيا"
 
-#: modules/geo/classes/admin.php:49
+#: modules/geo/classes/admin.php:51
 msgid "Geo Targeting"
 msgstr "استهداف جغرافي"
 
@@ -946,7 +996,7 @@ msgstr "استهداف جغرافي"
 msgid "geo location"
 msgstr "الموقع الجغرافي"
 
-#: modules/geo/classes/admin.php:227
+#: modules/geo/classes/admin.php:229
 #: modules/geo/admin/views/setting-download.php:35
 msgid "Geo Databases not found."
 msgstr "لم يتم العثور على قاعدة البيانات الجغرافية."
@@ -967,7 +1017,7 @@ msgstr "غامبيا"
 msgid "Gabon"
 msgstr "الجابون"
 
-#: modules/geo/classes/admin.php:341
+#: modules/geo/classes/admin.php:343
 msgid "from"
 msgstr "من"
 
@@ -1019,7 +1069,7 @@ msgstr "أثيوبيا"
 msgid "Estonia"
 msgstr "إستونيا"
 
-#: modules/geo/classes/admin.php:497
+#: modules/geo/classes/admin.php:507
 msgid "Error downloading database from: %1$s - %2$s"
 msgstr "خطأ في تحميل قاعدة البيانات من: %1$s - %2$s"
 
@@ -1031,7 +1081,7 @@ msgstr "إريتريا"
 msgid "Equatorial Guinea"
 msgstr "غينيا الإستوائية"
 
-#: modules/geo/classes/admin.php:362
+#: modules/geo/classes/admin.php:364
 msgid "Enter the name of the city, click the search button and pick one of the results to set the coordinates of the center."
 msgstr "أدخل اسم المدينة ، وانقر فوق زر البحث واختر إحدى النتائج لتعيين إحداثيات المركز."
 
@@ -1063,19 +1113,19 @@ msgstr "دومينيكا"
 msgid "Djibouti"
 msgstr "جيبوتي"
 
-#: modules/geo/classes/admin.php:349
+#: modules/geo/classes/admin.php:351
 msgid "Distance to center"
 msgstr "المسافة إلى المركز"
 
-#: modules/geo/classes/admin.php:334
+#: modules/geo/classes/admin.php:336
 msgid "Distance is less than or equal to"
 msgstr "المسافة أقل من أو تساوي"
 
-#: modules/geo/classes/admin.php:335
+#: modules/geo/classes/admin.php:337
 msgid "Distance is greater than"
 msgstr "المسافة أكبر من"
 
-#: modules/geo/classes/admin.php:337
+#: modules/geo/classes/admin.php:339
 msgid "Distance"
 msgstr "المسافة"
 
@@ -1087,11 +1137,11 @@ msgstr "عرض الإعلانات على أساس الموقع الجغرافي.
 msgid "Denmark"
 msgstr "الدنمارك"
 
-#: modules/geo/classes/admin.php:474
+#: modules/geo/classes/admin.php:484
 msgid "Database updated successfully!"
 msgstr "تم تحديث قاعدة البيانات بنجاح!"
 
-#: modules/geo/classes/admin.php:492
+#: modules/geo/classes/admin.php:502
 msgid "Database update failed"
 msgstr "فشل تحديث قاعدة البيانات"
 
@@ -1115,15 +1165,15 @@ msgstr "كوبا"
 msgid "Croatia/Hrvatska"
 msgstr "كرواتيا / هرفاتسكا"
 
-#: modules/geo/classes/admin.php:521
+#: modules/geo/classes/admin.php:531
 msgid "Could not open downloaded database for reading: %s"
 msgstr "تعذر فتح قاعدة البيانات التي تم تنزيلها لقراءة: %s"
 
-#: modules/geo/classes/admin.php:545
+#: modules/geo/classes/admin.php:555
 msgid "Could not open database for writing %s"
 msgstr "تعذر فتح قاعدة البيانات لكتابة %s"
 
-#: modules/geo/classes/admin.php:535
+#: modules/geo/classes/admin.php:545
 msgid "Could not access filesystem"
 msgstr "تعذر الوصول إلى نظام الملفات"
 
@@ -1135,7 +1185,7 @@ msgstr "كوت ديفوار"
 msgid "Costa Rica"
 msgstr "كوستا ريكا"
 
-#: modules/geo/classes/admin.php:241
+#: modules/geo/classes/admin.php:243
 #: modules/geo/admin/views/visitor-profile.php:15
 msgid "Coordinates"
 msgstr "إحداثيات"
@@ -1164,7 +1214,7 @@ msgstr "كولومبيا"
 msgid "Cocos Islands"
 msgstr "جزر كوكوس"
 
-#: modules/geo/classes/admin.php:309 modules/geo/classes/admin.php:359
+#: modules/geo/classes/admin.php:311 modules/geo/classes/admin.php:361
 msgid "City"
 msgstr "مدينة"
 
@@ -1200,7 +1250,7 @@ msgstr "جزر كايمان"
 msgid "Cape Verde"
 msgstr "الرأس الأخضر"
 
-#: modules/geo/classes/admin.php:361
+#: modules/geo/classes/admin.php:363
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -1216,11 +1266,11 @@ msgstr "الكاميرون"
 msgid "Cambodia"
 msgstr "كمبوديا"
 
-#: modules/geo/classes/admin.php:265
+#: modules/geo/classes/admin.php:267
 msgid "by specific location"
 msgstr "حسب موقع معين"
 
-#: modules/geo/classes/admin.php:269
+#: modules/geo/classes/admin.php:271
 msgid "by radius"
 msgstr "حسب نصف القطر"
 
@@ -1384,12 +1434,12 @@ msgstr "لم يتم العثور على العنوان: %s"
 msgid "Activate now"
 msgstr "تفعيل الآن"
 
-#: modules/geo/classes/admin.php:217 modules/geo/classes/public.php:180
+#: modules/geo/classes/admin.php:219 modules/geo/classes/public.php:180
 #: modules/geo/classes/public.php:336
 msgid "(unknown region)"
 msgstr "(منطقة غير معروفة)"
 
-#: modules/geo/classes/admin.php:208 modules/geo/classes/public.php:174
+#: modules/geo/classes/admin.php:210 modules/geo/classes/public.php:174
 #: modules/geo/classes/public.php:332
 msgid "(unknown city)"
 msgstr "(مدينة غير معروفة)"
@@ -1540,17 +1590,17 @@ msgstr "حقل ملف تعريف BuddyBoss"
 msgid "Stream"
 msgstr "Stream"
 
-#: modules/buddypress/admin.class.php:37
+#: modules/buddypress/admin.class.php:41
 msgid "Display ads on BuddyBoss related pages."
 msgstr "عرض الإعلانات على صفحات ذات صلة BuddyBoss."
 
-#: modules/buddypress/admin.class.php:36
+#: modules/buddypress/admin.class.php:40
 msgid "BuddyBoss Content"
 msgstr "محتوى BuddyBoss"
 
 #: modules/cache-busting/views/settings.php:42
 msgid "By default, cache busting only works through placements."
-msgstr "بشكل افتراضي ، لا تعمل عملية تفريغ ذاكرة التخزين المؤقت إلا من خلال المواضع."
+msgstr "بشكل افتراضي ، لا تعمل عملية تفادي التخزين المؤقت المؤقت إلا من خلال المواضع."
 
 #: modules/cache-busting/views/settings.php:77
 msgid "Update visitor profile"
@@ -1639,7 +1689,7 @@ msgstr "حد أدنى من الكلمات بين الإعلانات التي ي�
 msgid "Advanced Ads GmbH"
 msgstr "Advanced Ads GmbH"
 
-#: modules/duplicate-ads/admin.class.php:134
+#: modules/duplicate-ads/admin.class.php:160
 msgctxt "noun"
 msgid "copy"
 msgstr "نسخ"
@@ -1648,11 +1698,11 @@ msgstr "نسخ"
 msgid "Minimum length of content (in words) before automatically injected ads are allowed in them. Set to zero or leave empty to always display ads, regardless of how long the content is."
 msgstr "الحد الأدنى لطول المحتوى (بالكلمات) قبل السماح بالإعلانات المحقونة تلقائيًا فيها. عيِّن على صفر أو اتركه فارغًا لعرض الإعلانات دائمًا ، بصرف النظر عن طول المحتوى."
 
-#: modules/duplicate-ads/admin.class.php:81
+#: modules/duplicate-ads/admin.class.php:99
 msgid "Duplicate"
 msgstr "ينسخ"
 
-#: modules/duplicate-ads/admin.class.php:81
+#: modules/duplicate-ads/admin.class.php:99
 msgid "Create a copy of this ad"
 msgstr "قم بإنشاء نسخة من هذا الإعلان"
 
@@ -1670,7 +1720,7 @@ msgstr "قد تحتاج إلى تحديث ذاكرة التخزين المؤقت
 
 #: modules/cache-busting/views/settings.php:73
 msgid "Advanced Ads stores some user information in the user’s browser to limit the number of AJAX requests for cache busting. Manual"
-msgstr "تخزن الإعلانات المتقدمة بعض معلومات المستخدم في متصفح المستخدم للحد من عدد طلبات AJAX لتفريغ ذاكرة التخزين المؤقت."
+msgstr "تخزن الإعلانات المتقدمة بعض معلومات المستخدم في متصفح المستخدم للحد من عدد طلبات AJAX لتفادي التخزين المؤقت."
 
 #: modules/cache-busting/views/settings.php:70
 msgid "Visitor profile"
@@ -1916,10 +1966,11 @@ msgstr "النقرات المسموح بها على إعلان واحد قبل �
 #: modules/gamipress/views/visitor-condition-achievement.php:34
 #: modules/gamipress/views/visitor-condition-points.php:41
 #: modules/gamipress/views/visitor-condition-rank.php:41
-#: modules/geo/classes/admin.php:369
+#: modules/geo/classes/admin.php:371
 #: modules/group-refresh/views/settings_group_refresh.php:22
 #: modules/lazy-load/views/settings.php:10
 #: modules/parallax-ads/views/placement-options-after.php:24
+#: modules/responsive-ads/views/setting_fallback_width.php:16
 #: modules/rest-api/views/module-enable.php:15
 #: modules/geo/admin/views/setting-maxmind-license-key.php:10
 msgid "Manual"
@@ -1937,7 +1988,7 @@ msgstr "قم بتمكين الخرق السلبي لذاكرة التخزين ا
 msgid "Choose the fallback if “passive“ cache busting is not possible."
 msgstr "اختر الخيار الاحتياطي إذا لم يكن التحكُّم \"السلبي\" في ذاكرة التخزين المؤقت ممكنًا."
 
-#: modules/cache-busting/admin-ui.class.php:58
+#: modules/cache-busting/admin-ui.class.php:101
 #: modules/cache-busting/views/settings.php:31
 #: modules/cache-busting/views/settings.php:55
 msgid "AJAX"
@@ -2203,64 +2254,64 @@ msgstr "الحد الأقصى لعدد نقرات الإعلان"
 msgid "Click Fraud Protection"
 msgstr "الحماية من الاحتيال"
 
-#: modules/cache-busting/cache-busting.class.php:1688
+#: modules/cache-busting/cache-busting.class.php:1710
 msgctxt "placement admin label"
 msgid "Cache-busting:"
 msgstr "تفريغ ذاكرة التخزين المؤقت:"
 
-#: modules/cache-busting/cache-busting.class.php:1682
+#: modules/cache-busting/cache-busting.class.php:1704
 msgid "The ad is not displayed on the page"
 msgstr "لا يتم عرض الإعلان على الصفحة"
 
-#: modules/cache-busting/cache-busting.class.php:1681
+#: modules/cache-busting/cache-busting.class.php:1703
 msgid "The ad is displayed on the page"
 msgstr "يتم عرض الإعلان على الصفحة"
 
-#: modules/cache-busting/cache-busting.class.php:1678
+#: modules/cache-busting/cache-busting.class.php:1700
 #: modules/cache-busting/views/settings.php:24
 msgid "passive"
 msgstr "سلبي"
 
-#: modules/cache-busting/cache-busting.class.php:1672
+#: modules/cache-busting/cache-busting.class.php:1694
 msgid "The ad can work with passive cache-busting"
 msgstr "يمكن أن يعمل الإعلان مع التفريغ السلبي لذاكرة التخزين المؤقت"
 
-#: modules/cache-busting/cache-busting.class.php:1670
+#: modules/cache-busting/cache-busting.class.php:1692
 msgid "The ad can not work with passive cache-busting"
 msgstr "لا يمكن أن يعمل الإعلان مع التفريغ السلبي لذاكرة التخزين المؤقت"
 
 #: modules/cache-busting/admin.class.php:16
 msgid "Cache Busting"
-msgstr "تفريغ ذاكرة التخزين المؤقت"
+msgstr "تفادي التخزين المؤقت"
 
-#: modules/cache-busting/admin-ui.class.php:131
+#: modules/cache-busting/admin-ui.class.php:180
 msgid "The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not passive cache-busting."
 msgstr "يمكن لنوع إعلان <em> المجموعة الإعلانية </em> فقط استخدام  AJAX أو عدم استخدام تفريغ ذاكرة التخزين المؤقت ، ولكن لا يمكنه استخدام التفريغ السلبي لذاكرة التخزين المؤقت."
 
-#: modules/cache-busting/admin-ui.class.php:78
+#: modules/cache-busting/admin-ui.class.php:121
 msgctxt "placement admin label"
 msgid "Cache-busting"
 msgstr "تفريغ ذاكرة التخزين المؤقت:"
 
-#: modules/cache-busting/cache-busting.class.php:1685
+#: modules/cache-busting/cache-busting.class.php:1707
 msgctxt "setting label"
 msgid "off"
 msgstr "إيقاف"
 
-#: modules/cache-busting/cache-busting.class.php:1676
+#: modules/cache-busting/cache-busting.class.php:1698
 msgctxt "setting label"
 msgid "ajax"
 msgstr "ajax"
 
-#: modules/buddypress/admin.class.php:102
+#: modules/buddypress/admin.class.php:106
 msgid "Member List"
 msgstr "قائمة الأعضاء"
 
-#: modules/buddypress/admin.class.php:99
+#: modules/buddypress/admin.class.php:103
 msgid "Group List"
 msgstr "قائمة المجموعة"
 
-#: modules/buddypress/admin.class.php:83 modules/buddypress/admin.class.php:91
+#: modules/buddypress/admin.class.php:87 modules/buddypress/admin.class.php:95
 msgid "Activity Entry"
 msgstr "دخول النشاط"
 
@@ -2269,11 +2320,11 @@ msgstr "دخول النشاط"
 msgid "Inject after %s. entry"
 msgstr "احقن بعد %s. مدخل"
 
-#: modules/buddypress/admin.class.php:47
+#: modules/buddypress/admin.class.php:51
 msgid "Display ads on BuddyPress related pages."
 msgstr "عرض الإعلانات على صفحات ذات صلة BuddyPress."
 
-#: modules/buddypress/admin.class.php:46
+#: modules/buddypress/admin.class.php:50
 msgid "BuddyPress Content"
 msgstr "محتوى BuddyPress"
 
@@ -2441,7 +2492,7 @@ msgstr "لا توجد لغات معدة في WPML"
 #: modules/paid-memberships-pro/main.class.php:112
 #: modules/paid-memberships-pro/main.class.php:231
 #: modules/gamipress/views/visitor-condition-achievement.php:17
-#: modules/geo/classes/admin.php:282
+#: modules/geo/classes/admin.php:284
 msgid "is not"
 msgstr "ليس"
 
@@ -2452,7 +2503,7 @@ msgstr "ليس"
 #: modules/paid-memberships-pro/main.class.php:111
 #: modules/paid-memberships-pro/main.class.php:230
 #: modules/gamipress/views/visitor-condition-achievement.php:16
-#: modules/geo/classes/admin.php:281
+#: modules/geo/classes/admin.php:283
 msgid "is"
 msgstr "يكون"
 
@@ -2514,23 +2565,23 @@ msgstr "عنصر مانع الإعلانات"
 msgid "Ads for ad blockers"
 msgstr "إعلانات لأداة منع الإعلانات"
 
-#: modules/admin-bar/admin-bar.class.php:97
+#: modules/admin-bar/admin-bar.class.php:106
 msgid "placement"
 msgstr "الموضع"
 
-#: modules/admin-bar/admin-bar.class.php:94
+#: modules/admin-bar/admin-bar.class.php:103
 msgid "group"
 msgstr "مجموعة"
 
-#: modules/admin-bar/admin-bar.class.php:91
+#: modules/admin-bar/admin-bar.class.php:100
 msgid "ad"
 msgstr "إعلان"
 
-#: modules/admin-bar/admin-bar.class.php:49
+#: modules/admin-bar/admin-bar.class.php:58
 msgid "No Ads found"
 msgstr "لا توجد إعلانات"
 
-#: modules/admin-bar/admin-bar.class.php:41
+#: modules/admin-bar/admin-bar.class.php:50
 msgid "Ads"
 msgstr "إعلانات"
 
@@ -2542,20 +2593,20 @@ msgstr "عرض الإعلان مرة واحدة فقط في كل صفحة"
 msgid "Display only once"
 msgstr "عرض مرة واحدة فقط"
 
-#: classes/advanced-ads-pro.php:490
+#: classes/advanced-ads-pro.php:502
 msgid "Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities"
 msgstr "يرجى ملاحظة أن أدوار \"مسؤول الإعلانات\" و \"مدير الإعلانات\" تتمتعان بإمكانيات \"upload_files\" و \"uniltered_html\""
 
 #. %s is the plugin’s name.
-#: classes/advanced-ads-pro.php:300
+#: classes/advanced-ads-pro.php:312
 msgid "<strong>%s</strong> requires the <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> plugin to be installed and activated on your site."
 msgstr "يتطلب <strong> %s </strong> تثبيت وتفعيل المكوّن الإضافي <strong> <a href=\"https://wpadvancedads.com\" target=\"_blank\"> Advanced Ads </a> </strong> على موقعك."
 
-#: classes/advanced-ads-pro.php:315
+#: classes/advanced-ads-pro.php:327
 msgid "Install Now"
 msgstr "تثبيت الآن"
 
-#: classes/advanced-ads-pro.php:313
+#: classes/advanced-ads-pro.php:325
 msgid "Activate Now"
 msgstr " التفعيل الآن"
 
@@ -2580,14 +2631,14 @@ msgstr "دور مستخدم الإعلانات المتقدم"
 msgid "--no role--"
 msgstr "--لا دور--"
 
-#: classes/advanced-ads-pro-admin.php:41 classes/advanced-ads-pro.php:269
+#: classes/advanced-ads-pro-admin.php:41 classes/advanced-ads-pro.php:281
 msgid "Ad User"
 msgstr "مستخدم إعلان"
 
-#: classes/advanced-ads-pro-admin.php:40 classes/advanced-ads-pro.php:256
+#: classes/advanced-ads-pro-admin.php:40 classes/advanced-ads-pro.php:268
 msgid "Ad Manager"
 msgstr "مدير الإعلانات"
 
-#: classes/advanced-ads-pro-admin.php:39 classes/advanced-ads-pro.php:242
+#: classes/advanced-ads-pro-admin.php:39 classes/advanced-ads-pro.php:254
 msgid "Ad Admin"
 msgstr "مشرف الإعلان"

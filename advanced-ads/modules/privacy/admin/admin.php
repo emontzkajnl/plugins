@@ -15,11 +15,8 @@ class Advanced_Ads_Privacy_Admin {
 	 * Initialize the module
 	 */
 	private function __construct() {
-		// add module settings to Advanced Ads settings page
 		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ], 20 );
 		add_filter( 'advanced-ads-setting-tabs', [ $this, 'setting_tabs' ], 20 );
-
-		// additional ad options
 		add_action( 'advanced-ads-ad-params-after', [ $this, 'render_ad_options' ], 20 );
 		add_filter( 'advanced-ads-save-options', [ $this, 'save_ad_options' ], 10, 2 );
 	}
@@ -70,11 +67,14 @@ class Advanced_Ads_Privacy_Admin {
 		 *
 		 * @return array
 		 */
-		add_filter( 'advanced-ads-ad-admin-options', function( $options ) {
-			$options[] = ADVADS_PRIVACY_SLUG;
+		add_filter(
+			'advanced-ads-ad-admin-options',
+			function ( $options ) {
+				$options[] = ADVADS_PRIVACY_SLUG;
 
-			return $options;
-		} );
+				return $options;
+			}
+		);
 
 		add_settings_section(
 			ADVADS_PRIVACY_SLUG . '_settings_section',
@@ -119,15 +119,15 @@ class Advanced_Ads_Privacy_Admin {
 			],
 			'custom'     => [
 				'label'      => __( 'Cookie', 'advanced-ads' ),
-				'manual_url' => ADVADS_URL . 'manual/ad-cookie-consent/?utm_source=advanced-ads&utm_medium=link&utm_campaign=privacy-tab',
+				'manual_url' => 'https://wpadvancedads.com/manual/ad-cookie-consent/?utm_source=advanced-ads&utm_medium=link&utm_campaign=privacy-tab',
 			],
 			'iab_tcf_20' => [
 				'label'      => sprintf(
-					// translators: %s is a string with various CMPs (companies) that support the TCF standard
+					// translators: %s is a string with various CMPs (companies) that support the TCF standard.
 					__( 'TCF v2.0 integration (e.g., %s)', 'advanced-ads' ),
 					'Quantcast Choices'
 				),
-				'manual_url' => ADVADS_URL . 'manual/tcf-consent-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=privacy-tab',
+				'manual_url' => 'https://wpadvancedads.com/manual/tcf-consent-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=privacy-tab',
 			],
 		];
 		$current_method                = isset( $options['consent-method'] ) ? $options['consent-method'] : '';
@@ -135,7 +135,7 @@ class Advanced_Ads_Privacy_Admin {
 		$custom_cookie_value           = isset( $options['custom-cookie-value'] ) ? $options['custom-cookie-value'] : '';
 		$show_non_personalized_adsense = isset( $options['show-non-personalized-adsense'] );
 		$link_default_attrs            = [
-			'href'   => esc_url( ADVADS_URL . 'add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=privacy-cache' ),
+			'href'   => 'https://wpadvancedads.com/add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=privacy-cache',
 			'target' => '_blank',
 		];
 		$pro_link_attrs                = apply_filters( 'advanced-ads-privacy-custom-link-attributes', $link_default_attrs );
@@ -146,9 +146,8 @@ class Advanced_Ads_Privacy_Admin {
 			'<a %s>',
 			implode(
 				' ',
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- attrs get escaped below.
 				array_map(
-					function( $key, $value ) {
+					function ( $key, $value ) {
 						return sprintf( '%s="%s"', $key, esc_attr( $value ) );
 					},
 					array_keys( $pro_link_attrs ),
@@ -181,7 +180,7 @@ class Advanced_Ads_Privacy_Admin {
 		}
 
 		// Don't add override option if the ad is adsense and tcf is enabled, or if the ad is image or dummy.
-		$skip_option = ( $ad->type === 'adsense' && $privacy_options['consent-method'] === 'iab_tcf_20' ) || ! $privacy->ad_type_needs_consent( $ad->type );
+		$skip_option = ( 'adsense' === $ad->type && 'iab_tcf_20' === $privacy_options['consent-method'] ) || ! $privacy->ad_type_needs_consent( $ad->type );
 
 		if ( (bool) apply_filters( 'advanced-ads-ad-privacy-hide-ignore-consent', $skip_option, $ad, $privacy_options ) ) {
 			return;

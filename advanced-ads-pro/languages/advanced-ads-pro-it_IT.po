@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Advanced Ads Pro package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-02-03 15:16:57+0000\n"
+"PO-Revision-Date: 2023-11-08 21:29:44+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -11,35 +11,85 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: Advanced Ads Pro\n"
 
-#: modules/cache-busting/admin-ui.class.php:59
+#: modules/responsive-ads/views/setting_reload_ads.php:19
+msgid "You need to enable cache-busting in order to use this feature."
+msgstr "È necessario abilitare il busting della cache per utilizzare questa funzionalità."
+
+#. 1 is the opening link to the Advanced Ads website, 2 the closing link
+#: classes/advanced-ads-pro.php:508
+msgid "We have renamed the Responsive Ads add-on to ‘Advanced Ads AMP Ads’. With this change, the Browser Width visitor condition moved from that add-on into Advanced Ads Pro. You can deactivate ‘Advanced Ads AMP Ads’ if you don’t utilize AMP ads or the custom sizes feature for responsive AdSense ad units. %1$sRead more%2$s."
+msgstr "Abbiamo rinominato il componente aggiuntivo Responsive Ads in ‘Advanced Ads AMP Ads’. Con questa modifica, la condizione del visitatore Larghezza del browser è stata spostata da quel componente aggiuntivo a Advanced Ads Pro. Puoi disattivare ‘Advanced Ads AMP Ads’ se non utilizzi gli annunci AMP o la funzionalità Dimensioni personalizzate per le unità pubblicitarie AdSense reattive. %1$sPer saperne di più%2$s."
+
+#: modules/responsive-ads/includes/class-admin.php:45
+msgid "Responsive Image Ads"
+msgstr "Annunci illustrati reattivi"
+
+#: modules/responsive-ads/includes/class-admin.php:38
+msgid "Responsive Ads"
+msgstr "Annunci reattivi"
+
+#: modules/responsive-ads/views/setting_reload_ads.php:16
+msgid "Reload ads when the screen resizes."
+msgstr "Ricarica gli annunci quando lo schermo viene ridimensionato."
+
+#: modules/responsive-ads/includes/class-admin.php:53
+msgid "Reload ads on resize"
+msgstr "Ricarica gli annunci al ridimensionamento"
+
+#: modules/responsive-ads/includes/class-admin.php:61
+msgid "Fallback width"
+msgstr "Larghezza fallback"
+
+#: modules/responsive-ads/includes/class-common.php:39
+msgid "Display ads based on the browser width."
+msgstr "Visualizza gli annunci in base alla larghezza del browser."
+
+#: modules/cache-busting/admin-ui.class.php:56
+msgid "Couldn't find the placement."
+msgstr "Impossibile trovare il posizionamento."
+
+#: modules/responsive-ads/views/setting_responsive_images.php:15
+msgid "Check this option if the size of image ads is not adjusted responsively by your theme."
+msgstr "Seleziona questa opzione se la dimensione degli annunci illustrati non viene regolata in modo reattivo dal tuo tema."
+
+#: modules/cache-busting/admin-ui.class.php:53
+msgid "Cache busting has been successfully enabled for the assigned placement."
+msgstr "Il busting della cache è stato abilitato con successo per il posizionamento assegnato."
+
+#: modules/responsive-ads/includes/class-common.php:38
+msgid "browser width"
+msgstr "larghezza del browser"
+
+#: modules/cache-busting/admin-ui.class.php:102
 #: modules/cache-busting/views/settings.php:62
 msgid "off"
-msgstr ""
+msgstr "spento"
 
 #: modules/cache-busting/views/settings.php:18
 msgid "Choose which method to use when a placement needs cache busting and the option is set to “auto”."
-msgstr ""
+msgstr "Scegli quale metodo utilizzare quando un posizionamento necessita di busting della cache e l&rsquo;opzione è impostata su \"automatico\"."
 
-#: modules/cache-busting/admin-ui.class.php:57
+#: modules/cache-busting/admin-ui.class.php:100
 msgid "auto"
-msgstr ""
+msgstr "automatico"
 
-#: modules/geo/classes/admin.php:397
+#: modules/cache-busting/admin-ui.class.php:45
+#: modules/geo/classes/admin.php:407
 msgid "You are not allowed to do this."
-msgstr ""
+msgstr "Non ti è permesso farlo."
 
-#: modules/geo/classes/admin.php:405
+#: modules/geo/classes/admin.php:415
 msgid "Please provide a MaxMind license key"
-msgstr ""
+msgstr "Fornisci una chiave di licenza MaxMind"
 
 #. Link to parallax manual
 #: modules/parallax-ads/views/placement-options-after.php:24
 msgid "Optimized for image ads. %s"
-msgstr ""
+msgstr "Ottimizzato per gli annunci illustrati. %s"
 
 #: modules/parallax-ads/views/placement-options-after.php:19
 msgid "Enable the parallax effect."
-msgstr ""
+msgstr "Abilita effetto parallasse."
 
 #: modules/rest-api/classes/Admin_UI.php:33
 msgid "REST API"
@@ -79,7 +129,7 @@ msgstr "Reimposta il profilo del visitatore"
 msgid "Location based on your visitor profile cookie:"
 msgstr "Posizione basata sul cookie del tuo profilo visitatore:"
 
-#: modules/geo/classes/admin.php:374
+#: modules/geo/classes/admin.php:376
 msgid "Location based on your IP address"
 msgstr "Posizione basata sul tuo indirizzo IP"
 
@@ -100,29 +150,29 @@ msgstr "Visualizza gli annunci in base alla lingua della pagina impostata dal pl
 msgid "Display ads based on existing BuddyBoss groups."
 msgstr "Visualizza annunci basati su gruppi BuddyBoss esistenti."
 
-#: modules/geo/classes/admin.php:340
+#: modules/geo/classes/admin.php:342
 msgid "miles (mi)"
 msgstr "miglia (mi)"
 
-#: modules/geo/classes/admin.php:661
+#: modules/geo/classes/admin.php:678
 msgid "There was an error connecting to the search service."
 msgstr "Si è verificato un errore durante la connessione al servizio di ricerca."
 
-#: modules/geo/classes/admin.php:660
+#: modules/geo/classes/admin.php:677
 msgid "Your search did not return any results."
 msgstr "La tua ricerca non ha prodotto risultati."
 
 #. 1: A link to the geo location service.
-#: modules/geo/classes/admin.php:663
+#: modules/geo/classes/admin.php:680
 msgid "You can search for the geo coordinates manually at %1$s."
 msgstr "Puoi cercare le coordinate geografiche manualmente su %1$s."
 
 #. 1: The number of search results.
-#: modules/geo/classes/admin.php:659
+#: modules/geo/classes/admin.php:676
 msgid "Found %1$d results. Please pick the one, you want to use."
 msgstr "Trovato %1$d risultati. Seleziona quello che desideri utilizzare."
 
-#: modules/geo/classes/admin.php:339
+#: modules/geo/classes/admin.php:341
 msgid "kilometers (km)"
 msgstr "chilometri (km)"
 
@@ -139,12 +189,12 @@ msgstr "Zimbabwe"
 msgid "Zambia"
 msgstr "Zambia"
 
-#: modules/geo/classes/admin.php:234
+#: modules/geo/classes/admin.php:236
 msgid "Your IP address format is incorrect"
 msgstr "Il formato del tuo indirizzo IP non è corretto"
 
 #. %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:179
+#: modules/cache-busting/admin-ui.class.php:228
 msgid "You need a placement to deliver this group using cache busting. <a href=\"%s\" target=\"_blank\">Create a placement now.</a>"
 msgstr "È necessario un posizionamento per fornire questo gruppo utilizzando il busting della cache. <a href=\"%s\" target=\"_blank\">Crea un posizionamento ora.</a>"
 
@@ -260,11 +310,11 @@ msgstr "Togo"
 msgid "Timor-Leste"
 msgstr "Timor Est"
 
-#: modules/geo/classes/admin.php:324
+#: modules/geo/classes/admin.php:326
 msgid "This option can’t be used if your site is using sucuri.net."
 msgstr "Questa opzione non può essere utilizzata se il tuo sito utilizza sucuri.net."
 
-#: modules/geo/classes/admin.php:401
+#: modules/geo/classes/admin.php:411
 msgid "The upload dir is not available"
 msgstr "La directory di caricamento non è disponibile"
 
@@ -324,7 +374,7 @@ msgstr "Sudan"
 msgid "Sucuri Header (country only)"
 msgstr "Intestazione Sucuri (solo per paese)"
 
-#: modules/geo/classes/admin.php:307
+#: modules/geo/classes/admin.php:309
 msgid "State/Region"
 msgstr "Stato/Regione"
 
@@ -392,7 +442,7 @@ msgstr "Serbia"
 msgid "Senegal"
 msgstr "Senegal"
 
-#: modules/geo/classes/admin.php:360
+#: modules/geo/classes/admin.php:362
 msgid "Search"
 msgstr "Cerca"
 
@@ -477,7 +527,7 @@ msgid "Poland"
 msgstr "Polonia"
 
 #. 1: opening <a>-tag to Advanced Ads manual, 2: closing <a>-tag
-#: modules/geo/classes/admin.php:227
+#: modules/geo/classes/admin.php:229
 #: modules/geo/admin/views/setting-download.php:24
 msgid "Please read the %1$sinstallation instructions%2$s."
 msgstr "Leggi le %1$sistruzioni per installazione%2$s."
@@ -518,7 +568,7 @@ msgstr "Palau"
 msgid "Pakistan"
 msgstr "Pakistan"
 
-#: modules/geo/classes/admin.php:306 modules/geo/classes/admin.php:308
+#: modules/geo/classes/admin.php:308 modules/geo/classes/admin.php:310
 msgid "or"
 msgstr "o"
 
@@ -639,7 +689,7 @@ msgstr "Micronesia"
 msgid "Mexico"
 msgstr "Messico"
 
-#: modules/geo/classes/admin.php:76
+#: modules/geo/classes/admin.php:78
 msgid "Method"
 msgstr "Metodo"
 
@@ -647,11 +697,11 @@ msgstr "Metodo"
 msgid "Mayotte"
 msgstr "Mayotte"
 
-#: modules/geo/classes/admin.php:230
+#: modules/geo/classes/admin.php:232
 msgid "Maybe you are working on a local or secured environment."
 msgstr "Forse stai lavorando su un ambiente locale o protetto."
 
-#: modules/geo/classes/admin.php:57
+#: modules/geo/classes/admin.php:59
 msgid "MaxMind license key"
 msgstr "Chiave di licenza MaxMind"
 
@@ -659,7 +709,7 @@ msgstr "Chiave di licenza MaxMind"
 msgid "MaxMind database (default)"
 msgstr "Database MaxMind (predefinito)"
 
-#: modules/geo/classes/admin.php:66
+#: modules/geo/classes/admin.php:68
 msgid "MaxMind Database"
 msgstr "Database MaxMind."
 
@@ -715,7 +765,7 @@ msgstr "Macau"
 msgid "Luxembourg"
 msgstr "Lussemburgo"
 
-#: modules/geo/classes/admin.php:344
+#: modules/geo/classes/admin.php:346
 msgid "Longitude"
 msgstr "Longitudine"
 
@@ -747,7 +797,7 @@ msgstr "Libano"
 msgid "Latvia"
 msgstr "Lettonia"
 
-#: modules/geo/classes/admin.php:343
+#: modules/geo/classes/admin.php:345
 msgid "Latitude"
 msgstr "Latitudine"
 
@@ -760,7 +810,7 @@ msgstr "Ultimo aggiornamento: %s"
 msgid "Lao People's Democratic Republic"
 msgstr "Repubblica Democratica Popolare del Laos"
 
-#: modules/geo/classes/admin.php:86
+#: modules/geo/classes/admin.php:88
 msgid "Language of names"
 msgstr "Lingua dei nomi"
 
@@ -805,12 +855,12 @@ msgid "Italy"
 msgstr "Italia"
 
 #. %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:200
-msgid "It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href=\"%s\" target=\"_blank\">Activate cache busting for this placement.</a>"
-msgstr "Sembra che sia attivato un plugin di memorizzazione nella cache. I tuoi annunci potrebbero non ruotare correttamente, mentre il busting della cache è disabilitato per il posizionamento utilizzato dal tuo gruppo. <a href=\"%s\" target=\"_blank\">Attiva il busting della cache per questo posizionamento.</a>"
+#: modules/cache-busting/admin-ui.class.php:249
+msgid "It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href=\"#\" data-placement=\"%s\" class=\"js-placement-activate-cb\">Activate cache busting for this placement.</a>"
+msgstr "Sembra che sia attivato un plugin di memorizzazione nella cache. I tuoi annunci potrebbero non ruotare correttamente, mentre il busting della cache è disabilitato per il posizionamento utilizzato dal tuo gruppo. <a href=\"#\" data-placement=\"%s\" class=\"js-placement-activate-cb\">Attiva il busting della cache per questo posizionamento.</a>"
 
 #. %s is an URL.
-#: modules/cache-busting/admin-ui.class.php:156
+#: modules/cache-busting/admin-ui.class.php:205
 msgid "It seems that a caching plugin is activated. Your ads might not rotate properly while cache busting is disabled. <a href=\"%s\" target=\"_blank\">Activate cache busting.</a>"
 msgstr "Sembra che sia attivato un plugin di memorizzazione nella cache. I tuoi annunci potrebbero non ruotare correttamente mentre il busting della cache è disabilitato. <a href=\"%s\" target=\"_blank\">Attiva il busting della cache.</a>"
 
@@ -926,7 +976,7 @@ msgstr "Gibilterra"
 msgid "Ghana"
 msgstr "Ghana"
 
-#: modules/geo/classes/admin.php:342
+#: modules/geo/classes/admin.php:344
 msgid "get coordinates"
 msgstr "ottieni le coordinate"
 
@@ -938,7 +988,7 @@ msgstr "Germania"
 msgid "Georgia"
 msgstr "Georgia"
 
-#: modules/geo/classes/admin.php:49
+#: modules/geo/classes/admin.php:51
 msgid "Geo Targeting"
 msgstr "Geo Targeting"
 
@@ -946,7 +996,7 @@ msgstr "Geo Targeting"
 msgid "geo location"
 msgstr "posizione geografica"
 
-#: modules/geo/classes/admin.php:227
+#: modules/geo/classes/admin.php:229
 #: modules/geo/admin/views/setting-download.php:35
 msgid "Geo Databases not found."
 msgstr "Database geografico non trovato."
@@ -967,7 +1017,7 @@ msgstr "Gambia"
 msgid "Gabon"
 msgstr "Gabon"
 
-#: modules/geo/classes/admin.php:341
+#: modules/geo/classes/admin.php:343
 msgid "from"
 msgstr "da"
 
@@ -1019,7 +1069,7 @@ msgstr "Etiopia"
 msgid "Estonia"
 msgstr "Estonia"
 
-#: modules/geo/classes/admin.php:497
+#: modules/geo/classes/admin.php:507
 msgid "Error downloading database from: %1$s - %2$s"
 msgstr "Errore durante il download del database da: %1$s - %2$s"
 
@@ -1031,7 +1081,7 @@ msgstr "Eritrea"
 msgid "Equatorial Guinea"
 msgstr "Guinea Equatoriale"
 
-#: modules/geo/classes/admin.php:362
+#: modules/geo/classes/admin.php:364
 msgid "Enter the name of the city, click the search button and pick one of the results to set the coordinates of the center."
 msgstr "Inserisci il nome della città, fai clic sul pulsante di ricerca e scegli uno dei risultati per impostare le coordinate del centro."
 
@@ -1063,19 +1113,19 @@ msgstr "Dominica"
 msgid "Djibouti"
 msgstr "Gibuti"
 
-#: modules/geo/classes/admin.php:349
+#: modules/geo/classes/admin.php:351
 msgid "Distance to center"
 msgstr "Distanza dal centro"
 
-#: modules/geo/classes/admin.php:334
+#: modules/geo/classes/admin.php:336
 msgid "Distance is less than or equal to"
 msgstr "La distanza è inferiore o uguale a"
 
-#: modules/geo/classes/admin.php:335
+#: modules/geo/classes/admin.php:337
 msgid "Distance is greater than"
 msgstr "La distanza è maggiore di"
 
-#: modules/geo/classes/admin.php:337
+#: modules/geo/classes/admin.php:339
 msgid "Distance"
 msgstr "Distanza"
 
@@ -1087,11 +1137,11 @@ msgstr "Visualizza annunci in base alla posizione geografica."
 msgid "Denmark"
 msgstr "Danimarca"
 
-#: modules/geo/classes/admin.php:474
+#: modules/geo/classes/admin.php:484
 msgid "Database updated successfully!"
 msgstr "Database aggiornato correttamente!"
 
-#: modules/geo/classes/admin.php:492
+#: modules/geo/classes/admin.php:502
 msgid "Database update failed"
 msgstr "Aggiornamento del database fallito"
 
@@ -1115,15 +1165,15 @@ msgstr "Cuba"
 msgid "Croatia/Hrvatska"
 msgstr "Croazia / Hrvatska"
 
-#: modules/geo/classes/admin.php:521
+#: modules/geo/classes/admin.php:531
 msgid "Could not open downloaded database for reading: %s"
 msgstr "Impossibile aprire il database scaricato per la lettura: %s"
 
-#: modules/geo/classes/admin.php:545
+#: modules/geo/classes/admin.php:555
 msgid "Could not open database for writing %s"
 msgstr "Impossibile aprire il database per la scrittura %s"
 
-#: modules/geo/classes/admin.php:535
+#: modules/geo/classes/admin.php:545
 msgid "Could not access filesystem"
 msgstr "Impossibile accedere al filesystem"
 
@@ -1135,7 +1185,7 @@ msgstr "Costa d'Avorio"
 msgid "Costa Rica"
 msgstr "Costa Rica"
 
-#: modules/geo/classes/admin.php:241
+#: modules/geo/classes/admin.php:243
 #: modules/geo/admin/views/visitor-profile.php:15
 msgid "Coordinates"
 msgstr "Coordinate"
@@ -1164,7 +1214,7 @@ msgstr "Colombia"
 msgid "Cocos Islands"
 msgstr "Isole Cocos"
 
-#: modules/geo/classes/admin.php:309 modules/geo/classes/admin.php:359
+#: modules/geo/classes/admin.php:311 modules/geo/classes/admin.php:361
 msgid "City"
 msgstr "Città"
 
@@ -1200,7 +1250,7 @@ msgstr "Isole Cayman"
 msgid "Cape Verde"
 msgstr "Capo Verde"
 
-#: modules/geo/classes/admin.php:361
+#: modules/geo/classes/admin.php:363
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -1216,11 +1266,11 @@ msgstr "Cameroon"
 msgid "Cambodia"
 msgstr "Cambogia"
 
-#: modules/geo/classes/admin.php:265
+#: modules/geo/classes/admin.php:267
 msgid "by specific location"
 msgstr "per posizione specifica"
 
-#: modules/geo/classes/admin.php:269
+#: modules/geo/classes/admin.php:271
 msgid "by radius"
 msgstr "per raggio"
 
@@ -1384,12 +1434,12 @@ msgstr "Indirizzo non trovato: %s"
 msgid "Activate now"
 msgstr "Attiva ora"
 
-#: modules/geo/classes/admin.php:217 modules/geo/classes/public.php:180
+#: modules/geo/classes/admin.php:219 modules/geo/classes/public.php:180
 #: modules/geo/classes/public.php:336
 msgid "(unknown region)"
 msgstr "(regione sconosciuta)"
 
-#: modules/geo/classes/admin.php:208 modules/geo/classes/public.php:174
+#: modules/geo/classes/admin.php:210 modules/geo/classes/public.php:174
 #: modules/geo/classes/public.php:332
 msgid "(unknown city)"
 msgstr "(città sconosciuta)"
@@ -1540,11 +1590,11 @@ msgstr "Campo del profilo BuddyBoss"
 msgid "Stream"
 msgstr "Stream"
 
-#: modules/buddypress/admin.class.php:37
+#: modules/buddypress/admin.class.php:41
 msgid "Display ads on BuddyBoss related pages."
 msgstr "Visualizza annunci nelle pagine correlate a BuddyBoss."
 
-#: modules/buddypress/admin.class.php:36
+#: modules/buddypress/admin.class.php:40
 msgid "BuddyBoss Content"
 msgstr "Contenuto BuddyBoss"
 
@@ -1639,7 +1689,7 @@ msgstr "Una quantità minima di parole tra gli annunci inseriti automaticamente.
 msgid "Advanced Ads GmbH"
 msgstr "Advanced Ads GmbH"
 
-#: modules/duplicate-ads/admin.class.php:134
+#: modules/duplicate-ads/admin.class.php:160
 msgctxt "noun"
 msgid "copy"
 msgstr "copia"
@@ -1648,11 +1698,11 @@ msgstr "copia"
 msgid "Minimum length of content (in words) before automatically injected ads are allowed in them. Set to zero or leave empty to always display ads, regardless of how long the content is."
 msgstr "La lunghezza minima del contenuto (in parole) prima che gli annunci a iniezione automatica siano consentiti in esso. Imposta su zero o lascia vuoto per visualizzare sempre gli annunci, indipendentemente dalla durata del contenuto."
 
-#: modules/duplicate-ads/admin.class.php:81
+#: modules/duplicate-ads/admin.class.php:99
 msgid "Duplicate"
 msgstr "Duplica"
 
-#: modules/duplicate-ads/admin.class.php:81
+#: modules/duplicate-ads/admin.class.php:99
 msgid "Create a copy of this ad"
 msgstr "Crea una copia di questo annuncio"
 
@@ -1916,10 +1966,11 @@ msgstr "Clic ammessi su un singolo annuncio prima che venga rimosso"
 #: modules/gamipress/views/visitor-condition-achievement.php:34
 #: modules/gamipress/views/visitor-condition-points.php:41
 #: modules/gamipress/views/visitor-condition-rank.php:41
-#: modules/geo/classes/admin.php:369
+#: modules/geo/classes/admin.php:371
 #: modules/group-refresh/views/settings_group_refresh.php:22
 #: modules/lazy-load/views/settings.php:10
 #: modules/parallax-ads/views/placement-options-after.php:24
+#: modules/responsive-ads/views/setting_fallback_width.php:16
 #: modules/rest-api/views/module-enable.php:15
 #: modules/geo/admin/views/setting-maxmind-license-key.php:10
 msgid "Manual"
@@ -1937,7 +1988,7 @@ msgstr "Abilita il busting della cache passivo per tutti gli annunci ed i gruppi
 msgid "Choose the fallback if “passive“ cache busting is not possible."
 msgstr "Scegli il fallback se il busting della cache \"passivo\" non è possibile."
 
-#: modules/cache-busting/admin-ui.class.php:58
+#: modules/cache-busting/admin-ui.class.php:101
 #: modules/cache-busting/views/settings.php:31
 #: modules/cache-busting/views/settings.php:55
 msgid "AJAX"
@@ -2201,29 +2252,29 @@ msgstr "max. clic sugli annunci"
 msgid "Click Fraud Protection"
 msgstr "Protezione clic fraudolenti"
 
-#: modules/cache-busting/cache-busting.class.php:1688
+#: modules/cache-busting/cache-busting.class.php:1710
 msgctxt "placement admin label"
 msgid "Cache-busting:"
 msgstr "Busting della cache:"
 
-#: modules/cache-busting/cache-busting.class.php:1682
+#: modules/cache-busting/cache-busting.class.php:1704
 msgid "The ad is not displayed on the page"
 msgstr "L&rsquo;annuncio non è visualizzato sulla pagina"
 
-#: modules/cache-busting/cache-busting.class.php:1681
+#: modules/cache-busting/cache-busting.class.php:1703
 msgid "The ad is displayed on the page"
 msgstr "L&rsquo;annuncio è visualizzato sulla pagina"
 
-#: modules/cache-busting/cache-busting.class.php:1678
+#: modules/cache-busting/cache-busting.class.php:1700
 #: modules/cache-busting/views/settings.php:24
 msgid "passive"
 msgstr "passivo"
 
-#: modules/cache-busting/cache-busting.class.php:1672
+#: modules/cache-busting/cache-busting.class.php:1694
 msgid "The ad can work with passive cache-busting"
 msgstr "L'annuncio può funzionare con busting della cache passivo"
 
-#: modules/cache-busting/cache-busting.class.php:1670
+#: modules/cache-busting/cache-busting.class.php:1692
 msgid "The ad can not work with passive cache-busting"
 msgstr "L'annuncio non può funzionare con busting della cache passivo"
 
@@ -2231,34 +2282,34 @@ msgstr "L'annuncio non può funzionare con busting della cache passivo"
 msgid "Cache Busting"
 msgstr "Busting della cache"
 
-#: modules/cache-busting/admin-ui.class.php:131
+#: modules/cache-busting/admin-ui.class.php:180
 msgid "The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not passive cache-busting."
 msgstr "Il tipo di annuncio <em>Gruppo di annunci</em> può utilizzare solo AJAX o busting della cache inattivo, non può utilizzare busting della cache passivo."
 
-#: modules/cache-busting/admin-ui.class.php:78
+#: modules/cache-busting/admin-ui.class.php:121
 msgctxt "placement admin label"
 msgid "Cache-busting"
 msgstr "Busting della cache"
 
-#: modules/cache-busting/cache-busting.class.php:1685
+#: modules/cache-busting/cache-busting.class.php:1707
 msgctxt "setting label"
 msgid "off"
 msgstr "inattivo"
 
-#: modules/cache-busting/cache-busting.class.php:1676
+#: modules/cache-busting/cache-busting.class.php:1698
 msgctxt "setting label"
 msgid "ajax"
 msgstr "ajax"
 
-#: modules/buddypress/admin.class.php:102
+#: modules/buddypress/admin.class.php:106
 msgid "Member List"
 msgstr "Elenco membri"
 
-#: modules/buddypress/admin.class.php:99
+#: modules/buddypress/admin.class.php:103
 msgid "Group List"
 msgstr "Elenco  gruppo"
 
-#: modules/buddypress/admin.class.php:83 modules/buddypress/admin.class.php:91
+#: modules/buddypress/admin.class.php:87 modules/buddypress/admin.class.php:95
 msgid "Activity Entry"
 msgstr "Inserimento attività"
 
@@ -2267,11 +2318,11 @@ msgstr "Inserimento attività"
 msgid "Inject after %s. entry"
 msgstr "Inserisci dopo %s. inserimenti"
 
-#: modules/buddypress/admin.class.php:47
+#: modules/buddypress/admin.class.php:51
 msgid "Display ads on BuddyPress related pages."
 msgstr "Visualizza annunci sulle pagine correlate di BuddyPress."
 
-#: modules/buddypress/admin.class.php:46
+#: modules/buddypress/admin.class.php:50
 msgid "BuddyPress Content"
 msgstr "Contenuto BuddyPress"
 
@@ -2439,7 +2490,7 @@ msgstr "nessuna lingua impostata in WPML"
 #: modules/paid-memberships-pro/main.class.php:112
 #: modules/paid-memberships-pro/main.class.php:231
 #: modules/gamipress/views/visitor-condition-achievement.php:17
-#: modules/geo/classes/admin.php:282
+#: modules/geo/classes/admin.php:284
 msgid "is not"
 msgstr "non è"
 
@@ -2450,7 +2501,7 @@ msgstr "non è"
 #: modules/paid-memberships-pro/main.class.php:111
 #: modules/paid-memberships-pro/main.class.php:230
 #: modules/gamipress/views/visitor-condition-achievement.php:16
-#: modules/geo/classes/admin.php:281
+#: modules/geo/classes/admin.php:283
 msgid "is"
 msgstr "è"
 
@@ -2512,23 +2563,23 @@ msgstr "Elemento per Ad blocker"
 msgid "Ads for ad blockers"
 msgstr "Annunci per ad blocker"
 
-#: modules/admin-bar/admin-bar.class.php:93
+#: modules/admin-bar/admin-bar.class.php:106
 msgid "placement"
 msgstr "posizionamento"
 
-#: modules/admin-bar/admin-bar.class.php:90
+#: modules/admin-bar/admin-bar.class.php:103
 msgid "group"
 msgstr "gruppo"
 
-#: modules/admin-bar/admin-bar.class.php:87
+#: modules/admin-bar/admin-bar.class.php:100
 msgid "ad"
 msgstr "annuncio"
 
-#: modules/admin-bar/admin-bar.class.php:49
+#: modules/admin-bar/admin-bar.class.php:58
 msgid "No Ads found"
 msgstr "Nessun annuncio trovato"
 
-#: modules/admin-bar/admin-bar.class.php:41
+#: modules/admin-bar/admin-bar.class.php:50
 msgid "Ads"
 msgstr "Annunci"
 
@@ -2540,20 +2591,20 @@ msgstr "Visualizza l'annuncio solo una volta per pagina"
 msgid "Display only once"
 msgstr "Visualizza solo una volta"
 
-#: classes/advanced-ads-pro.php:490
+#: classes/advanced-ads-pro.php:502
 msgid "Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities"
 msgstr "Tieni presente che i ruoli \"Ad Admin\" e \"Ad Manager\" hanno le capacità \"upload_files\" e \"unfiltered_html\""
 
 #. %s is the plugin’s name.
-#: classes/advanced-ads-pro.php:300
+#: classes/advanced-ads-pro.php:312
 msgid "<strong>%s</strong> requires the <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> plugin to be installed and activated on your site."
 msgstr "<strong>%s</strong> richiede il plugin <strong><a href=\"https://wpadvancedads.com\" target=\"_blank\">Advanced Ads</a></strong> da installare e attivare sul tuo sito."
 
-#: classes/advanced-ads-pro.php:315
+#: classes/advanced-ads-pro.php:327
 msgid "Install Now"
 msgstr "Installa ora"
 
-#: classes/advanced-ads-pro.php:313
+#: classes/advanced-ads-pro.php:325
 msgid "Activate Now"
 msgstr "Attiva ora"
 
@@ -2578,14 +2629,14 @@ msgstr "Ruolo utente Advanced Ads"
 msgid "--no role--"
 msgstr "--nessun ruolo--"
 
-#: classes/advanced-ads-pro-admin.php:41 classes/advanced-ads-pro.php:269
+#: classes/advanced-ads-pro-admin.php:41 classes/advanced-ads-pro.php:281
 msgid "Ad User"
 msgstr "Ad User"
 
-#: classes/advanced-ads-pro-admin.php:40 classes/advanced-ads-pro.php:256
+#: classes/advanced-ads-pro-admin.php:40 classes/advanced-ads-pro.php:268
 msgid "Ad Manager"
 msgstr "Ad Manager"
 
-#: classes/advanced-ads-pro-admin.php:39 classes/advanced-ads-pro.php:242
+#: classes/advanced-ads-pro-admin.php:39 classes/advanced-ads-pro.php:254
 msgid "Ad Admin"
 msgstr "Ad Admin"

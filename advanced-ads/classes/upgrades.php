@@ -2,29 +2,29 @@
 
 /**
  * Upgrade logic from older data to new one
- * 
+ *
  * the version number itself is changed in /admin/includes/class-notices.php::register_version_notices()
- * 
+ *
  * @since   1.7
  * @todo    we need internal markers to check if the update ran on a normal request and not AJAX, where it happened to break sometimes
  */
 class Advanced_Ads_Upgrades {
-    
+
 	public function __construct(){
-	    
+
 		$internal_options = Advanced_Ads_Plugin::get_instance()->internal_options();
 
-		// the 'advanced_ads_edit_ads' capability was added to POST_TYPE_SLUG post type in this version
+		// the 'advanced_ads_edit_ads' capability was added to Entities::POST_TYPE_AD post type in this version
 		if ( ! isset( $internal_options['version'] ) || version_compare( $internal_options['version'], '1.7.2', '<' ) ) {
 			Advanced_Ads_Plugin::get_instance()->create_capabilities();
 		}
 
 		// suppress version update?
 		$suppress_version_number_update = false;
-		
+
 		// don’t upgrade if no previous version existed
 		if( ! empty( $internal_options['version'] ) ) {
-		    
+
 			/**
 			 * Example of how to use an update
 			 * this is no longer valid

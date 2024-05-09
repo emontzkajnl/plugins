@@ -15,33 +15,55 @@
 var advanced_ads_pro, advads_pro_utils;
 
 if (!advanced_ads_pro) {
-    advanced_ads_pro = {
-        ads: [],
-        passive_ads: {}, // passive ads that should be tracked
-        deferedAds: [], // ad requests that will be sent to the server using AJAX
-        blockme: false,
-        blockmeQueue: [],
-        observers: jQuery.Callbacks(),
-        postscribeObservers : jQuery.Callbacks(),
-        random_placements: false,
-        iterations: 0,
-        adblocker_active: false, // whether an ad blocker is active
+	advanced_ads_pro = {
+		ads: [],
+		passive_ads: {}, // passive ads that should be tracked
+		deferedAds: [], // ad requests that will be sent to the server using AJAX
+		blockme: false,
+		blockmeQueue: [],
+		observers: jQuery.Callbacks(),
+		postscribeObservers : jQuery.Callbacks(),
+		random_placements: false,
+		iterations: 0,
+		adblocker_active: false, // whether an ad blocker is active
 		injected: 0, // internal counter how many ads should be injected.
 		injected_done: 0, // internal counter how many ads have been injected.
-        options: {
-            action: "advads_ad_select", // service action
-        },
-        inject_before: [], // scripts to inject to the wrapper before other output.
+		options: {
+			action: "advads_ad_select", // service action
+		},
+		inject_before: [], // scripts to inject to the wrapper before other output.
+
+		/**
+		 * Dispatch a custom event after placement has been processed by cache busting.
+		 *
+		 * @param {string} id wrapper HTML ID
+		 * @param {boolean} isEmpty whether the wrapper get filled
+		 * @param {string} cacheBustingType cache busting type
+		 */
+		dispatchWrapperCBEvent( id, isEmpty, cacheBustingType ) {
+			document.dispatchEvent(
+				new CustomEvent(
+					'advads_pro_cache_busting_done',
+					{
+						detail: {
+							elementId: id,
+							isEmpty:   isEmpty,
+							type:      cacheBustingType
+						}
+					}
+				)
+			);
+		},
 
 		// whether cache-busting is working.
-        isBusy: false,
+		isBusy: false,
 		/**
 		 * Set busy state, and fire event.
 		 *
 		 * @param {boolean} busy
 		 */
 		set busy(busy) {
-        	this.isBusy = busy;
+			this.isBusy = busy;
 			document.dispatchEvent(new CustomEvent('advanced_ads_pro.' + (busy ? 'busy' : 'idle')));
 		},
 		/**
@@ -50,207 +72,243 @@ if (!advanced_ads_pro) {
 		 * @returns {boolean}
 		 */
 		get busy() {
-        	return this.isBusy;
+			return this.isBusy;
 		},
 
-        /**
-         * Prepare ajax requests.
-         *
-         * @param {obj} args
-         */
-        load: function (args) {
-            // read arguments
-            "use strict";
-            var id, method, params, elementId, placement_id, is_lazy, blog_id;
-            id = args.hasOwnProperty("id") ? args.id : null;
-            method = args.hasOwnProperty("method") ? args.method : null;
-            params = args.hasOwnProperty("params") && typeof args.params === 'object' ? this.add_general_ajax_args( args.params ) : {};
-            elementId = args.hasOwnProperty("elementid") ? args.elementid : null;
-            is_lazy = advanced_ads_pro_ajax_object.lazy_load_module_enabled && params && params.lazy_load === 'enabled';
-            blog_id = args.hasOwnProperty("blog_id") ? args.blog_id : '';
-            var server_conditions = args.hasOwnProperty("server_conditions") ? args.server_conditions : '';
+		/**
+		 * Prepare ajax requests.
+		 *
+		 * @param {obj} args
+		 */
+		load: function (args) {
+			// read arguments
+			"use strict";
+			var id, method, params, elementId, placement_id, is_lazy, blog_id;
+			id        = args.hasOwnProperty("id") ? args.id : null;
+			method    = args.hasOwnProperty("method") ? args.method : null;
+			params    = args.hasOwnProperty("params") && typeof args.params === 'object' ? this.add_general_ajax_args( args.params ) : {};
+			elementId = args.hasOwnProperty("elementid") ? args.elementid : null;
+			is_lazy   = advanced_ads_pro_ajax_object.lazy_load_module_enabled && params && params.lazy_load === 'enabled';
+			blog_id   = args.hasOwnProperty("blog_id") ? args.blog_id : '';
 
+			var server_conditions = args.hasOwnProperty("server_conditions") ? args.server_conditions : '';
 
-            if ( elementId && this.iterations > 1 ) {
-                jQuery( '.' + elementId ).empty();
-            }
+			if ( elementId && this.iterations > 1 ) {
+				jQuery( '.' + elementId ).empty();
+			}
 
-            if ( params && typeof params === 'object' ) {
-                // do not show `Custom Position` placement ad if selector doesn't exist
-                if ( ! advads_pro_utils.selector_exists( params ) ) {
-                    return;
-                }
+			if ( params && typeof params === 'object' ) {
+				// do not show `Custom Position` placement ad if selector doesn't exist
+				if ( ! advads_pro_utils.selector_exists( params ) ) {
+					return;
+				}
 
-                // do not deliver placement, that belongs to a test, and was not randomly selected by weight
-                if ( params.test_id ) {
-                    if ( params.previous_method === 'placement' ) {
-                        placement_id = params.previous_id;
-                    } else {
-                        placement_id = id;
-                    }
+				// do not deliver placement, that belongs to a test, and was not randomly selected by weight
+				if ( params.test_id ) {
+					if ( params.previous_method === 'placement' ) {
+						placement_id = params.previous_id;
+					} else {
+						placement_id = id;
+					}
 
-                    if ( jQuery.inArray( placement_id, this.get_random_placements() ) < 0 ) {
-                        return;
-                    }
-                }
+					if ( jQuery.inArray( placement_id, this.get_random_placements() ) < 0 ) {
+						return;
+					}
+				}
 
-                params.adblocker_active = this.adblocker_active;
+				params.adblocker_active = this.adblocker_active;
 
-                params = JSON.stringify( params );
-            }
+				params = JSON.stringify( params );
+			}
 
-            var obj = { ad_id: id, ad_method: method, ad_args: params, elementId: elementId, blog_id: blog_id, server_conditions: server_conditions };
+			var obj = { ad_id: id, ad_method: method, ad_args: params, elementId: elementId, blog_id: blog_id, server_conditions: server_conditions };
 
-            if ( is_lazy ) {
-                advanced_ads_pro.lazy_load.add( elementId, 'ajax', obj );
-                return;
-            }
+			if ( is_lazy ) {
+				advanced_ads_pro.lazy_load.add( elementId, 'ajax', obj );
+				return;
+			}
 
-            this.deferedAds[ this.deferedAds.length ] = obj;
-        },
+			this.deferedAds[ this.deferedAds.length ] = obj;
+		},
 
-        /**
-         * Add general AJAX arguments that were removed to reduce the size of the array printed in footer.
-         *
-         * @param {object} A list of arguments with general arguments removed.
-         * @return {object} A full list of arguments.
-         */
-        add_general_ajax_args: function( args ) {
-            if ( advads_pro_utils.isset( args.post ) && advads_ajax_queries_args[ args.post ] ) {
-                args.post = advads_ajax_queries_args[ args.post ];
-            }
-            return args;
-        },
+		/**
+		 * Add general AJAX arguments that were removed to reduce the size of the array printed in footer.
+		 *
+		 * @param {object} A list of arguments with general arguments removed.
+		 * @return {object} A full list of arguments.
+		 */
+		add_general_ajax_args: function( args ) {
+			if ( advads_pro_utils.isset( args.post ) && advads_ajax_queries_args[ args.post ] ) {
+				args.post = advads_ajax_queries_args[ args.post ];
+			}
+			return args;
+		},
 
-        hasAd: function (id, method, title, cb_type, elementId ) {
-            "use strict";
-            var ad = {id: id, type: method, title: title, cb_type: cb_type, elementId: elementId };
-            this.ads.push(ad);
-            this.observers.fire({ event: "hasAd", ad: ad });
-        },
+		hasAd: function (id, method, title, cb_type, elementId ) {
+			"use strict";
+			var ad = {id: id, type: method, title: title, cb_type: cb_type, elementId: elementId };
+			this.ads.push(ad);
+			this.observers.fire({ event: "hasAd", ad: ad });
+		},
 
-        // inject blocked ads that should not be defered any further
-        injectBlocked: function () {
-            "use strict";
-            var queue = this.blockmeQueue, ad, i, l = queue.length;
-            this.blockmeQueue = [];
-            for (i = 0; i < l; i += 1) {
-                ad = queue[i];
-                this.inject(ad[0], ad[1] );
-            }
-        },
+		// inject blocked ads that should not be defered any further
+		injectBlocked: function () {
+			"use strict";
+			var queue = this.blockmeQueue, ad, i, l = queue.length;
+			this.blockmeQueue = [];
+			for (i = 0; i < l; i += 1) {
+				ad = queue[i];
+				this.inject(ad[0], ad[1] );
+			}
+		},
 
-        /**
-         * Inject a script prior to injecting ads.
-         *
-         * @param {str} elementId Element id.
-         * @param {jQuery} ref Wrapper to inject ads.
-         * @return {jQuery} ref Wrapper to inject ads.
-         */
-        _inject_before: function( elementId, ref ) {
-            if ( elementId ) {
-                advads_pro_utils.each( advanced_ads_pro.inject_before, function( item ) {
-                    if ( item.elementId === elementId ) {
-                        advads_pro_utils.each( item.data, function( data ) {
-                            ref.append( data );
-                        } );
-                        //ref = jQuery( '[id=' + elementId + ']' );
-                        ref = jQuery( '.' + elementId );
-                        item.data = [];
-                    }
-                });
-            }
-            return ref;
-        },
+		/**
+		 * Inject a script prior to injecting ads.
+		 *
+		 * @param {str} elementId Element id.
+		 * @param {jQuery} ref Wrapper to inject ads.
+		 * @return {jQuery} ref Wrapper to inject ads.
+		 */
+		_inject_before: function( elementId, ref ) {
+			if ( elementId ) {
+				advads_pro_utils.each( advanced_ads_pro.inject_before, function( item ) {
+					if ( item.elementId === elementId ) {
+						advads_pro_utils.each( item.data, function( data ) {
+							ref.append( data );
+						} );
+						//ref = jQuery( '[id=' + elementId + ']' );
+						ref = jQuery( '.' + elementId );
+						item.data = [];
+					}
+				});
+			}
+			return ref;
+		},
 
-        /**
-        * Inject ad content, block if needed.
-        *
-        * @param {string} elementId id of the wrapper
-        * @param {string} ad content
-        */
-        inject: function ( elementId, ad  ) {
-            "use strict";
-            var that = this, async, ref;
+		/**
+		* Inject ad content, block if needed.
+		*
+		* @param {string} elementId id of the wrapper
+		* @param {string} ad content
+		*/
+		inject: function ( elementId, ad  ) {
+			"use strict";
+			var that = this, async, ref;
 
-            if (this.blockme) {
-                this.blockmeQueue.push( [ elementId, ad ] );
-                return;
-            }
+			if (this.blockme) {
+				this.blockmeQueue.push( [ elementId, ad ] );
+				return;
+			}
 
-            this.injected++;
+			this.injected++;
 
-            // If the ad is encoded, decode before injection.
-            var regExp = new RegExp(/^([\s\S]*?)<script[^>]+?data-tcf="waiting-for-consent"[^>]+>(.+?)<\/script>([\s\S]*)$/i);
-            var decodeAd = regExp.exec(ad);
-            // If this a wrapped group, iterate until there are no matches left.
-            while (decodeAd !== null) {
-            	var script = document.createElement('script');
+			// If the ad is encoded, decode before injection.
+			var regExp = new RegExp(/^([\s\S]*?)<script[^>]+?data-tcf="waiting-for-consent"[^>]+>(.+?)<\/script>([\s\S]*)$/i);
+			var decodeAd = regExp.exec(ad);
+			// If this a wrapped group, iterate until there are no matches left.
+			while (decodeAd !== null) {
+				var script = document.createElement('script');
 				script.setAttribute('type', 'text/plain');
-            	script.textContent = decodeAd[2];
+				script.textContent = decodeAd[2];
 				ad = decodeAd[1] + advads.privacy.decode_ad(script, false) + decodeAd[3];
 				decodeAd = regExp.exec(ad);
 			}
 
 
-            try {
-                async = (ad.match(/<script[^>]+src/) && ad.indexOf(" async") === -1);
+			try {
+				async = (ad.match(/<script[^>]+src/) && ad.indexOf(" async") === -1);
 
-                if ( elementId === null ) {
-                     ref = jQuery( 'head ');
-                } else {
-                    ref = jQuery( "." + elementId );
+				if ( elementId === null ) {
+					 ref = jQuery( 'head ');
+				} else {
+					ref = jQuery( "." + elementId );
 					if (!ref.length) {
 						this.injected--;
 						return;
 					}
-                }
+				}
 
-                if (async) {
-                    this.blockme = true;
+				if (async) {
+					this.blockme = true;
 
-                    ref = that._inject_before( elementId, ref );
+					ref = that._inject_before( elementId, ref );
 
-                    ref.each( function() {
-                        var $this = jQuery( this );
-                        advads_postscribe( $this, ad, {
-                            beforeWriteToken: that.beforeWriteToken,
-                            afterAsync: function () {
-                                that.blockme = false;
-                                that.injectBlocked();
-                            },
-                            done: function() {
-                                that.postscribeObservers.fire( { event: "postscribe_done", ref: ref, ad: ad } );
-                            },
+					ref.each( function() {
+						var $this = jQuery( this );
+						advads_postscribe( $this, ad, {
+							beforeWriteToken: that.beforeWriteToken,
+							afterAsync: function () {
+								that.blockme = false;
+								that.injectBlocked();
+							},
+							done: function() {
+								that.dispatchWrapperCBEvent( elementId, false, 'ajax' );
+								that.postscribeObservers.fire( { event: "postscribe_done", ref: ref, ad: ad } );
+							},
 							error: function (e) {
 								console.error(e);
 								advanced_ads_pro.injected--;
 							}
-                        });
-                    } );
-                } else {
+						});
+					} );
+				} else {
 
-                    ref = that._inject_before( elementId, ref );
+					ref = that._inject_before( elementId, ref );
 
-                    ref.each( function() {
-                        var $this = jQuery( this );
-                        advads_postscribe( $this, ad, {
-                            beforeWriteToken: that.beforeWriteToken,
-                            done: function() {
-                                that.postscribeObservers.fire( { event: "postscribe_done", ref: ref, ad: ad } );
-                            },
+					if ( ad.indexOf( 'gform.initializeOnLoaded' ) !== - 1 ) {
+						// move submit button event handlers into separate `<script />` tag.
+						const div     = document.createElement( 'DIV' );
+						div.innerHTML = ad;
+						const btn     = div.querySelector( 'input[type="submit"]' );
+
+						if ( btn ) {
+							const onclick    = btn.getAttribute( 'onclick' ),
+								  onkeypress = btn.getAttribute( 'onkeypress' ),
+								  id         = btn.id,
+								  script     = document.createElement( 'SCRIPT' );
+
+							btn.removeAttribute( 'onclick' );
+							btn.removeAttribute( 'onkeypress' );
+							script.innerHTML = ( ['click', 'keypress'].map(
+								function ( type ) {
+									return `document.body.addEventListener("${type}", function(event){if (event.target && event.target.id === "${this.id}"){${this[type]}}})`;
+								},
+								{id: id, click: onclick, keypress: onkeypress}
+							) ).join( ';' );
+							div.append( script );
+						}
+
+						const form   = div.querySelector( 'form' ),
+							  action = form.getAttribute( 'action' );
+
+						if ( action.includes( '#gf' ) ) {
+							// AJAX submit
+							form.setAttribute( 'action', `${window.location.href.split('#')[0]}#${action.split('#')[1]}` );
+						}
+
+						ad = div.innerHTML;
+					}
+
+					ref.each( function() {
+						var $this = jQuery( this );
+						advads_postscribe( $this, ad, {
+							beforeWriteToken: that.beforeWriteToken,
+							done: function() {
+								that.dispatchWrapperCBEvent( elementId, false, 'ajax' );
+								that.postscribeObservers.fire( { event: "postscribe_done", ref: ref, ad: ad } );
+							},
 							error: function (e) {
 								console.error(e);
 								advanced_ads_pro.injected--;
 							}
-                        });
-                    } );
-                }
-            } catch (err) {
+						});
+					} );
+				}
+			} catch (err) {
 				console.error(err);
 				this.injected--;
 			}
-        },
+		},
 
 		/**
 		 * Called before the `postscribe.js` library writes a token.
@@ -279,7 +337,7 @@ if (!advanced_ads_pro) {
 		},
 
 		loadAjaxAds: function() {
-            "use strict";
+			"use strict";
 
 			if ( ! this.deferedAds.length ) {
 				advanced_ads_pro.observers.fire({ event: "inject_ajax_ads", ad_ids: [] });
@@ -288,17 +346,20 @@ if (!advanced_ads_pro) {
 			}
 
 			var data = {
-				action: "advads_ad_select",
-				ad_ids: this.ads,
+				action:     'advads_ad_select',
+				ad_ids:     this.ads,
 				deferedAds: this.deferedAds,
-				consent: typeof advads === 'undefined' ? 'not_needed' : advads.privacy.get_state(),
+				consent:    typeof advads === 'undefined' ? 'not_needed' : advads.privacy.get_state(),
+				theId:      window.advanced_ads_pro_ajax_object.the_id,
+				isSingular: advanced_ads_pro_ajax_object.is_singular
 			};
 
 			document.dispatchEvent( new CustomEvent( 'advads_ajax_ad_select', {detail: data} ) );
 
 			this.deferedAds = [];
+			const self = this;
 
-            jQuery
+			jQuery
 				.ajax({ url: advanced_ads_pro_ajax_object.ajax_url, method: "POST", data: data, dataType: "json"})
 				.done(function( msg_bunch ) {
 					var ajax_ads = {};
@@ -307,6 +368,9 @@ if (!advanced_ads_pro) {
 						advanced_ads_pro.observe_injections();
 						for ( var j =0; j < msg_bunch.length; j++ ) {
 							var msg = msg_bunch[j];
+							if ( msg.status && msg.status === 'error' ) {
+								advanced_ads_pro.dispatchWrapperCBEvent( msg.elementId, true, 'ajax' );
+							}
 							if ( msg.hasOwnProperty("status") && msg.status === "success" && msg.hasOwnProperty("item") && msg.item ) {
 
 								if ( msg.inject_before ) {
@@ -341,7 +405,7 @@ if (!advanced_ads_pro) {
 				.fail(function() {
 					advanced_ads_pro.return_to_idle_injections_done();
 				})
-        },
+		},
 
 		/**
 		 * select random placements based on weight from placement tests
@@ -716,6 +780,8 @@ if (!advanced_ads_pro) {
 
 		handleResize();
 	});
+	// Reload on resize ends here.
+
 
 	if (typeof advads !== 'undefined' && typeof advads.privacy.dispatch_event !== 'undefined') {
 		// check for changes in privacy settings.
@@ -734,7 +800,7 @@ if (!advanced_ads_pro) {
 				var encodedAd = 'script[type="text/plain"][data-tcf="waiting-for-consent"]';
 
 				// Find all scripts and decode them.
-				document.querySelectorAll(encodedAd).forEach(function(node){
+				document.querySelectorAll(encodedAd).forEach(function(node) {
 					// Add the decoded ad ids to passive_ads, so they can be tracked.
 					if (!advanced_ads_pro.passive_ads.hasOwnProperty(node.dataset.bid)) {
 						advanced_ads_pro.passive_ads[node.dataset.bid] = [];
@@ -878,7 +944,9 @@ var Advads_passive_cb_Conditions = {
 	 */
 	check_mobile: function( options ) {
 		// https://github.com/kaimallea/isMobile
-		!function(a){var b=/iPhone/i,c=/iPod/i,d=/iPad/i,e=/(?=.*\bAndroid\b)(?=.*\bMobile\b)/i,f=/Android/i,g=/(?=.*\bAndroid\b)(?=.*\bSD4930UR\b)/i,h=/(?=.*\bAndroid\b)(?=.*\b(?:KFOT|KFTT|KFJWI|KFJWA|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|KFARWI|KFASWI|KFSAWI|KFSAWA)\b)/i,i=/IEMobile/i,j=/(?=.*\bWindows\b)(?=.*\bARM\b)/i,k=/BlackBerry/i,l=/BB10/i,m=/Opera Mini/i,n=/(CriOS|Chrome)(?=.*\bMobile\b)/i,o=/(?=.*\bFirefox\b)(?=.*\bMobile\b)/i,p=new RegExp("(?:Nexus 7|BNTV250|Kindle Fire|Silk|GT-P1000)","i"),q=function(a,b){return a.test(b)},r=function(a){var r=a||navigator.userAgent,s=r.split("[FBAN");return"undefined"!=typeof s[1]&&(r=s[0]),this.apple={phone:q(b,r),ipod:q(c,r),tablet:!q(b,r)&&q(d,r),device:q(b,r)||q(c,r)||q(d,r)},this.amazon={phone:q(g,r),tablet:!q(g,r)&&q(h,r),device:q(g,r)||q(h,r)},this.android={phone:q(g,r)||q(e,r),tablet:!q(g,r)&&!q(e,r)&&(q(h,r)||q(f,r)),device:q(g,r)||q(h,r)||q(e,r)||q(f,r)},this.windows={phone:q(i,r),tablet:q(j,r),device:q(i,r)||q(j,r)},this.other={blackberry:q(k,r),blackberry10:q(l,r),opera:q(m,r),firefox:q(o,r),chrome:q(n,r),device:q(k,r)||q(l,r)||q(m,r)||q(o,r)||q(n,r)},this.seven_inch=q(p,r),this.any=this.apple.device||this.android.device||this.windows.device||this.other.device||this.seven_inch,this.phone=this.apple.phone||this.android.phone||this.windows.phone,this.tablet=this.apple.tablet||this.android.tablet||this.windows.tablet,"undefined"==typeof window?this:void 0},s=function(){var a=new r;return a.Class=r,a};"undefined"!=typeof module&&module.exports&&"undefined"==typeof window?module.exports=r:"undefined"!=typeof module&&module.exports&&"undefined"!=typeof window?module.exports=s():"function"==typeof define&&define.amd?define("isMobile",[],a.isMobile=s()):a.isMobile=s()}(this);
+		// phpcs:disable
+		!function(a) {var b=/iPhone/i,c=/iPod/i,d=/iPad/i,e=/(?=.*\bAndroid\b)(?=.*\bMobile\b)/i,f=/Android/i,g=/(?=.*\bAndroid\b)(?=.*\bSD4930UR\b)/i,h=/(?=.*\bAndroid\b)(?=.*\b(?:KFOT|KFTT|KFJWI|KFJWA|KFSOWI|KFTHWI|KFTHWA|KFAPWI|KFAPWA|KFARWI|KFASWI|KFSAWI|KFSAWA)\b)/i,i=/IEMobile/i,j=/(?=.*\bWindows\b)(?=.*\bARM\b)/i,k=/BlackBerry/i,l=/BB10/i,m=/Opera Mini/i,n=/(CriOS|Chrome)(?=.*\bMobile\b)/i,o=/(?=.*\bFirefox\b)(?=.*\bMobile\b)/i,p=new RegExp("(?:Nexus 7|BNTV250|Kindle Fire|Silk|GT-P1000)","i"),q=function(a,b) {return a.test(b)},r=function(a) {var r=a||navigator.userAgent,s=r.split("[FBAN");return"undefined"!=typeof s[1]&&(r=s[0]),this.apple={phone:q(b,r),ipod:q(c,r),tablet:!q(b,r)&&q(d,r),device:q(b,r)||q(c,r)||q(d,r)},this.amazon={phone:q(g,r),tablet:!q(g,r)&&q(h,r),device:q(g,r)||q(h,r)},this.android={phone:q(g,r)||q(e,r),tablet:!q(g,r)&&!q(e,r)&&(q(h,r)||q(f,r)),device:q(g,r)||q(h,r)||q(e,r)||q(f,r)},this.windows={phone:q(i,r),tablet:q(j,r),device:q(i,r)||q(j,r)},this.other={blackberry:q(k,r),blackberry10:q(l,r),opera:q(m,r),firefox:q(o,r),chrome:q(n,r),device:q(k,r)||q(l,r)||q(m,r)||q(o,r)||q(n,r)},this.seven_inch=q(p,r),this.any=this.apple.device||this.android.device||this.windows.device||this.other.device||this.seven_inch,this.phone=this.apple.phone||this.android.phone||this.windows.phone,this.tablet=this.apple.tablet||this.android.tablet||this.windows.tablet,"undefined"==typeof window?this:void 0},s=function() {var a=new r;return a.Class=r,a};"undefined"!=typeof module&&module.exports&&"undefined"==typeof window?module.exports=r:"undefined"!=typeof module&&module.exports&&"undefined"!=typeof window?module.exports=s():"function"==typeof define&&define.amd?define("isMobile",[],a.isMobile=s()):a.isMobile=s()}(this);
+		// phpcs:enable
 
 		// previous implementation
 		if ( ! advads_pro_utils.isset( options.value ) ) {
@@ -1141,11 +1209,11 @@ var Advads_passive_cb_Conditions = {
 		var device = '';
 
 		for (var key in rules) {
-		    var reg = new RegExp(rules[key], 'i'); // convert to regEx
-		    if (reg.test(user_agent)) {
-			device = reg;
-			break;
-		    }
+			var reg = new RegExp( rules[key], 'i' ); // convert to regEx
+			if ( reg.test( user_agent ) ) {
+				device = reg;
+				break;
+			}
 		}
 
 		switch ( options.operator ) {
@@ -1288,7 +1356,7 @@ var Advads_passive_cb_Conditions = {
 
 		if ( options['geo_mode'] === 'latlon' ) {
 			var hasValidLatLonOptions = this.check_for_valid_lat_lon_options( options );
-			if ( hasValidLatLonOptions ){
+			if ( hasValidLatLonOptions ) {
 				var dst = advads_pro_utils.calculate_distance(
 					parseFloat( stored_condition.current_lat ), parseFloat( stored_condition.current_lon ),
 					parseFloat( options['lat'] ), parseFloat( options['lon'] ),
@@ -1564,10 +1632,9 @@ function Advads_passive_cb_Placement( placement, element_id ) {
 	// If not, ajax cache-busting will be used.
 	this.server_conditions = placement.server_conditions;
 
-    if ( placement.inject_before ) {
-        advanced_ads_pro.inject_before.push( { elementId: this.element_id, data: placement.inject_before } );
-    }
-
+		if ( placement.inject_before ) {
+			advanced_ads_pro.inject_before.push( { elementId: this.element_id, data: placement.inject_before } );
+		}
 };
 
 /**
@@ -1698,6 +1765,7 @@ Advads_passive_cb_Placement.prototype.output = function() {
 	 *     } );
 	 * }
 	 */
+	advanced_ads_pro.dispatchWrapperCBEvent( this.element_id, is_empty, 'passive' );
 	advanced_ads_pro.observers.fire( { event: "inject_placement", id: this.placement_id, is_empty: is_empty, cb_type: 'passive' } );
 	advanced_ads_pro.hasAd( this.placement_id, 'placement', this.placement_id, 'passive' );
 }
@@ -1929,14 +1997,15 @@ Advads_passive_cb_Ad.prototype.can_display_by_timeout = function() {
  * @return {bool} true if limit is not reached, false otherwise
  */
 Advads_passive_cb_Ad.prototype.can_display_by_display_limit = function() {
-    if ( this.once_per_page ) {
-        for ( var i = 0; i < advanced_ads_pro.ads.length; i++ ) {
-            if ( advanced_ads_pro.ads[ i ].type === 'ad' && parseInt( advanced_ads_pro.ads[ i ].id, 10 ) === this.id  ) {
-                return false;
-            }
-        };
-    }
-    return true;
+		if ( this.once_per_page ) {
+			var adsLen = advanced_ads_pro.ads.length
+			for ( var i = 0; i < adsLen; i++ ) {
+				if ( advanced_ads_pro.ads[ i ].type === 'ad' && parseInt( advanced_ads_pro.ads[ i ].id, 10 ) === this.id  ) {
+					return false;
+				}
+			};
+		}
+		return true;
 }
 
 /**
@@ -2098,23 +2167,23 @@ Advads_passive_cb_Group.prototype.output = function() {
 }
 
 Advads_passive_cb_Group.prototype.output_refresh = function() {
-    var ordered_ad_ids = this.ordered_ad_ids,
-        output_buffer = [],
-        self = this,
-        index = 0,
-        ad_id,
-        prev_ad_id = false,
-        tracked_ads = [],
-        ads_displayed = 0,
-        interval = this.refresh_interval;
+		var ordered_ad_ids = this.ordered_ad_ids,
+		output_buffer      = [],
+		self               = this,
+		index              = 0,
+		ad_id,
+		prev_ad_id         = false,
+		tracked_ads        = [],
+		ads_displayed      = 0,
+		interval           = this.refresh_interval;
 
-        var $el = jQuery( '.' + self.elementid );
-        $el = advanced_ads_pro._inject_before( this.elementid, $el );
+		var $el = jQuery( '.' + self.elementid );
+		$el     = advanced_ads_pro._inject_before( this.elementid, $el );
 
 
-    if ( ! Array.isArray( ordered_ad_ids ) || ! jQuery.isPlainObject( this.ads ) ) {
-        return;
-    }
+		if ( ! Array.isArray( ordered_ad_ids ) || ! jQuery.isPlainObject( this.ads ) ) {
+			return;
+		}
 
 	/**
 	 * Track the ad.
@@ -2175,50 +2244,53 @@ Advads_passive_cb_Group.prototype.output_refresh = function() {
 		return position;
 	}
 
-    (function tick() {
-		var new_ids = pick_ids();
-		for ( var i = 0; i < new_ids.length; i++ ) {
-			var ad_id = new_ids[ i ];
-			var ad_info = self.ads[ ad_id ];
-			if ( typeof ad_info === 'object' ) {
-				var ad = new Advads_passive_cb_Ad( ad_info, self.elementid );
-				if ( ad.can_display() ) {
-					// The first ad will be tracked like all other passive ads.
-					if ( ads_displayed === 0 ) {
-						output_buffer = [ ad.output( { track: true, inject: false, do_has_ad: true } ) ];
-						advanced_ads_group_refresh.prepare_wrapper( $el, get_position( ad ), true );
-					} else {
-						var do_has_ad = jQuery.inArray( ad_id, tracked_ads ) < 0;
-						output_buffer = [ ad.output( { track: false, inject: false, do_has_ad: do_has_ad } ) ];
-						track_ad( ad );
-						advanced_ads_group_refresh.prepare_wrapper( $el, get_position( ad ), false );
-					}
-					tracked_ads.push(ad.id);
-
-					advanced_ads_pro.inject( self.elementid, self.add_group_wrap( output_buffer, 1 ) );
-					self.is_empty = false;
-					ads_displayed++;
-					setTimeout( function() {
-						if ( ! self.placement || self.placement.can_display() ) {
-							tick()
+		(function tick() {
+			var new_ids = pick_ids();
+			var idsLen  = new_ids.length
+			for ( var i = 0; i < idsLen; i++ ) {
+				var ad_id   = new_ids[ i ];
+				var ad_info = self.ads[ ad_id ];
+				if ( typeof ad_info === 'object' ) {
+					var ad = new Advads_passive_cb_Ad( ad_info, self.elementid );
+					if ( ad.can_display() ) {
+						// The first ad will be tracked like all other passive ads.
+						if ( ads_displayed === 0 ) {
+							output_buffer = [ ad.output( { track: true, inject: false, do_has_ad: true } ) ];
+							advanced_ads_group_refresh.prepare_wrapper( $el, get_position( ad ), true );
+						} else {
+							var do_has_ad = jQuery.inArray( ad_id, tracked_ads ) < 0;
+							output_buffer = [ ad.output( { track: false, inject: false, do_has_ad: do_has_ad } ) ];
+							track_ad( ad );
+							advanced_ads_group_refresh.prepare_wrapper( $el, get_position( ad ), false );
 						}
-					}, get_ad_interval( ad_id ) );
-					prev_ad_id = ad.id;
-					break;
+						tracked_ads.push( ad.id );
+
+						advanced_ads_pro.inject( self.elementid, self.add_group_wrap( output_buffer, 1 ) );
+						self.is_empty = false;
+						ads_displayed++;
+						setTimeout( function() {
+							if ( ! self.placement || self.placement.can_display() ) {
+								tick()
+							}
+						}, get_ad_interval( ad_id ) );
+						prev_ad_id = ad.id;
+						break;
+					}
 				}
 			}
-		}
-    })();
+		})();
 }
 
 /**
- * get markup to inject around each ad and around entire set of ads (if needed)
+ * Get markup to inject around each ad and around entire set of ads (if needed)
  *
  * @param arr output_buffer
  * @return string
  */
 Advads_passive_cb_Group.prototype.add_group_wrap = function( output_buffer, ads_displayed ) {
-    if ( ! output_buffer.length ) { return ''; }
+		if ( ! output_buffer.length ) {
+			return '';
+		}
 
 	var before = '', after = '';
 
@@ -2348,43 +2420,43 @@ Advads_passive_cb_Group.prototype.shuffle_ads = function() {
 }
 
 if ( ! advads_pro_utils ) {
-    advads_pro_utils = {
-        debug: window.location && window.location.hash && window.location.hash.indexOf( '#debug=true' ) !== -1,
+	advads_pro_utils = {
+		debug: window.location && window.location.hash && window.location.hash.indexOf( '#debug=true' ) !== -1,
 
-        // Loop over each item in an array-like value.
-        each: function( arr, fn, _this ) {
-            var i, len = ( arr && arr.length ) || 0;
-            for ( i = 0; i < len; i++ ) {
-                fn.call( _this, arr[ i ], i );
-            }
-        },
-        // Loop over each key/value pair in a hash.
-        each_key: function(obj, fn, _this) {
-            if ( 'object' === typeof obj ) {
-                var key;
-                for( key in obj ) {
-                    if ( obj.hasOwnProperty( key ) ) {
-                        fn.call( _this, key, obj[ key ] );
-                    }
-                }
-            }
+		// Loop over each item in an array-like value.
+		each: function( arr, fn, _this ) {
+			var i, len = ( arr && arr.length ) || 0;
+			for ( i = 0; i < len; i++ ) {
+				fn.call( _this, arr[ i ], i );
+			}
+		},
+		// Loop over each key/value pair in a hash.
+		each_key: function(obj, fn, _this) {
+			if ( 'object' === typeof obj ) {
+				var key;
+				for ( key in obj ) {
+					if ( obj.hasOwnProperty( key ) ) {
+						fn.call( _this, key, obj[ key ] );
+					}
+				}
+			}
 
-        },
+		},
 
-        /**
-         * Log messages to the browser console.
-         */
-        log: function() {
-            if ( this.debug && this.isset( window.console ) ) {
-                var args = Array.prototype.slice.call( arguments );
-                args.unshift( 'Advanced Ads CB:' );
-                window.console.log.apply( window.console, args );
-            }
-        },
+		/**
+		 * Log messages to the browser console.
+		 */
+		log: function() {
+			if ( this.debug && this.isset( window.console ) ) {
+				var args = Array.prototype.slice.call( arguments );
+				args.unshift( 'Advanced Ads CB:' );
+				window.console.log.apply( window.console, args );
+			}
+		},
 
-        /**
-         * Log cache-busting arrays (AJAX and passive cb).
-         */
+		/**
+		 * Log cache-busting arrays (AJAX and passive cb).
+		 */
 		print_debug_arrays: function() {
 			if ( advanced_ads_pro.iterations === 0 ) {
 				// Available when passive cb is enabled for all ads/groups which are not delivered through a placement.
@@ -2398,112 +2470,113 @@ if ( ! advads_pro_utils ) {
 			}
 		},
 
-        isset: function( str ) {
-            return typeof str !== 'undefined';
-        },
+		isset: function( str ) {
+			return typeof str !== 'undefined';
+		},
 
-        /**
-         * check if nested object key exists
-         *
-         * @param {obj}
-         * @params {str} level1, .. levelN
-         * @return {bool} true on success false on failure
-         */
-        isset_nested: function ( obj ) {
-            for ( var i = 1; i < arguments.length; i++ ) {
-                if ( ! obj || ! obj.hasOwnProperty( arguments[i] ) ) {
-                    return false;
-                }
-                obj = obj[arguments[i]];
-            }
-            return true;
-        },
-        is_numeric: function( n ) {
-            return ! isNaN( parseFloat( n ) ) && isFinite( n );
-        },
-        // generate a random number between min and max (inclide min and max)
-        get_random_number: function( min, max ) {
-            var rand = min - 0.5 + Math.random() * (max - min + 1)
-            return Math.round( rand );
-        },
+		/**
+		 * Check if nested object key exists
+		 *
+		 * @param {obj}
+		 * @params {str} level1, .. levelN
+		 * @return {bool} true on success false on failure
+		 */
+		isset_nested: function ( obj ) {
+			var argsLen = arguments.length
+			for ( var i = 1; i < argsLen; i++ ) {
+				if ( ! obj || ! obj.hasOwnProperty( arguments[i] ) ) {
+					return false;
+				}
+				obj = obj[arguments[i]];
+			}
+			return true;
+		},
+		is_numeric: function( n ) {
+			return ! isNaN( parseFloat( n ) ) && isFinite( n );
+		},
+		// generate a random number between min and max (inclide min and max)
+		get_random_number: function( min, max ) {
+			var rand = min - 0.5 + Math.random() * (max - min + 1)
+			return Math.round( rand );
+		},
 
-        /**
-         * get random element by weight
-         *
-         * @param {object} weights e.g. {'A' => 2, 'B' => 3, 'C' => 5}
-         * @param {string} key to skip, e.g. 'A'
-         * @source applied with fix for order http://stackoverflow.com/a/11872928/904614
-         */
-        get_random_el_by_weight: function( weights, skip ) {
-            var max = 0, rand;
-            skip = typeof skip !== 'undefined' ? skip : false;
+		/**
+		 * Get random element by weight
+		 *
+		 * @param {object} weights e.g. {'A' => 2, 'B' => 3, 'C' => 5}
+		 * @param {string} key to skip, e.g. 'A'
+		 * @source applied with fix for order http://stackoverflow.com/a/11872928/904614
+		 */
+		get_random_el_by_weight: function( weights, skip ) {
+			var max = 0, rand;
+			skip    = typeof skip !== 'undefined' ? skip : false;
 
-            if ( typeof weights === 'object' )  {
-                for ( var el in weights ) {
-                    if ( el !== skip && weights.hasOwnProperty( el ) ) {
-                        max += parseInt( weights[el] ) || 0;
-                    }
-                }
+			if ( typeof weights === 'object' ) {
+				for ( var el in weights ) {
+					if ( el !== skip && weights.hasOwnProperty( el ) ) {
+						max += parseInt( weights[el] ) || 0;
+					}
+				}
 
-                if ( max < 1 ) {
-                    return null;
-                }
+				if ( max < 1 ) {
+					return null;
+				}
 
-                rand = advads_pro_utils.get_random_number( 1, max );
+				rand = advads_pro_utils.get_random_number( 1, max );
 
-                for ( var el in weights ) {
-                    if ( el !== skip && weights.hasOwnProperty( el ) ) {
-                        rand -= weights[ el ];
-                        if ( rand <= 0 ) {
-                            return el;
-                        }
-                    }
-                }
-            }
-        },
+				for ( var el in weights ) {
+					if ( el !== skip && weights.hasOwnProperty( el ) ) {
+						rand -= weights[ el ];
+						if ( rand <= 0 ) {
+							return el;
+						}
+					}
+				}
+			}
+		},
 
-        /**
-         * A 'polyfill' of the native 'bind' function.
-         *
-         * @param {function} func
-         * @param {obj} context
-         */
-        bind: function( func, context ) {
-            return function() {
-                return func.apply( context, arguments );
-           };
-        },
+		/**
+		 * A 'polyfill' of the native 'bind' function.
+		 *
+		 * @param {function} func
+		 * @param {obj} context
+		 */
+		bind: function( func, context ) {
+			return function() {
+				return func.apply( context, arguments );
+			};
+		},
 
-        /**
-         * Shuffle array (knuthfisheryates).
-         * http://stackoverflow.com/a/2450976/1037948
-         *
-         * @param {array} arr
-         * @return {array} arr
-         */
-        shuffle_array: function( arr ) {
-            var temp, j, i = arr.length;
-            if ( ! i ) {
-                return arr;
-            }
-            while ( --i ) {
-                j = ~~( Math.random() * ( i + 1 ) );
-                temp = arr[ i ];
-                arr[ i ] = arr[ j ];
-                arr[ j ] = temp;
-            }
+		/**
+		 * Shuffle array (knuthfisheryates).
+		 * http://stackoverflow.com/a/2450976/1037948
+		 *
+		 * @param {array} arr
+		 * @return {array} arr
+		 */
+		shuffle_array: function( arr ) {
+			var temp, j, i = arr.length;
+			if ( ! i ) {
+				return arr;
+			}
+			while ( --i ) {
+				j        = ~~( Math.random() * ( i + 1 ) );
+				temp     = arr[ i ];
+				arr[ i ] = arr[ j ];
+				arr[ j ] = temp;
+			}
 
-            return arr;
-        },
+			return arr;
+		},
 
-        /**
-         * Check if the selector of the Custom position placement exists.
-         *
-         * @param {array} params Placement options.
-         * @return bool
-         */
-        selector_exists: function( params ) {
-            var cp_target = ( ! params.inject_by || params.inject_by === 'pro_custom_element' ) ? 'pro_custom_element' : 'container_id';
+		/**
+		 * Check if the selector of the Custom position placement exists.
+		 *
+		 * @param {array} params Placement options.
+		 * @return bool
+		 */
+		selector_exists: function( params ) {
+			var cp_target = ( ! params.inject_by || params.inject_by === 'pro_custom_element' ) ? 'pro_custom_element' : 'container_id';
 			var el = params[ cp_target ];
 			if ( ! el ) {
 				// Not Custom Position placement.
@@ -2512,45 +2585,44 @@ if ( ! advads_pro_utils ) {
 
 			var $el = jQuery( el );
 
-            if ( ! $el.length ) {
+			if ( ! $el.length ) {
 				advads_pro_utils.log( "selector does not exist", el );
-                return false;
-            }
-            if ( ! advanced_ads_pro_ajax_object.moveintohidden && ! $el.filter( ':visible' ).length ) {
+				return false;
+			}
+			if ( ! advanced_ads_pro_ajax_object.moveintohidden && ! $el.filter( ':visible' ).length ) {
 				advads_pro_utils.log( "selector is hidden", el );
-                return false;
-            }
-            return true;
-        },
+				return false;
+			}
+			return true;
+		},
 
-        /**
-         * Converts the number in degrees to the radians.
-         */
-        deg2rad: function( deg ) {
-            return deg * Math.PI / 180;
-        },
+		/**
+		 * Converts the number in degrees to the radians.
+		 */
+		deg2rad: function( deg ) {
+			return deg * Math.PI / 180;
+		},
 
-        /**
-         * Computes the distance between the coordinates and returns the result.
-         */
-        calculate_distance: function( lat1, lon1, lat2, lon2, unit ) {
-            unit = unit || 'km';
-            lat1 = this.deg2rad( lat1 );
-            lon1 = this.deg2rad( lon1 );
-            lat2 = this.deg2rad( lat2 );
-            lon2 = this.deg2rad( lon2 );
+		/**
+		 * Computes the distance between the coordinates and returns the result.
+		 */
+		calculate_distance: function( lat1, lon1, lat2, lon2, unit ) {
+			unit = unit || 'km';
+			lat1 = this.deg2rad( lat1 );
+			lon1 = this.deg2rad( lon1 );
+			lat2 = this.deg2rad( lat2 );
+			lon2 = this.deg2rad( lon2 );
 
-            dLon = lon2 - lon1;
-            a = Math.pow( Math.cos( lat2 ) * Math.sin( dLon ), 2 ) + Math.pow( Math.cos( lat1 ) * Math.sin( lat2 ) - Math.sin( lat1 ) * Math.cos( lat2 ) * Math.cos( dLon ), 2 );
-            b = Math.sin( lat1 ) * Math.sin( lat2 ) + Math.cos( lat1 ) * Math.cos( lat2 ) * Math.cos( dLon );
+			dLon = lon2 - lon1;
+			a    = Math.pow( Math.cos( lat2 ) * Math.sin( dLon ), 2 ) + Math.pow( Math.cos( lat1 ) * Math.sin( lat2 ) - Math.sin( lat1 ) * Math.cos( lat2 ) * Math.cos( dLon ), 2 );
+			b    = Math.sin( lat1 ) * Math.sin( lat2 ) + Math.cos( lat1 ) * Math.cos( lat2 ) * Math.cos( dLon );
 
-            rad = Math.atan2( Math.sqrt( a ), b );
-            if ( unit == 'mi' ){
-                return rad * 3958.755865744; //6371.0 / 1.609344;
-            }
-            else{
-                return rad * 6371.0;
-            }
+			rad = Math.atan2( Math.sqrt( a ), b );
+			if ( unit == 'mi' ) {
+				return rad * 3958.755865744;
+			} else {
+				return rad * 6371.0;
+			}
 		},
 
 		/**
@@ -2577,7 +2649,7 @@ if ( ! advads_pro_utils ) {
 
 			return cookie_obj.data;
 		}
-    };
+	};
 }
 
 
@@ -2614,8 +2686,9 @@ var advanced_ads_group_refresh = {
 					if ( now > ( call_time - 1000 ) ) {
 						// Gather multiple requests into one request.
 						var queries_for_time = queries[ call_time ];
+						var queries_length   = queries_for_time.length
 
-						for ( var i = 0; i < queries_for_time.length; i++ ){
+						for ( var i = 0; i < queries_length; i++ ) {
 							requests.push( queries_for_time[ i ] );
 						}
 

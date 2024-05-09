@@ -1,4 +1,7 @@
 <?php
+
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Injects ads in the content based on an XPath expression.
  */
@@ -337,7 +340,7 @@ class Advanced_Ads_In_Content_Injector {
 			 * * could not inject one ad (as by use of `elseif` here)
 			 * * but there are enough elements on the site, but just in sub-containers
 			 */
-		} elseif ( current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) )
+		} elseif ( WordPress::user_can( 'advanced_ads_manage_options' )
 				&& $options['itemLimit'] !== -1
 				&& empty( $plugin_options['content-injection-level-disabled'] ) ) {
 

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Container for utility functions
+ */
 class Advanced_Ads_Pro_Utils {
 	/**
 	 * generate unique wrapper id
@@ -11,7 +14,7 @@ class Advanced_Ads_Pro_Utils {
 		$prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
 		return $prefix . ++$count . mt_rand();
 	}
-	
+
 	/**
 	 * Checks if a blog exists and is not marked as deleted.
 	 *
@@ -66,5 +69,27 @@ class Advanced_Ads_Pro_Utils {
 			return $max;
 		}
 		return $int;
+	}
+
+	/**
+	 * Retrieve a post given a post ID
+	 *
+	 * Used for display conditions during `advads_ad_select` (ajax ads).
+	 *
+	 * @return array|WP_Post|null
+	 */
+	public static function get_post() {
+		$post_object = get_post();
+
+		if ( ! $post_object
+			 && wp_doing_ajax()
+			 && isset( $_REQUEST['action'], $_REQUEST['theId'], $_REQUEST['isSingular'] )
+			 && sanitize_key( $_REQUEST['action'] ) === 'advads_ad_select'
+			 && $_REQUEST['isSingular']
+		) {
+			$post_object = get_post( (int) $_REQUEST['theId'] );
+		}
+
+		return $post_object;
 	}
 }

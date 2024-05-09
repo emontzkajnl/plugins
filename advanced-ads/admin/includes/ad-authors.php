@@ -1,5 +1,7 @@
 <?php
 
+use AdvancedAds\Entities;
+
 /**
  * Control Ad Authors.
  */
@@ -41,7 +43,7 @@ class Advanced_Ads_Ad_Authors {
 	 * @return array
 	 */
 	public function filter_ad_authors( $query_args ) {
-		if ( get_current_screen()->post_type !== Advanced_Ads::POST_TYPE_SLUG ) {
+		if ( get_current_screen()->post_type !== Entities::POST_TYPE_AD ) {
 			return $query_args;
 		}
 
@@ -108,7 +110,7 @@ class Advanced_Ads_Ad_Authors {
 	 */
 	public function sanitize_author_saving( $post_id, $data ) {
 		if (
-			get_post_type( $post_id ) !== Advanced_Ads::POST_TYPE_SLUG
+			get_post_type( $post_id ) !== Entities::POST_TYPE_AD
 			|| (int) $data['post_author'] === get_current_user_id()
 			|| (int) $data['post_author'] === (int) get_post_field( 'post_author', $post_id )
 		) {

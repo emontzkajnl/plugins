@@ -1,4 +1,7 @@
 <?php
+
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Shortcode generator for TinyMCE editor
  *
@@ -47,7 +50,7 @@ class Advanced_Ads_Shortcode_Creator {
 		$options = Advanced_Ads::get_instance()->options();
 
 		if ( 'true' !== get_user_option( 'rich_editing' )
-			|| ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_place_ads' ) )
+			|| ! WordPress::user_can( 'advanced_ads_place_ads' )
 			|| defined( 'ADVANCED_ADS_DISABLE_SHORTCODE_BUTTON' )
 			|| apply_filters( 'advanced-ads-disable-shortcode-button', false )
 		) {
@@ -106,7 +109,7 @@ class Advanced_Ads_Shortcode_Creator {
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo "<script>\n"
 			. $this->get_l10n() . "\n"
-			. file_get_contents( ADVADS_BASE_PATH . 'admin/assets/js/shortcode.js' ) . "\n"
+			. file_get_contents( ADVADS_ABSPATH . 'admin/assets/js/shortcode.js' ) . "\n"
 			. "</script>\n";
 		// phpcs:enable
 	}
@@ -120,7 +123,7 @@ class Advanced_Ads_Shortcode_Creator {
 		static $script = null;
 
 		if ( null === $script ) {
-			include_once ADVADS_BASE_PATH . 'admin/includes/shortcode-creator-l10n.php';
+			include_once ADVADS_ABSPATH . 'admin/includes/shortcode-creator-l10n.php';
 			$script = $strings;
 		}
 

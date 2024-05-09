@@ -52,3 +52,6 @@ input.advads-has-sub-settings:checked ~ .advads-sub-settings {
 #advads-settings-hide-by-post-type label {
 	display: block;
 }
+
+.advads-color-green { color: green; }
+.advads-color-red { color: red; }

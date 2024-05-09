@@ -22,6 +22,9 @@ class Advanced_Ads_Pro_Compatibility {
 		if ( function_exists( 'weglot_get_current_full_url' ) ) {
 			add_filter( 'advanced-ads-pro-display-condition-url-string', [ $this, 'weglot_get_current_full_url' ], 0 );
 		}
+
+		// Gravity forms plugin.
+		add_action( 'wp_loaded', [ $this, 'gravity_forms_init' ] );
 	}
 
 	/**
@@ -68,6 +71,50 @@ class Advanced_Ads_Pro_Compatibility {
 		}
 
 		return $url_parameter;
+	}
+
+
+	/**
+	 * Gravity Forms plugin: Do JS initialization
+	 *
+	 * @return void
+	 */
+	public function gravity_forms_init() {
+		if ( ! function_exists( 'gravity_form_enqueue_scripts' ) ) {
+			return;
+		}
+		$has_ajaxcb_placement = false;
+		$gravity_form_ads     = Advanced_Ads::get_instance()->get_model()->get_ads(
+			[
+				's'          => '[gravityform id=',
+				'meta_query' => [
+					'key'     => 'allow_shortcodes',
+					'value'   => '1',
+					'compare' => 'LIKE',
+				],
+			]
+		);
+
+		if ( empty( $gravity_form_ads ) ) {
+			return;
+		}
+
+		foreach ( Advanced_Ads::get_instance()->get_model()->get_ad_placements_array() as $placement ) {
+			if ( isset( $placement['options']['cache-busting'] ) && $placement['options']['cache-busting'] === 'on' ) {
+				$has_ajaxcb_placement = true;
+				break;
+			}
+		}
+
+		if ( ! $has_ajaxcb_placement ) {
+			return;
+		}
+
+		foreach ( $gravity_form_ads as $gravity_form_ad ) {
+			if ( preg_match( '#gravityform id="([0-9]+)".*#', $gravity_form_ad->post_content, $form_ids ) ) {
+				gravity_form_enqueue_scripts( $form_ids[1], true );
+			}
+		}
 	}
 }
 

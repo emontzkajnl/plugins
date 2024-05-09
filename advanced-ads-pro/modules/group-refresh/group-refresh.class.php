@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * The Group refresh class.
+ */
 class Advanced_Ads_Pro_Group_Refresh {
 	/**
 	 * Data related to each group.
@@ -14,6 +16,13 @@ class Advanced_Ads_Pro_Group_Refresh {
 	 * @var array
 	 */
 	private $shown_group_ids = [];
+
+	/**
+	 * If we are in a current AJAX call.
+	 *
+	 * @var bool
+	 */
+	public $is_ajax = false;
 
 	public function __construct() {
 		$options = Advanced_Ads_Pro::get_instance()->get_options();

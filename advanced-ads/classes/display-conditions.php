@@ -1,5 +1,5 @@
 <?php
-
+// phpcs:ignoreFile
 /**
  * Display Conditions under which to (not) show an ad
  *
@@ -7,7 +7,6 @@
  *
  */
 class Advanced_Ads_Display_Conditions {
-
 	/**
 	 * Advanced_Ads_Display_Conditions
 	 *
@@ -249,12 +248,14 @@ class Advanced_Ads_Display_Conditions {
 	public static function render_condition_list( array $set_conditions, $list_target = '', $form_name = '', $options = [] ) {
 		$conditions = self::get_instance()->get_conditions();
 
-
 		if ( isset( $options['in'] ) ) {
 			if ( 'global' === $options['in'] ) {
-				$conditions = array_filter( $conditions, function( $condition ) {
-					return ! isset( $condition['options']['global'] ) || $condition['options']['global'];
-				} );
+				$conditions = array_filter(
+					$conditions,
+					function ( $condition ) {
+						return ! isset( $condition['options']['global'] ) || $condition['options']['global'];
+					}
+				);
 			} elseif ( is_array( $options['in'] ) ) {
 				// Include already set condition types.
 				$set_types = [];
@@ -273,7 +274,7 @@ class Advanced_Ads_Display_Conditions {
 		// @todo create a random form name, in case we have more than one form per page and the parameter is not given.
 		$form_name = ! $form_name ? self::FORM_NAME : $form_name;
 
-		include ADVADS_BASE_PATH . 'admin/views/conditions/display-conditions-list.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/display-conditions-list.php';
 
 		/**
 		 * Prepare condition form
@@ -300,7 +301,7 @@ class Advanced_Ads_Display_Conditions {
 
 		$empty_options = ! is_array( $set_conditions ) || ! count( $set_conditions );
 
-		include ADVADS_BASE_PATH . 'admin/views/conditions/conditions-form.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/conditions-form.php';
 	}
 
 	/**
@@ -314,7 +315,6 @@ class Advanced_Ads_Display_Conditions {
 	 * @since 1.7.0.4
 	 */
 	public static function render_connector_option( $index, $value, $form_name ) {
-
 		$label = ( 'or' === $value ) ? __( 'or', 'advanced-ads' ) : __( 'and', 'advanced-ads' );
 
 		$name = self::get_form_name_with_index( $form_name, $index );
@@ -322,9 +322,14 @@ class Advanced_Ads_Display_Conditions {
 		// create random value to identify the form field.
 		$rand = md5( $form_name );
 
-		return '<input style="display:none;" type="checkbox" name="' . $name . '[connector]' . '" value="or"
-				id="advads-conditions-' . $index . '-connector-' . $rand . '"' . checked( 'or', $value, false ) . '>
-				<label for="advads-conditions-' . $index . '-connector-' . $rand . '">' . $label . '</label>';
+		return sprintf(
+			"<input style='display:none' type='checkbox' name='%s[connector]' value='or' id='%s' %s><label for='%s'>%s</label>",
+			esc_attr( $name ),
+			esc_attr( "advads-conditions-$index-connector-$rand" ),
+			checked( 'or', $value, false ),
+			esc_attr( "advads-conditions-$index-connector-$rand" ),
+			esc_html( $label )
+		);
 	}
 
 	/**
@@ -334,11 +339,9 @@ class Advanced_Ads_Display_Conditions {
 	 * @param string $name name of the form, falls back to class constant.
 	 */
 	public static function render_type_field( $type, $name ) {
-
 		?>
 		<input type="hidden" name="<?php echo esc_attr( $name ); ?>[type]" value="<?php echo esc_attr( $type ); ?>"/>
 		<?php
-
 	}
 
 	/**
@@ -383,7 +386,7 @@ class Advanced_Ads_Display_Conditions {
 		self::render_type_field( $options['type'], $name );
 
 		// load operator template.
-		include ADVADS_BASE_PATH . 'admin/views/conditions/condition-operator.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/condition-operator.php';
 
 		// set defaults.
 		$post_types = get_post_types(
@@ -395,7 +398,8 @@ class Advanced_Ads_Display_Conditions {
 			'or'
 		);
 		?>
-		<div class="advads-conditions-single advads-buttonset"><?php
+		<div class="advads-conditions-single advads-buttonset">
+		<?php
 		$type_label_counts = array_count_values( wp_list_pluck( $post_types, 'label' ) );
 
 		foreach ( $post_types as $_type_id => $_type ) {
@@ -411,15 +415,20 @@ class Advanced_Ads_Display_Conditions {
 				$_label = sprintf( '%s (%s)', $_type->label, $_type_id );
 			}
 			$field_id = "advads-conditions-$_type_id-$rand";
-			?><label class="button" for="<?php echo $field_id;
-			?>"><?php echo $_label ?></label><input type="checkbox"
-			id="<?php echo $field_id; ?>"
-			name="<?php echo $name; ?>[value][]" <?php checked( $_val, 1 ); ?>
-			value="<?php echo $_type_id; ?>"><?php
+			printf(
+				"<label class='button' for='%s'>%s</label><input type='checkbox' id='%s' name='%s' %s value='%s'>",
+				esc_attr( $field_id ),
+				esc_html( $_label ),
+				esc_attr( $field_id ),
+				esc_attr( "{$name}[value][]" ),
+				checked( $_val, 1, false ),
+				esc_attr( $_type_id )
+			);
 		}
-		include ADVADS_BASE_PATH . 'admin/views/conditions/not-selected.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/not-selected.php';
 		?>
-		</div><?php
+		</div>
+		<?php
 	}
 
 	/**
@@ -452,13 +461,12 @@ class Advanced_Ads_Display_Conditions {
 		self::render_type_field( $options['type'], $name );
 
 		// load operator template.
-		include ADVADS_BASE_PATH . 'admin/views/conditions/condition-operator.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/condition-operator.php';
 
 		// set defaults.
 		$max_authors = absint( apply_filters( 'advanced-ads-admin-max-terms', 50 ) );
 		$args        = [
 			'orderby' => 'nicename',
-			'number'  => $max_authors,
 		];
 		if ( version_compare( get_bloginfo( 'version' ), '5.9' ) > -1 ) {
 			$args['capability'] = [ 'edit_posts' ];
@@ -467,7 +475,7 @@ class Advanced_Ads_Display_Conditions {
 		}
 		$authors = get_users( $args );
 
-		include ADVADS_BASE_PATH . 'admin/views/conditions/condition-author.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/condition-author.php';
 	}
 
 	/**
@@ -508,14 +516,14 @@ class Advanced_Ads_Display_Conditions {
 		self::render_type_field( $options['type'], $name );
 
 		// load operator template.
-		include ADVADS_BASE_PATH . 'admin/views/conditions/condition-operator.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/condition-operator.php';
 
 		?>
 		<div class="advads-conditions-single advads-buttonset">
 			<?php
 			$terms = self::display_term_list( $taxonomy, $values, $name . '[value][]', $max_terms, $index );
 			if ( empty( $terms ) ) {
-				include ADVADS_BASE_PATH . 'admin/views/conditions/no-option.php';
+				include ADVADS_ABSPATH . 'admin/views/conditions/no-option.php';
 			}
 			?>
 		</div>
@@ -566,13 +574,17 @@ class Advanced_Ads_Display_Conditions {
 				}
 
 				$field_id = "advads-conditions-$_taxonomy_id-$rand";
-				?><label class="button" for="<?php echo $field_id
-			?>"><?php echo $_label ?></label><input type="checkbox"
-				id="<?php echo $field_id; ?>"
-				name="<?php echo $name; ?>[value][]" <?php checked( $_val, 1 ); ?>
-				value="<?php echo $_taxonomy_id; ?>"><?php
+				printf(
+					"<label class='button' for='%s'>%s</label><input type ='checkbox' id='%s' name='%s' %s value='%s'>",
+					esc_attr( $field_id ),
+					esc_html( $_label ),
+					esc_attr( $field_id ),
+					esc_attr( "{$name}[value][]" ),
+					checked( $_val, 1, false ),
+					esc_attr( $_taxonomy_id )
+				);
 			endforeach;
-			include ADVADS_BASE_PATH . 'admin/views/conditions/not-selected.php';
+			include ADVADS_ABSPATH . 'admin/views/conditions/not-selected.php';
 			?>
 		</div>
 		<?php
@@ -585,12 +597,11 @@ class Advanced_Ads_Display_Conditions {
 	 * @param array  $checked ids of checked terms.
 	 * @param string $inputname name of the input field.
 	 * @param int    $max_terms maximum number of terms to show.
-	 * @param int    $index index of the conditions group.
+ 	 * @param int    $index index of the conditions group.
 	 *
 	 * @return array|int|WP_Error
 	 */
 	public static function display_term_list( $taxonomy, $checked = [], $inputname = '', $max_terms = 50, $index = 0 ) {
-
 		$terms = get_terms(
 			$taxonomy->name,
 			[
@@ -621,22 +632,34 @@ class Advanced_Ads_Display_Conditions {
 					// phpcs:enable
 				} else {
 					?>
-					<div class="advads-conditions-terms-buttons dynamic-search"></div><?php
+					<div class="advads-conditions-terms-buttons dynamic-search"></div>
+					<?php
 				}
-				?><span class="advads-conditions-terms-show-search button" title="<?php
-			_ex( 'add more terms', 'display the terms search field on ad edit page', 'advanced-ads' );
-			?>">+</span><br/><input type="text" class="advads-conditions-terms-search"
-				data-tag-name="<?php echo $taxonomy->name;
-				?>" data-input-name="<?php echo $inputname; ?>"
-				placeholder="<?php _e( 'term name or id', 'advanced-ads' ); ?>"/><?php
+
+				printf(
+					"<span class='advads-conditions-terms-show-search button' title='%s'>+</span><br>",
+					esc_attr_x( 'add more terms', 'display the terms search field on ad edit page', 'advanced-ads' )
+				);
+				printf(
+					"<input type='text' class='advads-conditions-terms-search' data-tag-name='%s' data-input-name='%s' placeholder='%s'>",
+					esc_attr( $taxonomy->name ),
+					esc_attr( $inputname ),
+					esc_attr__( 'term name or id', 'advanced-ads' )
+				);
 			else :
-				foreach ( $terms as $_term ) :
+				foreach ( $terms as $_term ) {
 					$field_id = "advads-conditions-$_term->term_id-$rand";
-					?><input type="checkbox" id="<?php echo $field_id; ?>" name="<?php echo $inputname; ?>"
-					value="<?php echo $_term->term_id; ?>" <?php checked( in_array( $_term->term_id, $checked ), true );
-					?>><label for="<?php echo $field_id; ?>"><?php echo $_term->name; ?></label><?php
-				endforeach;
-				include ADVADS_BASE_PATH . 'admin/views/conditions/not-selected.php';
+					printf(
+						"<input type='checkbox' id='%s' name='%s' value='%s' %s><label for='%s'>%s</label>",
+						esc_attr( $field_id ),
+						esc_attr( $inputname ),
+						esc_attr( $_term->term_id ),
+						checked( in_array( $_term->term_id, $checked ), true, false ),
+						esc_attr( $field_id ),
+						esc_html( $_term->name )
+					);
+				}
+				include ADVADS_ABSPATH . 'admin/views/conditions/not-selected.php';
 			endif;
 		endif;
 
@@ -666,7 +689,7 @@ class Advanced_Ads_Display_Conditions {
 		self::render_type_field( $options['type'], $name );
 
 		// load operator template.
-		include ADVADS_BASE_PATH . 'admin/views/conditions/condition-operator.php';
+		include ADVADS_ABSPATH . 'admin/views/conditions/condition-operator.php';
 
 		?>
 		<div class="advads-conditions-single advads-buttonset advads-conditions-postid-buttons">
@@ -682,7 +705,6 @@ class Advanced_Ads_Display_Conditions {
 				'order_by'       => 'title',
 
 			];
-
 			$the_query = new WP_Query( $args );
 			while ( $the_query->have_posts() ) {
 				$the_query->next_post();
@@ -693,15 +715,29 @@ class Advanced_Ads_Display_Conditions {
 				value="<?php echo esc_attr( $the_query->post->ID ); ?>"></label><?php
 			}
 		}
-		?><span class="advads-conditions-postids-show-search button" <?php if ( ! count( $values ) ) {
-				echo 'style="display:none;"'; } ?>>+</span><p class="advads-conditions-postids-search-line">
-			<input type="text" class="advads-display-conditions-individual-post" <?php if ( count( $values ) ) {
-				echo 'style="display:none;"';
-			} ?>
-					placeholder="<?php _e( 'title or id', 'advanced-ads' ); ?>"
-					data-field-name="<?php echo $name; ?>"/><?php
-			wp_nonce_field( 'internal-linking', '_ajax_linking_nonce', false );
-			?></p></div><?php
+		printf(
+			"<span class='advads-conditions-postids-show-search button' style='%s'>+</span>",
+			empty( $values ) ? 'display:none;' : ''
+		);
+
+		printf(
+			"<p class='advads-conditions-postids-search-line'><input type='text' class='advads-display-conditions-individual-post' style='%s' placeholder='%s' data-field-name='%s' />%s</p></div>",
+			! empty( $values ) ? 'display:none;' : '',
+			esc_attr__( 'title or id', 'advanced-ads' ),
+			esc_attr( $name ),
+			wp_kses(
+				wp_nonce_field( 'internal-linking', '_ajax_linking_nonce', false, false ),
+				[
+					'input' => [
+						'type'  => true,
+						'id'    => true,
+						'name'  => true,
+						'class' => true,
+						'value' => true,
+					],
+				]
+			)
+		);
 		// phpcs:enable
 	}
 
@@ -729,19 +765,26 @@ class Advanced_Ads_Display_Conditions {
 		self::render_type_field( $options['type'], $name );
 
 		$rand = md5( $form_name );
-		foreach ( $conditions as $_key => $_condition ) :
-
+		foreach ( $conditions as $_key => $_condition ) {
 			// activate by default.
-			$value = ( [] === $values || in_array( $_key, $values, true ) ) ? 1 : 0;
-
+			$value    = ( [] === $values || in_array( $_key, $values, true ) ) ? 1 : 0;
 			$field_id = "advads-conditions-$_key-$rand";
-			?><input type="checkbox" id="<?php echo $field_id; ?>" name="<?php echo $name; ?>[value][]"
-			value="<?php echo $_key; ?>" <?php checked( 1, $value ); ?>><label
-			for="<?php echo $field_id; ?>"><?php echo $_condition['label']; ?></label><?php
-		endforeach;
-		include ADVADS_BASE_PATH . 'admin/views/conditions/not-selected.php';
-		?></div><?php
-		return;
+			printf(
+				"<input type='checkbox' id='%s' name='%s' %s value='%s'>",
+				esc_attr( $field_id ),
+				esc_attr( "{$name}[value][]" ),
+				checked( 1, $value, false ),
+				esc_attr( $_key )
+			);
+			printf(
+				"<label for='%s'>%s</label>",
+				esc_attr( $field_id ),
+				esc_html( $_condition['label'] )
+			);
+
+		}
+		include ADVADS_ABSPATH . 'admin/views/conditions/not-selected.php';
+		echo '</div>';
 	}
 
 	/**
@@ -750,7 +793,8 @@ class Advanced_Ads_Display_Conditions {
 	 * @return array $conditions
 	 */
 	public static function general_conditions() {
-		return $conditions = apply_filters( 'advanced-ads-display-conditions-general',
+		return apply_filters(
+			'advanced-ads-display-conditions-general',
 			[
 				'is_front_page' => [
 					'label'       => __( 'Home Page', 'advanced-ads' ),
@@ -792,7 +836,7 @@ class Advanced_Ads_Display_Conditions {
 					'description' => __( 'allow ads in RSS Feed', 'advanced-ads' ),
 					'type'        => 'radio',
 				],
-				'is_rest_api'     => [
+				'is_rest_api'   => [
 					'label'       => __( 'REST API', 'advanced-ads' ),
 					'description' => __( 'allow ads in REST API', 'advanced-ads' ),
 					'type'        => 'radio',
@@ -809,7 +853,7 @@ class Advanced_Ads_Display_Conditions {
 	 * @param string $form_name name of the form, falls back to class constant.
 	 */
 	public static function metabox_content_age( $options, $index = 0, $form_name = '' ) {
-		if ( ! isset ( $options['type'] ) || '' === $options['type'] ) {
+		if ( ! isset( $options['type'] ) || '' === $options['type'] ) {
 			return;
 		}
 
@@ -828,9 +872,9 @@ class Advanced_Ads_Display_Conditions {
 		self::render_type_field( $options['type'], $name );
 
 		?>
-		<select name="<?php echo $name; ?>[operator]">
-			<option value="older_than" <?php selected( 'older_than', $operator ); ?>><?php _e( 'older than', 'advanced-ads' ); ?></option>
-			<option value="younger_than" <?php selected( 'younger_than', $operator ); ?>><?php _e( 'younger than', 'advanced-ads' ); ?></option>
+		<select name="<?php echo esc_attr( $name ); ?>[operator]">
+			<option value="older_than" <?php selected( 'older_than', $operator ); ?>><?php esc_html_e( 'older than', 'advanced-ads' ); ?></option>
+			<option value="younger_than" <?php selected( 'younger_than', $operator ); ?>><?php esc_html_e( 'younger than', 'advanced-ads' ); ?></option>
 		</select>
 
 		<input type="text" name="<?php echo esc_attr( $name ); ?>[value]" value="<?php echo esc_attr( $value ); ?>"/>
@@ -1100,7 +1144,8 @@ class Advanced_Ads_Display_Conditions {
 		}
 
 		// check general conditions added by other add-ons.
-		if ( null !== ( $result = apply_filters( 'advanced-ads-display-conditions-check-general', null, $options['value'] ) ) ) {
+		$result = apply_filters( 'advanced-ads-display-conditions-check-general', null, $options['value'] );
+		if ( null !== ( $result ) ) {
 			return $result;
 		}
 
@@ -1123,21 +1168,19 @@ class Advanced_Ads_Display_Conditions {
 		}
 
 		// check home page.
-		if ( ( ( isset( $query['is_front_page'] ) && $query['is_front_page'] )
-		       || ( isset( $query['is_home'] ) && $query['is_home'] ) )
-		     && in_array( 'is_front_page', $options['value'], true )
+		if (
+			( ( isset( $query['is_front_page'] ) && $query['is_front_page'] ) || ( isset( $query['is_home'] ) && $query['is_home'] ) )
+			&& in_array( 'is_front_page', $options['value'], true )
 		) {
 			return true;
-		} elseif ( isset( $query['is_front_page'] ) && $query['is_front_page'] && (
-			! in_array( 'is_front_page', $options['value'], true )
-			) ) {
+		} elseif ( isset( $query['is_front_page'] ) && $query['is_front_page'] && ( ! in_array( 'is_front_page', $options['value'], true ) ) ) {
 			return false;
 		}
 
 		// check common tests.
 		foreach ( self::$query_var_keys as $_type ) {
 			if ( 'is_main_query' !== $_type && isset( $query[ $_type ] ) && $query[ $_type ] &&
-			     in_array( $_type, $options['value'], true ) ) {
+				in_array( $_type, $options['value'], true ) ) {
 				return true;
 			}
 		}
@@ -1154,7 +1197,16 @@ class Advanced_Ads_Display_Conditions {
 	 * @return bool true if can be displayed
 	 */
 	public static function check_content_age( $options, Advanced_Ads_Ad $ad ) {
-		global $post;
+		$post = get_post();
+
+		if ( ! $post
+			&& wp_doing_ajax()
+			&& isset( $_REQUEST['action'], $_REQUEST['theId'], $_REQUEST['isSingular'] )
+			&& sanitize_key( $_REQUEST['action'] ) === 'advads_ad_select'
+			&& ( $_REQUEST['isSingular'] )
+		) {
+			$post = get_post( (int) $_REQUEST['theId'] );
+		}
 
 		$operator = ( isset( $options['operator'] ) && 'younger_than' === $options['operator'] ) ? 'younger_than' : 'older_than';
 		$value    = isset( $options['value'] ) ? $options['value'] : '';
@@ -1249,15 +1301,13 @@ class Advanced_Ads_Display_Conditions {
 			return true;
 		}
 		// get conditions with rebased index keys.
-		$conditions = array_values( $options['conditions'] );
-		$query      = $options['wp_the_query'];
-		$post       = isset( $options['post'] ) ? $options['post'] : null;
-
-
+		$conditions  = array_values( $options['conditions'] );
+		$query       = $options['wp_the_query'];
+		$post        = isset( $options['post'] ) ? $options['post'] : null;
 		$last_result = false;
 		$length      = count( $conditions );
 
-		for ( $i = 0; $i < $length; ++ $i ) {
+		for ( $i = 0; $i < $length; ++$i ) {
 			$_condition = current( $conditions );
 			$next       = next( $conditions );
 			$next_key   = key( $conditions );
@@ -1272,12 +1322,13 @@ class Advanced_Ads_Display_Conditions {
 			$tax      = ( isset( $_condition['type'] ) && isset( $this->conditions[ $_condition['type'] ]['taxonomy'] ) ) ? $this->conditions[ $_condition['type'] ]['taxonomy'] : false;
 			$next_tax = ( isset( $next['type'] ) && isset( $this->conditions[ $next['type'] ]['taxonomy'] ) ) ? $this->conditions[ $next['type'] ]['taxonomy'] : false;
 			if ( $tax && $next_tax && $next_key
-			     && $next_tax === $tax
-			     && ( ! isset( $next['connector'] ) || 'or' !== $next['connector'] )
-			     && 'is' === $_condition['operator'] && 'is' === $next['operator']
-			     && $_condition['type'] !== $next['type'] ) {
-				$next['connector']                    = 'or';
-				$conditions[ $next_key ]['connector'] = 'or';
+				&& $next_tax === $tax
+				&& ( ! isset( $next['connector'] ) || 'or' !== $next['connector'] )
+				&& 'is' === $_condition['operator'] && 'is' === $next['operator']
+				&& $_condition['type'] !== $next['type']
+			) {
+					$next['connector']                    = 'or';
+					$conditions[ $next_key ]['connector'] = 'or';
 			}
 
 			// ignore OR if last result was true.
@@ -1417,9 +1468,6 @@ class Advanced_Ads_Display_Conditions {
 	 */
 	public static function modify_post_search_sql( $sql ) {
 		global $wpdb;
-
-		// $sql = preg_replace_callback( "/{$wpdb->posts}.post_(content|excerpt)( NOT)? LIKE '%(.*?)%'/", array( 'Advanced_Ads_Display_Conditions', 'modify_post_search_sql_callback' ), $sql );
-
 		// removes the search in content and excerpt columns.
 		$sql = preg_replace( "/OR \({$wpdb->posts}.post_(content|excerpt)( NOT)? LIKE '(.*?)'\)/", '', $sql );
 
@@ -1446,5 +1494,4 @@ class Advanced_Ads_Display_Conditions {
 			return '1=0';
 		}
 	}
-
 }

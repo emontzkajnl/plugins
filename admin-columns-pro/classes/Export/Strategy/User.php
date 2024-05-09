@@ -10,11 +10,6 @@ use WP_User_Query;
 class User extends Strategy
 {
 
-    public function __construct(AC\ListScreen\User $list_screen)
-    {
-        parent::__construct($list_screen);
-    }
-
     protected function get_list_table(): ?ListTable
     {
         return (new AC\ListTableFactory())->create_from_globals();
@@ -26,7 +21,7 @@ class User extends Strategy
     }
 
     /**
-     * Modify the users query to use the correct pagination arguments, and epxort the resulting
+     * Modify the users query to use the correct pagination arguments, and export the resulting
      * items. This should be attached to the users_list_table_query_args hook when an AJAX request
      * is sent
      *

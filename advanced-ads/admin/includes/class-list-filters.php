@@ -1,4 +1,9 @@
 <?php
+// phpcs:ignoreFile
+
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\Conditional;
+
 /**
  * Container class for custom filters on admin ad list page.
  *
@@ -65,8 +70,8 @@ class Advanced_Ads_Ad_List_Filters {
 			add_filter( 'post_limits', [ $this, 'limit_filter' ], 10, 2 );
 		}
 
-		add_filter( 'views_edit-' . Advanced_Ads::POST_TYPE_SLUG, [ $this, 'add_expired_view' ] );
-		add_filter( 'views_edit-' . Advanced_Ads::POST_TYPE_SLUG, [ $this, 'add_expiring_view' ] );
+		add_filter( 'views_edit-' . Entities::POST_TYPE_AD, [ $this, 'add_expired_view' ] );
+		add_filter( 'views_edit-' . Entities::POST_TYPE_AD, [ $this, 'add_expiring_view' ] );
 		add_action( 'restrict_manage_posts', [ $this, 'send_addate_in_filter' ] );
 
 		add_action( 'manage_posts_extra_tablenav', [ $this, 'ad_views' ] );
@@ -86,10 +91,13 @@ class Advanced_Ads_Ad_List_Filters {
 	/**
 	 * Check if the current screen uses a search or filter.
 	 *
+	 * @deprecated 1.47.0
+	 *
 	 * @return bool
 	 */
 	public static function uses_filter_or_search() {
-		return ! empty( $_GET['s'] ) || ! empty( $_GET['adtype'] ) || ! empty( $_GET['adsize'] ) || ! empty( $_GET['adgroup'] );
+		_deprecated_function( __METHOD__, '1.47.0', '\AdvancedAds\Utilities\Conditional::has_filter_or_search()' );
+		return Conditional::has_filter_or_search();
 	}
 
 	/**
@@ -238,7 +246,7 @@ class Advanced_Ads_Ad_List_Filters {
 					'SELECT object_id, term_taxonomy_id FROM `' . $wpdb->prefix . 'term_relationships` WHERE `term_taxonomy_id` IN (' .
 					'SELECT term_taxonomy_id FROM `' . $wpdb->prefix . 'term_taxonomy` WHERE `taxonomy` = %s' .
 					')',
-					Advanced_Ads::AD_GROUP_TAXONOMY
+					Entities::TAXONOMY_AD_GROUP
 				),
 				'ARRAY_A'
 			);
@@ -438,7 +446,7 @@ class Advanced_Ads_Ad_List_Filters {
 				 'WHERE ' . $wpdb->prefix . 'terms.slug = %s AND ' . $wpdb->prefix . 'term_taxonomy.taxonomy = %s' .
 				 ')';
 
-			$q = $wpdb->prepare( $q, $term, Advanced_Ads::AD_GROUP_TAXONOMY );
+			$q = $wpdb->prepare( $q, $term, Entities::TAXONOMY_AD_GROUP );
 
 			$object_ids  = $wpdb->get_results( $q, 'ARRAY_A' );
 			$ads_in_taxo = [];
@@ -551,7 +559,7 @@ class Advanced_Ads_Ad_List_Filters {
 		$views[ Advanced_Ads_Ad_Expiration::POST_STATUS ] = sprintf(
 			'<a href="%s" %s>%s <span class="count">(%d)</span></a>',
 			add_query_arg( [
-				'post_type' => Advanced_Ads::POST_TYPE_SLUG,
+				'post_type' => Entities::POST_TYPE_AD,
 				'addate'    => 'advads-filter-expired',
 				'orderby'   => 'expiry_date',
 				'order'     => 'DESC',
@@ -571,7 +579,7 @@ class Advanced_Ads_Ad_List_Filters {
 	 */
 	private function count_expired_ads() {
 		return ( new WP_Query( [
-			'post_type'   => Advanced_Ads::POST_TYPE_SLUG,
+			'post_type'   => Entities::POST_TYPE_AD,
 			'post_status' => Advanced_Ads_Ad_Expiration::POST_STATUS,
 		] ) )->found_posts;
 	}
@@ -591,7 +599,7 @@ class Advanced_Ads_Ad_List_Filters {
 		$views['expiring'] = sprintf(
 			'<a href="%s" %s>%s <span class="count">(%d)</span></a>',
 			add_query_arg( [
-				'post_type' => Advanced_Ads::POST_TYPE_SLUG,
+				'post_type' => Entities::POST_TYPE_AD,
 				'addate'    => 'advads-filter-expiring',
 				'orderby'   => 'expiry_date',
 				'order'     => 'ASC',
@@ -611,7 +619,7 @@ class Advanced_Ads_Ad_List_Filters {
 	 */
 	private function count_expiring_ads() {
 		return ( new WP_Query( [
-			'post_type'   => Advanced_Ads::POST_TYPE_SLUG,
+			'post_type'   => Entities::POST_TYPE_AD,
 			'post_status' => 'any',
 			'meta_query'  => [
 				[
@@ -696,7 +704,7 @@ class Advanced_Ads_Ad_List_Filters {
 		$views_new = [];
 
 		$is_all = count( array_diff_key( $_GET, [
-			'post_type' => Advanced_Ads::POST_TYPE_SLUG,
+			'post_type' => Entities::POST_TYPE_AD,
 			'orderby'   => '',
 			'order'     => '',
 			'paged'     => '',
@@ -711,7 +719,7 @@ class Advanced_Ads_Ad_List_Filters {
 
 		$show_trash_delete_button = isset( $_GET['post_status'] ) && 'trash' === $_GET['post_status'] && have_posts() && current_user_can( get_post_type_object( $wp_list_table->screen->post_type )->cap->edit_others_posts );
 
-		include ADVADS_BASE_PATH . 'admin/views/ad-list/view-list.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list/view-list.php';
 	}
 
 	/**
@@ -726,29 +734,29 @@ class Advanced_Ads_Ad_List_Filters {
 
 		// show label before the search form if this is a search
 		if ( ! empty( $_GET['s'] ) ) {
-			wp_add_inline_style( ADVADS_SLUG . '-admin-styles', "
+			wp_add_inline_style( ADVADS_SLUG . '-admin', "
 				.post-type-advanced_ads .search-box:before { content: '" . esc_html__( 'Showing search results for', 'advanced-ads' ) . "'; float: left; margin-right: 8px; line-height: 30px; font-weight: 700; }
 				.post-type-advanced_ads .subtitle { display: none; }
 			" );
 		}
 
 		// adjust search form when there are no results
-		if ( self::uses_filter_or_search() && 0 === count( $this->all_ads ) ) {
-			wp_add_inline_style( ADVADS_SLUG . '-admin-styles', '.post-type-advanced_ads .search-box { display: block; margin-top: 10px; }' );
+		if ( Conditional::has_filter_or_search() && 0 === count( $this->all_ads ) ) {
+			wp_add_inline_style( ADVADS_SLUG . '-admin', '.post-type-advanced_ads .search-box { display: block; margin-top: 10px; }' );
 			return;
 		}
 
 		// show filters, if the option to show them is enabled or a search is running
-		if ( get_current_screen()->get_option( 'show-filters' ) || self::uses_filter_or_search() ) {
+		if ( get_current_screen()->get_option( 'show-filters' ) || Conditional::has_filter_or_search() ) {
 			global $wp_query;
-			wp_add_inline_style( ADVADS_SLUG . '-admin-styles', '.post-type-advanced_ads .search-box { display: block; }' );	
+			wp_add_inline_style( ADVADS_SLUG . '-admin', '.post-type-advanced_ads .search-box { display: block; }' );
 			if (isset($wp_query->found_posts) && $wp_query->found_posts > 0) {
-				wp_add_inline_style(ADVADS_SLUG . '-admin-styles', '.post-type-advanced_ads .tablenav.top .alignleft.actions:not(.bulkactions) { display: block; }' );
+				wp_add_inline_style(ADVADS_SLUG . '-admin', '.post-type-advanced_ads .tablenav.top .alignleft.actions:not(.bulkactions) { display: block; }' );
 			}
 			return;
 		}
 
-		wp_add_inline_script( ADVADS_SLUG . '-admin-script', "
+		wp_add_inline_script( ADVADS_SLUG . '-admin', "
 			jQuery( document ).ready( function ( $ ) {
 				$( '#advads-show-filters' ).on( 'click', function() {
 					const disabled = $( this ).find( '.dashicons' ).hasClass('dashicons-arrow-up');
@@ -771,7 +779,7 @@ class Advanced_Ads_Ad_List_Filters {
 	public function send_addate_in_filter() {
 		if (
 			! isset( $_GET['post_type'] )
-			|| $_GET['post_type'] !== Advanced_Ads::POST_TYPE_SLUG
+			|| $_GET['post_type'] !== Entities::POST_TYPE_AD
 			|| empty( $_GET['addate'] )
 		) {
 			return;

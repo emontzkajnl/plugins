@@ -11,7 +11,6 @@ use AdvancedAdsPro\GeoIp2\Exception\AddressNotFoundException;
  * @copyright   Copyright (c) 2015, Thomas Maier, webgilde GmbH
  * @since       1.0
  */
-
 class Advanced_Ads_Geo_Api {
 
 	/**
@@ -394,13 +393,24 @@ class Advanced_Ads_Geo_Api {
 		return apply_filters( 'advanced-ads-geo-countries', $countries );
 	}
 
-	/*
-	 * To change this license header, choose License Headers in Project Properties.
-	 * To change this template file, choose Tools | Templates
-	 * and open the template in the editor.
+	/**
+	 * Return absolute path to the country file
+	 *
+	 * @return false|string
 	 */
-
 	public function get_GeoLite_country_filename() {
+		$custom_file = '';
+		/**
+		 * Allow experienced users to choose an existing MaxMind country database file
+		 *
+		 * @param string $custom_file absolute path to the country file.
+		 */
+		$custom_file = apply_filters( 'advanced-ads-geo-maxmind-geolite2-country-db-filepath', $custom_file );
+
+		if ( is_string( $custom_file ) && $custom_file !== '' && file_exists( $custom_file ) ) {
+			return $custom_file;
+		}
+
 		if ( ! $upload_full = Advanced_Ads_Geo_Plugin::get_instance()->get_upload_full() ) {
 			return false;
 		}
@@ -421,7 +431,24 @@ class Advanced_Ads_Geo_Api {
 		return false;
 	}
 
+	/**
+	 * Return absolute path to the city file
+	 *
+	 * @return false|string
+	 */
 	public function get_GeoLite_city_filename() {
+		$custom_file = '';
+		/**
+		 * Allow experienced users to choose an existing MaxMind city database file
+		 *
+		 * @param string $custom_file absolute path to the city file.
+		 */
+		$custom_file = apply_filters( 'advanced-ads-geo-maxmind-geolite2-city-db-filepath', $custom_file );
+
+		if ( is_string( $custom_file ) && $custom_file !== '' && file_exists( $custom_file ) ) {
+			return $custom_file;
+		}
+
 		if ( ! $upload_full = Advanced_Ads_Geo_Plugin::get_instance()->get_upload_full() ) {
 			return false;
 		}

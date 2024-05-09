@@ -1,4 +1,9 @@
 <?php
+// phpcs:ignoreFile
+
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\Conditional;
+
 /**
  * Compatibility fixes with other plugins.
  */
@@ -49,7 +54,14 @@ class Advanced_Ads_Compatibility {
 		}
 
 		// Make sure inline JS in head is executed when Complianz is set to block JS.
-		add_filter( 'cmplz_script_class', [ $this, 'complianz_exclude_inline_js' ], 10, 2 );
+		$complianz_version = get_option( 'cmplz-current-version', false );
+		// if complianz version equal or greater then 6.0.0 use cmplz_service_category
+		if ( $complianz_version && version_compare( $complianz_version, '6.0.0', '>=' ) ) {
+			add_filter( 'cmplz_service_category', [ $this, 'complianz_exclude_inline_js' ], 10, 2 );
+		} else {
+			// if complianz version  less then 6.0.0 use cmplz_script_class
+			add_filter( 'cmplz_script_class', [ $this, 'complianz_exclude_inline_js' ], 10, 2 );
+		}
 
 		$this->critical_inline_js = $this->critical_inline_js();
 	}
@@ -242,7 +254,7 @@ class Advanced_Ads_Compatibility {
 	 * Dequeue scripts and styles to prevent layout issues.
 	 */
 	public function admin_dequeue_scripts_and_styles() {
-		if ( ! Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+		if ( ! Conditional::is_screen_advanced_ads() ) {
 			return;
 		}
 
@@ -342,7 +354,7 @@ class Advanced_Ads_Compatibility {
 		}
 
 		// load ACF field groups dedicated to the Advanced Ads post type
-		$groups = acf_get_field_groups( [ 'post_type' => Advanced_Ads::POST_TYPE_SLUG ] );
+		$groups = acf_get_field_groups( [ 'post_type' => Entities::POST_TYPE_AD ] );
 
 		if ( is_array( $groups ) && $groups ) {
 			foreach ( $groups as $_group ) {

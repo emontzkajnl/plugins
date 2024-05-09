@@ -1,4 +1,6 @@
 <?php
+// phpcs:ignoreFile
+
 /**
  * Advanced Ads.
  *
@@ -8,6 +10,9 @@
  * @link      https://wpadvancedads.com
  * @copyright 2013-2018 Thomas Maier, Advanced Ads GmbH
  */
+
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * Plugin class. This class should ideally be used to work with the
@@ -21,12 +26,16 @@ class Advanced_Ads {
 	/**
 	 * Post type slug
 	 *
+	 * @deprecated 1.47.0 Use \AdvancedAds\Entities::POST_TYPE_AD
+	 *
 	 * @var     string
 	 */
 	const POST_TYPE_SLUG = 'advanced_ads';
 
 	/**
 	 * Ad group slug
+	 *
+	 * @deprecated 1.47.0 Use \AdvancedAds\Entities::TAXONOMY_AD_GROUP
 	 *
 	 * @var     string
 	 */
@@ -59,6 +68,13 @@ class Advanced_Ads {
 	 * @var     array (if loaded)
 	 */
 	protected $options = false;
+
+	/**
+	 * Adsense options
+	 *
+	 * @var array (if loaded)
+	 */
+	protected $adsense_options = null;
 
 	/**
 	 * Interal plugin options – set by the plugin
@@ -236,9 +252,6 @@ class Advanced_Ads {
 	 * Init / load plugin specific functions and settings
 	 */
 	public function wp_init() {
-		// load ad post types.
-		$this->create_post_types();
-		// set ad types array.
 		$this->set_ad_types();
 	}
 
@@ -327,7 +340,7 @@ class Advanced_Ads {
 				$this->disable_ads( 'page', $post->ID );
 				return;
 			}
-		};
+		}
 
 		// "Posts page" set on the WordPress Reading settings page.
 		if ( $wp_the_query->is_posts_page ) {
@@ -337,7 +350,7 @@ class Advanced_Ads {
 				$this->disable_ads( 'page', $wp_the_query->queried_object_id );
 				return;
 			}
-		};
+		}
 
 		/**
 		 * Check if ads are disabled on WooCommerce shop page (and currently on shop page).
@@ -365,8 +378,8 @@ class Advanced_Ads {
 		}
 
 		// check bots if option is enabled.
-		if ( ( isset( $options['block-bots'] ) && $options['block-bots']
-			&& ! $this->is_cache_bot() && $this->is_bot() ) ) {
+		if ( isset( $options['block-bots'] ) && $options['block-bots']
+			&& ! $this->is_cache_bot() && $this->is_bot() ) {
 			$this->disable_ads();
 			return;
 		}
@@ -434,6 +447,19 @@ class Advanced_Ads {
 	 */
 	public function options() {
 		return $this->plugin->options();
+	}
+
+	/**
+	 * Compat method
+	 *
+	 * @return array with adsense options
+	 */
+	public function get_adsense_options() {
+		// we can’t store options if WPML String Translations is enabled, or it would not translate the "Ad Label" option.
+		if ( ! isset( $this->adsense_options ) || class_exists( 'WPML_ST_String' ) ) {
+			$this->adsense_options = get_option( 'advanced-ads-adsense', [] );
+		}
+		return $this->adsense_options;
 	}
 
 	/**
@@ -530,17 +556,23 @@ class Advanced_Ads {
 		);
 
 		// make sure that no ad is injected into another ad.
-		if ( get_post_type() === self::POST_TYPE_SLUG ) {
+		if ( get_post_type() === Entities::POST_TYPE_AD ) {
 			return $content;
 		}
 
 		// Do not inject on admin pages.
-		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return $content;
+		}
+
+		// Do not inject in writing REST requests.
+		if (  WordPress::is_gutenberg_writing_request() && WordPress::is_rest_request() ) {
 			return $content;
 		}
 
 		// check if admin allows injection in all places.
-		if ( ! isset( $options['content-injection-everywhere'] ) || 0 === $options['content-injection-everywhere'] ) {
+		$enabled = $options['content-injection-enabled'] ?? 'off';
+		if ( $enabled === 'off' || ! isset( $options['content-injection-everywhere'] ) || 0 === $options['content-injection-everywhere'] ) {
 					// check if this is a singular page within the loop or an AMP page.
 					$is_amp = advads_is_amp();
 			if ( ( ! is_singular( $public_post_types ) && ! is_feed() ) || ( ! $is_amp && ! $this->in_the_loop() && ! $this->was_in_the_loop ) ) {
@@ -724,134 +756,6 @@ class Advanced_Ads {
 	}
 
 	/**
-	 * Registers ad post type and group taxonomies
-	 */
-	public function create_post_types() {
-		if ( 1 !== did_action( 'init' ) && 1 !== did_action( 'uninstall_' . ADVADS_BASE ) ) {
-			return;
-		}
-
-		// register ad group taxonomy.
-		if ( ! taxonomy_exists( self::AD_GROUP_TAXONOMY ) ) {
-			$post_type_params = $this->get_group_taxonomy_params();
-			register_taxonomy( self::AD_GROUP_TAXONOMY, [ self::POST_TYPE_SLUG ], $post_type_params );
-		}
-
-		// register ad post type.
-		if ( ! post_type_exists( self::POST_TYPE_SLUG ) ) {
-			$post_type_params = $this->get_post_type_params();
-			register_post_type( self::POST_TYPE_SLUG, $post_type_params );
-		}
-	}
-
-	/**
-	 * Defines the parameters for the ad post type taxonomy
-	 *
-	 * @return array
-	 */
-	protected function get_group_taxonomy_params() {
-		$labels = [
-			'name'              => _x( 'Ad Groups & Rotations', 'ad group general name', 'advanced-ads' ),
-			'singular_name'     => _x( 'Ad Group', 'ad group singular name', 'advanced-ads' ),
-			'search_items'      => __( 'Search Ad Groups', 'advanced-ads' ),
-			'all_items'         => __( 'All Ad Groups', 'advanced-ads' ),
-			'parent_item'       => __( 'Parent Ad Groups', 'advanced-ads' ),
-			'parent_item_colon' => __( 'Parent Ad Groups:', 'advanced-ads' ),
-			'edit_item'         => __( 'Edit Ad Group', 'advanced-ads' ),
-			'update_item'       => __( 'Update Ad Group', 'advanced-ads' ),
-			'add_new_item'      => __( 'New Ad Group', 'advanced-ads' ),
-			'new_item_name'     => __( 'New Ad Groups Name', 'advanced-ads' ),
-			'menu_name'         => __( 'Groups', 'advanced-ads' ),
-			'not_found'         => __( 'No Ad Group found', 'advanced-ads' ),
-		];
-
-		$args = [
-			'public'            => false,
-			'hierarchical'      => true,
-			'labels'            => $labels,
-			'show_ui'           => true,
-			'show_in_nav_menus' => false,
-			'show_in_menu'		=> false,
-			'show_tagcloud'     => false,
-			'show_admin_column' => true,
-			'query_var'         => false,
-			'rewrite'           => false,
-			'capabilities' => [
-				'manage_terms' => 'advanced_ads_edit_ads',
-				'edit_terms'   => 'advanced_ads_edit_ads',
-				'delete_terms' => 'advanced_ads_edit_ads',
-				'assign_terms' => 'advanced_ads_edit_ads',
-			],
-		];
-
-		return apply_filters( 'advanced-ads-group-taxonomy-params', $args );
-	}
-
-	/**
-	 * Defines the parameters for the custom post type
-	 *
-	 * @return array
-	 */
-	protected function get_post_type_params() {
-		$labels = [
-			'name'               => __( 'Ads', 'advanced-ads' ),
-			'singular_name'      => __( 'Ad', 'advanced-ads' ),
-			'add_new'            => __( 'New Ad', 'advanced-ads' ),
-			'add_new_item'       => __( 'Add New Ad', 'advanced-ads' ),
-			'edit'               => __( 'Edit', 'advanced-ads' ),
-			'edit_item'          => __( 'Edit Ad', 'advanced-ads' ),
-			'new_item'           => __( 'New Ad', 'advanced-ads' ),
-			'view'               => __( 'View', 'advanced-ads' ),
-			'view_item'          => __( 'View the Ad', 'advanced-ads' ),
-			'search_items'       => __( 'Search Ads', 'advanced-ads' ),
-			'not_found'          => __( 'No Ads found', 'advanced-ads' ),
-			'not_found_in_trash' => __( 'No Ads found in Trash', 'advanced-ads' ),
-			'parent'             => __( 'Parent Ad', 'advanced-ads' ),
-		];
-
-		$supports = [ 'title', 'author' ];
-		if ( defined( 'ADVANCED_ADS_ENABLE_REVISIONS' ) ) {
-			$supports[] = 'revisions';
-		};
-
-		$post_type_params = [
-			'labels'       => $labels,
-			'public'       => false,
-			'show_ui'      => true,
-			'show_in_menu' => false,
-			'hierarchical' => false,
-			'capabilities' => [
-				// Meta capabilities.
-				'edit_post'              => 'advanced_ads_edit_ads',
-				'read_post'              => 'advanced_ads_edit_ads',
-				'delete_post'            => 'advanced_ads_edit_ads',
-				'edit_page'              => 'advanced_ads_edit_ads',
-				'read_page'              => 'advanced_ads_edit_ads',
-				'delete_page'            => 'advanced_ads_edit_ads',
-				// Primitive capabilities used outside of map_meta_cap().
-				'edit_posts'             => 'advanced_ads_edit_ads',
-				'publish_posts'          => 'advanced_ads_edit_ads',
-				'read_private_posts'     => 'advanced_ads_edit_ads',
-				// Primitive capabilities used within map_meta_cap().
-				'read'                   => 'advanced_ads_edit_ads',
-				'delete_posts'           => 'advanced_ads_edit_ads',
-				'delete_private_posts'   => 'advanced_ads_edit_ads',
-				'delete_published_posts' => 'advanced_ads_edit_ads',
-				'edit_private_posts'     => 'advanced_ads_edit_ads',
-				'edit_published_posts'   => 'advanced_ads_edit_ads',
-				'create_posts'           => 'advanced_ads_edit_ads',
-			],
-			'has_archive'  => false,
-			'query_var'    => false, // set to true and refresh your permalink settings to query ads under a public URL
-			'rewrite'      => false, // defaults to true and so needs to be set to false to prevent any public URL
-			'supports'     => $supports,
-			'taxonomies'   => [ self::AD_GROUP_TAXONOMY ],
-		];
-
-		return apply_filters( 'advanced-ads-post-type-params', $post_type_params );
-	}
-
-	/**
 	 * Add meta robots noindex, nofollow to images, which are part of 'Image ad' ad type
 	 */
 	public function noindex_attachment_images() {
@@ -859,7 +763,7 @@ class Advanced_Ads {
 
 		if ( is_attachment() && is_object( $post ) && isset( $post->post_parent ) ) {
 			$post_parent  = get_post( $post->post_parent );
-			$parent_is_ad = $post_parent && self::POST_TYPE_SLUG === $post_parent->post_type;
+			$parent_is_ad = $post_parent && Entities::POST_TYPE_AD === $post_parent->post_type;
 			// if the image was not attached to any post and if at least one image ad contains the image. Needed for backward compatibility.
 			$parent_is_image_ad = ( empty( $post->post_parent ) && 0 < get_post_meta( get_the_ID(), '_advanced-ads_parent_id', true ) );
 
@@ -873,7 +777,7 @@ class Advanced_Ads {
 	 * Show custom CSS in the header
 	 */
 	public function custom_header_code(){
-		if ( ! defined( 'ADVANCED_ADS_DISABLE_EDIT_BAR' ) && current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! defined( 'ADVANCED_ADS_DISABLE_EDIT_BAR' ) && WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			?><style>
 				div.advads-edit-bar{position:absolute;height:0;display:none;z-index:10000;animation:advads-edit-appear 2s linear 1;}
 				@keyframes advads-edit-appear {

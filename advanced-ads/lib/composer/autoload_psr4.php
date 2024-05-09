@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Advanced_Ads\\' => array($baseDir . '/src'),
+    'AdvancedAds\\BuildTools\\' => array($vendorDir . '/advanced-ads/build-tools/src'),
 );

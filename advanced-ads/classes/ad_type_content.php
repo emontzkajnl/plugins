@@ -96,7 +96,7 @@ JS;
         <br class="clear"/>
 
         <input type="hidden" name="advanced_ad[output][allow_shortcodes]" value="1" /><?php
-		include ADVADS_BASE_PATH . 'admin/views/ad-info-after-textarea.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-info-after-textarea.php';
 	}
 
 	/**

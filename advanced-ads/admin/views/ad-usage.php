@@ -17,7 +17,7 @@
 	printf(
 	/* translators: 1: is an opening a tag, 2: is a closing a tag */
 		esc_html__( 'Find more display options in the %1$smanual%2$s.', 'advanced-ads' ),
-		sprintf( '<a href="%smanual/placements/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-title" target="_blank" class="advads-manual-link">', esc_url( ADVADS_URL ) ),
+		sprintf( '<a href="%smanual/placements/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-title" target="_blank" class="advads-manual-link">', 'https://wpadvancedads.com/' ),
 		'</a>'
 	);
 	?>

@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:ignoreFile
+
 /**
  * @since 1.7.17
  */
@@ -77,6 +78,7 @@ class Advanced_Ads_Filesystem {
 					break;
 				default:
 					if ( ! $wp_filesystem->find_folder( $dir ) )
+						/* translators: %s directory */
 						return new WP_Error( 'fs_no_folder', sprintf( __( 'Unable to locate needed folder (%s).', 'advanced-ads' ) , esc_html( basename( $dir ) ) ) );
 					break;
 			}

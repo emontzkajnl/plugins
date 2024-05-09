@@ -1,3 +1,89 @@
+##### [Version 3.3.20](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.19...v3.3.20) (2024-04-16)
+
+fix required params on sprintf
+
+##### [Version 3.3.19](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.18...v3.3.19) (2024-04-15)
+
+Add full translation support
+
+##### [Version 3.3.18](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.17...v3.3.18) (2024-04-05)
+
+### Big Fixes
+- Fix rollback for Themes
+
+##### [Version 3.3.17](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.16...v3.3.17) (2024-04-01)
+
+### Improvements
+- Add safeguard against type mutation for featured plugin results.
+
+##### [Version 3.3.16](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.15...v3.3.16) (2024-03-29)
+
+### Improvements
+- Formbricks on multiple products.
+- List Pro Products in featured tab.
+
+##### [Version 3.3.15](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.14...v3.3.15) (2024-03-26)
+
+### Improvements
+- Add a filter to disallow promotions on specific products.
+- Update Formbricks
+
+##### [Version 3.3.14](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.13...v3.3.14) (2024-02-27)
+
+- Add Announcement Module
+- Add Script Loader Module
+
+##### [Version 3.3.13](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.12...v3.3.13) (2024-02-01)
+
+- Updated nonce check
+
+##### [Version 3.3.12](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.11...v3.3.12) (2024-01-31)
+
+- fix: prevent reference key set for users with no capability
+
+##### [Version 3.3.11](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.10...v3.3.11) (2023-12-12)
+
+- fix: cached requests for wp options
+- fix: php notice on failed xml feed
+
+##### [Version 3.3.10](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.9...v3.3.10) (2023-12-11)
+
+feat: add new filter for tsdk_utmify query arguments
+
+##### [Version 3.3.9](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.8...v3.3.9) (2023-11-16)
+
+- Fix: a debugging error when you activate Neve Pro after installing Otter & Otter Pro without the license.
+
+##### [Version 3.3.8](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.7...v3.3.8) (2023-11-14)
+
+- Add Product Telemetry
+
+##### [Version 3.3.7](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.6...v3.3.7) (2023-10-31)
+
+- fix: deprecating notice in Dashboard Widget
+
+##### [Version 3.3.6](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.5...v3.3.6) (2023-10-05)
+
+- Fix duplicate notification in Neve FSE
+- Fix SDK breaking Enfold theme builder
+
+##### [Version 3.3.5](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.4...v3.3.5) (2023-09-29)
+
+Fix TPC message.
+Fix TPC typo.
+
+##### [Version 3.3.4](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.3...v3.3.4) (2023-09-18)
+
+- Allow users to activate plugins from the About page
+
+##### [Version 3.3.3](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.2...v3.3.3) (2023-08-22)
+
+- Disable install buttons on the About page if users can not install plugins
+
+##### [Version 3.3.2](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.1...v3.3.2) (2023-08-02)
+
+- Added a new product page for Otter
+
 ##### [Version 3.3.1](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.0...v3.3.1) (2023-06-21)
 
 - Fix Neve FSE promo typo

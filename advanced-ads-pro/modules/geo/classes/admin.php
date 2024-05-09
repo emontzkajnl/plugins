@@ -1,6 +1,8 @@
 <?php
 
 use AdvancedAdsPro\GeoIp2\Exception\AddressNotFoundException;
+use AdvancedAds\Utilities\WordPress;
+use AdvancedAds\Utilities\Conditional;
 
 /**
  * WP Admin class for Geo Targeting.
@@ -97,11 +99,25 @@ class Advanced_Ads_Geo_Admin {
 	}
 
 	/**
+	 * Check if custom database files are used via filters
+	 *
+	 * @return bool
+	 */
+	private function is_using_custom_database() {
+		$api = Advanced_Ads_Geo_Api::get_instance();
+
+		return has_filter( 'advanced-ads-geo-maxmind-geolite2-country-db-filepath' )
+			   && has_filter( 'advanced-ads-geo-maxmind-geolite2-city-db-filepath' )
+			   && $api->get_GeoIP2_city_reader()
+			   && $api->get_GeoIP2_country_reader();
+	}
+
+	/**
 	 * Render MaxMind license key field.
 	 */
 	public function render_settings_license_key_callback() {
 		$license_key = Advanced_Ads_Geo_Plugin::get_instance()->options( 'maxmind-license-key', '' );
-
+		$use_filters = $this->is_using_custom_database();
 		include $this->views_path . '/setting-maxmind-license-key.php';
 	}
 
@@ -117,7 +133,7 @@ class Advanced_Ads_Geo_Admin {
 		// Check if the database files exist and do not contain errors.
 		$api               = Advanced_Ads_Geo_Api::get_instance();
 		$correct_databases = $api->get_GeoIP2_city_reader() && $api->get_GeoIP2_country_reader();
-
+		$use_filters       = $this->is_using_custom_database();
 		// Render download of the geo database.
 		include $this->views_path . '/setting-download.php';
 	}
@@ -393,7 +409,15 @@ class Advanced_Ads_Geo_Admin {
 	public function download_database() {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_manage_options' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
+		}
+
+		if ( ! current_user_can( $cap ) ) {
 			wp_send_json_error( __( 'You are not allowed to do this.', 'advanced-ads-pro' ), 400 );
 		}
 
@@ -648,7 +672,14 @@ class Advanced_Ads_Geo_Admin {
 	 * @return void
 	 */
 	public function enqueue_admin_scripts() {
-		if ( ! \Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+		$is_screen = false;
+		if ( method_exists( 'AdvancedAds\Utilities\Conditional', 'is_screen_advanced_ads' ) ) {
+			$is_screen = Conditional::is_screen_advanced_ads();
+		} elseif ( method_exists( 'Advanced_Ads_Admin', 'screen_belongs_to_advanced_ads' ) ) {
+			$is_screen = Advanced_Ads_Admin::screen_belongs_to_advanced_ads();
+		}
+
+		if ( ! $is_screen ) {
 			return;
 		}
 

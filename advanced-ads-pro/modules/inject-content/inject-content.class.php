@@ -1,4 +1,7 @@
 <?php
+
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Inject Content module
  */
@@ -43,6 +46,20 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 		// Check if Verification code & Auto ads ads can be displayed by post type.
 		add_filter( 'advanced-ads-can-display-ads-in-header', [ $this, 'can_display_in_header_by_post_type' ], 10 );
 		add_action( 'advanced-ads-body-classes', [ $this, 'body_class' ] );
+		// Wait until other plugins (for example Elementor) have disabled admin bar using `show_admin_bar` filter.
+		add_action( 'template_redirect', [ $this, 'init' ], 11 );
+	}
+
+	/**
+	 * Ad Health init.
+	 */
+	public function init() {
+		if ( ! is_admin()
+		&& is_admin_bar_showing()
+		&& WordPress::user_can( 'advanced_ads_edit_ads' )
+		&& Advanced_Ads_Ad_Health_Notices::notices_enabled() ) {
+			add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_menu' ], 1000 );
+		}
 	}
 
 	/**
@@ -813,5 +830,30 @@ class Advanced_Ads_Pro_Module_Inject_Content {
 		}
 
 		return $aa_classes;
+	}
+
+	/**
+	 * List current ad situation on the page in the admin-bar.
+	 *
+	 * @param object $wp_admin_bar WP_Admin_Bar.
+	 */
+	public function add_admin_bar_menu( $wp_admin_bar ) {
+		$post_type = $this->get_current_post_type();
+
+		if ( $this->post_type_disabled( $post_type ) ) {
+			$wp_admin_bar->add_node(
+				[
+					'parent' => 'advanced_ads_ad_health',
+					'id'     => 'advanced_ads_ad_health_no_post',
+					'title'  => __( 'Ads are disabled for this Post Type', 'advanced-ads' ),
+					'href'  => admin_url( 'admin.php?page=advanced-ads-settings' ),
+					'meta'   => [
+						'class' => 'advanced_ads_ad_health_warning',
+						'target' => '_blank',
+					],
+				]
+			);
+		}
+		return $wp_admin_bar;
 	}
 }

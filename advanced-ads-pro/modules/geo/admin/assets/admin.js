@@ -99,6 +99,10 @@ advads_geo_admin.receive_search_results = function(index, data){
 	if ( ! license ) {
 		return;
 	}
+	if ( Boolean( license.dataset.customdb ) ) {
+		license.closest( 'tr' ).style.display = 'none';
+		return;
+	}
 	const licenseMissingWarning = document.getElementById( 'advanced-ads-geo-license-missing-warning' );
 	const dataBaseUpdate        = document.getElementById( 'advanced-ads-geo-update-database' );
 	const hasDatabase           = dataBaseUpdate.dataset.dbExists || false;

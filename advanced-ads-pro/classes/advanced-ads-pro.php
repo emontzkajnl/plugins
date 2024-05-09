@@ -70,6 +70,9 @@ class Advanced_Ads_Pro {
 			return;
 		}
 
+		// TODO: Update routines will be handled by the Advanced Ads Framework. Move this function then accordingly.
+		$this->plugin_updates();
+
 		// Load gettext domain.
 		$this->load_textdomain();
 
@@ -129,6 +132,15 @@ class Advanced_Ads_Pro {
 			[ 'jquery', ADVADS_SLUG . '-advanced-js' ],
 			AAP_VERSION,
 			true
+		);
+
+		wp_localize_script(
+			self::FRONTEND_SCRIPT_HANDLE,
+			'advanced_ads_cookies',
+			[
+				'cookie_path'      => COOKIEPATH,
+				'cookie_domain'    => COOKIE_DOMAIN,
+			]
 		);
 	}
 
@@ -490,6 +502,30 @@ class Advanced_Ads_Pro {
 			'text'   => __( 'Please note, the “Ad Admin“ and the “Ad Manager“ roles have the “upload_files“ and the “unfiltered_html“ capabilities', 'advanced-ads-pro' ),
 			'global' => true,
 		];
+		$message                     = wp_kses(
+			sprintf(
+			/* translators: 1 is the opening link to the Advanced Ads website, 2 the closing link */
+				__(
+					'We have renamed the Responsive Ads add-on to ‘Advanced Ads AMP Ads’. With this change, the Browser Width visitor condition moved from that add-on into Advanced Ads Pro. You can deactivate ‘Advanced Ads AMP Ads’ if you don’t utilize AMP ads or the custom sizes feature for responsive AdSense ad units. %1$sRead more%2$s.',
+					'advanced-ads-pro'
+				),
+				'<a href="https://wpadvancedads.com/responsive-ads-add-on-becomes-amp-ads" target="_blank" class="advads-manual-link">',
+				'</a>'
+			),
+			[
+				'a' => [
+					'href' => true,
+					'target' => true,
+					'class' => true,
+				],
+			]
+		);
+		$notices['pro_responsive_migration'] = [
+			'type'   => 'info',
+			'text'   => $message,
+			'global' => true,
+		];
+
 		return $notices;
 	}
 
@@ -644,9 +680,13 @@ class Advanced_Ads_Pro {
 	 * Enable placement test emails
 	 */
 	public static function enable_placement_test_emails() {
-		// Only schedule if not yet scheduled.
-		if ( ! wp_next_scheduled( 'advanced-ads-placement-tests-emails' ) ) {
+		$placement_tests = get_option( 'advads-ads-placement-tests', [] );
+		if ( ! wp_next_scheduled( 'advanced-ads-placement-tests-emails' ) && count($placement_tests) > 0 ) {
+			// Only schedule if not yet scheduled & tests exists.
 			wp_schedule_event( time(), 'daily', 'advanced-ads-placement-tests-emails' );
+		} elseif ( wp_next_scheduled( 'advanced-ads-placement-tests-emails' ) && count($placement_tests) <= 0 ) {
+			// deactivate if running and tests empty.
+			self::disable_placement_test_emails();
 		}
 	}
 
@@ -720,4 +760,19 @@ class Advanced_Ads_Pro {
 		return call_user_func( [ Advanced_Ads_Plugin::get_instance(), $function_name ], $atts );
 	}
 
+	/**
+	 * Plugin update.
+	 *
+	 * @return void
+	 */
+	private function plugin_updates(): void {
+		$pro_options  = $this->get_options();
+		$free_options = Advanced_Ads::get_instance()->options();
+
+		if ( isset( $pro_options['responsive-ads'] ) || ! isset( $free_options['responsive-ads'] ) ) {
+			return;
+		}
+
+		$this->set_option( 'responsive-ads', $free_options['responsive-ads'] );
+	}
 }

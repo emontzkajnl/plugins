@@ -1,5 +1,7 @@
 <?php
 
+use AdvancedAds\Entities;
+
 /**
  * Advanced Ads Model
  */
@@ -56,7 +58,7 @@ class Advanced_Ads_Model {
 	 */
 	public function get_ad_conditions() {
 		if ( ! isset( self::$ad_conditions ) ) {
-			$this->ad_conditions = include ADVADS_BASE_PATH . 'includes/array_ad_conditions.php';
+			$this->ad_conditions = include ADVADS_ABSPATH . 'includes/array_ad_conditions.php';
 		}
 
 		return $this->ad_conditions;
@@ -91,7 +93,7 @@ class Advanced_Ads_Model {
 			'post_status'    => [ 'publish', 'future' ],
 		] );
 		// add default WP_Query arguments.
-		$args['post_type'] = Advanced_Ads::POST_TYPE_SLUG;
+		$args['post_type'] = Entities::POST_TYPE_AD;
 
 		return ( new WP_Query( $args ) )->posts;
 	}
@@ -109,9 +111,12 @@ class Advanced_Ads_Model {
 		$args['hide_empty'] = $args['hide_empty'] ?? false;
 		unset( $args['fields'] );
 
-		return array_map( static function( WP_Term $term ) {
-			return new Advanced_Ads_Group( $term );
-		}, get_terms( Advanced_Ads::AD_GROUP_TAXONOMY, $args ) );
+		return array_map(
+			static function( WP_Term $term ) {
+				return \Advanced_Ads\Group_Repository::get( $term );
+			},
+			get_terms( Entities::TAXONOMY_AD_GROUP, $args )
+		);
 	}
 
 	/**

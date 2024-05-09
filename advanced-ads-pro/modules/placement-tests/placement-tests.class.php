@@ -1,9 +1,12 @@
 <?php
 
+/**
+ * Takes care of the placement tests.
+ */
 class Advanced_Ads_Pro_Placement_Tests {
 	/**
 	 * Instance of this class.
-	 * 
+	 *
 	 * @var      object
 	 */
 	private static $instance = null;
@@ -16,8 +19,8 @@ class Advanced_Ads_Pro_Placement_Tests {
 	/**
 	 * delivered placement tests when cache-busting is not used
 	 * contains pairs placement_id => test_id
-	 * 
-	 * @var array 
+	 *
+	 * @var array
 	 */
 	public $delivered_tests = [];
 
@@ -72,18 +75,18 @@ class Advanced_Ads_Pro_Placement_Tests {
 	/**
 	 * display weight header in placement table
 	 */
-	public function display_placement_weight_header() { ?> 
+	public function display_placement_weight_header() { ?>
 		<th></th><?php
-	}	
+	}
 
 	/**
 	 * display weight selector in placement table
 	 */
-	public function display_placement_weight_selector( $_placement_slug, $_placement ) { 
+	public function display_placement_weight_selector( $_placement_slug, $_placement ) {
 		$placement_types = Advanced_Ads_Placements::get_placement_types();
 		$show = ! isset( $placement_types[ $_placement['type'] ]['options']['placement-cache-busting'] ) || $placement_types[ $_placement['type'] ]['options']['placement-cache-busting'];
 		include plugin_dir_path(__FILE__) . '/views/setting_placement_test_weight.php';
-	}	
+	}
 
 	/**
 	 * display button in placement table
@@ -94,13 +97,12 @@ class Advanced_Ads_Pro_Placement_Tests {
 	}
 
 	/**
-	 * display placement tests table
+	 * Display placement tests table.
 	 *
+	 * @param array $placements The placement array.
 	 */
 	public function display_placement_tests( $placements ) {
 		$placement_tests = $this->get_placement_tests_array();
-		$placements = Advanced_Ads::get_ad_placements_array();
-		$adsense_limit = Advanced_Ads_AdSense_Data::get_instance()->get_limit_per_page();
 
 		include plugin_dir_path(__FILE__) . '/views/placement_tests.php';
 	}
@@ -115,7 +117,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 			$placement_tests = $this->get_placement_tests_array();
 			$placements = Advanced_Ads::get_ad_placements_array();
 			// sort by weights
-			arsort( $_POST['advads']['placement_test'] ); 
+			arsort( $_POST['advads']['placement_test'] );
 			$new_placements = [];
 			$test_id = 'pt_' . md5( uniqid( time(), true ) );
 
@@ -166,7 +168,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 			update_option( 'advads-ads-placements', $placements );
 			$this->update_placement_tests_array( $placement_tests );
 			$success = true;
-		}	
+		}
 
 		// save placements
 		if ( isset($_POST['advads']['placements']) && check_admin_referer( 'advads-placement', 'advads_placement' )){
@@ -175,7 +177,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 			$placements = Advanced_Ads::get_ad_placements_array();
 			$placement_tests = $this->get_placement_tests_array();
 			$need_update = false;
-			
+
 			foreach ( $placement_items as $_placement_slug => $_placement ) {
 				if ( isset( $_placement['delete'] ) ) {
 					foreach ( $placement_tests as $k => &$placement_test ) {
@@ -205,7 +207,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 
 			if ( $need_update ) {
 				update_option( 'advads-ads-placements', $placements );
-				$this->update_placement_tests_array( $placement_tests );				
+				$this->update_placement_tests_array( $placement_tests );
 			}
 
 			$success = true;
@@ -372,7 +374,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 	 */
 	public static function get_exp_time( $timestamp = null ) {
 		$utc_ts = $timestamp ? $timestamp : time();
-		
+
 		$utc_time = date_create( '@' . $utc_ts );
 		$tz_option = get_option( 'timezone_string' );
 		$exp_time = clone  $utc_time;
@@ -404,7 +406,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 			list( $curr_year, $curr_month, $curr_day, $curr_hour, $curr_minute ) = explode( '-', $exp_time->format( 'Y-m-d-H-i' ) );
 			$TZ = Advanced_Ads_Admin::timezone_get_name( Advanced_Ads_Admin::get_wp_timezone() );
 
-			include plugin_dir_path(__FILE__) . '/views/settings_test_expiry_date.php';			
+			include plugin_dir_path(__FILE__) . '/views/settings_test_expiry_date.php';
 		}
 	}
 
@@ -435,7 +437,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 				list( $year, $month, $day, $hour, $minute ) = explode( '-', $gmDate );
 				return gmmktime($hour, $minute, 0, $month, $day, $year);
 			}
-		} 
+		}
 
 		return 0;
 	}
@@ -459,9 +461,9 @@ class Advanced_Ads_Pro_Placement_Tests {
 		$message_subject = _x( 'Expired placement tests', 'placement tests', 'advanced-ads-pro' );
 
 		foreach ( $placement_tests as $placement_test_id => $placement_test ) {
-			if ( 
-				! empty( $placement_test['user_id'] ) && 
-				! empty( $placement_test['placements'] ) && is_array( $placement_test['placements'] ) && count( $placement_test['placements'] ) > 1 && 
+			if (
+				! empty( $placement_test['user_id'] ) &&
+				! empty( $placement_test['placements'] ) && is_array( $placement_test['placements'] ) && count( $placement_test['placements'] ) > 1 &&
 				! empty ( $placement_test['expiry_date'] )
 			) {
 				$expiry_date = (int) $placement_test['expiry_date'];
@@ -476,7 +478,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 				$combined_tests [ $placement_test['user_id']  ][ $placement_test_id ] = $placement_test;
 			}
 		}
-		
+
 
 		foreach ( $combined_tests as $user_id => $tests ) {
 			$message_body = '';
@@ -489,7 +491,7 @@ class Advanced_Ads_Pro_Placement_Tests {
 					' - ' . $expiry_date_formatted . "<br />";
 			}
 
-			$message_body .= '<br />' 
+			$message_body .= '<br />'
 			. sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=advanced-ads-placements' ) ),
 				_x( 'Placement page', 'placement tests', 'advanced-ads-pro' ) );
 

@@ -35,7 +35,7 @@
 						<div class="advads-ad-positioning-position-icon">
 							<?php
 							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- allow inline svg
-							echo preg_replace( '/\s+/', ' ', file_get_contents( sprintf( ADVADS_BASE_PATH . 'modules/ad-positioning/assets/img/advads-bknd-ui-pos-%s.svg', esc_attr( isset( $option['img'] ) ? $option['img'] : $group_name ) ) ) );
+							echo preg_replace( '/\s+/', ' ', file_get_contents( sprintf( ADVADS_ABSPATH . 'modules/ad-positioning/assets/img/advads-bknd-ui-pos-%s.svg', esc_attr( isset( $option['img'] ) ? $option['img'] : $group_name ) ) ) );
 							?>
 						</div>
 					</label>

@@ -1,5 +1,48 @@
 == Changelog ==
 
+= 2.26.1 (March 13, 2024) =
+
+- Improvement: update German, German (Austria), German (Switzerland) and German (formal) translations
+- Improvement: show Ad Health notice when ads are disabled for selected post type
+
+= 2.26.0 (January 31, 2024) =
+
+- Improvement: update German and German (formal) translations
+- Improvement: display required modules for adblocker fallback item
+- Improvement: display required modules for Lazy Loading
+- Improvement: allow use of existing MaxMind database files via filters
+- Fix: allow "parent page" and "post meta" display conditions to work with AJAX Cache Busting
+- Fix: allow Gravity Forms shortcode to work with AJAX Cache Busting
+- Fix: avoid storing browser width when `ADVANCED_ADS_RESPONSIVE_DISABLE_BROWSER_WIDTH` is defined
+
+= 2.25.2 (December 6, 2023) =
+
+- Improvement: update Arabic translations
+- Improvement: provide vanilla JavaScript instead of jQuery code in the Ad Server usage box
+- Improvement: add manual links to pro options on ad edit page
+- Fix: remove a deprecation warning when running placement tests
+
+= 2.25.1 (November 14, 2023) =
+
+- Improvement: update Greek and Italian translations
+- Improvement: remove split test cronjob, when no test is running
+- Fix: prevent Advanced Ads AMP Ads notice from showing infinitely
+
+= 2.25.0 (November 8, 2023) =
+
+- Feature: add Browser Width condition
+- Feature: add option to reload ads on screen size change
+- Feature: enforce responsive image ads for themes without support
+- Fix: remove PHP deprecation notices with PHP 8
+
+= 2.24.2 (November 1, 2023) =
+
+- Fix: replace more deprecated functions
+
+= 2.24.1 (October 26, 2023) =
+
+- Fix: replace deprecated functions
+
 = 2.24.0 (September 13, 2023) =
 
 - Improvement: add a link to enable cache busting on the fly for groups that need a placement with cache busting enabled

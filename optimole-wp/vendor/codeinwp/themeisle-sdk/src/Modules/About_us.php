@@ -27,6 +27,7 @@
 namespace ThemeisleSDK\Modules;
 
 use ThemeisleSDK\Common\Abstract_Module;
+use ThemeisleSDK\Loader;
 use ThemeisleSDK\Product;
 
 // Exit if accessed directly.
@@ -96,8 +97,8 @@ class About_Us extends Abstract_Module {
 
 		add_submenu_page(
 			$this->about_data['location'],
-			__( 'About Us', 'textdomain' ),
-			__( 'About Us', 'textdomain' ),
+			Loader::$labels['about_us']['title'],
+			Loader::$labels['about_us']['title'],
 			'manage_options',
 			$this->get_about_page_slug(),
 			array( $this, 'render_about_us_page' ),
@@ -173,36 +174,126 @@ class About_Us extends Abstract_Module {
 	 * @return array
 	 */
 	private function get_about_localization_data() {
-		$links = isset( $this->about_data['page_menu'] ) ? $this->about_data['page_menu'] : [];
+		$links         = isset( $this->about_data['page_menu'] ) ? $this->about_data['page_menu'] : [];
+		$product_pages = isset( $this->about_data['product_pages'] ) ? $this->about_data['product_pages'] : [];
 
 		return [
-			'links'          => $links,
-			'logoUrl'        => $this->about_data['logo'],
-			'products'       => $this->get_other_products_data(),
-			'homeUrl'        => esc_url( home_url() ),
-			'pageSlug'       => $this->get_about_page_slug(),
-			'currentProduct' => [
+			'links'              => $links,
+			'logoUrl'            => $this->about_data['logo'],
+			'productPages'       => $this->get_product_pages_data( $product_pages ),
+			'products'           => $this->get_other_products_data(),
+			'homeUrl'            => esc_url( home_url() ),
+			'pageSlug'           => $this->get_about_page_slug(),
+			'currentProduct'     => [
 				'slug' => $this->product->get_key(),
 				'name' => $this->product->get_name(),
 			],
-			'teamImage'      => $this->get_sdk_uri() . 'assets/images/team.jpg',
-			'strings'        => [
-				'aboutUs'          => __( 'About us', 'textdomain' ),
-				'heroHeader'       => __( 'Our Story', 'textdomain' ),
-				'heroTextFirst'    => __( 'Themeisle was founded in 2012 by a group of passionate developers who wanted to create beautiful and functional WordPress themes and plugins. Since then, we have grown into a team of over 20 dedicated professionals who are committed to delivering the best possible products to our customers.', 'textdomain' ),
-				'heroTextSecond'   => __( 'At Themeisle, we offer a wide range of WordPress themes and plugins that are designed to meet the needs of both beginners and advanced users. Our products are feature-rich, easy to use, and are designed to help you create beautiful and functional websites.', 'textdomain' ),
-				'teamImageCaption' => __( 'Our team in WCEU2022 in Portugal', 'textdomain' ),
-				'newsHeading'      => __( 'Stay connected for news & updates!', 'textdomain' ),
-				'emailPlaceholder' => __( 'Your email address', 'textdomain' ),
-				'signMeUp'         => __( 'Sign me up', 'textdomain' ),
-				'installNow'       => __( 'Install Now', 'textdomain' ),
-				'activate'         => __( 'Activate', 'textdomain' ),
-				'learnMore'        => __( 'Learn More', 'textdomain' ),
-				'installed'        => __( 'Installed', 'textdomain' ),
-				'notInstalled'     => __( 'Not Installed', 'textdomain' ),
-				'active'           => __( 'Active', 'textdomain' ),
+			'teamImage'          => $this->get_sdk_uri() . 'assets/images/team.jpg',
+			'strings'            => [
+				'aboutUs'          => Loader::$labels['about_us']['title'],
+				'heroHeader'       => Loader::$labels['about_us']['heroHeader'],
+				'heroTextFirst'    => Loader::$labels['about_us']['heroTextFirst'],
+				'heroTextSecond'   => Loader::$labels['about_us']['heroTextSecond'],
+				'teamImageCaption' => Loader::$labels['about_us']['teamImageCaption'],
+				'newsHeading'      => Loader::$labels['about_us']['newsHeading'],
+				'emailPlaceholder' => Loader::$labels['about_us']['emailPlaceholder'],
+				'signMeUp'         => Loader::$labels['about_us']['signMeUp'],
+				'installNow'       => Loader::$labels['about_us']['installNow'],
+				'activate'         => Loader::$labels['about_us']['activate'],
+				'learnMore'        => Loader::$labels['about_us']['learnMore'],
+				'installed'        => Loader::$labels['about_us']['installed'],
+				'notInstalled'     => Loader::$labels['about_us']['notInstalled'],
+				'active'           => Loader::$labels['about_us']['active'],
+			],
+			'canInstallPlugins'  => current_user_can( 'install_plugins' ),
+			'canActivatePlugins' => current_user_can( 'activate_plugins' ),
+		];
+	}
+
+	/**
+	 * Get product pages data.
+	 *
+	 * @param array $product_pages Product pages.
+	 *
+	 * @return array
+	 */
+	private function get_product_pages_data( $product_pages ) {
+
+		$otter_slug                     = 'otter-blocks';
+		$otter_plugin                   = [
+			'status' => 'not-installed',
+		];
+		$otter_plugin['status']         = $this->is_plugin_installed( $otter_slug ) ? 'installed' : 'not-installed';
+		$otter_plugin['status']         = $this->is_plugin_active( $otter_slug ) ? 'active' : $otter_plugin['status'];
+		$otter_plugin['activationLink'] = $this->get_plugin_activation_link( $otter_slug );
+
+		$pages = [
+			'otter-page' => [
+				'name'    => 'Otter Blocks',
+				'hash'    => '#otter-page',
+				'product' => $otter_slug,
+				'plugin'  => $otter_plugin,
+				'strings' => [
+					'heading'      => Loader::$labels['about_us']['otter-page']['heading'],
+					'text'         => Loader::$labels['about_us']['otter-page']['text'],
+					'buttons'      => [
+						'install_otter_free' => Loader::$labels['about_us']['otter-page']['install_otter_free'],
+						'install_now'        => Loader::$labels['about_us']['otter-page']['install_now'],
+						'learn_more'         => Loader::$labels['about_us']['otter-page']['learn_more'],
+						'learn_more_link'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/', 'otter-page', 'about-us' ),
+					],
+					'features'     => [
+						'advancedTitle' => Loader::$labels['about_us']['otter-page']['features']['advancedTitle'],
+						'advancedDesc'  => Loader::$labels['about_us']['otter-page']['features']['advancedDesc'],
+						'fastTitle'     => Loader::$labels['about_us']['otter-page']['features']['fastTitle'],
+						'fastDesc'      => Loader::$labels['about_us']['otter-page']['features']['fastDesc'],
+						'mobileTitle'   => Loader::$labels['about_us']['otter-page']['features']['mobileTitle'],
+						'mobileDesc'    => Loader::$labels['about_us']['otter-page']['features']['mobileDesc'],
+					],
+					'details'      => [
+						's1Title' => Loader::$labels['about_us']['otter-page']['details']['s1Title'],
+						's1Text'  => Loader::$labels['about_us']['otter-page']['details']['s1Text'],
+						's2Title' => Loader::$labels['about_us']['otter-page']['details']['s2Title'],
+						's2Text'  => Loader::$labels['about_us']['otter-page']['details']['s2Text'],
+						's3Title' => Loader::$labels['about_us']['otter-page']['details']['s3Title'],
+						's3Text'  => Loader::$labels['about_us']['otter-page']['details']['s3Text'],
+						's1Image' => $this->get_sdk_uri() . 'assets/images/otter/otter-builder.png',
+						's2Image' => $this->get_sdk_uri() . 'assets/images/otter/otter-patterns.png',
+						's3Image' => $this->get_sdk_uri() . 'assets/images/otter/otter-library.png',
+					],
+					'testimonials' => [
+						'heading' => Loader::$labels['about_us']['otter-page']['testimonials']['heading'],
+						'users'   => [
+							[
+								'avatar' => 'https://mllj2j8xvfl0.i.optimole.com/cb:3970~373ad/w:80/h:80/q:mauto/https://themeisle.com/wp-content/uploads/2021/05/avatar-03.png',
+								'name'   => 'Michael Burry',
+								'text'   => Loader::$labels['about_us']['otter-page']['testimonials']['users']['user_1'],
+							],
+							[
+								'avatar' => 'https://mllj2j8xvfl0.i.optimole.com/cb:3970~373ad/w:80/h:80/q:mauto/https://themeisle.com/wp-content/uploads/2022/04/avatar-04.png',
+								'name'   => 'Maria Gonzales',
+								'text'   => Loader::$labels['about_us']['otter-page']['testimonials']['users']['user_2'],
+							],
+							[
+								'avatar' => 'https://mllj2j8xvfl0.i.optimole.com/cb:3970~373ad/w:80/h:80/q:mauto/https://themeisle.com/wp-content/uploads/2022/04/avatar-05.png',
+								'name'   => 'Florian Henckel',
+								'text'   => Loader::$labels['about_us']['otter-page']['testimonials']['users']['user_3'],
+							],
+						],
+					],
+				],
 			],
 		];
+
+		return array_filter(
+			$pages,
+			function ( $page_data, $page_key ) use ( $product_pages ) {
+				return in_array( $page_key, $product_pages, true ) &&
+					   isset( $page_data['plugin']['status'] ) &&
+					   $page_data['plugin']['status'] === 'not-installed';
+			},
+			ARRAY_FILTER_USE_BOTH
+		);
 	}
 
 	/**
@@ -214,12 +305,12 @@ class About_Us extends Abstract_Module {
 		$products = [
 			'optimole-wp'                         => [
 				'name'        => 'Optimole',
-				'description' => 'Optimole is an image optimization service that automatically optimizes your images and serves them to your visitors via a global CDN, making your website lighter, faster and helping you reduce your bandwidth usage.',
+				'description' => Loader::$labels['about_us']['others']['optimole_desc'],
 			],
 			'neve'                                => [
 				'skip_api'    => true,
 				'name'        => 'Neve',
-				'description' => __( 'A fast, lightweight, customizable WordPress theme offering responsive design, speed, and flexibility for various website types.', 'textdomain' ),
+				'description' => Loader::$labels['about_us']['others']['neve_desc'],
 				'icon'        => $this->get_sdk_uri() . 'assets/images/neve.png',
 			],
 			'otter-blocks'                        => [
@@ -242,7 +333,7 @@ class About_Us extends Abstract_Module {
 				'skip_api'    => true,
 				'premiumUrl'  => tsdk_utmify( 'https://themeisle.com/plugins/wp-landing-kit', $this->get_about_page_slug() ),
 				'name'        => 'WP Landing Kit',
-				'description' => __( 'Turn WordPress into a landing page powerhouse with Landing Kit, map domains to pages or any other published resource.', 'textdomain' ),
+				'description' => Loader::$labels['about_us']['others']['landingkit_desc'],
 				'icon'        => $this->get_sdk_uri() . 'assets/images/wplk.png',
 			],
 			'multiple-pages-generator-by-porthas' => [
@@ -252,13 +343,13 @@ class About_Us extends Abstract_Module {
 				'skip_api'    => true,
 				'premiumUrl'  => tsdk_utmify( 'https://themeisle.com/plugins/sparks-for-woocommerce', $this->get_about_page_slug() ),
 				'name'        => 'Sparks',
-				'description' => __( 'Extend your store functionality with 8 ultra-performant features like product comparisons, variation swatches, wishlist, and more.', 'textdomain' ),
+				'description' => Loader::$labels['about_us']['others']['sparks_desc'],
 				'icon'        => $this->get_sdk_uri() . 'assets/images/sparks.png',
 				'condition'   => class_exists( 'WooCommerce', false ),
 			],
 			'templates-patterns-collection'       => [
-				'name'        => 'Template Cloud',
-				'description' => __( 'Ultimate Free Templates Cloud for WordPress, for blocks, patters of full pages.', 'textdomain' ),
+				'name'        => 'Templates Cloud',
+				'description' => Loader::$labels['about_us']['others']['tpc_desc'],
 			],
 		];
 

@@ -105,22 +105,54 @@ class Advanced_Ads_AdSense_Report_Data implements Serializable {
 	}
 
 	/**
-	 * Returns serialized object properties.
+	 * Serialize an instance of this class into a string. For PHP version >= 7.4
 	 *
-	 * @return string the serialized data.
+	 * @return array
 	 */
-	public function serialize() {
-		return serialize( [
+	public function __serialize() {
+		return [
 			'earnings'  => $this->earnings,
 			'type'      => $this->type,
 			'timestamp' => $this->timestamp,
 			'currency'  => $this->currency,
 			'domains'   => $this->domains,
-		] );
+		];
 	}
 
 	/**
-	 * Set object properties from serialized data string.
+	 * Recreate an instance of this class from a string. For PHP version >= 7.4
+	 *
+	 * @param array $data the array from __serialize.
+	 *
+	 * @return void
+	 */
+	public function __unserialize( $data ) {
+		$this->earnings  = $data['earnings'] ?? null;
+		$this->type      = $data['type'] ?? null;
+		$this->timestamp = $data['timestamp'] ?? 0;
+		$this->currency  = $data['currency'] ?? '';
+		$this->domains   = $data['domains'] ?? [];
+	}
+
+	/**
+	 * Returns serialized object properties. For PHP version < 7.4
+	 *
+	 * @return string the serialized data.
+	 */
+	public function serialize() {
+		return serialize(
+			[
+				'earnings'  => $this->earnings,
+				'type'      => $this->type,
+				'timestamp' => $this->timestamp,
+				'currency'  => $this->currency,
+				'domains'   => $this->domains,
+			]
+		);
+	}
+
+	/**
+	 * Set object properties from serialized data string. For PHP version < 7.4
 	 *
 	 * @param string $data serilaized data from DB.
 	 */
@@ -130,12 +162,7 @@ class Advanced_Ads_AdSense_Report_Data implements Serializable {
 		} catch ( Exception $ex ) {
 			$unwrapped = [];
 		}
-
-		$this->earnings  = isset( $unwrapped['earnings'] ) ? $unwrapped['earnings'] : null;
-		$this->type      = isset( $unwrapped['type'] ) ? $unwrapped['type'] : null;
-		$this->timestamp = isset( $unwrapped['timestamp'] ) ? $unwrapped['timestamp'] : 0;
-		$this->currency  = isset( $unwrapped['currency'] ) ? $unwrapped['currency'] : '';
-		$this->domains   = isset( $unwrapped['domains'] ) ? $unwrapped['domains'] : [];
+		$this->__unserialize( $unwrapped );
 	}
 
 	/**
@@ -200,6 +227,12 @@ class Advanced_Ads_AdSense_Report_Data implements Serializable {
 		if ( $option === false ) {
 			return new self( $type );
 		}
+
+		// PHP version < 7.4.
+		if ( $option instanceof self ) {
+			return $option;
+		}
+
 		try {
 			$unserialized = unserialize( $option );
 			if ( $unserialized instanceof self ) {

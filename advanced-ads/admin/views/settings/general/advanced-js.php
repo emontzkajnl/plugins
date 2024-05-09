@@ -24,7 +24,7 @@ if ( ! $checked && apply_filters( 'advanced-ads-activate-advanced-js', $checked 
 				],
 			]
 		),
-		esc_url( ADVADS_URL . 'javascript-functions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings' )
+		'https://wpadvancedads.com/javascript-functions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings'
 	);
 	?>
 </label>

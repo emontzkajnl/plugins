@@ -242,7 +242,7 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 			$operator = 'is';
 		}
 
-		global $post;
+		$post        = Advanced_Ads_Pro_Utils::get_post();
 		$post_parent = ! empty( $post->post_parent ) ? $post->post_parent : 0;
 
 		if ( ! Advanced_Ads_Display_Conditions::can_display_ids( $post_parent, $options['value'], $operator ) ) {
@@ -261,8 +261,8 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 	 * @return bool
 	 */
 	public static function check_post_meta( $options, Advanced_Ads_Ad $ad ) {
-		global $post;
-		$mode = ( isset($options['mode']) && $options['mode'] === 'all' ) ? 'all' : 'any';
+		$post       = Advanced_Ads_Pro_Utils::get_post();
+		$mode       = ( isset( $options['mode'] ) && $options['mode'] === 'all' ) ? 'all' : 'any';
 		$meta_field = isset( $options['meta_field'] ) ? $options['meta_field'] : '';
 
 		if ( empty( $post->ID ) && empty( $meta_field ) ) {

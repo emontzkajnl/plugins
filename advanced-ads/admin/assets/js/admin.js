@@ -1,4 +1,6 @@
+// phpcs:ignoreFile
 jQuery( document ).ready( function ( $ ) {
+
 	function advads_load_ad_type_parameter_metabox ( ad_type ) {
 		jQuery( '#advanced-ad-type input' ).prop( 'disabled', true )
 		$( '#advanced-ads-tinymce-wrapper' ).hide()
@@ -109,9 +111,9 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	} )
 	// show edit icon in the last head column
-	$( '.post-type-advanced_ads .wp-list-table thead th:last-of-type' ).append( '<span class="dashicons dashicons-edit"></span>' ).on( 'click', function() {
+	$( '.post-type-advanced_ads .wp-list-table thead th:last-of-type' ).append( $( '<span class="dashicons dashicons-edit"></span>' ).on( 'click', function () {
 		$( '#show-settings-link' ).trigger( 'click' );
-	} );
+	} ) );
 
 	/**
 	 * Logic for placement list
@@ -245,22 +247,45 @@ jQuery( document ).ready( function ( $ ) {
 	} )
 
 	// group page: add ad to group
-	$( '.advads-group-add-ad button' ).on( 'click', function () {
-		var $settings_row = $( this ).closest( '.advads-ad-group-form' ),
-				$ad           = $settings_row.find( '.advads-group-add-ad-list-ads option:selected' )
-		$weight_selector = $settings_row.find( '.advads-group-add-ad-list-weights' ).last(),
-			$ad_table = $settings_row.find( '.advads-group-ads tbody' )
+	$('.advads-group-add-ad button').on('click', function () {
+		var $settings_row = $( this ).closest('.advads-ad-group-form'),
+			$ad = $settings_row.find(
+				'.advads-group-add-ad-list-ads option:selected'
+			),
+			$weight_selector = $settings_row
+				.find('.advads-group-add-ad-list-weights')
+				.last(),
+			$ad_table = $settings_row.find('.advads-group-ads tbody');
+
+		const adVal = $ad.val().match(/\d+/g);
+		let adUrl = '';
+
+		if (adVal) {
+			adUrl = advancedAds.endpoints.editAd + adVal.pop();
+		}
+
 		// add new row if does not already exist
-		if ( $ad.length && $weight_selector.length && ! $ad_table.find( '[name="' + $ad.val() + '"]' ).length ) {
+		if (
+			$ad.length &&
+			$weight_selector.length &&
+			!$ad_table.find('[name="' + $ad.val() + '"]').length
+		) {
 			$ad_table.append(
-				$( '<tr></tr>' ).append(
-					$( '<td></td>' ).html( $ad.text() ),
-					$( '<td></td>' ).append( $weight_selector.clone().val( $weight_selector.val() ).prop( 'name', $ad.val() ) ),
+				$('<tr></tr>').append(
+					$('<td></td>').html(
+						`<a target="_blank" href="${adUrl}">${$ad.text()}</a>`
+					),
+					$('<td></td>').append(
+						$weight_selector
+							.clone()
+							.val($weight_selector.val())
+							.prop('name', $ad.val())
+					),
 					'<td><button type="button" class="advads-remove-ad-from-group button">x</button></td>'
 				)
-			)
+			);
 		}
-	} )
+	});
 	// group page: remove ad from group
 	$( '#advads-ad-group-list' ).on( 'click', '.advads-remove-ad-from-group', function () {
 		var $ad_row = $( this ).closest( 'tr' )

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -231,7 +231,7 @@ class ADVADS_SL_Plugin_Updater {
 		} elseif ( empty( $update_cache->response[ $this->name ]->package ) && ! empty( $changelog_link ) ) {
 			echo ' ';
 			printf(
-			/* translators: 1. opening anchor tag, do not translate 2. the new plugin version 3. closing anchor tag, do not translate. */
+				/* translators: 1. opening anchor tag, do not translate 2. the new plugin version 3. closing anchor tag, do not translate. */
 				__( '%1$sView version %2$s details%3$s.', 'advanced-ads' ),
 				'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
 				esc_html( $update_cache->response[ $this->name ]->new_version ),
@@ -240,7 +240,8 @@ class ADVADS_SL_Plugin_Updater {
 		} elseif ( ! empty( $changelog_link ) ) {
 			echo ' ';
 			printf(
-				__( '%1$sView version %2$s details%3$s or %4$supdate now%5$s.', 'advanced-ads' ),
+				/* translators: 1: link tag 2: Version 3: link tag close 4: link tag 5: link tag close */
+				__( '%1$s View version %2$s details%3$s or %4$supdate now%5$s.', 'advanced-ads' ),
 				'<a target="_blank" class="thickbox open-plugin-details-modal" href="' . esc_url( $changelog_link ) . '">',
 				esc_html( $update_cache->response[ $this->name ]->new_version ),
 				'</a>',

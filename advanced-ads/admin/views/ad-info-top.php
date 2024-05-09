@@ -17,7 +17,7 @@ if ( $this->show_wizard_welcome() || ! Advanced_Ads::get_number_of_ads() ) :
 <div  class="advads-ad-metabox postbox">
 	<?php
 	if ( ! Advanced_Ads::get_number_of_ads() ) {
-		include ADVADS_BASE_PATH . 'admin/views/ad-list-no-ads.php';
+		include ADVADS_ABSPATH . 'admin/views/ad-list-no-ads.php';
 	} if ( $this->show_wizard_welcome() ) :
 		?>
 <div id="advads-wizard-welcome">

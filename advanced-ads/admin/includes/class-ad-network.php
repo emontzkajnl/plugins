@@ -1,4 +1,7 @@
 <?php
+// phpcs:ignoreFile
+use AdvancedAds\Utilities\Conditional;
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * Class Advanced_Ads_Ad_Network
@@ -229,7 +232,7 @@ abstract class Advanced_Ads_Ad_Network {
 	 */
 	public function enqueue_scripts_callback() {
 
-		if ( ! Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+		if ( ! Conditional::is_screen_advanced_ads() ) {
 			return;
 		}
 
@@ -326,7 +329,7 @@ abstract class Advanced_Ads_Ad_Network {
 	 * dies, when a problem was detected
 	 */
 	protected function ajax_security_checks() {
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			// TODO: translate.
 			$this->send_ajax_error_response_and_die( "You don't have the permission to manage ads." );
 		}

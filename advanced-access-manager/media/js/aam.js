@@ -296,20 +296,8 @@
                                         }).bind('click', function () {
                                             var title = $('td:eq(0) span', row).html();
 
-                                            // Reset all roles
-                                            $('#role-list').DataTable().rows().eq(0).each(function(i) {
-                                                $(
-                                                    'td:eq(0) span',
-                                                    $('#role-list').DataTable().row(i).node()
-                                                ).removeClass('aam-highlight');
-
-                                                $(
-                                                    '.icon-cog',
-                                                    $('#role-list').DataTable().row(i).node()
-                                                ).attr('class', 'aam-row-action icon-cog text-info');
-                                            });
-
                                             getAAM().setSubject('role', data[0], title, data[4]);
+
                                             $('td:eq(0) span', row).replaceWith(
                                                 '<span class="aam-highlight">' + title + '</span>'
                                             );
@@ -953,6 +941,7 @@
                                         if (!$(this).prop('disabled')) {
                                             $(this).prop('disabled', true);
                                             getAAM().setSubject('user', data[0], data[2], data[4]);
+
                                             $('td:eq(0) span', row).replaceWith(
                                                 '<strong class="aam-highlight">' + data[2] + '</strong>'
                                             );
@@ -3439,6 +3428,11 @@
          */
         (function ($) {
 
+            /**
+             *
+             * @param {*} payload
+             * @param {*} successCallback
+             */
             function save(payload, successCallback) {
                 getAAM().queueRequest(function () {
                     $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/403`, {
@@ -3482,8 +3476,12 @@
                             // provided
                             const type = $(this).val();
 
-                            if (type === 'default') {
-                                save(getAAM().prepareRequestSubjectData({ area, type }), () => {
+                            // If type is default or message, also capture the HTTP
+                            // status code
+                            const http_status_code = $(`#${area}-${type}-status-code`).val();
+
+                            if (['default', 'login_redirect'].includes(type)) {
+                                save(getAAM().prepareRequestSubjectData({ area, type, http_status_code }), () => {
                                     $('#aam-redirect-overwrite').show();
                                 });
                             }
@@ -3518,7 +3516,15 @@
                             } else if (type === 'trigger_callback') {
                                 payload.callback = value;
                             } else if (type === 'custom_message') {
-                                payload.message = value;
+                                if ($(this).attr('name').indexOf('message.code') !== -1) {
+                                    payload.http_status_code = value;
+                                    payload.message     = $(`textarea[name="${area}.redirect.message"]`).val();
+                                } else {
+                                    payload.message     = value;
+                                    payload.http_status_code = $(`#${area}-message-status-code`).val()
+                                }
+                            } else if (type === 'default') {
+                                payload.http_status_code = value;
                             }
 
                             //save redirect type
@@ -4195,14 +4201,20 @@
                         const uri  = $('#uri-rule').val();
                         const type = $('input[name="uri.access.type"]:checked').val();
                         const code = $('#uri-access-deny-redirect-code-value').val();
-                        const add  = $('#url_additional_properties').find('select, textarea, input').serializeArray();
+                        const add  = $('#url_metadata_properties').find('select, textarea, input').serializeArray();
 
                         if (uri && type) {
+                            const metadata = {};
+
+                            for(let i of add) {
+                                metadata[i.name] = i.value
+                            }
+
                             // Preparing the payload
                             const payload = {
                                 url: uri,
                                 type: type,
-                                additional: add
+                                metadata
                             }
 
                             if (type === 'custom_message') {
@@ -4224,7 +4236,7 @@
                             }
 
                             if (code) {
-                                payload.http_redirect_code = parseInt(code, 10);
+                                payload.http_status_code = parseInt(code, 10);
                             }
 
                             let endpoint = `${getLocal().rest_base}aam/v2/service/url`;
@@ -4235,10 +4247,13 @@
 
                             $.ajax(endpoint, {
                                 type: 'POST',
+                                contentType: 'application/json',
                                 dataType: 'json',
-                                data: getAAM().prepareRequestSubjectData(payload),
+                                data: JSON.stringify(
+                                    getAAM().prepareRequestSubjectData(payload)
+                                ),
                                 headers: {
-                                    'X-WP-Nonce': getLocal().rest_nonce,
+                                    'X-WP-Nonce': getLocal().rest_nonce
                                 },
                                 beforeSend: function () {
                                     $('#uri-save-btn').text(
@@ -4337,9 +4352,9 @@
                                         rule.url,
                                         rule.type,
                                         action,
-                                        rule.http_redirect_code || null,
+                                        rule.http_status_code || null,
                                         actions.join(','),
-                                        rule.additional || null
+                                        rule.metadata || null
                                     ]);
                                 });
 
@@ -4384,11 +4399,6 @@
                                         }).bind('click', function () {
                                             editingRule = data;
 
-                                            getAAM().triggerHook(
-                                                'init-uri-edit-form',
-                                                data
-                                            );
-
                                             $('.form-clearable', '#uri-model').val('');
                                             $('.aam-uri-access-action').hide();
                                             $('#uri-rule').val(data[1]);
@@ -4396,6 +4406,13 @@
                                             $('#uri-access-' + data[2] + '-value').val(data[3]);
                                             $('#uri-access-deny-redirect-code-value').val(data[4]);
                                             $('#uri-model').modal('show');
+
+                                            // If there are any additional metadata properties, load them
+                                            if (data[6]) {
+                                                for(let i in data[6]) {
+                                                    $(`#${i}`).val(data[6][i]);
+                                                }
+                                            }
                                         }).attr({
                                             'data-toggle': "tooltip",
                                             'title': getAAM().__('Edit Rule')
@@ -4470,6 +4487,8 @@
                             $('td:eq(1)', row).html(type);
                         }
                     });
+
+                    getAAM().triggerHook('init-uri-edit-form');
                 }
             }
 
@@ -5637,6 +5656,21 @@
         // Persist the subject in the local storage
         window.localStorage.setItem('aam-subject', JSON.stringify(this.subject));
 
+        // Reset all roles
+       if ($('#role-list').is('.dataTable')) {
+            $('#role-list').DataTable().rows().eq(0).each(function(i) {
+                $(
+                    'td:eq(0) span',
+                    $('#role-list').DataTable().row(i).node()
+                ).removeClass('aam-highlight');
+
+                $(
+                    '.icon-cog',
+                    $('#role-list').DataTable().row(i).node()
+                ).attr('class', 'aam-row-action icon-cog text-info');
+            });
+        }
+
         if (getAAM().isUI('main')) {
             // First set the type of the subject
             $('.aam-current-subject').text(
@@ -5822,7 +5856,7 @@
      * Initialize UI
      */
     $(document).ready(function () {
-        $.aam = aam = new AAM();
+        $.aam = aam = window['aam'] = new AAM();
         getAAM().initialize();
     });
 

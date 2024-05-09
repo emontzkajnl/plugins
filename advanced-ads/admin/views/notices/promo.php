@@ -7,8 +7,7 @@
  */
 ?>
 <div class="notice notice-promo advads-notice advads-admin-notice message is-dismissible"
-	data-notice="<?php echo esc_attr( $_notice ); ?>"
-	style="background: url(<?php echo esc_url( ADVADS_BASE_URL . 'admin/assets/img/promo-background.svg' ); ?>);">
+	data-notice="<?php echo esc_attr( $_notice ); ?>">
 	<p>
 		<?php
 		echo wp_kses(

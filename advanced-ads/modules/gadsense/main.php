@@ -2,7 +2,7 @@
 
 if ( class_exists( 'Advanced_Ads', false ) ) {
 	define( 'GADSENSE_BASE_PATH', plugin_dir_path( __FILE__ ) );
-	define( 'GADSENSE_BASE_URL', plugins_url( basename( ADVADS_BASE_PATH ) . '/modules/' . basename( GADSENSE_BASE_PATH ) . '/' ) );
+	define( 'GADSENSE_BASE_URL', plugins_url( basename( ADVADS_ABSPATH ) . '/modules/' . basename( GADSENSE_BASE_PATH ) . '/' ) );
 	define( 'GADSENSE_OPT_NAME', ADVADS_SLUG . '-adsense' );
 
 	function gadsense_init() {

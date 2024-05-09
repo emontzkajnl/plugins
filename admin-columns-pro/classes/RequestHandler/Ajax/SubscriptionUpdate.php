@@ -3,9 +3,9 @@
 namespace ACP\RequestHandler\Ajax;
 
 use AC;
-use AC\Capabilities;
 use AC\IntegrationRepository;
 use AC\Nonce;
+use AC\RequestAjaxHandler;
 use ACP\Access\ActivationKeyStorage;
 use ACP\Access\ActivationStorage;
 use ACP\Access\ActivationUpdater;
@@ -13,7 +13,6 @@ use ACP\Access\PermissionChecker;
 use ACP\ActivationTokenFactory;
 use ACP\ApiFactory;
 use ACP\LicenseKeyRepository;
-use ACP\RequestAjaxHandler;
 use ACP\Type\SiteUrl;
 
 class SubscriptionUpdate implements RequestAjaxHandler
@@ -81,10 +80,6 @@ class SubscriptionUpdate implements RequestAjaxHandler
 
     public function handle(): void
     {
-        if ( ! current_user_can(Capabilities::MANAGE)) {
-            return;
-        }
-
         $request = new AC\Request();
 
         if ( ! (new Nonce\Ajax())->verify($request)) {

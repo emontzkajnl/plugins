@@ -1,4 +1,6 @@
 <?php
+// phpcs:ignoreFile
+use AdvancedAds\Utilities\Conditional;
 
 /**
  * Container class for admin notices
@@ -170,7 +172,7 @@ class Advanced_Ads_Admin_Notices {
 	 */
 	public function register_license_notices() {
 
-		if ( ! Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+		if ( ! Conditional::is_screen_advanced_ads() ) {
 			return;
 		}
 
@@ -318,14 +320,14 @@ class Advanced_Ads_Admin_Notices {
 			return;
 		}
 
-		// register Black Friday 2022 deals.
-		if ( time() > 1669291200 &&
-			time() <= 1669723200 && Advanced_Ads_Admin::get_instance()->screen_belongs_to_advanced_ads() ) {
+		// register Black Friday 2023 deals.
+		if ( time() > 1700654400 &&
+			time() <= 1701172800 && Conditional::is_screen_advanced_ads() ) {
 			$options = $this->options();
 			$closed  = isset( $options['closed'] ) ? $options['closed'] : [];
 
-			if ( ! isset( $closed['bfcm22'] ) ) {
-				$this->notices[] = 'bfcm22';
+			if ( ! isset( $closed['bfcm23'] ) ) {
+				$this->notices[] = 'bfcm23';
 			}
 		}
 
@@ -343,7 +345,7 @@ class Advanced_Ads_Admin_Notices {
 		}
 
 		// load notices.
-		include ADVADS_BASE_PATH . '/admin/includes/notices.php';
+		include ADVADS_ABSPATH . '/admin/includes/notices.php';
 
 		// iterate through notices.
 		$count = 0;
@@ -359,7 +361,7 @@ class Advanced_Ads_Admin_Notices {
 
 			// don’t display non-global notices on other than plugin related pages.
 			if ( ( ! isset( $advanced_ads_admin_notices[ $_notice ]['global'] ) || ! $advanced_ads_admin_notices[ $_notice ]['global'] )
-				 && ! Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+				 && ! Conditional::is_screen_advanced_ads() ) {
 				continue;
 			}
 
@@ -370,19 +372,19 @@ class Advanced_Ads_Admin_Notices {
 
 			switch ( $type ) {
 				case 'info':
-					include ADVADS_BASE_PATH . '/admin/views/notices/info.php';
+					include ADVADS_ABSPATH . '/admin/views/notices/info.php';
 					break;
 				case 'subscribe':
-					include ADVADS_BASE_PATH . '/admin/views/notices/subscribe.php';
+					include ADVADS_ABSPATH . '/admin/views/notices/subscribe.php';
 					break;
 				case 'plugin_error':
-					include ADVADS_BASE_PATH . '/admin/views/notices/plugin_error.php';
+					include ADVADS_ABSPATH . '/admin/views/notices/plugin_error.php';
 					break;
 				case 'promo':
-					include ADVADS_BASE_PATH . '/admin/views/notices/promo.php';
+					include ADVADS_ABSPATH . '/admin/views/notices/promo.php';
 					break;
 				default:
-					include ADVADS_BASE_PATH . '/admin/views/notices/error.php';
+					include ADVADS_ABSPATH . '/admin/views/notices/error.php';
 			}
 
 			if ( self::MAX_NOTICES === ++ $count ) {
@@ -544,7 +546,7 @@ class Advanced_Ads_Admin_Notices {
 			return;
 		}
 
-		include ADVADS_BASE_PATH . '/admin/includes/notices.php';
+		include ADVADS_ABSPATH . '/admin/includes/notices.php';
 
 		if ( ! isset( $advanced_ads_admin_notices[ $_notice ] ) ) {
 			return;
@@ -552,7 +554,7 @@ class Advanced_Ads_Admin_Notices {
 
 		$notice = $advanced_ads_admin_notices[ $_notice ];
 		$text   = $notice['text'];
-		include ADVADS_BASE_PATH . '/admin/views/notices/inline.php';
+		include ADVADS_ABSPATH . '/admin/views/notices/inline.php';
 	}
 
 	/**
@@ -561,7 +563,7 @@ class Advanced_Ads_Admin_Notices {
 	public function get_welcome_panel() {
 
 		ob_start();
-		include ADVADS_BASE_PATH . '/admin/views/notices/welcome-panel.php';
+		include ADVADS_ABSPATH . '/admin/views/notices/welcome-panel.php';
 
 		return ob_get_clean();
 

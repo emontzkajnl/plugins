@@ -84,5 +84,5 @@ if ( is_array( $pro_placements ) ) :
 		</div>
 		<?php endforeach; ?>
 	<div class="clear"></div>
-	<h4><?php Advanced_Ads_Admin_Upgrades::upgrade_link( __( 'Get all placements with All Access', 'advanced-ads' ), ADVADS_URL . 'add-ons/all-access/', 'upgrades-pro-placements' ); ?></h4>
+	<h4><?php Advanced_Ads_Admin_Upgrades::upgrade_link( __( 'Get all placements with All Access', 'advanced-ads' ), 'https://wpadvancedads.com/add-ons/all-access/', 'upgrades-pro-placements' ); ?></h4>
 <?php endif; ?>

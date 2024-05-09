@@ -5,6 +5,9 @@ class MonsterInsights_SiteNotes_Controller
 
 	public static $instance;
 
+	/**
+	 * @var MonsterInsights_Site_Notes_DB_Base
+	 */
 	private $db;
 
 	public static function get_instance()
@@ -58,7 +61,6 @@ class MonsterInsights_SiteNotes_Controller
 		add_filter('wp_untrash_post_status', array($this, 'change_restore_note_status'), 10, 3);
 		add_action('monsterinsights_after_exclude_metabox', array($this, 'add_metabox_contents'), 11, 2);
 		add_action('admin_enqueue_scripts', array($this, 'load_metabox_assets'));
-		add_action('current_screen', array($this, 'clear_sitenote_meta'));
 	}
 
 	private function prepare_notes($params)
@@ -633,7 +635,7 @@ class MonsterInsights_SiteNotes_Controller
 		$data['data']['overviewgraph']['notes'] = array();
 
 		foreach ($notes['items'] as $note) {
-			$date_index = wp_date('j M', strtotime($note['note_date'], current_time('U')));
+			$date_index = date('j M', strtotime($note['note_date'], current_time('U')));
 			if (!isset($data['data']['overviewgraph']['notes'][$date_index])) {
 				$data['data']['overviewgraph']['notes'][$date_index] = array();
 			}
@@ -705,17 +707,6 @@ class MonsterInsights_SiteNotes_Controller
 		wp_enqueue_script('monsterinsights-admin-metabox-sitenotes-script');
 	}
 
-	public function clear_sitenote_meta()
-	{
-		if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['post'])) {
-			$post_id = $_GET['post'];
-			delete_post_meta($post_id, '_monsterinsights_sitenote_active');
-			delete_post_meta($post_id, '_monsterinsights_sitenote_note');
-			delete_post_meta($post_id, '_monsterinsights_sitenote_id');
-			delete_post_meta($post_id, '_monsterinsights_sitenote_category');
-		}
-	}
-
 	/**
 	 * Add site-note to traffic sessions chart.
 	 *
@@ -746,7 +737,7 @@ class MonsterInsights_SiteNotes_Controller
 		$prepared_notes = array();
 
 		foreach ( $notes['items'] as $note ) {
-			$date_index = wp_date( 'j M', strtotime( $note['note_date'], current_time( 'U' ) ) );
+			$date_index = date( 'j M', strtotime( $note['note_date'], current_time( 'U' ) ) );
 
 			if ( ! isset( $prepared_notes[ $date_index ] ) ) {
 				$prepared_notes[ $date_index ] = array();
@@ -762,6 +753,13 @@ class MonsterInsights_SiteNotes_Controller
 		$data['data']['sessions_chart']['notes'] = $prepared_notes;
 
 		return $data;
+	}
+
+	/**
+	 * Create a site note.
+	 */
+	public function create_note( $note_details ) {
+		return $this->db->create( $note_details );
 	}
 }
 

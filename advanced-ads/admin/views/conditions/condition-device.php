@@ -22,7 +22,7 @@
 			</label>
 			<input type="checkbox" id="<?php echo esc_attr( $input_id ); ?>" name="<?php echo esc_attr( $name ); ?>[value][]" value="<?php echo esc_attr( $device_type['id'] ); ?>" <?php checked( $device_type['checked'] ); ?>>
 		<?php endforeach; ?>
-		<?php include ADVADS_BASE_PATH . 'admin/views/conditions/not-selected.php'; ?>
+		<?php include ADVADS_ABSPATH . 'admin/views/conditions/not-selected.php'; ?>
 	</div>
 <?php
 printf(

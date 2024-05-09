@@ -96,7 +96,7 @@ function monsterinsights_get_addons_data( $key ) {
 	// Get Addons
 	// If the key is valid, we'll get personalised upgrade URLs for each Addon (if necessary) and plugin update information.
 	if ( monsterinsights_is_pro_version() && $key ) {
-		$addons = MonsterInsights()->license_actions->perform_remote_request( 'get-addons-data-v600', array( 'tgm-updater-key' => $key ) );
+		$addons = monsterinsights_perform_remote_request( 'get-addons-data-v600', array( 'tgm-updater-key' => $key ) );
 	} else {
 		$addons = monsterinsights_get_all_addons_data();
 	}
@@ -128,41 +128,17 @@ function monsterinsights_get_addons_data( $key ) {
  * @return array|bool|mixed|object
  */
 function monsterinsights_get_all_addons_data() {
-	// Build the body of the request.
-	$body = array(
-		'tgm-updater-action'     => 'get-all-addons-data',
-		'tgm-updater-key'        => '',
-		'tgm-updater-wp-version' => get_bloginfo( 'version' ),
-		'tgm-updater-referer'    => site_url(),
-		'tgm-updater-mi-version' => MONSTERINSIGHTS_VERSION,
-		'tgm-updater-is-pro'     => false,
-	);
-	$body = http_build_query( $body, '', '&' );
 
-	// Build the headers of the request.
-	$headers = array(
-		'Content-Type'   => 'application/x-www-form-urlencoded',
-		'Content-Length' => strlen( $body ),
-	);
+    $body = array(
+        'tgm-updater-action'     => 'get-all-addons-data',
+        'tgm-updater-key'        => '',
+        'tgm-updater-wp-version' => get_bloginfo( 'version' ),
+        'tgm-updater-referer'    => site_url(),
+        'tgm-updater-mi-version' => MONSTERINSIGHTS_VERSION,
+        'tgm-updater-is-pro'     => false,
+    );
 
-	// Setup variable for wp_remote_post.
-	$post = array(
-		'headers' => $headers,
-		'body'    => $body,
-	);
-
-	// Perform the query and retrieve the response.
-	$response      = wp_remote_post( monsterinsights_get_licensing_url(), $post );
-	$response_code = wp_remote_retrieve_response_code( $response );
-	$response_body = wp_remote_retrieve_body( $response );
-
-	// Bail out early if there are any errors.
-	if ( 200 !== $response_code || is_wp_error( $response_body ) ) {
-		return false;
-	}
-
-	// Return the json decoded content.
-	return json_decode( $response_body );
+    return monsterinsights_perform_remote_request( 'verify-key', $body );
 }
 
 /**

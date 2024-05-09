@@ -1,5 +1,7 @@
 <?php
 
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin
  * Admin logic to duplicate an existing ads.
@@ -37,9 +39,17 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	 */
 	public function render_duplicate_link( $actions, $post ) {
 
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_manage_options' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
+		}
+
 		if ( isset( $post->post_type )
-		    && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
-		    && current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+			 && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
+			 && current_user_can( $cap ) ) {
 			$actions['copy-ad'] = self::get_duplicate_link( $post->ID );
 		}
 
@@ -50,12 +60,20 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	 * Add the link to the submit box on the ad edit screen.
 	 */
 	public function render_duplicate_link_in_submit_box() {
-
 		global $post;
+
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_manage_options' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
+		}
+
 		if ( isset( $post->post_type )
 			 && 'edit' === $post->filter // only for already saved ads.
-		     && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
-		     && current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+			 && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
+			 && current_user_can( $cap ) ) {
 			?>
 			<div>
 				<?php
@@ -86,11 +104,19 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	 */
 	public function duplicate_ad() {
 
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_edit_ads' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' );
+		}
+
 		if (
 			! isset( $_GET['action'] )
 			|| 'advanced_ads_duplicate_ad' !== $_GET['action']
 			|| ! isset( $_GET['ad_id'] )
-			|| ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) )
+			|| ! current_user_can( $cap )
 		) {
 			return;
 		}

@@ -2,8 +2,7 @@
  * Logic for Display and Visitor Conditions forms
  */
 
-jQuery( document ).ready(
-	function ( $ ) {
+jQuery( document ).ready(function ( $ ) {
 		/**
 		 * Pressing the button to add a new condition to the list of conditions
 		 */
@@ -109,6 +108,62 @@ jQuery( document ).ready(
 				}
 			)
 		}
+
+	// remove author from list by clicking on it.
+	$(document).on(
+		'click',
+		'.advads-conditions-authors-buttons .button',
+		function () {
+			$(this).remove();
+		}
+	);
+	// display input field to search for author.
+	$(document).on(
+		'click',
+		'.advads-conditions-authors-show-search',
+		function (e) {
+			e.preventDefault();
+			// display input field.
+			$(this)
+				.siblings('.advads-conditions-authors-search')
+				.show()
+				.focus();
+			// register autocomplete.
+			advadsRegisterAuthorAutocomplete(
+				$(this).siblings('.advads-conditions-authors-search')
+			);
+			$(this).next('br').show();
+			$(this).hide();
+		}
+	);
+
+	// author search box autocomplete.
+	function advadsRegisterAuthorAutocomplete(self) {
+		self.autocomplete({
+			classes: {
+				'ui-autocomplete': 'advads-ui-autocomplete',
+			},
+			source(request, callback) {
+				advadsAuthorSearch(self, callback);
+			},
+			minLength: 1,
+			select(event, ui) {
+				// append new line with input fields.
+				$(
+					'<label class="button advads-button advads-ui-state-active"><span class="advads-button-text">' +
+						ui.item.label +
+						'<input type="hidden" name="' +
+						self.data('inputName') +
+						'" value="' +
+						ui.item.value +
+						'"></span></label>'
+				).appendTo(self.siblings('.advads-conditions-authors-buttons'));
+			},
+			close() {
+				self.val('');
+			},
+		});
+	}
 
 		// display input field to search for post, page, etc.
 		$( document ).on( 'click', '.advads-conditions-postids-show-search', function ( e ) {
@@ -240,6 +295,47 @@ function advads_term_search ( field, callback ) {
 		},
 		'json'
 	)
+}
+
+/**
+ * Callback for author search autocomplete
+ *
+ * @param {string}           search   author
+ * @param {HTMLInputElement} field    html input field
+ * @param {Function}         callback Callback function
+ * @return {Object} JSON object with labels and values
+ */
+
+function advadsAuthorSearch(field, callback) {
+	const query = {
+		action: 'advads-authors-search',
+		nonce: advadsglobal.ajax_nonce,
+	};
+
+	query.search = field.val();
+
+	var querying = true;
+
+	const results = [];
+	// eslint-disable-next-line no-undef
+	jQuery.post(
+		// eslint-disable-next-line no-undef
+		ajaxurl,
+		query,
+		function (r) {
+			querying = false;
+			if (r) {
+				r.map(function (element, index) {
+					results[index] = {
+						value: element.data.ID,
+						label: element.data.display_name,
+					};
+				});
+			}
+			callback(results);
+		},
+		'json'
+	);
 }
 
 /**

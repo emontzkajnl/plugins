@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 if ( ! defined( 'WPINC' ) ) {
 	die();
 }
@@ -74,7 +74,7 @@ gadsenseData['msg'] = {
 
 //  the network variable needs to be set for the view to work!
 $network = Advanced_Ads_Network_Adsense::get_instance();
-include(ADVADS_BASE_PATH . '/modules/gadsense/admin/views/external-ads-links.php');
+include(ADVADS_ABSPATH . '/modules/gadsense/admin/views/external-ads-links.php');
 ?>
 <?php endif; ?>
 <p id="adsense-ad-param-error"></p>
@@ -84,7 +84,7 @@ include(ADVADS_BASE_PATH . '/modules/gadsense/admin/views/external-ads-links.php
     <input type="text" name="unit-code" id="unit-code" value="<?php echo $unit_code; ?>" />
     <input type="hidden" name="advanced_ad[output][adsense-pub-id]" id="advads-adsense-pub-id" value="<?php echo esc_attr( $unit_pubid ); ?>" />
     <?php if( $unit_pubid ) : ?>
-	<?php printf(__( 'Publisher ID: %s', 'advanced-ads' ), $unit_pubid ); ?>
+	<?php /* translators: %s is the publisher ID. */ printf(__( 'Publisher ID: %s', 'advanced-ads' ), $unit_pubid ); ?>
     <?php endif; ?>
 	<p id="advads-pubid-in-slot" class="advads-notice-inline advads-error"
 		<?php echo ! ( 0 === strpos( $pub_id, 'pub-' ) && false !== strpos( $unit_code, substr( $pub_id, 4 ) ) ) ? 'style="display:none"' : ''; ?>
@@ -99,7 +99,7 @@ if( $pub_id_errors ) : ?>
 	<span class="advads-notice-inline advads-error">
 	    <?php echo $pub_id_errors; ?>
 	</span>
-	<?php printf(__( 'Please <a href="%s" target="_blank">change it here</a>.', 'advanced-ads' ), admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' )); ?>
+	<?php /* translators: %s the setting page link */ printf(__( 'Please <a href="%s" target="_blank">change it here</a>.', 'advanced-ads' ), admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' )); ?>
     </p>
 <?php endif; ?>
     <label class="label" id="unit-type-block"><?php _e( 'Type', 'advanced-ads' ); ?></label>
@@ -117,11 +117,11 @@ if( $pub_id_errors ) : ?>
 	    <option value="in-article" <?php selected( $unit_type, 'in-article' ); ?>><?php _e( 'In-article', 'advanced-ads' ); ?></option>
 	    <option value="in-feed" <?php selected( $unit_type, 'in-feed' ); ?>><?php _e( 'In-feed', 'advanced-ads' ); ?></option>
 	</select>
-	<a href="<?php echo esc_url( ADVADS_URL ) . 'adsense-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-ad-types'; ?>" target="_blank"><?php esc_html_e( 'manual', 'advanced-ads' ); ?></a>
+	<a href="https://wpadvancedads.com/adsense-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-ad-types" target="_blank"><?php esc_html_e( 'manual', 'advanced-ads' ); ?></a>
     </div>
 <?php if ( in_array( $unit_type, [ 'link', 'link-responsive' ], true ) ) : ?>
 <p class="advads-message-warning"><?php esc_html_e( 'Google AdSense deprecated Link Units. Please choose another type.', 'advanced-ads' ); ?>
-	<a href="<?php echo esc_url( ADVADS_URL ); ?>adsense-link-units/"" target="_blank" rel="noopener">
+	<a href="https://wpadvancedads.com/adsense-link-units/" target="_blank" rel="noopener">
 		<?php esc_html_e( 'Learn more', 'advanced-ads' ); ?>
 	</a>
 </p>

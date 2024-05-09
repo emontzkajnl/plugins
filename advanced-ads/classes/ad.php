@@ -9,6 +9,9 @@
  * @copyright 2013-2020 Thomas Maier, Advanced Ads GmbH
  */
 
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * An ad object
  *
@@ -209,7 +212,7 @@ class Advanced_Ads_Ad {
 		$this->args = is_array( $args ) ? $args : [];
 
 		$post_data = get_post( $id );
-		if ( $post_data === null || $post_data->post_type !== Advanced_Ads::POST_TYPE_SLUG ) {
+		if ( $post_data === null || $post_data->post_type !== Entities::POST_TYPE_AD ) {
 			return;
 		}
 
@@ -375,7 +378,7 @@ class Advanced_Ads_Ad {
 
 		// switch between normal and debug mode.
 		// check if debug output should only be displayed to admins.
-		$user_can_manage_ads = current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) );
+		$user_can_manage_ads = WordPress::user_can( 'advanced_ads_manage_options' );
 		if ( $this->options( 'output.debugmode' )
 			 && ( $user_can_manage_ads || ( ! $user_can_manage_ads && ! defined( 'ADVANCED_ADS_AD_DEBUG_FOR_ADMIN_ONLY' ) ) ) ) {
 			$debug = new Advanced_Ads_Ad_Debug();
@@ -915,17 +918,32 @@ class Advanced_Ads_Ad {
 		if (
 			! defined( 'ADVANCED_ADS_DISABLE_EDIT_BAR' )
 			// Add edit button for users with the appropriate rights.
-			&& current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) )
+			&& WordPress::user_can( 'advanced_ads_edit_ads' )
 			// We need a wrapper. Check if at least the placement wrapper exists.
 			&& ! empty( $this->args['placement_type'] )
 		) {
 			ob_start();
-			include ADVADS_BASE_PATH . 'public/views/ad-edit-bar.php';
+			include ADVADS_ABSPATH . 'public/views/ad-edit-bar.php';
 			$ad_content = trim( ob_get_clean() ) . $ad_content;
+			// Include the tooltip title from get_tooltip_title() in the 'title' attribute.
+			$this->output['wrapper_attrs']['data-title'][] = $this->get_tooltip_title();
 		}
 
-		if ( ( ! isset( $this->output['wrapper-id'] ) || '' === $this->output['wrapper-id'] )
-			 && [] === $wrapper_options || ! is_array( $wrapper_options ) ) {
+		// ad Health Tool add class and attribute in to ads and group
+		if ( WordPress::user_can('advanced_ads_edit_ads') ) {
+
+			$has_group_info = isset($this->args['group_info']);
+			$frontend_prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
+
+			if (  ! $has_group_info ) {
+				// Add the 'highlight-wrapper' class to the ad wrapper
+				$wrapper_options['class'][] = $frontend_prefix . 'highlight-wrapper';
+			}
+
+		}
+
+		if ('' === ($this->output['wrapper-id'] ?? '')
+			&& ( [] === $wrapper_options || ! is_array($wrapper_options) )) {
 			return $this->label . $ad_content;
 		}
 
@@ -996,7 +1014,7 @@ class Advanced_Ads_Ad {
 		if ( ! defined( 'AAT_VERSION' ) ) {
 			global $pagenow;
 			// If this is not the ad edit page.
-			if ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow ) {
+			if ( 'post.php' !== $pagenow && 'post-new.php' !== $pagenow && ! empty( $this->url ) ) {
 				// Remove placeholders.
 				$this->url = str_replace(
 					[
@@ -1014,4 +1032,39 @@ class Advanced_Ads_Ad {
 		return $this->url;
 	}
 
+	/**
+	 * Generate the tooltip title for a placement with associated ads.
+	 *
+	 * @return string Tooltip title containing placement and ads name.
+	 */
+	private function get_tooltip_title() {
+		$ads = [];
+
+		// Check if a group ID is provided in the arguments.
+		if ( isset( $this->args['group_info']['id'] ) ) {
+			// Create an instance of Advanced_Ads_Group using the provided group ID.
+			$group = new Advanced_Ads_Group( $this->args['group_info']['id'] );
+			// Get all ads within the group and extract their post titles.
+			$ads = wp_list_pluck( $group->get_all_ads(), 'post_title' );
+		} else {
+
+			// If no group ID is provided, get ads directly from the Advanced_Ads model.
+			$ads =  wp_list_pluck(
+						Advanced_Ads::get_instance()->get_model()->get_ads(
+							[
+								'post__in'           => [ $this->args['id'] ]
+							]
+						),
+					'post_title'
+					);
+		}
+
+		// Construct and format the tooltip title using the placement ID and ad titles.
+		return sprintf(
+				// translators: %1$s is a placement name, %2$s is the ads name.
+					__( 'Placement name: %1$s; Ads: %2$s', 'advanced-ads' ),
+					esc_attr( $this->args['output']['placement_id'] ?? '' ),
+					esc_attr( $ads ? implode( ',', $ads ) : '' )
+				);
+	}
 }

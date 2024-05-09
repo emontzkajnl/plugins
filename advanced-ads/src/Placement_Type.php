@@ -178,11 +178,13 @@ class Placement_Type extends \ArrayObject {
 			if ( ! $this->is_group_type_allowed( $group->type ) ) {
 				continue;
 			}
-
 			// check if the group has allowed ads.
-			$group_ads = array_filter( $group->get_all_ads(), function( \WP_Post $ad_post ) {
-				return $this->is_ad_type_allowed( ( new \Advanced_Ads_Ad( $ad_post->ID ) )->type );
-			} );
+			$group_ads = array_filter(
+				$group->get_all_ads(),
+				function( \WP_Post $ad_post ) {
+					return $this->is_ad_type_allowed( ( \Advanced_Ads\Ad_Repository::get( $ad_post->ID ) )->type );
+				}
+			);
 			if ( empty( $group_ads ) ) {
 				continue;
 			}

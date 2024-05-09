@@ -7,7 +7,9 @@
  * @var array  $placement           information of the current placement.
  * @var string $placement_item_type type of the item currently selected for the placement
  * @var int    $placement_item_id   ID of the item currently selected for the placement
+ * @package Advanced_Ads_Admin
  */
+
 ?>
 	<select id="advads-placements-item-<?php echo esc_attr( $slug ); ?>" name="advads[placements][<?php echo esc_attr( $slug ); ?>][item]">
 		<option value=""><?php esc_html_e( '--not selected--', 'advanced-ads' ); ?></option>
@@ -38,7 +40,7 @@ if ( $placement_item_type ) :
 			$link_to_item      = get_edit_post_link( $placement_item_id );
 			break;
 		case 'group':
-			$link_to_item = admin_url( 'admin.php?page=advanced-ads-groups&advads-last-edited-group=' . $placement_item_id );
+			$link_to_item = admin_url( 'admin.php?page=advanced-ads-groups#modal-group-edit-' . $placement_item_id );
 			break;
 	endswitch;
 	if ( $link_to_item ) {
@@ -46,12 +48,12 @@ if ( $placement_item_type ) :
 		<a href="<?php echo esc_url( $link_to_item ); ?>"><span class="dashicons dashicons-external"></span></span></a>
 		<?php
 	} elseif ( 'ad' === $placement_item_type && defined( 'ICL_LANGUAGE_NAME' ) ) {
-		// translation missing notice
+		// translation missing notice.
 		?>
 		<p>
 		<?php
 		printf(
-				// translators: %s is the name of a language in English
+				// translators: %s is the name of a language in English.
 			esc_html__( 'The ad is not translated into %s', 'advanced-ads' ),
 			esc_html( ICL_LANGUAGE_NAME )
 		);
@@ -60,7 +62,7 @@ if ( $placement_item_type ) :
 		<?php
 	}
 endif;
-// show a button when no ads exist, yet
+// show a button when no ads exist, yet.
 if ( empty( $items ) ) :
 	?>
 	<a class="button" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=advanced_ads' ) ); ?>"><?php esc_html_e( 'Create your first ad', 'advanced-ads' ); ?></a>

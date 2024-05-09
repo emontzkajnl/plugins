@@ -17,7 +17,7 @@ class Advanced_Ads_Checks {
 	 * Show the list of potential issues
 	 */
 	public static function show_issues() {
-		include_once ADVADS_BASE_PATH . '/admin/views/checks.php';
+		include_once ADVADS_ABSPATH . '/admin/views/checks.php';
 	}
 
 	/**

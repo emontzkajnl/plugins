@@ -1,4 +1,8 @@
 <?php
+
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Export functionality.
  */
@@ -34,10 +38,10 @@ class Advanced_Ads_Export {
 	 * Handle form submissions
 	 */
 	public function download_export_file() {
-		$action = Advanced_Ads_Admin::get_instance()->current_action();
+		$action = WordPress::current_action();
 
 		if ( $action === 'export' ) {
-			if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options') ) ) {
+			if ( ! WordPress::user_can( 'advanced_ads_manage_options') ) {
 				return;
 			}
 
@@ -81,7 +85,7 @@ class Advanced_Ads_Export {
 				'guid'
 			] );
 
-			$posts = $wpdb->get_results( $wpdb->prepare( "SELECT $export_fields FROM {$wpdb->posts} where post_type = '%s' and post_status not in ('trash', 'auto-draft')", Advanced_Ads::POST_TYPE_SLUG ), ARRAY_A );
+			$posts = $wpdb->get_results( $wpdb->prepare( "SELECT $export_fields FROM {$wpdb->posts} where post_type = '%s' and post_status not in ('trash', 'auto-draft')", Entities::POST_TYPE_AD ), ARRAY_A );
 
 			$mime_types = array_filter( get_allowed_mime_types(), function( $mime_type ) {
 				return preg_match( '/image\//', $mime_type );

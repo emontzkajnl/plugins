@@ -27,7 +27,7 @@
 						],
 					]
 				),
-				esc_url( ADVADS_URL . '/manual/ad-blockers/#utm_source=advanced-ads&utm_medium=link&utm_campaign=adblock-manual' )
+				'https://wpadvancedads.com/manual/ad-blockers/#utm_source=advanced-ads&utm_medium=link&utm_campaign=adblock-manual'
 			);
 			?>
 		</p>

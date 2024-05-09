@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -17,7 +17,7 @@ class Advanced_Ads_Admin_Licenses {
 	 *
 	 * @const string
 	 */
-	const API_ENDPOINT = ADVADS_URL . 'license-api/';
+	const API_ENDPOINT = 'https://wpadvancedads.com/license-api/';
 
 	/**
 	 * Advanced_Ads_Admin_Licenses constructor.
@@ -209,13 +209,13 @@ class Advanced_Ads_Admin_Licenses {
 										. sprintf(
 											/* translators: %1$s is a starting link tag, %2$s is the closing one. */
 											__( 'You can manage activations in %1$syour account%2$s.', 'advanced-ads' ),
-											'<a href="' . ADVADS_URL . 'account/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses-activations-left" target="_blank">',
+											'<a href="https://wpadvancedads.com/account/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses-activations-left" target="_blank">',
 											'</a>'
 										) . '&nbsp;'
 										. sprintf(
 											/* translators: %1$s is a starting link tag, %2$s is the closing one. */
 											__( '%1$sUpgrade%2$s for more activations.', 'advanced-ads' ),
-											'<a href="' . ADVADS_URL . 'account/upgrades/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses-activations-left" target="_blank">',
+											'<a href="https://wpadvancedads.com/account/upgrades/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses-activations-left" target="_blank">',
 											'</a>'
 										),
 			];
@@ -296,7 +296,7 @@ class Advanced_Ads_Admin_Licenses {
 			'item_name'  => urlencode( $plugin_name ),
 		];
 		$response   = wp_remote_get(
-			add_query_arg( $api_params, ADVADS_URL ),
+			add_query_arg( $api_params, 'https://wpadvancedads.com/' ),
 			[
 				'timeout'   => 15,
 				'sslverify' => false,
@@ -585,9 +585,11 @@ class Advanced_Ads_Admin_Licenses {
 			// if AJAX; show direct update link as first possible solution.
 			if ( defined( 'DOING_AJAX' ) ) {
 				$update_link                         = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $plugin_file, 'upgrade-plugin_' . $plugin_file );
+				/* translators: %s plugin update link */
 				$updater->strings['download_failed'] = sprintf( __( 'Download failed. <a href="%s">Click here to try another method</a>.', 'advanced-ads' ), $update_link );
 			} else {
-				$updater->strings['download_failed'] = sprintf( __( 'Download failed. <a href="%s" target="_blank">Click here to learn why</a>.', 'advanced-ads' ), ADVADS_URL . 'manual/download-failed-updating-add-ons/#utm_source=advanced-ads&utm_medium=link&utm_campaign=download-failed' );
+				/* translators: %s download failed knowledgebase link */
+				$updater->strings['download_failed'] = sprintf( __( 'Download failed. <a href="%s" target="_blank">Click here to learn why</a>.', 'advanced-ads' ), 'https://wpadvancedads.com/manual/download-failed-updating-add-ons/#utm_source=advanced-ads&utm_medium=link&utm_campaign=download-failed' );
 			}
 		}
 

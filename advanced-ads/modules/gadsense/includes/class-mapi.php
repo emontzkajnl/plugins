@@ -1,4 +1,6 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * AdSense Management API class.
@@ -50,7 +52,7 @@ class Advanced_Ads_AdSense_MAPI {
 		//add_action( 'wp_ajax_advads_gadsense_mapi_get_adUnits', array( $this, 'ajax_get_adUnits' ) );
 		add_action( 'wp_ajax_advads_gadsense_mapi_get_details', [ $this, 'ajax_get_account_details' ] );
 		add_action( 'wp_ajax_advads_gadsense_mapi_select_account', [ $this, 'ajax_account_selected' ] );
-		add_action( 'wp_ajax_advads_mapi_get_adCode', [ $this, 'ajax_get_adCode' ] );
+		add_action( 'wp_ajax_advads_mapi_get_adCode', [ $this, 'ajax_get_ad_code' ] );
 		add_action( 'wp_ajax_advads-mapi-reconstructed-code', [ $this, 'ajax_save_reconstructed_code' ] );
 		add_action( 'wp_ajax_advads-mapi-save-manual-code', [ $this, 'ajax_save_manual_code' ] );
 		add_action( 'wp_ajax_advads-mapi-revoke-token', [ $this, 'ajax_revoke_tokken' ] );
@@ -94,12 +96,12 @@ class Advanced_Ads_AdSense_MAPI {
 				$health_class->add( 'adsense_connect_' . $mapi_options['connect_error']['reason'] );
 			} else {
 				$health_class->add( 'adsense_connect_' . $mapi_options['connect_error']['reason'], [
-          'text' => esc_html__( 'Last AdSense account connection attempt failed.', 'advanced-ads' ) . ' ' . $mapi_options['connect_error']['message'],
+		  'text' => esc_html__( 'Last AdSense account connection attempt failed.', 'advanced-ads' ) . ' ' . $mapi_options['connect_error']['message'],
 					'type' => 'problem',
 				] );
 			}
 
-			foreach( $health_class->notices as $key => $value ) {
+			foreach ( $health_class->notices as $key => $value ) {
 				// There was already a connection error but the user tried again and obtained another error.
 				if ( false !== stripos( $key, 'adsense_connect_' ) && 'adsense_connect_' . $mapi_options['connect_error']['reason'] !== $key ) {
 					$health_class->remove( $key );
@@ -109,7 +111,7 @@ class Advanced_Ads_AdSense_MAPI {
 		} else {
 
 			// Once a connection has been established (or a the warning has been discarded on the AA settings page), remove connection related notices.
-			foreach( $health_class->notices as $key => $value ) {
+			foreach ( $health_class->notices as $key => $value ) {
 				if ( false !== stripos( $key, 'adsense_connect_' ) ) {
 					$health_class->remove( $key );
 				}
@@ -118,15 +120,13 @@ class Advanced_Ads_AdSense_MAPI {
 		}
 
 		$gadsense_data = Advanced_Ads_AdSense_Data::get_instance();
-		$adsense_id = $gadsense_data->get_adsense_id();
-
-		$alerts = Advanced_Ads_AdSense_MAPI::get_stored_account_alerts( $adsense_id );
+		$adsense_id    = $gadsense_data->get_adsense_id();
+		$alerts        = Advanced_Ads_AdSense_MAPI::get_stored_account_alerts( $adsense_id );
 
 		// AdSense account alerts (can not happens simultaneously with the connection error).
 		if ( is_array( $alerts ) && isset( $alerts['items'] ) && is_array( $alerts['items'] ) && $alerts['items'] ) {
-
+			$item_ids               = [];
 			$alerts_advads_messages = Advanced_Ads_Adsense_MAPI::get_adsense_alert_messages();
-			$item_ids = [];
 
 			foreach ( $alerts['items'] as $internal_id => $item ) {
 				$item_id    = isset( $item['id'] ) ? $item['id'] : str_replace( '-', '_', strtoupper( $item['type'] ) );
@@ -142,12 +142,11 @@ class Advanced_Ads_AdSense_MAPI {
 						]
 					);
 				}
-
 			}
 
 			// Remove notices that no more exist in the AdSense account (or have been dismissed).
 			$_remove_ids = [];
-			foreach( $health_class->notices as $key => $value ) {
+			foreach ( $health_class->notices as $key => $value ) {
 				if ( false !== stripos( $key, 'adsense_alert_' ) ) {
 					$alert_id = substr( $key, strlen( 'adsense_alert_' ) );
 					if ( ! in_array( $alert_id, $item_ids, true ) ) {
@@ -155,18 +154,16 @@ class Advanced_Ads_AdSense_MAPI {
 					}
 				}
 			}
-			foreach( $_remove_ids as $id ) {
+			foreach ( $_remove_ids as $id ) {
 				$health_class->remove( $id );
 			}
-
 		} else {
 			// No more alerts.
-			foreach( $health_class->notices as $key => $value ) {
+			foreach ( $health_class->notices as $key => $value ) {
 				if ( false !== stripos( $key, 'adsense_alert_' ) ) {
 					$health_class->remove( $key );
 				}
 			}
-
 		}
 	}
 
@@ -204,88 +201,43 @@ class Advanced_Ads_AdSense_MAPI {
 		$hours   = floor( $secs / 3600 );
 		$mins    = ceil( ( $secs - ( $hours * 3600 ) ) / 60 );
 
-		if ( 60 == $mins ) {
-			$hours += 1;
-			$mins   = 0;
+		if ( 60 === $mins ) {
+			++$hours;
+			$mins = 0;
 		}
 
-		if ( 0 == $options['quota']['count'] ) {
-
+		if ( 0 === (int) $options['quota']['count'] ) {
 			$msg = sprintf(
-				/*
-				 commented out so that these unused strings don’t show up for translators; using fixed strings instead in case we forget this when we might add the check again later
-				 _x( 'No API call left before %1$s %2$s.', 'No call left for the next X hours Y minutes.', 'advanced-ads' ),
-				 sprintf( _n( '%s hour', '%s hours', $hours, 'advanced-ads' ), $hours ),
-				 sprintf( _n( '%s minute', '%s minutes', $mins, 'advanced-ads' ), $mins )
-				 */
 				'No API call left before %1$s %2$s.',
 				sprintf( '%s hours', $hours ),
 				sprintf( '%s minutes', $mins )
-				);
+			);
 
-			if ( 0 == $hours ) {
-				/*
-				 commented out so that these unused strings don’t show up for translators; using fixed strings instead in case we forget this when we might add the check again later
-				 $msg = sprintf(
-				 _x( 'No API call left before %s.', 'No call left for the next X time.', 'advanced-ads' ),
-				 sprintf( _n( '%s minute', '%s minutes', $mins, 'advanced-ads' ), $mins )
-				 );
-				 */
+			if ( 0 === $hours ) {
 				$msg = 'No API call left before.';
 			}
 
-			if ( 0 == $mins ) {
-				/*
-				 commented out so that these unused strings don’t show up for translators; using fixed strings instead in case we forget this when we might add the check again later
-				 $msg = sprintf(
-				 _x( 'No API call left before %s.', 'No call left for the next X time.', 'advanced-ads' ),
-				 sprintf( _n( '%s hour', '%s hours', $hours, 'advanced-ads' ), $hours )
-				 );
-				 */
+			if ( 0 === $mins ) {
 				$msg = 'No API call left.';
 			}
 		} else {
-
 			$msg = sprintf(
-				/*
-				 commented out so that these unused strings don’t show up for translators; using fixed strings instead in case we forget this when we might add the check again later
-				 _x( '%1$s for the next %2$s %3$s.', 'Calls remaining for the next X hours Y minutes.', 'advanced-ads' ),
-				 sprintf( _n( '%s API call remaining.', '%s API calls remaining.', $options['quota']['count'], 'advanced-ads' ), $options['quota']['count'] ),
-				 sprintf( _n( '%s hour', '%s hours', $hours, 'advanced-ads' ), $hours ),
-				 sprintf( _n( '%s minute', '%s minutes', $mins, 'advanced-ads' ), $mins )
-				 */
 				'%1$s for the next %2$s %3$s',
 				sprintf( '%s API calls remaining', $options['quota']['count'] ),
 				sprintf( '%s hours', $hours ),
 				sprintf( '%s minutes', $mins )
-				);
+			);
 
-			if ( 0 == $hours ) {
-				/*
-				 commented out so that these unused strings don’t show up for translators; using fixed strings instead in case we forget this when we might add the check again later
-				 $msg = sprintf(
-				 _x( '%1$s for the next %2$s', 'Calls remaining for the next X time.', 'advanced-ads' ),
-				 sprintf( _n( '%s API call remaining.', '%s API calls remaining.', $options['quota']['count'], 'advanced-ads' ), $options['quota']['count'] ),
-				 sprintf( _n( '%s minute', '%s minutes', $mins, 'advanced-ads' ), $mins )
-				 );
-				 */
+			if ( 0 === $hours ) {
 				$msg = sprintf( '%s API calls remaining.', $options['quota']['count'] );
 			}
 
-			if ( 0 == $mins ) {
-				/*
-				 commented out so that these unused strings don’t show up for translators; using fixed strings instead in case we forget this when we might add the check again later
-				 $msg = sprintf(
-				 _x( '%1$s for the next %2$s', 'calls remaining for the next X time', 'advanced-ads' ),
-				 sprintf( _n( '%s API call remaining', '%s API calls remaining', $options['quota']['count'], 'advanced-ads' ), $options['quota']['count'] ),
-				 sprintf( _n( '%s hour', '%s hours', $hours, 'advanced-ads' ), $hours )
-				 );
-				 */
+			if ( 0 === $mins ) {
 				$msg = sprintf(
 					'%1$s for the next %2$s',
 					sprintf( '%s API calls remaining', $options['quota']['count'] ),
 					sprintf( '%s hours', $hours )
-					);
+				);
 			}
 		}
 		return $msg;
@@ -340,9 +292,7 @@ class Advanced_Ads_AdSense_MAPI {
 		}
 
 		if ( ! isset( $access_token['msg'] ) ) {
-			$headers  = [
-				'Authorization' => 'Bearer ' . $access_token,
-			];
+			$headers  = [ 'Authorization' => 'Bearer ' . $access_token ];
 			$response = wp_remote_get( $url, [ 'headers' => $headers ] );
 			self::log( 'Get ad code for ad Unit [' . $ad_unit . ']' );
 
@@ -355,11 +305,11 @@ class Advanced_Ads_AdSense_MAPI {
 				];
 			}
 			$ad_code = json_decode( $response['body'], true );
-			if ( $ad_code === null || ! isset( $ad_code['adCode'] ) ) {
-				if ( $ad_code['error']
-					 && $ad_code['error']['errors']
-					 && isset( $ad_code['error']['errors'][0]['reason'] )
-					 && $ad_code['error']['errors'][0]['reason'] === 'doesNotSupportAdUnitType'
+			if ( null === $ad_code || ! isset( $ad_code['adCode'] ) ) {
+				if ( $ad_code['error'] &&
+					$ad_code['error']['errors'] &&
+					isset( $ad_code['error']['errors'][0]['reason'] ) &&
+					'doesNotSupportAdUnitType' === $ad_code['error']['errors'][0]['reason']
 				) {
 					if ( array_key_exists( $ad_unit, $options['ad_codes'] ) && array_key_exists( $ad_unit, $options['unsupported_units'] ) ) {
 						unset( $options['unsupported_units'][ $ad_unit ] );
@@ -390,7 +340,7 @@ class Advanced_Ads_AdSense_MAPI {
 			return $ad_code['adCode'];
 		}
 
-		// return the original error info
+		// return the original error info.
 		return $access_token;
 	}
 
@@ -460,7 +410,7 @@ class Advanced_Ads_AdSense_MAPI {
 
 		$response_body = json_decode( trim( $response['body'] ), true );
 
-		if ( $response_body === null || ! isset( $response_body['adUnits'] ) ) {
+		if ( null === $response_body || ! isset( $response_body['adUnits'] ) ) {
 			// translators: %s is the publisher ID.
 			$error_message = sprintf( esc_html__( 'Invalid response while retrieving ad unit list for "%s".', 'advanced-ads' ), $account );
 			// check the response for errors and display them for better problem-solving.
@@ -529,12 +479,12 @@ class Advanced_Ads_AdSense_MAPI {
 			];
 			$response = wp_remote_get( $next_url, [ 'headers' => $headers ] );
 			self::log( 'Get ad unit list for ca-' . $account . ' page ' . $page );
-			$page++;
+			++$page;
 
 			if ( is_wp_error( $response ) ) {
 				return [
 					'status' => false,
-					// translators: the publisher ID.
+					// translators: %s is the publisher ID.
 					'msg'    => sprintf( esc_html__( 'Error while retrieving ad unit list for "%s".', 'advanced-ads' ), $account ),
 					'raw'    => $response->get_error_message(),
 				];
@@ -604,6 +554,7 @@ class Advanced_Ads_AdSense_MAPI {
 				// No account at all.
 				return [
 					'status' => false,
+					/* translators: %s account id */
 					'msg' => wp_kses( sprintf( __( 'Advanced Ads does not have access to your account (<code>%s</code>) anymore.', 'advanced-ads' ), $account ), [ 'code' => true ] ),
 					'reload' => true,
 				];
@@ -648,15 +599,16 @@ class Advanced_Ads_AdSense_MAPI {
 		if ( is_wp_error( $response ) ) {
 			return [
 				'status' => false,
+				/* translators: %s account id */
 				'msg'    => sprintf( esc_html__( 'error while renewing access token for "%s"', 'advanced-ads' ), $account ),
 				'raw'    => $response->get_error_message(),
 			];
 		} else {
 			$tokens = json_decode( $response['body'], true );
-			//  checking for the $tokens is not enough. it can be empty.
-            //  monitored this, when the access token is revoked from the outside
-            //  this can happen, when the user connects from another domain.
-			if ( null !== $tokens && isset($tokens['expires_in']) ) {
+			// checking for the $tokens is not enough. it can be empty.
+			// monitored this, when the access token is revoked from the outside
+			// this can happen, when the user connects from another domain.
+			if ( null !== $tokens && isset( $tokens['expires_in'] ) ) {
 				$expires = time() + absint( $tokens['expires_in'] );
 				if ( self::use_user_app() ) {
 					$options['accounts'][ $account ]['user_app']['access_token'] = $tokens['access_token'];
@@ -674,7 +626,7 @@ class Advanced_Ads_AdSense_MAPI {
 				return [
 					'status' => false,
 					'msg'    => sprintf(
-						// translators: %s AdSense account ID
+						/* translators: %s AdSense account ID */
 						esc_html__( 'invalid response received while renewing access token for "%s"', 'advanced-ads' ),
 						$account
 					) . ' ' . __( 'You could try to connect again under Advanced Ads > Settings > AdSense.', 'advanced-ads' ),
@@ -687,12 +639,12 @@ class Advanced_Ads_AdSense_MAPI {
 	/**
 	 *  Recoke a refresh token
 	 */
-        public function ajax_revoke_tokken() {
+	public function ajax_revoke_tokken() {
 
-		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
-        if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
-            die;
-        }
+		$nonce = $_POST['nonce'] ?? '';
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
+			die;
+		}
 		if ( false !== wp_verify_nonce( $nonce, 'advads-mapi' ) ) {
 			$adsense_id = stripslashes( $_POST['adsenseId'] );
 			$options    = self::get_option();
@@ -715,10 +667,10 @@ class Advanced_Ads_AdSense_MAPI {
 			if ( is_wp_error( $response ) ) {
 				echo json_encode( [ 'status' => false ] );
 			} else {
-			    //  remove all the adsense stats
-                global $wpdb;
-                $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'advanced_ads_adsense_report_%';" );
-                delete_option("advanced-ads-adsense-dashboard-filter");
+				//  remove all the adsense stats
+				global $wpdb;
+				$wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'advanced_ads_adsense_report_%';" );
+				delete_option("advanced-ads-adsense-dashboard-filter");
 
 				header( 'Content-Type: application/json' );
 				unset( $options['accounts'][ $adsense_id ] );
@@ -727,14 +679,13 @@ class Advanced_Ads_AdSense_MAPI {
 			}
 		}
 		die;
-
 	}
 
 	/**
 	 * When a user manually adds an ad code, save it
 	 */
 	public function ajax_save_manual_code() {
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			die();
 		}
 
@@ -789,10 +740,11 @@ class Advanced_Ads_AdSense_MAPI {
 	 * Save ad code reconstructed from ad parameters
 	 */
 	public function ajax_save_reconstructed_code() {
-		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
-        if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
-            die;
-        }
+		$nonce = $_POST['nonce'] ?? '';
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
+			die;
+		}
+
 		if ( false !== wp_verify_nonce( $nonce, 'advads-mapi' ) ) {
 			$code          = stripslashes( $_POST['code'] );
 			$slot          = stripslashes( $_POST['slot'] );
@@ -810,21 +762,21 @@ class Advanced_Ads_AdSense_MAPI {
 	/**
 	 * Get ad code for a given unit
 	 */
-	public function ajax_get_adCode() {
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+	public function ajax_get_ad_code() {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			wp_send_json_error( 'Unauthorized', 401 );
 		}
+
 		$post_data = wp_unslash( $_POST );
-		$nonce = isset( $post_data['nonce'] ) ? $post_data['nonce'] : '';
+		$nonce     = isset( $post_data['nonce'] ) ? $post_data['nonce'] : '';
 		if ( false !== wp_verify_nonce( $nonce, 'advads-mapi' ) ) {
 			$unit = stripslashes( $post_data['unit'] );
 
 			if ( ! self::use_user_app() ) {
 				$quota = $this->get_quota();
 
-				// No more quota left
+				// No more quota left.
 				if ( $quota['count'] < 1 ) {
-					$quota_msg = $this->get_quota_msg();
 					header( 'Content-Type: application/json' );
 					$quota_msg = $this->get_quota_msg();
 					echo wp_json_encode(
@@ -832,7 +784,7 @@ class Advanced_Ads_AdSense_MAPI {
 							'quota'    => 0,
 							'quotaMsg' => $quota_msg,
 						]
-						);
+					);
 					die;
 				}
 			}
@@ -870,67 +822,67 @@ class Advanced_Ads_AdSense_MAPI {
 
 			} else {
 
-				// return info about the error
+				// return info about the error.
 				header( 'Content-Type: application/json' );
 				echo wp_json_encode( $code );
-
 			}
 		}
 		die;
 	}
 
-    /**
-     *  Dismiss an account alert
-     */
-    public function ajax_dismiss_alert() {
-        if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
-            die;
-        }
-		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
+	/**
+	 *  Dismiss an account alert
+	 */
+	public function ajax_dismiss_alert() {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
+			die;
+		}
+		$nonce = $_POST['nonce'] ?? '';
 		if ( false !== wp_verify_nonce( $nonce, 'advads-mapi' ) ) {
 			$account = stripslashes( $_POST['account'] );
-            $id = stripslashes( $_POST['id'] );
-            $options = self::get_option();
+			$id      = stripslashes( $_POST['id'] );
+			$options = self::get_option();
 
-            $items = [];
+			$items = [];
 
-            // the account exists.
-            if ( isset( $options['accounts'][ $account ] ) ) {
-                // the alert exists.
-                if ( isset( $options['accounts'][ $account ]['alerts']['items'][ $id ] ) ) {
-                    unset( $options['accounts'][ $account ]['alerts']['items'][ $id ] );
+			// the account exists.
+			if ( isset( $options['accounts'][ $account ] ) ) {
+				// the alert exists.
+				if ( isset( $options['accounts'][ $account ]['alerts']['items'][ $id ] ) ) {
+					unset( $options['accounts'][ $account ]['alerts']['items'][ $id ] );
 
-                    update_option( self::OPTNAME, $options );
-                    $items = $options['accounts'][ $account ]['alerts']['items'];
-                }
-            }
-            header( 'Content-Type: application/json' );
-            echo json_encode( [
-                'status' => true,
-                'alerts' => $items,
-                'length' => count( $items ),
-            ] );
-        }
-        die;
-    }
+					update_option( self::OPTNAME, $options );
+					$items = $options['accounts'][ $account ]['alerts']['items'];
+				}
+			}
+			wp_send_json(
+				[
+					'status' => true,
+					'alerts' => $items,
+					'length' => count( $items ),
+				]
+			);
+		}
+		die;
+	}
 
-    /**
-     *  Get / Update the list of alerts on an AdSense account.
-     */
-    public function ajax_get_account_alerts() {
-        if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
-            die;
-        }
+	/**
+	 *  Get / Update the list of alerts on an AdSense account.
+	 */
+	public function ajax_get_account_alerts() {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
+			die;
+		}
 
-		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
+		$nonce = $_POST['nonce'] ?? '';
 		if ( false !== wp_verify_nonce( $nonce, 'mapi-alerts' ) ) {
 			$account = stripslashes( $_POST['account'] );
-            $options = self::get_option();
+			$options = self::get_option();
 
-            // the account exists.
-            if ( isset( $options['accounts'][ $account ] ) && self::has_token( $account ) ) {
-                $access_token = self::get_access_token( $account );
-                $url = str_replace( 'PUBID', $account, self::ALERTS_URL );
+			// the account exists.
+			if ( isset( $options['accounts'][ $account ] ) && self::has_token( $account ) ) {
+				$access_token = self::get_access_token( $account );
+				$url          = str_replace( 'PUBID', $account, self::ALERTS_URL );
 
 				if ( isset( $_POST['inlineAttempt'] ) ) {
 					if ( ! is_array( $options['accounts'][ $account ]['alerts'] ) ) {
@@ -940,22 +892,22 @@ class Advanced_Ads_AdSense_MAPI {
 					update_option( self::OPTNAME, $options );
 				}
 
-                // the token is valid.
-                if ( ! isset( $access_token['msg'] ) ) {
-                    $headers  = [
-                        'Authorization' => 'Bearer ' . $access_token,
-                    ];
-                    $response = wp_remote_get( $url, [ 'headers' => $headers ] );
+				// the token is valid.
+				if ( ! isset( $access_token['msg'] ) ) {
+					$headers  = [
+						'Authorization' => 'Bearer ' . $access_token,
+					];
+					$response = wp_remote_get( $url, [ 'headers' => $headers ] );
 
 					$this->log( 'Get AdSense alerts for ' . $account );
 
 					// the HTTP response is not an error.
 					if ( ! is_wp_error( $response ) ) {
-                        $alerts = json_decode( $response['body'], true );
+						$alerts = json_decode( $response['body'], true );
 
 						// the response body is valid.
 						if ( is_array( $alerts ) && isset( $alerts['alerts'] ) ) {
-                            $items = [];
+							$items = [];
 							foreach ( $alerts['alerts'] as $item ) {
 								// Do not store alerts of type "INFO".
 								if ( strcasecmp( $item['severity'], 'INFO' ) !== 0 ) {
@@ -963,69 +915,67 @@ class Advanced_Ads_AdSense_MAPI {
 								}
 							}
 
-							// filter alerts that are not relevant to the user
+							// filter alerts that are not relevant to the user.
 							$items = self::filter_account_alerts( $items );
 
-                            $alerts_array = [
-                                'items' => $items ,
-                                'lastCheck' => time(),
-                            ];
+							$alerts_array = [
+								'items' => $items,
+								'lastCheck' => time(),
+							];
 
-                            $options['accounts'][ $account ]['alerts'] = $alerts_array;
-                            update_option( self::OPTNAME, $options );
-                            $results = [
-                                'status' => true,
-                                'alerts' => $items,
-                                'length' => count( $items ),
-                            ];
-                            header( 'Content-Type:application/json' );
-                            echo wp_json_encode( $results );
-                        } else {
-                            $results = [
-                                'status' => false,
-                                'msg'    => esc_html__( 'Invalid response body while retrieving account alerts', 'advanced-ads' ),
-                            ];
-                            header( 'Content-Type:application/json' );
-                            echo wp_json_encode( $results );
-                        }
-
-                    } else {
-                        $results = [
-                            'status' => false,
-                            'msg'    => esc_html__( 'error while retrieving account alerts', 'advanced-ads' ),
-                            'raw'    => $response->get_error_message(),
-                        ];
-                        header( 'Content-Type:application/json' );
-                        echo wp_json_encode( $results );
-                    }
-                } else {
-                    // return the original error info
-                    return $access_token;
-                }
-
-            } else {
-                header( 'Content-Type:application/json' );
-                echo wp_json_encode( [ 'status' => false ] );
-            }
-
-        }
-        die;
-    }
+							$options['accounts'][ $account ]['alerts'] = $alerts_array;
+							update_option( self::OPTNAME, $options );
+							$results = [
+								'status' => true,
+								'alerts' => $items,
+								'length' => count( $items ),
+							];
+							header( 'Content-Type:application/json' );
+							echo wp_json_encode( $results );
+						} else {
+							$results = [
+								'status' => false,
+								'msg'    => esc_html__( 'Invalid response body while retrieving account alerts', 'advanced-ads' ),
+							];
+							header( 'Content-Type:application/json' );
+							echo wp_json_encode( $results );
+						}
+					} else {
+						$results = [
+							'status' => false,
+							'msg'    => esc_html__( 'error while retrieving account alerts', 'advanced-ads' ),
+							'raw'    => $response->get_error_message(),
+						];
+						header( 'Content-Type:application/json' );
+						echo wp_json_encode( $results );
+					}
+				} else {
+					// return the original error info.
+					return $access_token;
+				}
+			} else {
+				header( 'Content-Type:application/json' );
+				echo wp_json_encode( [ 'status' => false ] );
+			}
+		}
+		die;
+	}
 
 	/**
 	 * Get / Update the ad unit list for a given ad client. The corresponding <select /> input used in the ad selector is passed as a fied of an array
 	 */
 	public function ajax_get_adUnits() {
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			die;
 		}
 		$post_vars = wp_unslash( $_POST );
-		$nonce = isset( $post_vars['nonce'] ) ? wp_strip_all_tags( $post_vars['nonce'] ) : '';
-		if ( wp_verify_nonce( $nonce, 'advads-mapi' ) && isset( $post_vars['account'] ) ) {
-			$account  = wp_strip_all_tags( stripslashes( $post_vars['account'] ) );
-			$units    = self::get_ad_units( $account );
+		$nonce     = isset( $post_vars['nonce'] ) ? wp_strip_all_tags( $post_vars['nonce'] ) : '';
 
-			if ( isset( $units['done'] ) && $units['done'] === true ) {
+		if ( wp_verify_nonce( $nonce, 'advads-mapi' ) && isset( $post_vars['account'] ) ) {
+			$account = wp_strip_all_tags( stripslashes( $post_vars['account'] ) );
+			$units   = self::get_ad_units( $account );
+
+			if ( isset( $units['done'] ) && true === $units['done'] ) {
 				ob_start();
 				Advanced_Ads_AdSense_Admin::get_mapi_ad_selector();
 				$ad_selector = ob_get_clean();
@@ -1058,9 +1008,9 @@ class Advanced_Ads_AdSense_MAPI {
 	 * Save account and token after account selection MCN.
 	 */
 	public function ajax_account_selected() {
-        if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
-            die;
-        }
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
+			die;
+		}
 		$post_data = wp_unslash( $_POST );
 		$nonce     = isset( $post_data['nonce'] ) ? $post_data['nonce'] : '';
 		if ( ! wp_verify_nonce( $nonce, 'advads-mapi' ) ) {
@@ -1078,18 +1028,20 @@ class Advanced_Ads_AdSense_MAPI {
 		if ( $token_data ) {
 			$error = 'No account provided';
 		}
-		wp_send_json( [
-			'status'    => false,
-			'error_msg' => $error,
-		] );
 
+		wp_send_json(
+			[
+				'status'    => false,
+				'error_msg' => $error,
+			]
+		);
 	}
 
 	/**
 	 * Get AdSense account details from a new access token.
 	 */
 	public function ajax_get_account_details() {
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 401 );
 		}
 		$post_data = wp_unslash( $_POST );
@@ -1118,10 +1070,12 @@ class Advanced_Ads_AdSense_MAPI {
 		self::log( 'Get account details from new access token' );
 
 		if ( is_wp_error( $response ) ) {
-			wp_send_json( [
-				'status'    => false,
-				'error_msg' => $response->get_error_message(),
-			] );
+			wp_send_json(
+				[
+					'status'    => false,
+					'error_msg' => $response->get_error_message(),
+				]
+			);
 		}
 		if ( trim( $response['body'] ) === '{}' ) {
 			// Empty, disapproved or other reason.
@@ -1147,11 +1101,10 @@ class Advanced_Ads_AdSense_MAPI {
 			if ( trim( $child_accounts['body'] ) === '{}' ) {
 				// Standard AdSense account.
 				self::save_token_from_data( $token_data, $accounts['accounts'][0] );
-				wp_send_json_success( [
-					'reload' => true,
-				] );
+				wp_send_json_success( [ 'reload' => true ] );
 			}
-			if ( $accounts_list !== null ) {
+
+			if ( null !== $accounts_list ) {
 				// Network account.
 				$details            = [];
 				$html               = '';
@@ -1169,11 +1122,13 @@ class Advanced_Ads_AdSense_MAPI {
 					];
 					$html                   .= sprintf( '<option value="%1$s">%2$s [%3$s]</option>', esc_attr( $account_id ), esc_html( $item['displayName'] ), esc_html( $account_id ) );
 				}
-				wp_send_json_success( [
-					'details'    => $details,
-					'html'       => $html,
-					'token_data' => $token_data,
-				] );
+				wp_send_json_success(
+					[
+						'details'    => $details,
+						'html'       => $html,
+						'token_data' => $token_data,
+					]
+				);
 			}
 			wp_send_json_error( [ 'message' => 'unexpected response - get child accounts' ], 400 );
 		}
@@ -1183,9 +1138,9 @@ class Advanced_Ads_AdSense_MAPI {
 	 * Submit Google API confirmation code. Save the token and update ad client list.
 	 */
 	public function ajax_confirm_code() {
-        if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
-            die;
-        }
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
+			die;
+		}
 		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
 		if ( false !== wp_verify_nonce( $nonce, 'advads-mapi' ) ) {
 			$code = urldecode( $_POST['code'] );
@@ -1225,9 +1180,9 @@ class Advanced_Ads_AdSense_MAPI {
 						'msg'    => 'error while submitting code',
 						'raw'    => $response->get_error_message(),
 					]
-					);
+				);
 			} else {
-				$token      = json_decode( $response['body'], true );
+				$token = json_decode( $response['body'], true );
 
 				if ( null !== $token && isset( $token['refresh_token'] ) ) {
 					$expires          = time() + absint( $token['expires_in'] );
@@ -1238,8 +1193,7 @@ class Advanced_Ads_AdSense_MAPI {
 							'status'     => true,
 							'token_data' => $token,
 						]
-						);
-
+					);
 				} else {
 					header( 'Content-Type: application/json' );
 					echo json_encode(
@@ -1247,7 +1201,7 @@ class Advanced_Ads_AdSense_MAPI {
 							'status'        => false,
 							'response_body' => $response['body'],
 						]
-						);
+					);
 				}
 			}
 		}
@@ -1269,10 +1223,10 @@ class Advanced_Ads_AdSense_MAPI {
 	 * Print alert data in admin footer
 	 */
 	public function admin_footer() {
-		$data = Advanced_Ads_AdSense_Data::get_instance();
-		$adsense_id = $data->get_adsense_id();
-		$has_token = Advanced_Ads_AdSense_MAPI::has_token( $adsense_id );
-		$alerts = self::get_stored_account_alerts( $adsense_id );
+		$data           = Advanced_Ads_AdSense_Data::get_instance();
+		$adsense_id     = $data->get_adsense_id();
+		$has_token      = Advanced_Ads_AdSense_MAPI::has_token( $adsense_id );
+		$alerts         = self::get_stored_account_alerts( $adsense_id );
 		$refresh_alerts = false;
 
 		// default value, never checked for alerts.
@@ -1292,47 +1246,47 @@ class Advanced_Ads_AdSense_MAPI {
 		if ( $refresh_alerts ) {
 			$nonce = wp_create_nonce( 'mapi-alerts' );
 			?>
-            <input type="hidden" id="advads-mapi-refresh-alerts" />
-            <script type="text/javascript">
-            ;(function($){
+			<input type="hidden" id="advads-mapi-refresh-alerts" />
+			<script type="text/javascript">
+			;(function($) {
 
-                $( '#mapi-alerts-overlay' ).css( 'display', 'block' );
+				$( '#mapi-alerts-overlay' ).css( 'display', 'block' );
 
-                var pubId = $( '#adsense-id' ).val();
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'post',
-                    data: {
-                        action: 'advads-mapi-get-alerts',
-                        account: '<?php echo wp_strip_all_tags( $adsense_id ); ?>',
-                        nonce: '<?php echo wp_strip_all_tags( $nonce ); ?>',
+				var pubId = $( '#adsense-id' ).val();
+				$.ajax({
+					url: ajaxurl,
+					type: 'post',
+					data: {
+						action: 'advads-mapi-get-alerts',
+						account: '<?php echo wp_strip_all_tags( $adsense_id ); ?>',
+						nonce: '<?php echo wp_strip_all_tags( $nonce ); ?>',
 						inlineAttempt: 1,
-                    },
-                    success:function(response, status, XHR){
-                        if ( 'undefined' != typeof response.alerts ) {
-                            $( '#advads-mapi-refresh-alerts' ).trigger( 'advadsMapiRefreshAlerts', [response] );
-                        }
-                        $( '#mapi-alerts-overlay' ).css( 'display', 'none' );
-                    },
-                    error:function(request, status, error){
-                        $( '#mapi-alerts-overlay' ).css( 'display', 'none' );
-                    },
-                });
+					},
+					success:function(response, status, XHR) {
+						if ( 'undefined' != typeof response.alerts ) {
+							$( '#advads-mapi-refresh-alerts' ).trigger( 'advadsMapiRefreshAlerts', [response] );
+						}
+						$( '#mapi-alerts-overlay' ).css( 'display', 'none' );
+					},
+					error:function(request, status, error) {
+						$( '#mapi-alerts-overlay' ).css( 'display', 'none' );
+					},
+				});
 
-            })(window.jQuery);
-            </script>
-            <?php
-        }
-    }
+			})(window.jQuery);
+			</script>
+			<?php
+		}
+	}
 
-    public static function log( $task = 'No task provided' ) {
-        if ( ! defined( 'ADVANCED_ADS_LOG_ADSENSE_API' ) || ! ADVANCED_ADS_LOG_ADSENSE_API ) {
-            return;
-        }
+	public static function log( $task = 'No task provided' ) {
+		if ( ! defined( 'ADVANCED_ADS_LOG_ADSENSE_API' ) || ! ADVANCED_ADS_LOG_ADSENSE_API ) {
+			return;
+		}
 
-        $message = date_i18n( '[Y-m-d H:i:s]' ) . ' ' . $task . "\n";
-	    error_log( $message, 3, WP_CONTENT_DIR . '/advanced-ads-google-api-requests.log' );
-    }
+		$message = date_i18n( '[Y-m-d H:i:s]' ) . ' ' . $task . "\n";
+		error_log( $message, 3, WP_CONTENT_DIR . '/advanced-ads-google-api-requests.log' );
+	}
 
 	/**
 	 *  Sort ad units list alphabetically
@@ -1444,13 +1398,11 @@ class Advanced_Ads_AdSense_MAPI {
 			if ( isset( $options['accounts'][ $adsense_id ] ) && ! empty( $options['accounts'][ $adsense_id ]['user_app']['refresh_token'] ) ) {
 				$has_token = true;
 			}
-		} else {
-			if ( isset( $options['accounts'][ $adsense_id ] ) && ! empty( $options['accounts'][ $adsense_id ]['default_app']['refresh_token'] ) ) {
-				$has_token = true;
-			}
+		} elseif ( isset( $options['accounts'][ $adsense_id ] ) && ! empty( $options['accounts'][ $adsense_id ]['default_app']['refresh_token'] ) ) {
+			$has_token = true;
 		}
-		return $has_token;
 
+		return $has_token;
 	}
 
 	/**
@@ -1488,34 +1440,33 @@ class Advanced_Ads_AdSense_MAPI {
 		$options['connect_error']                      = [];
 		update_option( self::OPTNAME, $options );
 
-		$gadsense_data                          = Advanced_Ads_AdSense_Data::get_instance();
-		$gadsense_options                       = $gadsense_data->get_options();
-		$gadsense_options['adsense-id']         = $adsense_id;
+		$gadsense_data                  = Advanced_Ads_AdSense_Data::get_instance();
+		$gadsense_options               = $gadsense_data->get_options();
+		$gadsense_options['adsense-id'] = $adsense_id;
 		update_option( GADSENSE_OPT_NAME, $gadsense_options );
-
 	}
 
-    /**
-     *  Get a list of stored alerts for a given AdSense account.
-     *
-     *  @param string $pub_id the publisher account.
-     *  @return array $alerts
-     */
-    public static function get_stored_account_alerts( $pub_id = '' ) {
-        if ( empty( $pub_id ) ) {
-            return false;
-        }
-        $options = self::get_option();
-        if ( isset( $options['accounts'][ $pub_id ] ) ) {
-            if ( isset( $options['accounts'][ $pub_id ]['alerts'] ) && is_array( $options['accounts'][ $pub_id ]['alerts'] ) ) {
-                $alerts = $options['accounts'][ $pub_id ]['alerts'];
-                return self::filter_stored_account_alerts( $alerts );
-            } else {
-                return [];
-            }
-        }
-        return false;
-    }
+	/**
+	 *  Get a list of stored alerts for a given AdSense account.
+	 *
+	 *  @param string $pub_id the publisher account.
+	 *  @return array $alerts
+	 */
+	public static function get_stored_account_alerts( $pub_id = '' ) {
+		if ( empty( $pub_id ) ) {
+			return false;
+		}
+		$options = self::get_option();
+		if ( isset( $options['accounts'][ $pub_id ] ) ) {
+			if ( isset( $options['accounts'][ $pub_id ]['alerts'] ) && is_array( $options['accounts'][ $pub_id ]['alerts'] ) ) {
+				$alerts = $options['accounts'][ $pub_id ]['alerts'];
+				return self::filter_stored_account_alerts( $alerts );
+			} else {
+				return [];
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * We filter out specific alerts from the AdSense account when they are
@@ -1531,18 +1482,18 @@ class Advanced_Ads_AdSense_MAPI {
 			return $alert_items;
 		}
 
-		// the message IDs we don’t even import from AdSense
+		// the message IDs we don’t even import from AdSense.
 		$disabled_adsense_alerts = [
 			'SELLERS_JSON_CONSENT', // AdSense message: We encourage you to publish your seller information in the Google sellers.json file. Visit the account settings page to review your current visibility status.
 			'REPORTING_HORIZON_LEGACY_DATA_NOTICE', // AdSense message: Data older than three years is no longer available in Reporting. This data can be downloaded for a limited time.
 		];
 
-		// additional messages to disable. Useful if the function is used in different situations
+		// additional messages to disable. Useful if the function is used in different situations.
 		if ( ! empty( $disabled_alerts ) && is_array( $disabled_alerts ) ) {
 			$disabled_adsense_alerts = array_merge( $disabled_adsense_alerts, $disabled_alerts );
 		}
 
-		// remove alerts based on specific IDs
+		// remove alerts based on specific IDs.
 		foreach ( $alert_items as $internal_id => $item ) {
 			if (
 				( isset( $item['id'] ) && in_array( $item['id'], $disabled_adsense_alerts, true ) )
@@ -1578,37 +1529,39 @@ class Advanced_Ads_AdSense_MAPI {
 			$disabled_alerts = [ 'ALERT_TYPE_ADS_TXT_UNAUTHORIZED', 'ADS_TXT_MISSING', 'ADS_TXT_ISSUES' ];
 		}
 
-		// filter alerts
 		$alerts['items'] = self::filter_account_alerts( $alerts['items'], $disabled_alerts );
 
-        return $alerts;
-    }
+		return $alerts;
+	}
 
-    /**
-     * Checks if there is any AdSense warning for the currently connected AdSense account.
-     *
-     * @param array $messages The array of messages.
-     *
-     * @return array The modified array.
-     */
-    public static function adsense_warnings_check( $messages ) {
-        $data = Advanced_Ads_AdSense_Data::get_instance();
-        $adsense_id = $data->get_adsense_id();
-        $alerts = self::get_stored_account_alerts( $adsense_id );
-        if ( !is_array( $messages ) ) {
-            $messages = [];
-        }
-        if ( !empty( $alerts ) && !empty( $alerts['items'] ) ) {
-            $messages[] = sprintf(
-                wp_kses(
-                    __( 'There are one or more warnings about the currently linked AdSense account. You can view them <a href="%s">here</a>', 'advanced-ads' ),
-                    [ 'a' => [ 'href' => true ] ]
-                ),
-                esc_url( admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' ) )
-            );
-        }
-        return $messages;
-    }
+	/**
+	 * Checks if there is any AdSense warning for the currently connected AdSense account.
+	 *
+	 * @param array $messages The array of messages.
+	 *
+	 * @return array The modified array.
+	 */
+	public static function adsense_warnings_check( $messages ) {
+		$data       = Advanced_Ads_AdSense_Data::get_instance();
+		$adsense_id = $data->get_adsense_id();
+		$alerts     = self::get_stored_account_alerts( $adsense_id );
+
+		if ( ! is_array( $messages ) ) {
+			$messages = [];
+		}
+
+		if ( ! empty( $alerts ) && ! empty( $alerts['items'] ) ) {
+			$messages[] = sprintf(
+				wp_kses(
+					/* translators: %s admin setting page link */
+					__( 'There are one or more warnings about the currently linked AdSense account. You can view them <a href="%s">here</a>', 'advanced-ads' ),
+					[ 'a' => [ 'href' => true ] ]
+				),
+				esc_url( admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' ) )
+			);
+		}
+		return $messages;
+	}
 
 	/**
 	 * Get the class's option
@@ -1621,74 +1574,86 @@ class Advanced_Ads_AdSense_MAPI {
 		return $options + self::$default_options;
 	}
 
-    /**
-     * Get the URL to the AdSense error page
-     *
-     * @param string $code Add the error code to the URL.
-     *
-     * @return string The entire text with the url.
-     */
-    public static function get_adsense_error_link( $code = '' ) {
-        if ( ! empty( $code ) ) {
-            $code = '-' . $code;
-        }
-        $link = sprintf(
-            // translators: %1$s is an anchor (link) opening tag, %2$s is the closing tag.
-            esc_attr__( 'Learn more about AdSense account issues %1$shere%2$s.', 'advanced-ads' ),
-			'<a href="' . ADVADS_URL . 'adsense-errors/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-error' . $code . '" target="_blank">',
-            '</a>'
-        );
-        return $link;
-    }
+	/**
+	 * Get the URL to the AdSense error page
+	 *
+	 * @param string $code Add the error code to the URL.
+	 *
+	 * @return string The entire text with the url.
+	 */
+	public static function get_adsense_error_link( $code = '' ) {
+		if ( ! empty( $code ) ) {
+			$code = '-' . $code;
+		}
 
-    /**
-     * Get custom account connection error message list.
-     */
-    public static function get_connect_error_messages() {
-        $health_class = Advanced_Ads_Ad_Health_Notices::get_instance();
-        $messages = [];
-        foreach( $health_class->default_notices as $key => $value ) {
-            if ( 0 === strpos( $key, 'adsense_connect_' ) ) {
-                $messages[ substr( $key, strlen( 'adsense_connect_' ) ) ] = $value['text'];
-            }
-        }
-        return $messages;
-    }
+		return sprintf(
+			// translators: %1$s is an anchor (link) opening tag, %2$s is the closing tag.
+			esc_attr__( 'Learn more about AdSense account issues %1$shere%2$s.', 'advanced-ads' ),
+			'<a href="https://wpadvancedads.com/adsense-errors/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-error' . $code . '" target="_blank">',
+			'</a>'
+		);
+	}
 
-    /**
-     * Get custom messages for AdSense alerts.
-     */
-    public static function get_adsense_alert_messages() {
-        $health_class = Advanced_Ads_Ad_Health_Notices::get_instance();
-        $messages = [];
-        foreach( $health_class->default_notices as $key => $value ) {
-            if ( 0 === strpos( $key, 'adsense_alert_' ) ) {
-                $messages[ substr( $key, strlen( 'adsense_alert_' ) ) ] = $value['text'];
-            }
-        }
-        return $messages;
-    }
+	/**
+	 * Get custom account connection error message list.
+	 */
+	public static function get_connect_error_messages() {
+		$messages     = [];
+		$health_class = Advanced_Ads_Ad_Health_Notices::get_instance();
+		foreach ( $health_class->default_notices as $key => $value ) {
+			if ( 0 === strpos( $key, 'adsense_connect_' ) ) {
+				$messages[ substr( $key, strlen( 'adsense_connect_' ) ) ] = $value['text'];
+			}
+		}
+		return $messages;
+	}
 
+	/**
+	 * Get custom messages for AdSense alerts.
+	 */
+	public static function get_adsense_alert_messages() {
+		$messages     = [];
+		$health_class = Advanced_Ads_Ad_Health_Notices::get_instance();
+
+		foreach ( $health_class->default_notices as $key => $value ) {
+			if ( 0 === strpos( $key, 'adsense_alert_' ) ) {
+				$messages[ substr( $key, strlen( 'adsense_alert_' ) ) ] = $value['text'];
+			}
+		}
+		return $messages;
+	}
+
+	/**
+	 * Get class instance
+	 *
+	 * @return Advanced_Ads_AdSense_MAPI
+	 */
 	public static function get_instance() {
-		if ( null == self::$instance ) {
+		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
+
 		return self::$instance;
 	}
 
-    /**
-     * Get a hint for an error object that was received from AdSense
-     * @param $reason string the reason from the response's error
-     * @return string|void if there is a hint for this reason, a string containing the hint will be returned.
-     */
-    public static final function get_adsense_error_hint($reason){
+	/**
+	 * Get a hint for an error object that was received from AdSense
+	 *
+	 * @param string $reason The reason from the response's error.
+	 *
+	 * @return string|bool if there is a hint for this reason, a string containing the hint will be returned.
+	 */
+	final public static function get_adsense_error_hint( $reason ) {
 
-        switch($reason){
-            case "authError":
-                /* translators: 1:A link to the settings page
-                   translators: 2:The name of an ad network
-                 */
-                return sprintf(__( 'Please try to <a href="%1$s" target="_blank">reconnect to your %2$s account</a>.', 'advanced-ads' ), admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' ), 'AdSense');
-        }
-    }
+		if ( 'authError' === $reason ) {
+			return sprintf(
+				/* translators: 1: A link to the settings page 2: The name of an ad network */
+				__( 'Please try to <a href="%1$s" target="_blank">reconnect to your %2$s account</a>.', 'advanced-ads' ),
+				admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' ),
+				'AdSense'
+			);
+		}
+
+		return false;
+	}
 }

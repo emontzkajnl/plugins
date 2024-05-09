@@ -1,4 +1,7 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
+
+use AdvancedAds\Entities;
+
 /**
  * Container class for callbacks for overview widgets
  *
@@ -29,7 +32,7 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 	public static function setup_overview_widgets() {
 
 		// initiate i18n notice.
-		new Translation_Promo(
+		$promo = new Translation_Promo(
 			[
 				'textdomain'     => 'advanced-ads',
 				'plugin_name'    => 'Advanced Ads',
@@ -88,7 +91,7 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 		do_action( 'advanced-ads-overview-widget-content-' . $id, $id );
 		$content = ob_get_clean();
 
-		include ADVADS_BASE_PATH . 'admin/views/overview-widget.php';
+		include ADVADS_ABSPATH . 'admin/views/overview-widget.php';
 	}
 
 	/**
@@ -98,9 +101,7 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 		Advanced_Ads_Ad_Health_Notices::get_instance()->render_widget();
 		?><script>jQuery( document ).ready( function(){ advads_ad_health_maybe_remove_list(); });</script>
 		<?php
-
 	}
-
 
 	/**
 	 * Render next steps widget
@@ -111,9 +112,10 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 		$model      = Advanced_Ads::get_instance()->get_model();
 		$recent_ads = $model->get_ads();
 		if ( count( $recent_ads ) === 0 ) :
-			echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Advanced_Ads::POST_TYPE_SLUG ) ) .
+			echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . Entities::POST_TYPE_AD ) ) .
 			'">' . esc_html( __( 'Create your first ad', 'advanced-ads' ) ) . '</a></p>';
-			// Connect to AdSense
+
+			// Connect to AdSense.
 			echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' ) ) .
 			'">' . esc_attr__( 'Connect to AdSense', 'advanced-ads' ) . '</a></p>';
 			$primary_taken = true;
@@ -157,14 +159,14 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 			<?php
 		} elseif ( count( $recent_ads ) > 0 ) {
 			// link to manage ads.
-			echo '<p><a class="button button-secondary" href="' . esc_url( admin_url( 'edit.php?post_type=' . Advanced_Ads::POST_TYPE_SLUG ) ) .
+			echo '<p><a class="button button-secondary" href="' . esc_url( admin_url( 'edit.php?post_type=' . Entities::POST_TYPE_AD ) ) .
 			'">' . esc_html__( 'Manage your ads', 'advanced-ads' ) . '</a></p>';
 		}
 
 		$all_access = Advanced_Ads_Admin_Licenses::get_instance()->get_probably_all_access();
 		if ( $is_subscribed && ! $all_access ) {
 			?>
-			<a class="button button-primary" href="<?php echo esc_url( ADVADS_URL ); ?>add-ons/all-access/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pitch-bundle" target="_blank"><?php esc_html_e( 'Get the All Access pass', 'advanced-ads' ); ?></a>
+			<a class="button button-primary" href="https://wpadvancedads.com/add-ons/all-access/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pitch-bundle" target="_blank"><?php esc_html_e( 'Get the All Access pass', 'advanced-ads' ); ?></a>
 			<?php
 		}
 	}
@@ -175,11 +177,11 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 	public static function render_support() {
 		?>
 		<ul>
-			<li><a href="<?php echo esc_url( ADVADS_URL . 'manual/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-manual' ); ?>" target="_blank">
+			<li><a href="https://wpadvancedads.com/manual/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-manual" target="_blank">
 			<?php esc_html_e( 'Manual', 'advanced-ads' ); ?>
 				</a>
 			</li>
-			<li><a href="<?php echo esc_url( ADVADS_URL . 'support/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-support' ); ?>" target="_blank">
+			<li><a href="https://wpadvancedads.com/support/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-support" target="_blank">
 			<?php esc_html_e( 'FAQ and Support', 'advanced-ads' ); ?>
 				</a>
 			</li>
@@ -206,7 +208,6 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 		$ignored_count   = count( Advanced_Ads_Ad_Health_Notices::get_instance()->ignore );
 		$displayed_count = count( Advanced_Ads_Ad_Health_Notices::get_instance()->displayed_notices );
 		if ( ! $displayed_count && $ignored_count ) {
-			// translators: %s includes a number and markup like <span class="count">6</span>.
 			?>
 			<p><span class="dashicons dashicons-warning"></span>&nbsp;<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=advanced-ads&advads-show-hidden-notices=true' ), 'advanced-ads-show-hidden-notices', 'advads_nonce' ) ); ?>">
 			<?php
@@ -236,7 +237,8 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 		}
 		$report_type   = 'domain';
 		$report_filter = $filter_value;
-		include ADVADS_BASE_PATH . 'admin/views/gadsense-dashboard.php';
+		$pub_id = Advanced_Ads_AdSense_Data::get_instance()->get_adsense_id();
+		include ADVADS_ABSPATH . 'admin/views/gadsense-dashboard.php';
 	}
 
 	/**
@@ -306,12 +308,10 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 		$report        = new Advanced_Ads_AdSense_Report( $report_type, $report_filter );
 
 		if ( $report->get_data()->is_valid() ) {
-			// There is valid data
 			wp_send_json_success( [ 'html' => $report->get_markup() ] );
 		}
 
 		if ( $report->refresh_report() ) {
-			// we got new data from Google;
 			wp_send_json_success( [ 'html' => $report->get_markup() ] );
 		}
 
@@ -332,14 +332,14 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 	final public static function render_stats_box( $title, $main, $footer ) {
 		?>
 		<div class="advanced-ads-stats-box flex1">
-			<?php echo $title; ?>
+			<?php echo $title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<div class="advanced-ads-stats-box-main">
 				<?php
 				// phpcs:ignore
 				echo $main;
 				?>
 			</div>
-			<?php echo $footer; ?>
+			<?php echo $footer; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 		<?php
 	}
@@ -352,7 +352,7 @@ class Advanced_Ads_Overview_Widgets_Callbacks {
 	public static function render_addons( $hide_activated = false ) {
 		if ( ! $hide_activated ) :
 			?>
-			<p><a href="<?php echo esc_url( ADVADS_URL ) . 'manual/how-to-install-an-add-on/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-install-add-ons'; ?>" target="_blank"><?php echo esc_attr__( 'How to download, install and activate an add-on.', 'advanced-ads' ); ?></a></p>
+			<p><a href="https://wpadvancedads.com/manual/how-to-install-an-add-on/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-install-add-ons" target="_blank"><?php echo esc_attr__( 'How to download, install and activate an add-on.', 'advanced-ads' ); ?></a></p>
 			<?php
 		endif;
 
@@ -391,7 +391,7 @@ endif;
 			?>
 				</li><?php endif; /* bbPress */ ?>
 		<?php
-		if ( class_exists( 'BuddyPress', false ) ) : // BuddyPress or BuddyBoss
+		if ( class_exists( 'BuddyPress', false ) ) : // BuddyPress or BuddyBoss.
 			?>
 			<li>
 			<?php
@@ -440,50 +440,50 @@ endif;
 			'pro'             => [
 				'title' => 'Advanced Ads Pro',
 				'desc'  => $pro_content,
-				'link'  => ADVADS_URL . 'add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'  => 'https://wpadvancedads.com/add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 4,
 				'class' => 'recommended',
 			],
 			'tracking'        => [
 				'title' => 'Tracking',
 				'desc'  => __( 'Analyze clicks and impressions of your ads locally or in Google Analytics, share reports, and limit ads to a specific number of impressions or clicks.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/tracking/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'  => 'https://wpadvancedads.com/add-ons/tracking/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 4,
 			],
 			'responsive'      => [
-				'title' => 'Responsive, AMP and Mobile ads',
-				'desc'  => __( 'Display ads based on the device or the size of your visitor’s browser, and control ads on AMP pages.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/responsive-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'title' => 'AMP Ads',
+				'desc'  => __( 'Effortlessly integrate your ads on AMP (Accelerated Mobile Pages) and auto-convert your Google AdSense ad units.', 'advanced-ads' ),
+				'link'  => 'https://wpadvancedads.com/add-ons/responsive-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 4,
 			],
 			'gam'             => [
 				'title' => 'Google Ad Manager Integration',
 				'desc'  => __( 'A quick and error-free way of implementing ad units from your Google Ad Manager account.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/google-ad-manager/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'  => 'https://wpadvancedads.com/add-ons/google-ad-manager/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 5,
 			],
 			'sticky'          => [
 				'title' => 'Sticky ads',
 				'desc'  => __( 'Increase click rates on your ads by placing them in sticky positions above, next or below your site.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/sticky-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'  => 'https://wpadvancedads.com/add-ons/sticky-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 5,
 			],
 			'layer'           => [
 				'title' => 'PopUps and Layers',
 				'desc'  => __( 'Users will never miss an ad or other information in a PopUp. Choose when it shows up and for how long a user can close it.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/popup-and-layer-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'  => 'https://wpadvancedads.com/add-ons/popup-and-layer-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 5,
 			],
 			'selling'         => [
 				'title' => 'Selling Ads',
 				'desc'  => __( 'Earn more money and let advertisers pay for ad space directly on the frontend of your site.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/selling-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'  => 'https://wpadvancedads.com/add-ons/selling-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 6,
 			],
 			'slider'          => [
 				'title' => 'Ad Slider',
 				'desc'  => __( 'Create a beautiful and simple slider from your ads to show more information on less space.', 'advanced-ads' ),
-				'link'  => ADVADS_URL . 'add-ons/slider/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'  => 'https://wpadvancedads.com/add-ons/slider/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'order' => 6,
 			],
 			'adsense-in-feed' => [
@@ -510,13 +510,13 @@ endif;
 		if ( isset( $installed_plugins['advanced-ads-pro/advanced-ads-pro.php'] ) && ! class_exists( 'Advanced_Ads_Pro' ) ) { // is installed, but not active.
 			$add_ons['pro']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-pro/advanced-ads-pro.php&amp', 'activate-plugin_advanced-ads-pro/advanced-ads-pro.php' );
 			$add_ons['pro']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 		} elseif ( class_exists( 'Advanced_Ads_Pro' ) ) {
-			$add_ons['pro']['link']      = ADVADS_URL . 'manual/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['pro']['link']      = 'https://wpadvancedads.com/manual/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
 			$add_ons['pro']['desc']      = '';
 			$add_ons['pro']['installed'] = true;
 			$add_ons['pro']['order']     = 20;
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 
 			// remove the add-on.
 			if ( $hide_activated ) {
@@ -528,10 +528,10 @@ endif;
 		if ( isset( $installed_plugins['advanced-ads-tracking/tracking.php'] ) && ! class_exists( 'Advanced_Ads_Tracking_Plugin' ) ) { // is installed, but not active.
 			$add_ons['tracking']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-tracking/tracking.php&amp', 'activate-plugin_advanced-ads-tracking/tracking.php' );
 			$add_ons['tracking']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 		} elseif ( class_exists( 'Advanced_Ads_Tracking_Plugin', false ) &&
 			method_exists( Advanced_Ads_Tracking_Plugin::get_instance(), 'get_tracking_method' ) ) {
-			$add_ons['tracking']['link'] = ADVADS_URL . 'manual/tracking-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['tracking']['link'] = 'https://wpadvancedads.com/manual/tracking-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
 			if ( 'ga' !== Advanced_Ads_Tracking_Plugin::get_instance()->get_tracking_method() ) {
 
 				// don’t show Tracking link if Analytics method is enabled.
@@ -541,7 +541,7 @@ endif;
 			}
 			$add_ons['tracking']['installed'] = true;
 			$add_ons['tracking']['order']     = 20;
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 
 			// remove the add-on.
 			if ( $hide_activated ) {
@@ -553,13 +553,13 @@ endif;
 		if ( isset( $installed_plugins['advanced-ads-responsive/responsive-ads.php'] ) && ! class_exists( 'Advanced_Ads_Responsive_Plugin' ) ) { // is installed, but not active.
 			$add_ons['responsive']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-responsive/responsive-ads.php&amp', 'activate-plugin_advanced-ads-responsive/responsive-ads.php' );
 			$add_ons['responsive']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 		} elseif ( class_exists( 'Advanced_Ads_Responsive_Plugin' ) ) {
-			$add_ons['responsive']['link']      = ADVADS_URL . 'manual/responsive-ads-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
-			$add_ons['responsive']['desc']      = '<a href="' . admin_url( 'admin.php?page=responsive-ads-list' ) . '">' . __( 'List of responsive ads by browser width', 'advanced-ads' ) . '</a>';
+			$add_ons['responsive']['link']      = 'https://wpadvancedads.com/manual/ads-on-amp-pages/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['responsive']['desc']      = '';
 			$add_ons['responsive']['installed'] = true;
 			$add_ons['responsive']['order']     = 20;
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 
 			// remove the add-on.
 			if ( $hide_activated ) {
@@ -571,13 +571,13 @@ endif;
 		if ( isset( $installed_plugins['advanced-ads-gam/advanced-ads-gam.php'] ) && ! class_exists( 'Advanced_Ads_Network_Gam' ) ) { // is installed, but not active.
 			$add_ons['gam']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-gam/advanced-ads-gam.php&amp', 'activate-plugin_advanced-ads-gam/advanced-ads-gam.php' );
 			$add_ons['gam']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 		} elseif ( class_exists( 'Advanced_Ads_Network_Gam' ) ) {
-			$add_ons['gam']['link']      = ADVADS_URL . 'manual/google-ad-manager-integration-manual/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['gam']['link']      = 'https://wpadvancedads.com/manual/google-ad-manager-integration-manual/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
 			$add_ons['gam']['desc']      = '';
 			$add_ons['gam']['installed'] = true;
 			$add_ons['gam']['order']     = 20;
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 
 			// remove the add-on.
 			if ( $hide_activated ) {
@@ -589,13 +589,13 @@ endif;
 		if ( isset( $installed_plugins['advanced-ads-sticky-ads/sticky-ads.php'] ) && ! class_exists( 'Advanced_Ads_Sticky_Plugin' ) ) { // is installed, but not active.
 			$add_ons['sticky']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-sticky-ads/sticky-ads.php&amp', 'activate-plugin_advanced-ads-sticky-ads/sticky-ads.php' );
 			$add_ons['sticky']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 		} elseif ( class_exists( 'Advanced_Ads_Sticky_Plugin' ) ) {
-			$add_ons['sticky']['link']      = ADVADS_URL . 'manual/sticky-ads-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['sticky']['link']      = 'https://wpadvancedads.com/manual/sticky-ads-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
 			$add_ons['sticky']['desc']      = '';
 			$add_ons['sticky']['installed'] = true;
 			$add_ons['sticky']['order']     = 20;
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 
 			// remove the add-on.
 			if ( $hide_activated ) {
@@ -607,13 +607,13 @@ endif;
 		if ( isset( $installed_plugins['advanced-ads-layer/layer-ads.php'] ) && ! class_exists( 'Advanced_Ads_Layer_Plugin' ) ) { // is installed, but not active.
 			$add_ons['layer']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-layer/layer-ads.php&amp', 'activate-plugin_advanced-ads-layer/layer-ads.php' );
 			$add_ons['layer']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 		} elseif ( class_exists( 'Advanced_Ads_Layer_Plugin' ) ) {
-			$add_ons['layer']['link']      = ADVADS_URL . 'manual/popup-and-layer-ads-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['layer']['link']      = 'https://wpadvancedads.com/manual/popup-and-layer-ads-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
 			$add_ons['layer']['desc']      = '';
 			$add_ons['layer']['installed'] = true;
 			$add_ons['layer']['order']     = 20;
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 
 			// remove the add-on.
 			if ( $hide_activated ) {
@@ -625,15 +625,15 @@ endif;
 		if ( isset( $installed_plugins['advanced-ads-selling/advanced-ads-selling.php'] ) && ! class_exists( 'Advanced_Ads_Selling_Plugin' ) ) { // is installed, but not active.
 			$add_ons['selling']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-selling/advanced-ads-selling.php&amp', 'activate-plugin_advanced-ads-selling/advanced-ads-selling.php' );
 			$add_ons['selling']['link_title'] = __( 'Activate now', 'advanced-ads' );
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 		} elseif ( class_exists( 'Advanced_Ads_Selling_Plugin' ) ) {
-			$add_ons['selling']['link']      = ADVADS_URL . 'manual/selling-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['selling']['link']      = 'https://wpadvancedads.com/manual/selling-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
 			$add_ons['selling']['desc']      = '';
 			$add_ons['selling']['installed'] = true;
 			$add_ons['selling']['order']     = 20;
-			$installed_pro_plugins++;
+			++$installed_pro_plugins;
 
-			// remove the add-on.
+			// Remove the add-on.
 			if ( $hide_activated ) {
 				unset( $add_ons['selling'] );
 			}
@@ -644,7 +644,7 @@ endif;
 			$add_ons['slider']['link']       = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads-slider/slider.php&amp', 'activate-plugin_advanced-ads-slider/slider.php' );
 			$add_ons['slider']['link_title'] = __( 'Activate now', 'advanced-ads' );
 		} elseif ( class_exists( 'Advanced_Ads_Slider_Plugin' ) ) {
-			$add_ons['slider']['link']      = ADVADS_URL . 'manual/ad-slider/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
+			$add_ons['slider']['link']      = 'https://wpadvancedads.com/manual/ad-slider/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons-manual';
 			$add_ons['slider']['desc']      = '';
 			$add_ons['slider']['installed'] = true;
 			$add_ons['slider']['order']     = 20;
@@ -692,7 +692,7 @@ endif;
 			$add_ons['bundle'] = [
 				'title'        => 'All Access',
 				'desc'         => __( 'Our best deal with all add-ons included.', 'advanced-ads' ),
-				'link'         => ADVADS_URL . 'add-ons/all-access/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'         => 'https://wpadvancedads.com/add-ons/all-access/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'link_title'   => __( 'Get full access', 'advanced-ads' ),
 				'link_primary' => true,
 				'order'        => 0,
@@ -700,7 +700,10 @@ endif;
 		}
 
 		$all_access_expiry = Advanced_Ads_Admin_Licenses::get_instance()->get_probably_all_access_expiry();
-		// show All Access long-term pitch if less than 2 add-ons exist or All Access license is expiring within next 12 month or already expired
+
+		// show All Access long-term pitch if less than 2 add-ons exist or
+		// All Access license is expiring within next 12 month or already expired.
+
 		if (
 			$installed_pro_plugins < 2
 			|| ( $all_access_expiry && ( time() + YEAR_IN_SECONDS ) > strtotime( $all_access_expiry ) )
@@ -708,7 +711,7 @@ endif;
 			$add_ons['long_term'] = [
 				'title'        => 'All Access long-term',
 				'desc'         => __( 'A one-time payment for four years of support and updates. The package saves you up to 70% compared to individually purchasing our add-ons.', 'advanced-ads' ),
-				'link'         => ADVADS_URL . 'add-ons/all-access-long-term/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
+				'link'         => 'https://wpadvancedads.com/add-ons/all-access-long-term/?utm_source=advanced-ads&utm_medium=link&utm_campaign=overview-add-ons',
 				'link_title'   => __( 'Get full access', 'advanced-ads' ),
 				'link_primary' => true,
 				'order'        => 1,
@@ -729,14 +732,14 @@ endif;
 			} else {
 				$link_title = isset( $_addon['link_title'] ) ? $_addon['link_title'] : __( 'Get this add-on', 'advanced-ads' );
 			}
-			include ADVADS_BASE_PATH . 'admin/views/overview-addons-line.php';
+			include ADVADS_ABSPATH . 'admin/views/overview-addons-line.php';
 		endforeach;
 		?>
 		</table>
 		<?php
 	}
 
-	
+
 	/**
 	 * Sort by installed add-ons
 	 *
@@ -748,5 +751,4 @@ endif;
 	protected static function sort_by_order( $a, $b ) {
 		return $a['order'] - $b['order'];
 	}
-
 }

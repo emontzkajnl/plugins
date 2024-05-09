@@ -20,7 +20,7 @@
 				],
 			]
 		),
-		esc_url( ADVADS_URL . 'add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings' )
+		'https://wpadvancedads.com/add-ons/advanced-ads-pro/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings'
 	);
 	?>
 </label>

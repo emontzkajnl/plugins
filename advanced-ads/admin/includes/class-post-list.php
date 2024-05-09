@@ -33,7 +33,7 @@ class Post_List {
 		}
 
 		$viewability = $_GET['ad-viewability'] ?? '';
-		include ADVADS_BASE_PATH . 'admin/views/post-list-filter-dropdown.php';
+		include ADVADS_ABSPATH . 'admin/views/post-list-filter-dropdown.php';
 	}
 
 	/**

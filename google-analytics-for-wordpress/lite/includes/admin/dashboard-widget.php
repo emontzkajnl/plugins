@@ -161,21 +161,13 @@ class MonsterInsights_Dashboard_Widget {
 	 */
 	public function widget_scripts() {
 		$version_path = 'lite';
-		$rtl          = is_rtl() ? '.rtl' : '';
+		$screen       = get_current_screen();
 
-		$screen = get_current_screen();
 		if ( isset( $screen->id ) && 'dashboard' === $screen->id ) {
-			global $wp_version;
-			if ( ! defined( 'MONSTERINSIGHTS_LOCAL_WIDGET_JS_URL' ) ) {
-				wp_enqueue_style( 'monsterinsights-vue-style-vendors', plugins_url( $version_path . '/assets/vue/css/chunk-vendors' . $rtl . '.css', MONSTERINSIGHTS_PLUGIN_FILE ), array(), monsterinsights_get_asset_version() );
-				wp_enqueue_style( 'monsterinsights-vue-widget-style', plugins_url( $version_path . '/assets/vue/css/widget' . $rtl . '.css', MONSTERINSIGHTS_PLUGIN_FILE ), array(), monsterinsights_get_asset_version() );
-				wp_enqueue_script( 'monsterinsights-vue-vendors', plugins_url( $version_path . '/assets/vue/js/chunk-vendors.js', MONSTERINSIGHTS_PLUGIN_FILE ), array(), monsterinsights_get_asset_version(), true );
-				wp_enqueue_script( 'monsterinsights-vue-common', plugins_url( $version_path . '/assets/vue/js/chunk-common.js', MONSTERINSIGHTS_PLUGIN_FILE ), array(), monsterinsights_get_asset_version(), true );
-			} else {
-				wp_enqueue_script( 'monsterinsights-vue-vendors', MONSTERINSIGHTS_LOCAL_VENDORS_JS_URL, array(), monsterinsights_get_asset_version(), true );
-				wp_enqueue_script( 'monsterinsights-vue-common', MONSTERINSIGHTS_LOCAL_COMMON_JS_URL, array(), monsterinsights_get_asset_version(), true );
+			if ( ! defined( 'MONSTERINSIGHTS_LOCAL_JS_URL' ) ) {
+				MonsterInsights_Admin_Assets::enqueue_script_specific_css( 'src/modules/widget/widget.js' );
 			}
-			$widget_js_url = defined( 'MONSTERINSIGHTS_LOCAL_WIDGET_JS_URL' ) && MONSTERINSIGHTS_LOCAL_WIDGET_JS_URL ? MONSTERINSIGHTS_LOCAL_WIDGET_JS_URL : plugins_url( $version_path . '/assets/vue/js/widget.js', MONSTERINSIGHTS_PLUGIN_FILE );
+			$widget_js_url = MonsterInsights_Admin_Assets::get_js_url( 'src/modules/widget/widget.js' );
 			wp_register_script( 'monsterinsights-vue-widget', $widget_js_url, array(), monsterinsights_get_asset_version(), true );
 			wp_enqueue_script( 'monsterinsights-vue-widget' );
 

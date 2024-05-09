@@ -1,4 +1,9 @@
-<?php 
+<?php
+/**
+ * Displays the placement test table.
+ *
+ * @var array $placement_tests The array with saved tests.
+ */
 if ( count( $placement_tests ) ) : ?>
 	<h2><?php _e( 'Placement tests', 'advanced-ads-pro' ); ?></h2>
 	<form method="POST" action="">
@@ -12,7 +17,7 @@ if ( count( $placement_tests ) ) : ?>
 				</tr>
 			</thead>
 			<tbody>
-			<?php 
+			<?php
 			foreach ( $placement_tests as $slug => $placement_test ) :
 				$placement_names = $this->get_placement_names( $placement_test );
 				$is_empty_test = count( $placement_names ) < 2;
@@ -25,11 +30,11 @@ if ( count( $placement_tests ) ) : ?>
 				<td>
 					<?php
 					if ( ! $is_empty_test ) {
-						$expiry_date = isset( $placement_test['expiry_date'] ) ? $placement_test['expiry_date'] : false;
+						$expiry_date = $placement_test['expiry_date'] ?? false;
 						$this->output_expiry_date_form( $slug, $expiry_date );
 					}
 					?>
-				</td>			
+				</td>
 				<td>
 					<?php
 					if ( ! $is_empty_test ) {
@@ -51,10 +56,6 @@ if ( count( $placement_tests ) ) : ?>
 		<?php wp_nonce_field( 'advads-placement-test', 'advads_placement_test', true ) ?>
 		<input type="submit" class="button button-primary" value="<?php _e( 'Save Tests', 'advanced-ads-pro' ); ?>"/>
 	</form>
-
-	<?php if ( $adsense_limit ) : ?>
-	<p class="advads-notice-inline advads-error"><?php printf(__( 'Due to technical restrictions, when testing AdSense units, the limit in the plugin settings does not work. Please disable it <a href="%s">here</a>.', 'advanced-ads-pro' ), admin_url('admin.php?page=advanced-ads-settings#top#adsense') ); ?></p>
-	<?php endif; ?>
 <?php endif; ?>
 
 
@@ -69,7 +70,7 @@ jQuery( document ).ready( function( $ ) {
 	function maybe_allow_create_test() {
 		var $inputs = jQuery( '.advads-add-to-placement-test' ).filter( function() {
 			return this.value != '';
-		}); 
+		});
 
 		if ( $inputs.length > 1 ) {
 			jQuery( '#advads-save-placement-test-button' ).addClass( 'button-primary' ).prop( 'disabled', false );

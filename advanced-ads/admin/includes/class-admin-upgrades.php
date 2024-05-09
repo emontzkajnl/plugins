@@ -1,4 +1,8 @@
 <?php // phpcs:ignore
+
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Functions around promoting upgrades
  *
@@ -36,7 +40,7 @@ class Advanced_Ads_Admin_Upgrades {
 			$ad_types['upgrade-gam']->title       = 'Google Ad Manager'; // Do not translate.
 			$ad_types['upgrade-gam']->description = __( 'Load ad units directly from your Google Ad Manager account.', 'advanced-ads' );
 			$ad_types['upgrade-gam']->is_upgrade  = true;
-			$ad_types['upgrade-gam']->upgrade_url = ADVADS_URL . 'add-ons/google-ad-manager/';
+			$ad_types['upgrade-gam']->upgrade_url = 'https://wpadvancedads.com/add-ons/google-ad-manager/';
 		}
 
 		// Add AMP ad type from Responsive Ads add-on.
@@ -46,7 +50,7 @@ class Advanced_Ads_Admin_Upgrades {
 			$ad_types['upgrade-amp']->title       = 'AMP'; // Do not translate.
 			$ad_types['upgrade-amp']->description = __( 'Ads that are visible on Accelerated Mobile Pages.', 'advanced-ads' );
 			$ad_types['upgrade-amp']->is_upgrade  = true;
-			$ad_types['upgrade-amp']->upgrade_url = ADVADS_URL . 'add-ons/responsive-ads/';
+			$ad_types['upgrade-amp']->upgrade_url = 'https://wpadvancedads.com/add-ons/responsive-ads/';
 		}
 
 		return $ad_types;
@@ -61,7 +65,7 @@ class Advanced_Ads_Admin_Upgrades {
 	 */
 	public static function upgrade_link( $title = '', $url = '', $utm_campaign = 'upgrade' ) {
 		$title = ! empty( $title ) ? $title : __( 'Upgrade', 'advanced-ads' );
-		$url   = ! empty( $url ) ? $url : ADVADS_URL . 'add-ons/';
+		$url   = ! empty( $url ) ? $url : 'https://wpadvancedads.com/add-ons/';
 
 		$url = add_query_arg( [
 			'utm_source'   => 'advanced-ads',
@@ -69,7 +73,7 @@ class Advanced_Ads_Admin_Upgrades {
 			'utm_campaign' => $utm_campaign,
 		], $url );
 
-		include ADVADS_BASE_PATH . 'admin/views/upgrades/upgrade-link.php';
+		include ADVADS_ABSPATH . 'admin/views/upgrades/upgrade-link.php';
 	}
 
 	/**
@@ -81,7 +85,7 @@ class Advanced_Ads_Admin_Upgrades {
 	public static function pro_feature_link( $utm_campaign = '' ) {
 		self::upgrade_link(
 			__( 'Pro Feature', 'advanced-ads' ),
-			ADVADS_URL . 'advanced-ads-pro/',
+			'https://wpadvancedads.com/advanced-ads-pro/',
 			$utm_campaign
 		);
 	}
@@ -103,7 +107,7 @@ class Advanced_Ads_Admin_Upgrades {
 					'text' => sprintf(
 					// Translators: %1$s opening a tag, %2$s closing a tag.
 						esc_html__( 'This looks like a Google Ad Manager ad. Use the %1$sGAM Integration%2$s.', 'advanced' ),
-						'<a href="' . ADVADS_URL . 'add-ons/google-ad-manager/?utm_source=advanced-ads&utm_medium=link&utm_campaign=upgrade-ad-parameters-gam" target="_blank">',
+						'<a href="https://wpadvancedads.com/add-ons/google-ad-manager/?utm_source=advanced-ads&utm_medium=link&utm_campaign=upgrade-ad-parameters-gam" target="_blank">',
 						'</a>'
 					) . ' ' . __( 'A quick and error-free way of implementing ad units from your Google Ad Manager account.', 'advanced-ads' ),
 				];
@@ -118,7 +122,7 @@ class Advanced_Ads_Admin_Upgrades {
 	 */
 	public function adsense_type_amp_options() {
 		if ( ! defined( 'AAR_VERSION' ) && Advanced_Ads_Checks::active_amp_plugin() ) {
-			include ADVADS_BASE_PATH . 'admin/views/upgrades/adsense-amp.php';
+			include ADVADS_ABSPATH . 'admin/views/upgrades/adsense-amp.php';
 		}
 	}
 
@@ -133,8 +137,8 @@ class Advanced_Ads_Admin_Upgrades {
 	public function render_duplicate_link( $actions, $post ) {
 		if (
 			 ! defined( 'AAP_VERSION' )
-			 && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
-			 && current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) )
+			 && Entities::POST_TYPE_AD === $post->post_type
+			 && WordPress::user_can( 'advanced_ads_edit_ads' )
 		) {
 			$actions['copy-ad'] = $this->create_duplicate_link();
 		}
@@ -150,8 +154,8 @@ class Advanced_Ads_Admin_Upgrades {
 		if (
 			! defined( 'AAP_VERSION' )
 			 && $post->filter === 'edit' // only for already saved ads.
-			 && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
-			 && current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) )
+			 && Entities::POST_TYPE_AD === $post->post_type
+			 && WordPress::user_can( 'advanced_ads_edit_ads' )
 		) {
 			?>
 			<div>
@@ -166,7 +170,7 @@ class Advanced_Ads_Admin_Upgrades {
 	 */
 	public function create_duplicate_link() {
 		ob_start();
-		self::upgrade_link( null, ADVADS_URL . 'checkout/?edd_action=add_to_cart&download_id=1742', 'duplicate-ad' );
+		self::upgrade_link( null, 'https://wpadvancedads.com/checkout/?edd_action=add_to_cart&download_id=1742', 'duplicate-ad' );
 
 		return sprintf(
 			'%1$s (%2$s)',

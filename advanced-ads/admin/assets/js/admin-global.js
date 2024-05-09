@@ -401,3 +401,8 @@ function advads_ad_health_reload_show_link(){
 		show_link.show();
 	}
 }
+
+//Radio Toggle visibility
+function toggle_visibility ( currentElement, toggleElement ) {
+	jQuery( toggleElement ).toggle( jQuery(currentElement).val() === 'on');
+}

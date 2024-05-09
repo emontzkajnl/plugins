@@ -9,6 +9,8 @@
  * @copyright 2014 Thomas Maier, Advanced Ads GmbH
  */
 
+use AdvancedAds\Utilities\Groups;
+
 /**
  * Ad widget
  */
@@ -156,8 +158,7 @@ class Advanced_Ads_Widget extends WP_Widget {
 			return;
 		}
 
-		$hints = Advanced_Ads_Group::get_hints( new Advanced_Ads_Group( $elementid_parts[1] ) );
-		require ADVADS_BASE_PATH . 'admin/views/group-hints.php';
+		echo Groups::build_hints_html( new Advanced_Ads_Group( $elementid_parts[1] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	 /**

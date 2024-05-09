@@ -113,8 +113,8 @@ function monsterinsights_ajax_install_addon() {
 	wp_die();
 
 }
-
 add_action( 'wp_ajax_monsterinsights_activate_addon', 'monsterinsights_ajax_activate_addon' );
+
 /**
  * Activates a MonsterInsights addon.
  *
@@ -134,26 +134,35 @@ function monsterinsights_ajax_activate_addon() {
 
 	// Activate the addon.
 	if ( isset( $_POST['plugin'] ) ) {
+		$plugin = esc_attr( $_POST['plugin'] );
+
 		if ( isset( $_POST['isnetwork'] ) && $_POST['isnetwork'] ) {
-			$activate = activate_plugin( $_POST['plugin'], null, true );
+			$activate = activate_plugin( $plugin, null, true );
 		} else {
-			$activate = activate_plugin( $_POST['plugin'] );
+			$activate = activate_plugin( $plugin  );
 		}
+
 		/* Restrict thirt-party redirections on activation */
-		delete_transient( '_userfeedback_activation_redirect' );
+		if ( "userfeedback-lite/userfeedback.php" === $plugin ) {
+			delete_transient( '_userfeedback_activation_redirect' );
+		}
+
 		if ( is_wp_error( $activate ) ) {
 			echo json_encode( array( 'error' => $activate->get_error_message() ) );
 			wp_die();
 		}
 
 		do_action( 'monsterinsights_after_ajax_activate_addon', sanitize_text_field( $_POST['plugin'] ) );
+
+		// FunnelKit Stripe Woo Payment Gateway activation.
+		if ( 'funnelkit-stripe-woo-payment-gateway/funnelkit-stripe-woo-payment-gateway.php' === $plugin ) {
+			monsterinsights_activate_plugin_funnelkit_stripe_woo_gateway();
+		}
 	}
 
 	echo json_encode( true );
 	wp_die();
-
 }
-
 add_action( 'wp_ajax_monsterinsights_deactivate_addon', 'monsterinsights_ajax_deactivate_addon' );
 /**
  * Deactivates a MonsterInsights addon.
@@ -248,6 +257,38 @@ function monsterinsights_ajax_dismiss_semrush_cta() {
 
 add_action( 'wp_ajax_monsterinsights_vue_dismiss_semrush_cta', 'monsterinsights_ajax_dismiss_semrush_cta' );
 
+
+/**
+ * Dismiss AISEO plugin call-to-action
+ *
+ * @access public
+ * @since 8.22.1
+ */
+function monsterinsights_vue_dismiss_aiseo_cta() {
+	check_ajax_referer( 'mi-admin-nonce', 'nonce' );
+
+	if ( ! current_user_can( 'monsterinsights_save_settings' ) ) {
+		return;
+	}
+
+	// Deactivate the notice
+	if ( update_option( 'monsterinsights_dismiss_aiseo_cta', 'yes' ) ) {
+		// Return true
+		wp_send_json( array(
+			'dismissed' => 'yes',
+		) );
+		wp_die();
+	}
+
+	// If here, an error occurred
+	wp_send_json( array(
+		'dismissed' => 'no',
+	) );
+	wp_die();
+}
+
+add_action( 'wp_ajax_monsterinsights_vue_dismiss_aiseo_cta', 'monsterinsights_vue_dismiss_aiseo_cta' );
+
 /**
  * Get the sem rush cta dismiss status value
  */
@@ -262,6 +303,24 @@ function monsterinsights_get_sem_rush_cta_status() {
 }
 
 add_action( 'wp_ajax_monsterinsights_get_sem_rush_cta_status', 'monsterinsights_get_sem_rush_cta_status' );
+
+/**
+ * Checks if AISEO call-to-action is dismissed.
+ *
+ * @since 8.22.1
+ * @return void
+ */
+function monsterinsights_get_aiseo_cta_status() {
+	check_ajax_referer( 'mi-admin-nonce', 'nonce' );
+
+	$dismissed_cta = get_option( 'monsterinsights_dismiss_aiseo_cta', 'no' );
+
+	wp_send_json( array(
+		'dismissed' => $dismissed_cta,
+	) );
+}
+
+add_action( 'wp_ajax_monsterinsights_get_aiseo_cta_status', 'monsterinsights_get_aiseo_cta_status' );
 
 function monsterinsights_handle_get_plugin_info() {
 
@@ -329,3 +388,58 @@ if ( ! ( $license_type === 'master' || $license_type === 'pro' ) ) {
 	add_action( 'wp_ajax_monsterinsights_user_journey_report', 'monsterinsights_user_journey_demo_report_ajax' );
 	add_action( 'wp_ajax_monsterinsights_user_journey_report_filter_params', '__return_false' );
 }
+
+/**
+ * Plugin FunnelKit Stripe Woo Payment Gateway activation.
+ *
+ * @return void
+ */
+function monsterinsights_activate_plugin_funnelkit_stripe_woo_gateway() {
+	// Add FunnelKit partner ID. For MonsterInsights is 3f6c515da4bdcb59afc860b305a0cc3e .
+	update_option( 'fkwcs_wp_stripe', '3f6c515da4bdcb59afc860b305a0cc3e', false );
+}
+
+/**
+ * Plugin FunnelKit Stripe Woo Payment Gateway, check if Stripe is connected.
+ *
+ * @access public
+ * @since 6.0.0
+ */
+function monsterinsights_check_plugin_funnelkit_funnelkit_stripe_woo_gateway_configured() {
+	// Run a security check first.
+	check_ajax_referer( 'monsterinsights-funnelkit-stripe-woo-nonce', 'nonce' );
+
+	$fkwcs_con_status = get_option('fkwcs_con_status'); 
+
+	if ( 'success' === $fkwcs_con_status ) {
+		echo json_encode( true );
+		wp_die();
+	}
+
+	echo json_encode( false );
+	wp_die();
+
+}
+add_action( 'wp_ajax_monsterinsights_funnelkit_stripe_woo_gateway_configured', 'monsterinsights_check_plugin_funnelkit_funnelkit_stripe_woo_gateway_configured' );
+
+/**
+ * Called whenever a notice is dismissed in MonsterInsights editor blocks.
+ *
+ * @access public
+ * @since 8.26.0
+ */
+function monsterinsights_ajax_dismiss_editor_notice() {
+
+	// Run a security check first.
+	check_ajax_referer( 'monsterinsights-dismiss-notice', 'nonce' );
+
+	// Deactivate the notice
+	if ( isset( $_POST['notice'] ) && $_POST['notice'] === 'envira_promo' ) {
+		set_transient( '_monsterinsights_dismiss_envira_promo', true, 30 * DAY_IN_SECONDS );
+		wp_send_json_success();
+	}
+
+	wp_send_json_error();
+}
+
+add_action( 'wp_ajax_monsterinsights_ajax_dismiss_editor_notice', 'monsterinsights_ajax_dismiss_editor_notice' );

@@ -10,7 +10,7 @@ class Advanced_Ads_Pro_Module_Lazy_Load_Admin {
 		if ( empty( $options['lazy-load']['enabled'] ) ) {
 			return;
 		}
-		add_action( 'advanced-ads-placement-options-after', [ $this, 'render_lazy_load_option' ], 10, 2 );
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'render_lazy_load_option' ], 10, 2 );
 	}
 
 	public function settings_init($hook) {
@@ -51,10 +51,24 @@ class Advanced_Ads_Pro_Module_Lazy_Load_Admin {
 			$option_content = ob_get_clean();
 
 			if ( class_exists( 'Advanced_Ads_Admin_Options' ) ) {
+				if($cb_off) {
+					$cache_busting_text = sprintf(
+						'%1s (<a href="%2s" target="_blank">%3s</a>)',
+						__( 'Cache Busting needs to be enabled', 'advanced-ads-pro' ),
+						esc_url( get_admin_url('/','admin.php?page=advanced-ads-settings#top#pro') ),
+						__( 'Settings', 'advanced-ads-pro' )
+					);
+				}
+
 				Advanced_Ads_Admin_Options::render_option(
 					'placement-lazy-load',
 					__( 'Lazy Loading', 'advanced-ads-pro' ),
-					$option_content
+					$option_content,
+					sprintf(
+						"%1s <br> %2s",
+						__( 'Prevent ads from getting loaded before they appear in the visitor’s visible area.', 'advanced-ads-pro' ),
+						$cache_busting_text ?? ''
+					)
 				);
 			}
 		}

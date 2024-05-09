@@ -87,13 +87,18 @@ class Advanced_Ads_Inline_Css {
 	 *
 	 * @return array
 	 */
-	private function get_styles_by_string( $string ) {
+	private function get_styles_by_string( string $string ): array {
 		$chunks = array_chunk( preg_split( '/[:;]/', $string ), 2 );
 		array_walk_recursive( $chunks, function( &$value ) {
 			$value = trim( $value );
 		} );
 
-		return array_combine( array_filter( array_column( $chunks, 0 ) ), array_filter( array_column( $chunks, 1 ) ) );
+		$keys   = array_filter( array_column( $chunks, 0 ) );
+		$values = array_filter( array_column( $chunks, 1 ) );
+
+		$length = min( count( $keys ), count( $values ) );
+
+		return array_combine( array_slice( $keys, 0, $length ), array_slice( $values, 0, $length ) );
 	}
 
 	/**

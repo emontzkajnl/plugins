@@ -8,7 +8,7 @@
 		<?php _e( 'disabled', 'advanced-ads' ); ?>
     </label>
 	<span class="description">
-		<a target="_blank" href="<?php echo esc_url( ADVADS_URL ) . 'manual/ads-txt/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-ads-txt'; ?>" class="advads-manual-link">
+		<a target="_blank" href="https://wpadvancedads.com/manual/ads-txt/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-ads-txt" class="advads-manual-link">
 			<?php esc_html_e( 'Manual', 'advanced-ads' ); ?>
 		</a>
     </span>

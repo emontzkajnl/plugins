@@ -1,4 +1,10 @@
 <?php
+// phpcs:ignoreFile
+
+use AdvancedAds\Assets_Registry;
+use AdvancedAds\Entities;
+use AdvancedAds\Utilities\WordPress;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -23,14 +29,48 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	 * Advanced_Ads_Admin_Meta_Boxes constructor.
 	 */
 	private function __construct() {
-		add_action( 'add_meta_boxes_' . Advanced_Ads::POST_TYPE_SLUG, [ $this, 'add_meta_boxes' ] );
+		add_action( 'add_meta_boxes_' . Entities::POST_TYPE_AD, [ $this, 'add_meta_boxes' ] );
 		// add meta box for post types edit pages.
 		add_action( 'add_meta_boxes', [ $this, 'add_post_meta_box' ] );
 		add_action( 'save_post', [ $this, 'save_post_meta_box' ] );
 		// register dashboard widget.
 		add_action( 'wp_dashboard_setup', [ $this, 'add_dashboard_widget' ] );
+		add_action( 'wp_dashboard_setup', [ $this, 'add_adsense_widget' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'adsense_widget_js' ] );
 		// fixes compatibility issue with WP QUADS PRO.
 		add_action( 'quads_meta_box_post_types', [ $this, 'fix_wpquadspro_issue' ], 11 );
+	}
+
+	public function add_adsense_widget() {
+		if ( Advanced_Ads_AdSense_Data::get_instance()->is_setup()
+			&& ! Advanced_Ads_AdSense_Data::get_instance()->is_hide_stats()
+			&& isset ( Advanced_Ads::get_instance()->get_adsense_options()['adsense-wp-widget'] ) ) {
+			wp_add_dashboard_widget(
+				'custom_dashboard_widget',
+				__( 'AdSense Earnings', 'advanced-ads' ),
+				[ $this, 'adsense_widget_content' ],
+				null,
+				null,
+				'side'
+			);
+		}
+	}
+
+	public function adsense_widget_content() {
+       Advanced_Ads_Overview_Widgets_Callbacks::add_meta_box(
+				'advads_overview_adsense_stats',
+				'',
+				'full',
+				'render_adsense_stats'
+			);
+    }
+
+	public function adsense_widget_js() {
+		global $pagenow;
+
+		if ( 'index.php' === $pagenow ) {
+			Assets_Registry::enqueue_script( 'wp-widget-adsense' );
+		}
 	}
 
 	/**
@@ -54,7 +94,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	 */
 	public function add_meta_boxes() {
 		global $post;
-		$post_type = Advanced_Ads::POST_TYPE_SLUG;
+		$post_type = Entities::POST_TYPE_AD;
 
 		add_meta_box(
 			'ad-main-box',
@@ -209,7 +249,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 		switch ( $box['id'] ) {
 			case 'ad-main-box':
 				$view       = 'ad-main-metabox.php';
-				$hndlelinks = '<a href="' . ADVADS_URL . 'manual/ad-types?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-type" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
+				$hndlelinks = '<a href="https://wpadvancedads.com/manual/ad-types?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-type" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
 				break;
 			case 'ad-usage-box':
 				$view = 'ad-usage-metabox.php';
@@ -223,26 +263,25 @@ class Advanced_Ads_Admin_Meta_Boxes {
 				$wrapper_class      = $ad->options( 'output.wrapper-class', '' );
 				$debug_mode_enabled = (bool) $ad->options( 'output.debugmode', false );
 				$view               = 'ad-output-metabox.php';
-				$hndlelinks         = '<a href="' . ADVADS_URL . 'manual/optimizing-the-ad-layout/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-layout" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
+				$hndlelinks         = '<a href="https://wpadvancedads.com/manual/optimizing-the-ad-layout/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-layout" target="_blank" class="advads-manual-link">' . __( 'Manual', 'advanced-ads' ) . '</a>';
 				break;
 			case 'ad-targeting-box':
 				$view                         = 'conditions/ad-targeting-metabox.php';
 				$hndlelinks                   = '<a href="#" class="advads-video-link">' . __( 'Video', 'advanced-ads' ) . '</a>';
-				$hndlelinks                  .= '<a href="' . ADVADS_URL . 'manual/display-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-display" target="_blank" class="advads-manual-link">' . __( 'Display Conditions', 'advanced-ads' ) . '</a>';
-				$hndlelinks                  .= '<a href="' . ADVADS_URL . 'manual/visitor-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor" target="_blank" class="advads-manual-link">' . __( 'Visitor Conditions', 'advanced-ads' ) . '</a>';
+				$hndlelinks                   .= '<a href="https://wpadvancedads.com/manual/display-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-display" target="_blank" class="advads-manual-link">' . __( 'Display Conditions', 'advanced-ads' ) . '</a>';
+				$hndlelinks                   .= '<a href="https://wpadvancedads.com/manual/visitor-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor" target="_blank" class="advads-manual-link">' . __( 'Visitor Conditions', 'advanced-ads' ) . '</a>';
 				$videomarkup                  = '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/VjfrRl5Qn4I?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>';
-				$display_conditions           = $ad->options( 'conditions', [] );
-				$visitor_conditions           = $ad->options( 'visitors', [] );
+				$ad_options                   = $ad->options();
+				$display_conditions           = is_array( $ad_options['conditions'] ) ? $ad_options['conditions'] : []; // default value for older version is `""` (empty string)
+				$visitor_conditions           = is_array( $ad_options['visitors'] ) ? $ad_options['visitors'] : []; // default value for older version is `""` (empty string)
 				$display_conditions_available = ( empty( $display_conditions ) );
 				$visitor_conditions_available = ( empty( $visitor_conditions ) );
 				break;
 			case 'advads-pro-pitch':
 				$view = 'upgrades/all-access.php';
-				// $hndlelinks = '<a href="' . ADVADS_URL . 'manual/visitor-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor" target="_blank">' . __('Manual', 'advanced-ads') . '</a>';
 				break;
 			case 'advads-tracking-pitch':
 				$view = 'upgrades/tracking.php';
-				// $hndlelinks = '<a href="' . ADVADS_URL . 'manual/visitor-conditions/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-visitor" target="_blank">' . __('Manual', 'advanced-ads') . '</a>';
 				break;
 			case 'advads-gadsense-box':
 				$unit_code = null;
@@ -261,6 +300,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 				$report_filter                     = $unit_code;
 				$advads_gadsense_options['hidden'] = ! $unit_code;
 				$view                              = 'gadsense-dashboard.php';
+				$pub_id                            = Advanced_Ads_AdSense_Data::get_instance()->get_adsense_id();
 				$hndlelinks                        = '<a href="' . esc_url( admin_url( 'admin.php?page=advanced-ads-settings#top#adsense' ) ) . '" target="_blank">' . __( 'Disable', 'advanced-ads' ) . '</a>';
 				break;
 		}
@@ -354,7 +394,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 			endif;
 		}
 		echo '</ul>';
-		include ADVADS_BASE_PATH . 'admin/views/' . $view;
+		include ADVADS_ABSPATH . 'admin/views/' . $view;
 	}
 
 	/**
@@ -404,7 +444,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	 */
 	public function add_post_meta_box( $post_type = '' ) {
 		// don’t display for non admins.
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -420,10 +460,11 @@ class Advanced_Ads_Admin_Meta_Boxes {
 
 		// limit meta box to public post types.
 		if ( in_array( $post_type, $public_post_types ) ) {
+			$disabled_post_types = Advanced_Ads::get_instance()->options()['pro']['general']['disable-by-post-types'] ?? [];
 			add_meta_box(
 				'advads-ad-settings',
 				__( 'Ad Settings', 'advanced-ads' ),
-				[ $this, 'render_post_meta_box' ],
+				[ $this, in_array( $post_type, $disabled_post_types, true ) ? 'render_disable_post_type_notice' : 'render_post_meta_box' ],
 				$post_type,
 				'side',
 				'low'
@@ -445,7 +486,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 		$values = get_post_meta( $post->ID, '_advads_ad_settings', true );
 
 		// load the view.
-		include ADVADS_BASE_PATH . 'admin/views/post-ad-settings-metabox.php';
+		include ADVADS_ABSPATH . 'admin/views/post-ad-settings-metabox.php';
 
 		do_action( 'advanced_ads_render_post_meta_box', $post, $values );
 	}
@@ -459,7 +500,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	 */
 	public function save_post_meta_box( $post_id ) {
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -518,10 +559,10 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	 */
 	public function add_dashboard_widget() {
 		// display dashboard widget only to authors and higher roles.
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_see_interface' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_see_interface' ) ) {
 				return;
 		}
-		add_meta_box( 'advads_dashboard_widget', __( 'Dashboard', 'advanced-ads' ), [ $this, 'dashboard_widget_function' ], 'dashboard', 'side', 'high' );
+		add_meta_box( 'advads_dashboard_widget', __( 'Advanced Ads', 'advanced-ads' ), [ $this, 'dashboard_widget_function' ], 'dashboard', 'side', 'high' );
 	}
 
 	/**
@@ -533,14 +574,14 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	public static function dashboard_widget_function( $post, $callback_args ) {
 		// get number of ads.
 		$ads_count = Advanced_Ads::get_number_of_ads();
-		if ( current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			echo '<p>';
 			printf(
 				// translators: %1$d is the number of ads, %2$s and %3$s are URLs.
 				wp_kses( __( '%1$d ads – <a href="%2$s">manage</a> - <a href="%3$s">new</a>', 'advanced-ads' ), [ 'a' => [ 'href' => [] ] ] ),
 				absint( $ads_count ),
-				'edit.php?post_type=' . esc_attr( Advanced_Ads::POST_TYPE_SLUG ),
-				'post-new.php?post_type=' . esc_attr( Advanced_Ads::POST_TYPE_SLUG )
+				'edit.php?post_type=' . esc_attr( Entities::POST_TYPE_AD ),
+				'post-new.php?post_type=' . esc_attr( Entities::POST_TYPE_AD )
 			);
 			echo '</p>';
 		}
@@ -568,7 +609,7 @@ class Advanced_Ads_Admin_Meta_Boxes {
 		self::dashboard_cached_rss_widget();
 
 		?>
-		<p><a href="<?php echo esc_url( ADVADS_URL . 'category/tutorials/?utm_source=advanced-ads&utm_medium=link&utm_campaign=dashboard' ); ?>" target="_blank"><?php esc_html_e( 'Visit our blog for more articles about ad optimization', 'advanced-ads' ); ?></a></p>
+		<p><a href="https://wpadvancedads.com/category/tutorials/?utm_source=advanced-ads&utm_medium=link&utm_campaign=dashboard" target="_blank"><?php esc_html_e( 'Visit our blog for more articles about ad optimization', 'advanced-ads' ); ?></a></p>
 		<?php
 
 		// add markup for utm variables.
@@ -594,13 +635,14 @@ class Advanced_Ads_Admin_Meta_Boxes {
 			echo $output; // complex HTML widget.
 			return true;
 		}
+
 		/**
 		 * Only display dummy output which then loads the content via AJAX
 		 */
 		?>
 		<div id="advads-dashboard-widget-placeholder">
 			<img src="<?php echo esc_url( admin_url( 'images/spinner.gif' ) ); ?>" width="20" height="20" alt="spinner"/>
-			<script>advads_load_dashboard_rss_widget_content();</script>
+			<script>window.addEventListener( 'load', function() { advads_load_dashboard_rss_widget_content() } );</script>
 		</div>
 		<?php
 
@@ -618,12 +660,12 @@ class Advanced_Ads_Admin_Meta_Boxes {
 
 		$feeds = [
 			[
-				'link'         => ADVADS_URL,
-				'url'          => ADVADS_URL . 'feed/',
+				'link'         => 'https://wpadvancedads.com/',
+				'url'          => 'https://wpadvancedads.com/category/tutorials/feed/',
 				'title'        => sprintf(
 					// translators: %s is our URL.
 					__( 'Latest posts on wpadvancedads.com', 'advanced-ads' ),
-					ADVADS_URL
+					'https://wpadvancedads.com/'
 				),
 				'items'        => 2,
 				'show_summary' => 1,
@@ -668,6 +710,17 @@ class Advanced_Ads_Admin_Meta_Boxes {
 	public function fix_wpquadspro_issue( $allowed_post_types ) {
 		unset( $allowed_post_types['advanced_ads'] );
 		return $allowed_post_types;
+	}
+
+	/**
+	 * Render meta box for ad settings notice when ads disabled for post type
+	 *
+	 * @param WP_Post $post The post object.
+	 */
+	public function render_disable_post_type_notice( $post ) {
+		$labels = get_post_type_object( $post->post_type )->labels;
+		// load the view.
+		include ADVADS_ABSPATH . 'admin/views/post-ad-settings-hint-metabox.php';
 	}
 
 }

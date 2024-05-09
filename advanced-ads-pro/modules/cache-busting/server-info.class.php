@@ -12,6 +12,41 @@
 class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 
 	/**
+	 * Holds the Cache Busting class.
+	 *
+	 * @var Advanced_Ads_Pro_Module_Cache_Busting
+	 */
+	public $cache_busting;
+
+	/**
+	 * The options array.
+	 *
+	 * @var array
+	 */
+	public $options;
+
+	/**
+	 * How long the server info cookie will be stored maximum.
+	 *
+	 * @var int
+	 */
+	public $server_info_duration;
+
+	/**
+	 * How long the server info cookie will be stored maximum.
+	 *
+	 * @var int
+	 */
+	public $vc_cache_reset;
+
+	/**
+	 * If we are in a current AJAX call.
+	 *
+	 * @var bool
+	 */
+	public $is_ajax;
+
+	/**
 	 * The constructor.
 	 *
 	 * @param Advanced_Ads_Pro_Module_Cache_Busting $cache_busting Cache Busting instance.
@@ -148,6 +183,13 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 	// Note: hard-coded in JS.
 	const VISITOR_INFO_COOKIE_NAME = 'advanced_ads_visitor';
 
+	/**
+	 * Holds the server info class.
+	 *
+	 * @var Advanced_Ads_Pro_Cache_Busting_Server_Info
+	 */
+	private $server_info;
+
 	public function __construct( $server_info ) {
 		$this->server_info = $server_info;
 
@@ -205,9 +247,14 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 		$n_cookie = [];
 
 		if ( isset( $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ] ) ) {
-			$e_cookie = $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ];
-			$e_cookie = wp_unslash( $e_cookie );
-			$e_cookie = json_decode( $e_cookie, true);
+			$n_cookie['vc_cache_reset'] = $this->server_info->vc_cache_reset;
+			$e_cookie                   = $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ];
+			$e_cookie                   = wp_unslash( $e_cookie );
+			$e_cookie                   = json_decode( $e_cookie, true );
+
+			if ( isset( $e_cookie['browser_width'] ) ) {
+				$n_cookie['browser_width'] = $e_cookie['browser_width'];
+			}
 
 			if ( isset( $e_cookie['vc_cache_reset'] ) && absint( $e_cookie['vc_cache_reset'] ) < $this->server_info->vc_cache_reset ) {
 				// The cookie has been reset on the Settings page.

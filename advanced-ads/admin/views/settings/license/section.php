@@ -1,6 +1,6 @@
 <p>
-	<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/how-to-install-an-add-on/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses-install-add-ons'; ?>" target="_blank">
-		<?php echo esc_attr__( 'How to install and activate an add-on.', 'advanced-ads' ); ?>
+	<a href="https://wpadvancedads.com/manual/how-to-install-an-add-on/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses-install-add-ons" target="_blank">
+		<?php esc_html_e( 'How to install and activate an add-on.', 'advanced-ads' ); ?>
 	</a>
 <?php
 printf(
@@ -14,7 +14,7 @@ printf(
 			],
 		]
 	),
-	esc_url( ADVADS_URL . 'manual/purchase-licenses/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses' )
+	'https://wpadvancedads.com/manual/purchase-licenses/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses'
 );
 ?>
 </p>

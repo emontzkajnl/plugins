@@ -56,10 +56,10 @@
 								<?php
 								if ( $show_or_force_warning ) {
 									esc_attr_e( 'Forced to OR.', 'advanced-ads' );
-									echo '&nbsp;<a target="_blank" href="' . esc_url( ADVADS_URL ) . 'manual/display-conditions#manual-combining-multiple-conditions">' . esc_attr__( 'manual', 'advanced-ads' ) . '</a>';
+									echo '&nbsp;<a target="_blank" href="https://wpadvancedads.com/manual/display-conditions#manual-combining-multiple-conditions">' . esc_attr__( 'manual', 'advanced-ads' ) . '</a>';
 								} else {
 									esc_attr_e( 'The ad might always show due to OR and "is not". Better use AND.', 'advanced-ads' );
-									echo '&nbsp;<a target="_blank" href="' . esc_url( ADVADS_URL ) . 'manual/display-conditions/#Combining_conditions_with_AND_and_OR">' . esc_attr__( 'manual', 'advanced-ads' ) . '</a>';
+									echo '&nbsp;<a target="_blank" href="https://wpadvancedads.com/manual/display-conditions/#Combining_conditions_with_AND_and_OR">' . esc_attr__( 'manual', 'advanced-ads' ) . '</a>';
 								}
 								?>
 							</p>

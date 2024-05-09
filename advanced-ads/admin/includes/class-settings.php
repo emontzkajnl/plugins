@@ -1,5 +1,7 @@
 <?php
 
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Class Advanced_Ads_Admin_Settings
  */
@@ -157,7 +159,7 @@ class Advanced_Ads_Admin_Settings {
 		// add setting fields for content injection protection.
 		add_settings_field(
 			'content-injection-everywhere',
-			__( 'Unlimited ad injection', 'advanced-ads' ),
+			__( 'Content placement in post lists', 'advanced-ads' ),
 			[ $this, 'render_settings_content_injection_everywhere' ],
 			$hook,
 			'advanced_ads_setting_section_injection'
@@ -289,7 +291,7 @@ class Advanced_Ads_Admin_Settings {
 		$ad_admin_options = apply_filters( 'advanced-ads-ad-admin-options', $ad_admin_options );
 		foreach ( $ad_admin_options as $ad_admin_option ) {
 			add_filter( 'option_page_capability_' . $ad_admin_option, function() {
-				return Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
+				return WordPress::user_cap( 'advanced_ads_manage_options' );
 			} );
 		}
 	}
@@ -381,7 +383,7 @@ class Advanced_Ads_Admin_Settings {
 	 * Render licenses settings section
 	 */
 	public function render_settings_licenses_section_callback() {
-		include ADVADS_BASE_PATH . 'admin/views/settings/license/section.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/license/section.php';
 	}
 
 	/**
@@ -399,7 +401,7 @@ class Advanced_Ads_Admin_Settings {
 	 */
 	public function render_settings_pro_pitch_section_callback() {
 		echo '<br/>';
-		include ADVADS_BASE_PATH . 'admin/views/upgrades/pro-tab.php';
+		include ADVADS_ABSPATH . 'admin/views/upgrades/pro-tab.php';
 	}
 
 	/**
@@ -407,7 +409,7 @@ class Advanced_Ads_Admin_Settings {
 	 */
 	public function render_settings_tracking_pitch_section_callback() {
 		echo '<br/>';
-		include ADVADS_BASE_PATH . 'admin/views/upgrades/tracking.php';
+		include ADVADS_ABSPATH . 'admin/views/upgrades/tracking.php';
 	}
 
 	/**
@@ -425,7 +427,7 @@ class Advanced_Ads_Admin_Settings {
 		$disable_rest_api  = isset( $options['disabled-ads']['rest-api'] ) ? 1 : 0;
 
 		// load the template.
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/disable-ads.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/disable-ads.php';
 	}
 
 	/**
@@ -442,7 +444,7 @@ class Advanced_Ads_Admin_Settings {
 		global $wp_roles;
 		$roles = $wp_roles->get_names();
 
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/hide-for-user-role.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/hide-for-user-role.php';
 	}
 
 	/**
@@ -452,7 +454,7 @@ class Advanced_Ads_Admin_Settings {
 		$options = Advanced_Ads::get_instance()->options();
 		$checked = ( ! empty( $options['advanced-js'] ) ) ? 1 : 0;
 
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/advanced-js.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/advanced-js.php';
 	}
 
 	/**
@@ -460,7 +462,7 @@ class Advanced_Ads_Admin_Settings {
 	 */
 	public function render_settings_content_injection_everywhere() {
 		$options = Advanced_Ads::get_instance()->options();
-
+		$enabled = $options['content-injection-enabled'] ?? '';
 		if ( ! isset( $options['content-injection-everywhere'] ) ) {
 			$everywhere = 0;
 		} elseif ( 'true' === $options['content-injection-everywhere'] ) {
@@ -468,8 +470,7 @@ class Advanced_Ads_Admin_Settings {
 		} else {
 			$everywhere = absint( $options['content-injection-everywhere'] );
 		}
-
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/content-injection-everywhere.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/content-injection-everywhere.php';
 	}
 
 	/**
@@ -479,7 +480,7 @@ class Advanced_Ads_Admin_Settings {
 		$options  = Advanced_Ads::get_instance()->options();
 		$priority = ( isset( $options['content-injection-priority'] ) ) ? (int) $options['content-injection-priority'] : 100;
 
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/content-injection-priority.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/content-injection-priority.php';
 	}
 
 	/**
@@ -489,7 +490,7 @@ class Advanced_Ads_Admin_Settings {
 		$options = Advanced_Ads::get_instance()->options();
 		$checked = ( ! empty( $options['content-injection-level-disabled'] ) ) ? 1 : 0;
 
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/content-injection-level-limitation.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/content-injection-level-limitation.php';
 	}
 
 	/**
@@ -499,7 +500,7 @@ class Advanced_Ads_Admin_Settings {
 		$options = Advanced_Ads::get_instance()->options();
 		$checked = ( ! empty( $options['block-bots'] ) ) ? 1 : 0;
 
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/block-bots.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/block-bots.php';
 	}
 
 	/**
@@ -517,7 +518,7 @@ class Advanced_Ads_Admin_Settings {
 		);
 		$type_label_counts = array_count_values( wp_list_pluck( $post_types, 'label' ) );
 
-		require ADVADS_BASE_PATH . '/admin/views/settings/general/disable-post-types.php';
+		require ADVADS_ABSPATH . '/admin/views/settings/general/disable-post-types.php';
 	}
 
 	/**
@@ -527,7 +528,7 @@ class Advanced_Ads_Admin_Settings {
 		$options = Advanced_Ads::get_instance()->options();
 		$checked = ( ! empty( $options['disable-notices'] ) ) ? 1 : 0;
 
-		require ADVADS_BASE_PATH . '/admin/views/settings/general/disable-notices.php';
+		require ADVADS_ABSPATH . '/admin/views/settings/general/disable-notices.php';
 	}
 
 	/**
@@ -539,7 +540,7 @@ class Advanced_Ads_Admin_Settings {
 		$prefix     = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
 		$old_prefix = ( isset( $options['id-prefix'] ) ) ? esc_attr( $options['id-prefix'] ) : '';
 
-		require ADVADS_BASE_PATH . '/admin/views/settings/general/frontend-prefix.php';
+		require ADVADS_ABSPATH . '/admin/views/settings/general/frontend-prefix.php';
 	}
 
 	/**
@@ -555,7 +556,7 @@ class Advanced_Ads_Admin_Settings {
 			$allow = false;
 		}
 
-		require ADVADS_BASE_PATH . '/admin/views/settings/general/editors-manage-ads.php';
+		require ADVADS_ABSPATH . '/admin/views/settings/general/editors-manage-ads.php';
 	}
 
 	/**
@@ -576,7 +577,7 @@ class Advanced_Ads_Admin_Settings {
 		}
 		$allowed_roles = $options['allow-unfiltered-html'];
 
-		require ADVADS_BASE_PATH . '/admin/views/settings/general/allow-unfiltered-html.php';
+		require ADVADS_ABSPATH . '/admin/views/settings/general/allow-unfiltered-html.php';
 	}
 
 	/**
@@ -588,7 +589,7 @@ class Advanced_Ads_Admin_Settings {
 		$enabled = isset( $options['custom-label']['enabled'] );
 		$label   = ! empty( $options['custom-label']['text'] ) ? esc_html( $options['custom-label']['text'] ) : _x( 'Advertisements', 'label before ads', 'advanced-ads' );
 
-		require ADVADS_BASE_PATH . '/admin/views/settings/general/custom-label.php';
+		require ADVADS_ABSPATH . '/admin/views/settings/general/custom-label.php';
 	}
 
 	/**
@@ -608,7 +609,7 @@ class Advanced_Ads_Admin_Settings {
 		}
 
 		$target = isset( $options['target-blank'] ) ? $options['target-blank'] : 0;
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/link-target.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/link-target.php';
 	}
 
 	/**
@@ -618,7 +619,7 @@ class Advanced_Ads_Admin_Settings {
 		$options = Advanced_Ads::get_instance()->options();
 		$enabled = ! empty( $options['uninstall-delete-data'] );
 
-		include ADVADS_BASE_PATH . 'admin/views/settings/general/uninstall-delete-data.php';
+		include ADVADS_ABSPATH . 'admin/views/settings/general/uninstall-delete-data.php';
 	}
 
 	/**

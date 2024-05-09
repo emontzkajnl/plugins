@@ -10,6 +10,8 @@
  * @copyright 2013-2018 Thomas Maier, Advanced Ads GmbH
  */
 
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * This class is used to bundle all ajax callbacks
  *
@@ -28,6 +30,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 		add_action( 'wp_ajax_load_visitor_conditions_metabox', [ $this, 'load_visitor_condition' ] );
 		add_action( 'wp_ajax_load_display_conditions_metabox', [ $this, 'load_display_condition' ] );
 		add_action( 'wp_ajax_advads-terms-search', [ $this, 'search_terms' ] );
+		add_action( 'wp_ajax_advads-authors-search', [ $this, 'search_authors' ] );
 		add_action( 'wp_ajax_advads-close-notice', [ $this, 'close_notice' ] );
 		add_action( 'wp_ajax_advads-hide-notice', [ $this, 'hide_notice' ] );
 		add_action( 'wp_ajax_advads-subscribe-notice', [ $this, 'subscribe' ] );
@@ -57,7 +60,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 	public function load_ad_parameters_metabox() {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -77,7 +80,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 			$types_without_size = [ 'dummy' ];
 			$types_without_size = apply_filters( 'advanced-ads-types-without-size', $types_without_size );
 			if ( ! in_array( $type_string, $types_without_size ) ) {
-				include ADVADS_BASE_PATH . 'admin/views/ad-parameters-size.php';
+				include ADVADS_ABSPATH . 'admin/views/ad-parameters-size.php';
 			}
 
 			// set the ad type attribute if empty
@@ -104,7 +107,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -138,7 +141,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -172,7 +175,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -201,6 +204,39 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 	}
 
 	/**
+	 * Search authors
+	 *
+	 * @since 1.47.5
+	 */
+	public function search_authors() {
+		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
+
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
+			return;
+		}
+
+		$args                   = [];
+		$args['search_columns'] = [ 'ID', 'user_login', 'user_nicename', 'display_name' ];
+
+		if ( version_compare( get_bloginfo( 'version' ), '5.9' ) > -1 ) {
+			$args['capability'] = [ 'edit_posts' ];
+		} else {
+			$args['who'] = 'authors';
+		}
+
+		if ( ! isset( $_POST['search'] ) || '' === $_POST['search'] ) {
+			die();
+		}
+
+		$args['search'] = '*' . sanitize_text_field( wp_unslash( $_POST['search'] ) ) . '*';
+
+		$results = get_users( $args );
+
+		echo wp_json_encode( $results );
+		die();
+	}
+
+	/**
 	 * Close a notice for good
 	 *
 	 * @since 1.5.3
@@ -210,7 +246,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
 		if (
-			! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) )
+			! WordPress::user_can( 'advanced_ads_manage_options' )
 			|| empty( $_REQUEST['notice'] )
 		) {
 			die();
@@ -233,7 +269,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) )
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' )
 		|| empty( $_POST['notice'] )
 		) {
 			die();
@@ -252,7 +288,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_see_interface' ) ) || empty( $_POST['notice'] )
+		if ( ! WordPress::user_can( 'advanced_ads_see_interface' ) || empty( $_POST['notice'] )
 		) {
 			wp_send_json_error(
 				[
@@ -272,7 +308,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 	 * @since 1.5.7
 	 */
 	public function activate_license() {
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -295,7 +331,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 	 * @since 1.6.11
 	 */
 	public function deactivate_license() {
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -319,7 +355,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -334,7 +370,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -353,7 +389,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			die();
 		}
 
@@ -430,7 +466,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_edit_ads' ) ) {
 			return;
 		}
 
@@ -454,7 +490,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -471,7 +507,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -486,7 +522,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -509,7 +545,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 	public function ad_health_notice_hide() {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -525,7 +561,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 	public function ad_health_notice_unignore() {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -539,7 +575,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 	public function update_frontend_element() {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_placements' ) ) ) {
+		if ( ! WordPress::user_can( 'advanced_ads_manage_placements' ) ) {
 			return;
 		}
 
@@ -558,7 +594,7 @@ class Advanced_Ads_Ad_Ajax_Callbacks {
 
 		if (
 			! isset( $_POST['itemID'] )
-			|| ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) )
+			|| ! WordPress::user_can( 'advanced_ads_edit_ads' )
 		) {
 			die;
 		}

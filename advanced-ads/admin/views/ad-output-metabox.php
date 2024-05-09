@@ -40,7 +40,7 @@
 	<label for="advads-output-debugmode" class="label advads-hide-in-wizard"><?php esc_html_e( 'Enable debug mode', 'advanced-ads' ); ?></label>
 	<div class="advads-hide-in-wizard">
 	<input id="advads-output-debugmode" type="checkbox" name="advanced_ad[output][debugmode]" value="1" <?php checked( $debug_mode_enabled, true ); ?>/>
-	<a href="<?php echo esc_url( ADVADS_URL ); ?>manual/ad-debug-mode/?utm_source=advanced-ads&utm_medium=link&utm_campaign=ad-debug-mode" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads' ); ?></a>
+	<a href="https://wpadvancedads.com/manual/ad-debug-mode/?utm_source=advanced-ads&utm_medium=link&utm_campaign=ad-debug-mode" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads' ); ?></a>
 	</div>
 
 	<?php if ( ! defined( 'AAP_VERSION' ) ) : ?>

@@ -1,4 +1,8 @@
 <?php
+
+use AdvancedAds\Utilities\WordPress;
+use AdvancedAds\Utilities\Conditional;
+
 /**
  * Class Advanced_Ads_Pro_Module_BuddyPress_Admin
  * Manage backend-facing logic for BuddyPress/BuddyBoss integration
@@ -109,7 +113,14 @@ class Advanced_Ads_Pro_Module_BuddyPress_Admin {
 	 * Enqueue admin scripts.
 	 */
 	public function enqueue_admin_scripts() {
-		if ( ! Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+		$is_screen = false;
+		if ( method_exists( 'AdvancedAds\Utilities\Conditional', 'is_screen_advanced_ads' ) ) {
+			$is_screen = Conditional::is_screen_advanced_ads();
+		} elseif ( method_exists( 'Advanced_Ads_Admin', 'screen_belongs_to_advanced_ads' ) ) {
+			$is_screen = Advanced_Ads_Admin::screen_belongs_to_advanced_ads();
+		}
+
+		if ( ! $is_screen ) {
 			return;
 		}
 
@@ -122,8 +133,16 @@ class Advanced_Ads_Pro_Module_BuddyPress_Admin {
 	public function render_xprofile_field_ajax() {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_edit_ads' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' );
+		}
+
 		if (
-			! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' ) )
+			! current_user_can( $cap )
 			|| ! isset( $_POST['field_name'] )
 			|| ! isset( $_POST['field_type'] )
 		) {

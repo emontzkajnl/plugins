@@ -39,7 +39,6 @@ class MonsterInsights_Rest_Routes {
 			'update_popular_posts_theme_setting'
 		) );
 
-		// TODO: remove function from Google Optimize Addon.
 		add_action( 'wp_ajax_monsterinsights_get_posts', array( $this, 'get_posts' ) );
 
 		// Search for taxonomies.
@@ -75,6 +74,7 @@ class MonsterInsights_Rest_Routes {
 			'is_expired'  => MonsterInsights()->license->site_license_expired(),
 			'expiry_date' => MonsterInsights()->license->get_license_expiry_date(),
 			'is_invalid'  => MonsterInsights()->license->site_license_invalid(),
+			'is_agency'   => MonsterInsights()->license->site_is_agency(),
 		);
 		$network_license = array(
 			'key'         => MonsterInsights()->license->get_network_license_key(),
@@ -83,6 +83,7 @@ class MonsterInsights_Rest_Routes {
 			'is_expired'  => MonsterInsights()->license->network_license_expired(),
 			'expiry_date' => MonsterInsights()->license->get_license_expiry_date(),
 			'is_invalid'  => MonsterInsights()->license->network_license_disabled(),
+			'is_agency'   => MonsterInsights()->license->network_is_agency(),
 		);
 
 		wp_send_json( array(
@@ -283,10 +284,10 @@ class MonsterInsights_Rest_Routes {
 	 * Return the state of the addons ( installed, activated )
 	 */
 	public function get_addons() {
-
+		global $current_user;
 		check_ajax_referer( 'mi-admin-nonce', 'nonce' );
 
-		if ( ! current_user_can( 'monsterinsights_save_settings' ) ) {
+		if ( ! current_user_can( 'monsterinsights_view_dashboard' ) ) {
 			return;
 		}
 
@@ -326,14 +327,16 @@ class MonsterInsights_Rest_Routes {
 		// Edd.
 		$parsed_addons['easy_digital_downloads'] = array(
 			'active'    => class_exists( 'Easy_Digital_Downloads' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-edd.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-edd.png',
 			'title'     => 'Easy Digital Downloads',
-			'excerpt'   => __( 'Easy digital downloads plugin.', 'google-analytics-for-wordpress' ),
+			'excerpt'   => __( 'The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'easy-digital-downloads/easy-digital-downloads.php', $installed_plugins ) || array_key_exists( 'easy-digital-downloads-pro/easy-digital-downloads.php', $installed_plugins ),
 			'basename'  => array_key_exists( 'easy-digital-downloads-pro/easy-digital-downloads.php', $installed_plugins ) ? 'easy-digital-downloads-pro/easy-digital-downloads.php' : 'easy-digital-downloads/easy-digital-downloads.php',
 			'slug'      => 'easy-digital-downloads',
 			'settings'  => admin_url( 'edit.php?post_type=download' ),
 		);
+		// Ajax activation works only if the key is the same with the slug. keeping the older one for backwards compatibility
+		$parsed_addons['easy-digital-downloads'] = $parsed_addons['easy_digital_downloads'];
 		// MemberPress.
 		$parsed_addons['memberpress'] = array(
 			'active' => defined( 'MEPR_VERSION' ) && version_compare( MEPR_VERSION, '1.3.43', '>' ),
@@ -353,6 +356,47 @@ class MonsterInsights_Rest_Routes {
 		// GiveWP.
 		$parsed_addons['givewp'] = array(
 			'active' => function_exists( 'Give' ),
+		);
+
+		// Charitable WP.
+		$parsed_addons['charitable'] = array(
+			'active'    => class_exists( 'Charitable' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-charitable.png',
+			'title'     => 'Charitable',
+			'excerpt'   => __('Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('charitable/charitable.php', $installed_plugins),
+			'basename'  => 'charitable/charitable.php',
+			'slug'      => 'charitable',
+			'settings'  => admin_url('admin.php?page=charitable'),
+		);
+
+		// WPCode
+		$parsed_addons['wpcode'] = array(
+			'active'    => function_exists( 'WPCode' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-wpcode.png',
+			'title'     => 'WPCode',
+			'excerpt'   => __('Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('insert-headers-and-footers/ihaf.php', $installed_plugins),
+			'basename'  => 'insert-headers-and-footers/ihaf.php',
+			'slug'      => 'insert-headers-and-footers',
+			'settings'  => admin_url('admin.php?page=wpcode-settings'),
+		);
+
+		// Duplicator
+		$parsed_addons['duplicator'] = array(
+			'active'    => defined( 'DUPLICATOR_VERSION' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-duplicator.png',
+			'title'     => 'Duplicator',
+			'excerpt'   => __('Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('duplicator/duplicator.php', $installed_plugins),
+			'basename'  => 'duplicator/duplicator.php',
+			'slug'      => 'duplicator',
+			'settings'  => admin_url('admin.php?page=duplicator-settings'),
+		);
+
+		// WishList Member.
+		$parsed_addons['wishlist_member'] = array(
+			'active' => function_exists( 'wishlistmember_instance' ),
 		);
 		// GiveWP Analytics.
 		$parsed_addons['givewp_google_analytics'] = array(
@@ -386,22 +430,56 @@ class MonsterInsights_Rest_Routes {
 		$parsed_addons['easy_affiliate'] = array(
 			'active' => defined( 'ESAF_EDITION' ),
 		);
-		$parsed_addons['affiliate_wp']   = array(
-			'active' => function_exists( 'affiliate_wp' ) && defined( 'AFFILIATEWP_VERSION' ),
+
+		// AffiliateWP
+		$parsed_addons['affiliate-wp'] = array(
+			'active'    => class_exists('AffiliateWP_Core_Requirements_Check'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-affiliate-wp.png',
+			'title'     => 'AffiliateWP',
+			'excerpt'   => __('The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('affiliate-wp/affiliate-wp.php', $installed_plugins),
+			'basename'  => 'affiliate-wp/affiliate-wp.php',
+			'slug'      => 'affiliate-wp',
+			'settings'  => admin_url('admin.php?page=affiliate-wp-settings'),
+			'redirect'  => 'https://affiliatewp.com',
+		);
+
+		// WP Simple Pay
+		$parsed_addons['wpsimplepay'] = array(
+			'active'    => defined('SIMPLE_PAY_VERSION'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-wp-simple-pay.png',
+			'title'     => 'WP Simple Pay',
+			'excerpt'   => __('The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('stripe/stripe-checkout.php', $installed_plugins),
+			'basename'  => 'stripe/stripe-checkout.php',
+			'slug'      => 'stripe',
+			'settings'  => admin_url('edit.php?post_type=simple-pay&page=simpay_settings'),
+		);
+
+		// Sugar Calendar
+		$parsed_addons['sugarcalendar'] = array(
+			'active'    => class_exists('Sugar_Calendar\\Requirements_Check'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-sugar-calendar.png',
+			'title'     => 'Sugar Calendar',
+			'excerpt'   => __('A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('sugar-calendar-lite/sugar-calendar-lite.php', $installed_plugins),
+			'basename'  => 'sugar-calendar-lite/sugar-calendar-lite.php',
+			'slug'      => 'sugar-calendar-lite',
+			'settings'  => admin_url('admin.php?page=sugar-calendar'),
 		);
 
 		// WPForms.
 		$parsed_addons['wpforms-lite'] = array(
 			'active'    => function_exists( 'wpforms' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-wpforms.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-wpforms.png',
 			'title'     => 'WPForms',
-			'excerpt'   => __( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 150+ form templates. Trusted by over 5 million websites as the best forms plugin. We also have 400+ form templates and over 100 million downloads for WPForms Lite.', 'google-analytics-for-wordpress' ),
+			'excerpt'   => __( 'The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 1000+ form templates. Trusted by over 6 million websites as the best forms plugin.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'wpforms-lite/wpforms.php', $installed_plugins ) || array_key_exists( 'wpforms/wpforms.php', $installed_plugins ),
 			'basename'  => 'wpforms-lite/wpforms.php',
 			'slug'      => 'wpforms-lite',
 			'settings'  => admin_url( 'admin.php?page=wpforms-overview' ),
 		);
-		
+
 		// UserFeedback.
 		$parsed_addons['userfeedback-lite'] = array(
 			'active'    => function_exists( 'userfeedback' ),
@@ -417,7 +495,7 @@ class MonsterInsights_Rest_Routes {
 		// AIOSEO.
 		$parsed_addons['aioseo'] = array(
 			'active'    => function_exists( 'aioseo' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-all-in-one-seo.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-all-in-one-seo.png',
 			'title'     => 'AIOSEO',
 			'excerpt'   => __( 'The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'all-in-one-seo-pack/all_in_one_seo_pack.php', $installed_plugins ) || array_key_exists( 'all-in-one-seo-pack-pro/all_in_one_seo_pack.php', $installed_plugins ),
@@ -425,10 +503,26 @@ class MonsterInsights_Rest_Routes {
 			'slug'      => 'all-in-one-seo-pack',
 			'settings'  => admin_url( 'admin.php?page=aioseo' ),
 		);
+
+		// FunnelKit Stripe Woo Payment Gateway.
+		$parsed_addons['funnelkit-stripe-woo-payment-gateway'] = array(
+			'active'    => class_exists( 'FKWCS_Gateway_Stripe' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-funnelkit-stripe-woo-payment-gateway.png',
+			'title'     => 'Stripe Payment Gateway for WooCommerce',
+			'excerpt'   => __( 'Stripe Payment Gateway for WooCommerce is an integrated solution that lets you accept payments on your online store for web and mobile.', 'google-analytics-for-wordpress' ),
+			'installed' => array_key_exists( 'funnelkit-stripe-woo-payment-gateway/funnelkit-stripe-woo-payment-gateway.php', $installed_plugins ),
+			'basename'  => 'funnelkit-stripe-woo-payment-gateway/funnelkit-stripe-woo-payment-gateway.php',
+			'slug'      => 'funnelkit-stripe-woo-payment-gateway',
+			'settings'  => admin_url( 'admin.php?page=wc-settings&tab=fkwcs_api_settings' ),
+		);
+
+		// Use the plugin dir name as the array key since AJAX activation in add-ons page won't work.
+		$parsed_addons['all-in-one-seo-pack'] = $parsed_addons['aioseo'];
+
 		// OptinMonster.
 		$parsed_addons['optinmonster'] = array(
 			'active'    => class_exists( 'OMAPI' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-om.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-om.png',
 			'title'     => 'OptinMonster',
 			'excerpt'   => __( 'Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'optinmonster/optin-monster-wp-api.php', $installed_plugins ),
@@ -439,9 +533,9 @@ class MonsterInsights_Rest_Routes {
 		// WP Mail Smtp.
 		$parsed_addons['wp-mail-smtp'] = array(
 			'active'    => function_exists( 'wp_mail_smtp' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-smtp.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-smtp.png',
 			'title'     => 'WP Mail SMTP',
-			'excerpt'   => __( 'Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 2 million websites use it to fix WordPress email issues.', 'google-analytics-for-wordpress' ),
+			'excerpt'   => __( 'Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 3 million websites use it to fix WordPress email issues.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'wp-mail-smtp/wp_mail_smtp.php', $installed_plugins ),
 			'basename'  => 'wp-mail-smtp/wp_mail_smtp.php',
 			'slug'      => 'wp-mail-smtp',
@@ -449,7 +543,7 @@ class MonsterInsights_Rest_Routes {
 		// SeedProd.
 		$parsed_addons['coming-soon'] = array(
 			'active'    => defined( 'SEEDPROD_VERSION' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-seedprod.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-seedprod.png',
 			'title'     => 'SeedProd',
 			'excerpt'   => __( 'The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'coming-soon/coming-soon.php', $installed_plugins ),
@@ -459,8 +553,8 @@ class MonsterInsights_Rest_Routes {
 		);
 		// RafflePress
 		$parsed_addons['rafflepress'] = array(
-			'active'    => function_exists( 'rafflepress_lite_activation' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/pluign-rafflepress.png',
+			'active'    => defined('RAFFLEPRESS_VERSION'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-rafflepress.png',
 			'title'     => 'RafflePress',
 			'excerpt'   => __( 'Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'rafflepress/rafflepress.php', $installed_plugins ),
@@ -469,19 +563,34 @@ class MonsterInsights_Rest_Routes {
 			'settings'  => admin_url( 'admin.php?page=rafflepress_lite' ),
 		);
 		// TrustPulse
-		$parsed_addons['trustpulse-api'] = array(
-			'active'    => class_exists( 'TPAPI' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-trust-pulse.png',
+		$parsed_addons['trustpulse'] = array(
+			'active'    => defined('TRUSTPULSE_PLUGIN_VERSION'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-trustpulse.png',
 			'title'     => 'TrustPulse',
 			'excerpt'   => __( 'Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'trustpulse-api/trustpulse.php', $installed_plugins ),
 			'basename'  => 'trustpulse-api/trustpulse.php',
 			'slug'      => 'trustpulse-api',
 		);
+
+		$parsed_addons['trustpulse-api'] = $parsed_addons['trustpulse'];
+
+		// SearchWP
+		$parsed_addons['searchwp'] = array(
+			'active'    => defined('SEARCHWP_LIVE_SEARCH_VERSION'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-searchwp.png',
+			'title'     => 'SearchWP',
+			'excerpt'   => __('The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('searchwp-live-ajax-search/searchwp-live-ajax-search.php', $installed_plugins),
+			'basename'  => 'searchwp-live-ajax-search/searchwp-live-ajax-search.php',
+			'slug'      => 'searchwp-live-ajax-search',
+			'settings'  => admin_url('admin.php?page=searchwp-live-search'),
+		);
+
 		// Smash Balloon (Instagram)
-		$parsed_addons['smash-balloon-instagram'] = array(
+		$parsed_addons['instagram-feed'] = array(
 			'active'    => defined( 'SBIVER' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-smash-balloon.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-sb-instagram.png',
 			'title'     => 'Smash Balloon Instagram Feeds',
 			'excerpt'   => __( 'Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'instagram-feed/instagram-feed.php', $installed_plugins ),
@@ -489,27 +598,76 @@ class MonsterInsights_Rest_Routes {
 			'slug'      => 'instagram-feed',
 			'settings'  => admin_url( 'admin.php?page=sb-instagram-feed' ),
 		);
+
+		$parsed_addons['smash-balloon-instagram'] = $parsed_addons['instagram-feed'];
+
 		// Smash Balloon (Facebook)
-		$parsed_addons['smash-balloon-facebook'] = array(
+		$parsed_addons['custom-facebook-feed'] = array(
 			'active'    => defined( 'CFFVER' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-smash-balloon.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-sb-facebook.png',
 			'title'     => 'Smash Balloon Facebook Feeds',
-			'excerpt'   => __( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites.', 'google-analytics-for-wordpress' ),
+			'excerpt'   => __( 'Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'custom-facebook-feed/custom-facebook-feed.php', $installed_plugins ),
 			'basename'  => 'custom-facebook-feed/custom-facebook-feed.php',
 			'slug'      => 'custom-facebook-feed',
 			'settings'  => admin_url( 'admin.php?page=cff-feed-builder' ),
 		);
+
+		$parsed_addons['smash-balloon-facebook'] = $parsed_addons['custom-facebook-feed'];
+
+		// Smash Balloon (YouTube)
+		$parsed_addons['smash-balloon-youtube'] = array(
+			'active'    => defined('SBYVER'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-sb-youtube.png',
+			'title'     => 'Smash Balloon YouTube Feeds',
+			'excerpt'   => __('Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('feeds-for-youtube/youtube-feed.php', $installed_plugins),
+			'basename'  => 'feeds-for-youtube/youtube-feed.php',
+			'slug'      => 'feeds-for-youtube',
+			'settings'  => admin_url('admin.php?page=sby-feed-builder'),
+		);
+
+		// In Year in Review we need the exact slug for the key in order to make the AJAX activation work.
+		$parsed_addons['feeds-for-youtube'] = $parsed_addons['smash-balloon-youtube'];
+
+		// Smash Balloon (Twitter)
+		$parsed_addons['smash-balloon-twitter'] = array(
+			'active'    => defined('CTF_VERSION'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-sb-twitter.png',
+			'title'     => 'Smash Balloon Twitter Feeds',
+			'excerpt'   => __('Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('custom-twitter-feeds/custom-twitter-feed.php', $installed_plugins),
+			'basename'  => 'custom-twitter-feeds/custom-twitter-feed.php',
+			'slug'      => 'custom-twitter-feeds',
+			'settings'  => admin_url('admin.php?page=ctf-feed-builder'),
+		);
+
+		// We need the key of the addon to be exactly the slug. We should deprecate `smash-balloon-twitter` next version.
+		$parsed_addons['custom-twitter-feeds'] = $parsed_addons['smash-balloon-twitter'];
+
 		// PushEngage
 		$parsed_addons['pushengage'] = array(
-			'active'    => method_exists( 'Pushengage', 'init' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-pushengage.svg',
+			'active'    => defined('PUSHENGAGE_VERSION'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-pushengage.png',
 			'title'     => 'PushEngage',
-			'excerpt'   => __( 'Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 9 billion notifications each month.', 'google-analytics-for-wordpress' ),
+			'excerpt'   => __('Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 15 billion notifications each month.', 'google-analytics-for-wordpress'),
 			'installed' => array_key_exists( 'pushengage/main.php', $installed_plugins ),
 			'basename'  => 'pushengage/main.php',
 			'slug'      => 'pushengage',
 		);
+
+		// Uncanny Automator
+		$parsed_addons['uncanny-automator'] = array(
+			'active'    => function_exists('automator_get_recipe_id'),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-uncanny-automator.png',
+			'title'     => 'Uncanny Automator',
+			'excerpt'   => __('Automate everything with the #1 no-code Automation tool for WordPress.', 'google-analytics-for-wordpress'),
+			'installed' => array_key_exists('uncanny-automator/uncanny-automator.php', $installed_plugins),
+			'basename'  => 'uncanny-automator/uncanny-automator.php',
+			'slug'      => 'uncanny-automator',
+			'setup_complete'      => (bool) get_option('automator_reporting', false),
+		);
+
 		// Pretty Links
 		$parsed_addons['pretty-link'] = array(
 			'active'    => class_exists( 'PrliBaseController' ),
@@ -521,21 +679,65 @@ class MonsterInsights_Rest_Routes {
 			'slug'      => 'pretty-link',
 			'settings'  => admin_url( 'edit.php?post_type=pretty-link' ),
 		);
-		// Thirsty Affiliates
-		$parsed_addons['thirstyaffiliates'] = array(
-			'active'    => class_exists( 'ThirstyAffiliates' ),
-			'icon'      => '',
-			'title'     => 'Thirsty Affiliates',
-			'excerpt'   => __( 'ThirstyAffiliates is a revolution in affiliate link management. Collect, collate and store your affiliate links for use in your posts and pages.', 'google-analytics-for-wordpress' ),
-			'installed' => array_key_exists( 'thirstyaffiliates/thirstyaffiliates.php', $installed_plugins ),
-			'basename'  => 'thirstyaffiliates/thirstyaffiliates.php',
-			'slug'      => 'thirstyaffiliates',
-			'settings'  => admin_url( 'edit.php?post_type=thirstylink' ),
+		// SearchWP
+		$parsed_addons['searchwp-live-ajax-search'] = array(
+			'active'    => defined( 'SEARCHWP_LIVE_SEARCH_VERSION' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-searchwp.svg',
+			'title'     => 'SearchWP',
+			'excerpt'   => __( 'The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business.', 'google-analytics-for-wordpress' ),
+			'installed' => array_key_exists( 'searchwp-live-ajax-search/searchwp-live-ajax-search.php', $installed_plugins ),
+			'basename'  => 'searchwp-live-ajax-search/searchwp-live-ajax-search.php',
+			'slug'      => 'searchwp-live-ajax-search',
+			'settings'  => admin_url( 'admin.php?page=searchwp-live-search' ),
+		);
+		// Sugar Calendar Lite
+		$parsed_addons['sugar-calendar-lite'] = array(
+			'active'    => class_exists( 'Sugar_Calendar\\Requirements_Check' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-sugar-calendar.svg',
+			'title'     => 'Sugar Calendar',
+			'excerpt'   => __( 'A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more.', 'google-analytics-for-wordpress' ),
+			'installed' => array_key_exists( 'sugar-calendar-lite/sugar-calendar-lite.php', $installed_plugins ),
+			'basename'  => 'sugar-calendar-lite/sugar-calendar-lite.php',
+			'slug'      => 'sugar-calendar-lite',
+			'settings'  => admin_url( 'admin.php?page=sugar-calendar' ),
+		);
+		// Charitable
+		$parsed_addons['charitable'] = array(
+			'active'    => class_exists( 'Charitable' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-charitable.png',
+			'title'     => 'WP Charitable',
+			'excerpt'   => __( 'Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online.', 'google-analytics-for-wordpress' ),
+			'installed' => array_key_exists( 'charitable/charitable.php', $installed_plugins ),
+			'basename'  => 'charitable/charitable.php',
+			'slug'      => 'charitable',
+			'settings'  => admin_url( 'admin.php?page=charitable&install=true' ),
+		);
+		// WPCode
+		$parsed_addons['insert-headers-and-footers'] = array(
+			'active'    => class_exists( 'WPCode' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-wpcode.svg',
+			'title'     => 'WPCode',
+			'excerpt'   => __( 'Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area.', 'google-analytics-for-wordpress' ),
+			'installed' => array_key_exists( 'insert-headers-and-footers/ihaf.php', $installed_plugins ),
+			'basename'  => 'insert-headers-and-footers/ihaf.php',
+			'slug'      => 'insert-headers-and-footers',
+			'settings'  => admin_url( 'admin.php?page=wpcode' ),
+		);
+		// Duplicator
+		$parsed_addons['duplicator'] = array(
+			'active'    => class_exists( 'DuplicatorPhpVersionCheck' ),
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-duplicator.png',
+			'title'     => 'Duplicator',
+			'excerpt'   => __( 'Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy.', 'google-analytics-for-wordpress' ),
+			'installed' => array_key_exists( 'duplicator/duplicator.php', $installed_plugins ),
+			'basename'  => 'duplicator/duplicator.php',
+			'slug'      => 'duplicator',
+			'settings'  => admin_url( 'admin.php?page=duplicator' ),
 		);
 		// WP Simple Pay
-		$parsed_addons['wp-simple-pay'] = array(
+		$parsed_addons['stripe'] = array(
 			'active'    => defined( 'SIMPLE_PAY_MAIN_FILE' ),
-			'icon'      => '',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-simple-pay.svg',
 			'title'     => 'WP Simple Pay',
 			'excerpt'   => __( 'Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'stripe/stripe-checkout.php', $installed_plugins ),
@@ -560,7 +762,7 @@ class MonsterInsights_Rest_Routes {
 		// UserFeedback.
 		$parsed_addons['userfeedback-lite'] = array(
 			'active'    => function_exists( 'userfeedback' ),
-			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugin-userfeedback.png',
+			'icon'      => plugin_dir_url( MONSTERINSIGHTS_PLUGIN_FILE ) . 'assets/images/plugins/plugin-userfeedback.png',
 			'title'     => 'UserFeedback',
 			'excerpt'   => __( 'See what your analytics software isn’t telling you with powerful UserFeedback surveys.', 'google-analytics-for-wordpress' ),
 			'installed' => array_key_exists( 'userfeedback-lite/userfeedback.php', $installed_plugins ) || array_key_exists( 'userfeedback/userfeedback.php', $installed_plugins ),
@@ -586,7 +788,7 @@ class MonsterInsights_Rest_Routes {
 			);
 		}
 
-        $parsed_addons = apply_filters('monsterinsights_parsed_addons', $parsed_addons);
+		$parsed_addons = apply_filters('monsterinsights_parsed_addons', $parsed_addons);
 
 		wp_send_json( $parsed_addons );
 	}
@@ -756,7 +958,7 @@ class MonsterInsights_Rest_Routes {
 
 
 	/**
-	 *
+	 * Import exported JSON file.
 	 */
 	public function handle_settings_import() {
 
@@ -770,7 +972,9 @@ class MonsterInsights_Rest_Routes {
 			return;
 		}
 
-		$extension = explode( '.', sanitize_text_field( wp_unslash( $_FILES['import_file']['name'] ) ) ); // phpcs:ignore
+		$import_file = $_FILES['import_file']; // phpcs:ignore
+
+		$extension = explode( '.', sanitize_text_field( wp_unslash( $import_file['name'] ) ) ); // phpcs:ignore
 		$extension = end( $extension );
 
 		if ( 'json' !== $extension ) {
@@ -779,9 +983,8 @@ class MonsterInsights_Rest_Routes {
 			) );
 		}
 
-		$import_file = sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) ); // phpcs:ignore
+		$file = file_get_contents( $import_file['tmp_name'] );
 
-		$file = file_get_contents( $import_file );
 		if ( empty( $file ) ) {
 			wp_send_json_error( array(
 				'message' => esc_html__( 'Please select a valid file to upload.', 'google-analytics-for-wordpress' ),
@@ -799,6 +1002,9 @@ class MonsterInsights_Rest_Routes {
 			'cron_last_run',
 			'monsterinsights_oauth_status',
 		);
+
+		$this->import_site_notes( $new_settings['site_notes'] );
+		unset( $new_settings['site_notes'] );
 
 		foreach ( $exclude as $e ) {
 			if ( ! empty( $new_settings[ $e ] ) ) {
@@ -1108,11 +1314,23 @@ class MonsterInsights_Rest_Routes {
 
 		$post_type = isset( $_POST['post_type'] ) ? sanitize_text_field( wp_unslash( $_POST['post_type'] ) ) : 'any';
 
+		$already_added = monsterinsights_get_option('popular_posts_inline_curated', []);
+		$exclude = array();
+		if( is_array( $already_added ) && !empty( $already_added ) ){
+			foreach ( $already_added as $key => $value ) {
+				$exclude[$value['id']] = $value['id'];
+			}
+		}
+
+		$exclude = array_unique(array_values($exclude));
+
 		$args = array(
 			's'              => isset( $_POST['keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : '',
 			'post_type'      => $post_type,
-			'posts_per_page' => isset( $_POST['numberposts'] ) ? sanitize_text_field( wp_unslash( $_POST['numberposts'] ) ) : 10,
-			'orderby'        => 'relevance',
+			'posts_per_page' => isset( $_POST['numberposts'] ) ? sanitize_text_field( wp_unslash( $_POST['numberposts'] ) ) : 25,
+			'orderby'        => 'post_title',
+			'order'          => 'ASC',
+			'post__not_in'   => $exclude,
 		);
 
 		$array = array();
@@ -1385,5 +1603,31 @@ class MonsterInsights_Rest_Routes {
 
 		wp_send_json_error();
 
+	}
+
+	/**
+	 * Import site notes from exported file.
+	 */
+	private function import_site_notes( $site_notes ) {
+		$notes_db = new MonsterInsights_Site_Notes_DB_Base();
+
+		// Import site-notes category.
+		foreach ( $site_notes['categories'] as $category ) {
+			$notes_db->create_category( array(
+				'name'             => $category['name'],
+				'background_color' => $category['color'],
+			) );
+		}
+
+		foreach ( $site_notes['notes'] as $notes ) {
+			$category = get_term_by( 'name', $notes['category_name'], 'monsterinsights_note_category' );
+
+			$notes_db->create( array(
+				'note'      => $notes['note_title'],
+				'date'      => $notes['note_date'],
+				'important' => $notes['important'],
+				'category'  => intval( ( ! empty( $category ) && ! empty( $category->term_id ) ) ? $category->term_id : 0 ),
+			) );
+		}
 	}
 }

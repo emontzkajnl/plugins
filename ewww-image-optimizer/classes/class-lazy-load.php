@@ -228,11 +228,13 @@ class Lazy_Load extends Page_Parser {
 		if ( $this->is_iterable( $this->user_page_exclusions ) ) {
 			foreach ( $this->user_page_exclusions as $page_exclusion ) {
 				if ( '/' === $page_exclusion && '/' === $uri ) {
+					$this->debug_message( "$uri matchs $page_exclusion" );
 					return false;
 				} elseif ( '/' === $page_exclusion ) {
 					continue;
 				}
 				if ( false !== \strpos( $uri, $page_exclusion ) ) {
+					$this->debug_message( "$uri matchs $page_exclusion" );
 					return false;
 				}
 			}
@@ -246,7 +248,7 @@ class Lazy_Load extends Page_Parser {
 		if ( false !== \strpos( $uri, '&builder=true' ) ) {
 			return false;
 		}
-		if ( false !== \strpos( $uri, 'cornerstone=' ) || false !== \strpos( $uri, 'cornerstone-endpoint' ) ) {
+		if ( false !== \strpos( $uri, 'cornerstone=' ) || false !== \strpos( $uri, 'cornerstone-endpoint' ) || false !== \strpos( $uri, 'cornerstone/edit/' ) ) {
 			return false;
 		}
 		if ( false !== \strpos( $uri, 'ct_builder=' ) ) {
@@ -256,6 +258,9 @@ class Lazy_Load extends Page_Parser {
 			return false;
 		}
 		if ( \did_action( 'cornerstone_boot_app' ) || \did_action( 'cs_before_preview_frame' ) ) {
+			return false;
+		}
+		if ( \did_action( 'cs_element_rendering' ) || \did_action( 'cornerstone_before_boot_app' ) || \apply_filters( 'cs_is_preview_render', false ) ) {
 			return false;
 		}
 		if ( false !== \strpos( $uri, 'elementor-preview=' ) ) {
@@ -371,6 +376,10 @@ class Lazy_Load extends Page_Parser {
 		}
 		if ( ! \apply_filters( 'eio_do_lazyload', true, $this->request_uri ) ) {
 			return $buffer;
+		}
+
+		if ( ! $this->parsing_exactdn ) {
+			$this->get_preload_images( $buffer );
 		}
 
 		$above_the_fold   = \apply_filters( 'eio_lazy_fold', 0 );
@@ -593,6 +602,9 @@ class Lazy_Load extends Page_Parser {
 		if ( $this->parsing_exactdn && \apply_filters( 'eio_use_lqip', $this->get_option( $this->prefix . 'use_lqip' ), $file ) ) {
 			$placeholder_types[] = 'lqip';
 		}
+		if ( $this->parsing_exactdn && \apply_filters( 'eio_use_dcip', $this->get_option( $this->prefix . 'use_dcip' ), $file ) ) {
+			$placeholder_types[] = 'dcip';
+		}
 		if ( $this->parsing_exactdn && \apply_filters( 'eio_use_piip', true, $file ) ) {
 			$placeholder_types[] = 'epip';
 		}
@@ -609,6 +621,14 @@ class Lazy_Load extends Page_Parser {
 					$this->debug_message( 'using lqip, maybe' );
 					if ( false === \strpos( $file, 'nggid' ) && ! \preg_match( '#\.svg(\?|$)#', $file ) && \strpos( $file, $this->exactdn_domain ) ) {
 						$placeholder_src = add_query_arg( array( 'lazy' => 1 ), $file );
+						$use_native_lazy = true;
+						break 2;
+					}
+					break;
+				case 'dcip':
+					$this->debug_message( 'using dcip, maybe' );
+					if ( false === \strpos( $file, 'nggid' ) && ! \preg_match( '#\.svg(\?|$)#', $file ) && \strpos( $file, $this->exactdn_domain ) ) {
+						$placeholder_src = add_query_arg( array( 'lazy' => 3 ), $file );
 						$use_native_lazy = true;
 						break 2;
 					}
@@ -771,6 +791,17 @@ class Lazy_Load extends Page_Parser {
 				$bg_image_urls = $this->get_background_image_urls( $style );
 				if ( $this->is_iterable( $bg_image_urls ) ) {
 					$this->debug_message( 'bg-image urls found' );
+
+					foreach ( $bg_image_urls as $bg_image_url ) {
+						$bg_image_path = $this->parse_url( $bg_image_url, PHP_URL_PATH );
+						foreach ( $this->preload_images as $preload_image ) {
+							if ( $bg_image_path === $preload_image['path'] ) {
+								$this->debug_message( "preloading $bg_image_url, so no lazy allowed!" );
+								continue 3;
+							}
+						}
+					}
+
 					$new_style = $this->remove_background_image( $style );
 					if ( $style !== $new_style ) {
 						$this->debug_message( 'style modified, continuing' );
@@ -1013,6 +1044,14 @@ class Lazy_Load extends Page_Parser {
 				return false;
 			}
 		}
+
+		$src_path = $this->parse_url( $image_src, PHP_URL_PATH );
+		foreach ( $this->preload_images as $preload_image ) {
+			if ( $src_path === $preload_image['path'] ) {
+				$this->debug_message( "preloading $image_src, so no lazy allowed!" );
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -1127,7 +1166,6 @@ class Lazy_Load extends Page_Parser {
 				$placeholder->clear();
 			}
 			// If that didn't work, and we have a premium service, use the API to generate the slimmest PIP available.
-			/* if ( $this->get_option( 'ewww_image_optimizer_cloud_key' ) && ! defined( 'EWWW_IMAGE_OPTIMIZER_DISABLE_API_PIP' ) ) { */
 			if (
 				! \is_file( $piip_path ) &&
 				( $this->parsing_exactdn || $this->get_option( 'ewww_image_optimizer_cloud_key' ) ) &&

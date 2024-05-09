@@ -9,7 +9,7 @@
 ?><input type="hidden" name="<?php echo esc_attr( $name ); ?>[type]"
 		 value="<?php echo esc_attr( $options['type'] ); ?>"/>
 <?php
-include ADVADS_BASE_PATH . 'admin/views/conditions/condition-operator.php';
+include ADVADS_ABSPATH . 'admin/views/conditions/condition-operator.php';
 ?>
 <p class="description">
 	<?php echo esc_html( $type_options[ $options['type'] ]['description'] ); ?>

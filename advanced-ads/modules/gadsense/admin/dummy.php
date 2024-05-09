@@ -2,7 +2,7 @@
 if ( ! defined( 'WPINC' ) ) {
     die();
 }
-require_once ADVADS_BASE_PATH . '/admin/includes/class-ad-network.php';
+require_once ADVADS_ABSPATH . '/admin/includes/class-ad-network.php';
 
 class Dummy_Type extends Advanced_Ads_Ad_Type_Abstract{
     public $ID = "dummy2000";
@@ -20,9 +20,9 @@ class Dummy_Type extends Advanced_Ads_Ad_Type_Abstract{
         global $dummy_content;
         $dummy_content = (string) ( isset( $ad->content ) ? $ad->content : '' );
 
-        include(ADVADS_BASE_PATH . '/modules/gadsense/admin/views/external-ads-links.php');
-        include(ADVADS_BASE_PATH . '/modules/gadsense/admin/views/external-ads-list.php');
-        include(ADVADS_BASE_PATH . '/modules/gadsense/admin/views/external-ads-dummy.php');
+        include(ADVADS_ABSPATH . '/modules/gadsense/admin/views/external-ads-links.php');
+        include(ADVADS_ABSPATH . '/modules/gadsense/admin/views/external-ads-list.php');
+        include(ADVADS_ABSPATH . '/modules/gadsense/admin/views/external-ads-dummy.php');
     }
 
     public function sanitize_content($content = '') {

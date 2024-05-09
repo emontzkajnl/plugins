@@ -1,4 +1,7 @@
 <?php
+
+use AdvancedAds\Entities;
+
 /**
  * Advanced Ads Plain Ad Type
  *
@@ -46,7 +49,7 @@ class Advanced_Ads_Ad_Type_Group extends Advanced_Ads_Ad_Type_Abstract{
 	public function remove_from_ad_group( $post_id ){
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce is verified before calling the hook
-	    if( ! isset( $_POST['post_type'] ) || $_POST['post_type'] !== Advanced_Ads::POST_TYPE_SLUG ){
+	    if( ! isset( $_POST['post_type'] ) || $_POST['post_type'] !== Entities::POST_TYPE_AD ){
 		return;
 	    }
 
@@ -54,7 +57,7 @@ class Advanced_Ads_Ad_Type_Group extends Advanced_Ads_Ad_Type_Abstract{
 			$group_id = (int) $_POST['advanced_ad']['output']['group_id'];
 		if( isset( $_POST['tax_input']['advanced_ads_groups'] ) ){
 		    if(( $key = array_search( $group_id, $_POST['tax_input']['advanced_ads_groups'])) !== false ) {
-			$res = wp_remove_object_terms( $post_id, $group_id, Advanced_Ads::AD_GROUP_TAXONOMY );
+			$res = wp_remove_object_terms( $post_id, $group_id, Entities::TAXONOMY_AD_GROUP );
 			unset( $_POST['tax_input']['advanced_ads_groups'][$key] );
 		    }
 		}

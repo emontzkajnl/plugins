@@ -1,10 +1,13 @@
 <?php
+// phpcs:ignoreFile
+
+use AdvancedAds\Entities;
+use AdvancedAds\Installation\Capabilities;
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * WordPress integration and definitions:
  *
- * - posttypes
- * - taxonomy
  * - textdomain
  */
 class Advanced_Ads_Plugin {
@@ -55,10 +58,6 @@ class Advanced_Ads_Plugin {
 	 * Advanced_Ads_Plugin constructor.
 	 */
 	private function __construct() {
-		register_activation_hook( ADVADS_BASE, [ $this, 'activate' ] );
-		register_deactivation_hook( ADVADS_BASE, [ $this, 'deactivate' ] );
-		register_uninstall_hook( ADVADS_BASE, [ 'Advanced_Ads_Plugin', 'uninstall' ] );
-
 		add_action( 'plugins_loaded', [ $this, 'wp_plugins_loaded' ], 20 );
 		add_action( 'init', [ $this, 'run_upgrades' ], 9 );
 	}
@@ -93,11 +92,7 @@ class Advanced_Ads_Plugin {
 		// Load plugin text domain.
 		$this->load_plugin_textdomain();
 
-		// activate plugin when new blog is added on multisites // -TODO this is admin-only.
-		add_action( 'wpmu_new_blog', [ $this, 'activate_new_site' ] );
-
 		// Load public-facing style sheet and JavaScript.
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_head', [ $this, 'print_head_scripts' ], 7 );
 		// higher priority to make sure other scripts are printed before.
@@ -146,13 +141,6 @@ class Advanced_Ads_Plugin {
 	}
 
 	/**
-	 * Register and enqueue public-facing style sheet.
-	 */
-	public function enqueue_styles() {
-		// wp_enqueue_style( $this->get_plugin_slug() . '-plugin-styles', plugins_url('assets/css/public.css', __FILE__), array(), ADVADS_VERSION);
-	}
-
-	/**
 	 * Return the plugin slug.
 	 *
 	 * @return   string plugin slug variable.
@@ -168,7 +156,6 @@ class Advanced_Ads_Plugin {
 		if ( advads_is_amp() ) {
 			return;
 		}
-		// wp_enqueue_script( $this->get_plugin_slug() . '-plugin-script', plugins_url('assets/js/public.js', __FILE__), array('jquery'), ADVADS_VERSION);
 
 		wp_register_script(
 			$this->get_plugin_slug() . '-advanced-js',
@@ -218,7 +205,7 @@ class Advanced_Ads_Plugin {
 		$short_url   = self::get_short_url();
 		$attribution = '<!-- ' . $short_url . ' is managing ads with Advanced Ads%1$s%2$s -->';
 		$version     = self::is_new_user( 1585224000 ) ? ' ' . ADVADS_VERSION : '';
-		$plugin_url  = self::get_group_by_url( $short_url, 'a' ) ? ' – ' . ADVADS_URL : '';
+		$plugin_url  = self::get_group_by_url( $short_url, 'a' ) ? ' – https://wpadvancedads.com/' : '';
 		// escaping would break HTML comment tags so we disable checks here.
 		// phpcs:ignore
 		echo apply_filters( 'advanced-ads-attribution', sprintf( $attribution, $version, $plugin_url ) );
@@ -227,18 +214,27 @@ class Advanced_Ads_Plugin {
 			return;
 		}
 
+		$frontend_prefix = $this->get_frontend_prefix();
+
 		ob_start();
 		?>
-		<script id="<?php echo esc_attr( $this->get_frontend_prefix() ); ?>ready">
+		<script id="<?php echo esc_attr( $frontend_prefix ); ?>ready">
 			<?php
 			readfile( sprintf(
 				'%spublic/assets/js/ready%s.js',
-				ADVADS_BASE_PATH,
+				ADVADS_ABSPATH,
 				defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min'
 			) );
 			?>
 		</script>
 		<?php
+
+		/**
+		 * Print inline script in the page header form add-ons.
+		 *
+		 * @param string $frontend_prefix the prefix used for Advanced Ads related HTML ID-s and classes.
+		 */
+		do_action( 'advanced_ads_inline_header_scripts', $frontend_prefix );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaping would break the HTML
 		echo Advanced_Ads_Utils::get_inline_asset( ob_get_clean() );
 	}
@@ -256,7 +252,7 @@ class Advanced_Ads_Plugin {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- we're getting the contents of a local file
 			sprintf( '<script>%s</script>', file_get_contents( sprintf(
 				'%spublic/assets/js/ready-queue%s.js',
-				ADVADS_BASE_PATH,
+				ADVADS_ABSPATH,
 				defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min'
 			) ) )
 		);
@@ -270,110 +266,12 @@ class Advanced_Ads_Plugin {
 	}
 
 	/**
-	 * Fired when a new site is activated with a WPMU environment.
-	 *
-	 * @param int $blog_id ID of the new blog.
-	 */
-	public function activate_new_site( $blog_id ) {
-
-		if ( 1 !== did_action( 'wpmu_new_blog' ) ) {
-			return;
-		}
-
-		switch_to_blog( $blog_id );
-		$this->single_activate();
-		restore_current_blog();
-	}
-
-	/**
-	 * Fired for each blog when the plugin is activated.
-	 */
-	protected function single_activate() {
-		// $this->post_types_rewrite_flush();
-		// -TODO inform modules
-		$this->create_capabilities();
-	}
-
-	/**
-	 * Fired for each blog when the plugin is deactivated.
-	 */
-	protected function single_deactivate() {
-		// -TODO inform modules
-		$this->remove_capabilities();
-	}
-
-	/**
 	 * Load the plugin text domain for translation.
 	 */
 	public function load_plugin_textdomain() {
 		load_plugin_textdomain( 'advanced-ads', false, ADVADS_BASE_DIR . '/languages' );
 	}
 
-	/**
-	 * Fired when the plugin is activated.
-	 *
-	 * @param boolean $network_wide True if WPMU superadmin uses
-	 *                                       "Network Activate" action, false if
-	 *                                       WPMU is disabled or plugin is
-	 *                                       activated on an individual blog.
-	 */
-	public function activate( $network_wide ) {
-		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-
-			if ( $network_wide ) {
-				// get all blog ids.
-				global $wpdb;
-				$blog_ids         = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
-				$original_blog_id = $wpdb->blogid;
-
-				foreach ( $blog_ids as $blog_id ) {
-					switch_to_blog( $blog_id );
-					$this->single_activate();
-				}
-
-				switch_to_blog( $original_blog_id );
-			} else {
-				$this->single_activate();
-			}
-		} else {
-			$this->single_activate();
-		}
-	}
-
-	/**
-	 * Fired when the plugin is deactivated.
-	 *
-	 * @param boolean $network_wide true if Advanced Ads should be disabled network-wide.
-	 *
-	 * True if WPMU superadmin uses
-	 * "Network Deactivate" action, false if
-	 * WPMU is disabled or plugin is
-	 * deactivated on an individual blog.
-	 */
-	public function deactivate( $network_wide ) {
-		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-
-			if ( $network_wide ) {
-				// get all blog ids.
-				global $wpdb;
-				$blog_ids         = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
-				$original_blog_id = $wpdb->blogid;
-
-				foreach ( $blog_ids as $blog_id ) {
-					switch_to_blog( $blog_id );
-					$this->single_deactivate();
-				}
-
-				switch_to_blog( $original_blog_id );
-			} else {
-				$this->single_deactivate();
-			}
-		} else {
-			$this->single_deactivate();
-		}
-	}
-
-	
 	/**
 	 * Shortcode to include ad in frontend
 	 *
@@ -629,145 +527,37 @@ class Advanced_Ads_Plugin {
 	/**
 	 * Returns the capability needed to perform an action
 	 *
+	 * @deprecated 1.47.0
+	 *
 	 * @param string $capability a capability to check, can be internal to Advanced Ads.
 	 *
 	 * @return string $capability a valid WordPress capability.
 	 */
 	public static function user_cap( $capability = 'manage_options' ) {
-
-		global $advanced_ads_capabilities;
-
-		// admins can do everything.
-		// is also a fallback if no option or more specific capability is given.
-		if ( current_user_can( 'manage_options' ) ) {
-			return 'manage_options';
-		}
-
-		return apply_filters( 'advanced-ads-capability', $capability );
+		_deprecated_function( __METHOD__, '1.47.0', '\AdvancedAds\Utilities\WordPress::user_cap()' );
+		return WordPress::user_cap( $capability );
 	}
 
 	/**
 	 * Create roles and capabilities
+	 *
+	 * @deprecated 1.47.0
 	 */
 	public function create_capabilities() {
-		if ( $role = get_role( 'administrator' ) ) {
-			$role->add_cap( 'advanced_ads_manage_options' );
-			$role->add_cap( 'advanced_ads_see_interface' );
-			$role->add_cap( 'advanced_ads_edit_ads' );
-			$role->add_cap( 'advanced_ads_manage_placements' );
-			$role->add_cap( 'advanced_ads_place_ads' );
-		}
+		_deprecated_function( __METHOD__, '1.47.0', 'AdvancedAds\Installation\Capabilities::create_capabilities()' );
+
+		( new Capabilities() )->create_capabilities();
 	}
 
 	/**
 	 * Remove roles and capabilities
+	 *
+	 * @deprecated 1.47.0
 	 */
 	public function remove_capabilities() {
-		if ( $role = get_role( 'administrator' ) ) {
-			$role->remove_cap( 'advanced_ads_manage_options' );
-			$role->remove_cap( 'advanced_ads_see_interface' );
-			$role->remove_cap( 'advanced_ads_edit_ads' );
-			$role->remove_cap( 'advanced_ads_manage_placements' );
-			$role->remove_cap( 'advanced_ads_place_ads' );
-		}
-	}
+		_deprecated_function( __METHOD__, '1.47.0', 'AdvancedAds\Installation\Capabilities::remove_capabilities()' );
 
-	/**
-	 * Fired when the plugin is uninstalled.
-	 */
-	public static function uninstall() {
-		$advads_options = Advanced_Ads::get_instance()->options();
-
-		if ( ! empty( $advads_options['uninstall-delete-data'] ) ) {
-			global $wpdb;
-			$main_blog_id = $wpdb->blogid;
-
-			// Delete assets (main blog).
-			Advanced_Ads_Ad_Blocker_Admin::get_instance()->clear_assets();
-			Advanced_Ads::get_instance()->create_post_types();
-
-			if ( ! is_multisite() ) {
-				self::get_instance()->uninstall_single();
-			} else {
-				$blog_ids = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
-
-				foreach ( $blog_ids as $blog_id ) {
-					switch_to_blog( $blog_id );
-					self::get_instance()->uninstall_single();
-				}
-				switch_to_blog( $main_blog_id );
-			}
-
-
-		}
-
-	}
-
-	/**
-	 * Fired for each blog when the plugin is uninstalled.
-	 */
-	protected function uninstall_single() {
-		global $wpdb;
-
-		// Ads.
-		$post_ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type = %s", Advanced_Ads::POST_TYPE_SLUG ) );
-
-		if ( $post_ids ) {
-			$wpdb->delete(
-				$wpdb->posts,
-				[ 'post_type' => Advanced_Ads::POST_TYPE_SLUG ],
-				[ '%s' ]
-			);
-
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE post_id IN( %s )", implode( ',', $post_ids ) ) );
-		}
-
-		// Groups.
-		$term_ids = $wpdb->get_col( $wpdb->prepare( "SELECT t.term_id FROM {$wpdb->terms} AS t INNER JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s", Advanced_Ads::AD_GROUP_TAXONOMY ) );
-
-		foreach ( $term_ids as $term_id ) {
-			wp_delete_term( $term_id, Advanced_Ads::AD_GROUP_TAXONOMY );
-		}
-
-		delete_option( 'advanced-ads' );
-		delete_option( 'advanced-ads-internal' );
-		delete_option( 'advanced-ads-notices' );
-		delete_option( 'advads-ad-groups' );
-		delete_option( 'advanced_ads_groups_children' );
-		delete_option( 'advads-ad-weights' );
-		delete_option( 'advanced_ads_ads_txt' );
-		delete_option( 'advanced-ads-ad-health-notices' );
-		delete_option( 'advanced-ads-adsense' );
-		delete_option( 'advanced_ads_adsense_report_domain' );
-		delete_option( 'advanced_ads_adsense_report_unit' );
-		delete_option( 'advanced-ads-adsense-dashboard-filter' );
-		delete_option( 'advanced-ads-adsense-mapi' );
-		delete_option( 'advanced-ads-licenses' );
-		delete_option( 'advanced-ads-ab-module' );
-		delete_option( 'widget_' . Advanced_Ads_Widget::get_base_id() );
-		delete_option( 'advads-ads-placements' );
-
-		// User metadata.
-		delete_metadata( 'user', null, 'advanced-ads-hide-wizard', '', true );
-		delete_metadata( 'user', null, 'advanced-ads-subscribed', '', true );
-		delete_metadata( 'user', null, 'advanced-ads-ad-list-screen-options', '', true );
-		delete_metadata( 'user', null, 'advanced-ads-admin-settings', '', true );
-		delete_metadata( 'user', null, 'advanced-ads-role', '', true );
-		delete_metadata( 'user', null, 'edit_advanced_ads_per_page', '', true );
-		delete_metadata( 'user', null, 'meta-box-order_advanced_ads', '', true );
-		delete_metadata( 'user', null, 'screen_layout_advanced_ads', '', true );
-		delete_metadata( 'user', null, 'closedpostboxes_advanced_ads', '', true );
-		delete_metadata( 'user', null, 'metaboxhidden_advanced_ads', '', true );
-
-		// Post metadata.
-		delete_metadata( 'post', null, '_advads_ad_settings', '', true );
-
-		// Transients.
-		delete_transient( 'advanced-ads_add-on-updates-checked' );
-
-		do_action( 'advanced-ads-uninstall' );
-
-		wp_cache_flush();
+		( new Capabilities() )->remove_capabilities();
 	}
 
 	/**
@@ -797,9 +587,9 @@ class Advanced_Ads_Plugin {
 
 		$utm = empty( $utm ) ? '?utm_source=advanced-ads&utm_medium=link&utm_campaign=support' : $utm;
 		if ( self::any_activated_add_on() ) {
-			$url = ADVADS_URL . 'support/' . $utm . '-with-addons';
+			$url = 'https://wpadvancedads.com/support/' . $utm . '-with-addons';
 		} else {
-			$url = ADVADS_URL . 'support/' . $utm . '-free-user';
+			$url = 'https://wpadvancedads.com/support/' . $utm . '-free-user';
 		}
 
 		return $url;
@@ -841,8 +631,7 @@ class Advanced_Ads_Plugin {
 	public static function is_new_user( $timestamp = 0 ) {
 
 		// allow admins to see version for new users in any case.
-		if ( current_user_can( self::user_cap( 'advanced_ads_manage_options' ) )
-			&& isset( $_REQUEST['advads-ignore-timestamp'] ) ) {
+		if ( WordPress::user_can( 'advanced_ads_manage_options' ) && isset( $_REQUEST['advads-ignore-timestamp'] ) ) {
 			return true;
 		}
 
@@ -892,15 +681,6 @@ class Advanced_Ads_Plugin {
 	}
 
 	/**
-	 * Return Advanced Ads logo in base64 format for use in WP Admin menu.
-	 *
-	 * @return string
-	 */
-	public static function get_icon_svg() {
-		return 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE4LjEuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJFYmVuZV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDY0Ljk5MyA2NS4wMjQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDY0Ljk5MyA2NS4wMjQ7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIHN0eWxlPSJmaWxsOiNFNEU0RTQ7IiBkPSJNNDYuNTcxLDI3LjY0MXYyMy4xMzNIMTQuMjVWMTguNDUzaDIzLjExOGMtMC45NTYtMi4xODMtMS40OTQtNC41OS0xLjQ5NC03LjEyNg0KCWMwLTIuNTM1LDAuNTM4LTQuOTQyLDEuNDk0LTcuMTI0aC02Ljk1N0gwdjQ5LjQ5M2wxLjYxOCwxLjYxOEwwLDUzLjY5NmMwLDYuMjU2LDUuMDY4LDExLjMyNiwxMS4zMjQsMTEuMzI4djBoMTkuMDg3aDMwLjQxMlYyNy42MTENCgljLTIuMTkxLDAuOTY0LTQuNjA5LDEuNTA5LTcuMTU3LDEuNTA5QzUxLjE0MiwyOS4xMiw0OC43NDYsMjguNTg4LDQ2LjU3MSwyNy42NDF6Ii8+DQo8Y2lyY2xlIHN0eWxlPSJmaWxsOiM5ODk4OTg7IiBjeD0iNTMuNjY2IiBjeT0iMTEuMzI4IiByPSIxMS4zMjgiLz4NCjwvc3ZnPg0K';
-	}
-
-	/**
 	 * Fires when a post is transitioned from one status to another.
 	 *
 	 * @param string  $new_status New post status.
@@ -908,7 +688,7 @@ class Advanced_Ads_Plugin {
 	 * @param WP_Post $post       Post object.
 	 */
 	public function transition_ad_status( $new_status, $old_status, $post ) {
-		if ( ! isset( $post->post_type ) || Advanced_Ads::POST_TYPE_SLUG !== $post->post_type || ! isset( $post->ID ) ) {
+		if ( ! isset( $post->post_type ) || Entities::POST_TYPE_AD !== $post->post_type || ! isset( $post->ID ) ) {
 			return;
 		}
 

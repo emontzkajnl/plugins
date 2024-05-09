@@ -258,7 +258,6 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 		$output         = '';
 		$db             = Advanced_Ads_AdSense_Data::get_instance();
 		$pub_id         = $db->get_adsense_id( $ad );
-		$limit_per_page = $db->get_limit_per_page();
 
 		if ( ! isset( $content->unitType ) || empty( $pub_id ) ) {
 			return $output;
@@ -273,11 +272,6 @@ class Advanced_Ads_Ad_Type_Adsense extends Advanced_Ads_Ad_Type_Abstract {
 			$gadsense['adsense_count'] ++;
 		} else {
 			$gadsense['adsense_count'] = 1;
-		}
-
-		if ( $limit_per_page && 3 < $gadsense['adsense_count'] && $ad->global_output ) {
-			// The maximum allowed adSense ad per page count is 3 (according to the current Google AdSense TOS).
-			return '';
 		}
 
 		// "link" was a static format until AdSense stopped filling them in March 2021. Their responsive format serves as a fallback recommended by AdSense

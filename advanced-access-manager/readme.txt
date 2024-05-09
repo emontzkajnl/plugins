@@ -1,10 +1,10 @@
 === Advanced Access Manager - Restricted Content, Users & Roles, Enhanced Security and More ===
 Contributors: vasyltech
 Tags: access control, membership, backend menu, user role, restricted content, security, jwt
-Requires at least: 5.0.0
+Requires at least: 5.2.0
 Requires PHP: 5.6.0
-Tested up to: 6.4.1
-Stable tag: 6.9.18
+Tested up to: 6.5.2
+Stable tag: 6.9.27
 
 All you need to manage access to WordPress websites on the frontend, backend and API levels for any role, user or visitors.
 
@@ -80,6 +80,53 @@ We take security and privacy very seriously, that is why there are several non-n
 11. Improve your website security
 
 == Changelog ==
+
+= 6.9.27 =
+* Fixed: Backend Menu & Toolbar services do not show any items [https://github.com/aamplugin/advanced-access-manager/issues/362](https://github.com/aamplugin/advanced-access-manager/issues/362)
+* Added: Introduce Aarmie virtual assistant [https://github.com/aamplugin/advanced-access-manager/issues/361](https://github.com/aamplugin/advanced-access-manager/issues/361)
+= 6.9.26 =
+* Fixed: Metaboxes & Widgets service appends list for each refresh [https://github.com/aamplugin/advanced-access-manager/issues/358](https://github.com/aamplugin/advanced-access-manager/issues/358)
+* Fixed: Fatal error: No such file or directory in /.../application/Core/Migration.php:184 [https://github.com/aamplugin/advanced-access-manager/issues/357](https://github.com/aamplugin/advanced-access-manager/issues/357)
+* New:   Add the ability to change HTTP status code for "Access Denied" message [https://github.com/aamplugin/advanced-access-manager/issues/359](https://github.com/aamplugin/advanced-access-manager/issues/359)
+* Changed: Revise all redirect functionality and standardize internal implementation [https://github.com/aamplugin/advanced-access-manager/issues/360](https://github.com/aamplugin/advanced-access-manager/issues/360)
+
+= 6.9.25 =
+* Fixed: Access Policy Param "Enforce" did not enforce [https://github.com/aamplugin/advanced-access-manager/issues/355](https://github.com/aamplugin/advanced-access-manager/issues/355)
+* Fixed: Uncaught TypeError: AAM_Core_Policy_Token::evaluate(): Argument #3 ($args) must be of type array, null given [https://github.com/aamplugin/advanced-access-manager/issues/353](https://github.com/aamplugin/advanced-access-manager/issues/353)
+* Added: Enhance Hook Access Policy Resource [https://github.com/aamplugin/advanced-access-manager/issues/354](https://github.com/aamplugin/advanced-access-manager/issues/354)
+
+= 6.9.24 =
+* Fixed: Incorrectly merged access controls with 3 or more roles [https://github.com/aamplugin/advanced-access-manager/issues/352](https://github.com/aamplugin/advanced-access-manager/issues/352)
+* Fixed: Unnecessary forward slashes escapes in Access Policies [https://github.com/aamplugin/advanced-access-manager/issues/350](https://github.com/aamplugin/advanced-access-manager/issues/350)
+* New: Added the "Operator" option for Access Policies Conditions [https://github.com/aamplugin/advanced-access-manager/issues/351](https://github.com/aamplugin/advanced-access-manager/issues/351)
+* New: Added support for IP CIDR annotations for Access Policies [https://github.com/aamplugin/advanced-access-manager/issues/349](https://github.com/aamplugin/advanced-access-manager/issues/349)
+
+= 6.9.23 =
+* Fixed: Type E_Error in Visibility.php [https://github.com/aamplugin/advanced-access-manager/issues/347](https://github.com/aamplugin/advanced-access-manager/issues/347)
+* Fixed: The previous selected role does not visually uncheck if switched to manage visitors or default [https://github.com/aamplugin/advanced-access-manager/issues/348](https://github.com/aamplugin/advanced-access-manager/issues/348)
+* Changed: The minimum required WordPress version was lifted from 5.0.0 to 5.2.0.
+
+= 6.9.22 =
+* Fixed: Redirect to login page for visitors does not work [https://github.com/aamplugin/advanced-access-manager/issues/346](https://github.com/aamplugin/advanced-access-manager/issues/346)
+* Fixed: Fatal error: Uncaught TypeError: method_exists() [https://github.com/aamplugin/advanced-access-manager/issues/344](https://github.com/aamplugin/advanced-access-manager/issues/344)
+* Changed: Added "mergeAlign.limit" property [https://github.com/aamplugin/advanced-access-manager/issues/345](https://github.com/aamplugin/advanced-access-manager/issues/345)
+* Changed: Change how ${USER.ip} marker works [https://github.com/aamplugin/advanced-access-manager/issues/338](https://github.com/aamplugin/advanced-access-manager/issues/338)
+
+= 6.9.21 =
+* Fixed: Content visibility issue with multi-role setup [https://github.com/aamplugin/advanced-access-manager/issues/342](https://github.com/aamplugin/advanced-access-manager/issues/342)
+* Fixed: URL Access feature does not save "Redirect to page" [https://github.com/aamplugin/advanced-access-manager/issues/339](https://github.com/aamplugin/advanced-access-manager/issues/339)
+* Changed: Enhance plugins security pasture [https://github.com/aamplugin/advanced-access-manager/issues/341](https://github.com/aamplugin/advanced-access-manager/issues/341)
+
+= 6.9.20 =
+* Fixed: When deleting URL Access rule, the "Unexpected Application Error" is displayed [https://github.com/aamplugin/advanced-access-manager/issues/337](https://github.com/aamplugin/advanced-access-manager/issues/337)
+* Fixed: URL Access does not correctly handle multiple roles [https://github.com/aamplugin/advanced-access-manager/issues/336](https://github.com/aamplugin/advanced-access-manager/issues/336)
+* Changed: Add-ons page overhaul [https://github.com/aamplugin/advanced-access-manager/issues/335](https://github.com/aamplugin/advanced-access-manager/issues/335)
+
+= 6.9.19 =
+* Fixed: Handling "Profile" submenu access [https://github.com/aamplugin/advanced-access-manager/issues/334](https://github.com/aamplugin/advanced-access-manager/issues/334)
+* Fixed: Passing null to parameter #2 ($string) of type string is deprecated in /../Content.php on line 223 [https://github.com/aamplugin/advanced-access-manager/issues/333](https://github.com/aamplugin/advanced-access-manager/issues/333)
+* Fixed: Undefined array key 2 in /../application/Core/Object/Menu.php on line 136 [](https://github.com/aamplugin/advanced-access-manager/issues/331https://github.com/aamplugin/advanced-access-manager/issues/331)
+* Changed: Improve Login Redirect Shortcode redirect [https://github.com/aamplugin/advanced-access-manager/issues/332](https://github.com/aamplugin/advanced-access-manager/issues/332)
 
 = 6.9.18 =
 * Fixed: DataTables alert when URL Access service has at least one rule [https://github.com/aamplugin/advanced-access-manager/issues/330](https://github.com/aamplugin/advanced-access-manager/issues/330)

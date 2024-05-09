@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 /**
  * Template for license fields.
  *
@@ -27,10 +27,9 @@ $update_button = ob_get_clean();
 $license_key_for_expired_link = $license_key ? $license_key : '%LICENSE_KEY%';
 //phpcs:ignore
 $expired_error               .= $expired_renew_link = ' ' . sprintf(
-	// $translators: %1$s is a URL, %2$s is HTML of a button.
-	// phpcs:ignore
-	__( 'Click on %2$s if you renewed it or have a subscription or <a href="%1$s" class="advads-renewal-link" target="_blank">renew your license</a>.', 'advanced-ads' ),
-	esc_url( ADVADS_URL ) . 'checkout/?edd_license_key=' . esc_attr( $license_key_for_expired_link ) . '&utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses',
+	/* translators: 1: is a URL, 2: is HTML of a button. */
+	__( 'Click on %2$s if you renewed it or have a subscription or <a href="%1$s" class="advads-renewal-link" target="_blank">renew your license</a>.', 'advanced-ads' ), // phpcs:ignore
+	'https://wpadvancedads.com/checkout/?edd_license_key=' . esc_attr( $license_key_for_expired_link ) . '&utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-licenses',
 	$update_button
 );
 if ( 'lifetime' !== $expires ) {
@@ -41,7 +40,7 @@ if ( 'lifetime' !== $expires ) {
 if ( 'lifetime' === $expires ) {
 	// do nothing.
 } elseif ( $expired && $days_left <= 0 ) {
-	$plugin_url = isset( $plugin_url ) ? $plugin_url : ADVADS_URL;
+	$plugin_url = isset( $plugin_url ) ? $plugin_url : 'https://wpadvancedads.com/';
 	$errortext  = $expired_error;
 	$expired    = true;
 } elseif ( 0 < $days_left && 31 > $days_left ) {

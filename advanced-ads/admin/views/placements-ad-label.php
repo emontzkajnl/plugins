@@ -4,7 +4,9 @@
  *
  * @var string $_placement_slug slug of the current placement.
  * @var string $_label value of the label option.
+ * @package Advanced_Ads_Admin
  */
+
 ?>
 <label title="<?php esc_html_e( 'default', 'advanced-ads' ); ?>">
 	<input type="radio" name="advads[placements][<?php echo esc_attr( $_placement_slug ); ?>][options][ad_label]" value="default" <?php checked( $_label, 'default' ); ?>/>

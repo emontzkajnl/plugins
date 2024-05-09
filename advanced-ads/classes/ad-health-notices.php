@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:ignoreFile
+use AdvancedAds\Utilities\Conditional;
 
 /**
  * Container class for Ad Health notice handling
@@ -102,7 +103,7 @@ class Advanced_Ads_Ad_Health_Notices {
 
 		// load default notices.
 		if ( [] === $this->default_notices ) {
-			include ADVADS_BASE_PATH . '/admin/includes/ad-health-notices.php';
+			include ADVADS_ABSPATH . '/admin/includes/ad-health-notices.php';
 			$this->default_notices = $advanced_ads_ad_health_notices;
 		}
 
@@ -235,7 +236,7 @@ class Advanced_Ads_Ad_Health_Notices {
 		}
 
 		// run only daily unless we are on an Advanced Ads related page.
-		if ( ! Advanced_Ads_Admin::screen_belongs_to_advanced_ads()
+		if ( ! Conditional::is_screen_advanced_ads()
 			 && get_transient( self::DAILY_CHECK_TRANSIENT_NAME ) ) {
 			return;
 		}
@@ -587,7 +588,7 @@ class Advanced_Ads_Ad_Health_Notices {
 
 		// only render, if there are notices.
 		if ( $this->has_notices() ) {
-			include ADVADS_BASE_PATH . 'admin/views/overview-notices.php';
+			include ADVADS_ABSPATH . 'admin/views/overview-notices.php';
 		}
 	}
 
@@ -649,7 +650,7 @@ class Advanced_Ads_Ad_Health_Notices {
 																					$is_hidden = in_array( $_notice_key, $this->ignore, true ) ? true : false;
 																					$date      = isset( $_notice['time'] ) ? date_i18n( get_option( 'date_format' ), $_notice['time'] ) : false;
 
-																					include ADVADS_BASE_PATH . '/admin/views/overview-notice-row.php';
+																					include ADVADS_ABSPATH . '/admin/views/overview-notice-row.php';
 																				}
 
 																				?>
@@ -863,7 +864,7 @@ class Advanced_Ads_Ad_Health_Notices {
 		return sprintf(
 		// translators: %1$s is an anchor (link) opening tag, %2$s is the closing tag.
 			esc_attr__( 'Learn more about AdSense account issues %1$shere%2$s.', 'advanced-ads' ),
-			'<a href="' . ADVADS_URL . 'adsense-errors/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-error' . $code . '" target="_blank">',
+			'<a href="https://wpadvancedads.com/adsense-errors/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-error' . $code . '" target="_blank">',
 			'</a>'
 		);
 	}

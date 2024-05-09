@@ -5,6 +5,8 @@
  * @package   Advanced_Ads_Admin
  */
 
+use AdvancedAds\Utilities\WordPress;
+
 $data_obj = Advanced_Ads_AdSense_Data::get_instance();
 $options  = $data_obj->get_options();
 
@@ -36,7 +38,7 @@ $_get = wp_unslash( $_GET );
 
 if ( isset( $_get['oauth'] ) && '1' == $_get['oauth'] && isset( $_get['api'] ) && 'adsense' == $_get['api'] ) : ?>
 	<?php if ( isset( $_get['nonce'] ) && false !== wp_verify_nonce( $_get['nonce'], 'advads-mapi' ) ) : ?>
-		<?php if ( isset( $_get['code'] ) && current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) : ?>
+		<?php if ( isset( $_get['code'] ) && WordPress::user_can( 'advanced_ads_manage_options' ) ) : ?>
 		<input type="hidden" id="advads-adsense-oauth-code" value="<?php echo esc_attr( urldecode( $_get['code'] ) ); ?>" />
 		<?php endif; ?>
 	<?php endif; ?>

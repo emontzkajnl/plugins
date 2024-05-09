@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 /**
  * Render box with problems and notifications on the Advanced Ads overview page
  *
@@ -29,7 +29,7 @@ Advanced_Ads_Ad_Health_Notices::get_instance()->display_notices();
 															<?php
 															printf(
 																wp_kses(
-																	// translators: %s includes a number and markup like <span class="count">6</span>.
+																	// translators: %s is the number of hidden notices.
 																	esc_html__( 'Show %s hidden notices', 'advanced-ads' ),
 																	[
 																		'span' => [
@@ -46,7 +46,7 @@ Advanced_Ads_Ad_Health_Notices::get_instance()->display_notices();
 <?php
 
 if ( Advanced_Ads_Ad_Health_Notices::has_visible_problems() ) {
-	include ADVADS_BASE_PATH . 'admin/views/support-callout.php';
+	include ADVADS_ABSPATH . 'admin/views/support-callout.php';
 }
 
 ?>

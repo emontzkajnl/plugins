@@ -1,4 +1,8 @@
 <?php
+
+use AdvancedAds\Utilities\WordPress;
+use AdvancedAds\Utilities\Conditional;
+
 /**
  * Cache Busting admin user interface.
  */
@@ -28,7 +32,16 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	 */
 	public function ads_activate_placement_cb(){
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) && !filter_has_var( INPUT_POST, "placement" ) ) {
+
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_manage_options' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
+		}
+
+		if ( ! current_user_can( $cap ) && ! filter_has_var( INPUT_POST, 'placement' ) ) {
 			wp_send_json_error( esc_html__( 'You are not allowed to do this.', 'advanced-ads-pro' ), 400 );
 		}
 		$placement_slug = sanitize_text_field( $_POST['placement'] );
@@ -47,7 +60,16 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	 * Update visitor consitions cache.
 	 */
 	public function reset_vc_cache(){
-		if ( ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
+
+		$cap = 'manage_options';
+
+		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
+			$cap = WordPress::user_cap( 'advanced_ads_manage_options' );
+		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
+			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
+		}
+
+		if ( ! current_user_can( $cap ) ) {
 			return;
 		}
 
@@ -105,12 +127,18 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	 * enqueue scripts for validation the ad
 	 */
 	public function enqueue_admin_scripts() {
-		$screen = get_current_screen();
+		$screen     = get_current_screen();
 		$uriRelPath = plugin_dir_url( __FILE__ );
+		$is_screen  = false;
+		if ( method_exists( 'AdvancedAds\Utilities\Conditional', 'is_screen_advanced_ads' ) ) {
+			$is_screen = Conditional::is_screen_advanced_ads();
+		} elseif ( method_exists( 'Advanced_Ads_Admin', 'screen_belongs_to_advanced_ads' ) ) {
+			$is_screen = Advanced_Ads_Admin::screen_belongs_to_advanced_ads();
+		}
 		if ( isset( $screen->id ) && $screen->id === 'advanced_ads' ) { //ad edit page
 			wp_register_script( 'krux/prescribe', $uriRelPath . 'inc/prescribe.js', [ 'jquery' ], '1.1.3' );
 			wp_enqueue_script( 'advanced-ads-pro/cache-busting-admin', $uriRelPath . 'inc/admin.js', [ 'krux/prescribe' ], AAP_VERSION );
-		} elseif( Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+		} elseif ( $is_screen ) {
 			wp_enqueue_script( 'advanced-ads-pro/cache-busting-admin', $uriRelPath . 'inc/admin.js', [], AAP_VERSION );
 		}
 	}
