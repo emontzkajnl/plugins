@@ -52,7 +52,7 @@ class SgpbPopupExtensionRegister
 		$pluginData['options'] = $options;
 
 		$registeredData[$pluginName] = $pluginData;
-		$registeredData = json_encode($registeredData);
+		$registeredData = wp_json_encode($registeredData);
 
 		AdminHelper::updateOption(SGPB_POPUP_BUILDER_REGISTERED_PLUGINS, $registeredData);
 		// it seems we have an inactive extension now
@@ -112,7 +112,7 @@ class SgpbPopupExtensionRegister
 			return false;
 		}
 		unset($registeredData[$pluginName]);
-		$registeredData = json_encode($registeredData);
+		$registeredData = wp_json_encode($registeredData);
 
 		AdminHelper::updateOption(SGPB_POPUP_BUILDER_REGISTERED_PLUGINS, $registeredData);
 

@@ -1,6 +1,10 @@
 <?php
+	/* Exit if accessed directly */
+	if ( ! defined( 'ABSPATH' ) ) {
+		exit;
+	}
 	use sgpb\AdminHelper;
-	$defaultData = ConfigDataHelper::defaultData();
+	$defaultData = SGPBConfigDataHelper::defaultData();
 
 	$deleteData = '';
 	if (get_option('sgpb-dont-delete-data')) {
@@ -12,7 +16,7 @@
 <div class="sgpb sgpb-wrapper">
 	<div class="sgpb-import-popups">
 		<h3 class="sgpb-header-h3">
-			<span><?php esc_html_e('Import popups', SG_POPUP_TEXT_DOMAIN); ?></span>
+			<span><?php esc_html_e('Import popups', 'popup-builder'); ?></span>
 		</h3>
 		<div class="sgpb-import-popups-form">
 			<?php

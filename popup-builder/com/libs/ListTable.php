@@ -601,7 +601,7 @@ class SGPBListTable {
 				if ( $current_mode == $mode )
 					$classes[] = 'current';
 				printf(
-					"<a href='%s' class='%s' id='view-switch-$mode'><span class='screen-reader-text'>%s</span></a>\n",
+					wp_kses_post( "<a href='%s' class='%s' id='view-switch-$mode'><span class='screen-reader-text'>%s</span></a>\n" ),
 					esc_url( add_query_arg( 'mode', $mode ) ),
 					esc_html(implode( ' ', $classes )),
 					esc_html($title)
@@ -626,9 +626,11 @@ class SGPBListTable {
 
 		$approved_comments_number = number_format_i18n( $approved_comments );
 		$pending_comments_number = number_format_i18n( $pending_comments );
-
+		/* translators: numner comments, numner approved comments */
 		$approved_only_phrase = sprintf( _n( '%s comment', '%s comments', $approved_comments ), $approved_comments_number );
+		/* translators: numner comments, numner approved comments */
 		$approved_phrase = sprintf( _n( '%s approved comment', '%s approved comments', $approved_comments ), $approved_comments_number );
+		/* translators: numner comments, numner pending comments */
 		$pending_phrase = sprintf( _n( '%s pending comment', '%s pending comments', $pending_comments ), $pending_comments_number );
 
 		// No comments at all.
@@ -638,14 +640,14 @@ class SGPBListTable {
 			);
 		// Approved comments have different display depending on some conditions.
 		} elseif ( $approved_comments ) {
-			printf( '<a href="%s" class="post-com-count post-com-count-approved"><span class="comment-count-approved" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></a>',
+			printf( wp_kses_post('<a href="%s" class="post-com-count post-com-count-approved"><span class="comment-count-approved" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></a>' ),
 				esc_url( add_query_arg( array( 'p' => $post_id, 'comment_status' => 'approved' ), admin_url( 'edit-comments.php' ) ) ),
-				$approved_comments_number,
+				esc_html($approved_comments_number),
 				$pending_comments ? esc_html($approved_phrase) : esc_html($approved_only_phrase)
 			);
 		} else {
-			printf( '<span class="post-com-count post-com-count-no-comments"><span class="comment-count comment-count-no-comments" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></span>',
-				$approved_comments_number,
+			printf( wp_kses_post( '<span class="post-com-count post-com-count-no-comments"><span class="comment-count comment-count-no-comments" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></span>'),
+				esc_html($approved_comments_number),
 				$pending_comments ? esc_html__( 'No approved comments' ) : esc_html__( 'No comments' )
 			);
 		}
@@ -726,14 +728,15 @@ class SGPBListTable {
 		if ( isset( $this->_pagination_args['infinite_scroll'] ) ) {
 			$infinite_scroll = $this->_pagination_args['infinite_scroll'];
 		}
-
+		/* translators: total items */
 		$output = '<span class="displaying-num">' . sprintf( _n( '%s item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
 
 		$current = $this->get_pagenum();
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$current_url = set_url_scheme( 'http://' . (isset($_SERVER['HTTP_HOST'])? $_SERVER['HTTP_HOST'] : '') . (isset($_SERVER['REQUEST_URI'])?$_SERVER['REQUEST_URI'] : '') );
-
+		$sbpb_server_host = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '';
+		$sbpb_server_requesturi = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field( $_SERVER['REQUEST_URI'] ) : '';
+		$current_url = set_url_scheme( 'http://' . $sbpb_server_host . $sbpb_server_requesturi );
 		$current_url = remove_query_arg( array( 'hotkeys_highlight_last', 'hotkeys_highlight_first' ), $current_url );
 
 		$page_links = array();
@@ -789,6 +792,7 @@ class SGPBListTable {
 			);
 		}
 		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+		/* translators: current page,  total pages */
 		$page_links[] = $total_pages_before . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . $total_pages_after;
 
 		if ( $disable_next ) {
@@ -1002,7 +1006,9 @@ class SGPBListTable {
 		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$current_url = set_url_scheme( 'http://' . (isset($_SERVER['HTTP_HOST'])?$_SERVER['HTTP_HOST']:'') . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '') );
+		$sbpb_server_host = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '';
+		$sbpb_server_requesturi = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field( $_SERVER['REQUEST_URI'] ) : '';
+		$current_url = set_url_scheme( 'http://' . $sbpb_server_host . $sbpb_server_requesturi );
 		$current_url = remove_query_arg( 'paged', $current_url );
 
 		if ( isset( $_GET['orderby'] ) )
@@ -1291,8 +1297,9 @@ class SGPBListTable {
 
 		$response = array( 'rows' => $rows );
 
-		if ( isset( $this->_pagination_args['total_items'] ) ) {
+		if ( isset( $this->_pagination_args['total_items'] ) ) {			
 			$response['total_items_i18n'] = sprintf(
+				/* translators: total item, total items */
 				_n( '%s item', '%s items', $this->_pagination_args['total_items'] ),
 				number_format_i18n( $this->_pagination_args['total_items'] )
 			);
@@ -1318,7 +1325,8 @@ class SGPBListTable {
 				'base' => $this->screen->base,
 			)
 		);
-
-		printf( "<script type='text/javascript'>list_args = %s;</script>\n", wp_json_encode( $args ) );
+		wp_register_script( 'sgpb-listtable-js-footer', '', array("jquery"), '', true );
+		wp_enqueue_script( 'sgpb-listtable-js-footer'  );
+		wp_add_inline_script( 'sgpb-listtable-js-footer', printf( "list_args = %s;", wp_json_encode( $args ) ));		
 	}
 }

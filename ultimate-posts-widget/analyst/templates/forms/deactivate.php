@@ -130,7 +130,8 @@
 
       var data = {
         action: 'analyst_plugin_deactivate_' + pluginId,
-		question: question
+		    question: question,
+        nonce: analyst_opt_localize.nonce
       }
 
 	  if (reason) {

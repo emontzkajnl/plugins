@@ -1,5 +1,9 @@
 <?php
 namespace sgpb;
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $data = $popupTypeObj->getOptionValue('sgpb-behavior-after-special-events');
 $builder = ConditionBuilder::createBehaviorAfterSpecialEventsConditionBuilder($data);
 ?>

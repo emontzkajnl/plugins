@@ -264,7 +264,7 @@ class AdminHelper
 			}
 			else {
 				$str .= '<div class="row form-group">';
-				$str .= '<label class="col-md-5 control-label">'.__($element['title'], SG_POPUP_TEXT_DOMAIN).'</label>';
+				$str .= '<label class="col-md-5 control-label">'.sprintf( '%s', esc_html( $element['title'] )).'</label>';
 				$str .= '<div class="col-sm-7"><input type="radio" name="'.esc_attr($name).'" value="'.esc_attr($value).'" '.$checked.' autocomplete="off">'.$extraHtmlAfterInput.'</div>';
 				$str .= '</div>';
 			}
@@ -338,16 +338,18 @@ class AdminHelper
 		if ($query == '') {
 			$query = 'SELECT firstName, lastName, email, cDate, '.$additionalColumn.' '.$postsTablename.'.post_title AS subscriptionTitle FROM '.$subscribersTablename.' ';
 		}
-
-		$searchQuery = ' unsubscribed <> 1';
+		$array_mapping_search = [];	
+		$searchQuery = ' unsubscribed <> %d';
+		$array_mapping_search[] = 1;
 		$filterCriteria = '';
 
 		$query .= ' LEFT JOIN '.$postsTablename.' ON '.$postsTablename.'.ID='.$subscribersTablename.'.subscriptionType';
-
+		
 		if (isset($_GET['sgpb-subscription-popup-id']) && !empty($_GET['sgpb-subscription-popup-id'])) {
 			$filterCriteria = sanitize_text_field($_GET['sgpb-subscription-popup-id']);
 			if ($filterCriteria != 'all') {
-				$searchQuery .= " AND (subscriptionType = '".esc_sql((int)$filterCriteria)."')";
+				$searchQuery .= " AND (subscriptionType = %s)";
+				$array_mapping_search[] = esc_sql((int)$filterCriteria);
 			}
 		}
 		if ($filterCriteria != '' && $filterCriteria != 'all' && isset($_GET['s']) && !empty($_GET['s'])) {
@@ -360,7 +362,11 @@ class AdminHelper
 				$searchQuery .= ' AND ';
 			}
 			$searchCriteria = "%" . esc_sql($wpdb->esc_like( $searchCriteria )) . "%";
-			$searchQuery .= "(firstName LIKE '$searchCriteria' or lastName LIKE '$searchCriteria' or email LIKE '$searchCriteria' or $postsTablename.post_title LIKE '$searchCriteria')";
+			$searchQuery .= "(firstName LIKE %s or lastName LIKE %s or email LIKE %s or $postsTablename.post_title LIKE %s)";
+			$array_mapping_search[] = $searchCriteria;
+			$array_mapping_search[] = $searchCriteria;
+			$array_mapping_search[] = $searchCriteria;
+			$array_mapping_search[] = $searchCriteria;
 		}
 		if (isset($_GET['sgpb-subscribers-date']) && !empty($_GET['sgpb-subscribers-date'])) {
 			$filterCriteriaDate = sanitize_text_field($_GET['sgpb-subscribers-date']);
@@ -368,14 +374,14 @@ class AdminHelper
 				if ($searchQuery != '') {
 					$searchQuery .= ' AND ';
 				}
-				$searchQuery .= " cDate LIKE '".esc_sql( $wpdb->esc_like($filterCriteriaDate))."%'";
+				$searchQuery .= " cDate LIKE %s ";
+				$array_mapping_search[] = esc_sql( $wpdb->esc_like($filterCriteriaDate)).'%';
 			}
 		}
 		if ($searchQuery != '') {
 			$query .= " WHERE $searchQuery";
-		}
-
-		return $query;
+		}		
+		return $wpdb->prepare( $query, $array_mapping_search );
 	}
 
 	public static function themeRelatedSettings($popupId, $buttonPosition, $theme)
@@ -437,8 +443,8 @@ class AdminHelper
 	public static function getFormattedDate($date)
 	{
 		$date = strtotime($date);
-		$month = date('F', $date);
-		$year = date('Y', $date);
+		$month = gmdate('F', $date);
+		$year = gmdate('Y', $date);
 
 		return $month.' '.$year;
 	}
@@ -669,8 +675,8 @@ class AdminHelper
 		<p class="sgpb-extension-notice-close">x</p>
 		<div class="sgpb-extensions-list-wrapper">
 			<div class="sgpb-notice-header">
-				<h3><?php esc_html_e('Popup Builder plugin has been successfully updated', SG_POPUP_TEXT_DOMAIN); ?></h3>
-				<h4><?php esc_html_e('The following extensions need to be updated manually', SG_POPUP_TEXT_DOMAIN); ?></h4>
+				<h3><?php esc_html_e('Popup Builder plugin has been successfully updated', 'popup-builder'); ?></h3>
+				<h4><?php esc_html_e('The following extensions need to be updated manually', 'popup-builder'); ?></h4>
 			</div>
 			<ul class="sgpb-extensions-list">
 				<?php foreach ($extensions as $extensionName): ?>
@@ -678,7 +684,7 @@ class AdminHelper
 				<?php endforeach; ?>
 			</ul>
 		</div>
-		<p class="sgpb-extension-notice-dont-show"><?php esc_html_e('Don\'t show again', SG_POPUP_TEXT_DOMAIN)?></p>
+		<p class="sgpb-extension-notice-dont-show"><?php esc_html_e('Don\'t show again', 'popup-builder')?></p>
 		<?php
 		$content = ob_get_contents();
 		ob_get_clean();
@@ -754,11 +760,14 @@ class AdminHelper
 			<div class="welcome-panel-content">
 				<p class="sgpb-problem-notice-close">x</p>
 				<div class="sgpb-alert-problem-text-wrapper">
-					<h3><?php esc_html_e('Popup Builder plugin has been updated to the new version 3.', SG_POPUP_TEXT_DOMAIN); ?></h3>
-					<h5><?php esc_html_e('A lot of changes and improvements have been made.', SG_POPUP_TEXT_DOMAIN); ?></h5>
-					<h5><?php _e('In case of any issues, please contact us <a href="<?php echo SG_POPUP_TICKET_URL; ?>" target="_blank">here</a>.', SG_POPUP_TEXT_DOMAIN); ?></h5>
+					<h3><?php esc_html_e('Popup Builder plugin has been updated to the new version 3.', 'popup-builder'); ?></h3>
+					<h5><?php esc_html_e('A lot of changes and improvements have been made.', 'popup-builder'); ?></h5>
+					<h5><?php 
+						/* translators: Ticket URL */
+						printf( wp_kses_post( __('In case of any issues, please contact us <a href="%s" target="_blank">here</a>.', 'popup-builder') ) , esc_url( SG_POPUP_TICKET_URL ) ); 
+						?></h5>
 				</div>
-				<p class="sgpb-problem-notice-dont-show"><?php esc_html_e('Don\'t show again', SG_POPUP_TEXT_DOMAIN); ?></p>
+				<p class="sgpb-problem-notice-dont-show"><?php esc_html_e('Don\'t show again', 'popup-builder'); ?></p>
 			</div>
 		</div>
 		<?php
@@ -876,8 +885,10 @@ class AdminHelper
 		if ($subscriber && $noSubscriber) {
 			self::deleteSubscriber($params);
 		}
-		else if (!$noSubscriber) {
-			_e('<span>Oops, something went wrong, please try again or contact the administrator to check more info.</span>', SG_POPUP_TEXT_DOMAIN);
+		else if (!$noSubscriber) {						
+			printf( '<span>%s</span>' , 
+				wp_kses_post(__('Oops, something went wrong, please try again or contact the administrator to check more info.', 'popup-builder') )				
+			);		
 			wp_die();
 		}
 	}
@@ -909,8 +920,12 @@ class AdminHelper
 
 		$prepareSql = $wpdb->prepare('UPDATE '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' SET unsubscribed = 1 WHERE id = %s ', $params['subscriberId']);
 		$wpdb->query($prepareSql);
-
-		_e('<span>You have successfully unsubscribed. <a href="'.esc_attr($homeUrl).'">click here</a> to go to the home page.</span>', SG_POPUP_TEXT_DOMAIN);
+		/* translators: Home page URL */
+		printf( '<span>%1$s <a href="%2$s">click here</a> %3$s</span>' , 
+			wp_kses_post(__('You have successfully unsubscribed.', 'popup-builder') ), 
+			esc_url($homeUrl), 
+			wp_kses_post(__(' to go to the home page.', 'popup-builder') )
+		);
 		wp_die();
 	}
 
@@ -923,12 +938,12 @@ class AdminHelper
 		$newsletterOptions = get_option('SGPB_NEWSLETTER_DATA');
 		$receiverEmail = get_bloginfo('admin_email');
 		$userEmail = $params['email'];
-		$emailTitle = __('Unsubscription', SG_POPUP_TEXT_DOMAIN);
+		$emailTitle = __('Unsubscription', 'popup-builder');
 		$subscriptionFormId = (int)$newsletterOptions['subscriptionFormId'];
 		$subscriptionFormTitle = get_the_title($subscriptionFormId);
-
-		$message = __('User with '.$userEmail.' email has unsubscribed from '.$subscriptionFormTitle.' mail list', SG_POPUP_TEXT_DOMAIN);
-
+		/* translators: user Email, subscription Form Title */
+		$message = sprintf( __('User with %1$s email has unsubscribed from %2$s mail list', 'popup-builder'), $userEmail, $subscriptionFormTitle); 
+		
 		$headers  = 'MIME-Version: 1.0'."\r\n";
 		$headers .= 'From: WordPress Popup Builder'."\r\n";
 		$headers .= 'Content-type: text/html; charset=UTF-8'."\r\n"; //set UTF-8
@@ -962,13 +977,13 @@ class AdminHelper
 
 	public static function supportBannerNotification()
 	{
-		$content = '<div class="sgpb-support-notification-wrapper sgpb-wrapper"><h4 class="sgpb-support-notification-title">'.__('Need some help?', SG_POPUP_TEXT_DOMAIN).'</h4>';
-		$content .= '<h4 class="sgpb-support-notification-title">'.__('Let us know what you think.', SG_POPUP_TEXT_DOMAIN).'</h4>';
-		$content .= '<a class="btn btn-info" target="_blank" href="'.SG_POPUP_RATE_US_URL.'"><span class="dashicons sgpb-dashicons-heart sgpb-info-text-white"></span><span class="sg-info-text">'.__('Rate Us', SG_POPUP_TEXT_DOMAIN).'</span></a>';
-		$content .= '<a class="btn btn-info" target="_blank" href="'.SG_POPUP_TICKET_URL.'"><span class="dashicons sgpb-dashicons-megaphone sgpb-info-text-white"></span>'.__('Support Portal', SG_POPUP_TEXT_DOMAIN).'</a>';
-		$content .= '<a class="btn btn-info" target="_blank" href="https://wordpress.org/support/plugin/popup-builder"><span class="dashicons sgpb-dashicons-admin-plugins sgpb-info-text-white"></span>'.__('Support Forum', SG_POPUP_TEXT_DOMAIN).'</a>';
-		$content .= '<a class="btn btn-info" target="_blank" href="'.SG_POPUP_STORE_URL.'"><span class="dashicons sgpb-dashicons-editor-help sgpb-info-text-white"></span>'.__('LIVE chat', SG_POPUP_TEXT_DOMAIN).'</a>';
-		$content .= '<a class="btn btn-info" target="_blank" href="mailto:support@popup-builder.com?subject=Hello"><span class="dashicons sgpb-dashicons-email-alt sgpb-info-text-white"></span>'.__('Email', SG_POPUP_TEXT_DOMAIN).'</a></div>';
+		$content = '<div class="sgpb-support-notification-wrapper sgpb-wrapper"><h4 class="sgpb-support-notification-title">'.__('Need some help?', 'popup-builder').'</h4>';
+		$content .= '<h4 class="sgpb-support-notification-title">'.__('Let us know what you think.', 'popup-builder').'</h4>';
+		$content .= '<a class="btn btn-info" target="_blank" href="'.SG_POPUP_RATE_US_URL.'"><span class="dashicons sgpb-dashicons-heart sgpb-info-text-white"></span><span class="sg-info-text">'.__('Rate Us', 'popup-builder').'</span></a>';
+		$content .= '<a class="btn btn-info" target="_blank" href="'.SG_POPUP_TICKET_URL.'"><span class="dashicons sgpb-dashicons-megaphone sgpb-info-text-white"></span>'.__('Support Portal', 'popup-builder').'</a>';
+		$content .= '<a class="btn btn-info" target="_blank" href="https://wordpress.org/support/plugin/popup-builder"><span class="dashicons sgpb-dashicons-admin-plugins sgpb-info-text-white"></span>'.__('Support Forum', 'popup-builder').'</a>';
+		$content .= '<a class="btn btn-info" target="_blank" href="'.SG_POPUP_STORE_URL.'"><span class="dashicons sgpb-dashicons-editor-help sgpb-info-text-white"></span>'.__('LIVE chat', 'popup-builder').'</a>';
+		$content .= '<a class="btn btn-info" target="_blank" href="mailto:support@popup-builder.com?subject=Hello"><span class="dashicons sgpb-dashicons-email-alt sgpb-info-text-white"></span>'.__('Email', 'popup-builder').'</a></div>';
 		$content .= '<div class="sgpb-support-notification-dont-show">'.__('Bored of this?').'<a class="sgpb-dont-show-again-support-notification" href="javascript:void(0)">'.__(' Press here ').'</a>'.__('and we will not show it again!').'</div>';
 
 		return $content;
@@ -977,7 +992,12 @@ class AdminHelper
 	public static function getMaxOpenDaysMessage()
 	{
 		$getUsageDays = self::getPopupUsageDays();
-		$firstHeader = __('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">This is great!</strong> We have noticed that you are using Popup Builder plugin on your site for '.$getUsageDays.' days, we are thankful for that.</h1>', SG_POPUP_TEXT_DOMAIN);
+		/* translators: Usage Days */
+		$firstHeader = sprintf('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">%1$s</strong> %2$s %3$d %4$s</h1>', 
+			__('This is great!','popup-builder'),
+			__('We have noticed that you are using Popup Builder plugin on your site for','popup-builder'),
+			__('days, we are thankful for that.','popup-builder')
+		);
 		$popupContent = self::getMaxOpenPopupContent($firstHeader, 'days');
 
 		return $popupContent;
@@ -1052,13 +1072,13 @@ class AdminHelper
 		<div class="sgpb-review-wrapper">
 			<div class="sgpb-review-description">
 				<?php echo wp_kses($firstHeader, 'post'); ?>
-				<h2 class="sgrb-review-h2"><?php esc_html_e('This is really great for your website score.', SG_POPUP_TEXT_DOMAIN); ?></h2>
-				<p class="sgrb-review-mt20"><?php _e('Have your input in the development of our plugin, and we’ll provide better conversions for your site!<br /> Leave your 5-star positive review and help us go further to the perfection!', SG_POPUP_TEXT_DOMAIN); ?></p>
+				<h2 class="sgrb-review-h2"><?php esc_html_e('This is really great for your website score.', 'popup-builder'); ?></h2>
+				<p class="sgrb-review-mt20"><?php esc_html_e('Have your input in the development of our plugin, and we’ll provide better conversions for your site!<br /> Leave your 5-star positive review and help us go further to the perfection!', 'popup-builder'); ?></p>
 			</div>
 			<div class="sgpb-buttons-wrapper">
-				<button class="press press-grey sgpb-button-1 sgpb-close-promo-notification" data-action="sg-already-did-review"><?php esc_html_e('I already did', SG_POPUP_TEXT_DOMAIN); ?></button>
-				<button class="press press-lightblue sgpb-button-3 sgpb-close-promo-notification" data-action="sg-you-worth-it"><?php esc_html_e('You worth it!', SG_POPUP_TEXT_DOMAIN); ?></button>
-				<button class="press press-grey sgpb-button-2 sgpb-close-promo-notification" data-action="sg-show-popup-period" data-message-type="<?php echo esc_attr($type); ?>"><?php esc_html_e('Maybe later', SG_POPUP_TEXT_DOMAIN); ?></button></div>
+				<button class="press press-grey sgpb-button-1 sgpb-close-promo-notification" data-action="sg-already-did-review"><?php esc_html_e('I already did', 'popup-builder'); ?></button>
+				<button class="press press-lightblue sgpb-button-3 sgpb-close-promo-notification" data-action="sg-you-worth-it"><?php esc_html_e('You worth it!', 'popup-builder'); ?></button>
+				<button class="press press-grey sgpb-button-2 sgpb-close-promo-notification" data-action="sg-show-popup-period" data-message-type="<?php echo esc_attr($type); ?>"><?php esc_html_e('Maybe later', 'popup-builder'); ?></button></div>
 			<div> </div>
 		</div>
 		<?php
@@ -1091,7 +1111,7 @@ class AdminHelper
 			}
 			$remainingDays = SGPB_REVIEW_POPUP_PERIOD - $usageDays;
 
-			$popupTimeZone = \ConfigDataHelper::getDefaultTimezone();
+			$popupTimeZone = \SGPBConfigDataHelper::getDefaultTimezone();
 			$timeDate = new DateTime('now', new DateTimeZone($popupTimeZone));
 			$timeDate->modify('+'.$remainingDays.' day');
 
@@ -1176,8 +1196,17 @@ class AdminHelper
 		if (!empty($counterMaxPopup['maxCount'])) {
 			$maxCountDefine = $counterMaxPopup['maxCount'];
 		}
-
-		$firstHeader = __('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">Awesome news!</strong> <b>Popup Builder</b> plugin helped you to share your message via <strong class="sgrb-review-strong">'.$popupTitle.'</strong> popup with your visitors for <strong class="sgrb-review-strong">'.$maxCountDefine.' times!</strong></h1>', SG_POPUP_TEXT_DOMAIN);
+		/* translators: popup Title, max Count Define */
+		$firstHeader = 
+		//sprintf( __('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">Awesome news!</strong> <b>Popup Builder</b>plugin helped you to share your message via<strong class="sgrb-review-strong">%1$s</strong>popup with your visitors for<strong class="sgrb-review-strong">%2$d times!</strong></h1>', 'popup-builder'), $popupTitle, $maxCountDefine);
+		sprintf('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">%1$s</strong> <b>%2$s</b> %3$s <strong class="sgrb-review-strong">%4$s </strong>%5$s<strong class="sgrb-review-strong">%6$d %7$s</strong></h1>', 
+			__('Awesome news!','popup-builder'),
+			__('Popup Builder','popup-builder'),
+			__('plugin helped you to share your message via','popup-builder'),
+			esc_html( $popupTitle ),
+			__('popup with your visitors for','popup-builder'),
+			__('times!','popup-builder')			
+		);
 		$popupContent = self::getMaxOpenPopupContent($firstHeader, 'count');
 
 		return $popupContent;
@@ -1285,11 +1314,11 @@ class AdminHelper
 	public static function getGutenbergPopupsEvents()
 	{
 		$data =  array(
-			array('value' => '', 'title' => __('Select Event', SG_POPUP_TEXT_DOMAIN)),
-			array('value' => 'inherit', 'title' => __('Inherit', SG_POPUP_TEXT_DOMAIN)),
-			array('value' => 'onLoad', 'title' => __('On load', SG_POPUP_TEXT_DOMAIN)),
-			array('value' => 'click', 'title' => __('On click', SG_POPUP_TEXT_DOMAIN)),
-			array('value' => 'hover', 'title' => __('On hover', SG_POPUP_TEXT_DOMAIN))
+			array('value' => '', 'title' => __('Select Event', 'popup-builder')),
+			array('value' => 'inherit', 'title' => __('Inherit', 'popup-builder')),
+			array('value' => 'onLoad', 'title' => __('On load', 'popup-builder')),
+			array('value' => 'click', 'title' => __('On click', 'popup-builder')),
+			array('value' => 'hover', 'title' => __('On hover', 'popup-builder'))
 		);
 
 		return $data;
@@ -1437,7 +1466,7 @@ class AdminHelper
 				$registeredPlugins[$key]['options']['licence']['file'] = $registeredPlugin['options']['licence']['file'];
 			}
 		}
-		$registeredPlugins = json_encode($registeredPlugins);
+		$registeredPlugins = wp_json_encode($registeredPlugins);
 
 		AdminHelper::updateOption(SGPB_POPUP_BUILDER_REGISTERED_PLUGINS, $registeredPlugins);
 		return true;
@@ -1530,7 +1559,7 @@ class AdminHelper
 		if (empty($postMeta)) {
 			return '';
 		}
-		$defaultData = \ConfigDataHelper::defaultData();
+		$defaultData = \SGPBConfigDataHelper::defaultData();
 
 		// get scripts
 		if (!isset($postMeta['js'])) {
@@ -1774,9 +1803,9 @@ class AdminHelper
 		// Server configuration (really just versioning)
 		$systemInfoContent .= "\n".'-- Webserver Configuration'."\n\n";
 		$systemInfoContent .= 'PHP Version:              '.PHP_VERSION."\n";
-		$systemInfoContent .= 'MySQL Version:            '.$wpdb->db_version()."\n";
-		$systemInfoContent .= 'Webserver Info:           '.isset($_SERVER['SERVER_SOFTWARE'])?$_SERVER['SERVER_SOFTWARE']:''."\n";
-
+		$systemInfoContent .= 'MySQL Version:            '.$wpdb->db_version()."\n";		
+		$serverinfo = isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field($_SERVER['SERVER_SOFTWARE']) : '';
+		$systemInfoContent .= 'Webserver Info:           '.$serverinfo."\n";
 		// PHP configs... now we're getting to the important stuff
 		$systemInfoContent .= "\n".'-- PHP Configuration'."\n\n";
 		$systemInfoContent .= 'Memory Limit:             '.ini_get('memory_limit')."\n";
@@ -1806,7 +1835,6 @@ class AdminHelper
 			$systemInfoContent .= 'Use Cookies:              '.(ini_get('session.use_cookies') ? 'On' : 'Off')."\n";
 			$systemInfoContent .= 'Use Only Cookies:         '.(ini_get('session.use_only_cookies') ? 'On' : 'Off')."\n";
 		}
-
 		$systemInfoContent = apply_filters('sgpbSystemInformation', $systemInfoContent);
 
 		$systemInfoContent .= "\n".'### End System Info ###';
@@ -1851,16 +1879,15 @@ class AdminHelper
 		}
 		else {
 			// Adding a general fallback for data gathering
-			return 'DBH: '.DB_HOST.', SRV: '.(isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '');
+			$servername = isset($_SERVER['SERVER_NAME']) ? sanitize_text_field($_SERVER['SERVER_NAME']) : '';
+			return 'DBH: '.DB_HOST.', SRV: '.$servername;
 		}
 	}
 
 	public static function getBrowser()
 	{
-		$uAgent = 'Unknown';
-		if (isset($_SERVER['HTTP_USER_AGENT'])) {
-			$uAgent = $_SERVER['HTTP_USER_AGENT'];
-		}
+		
+		$uAgent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : 'Unknown';		
 		$bname = $platform = $ub = $version = 'Unknown';
 		$browserInfoContent = '';
 
@@ -2086,7 +2113,7 @@ class AdminHelper
 
 		$pattern = "/\[(\[?)(Unsubscribe)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]\*+(?:\[(?!\/\2\])[^\[]\*+)\*+)\[\/\2\])?)(\]?)/";
 		preg_match($pattern, $emailMessage, $matches);
-		$title = __('Unsubscribe', SG_POPUP_TEXT_DOMAIN);
+		$title = __('Unsubscribe', 'popup-builder');
 		if ($matches) {
 			$patternUnsubscribe = $matches[0];
 			// If user didn't change anything inside the [unsubscribe] shortcode $matches[2] will be equal to 'Unsubscribe'

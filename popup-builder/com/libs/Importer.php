@@ -109,8 +109,8 @@ class WP_Import extends WP_Importer
 	public function import_start($file)
 	{
 		if (!is_file($file)) {
-			echo '<p><strong>' . __('Sorry, there has been an error.', SG_POPUP_TEXT_DOMAIN) . '</strong><br />';
-			echo __('The file does not exist, please try again.', SG_POPUP_TEXT_DOMAIN) . '</p>';
+			echo '<p><strong>' . esc_html( __('Sorry, there has been an error.', 'popup-builder') ). '</strong><br />';
+			echo esc_html( __('The file does not exist, please try again.', 'popup-builder') ). '</p>';
 			$this->footer();
 			die();
 		}
@@ -118,7 +118,7 @@ class WP_Import extends WP_Importer
 		$import_data = $this->parse($file);
 
 		if (is_wp_error($import_data)) {
-			echo '<p><strong>' . __('Sorry, there has been an error.', SG_POPUP_TEXT_DOMAIN) . '</strong><br />';
+			echo '<p><strong>' . esc_html( __('Sorry, there has been an error.', 'popup-builder') ). '</strong><br />';
 			echo esc_html($import_data->get_error_message()) . '</p>';
 			$this->footer();
 			die();
@@ -154,7 +154,7 @@ class WP_Import extends WP_Importer
 		wp_defer_term_counting(false);
 		wp_defer_comment_counting(false);
 
-		echo '<p>'.__('All done.', SG_POPUP_TEXT_DOMAIN).' <a href="'.admin_url().'edit.php?post_type='.SG_POPUP_POST_TYPE.'">'.__('Have fun!', SG_POPUP_TEXT_DOMAIN).'</a>'.'</p>';
+		echo '<p>'.esc_html__('All done.', 'popup-builder').' <a href="'.esc_url( admin_url() ).'edit.php?post_type='.esc_html( SG_POPUP_POST_TYPE ).'">'.esc_html__('Have fun!', 'popup-builder').'</a>'.'</p>';
 
 		do_action('import_end');
 	}
@@ -170,13 +170,14 @@ class WP_Import extends WP_Importer
 		$file = wp_import_handle_upload();
 
 		if (isset($file['error'])) {
-			echo '<p><strong>' . __('Sorry, there has been an error.', SG_POPUP_TEXT_DOMAIN).'</strong><br />';
+			echo '<p><strong>' . esc_html( __('Sorry, there has been an error.', 'popup-builder') ).'</strong><br />';
 			echo esc_html($file['error']).'</p>';
 			return false;
 		}
 		else if (!file_exists($file['file'])) {
-			echo '<p><strong>' . __('Sorry, there has been an error.', SG_POPUP_TEXT_DOMAIN).'</strong><br />';
-			printf(__('The export file could not be found at <code>%s</code>. It is likely that this was caused by a permissions problem.', SG_POPUP_TEXT_DOMAIN), esc_html($file['file']));
+			echo '<p><strong>' . esc_html( __('Sorry, there has been an error.', 'popup-builder') ).'</strong><br />';
+			/* translators: export file path */
+			printf(wp_kses_post(__('The export file could not be found at <code>%s</code>. It is likely that this was caused by a permissions problem.', 'popup-builder')), esc_html($file['file']));
 			echo '</p>';
 			return false;
 		}
@@ -184,7 +185,7 @@ class WP_Import extends WP_Importer
 		$this->id = (int)$file['id'];
 		$import_data = $this->parse($file['file']);
 		if (is_wp_error($import_data)) {
-			echo '<p><strong>' . __('Sorry, there has been an error.', SG_POPUP_TEXT_DOMAIN).'</strong><br />';
+			echo '<p><strong>' . esc_html( __('Sorry, there has been an error.', 'popup-builder') ).'</strong><br />';
 			echo esc_html($import_data->get_error_message()).'</p>';
 			return false;
 		}
@@ -192,7 +193,8 @@ class WP_Import extends WP_Importer
 		$this->version = $import_data['version'];
 		if ($this->version > $this->max_wxr_version) {
 			echo '<div class="error"><p><strong>';
-			printf(__('This WXR file (version %s) may not be supported by this version of the importer. Please consider updating.', SG_POPUP_TEXT_DOMAIN), esc_html($import_data['version']));
+			/* translators: import data version */
+			printf(wp_kses_post( __('This WXR file (version %s) may not be supported by this version of the importer. Please consider updating.', 'popup-builder') ), esc_html($import_data['version']));
 			echo '</strong></p></div>';
 		}
 
@@ -219,7 +221,8 @@ class WP_Import extends WP_Importer
 			foreach ($import_data['posts'] as $post) {
 				$login = sanitize_user($post['post_author'], true);
 				if (empty($login)) {
-					printf(__('Failed to import author %s. Their posts will be attributed to the current user.', SG_POPUP_TEXT_DOMAIN), esc_html($post['post_author']));
+					/* translators: post author */
+					printf(wp_kses_post( __('Failed to import author %s. Their posts will be attributed to the current user.', 'popup-builder') ), esc_html($post['post_author']));
 					echo '<br />';
 					continue;
 				}
@@ -242,15 +245,17 @@ class WP_Import extends WP_Importer
 	{
 		$j = 0;
 		?>
-		<form action="<?php echo admin_url('admin.php?import='.SG_POPUP_POST_TYPE.'&amp;step=2'); ?>" method="post">
+		<form action="<?php echo esc_url( admin_url('admin.php?import='.SG_POPUP_POST_TYPE.'&amp;step=2') ); ?>" method="post">
 			<?php wp_nonce_field('import-wordpress'); ?>
 			<input type="hidden" name="import_id" value="<?php echo esc_html($this->id); ?>" />
 
 			<?php if (!empty($this->authors)) : ?>
-				<h3><?php _e('Assign Authors', SG_POPUP_TEXT_DOMAIN); ?></h3>
-				<p><?php _e('To make it easier for you to edit and save the imported content, you may want to reassign the author of the imported item to an existing user of this site. For example, you may want to import all the entries as <code>admin</code>s entries.', SG_POPUP_TEXT_DOMAIN); ?></p>
+				<h3><?php esc_html_e('Assign Authors', 'popup-builder'); ?></h3>
+				<p><?php esc_html_e('To make it easier for you to edit and save the imported content, you may want to reassign the author of the imported item to an existing user of this site. For example, you may want to import all the entries as <code>admin</code>s entries.', 'popup-builder'); ?></p>
 				<?php if ($this->allow_create_users()) : ?>
-					<p><?php printf(__('If a new user is created by WordPress, a new password will be randomly generated and the new user&#8217;s role will be set as %s. Manually changing the new user&#8217;s details will be necessary.', SG_POPUP_TEXT_DOMAIN), esc_html(get_option('default_role'))); ?></p>
+					<p><?php 
+					/* translators: default role */
+					printf(wp_kses_post(__('If a new user is created by WordPress, a new password will be randomly generated and the new user&#8217;s role will be set as %s. Manually changing the new user&#8217;s details will be necessary.', 'popup-builder') ), esc_html(get_option('default_role'))); ?></p>
 				<?php endif; ?>
 				<ol id="authors">
 					<?php foreach ($this->authors as $author) : ?>
@@ -259,7 +264,7 @@ class WP_Import extends WP_Importer
 				</ol>
 			<?php endif; ?>
 
-			<p class="submit"><input type="submit" class="button" value="<?php esc_attr_e('Submit', SG_POPUP_TEXT_DOMAIN); ?>" /></p>
+			<p class="submit"><input type="submit" class="button" value="<?php esc_attr_e('Submit', 'popup-builder'); ?>" /></p>
 		</form>
 		<?php
 	}
@@ -273,7 +278,7 @@ class WP_Import extends WP_Importer
 	 */
 	public function author_select($n, $author)
 	{
-		_e('Import author:', SG_POPUP_TEXT_DOMAIN);
+		esc_html_e('Import author:', 'popup-builder');
 		echo ' <strong>' . esc_html($author['author_display_name']);
 		if ($this->version != '1.0') echo ' (' . esc_html($author['author_login']) . ')';
 		echo '</strong><br />';
@@ -284,21 +289,21 @@ class WP_Import extends WP_Importer
 		$create_users = $this->allow_create_users();
 		if ($create_users) {
 			if ($this->version != '1.0') {
-				_e('or create new user with login name:', SG_POPUP_TEXT_DOMAIN);
+				esc_html_e('or create new user with login name:', 'popup-builder');
 				$value = '';
 			} else {
-				_e('as a new user:', SG_POPUP_TEXT_DOMAIN);
+				esc_html_e('as a new user:', 'popup-builder');
 				$value = esc_attr(sanitize_user($author['author_login'], true));
 			}
 
-			echo ' <input type="text" name="user_new['.esc_attr($n).']" value="'. $value .'" /><br />';
+			echo ' <input type="text" name="user_new['.esc_attr($n).']" value="'. esc_attr( $value ) .'" /><br />';
 		}
 
 		if (!$create_users && $this->version == '1.0')
-			_e('assign posts to an existing user:', SG_POPUP_TEXT_DOMAIN);
+			esc_html_e('assign posts to an existing user:', 'popup-builder');
 		else
-			_e('or assign posts to an existing user:', SG_POPUP_TEXT_DOMAIN);
-		wp_dropdown_users(array('name' => "user_map[$n]", 'multi' => true, 'show_option_all' => __('- Select -', SG_POPUP_TEXT_DOMAIN)));
+			esc_html_e('or assign posts to an existing user:', 'popup-builder');
+		wp_dropdown_users(array('name' => "user_map[$n]", 'multi' => true, 'show_option_all' => __('- Select -', 'popup-builder')));
 		echo '<input type="hidden" name="imported_authors['.esc_attr($n).']" value="' . esc_attr($author['author_login']) . '" />';
 
 		if ($this->version != '1.0')
@@ -312,6 +317,20 @@ class WP_Import extends WP_Importer
 	 */
 	public function get_author_mapping()
 	{
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			return;
+		}
+		
+		/* Validate nonce */			
+		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( $_POST['_wpnonce'] ) : '';	
+		
+		if ( empty( $nonce ) || !wp_verify_nonce( $nonce, 'import-wordpress' ) ) { 		
+			return;
+		}
+		
 		if (!isset($_POST['imported_authors'])) {
 			return;
 		}
@@ -332,7 +351,7 @@ class WP_Import extends WP_Importer
 				}
 			} else if ($create_users) {
 				if (!empty($_POST['user_new'][$i])) {
-					$user_id = wp_create_user($_POST['user_new'][$i], wp_generate_password());
+					$user_id = wp_create_user( sanitize_user( $_POST['user_new'][$i] ), wp_generate_password());
 				} else if ($this->version != '1.0') {
 					$user_data = array(
 						'user_login' => $old_login,
@@ -350,9 +369,10 @@ class WP_Import extends WP_Importer
 						$this->processed_authors[$old_id] = $user_id;
 					$this->author_mapping[$santized_old_login] = $user_id;
 				} else {
-					printf(__('Failed to create new user for %s. Their posts will be attributed to the current user.', SG_POPUP_TEXT_DOMAIN), esc_html($this->authors[$old_login]['author_display_name']));
+					/* translators: author display name */
+					printf(wp_kses_post(__('Failed to create new user for %s. Their posts will be attributed to the current user.', 'popup-builder')), esc_html($this->authors[$old_login]['author_display_name']));
 					if (defined('IMPORT_DEBUG') && IMPORT_DEBUG)
-						echo ' ' . $user_id->get_error_message();
+						echo ' ' . esc_html( $user_id->get_error_message() );
 					echo '<br />';
 				}
 			}
@@ -403,9 +423,10 @@ class WP_Import extends WP_Importer
 				if (isset($cat['term_id']))
 					$this->processed_terms[intval($cat['term_id'])] = $id;
 			} else {
-				printf(__('Failed to import category %s', SG_POPUP_TEXT_DOMAIN), esc_html($cat['category_nicename']));
+				/* translators: category nicename */
+				printf(wp_kses_post(__('Failed to import category %s', 'popup-builder')), esc_html($cat['category_nicename']));
 				if (defined('IMPORT_DEBUG') && IMPORT_DEBUG)
-					echo ': ' . $id->get_error_message();
+					echo ': ' . esc_html( $id->get_error_message() );
 				echo '<br />';
 				continue;
 			}
@@ -447,9 +468,10 @@ class WP_Import extends WP_Importer
 				if (isset($tag['term_id']))
 					$this->processed_terms[intval($tag['term_id'])] = $id['term_id'];
 			} else {
-				printf(__('Failed to import post tag %s', SG_POPUP_TEXT_DOMAIN), esc_html($tag['tag_name']));
+				/* translators: tag name */
+				printf(wp_kses_post(__('Failed to import post tag %s', 'popup-builder')), esc_html($tag['tag_name']));
 				if (defined('IMPORT_DEBUG') && IMPORT_DEBUG)
-					echo ': ' . $id->get_error_message();
+					echo ': ' . esc_html( $id->get_error_message() );
 				echo '<br />';
 				continue;
 			}
@@ -497,9 +519,10 @@ class WP_Import extends WP_Importer
 				if (isset($term['term_id']))
 					$this->processed_terms[intval($term['term_id'])] = $id['term_id'];
 			} else {
-				printf(__('Failed to import %s %s', SG_POPUP_TEXT_DOMAIN), esc_html($term['term_taxonomy']), esc_html($term['term_name']));
+				/* translators: term taxonomy, term name */
+				printf(wp_kses_post(__('Failed to import %1$s %2$s', 'popup-builder')), esc_html($term['term_taxonomy']), esc_html($term['term_name']));
 				if (defined('IMPORT_DEBUG') && IMPORT_DEBUG)
-					echo ': ' . $id->get_error_message();
+					echo ': ' . esc_html( $id->get_error_message() );
 				echo '<br />';
 				continue;
 			}
@@ -588,7 +611,8 @@ class WP_Import extends WP_Importer
 			$post = apply_filters('wp_import_post_data_raw', $post);
 
 			if (!post_type_exists($post['post_type'])) {
-				printf(__('Failed to import &#8220;%s&#8221;: Invalid post type %s', SG_POPUP_TEXT_DOMAIN),
+				/* translators: post title, post type */
+				printf(wp_kses_post(__('Failed to import &#8220;%1$s&#8221;: Invalid post type %2$s', 'popup-builder')),
 					esc_html($post['post_title']), esc_html($post['post_type']));
 				echo '<br />';
 				do_action('wp_import_post_exists', $post);
@@ -627,7 +651,8 @@ class WP_Import extends WP_Importer
 			$post_exists = apply_filters('wp_import_existing_post', $post_exists, $post);
 
 			if ($post_exists && get_post_type($post_exists) == $post['post_type']) {
-				printf(__('%s &#8220;%s&#8221; already exists.', SG_POPUP_TEXT_DOMAIN), $post_type_object->labels->singular_name, esc_html($post['post_title']));
+				/* translators: singular name ,post title */
+				printf(wp_kses_post(__('%1$s &#8220;%2$s&#8221; already exists.', 'popup-builder')), esc_html( $post_type_object->labels->singular_name ), esc_html($post['post_title']));
 				echo '<br />';
 				$comment_post_ID = $post_id = $post_exists;
 				$this->processed_posts[ intval($post['post_id']) ] = intval($post_exists);
@@ -691,10 +716,11 @@ class WP_Import extends WP_Importer
 				}
 
 				if (is_wp_error($post_id)) {
-					printf(__('Failed to import %s &#8220;%s&#8221;', SG_POPUP_TEXT_DOMAIN),
-						$post_type_object->labels->singular_name, esc_html($post['post_title']));
+					/* translators: singular name ,post title */
+					printf(wp_kses_post(__('Failed to import %1$s &#8220;%2$s&#8221;', 'popup-builder')),
+						esc_html($post_type_object->labels->singular_name), esc_html($post['post_title']));
 					if (defined('IMPORT_DEBUG') && IMPORT_DEBUG)
-						echo ': ' . $post_id->get_error_message();
+						echo ': ' . esc_html( $post_id->get_error_message() );
 					echo '<br />';
 					continue;
 				}
@@ -726,9 +752,10 @@ class WP_Import extends WP_Importer
 							$term_id = $t['term_id'];
 							do_action('wp_import_insert_term', $t, $term, $post_id, $post);
 						} else {
-							printf(__('Failed to import %s %s', SG_POPUP_TEXT_DOMAIN), esc_html($taxonomy), esc_html($term['name']));
+							/* translators: taxonomy type , taxonomy name */
+							printf(wp_kses_post(__('Failed to import %1$s %2$s', 'popup-builder')), esc_html($taxonomy), esc_html($term['name']));
 							if (defined('IMPORT_DEBUG') && IMPORT_DEBUG)
-								echo ': ' . $t->get_error_message();
+								echo ': ' . esc_html( $t->get_error_message() );
 							echo '<br />';
 							do_action('wp_import_insert_term_failed', $t, $term, $post_id, $post);
 							continue;
@@ -859,14 +886,15 @@ class WP_Import extends WP_Importer
 
 		// no nav_menu term associated with this menu item
 		if (!$menu_slug) {
-			_e('Menu item skipped due to missing menu slug', SG_POPUP_TEXT_DOMAIN);
+			esc_html_e('Menu item skipped due to missing menu slug', 'popup-builder');
 			echo '<br />';
 			return;
 		}
 
 		$menu_id = term_exists($menu_slug, 'nav_menu');
 		if (!$menu_id) {
-			printf(__('Menu item skipped due to invalid menu slug: %s', SG_POPUP_TEXT_DOMAIN), esc_html($menu_slug));
+			/* translators: menu slug */
+			printf(wp_kses_post(__('Menu item skipped due to invalid menu slug: %s', 'popup-builder')), esc_html($menu_slug));
 			echo '<br />';
 			return;
 		} else {
@@ -935,8 +963,8 @@ class WP_Import extends WP_Importer
 	public function process_attachment($post, $url)
 	{
 		if (!$this->fetch_attachments) {
-			return new WP_Error('attachment_processing_error',
-				__('Fetching attachments is not enabled', SG_POPUP_TEXT_DOMAIN));
+			return new \WP_Error('attachment_processing_error',
+				__('Fetching attachments is not enabled', 'popup-builder'));
 		}
 
 		// if the URL is absolute, but does not contain address, then upload it assuming base_site_url
@@ -952,7 +980,7 @@ class WP_Import extends WP_Importer
 			$post['post_mime_type'] = $info['type'];
 		}
 		else {
-			return new WP_Error('attachment_processing_error', __('Invalid file type', SG_POPUP_TEXT_DOMAIN));
+			return new \WP_Error('attachment_processing_error', __('Invalid file type', 'popup-builder'));
 		}
 
 		$post['guid'] = $upload['url'];
@@ -990,7 +1018,7 @@ class WP_Import extends WP_Importer
 		// get placeholder file in the upload dir with a unique, sanitized filename
 		$upload = wp_upload_bits($file_name, null, '', $post['upload_date']);
 		if ($upload['error']) {
-			return new WP_Error('upload_dir_error', $upload['error']);
+			return new \WP_Error('upload_dir_error', $upload['error']);
 		}
 
 		// fetch the remote url and write it to the placeholder file
@@ -1004,34 +1032,36 @@ class WP_Import extends WP_Importer
 
 		// request failed
 		if (!$headers) {
-			@unlink($upload['file']);
-			return new WP_Error('import_file_error', __('Remote server did not respond', SG_POPUP_TEXT_DOMAIN));
+			wp_delete_file($upload['file']);
+			return new \WP_Error('import_file_error', __('Remote server did not respond', 'popup-builder'));
 		}
 
 		$remote_response_code = wp_remote_retrieve_response_code($remote_response);
 
 		// make sure the fetch was successful
 		if ($remote_response_code != '200') {
-			@unlink($upload['file']);
-			return new WP_Error('import_file_error', sprintf(__('Remote server returned error response %1$d %2$s', SG_POPUP_TEXT_DOMAIN), esc_html($remote_response_code), get_status_header_desc($remote_response_code)));
+			wp_delete_file($upload['file']);
+			/* translators: remote response code, status header description */
+			return new \WP_Error('import_file_error', sprintf(__('Remote server returned error response %1$d %2$s', 'popup-builder'), esc_html($remote_response_code), get_status_header_desc($remote_response_code)));
 		}
 
 		$filesize = filesize($upload['file']);
 
 		if (isset($headers['content-length']) && $filesize != $headers['content-length']) {
-			@unlink($upload['file']);
-			return new WP_Error('import_file_error', __('Remote file is incorrect size', SG_POPUP_TEXT_DOMAIN));
+			wp_delete_file($upload['file']);
+			return new \WP_Error('import_file_error', __('Remote file is incorrect size', 'popup-builder'));
 		}
 
 		if (0 == $filesize) {
-			@unlink($upload['file']);
-			return new WP_Error('import_file_error', __('Zero size file downloaded', SG_POPUP_TEXT_DOMAIN));
+			wp_delete_file($upload['file']);
+			return new \WP_Error('import_file_error', __('Zero size file downloaded', 'popup-builder'));
 		}
 
 		$max_size = (int) $this->max_attachment_size();
 		if (!empty($max_size) && $filesize > $max_size) {
-			@unlink($upload['file']);
-			return new WP_Error('import_file_error', sprintf(__('Remote file is too large, limit is %s', SG_POPUP_TEXT_DOMAIN), size_format($max_size)));
+			wp_delete_file($upload['file']);
+			/* translators: max size */
+			return new \WP_Error('import_file_error', sprintf(__('Remote file is too large, limit is %s', 'popup-builder'), size_format($max_size)));
 		}
 
 		// keep track of the old and new urls so we can substitute them later
@@ -1141,14 +1171,15 @@ class WP_Import extends WP_Importer
 	public function header()
 	{
 		echo '<div class="wrap">';
-		echo '<h2>' . __('Import WordPress', SG_POPUP_TEXT_DOMAIN) . '</h2>';
+		echo '<h2>' . esc_html( __('Import WordPress', 'popup-builder') ). '</h2>';
 
 		$updates = get_plugin_updates();
 		$basename = plugin_basename(__FILE__);
 		if (isset($updates[$basename])) {
 			$update = $updates[$basename];
 			echo '<div class="error"><p><strong>';
-			printf(__('A new version of this importer is available. Please update to version %s to ensure compatibility with newer export files.', SG_POPUP_TEXT_DOMAIN), $update->update->new_version);
+			/* translators: new version */
+			printf(wp_kses_post(__('A new version of this importer is available. Please update to version %s to ensure compatibility with newer export files.', 'popup-builder')), esc_html( $update->update->new_version) );
 			echo '</strong></p></div>';
 		}
 	}
@@ -1165,8 +1196,8 @@ class WP_Import extends WP_Importer
 	public function greet()
 	{
 		echo '<div class="narrow">';
-		echo '<p>'.__('Howdy!Upload your WordPress eXtended RSS (WXR) file and we&#8217;ll import the posts, pages, comments, custom fields, categories, and tags into this site.', SG_POPUP_TEXT_DOMAIN).'</p>';
-		echo '<p>'.__('Choose a WXR (.xml) file to upload, then click Upload file and import.', SG_POPUP_TEXT_DOMAIN).'</p>';
+		echo '<p>'. esc_html( __('Howdy!Upload your WordPress eXtended RSS (WXR) file and we&#8217;ll import the posts, pages, comments, custom fields, categories, and tags into this site.', 'popup-builder') ).'</p>';
+		echo '<p>'. esc_html( __('Choose a WXR (.xml) file to upload, then click Upload file and import.', 'popup-builder') ).'</p>';
 		wp_import_upload_form('admin.php?import=wordpress&amp;step=1');
 		echo '</div>';
 	}

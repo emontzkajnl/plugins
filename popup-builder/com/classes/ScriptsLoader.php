@@ -74,9 +74,9 @@ class ScriptsLoader
 		$popupOptions['sgpbConditions'] = apply_filters('sgpbRenderCondtions',  $popupCondition);
 		// JSON_UNESCAPED_UNICODE does not exist since 5.4.0
 		if (PHP_VERSION < '5.4.0'){
-			$popupOptions = json_encode($popupOptions);
+			$popupOptions = wp_json_encode($popupOptions);
 		} else {
-			$popupOptions = json_encode($popupOptions,JSON_UNESCAPED_UNICODE);
+			$popupOptions = wp_json_encode($popupOptions,JSON_UNESCAPED_UNICODE);
 		}
 		return base64_encode($popupOptions);
 	}
@@ -154,7 +154,7 @@ class ScriptsLoader
 				continue;
 			}
 			self::$alreadyLoadedPopups[$popupId] = $events;
-			$events = json_encode($events);
+			$events = wp_json_encode($events);
 			$currentUseOptions = $popup->getOptions();
 			$extraContent = apply_filters('sgpbPopupExtraData', $popupId, $currentUseOptions);
 
@@ -176,7 +176,7 @@ class ScriptsLoader
 							</div>
 						  </div>';
 					$footerPopupContent .= $extraContent;
-					echo $footerPopupContent;
+					echo wp_kses($footerPopupContent, AdminHelper::allowed_html_tags()); 					
 				});
 			}
 		}
@@ -197,7 +197,7 @@ class ScriptsLoader
 
 			$events = array();
 
-			$events = json_encode($events);
+			$events = wp_json_encode($events);
 
 			$popupOptions = $this->getEncodedOptionsFromPopup($popup);
 
@@ -316,7 +316,7 @@ class ScriptsLoader
 					}
 					if (version_compare($wp_version, '4.5', '>')){
 						/* after wp 4.5 version */
-						ScriptsIncluder::addInlineScripts($valueData['handle'], 'var '.$valueData['name'].' = ' .json_encode($valueData['data']).';');
+						ScriptsIncluder::addInlineScripts($valueData['handle'], 'var '.$valueData['name'].' = ' .wp_json_encode($valueData['data']).';');
 					} else {
 						/* since wp 4.5 version */
 						ScriptsIncluder::localizeScript($valueData['handle'], $valueData['name'], $valueData['data']);

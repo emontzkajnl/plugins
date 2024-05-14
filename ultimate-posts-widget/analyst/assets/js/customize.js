@@ -3,10 +3,13 @@
     var id = $(this).attr('analyst-notice-id');
     var self = this;
     
-    $.post(ajaxurl, {action: 'analyst_notification_dismiss', id: id})
-      .done(function () {
-        $(self).parent().fadeOut()
-      })
+    $.post(ajaxurl, {
+      action: 'analyst_notification_dismiss', 
+      id: id,
+      nonce: analyst_opt_localize.nonce
+    }).done(function () {
+      $(self).parent().fadeOut()
+    })
   })
 
   var url = new URL(window.location.href)
@@ -19,6 +22,7 @@
       method: 'POST',
       data: {
         action: 'analyst_install_verified_' + pluginId,
+        nonce: analyst_opt_localize.nonce
       },
       success: function () {
         // Refresh page without query params

@@ -189,9 +189,9 @@ class Installer
 			FROM '.$wpdb->terms . ' AS t
 			INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt
 			ON t.term_id = tt.term_id
-			WHERE tt.taxonomy = "'.esc_sql($taxonomy).'"';
+			WHERE tt.taxonomy =  %s';
 
-		$terms = $wpdb->get_results($customTermsQuery);
+		$terms = $wpdb->get_results( $wpdb->prepare( $customTermsQuery , esc_sql($taxonomy) ) );
 
 		$terms = apply_filters('sgpbDeleteTerms', $terms);
 
@@ -306,7 +306,7 @@ class Installer
 
 	public static function registerPlugin()
 	{
-		$pluginName = SG_POPUP_FILE_NAME;
+		$pluginName = SGPB_POPUP_FILE_NAME;
 		$classPath = SG_POPUP_EXTENSION_PATH.'SgpbPopupExtension.php';
 		$className = 'SgpbPopupExtension';
 		$options = array();
@@ -316,11 +316,11 @@ class Installer
 				'licence' => array(
 					'key' => SG_POPUP_KEY,
 					'storeURL' => SG_POPUP_STORE_URL,
-					'file' => SG_POPUP_FILE_NAME,
+					'file' => SGPB_POPUP_FILE_NAME,
 					'itemId' => SGPB_ITEM_ID,
-					'itemName' => __('Popup Builder', SG_POPUP_TEXT_DOMAIN),
+					'itemName' => __('Popup Builder', 'popup-builder'),
 					'autor' => SG_POPUP_AUTHOR,
-					'boxLabel' => __('Popup Builder License', SG_POPUP_TEXT_DOMAIN)
+					'boxLabel' => __('Popup Builder License', 'popup-builder')
 				)
 			);
 			$options = apply_filters('sgpbRegisterOptions', $options);

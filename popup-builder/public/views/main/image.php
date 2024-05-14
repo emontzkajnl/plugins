@@ -1,3 +1,9 @@
+<?php
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+?>
 <div class="sgpb sgpb-wrapper sgpb-media-upload sgpb-display-flex sgpb-align-item-center sgpb-padding-20">
     <div class="formItem sgpb-display-inline-flex sgpb-flex-direction-column sgpb-margin-right-50">
         <span class="formItem__title sgpb-margin-0"><?php esc_html_e('Please choose your picture');?>:</span>

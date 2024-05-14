@@ -1,11 +1,15 @@
 <?php
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 use sgpb\AdminHelper;
 use sgpb\MultipleChoiceButton;
 use sgpb\PopupBuilderActivePackage;
 
 $allowed_html = AdminHelper::allowed_html_tags();
 $removedOptions = $popupTypeObj->getRemoveOptions();
-$defaultData = ConfigDataHelper::defaultData();
+$defaultData = SGPBConfigDataHelper::defaultData();
 $defaultAnimation = esc_attr($popupTypeObj->getOptionValue('sgpb-open-animation-effect'));
 if (!empty($_GET['sgpb_type'])) {
 	if (defined('SGPB_POPUP_TYPE_RECENT_SALES')) {
@@ -26,7 +30,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 <div class="sgpb sgpb-wrapper popupOptions">
 	<?php if(empty($removedOptions['sgpb-content-click'])): ?>
 		<div class="formItem">
-			<span class="formItem__title sgpb-margin-right-20"><?php esc_html_e('Action on popup content click', SG_POPUP_TEXT_DOMAIN)?>:</span>
+			<span class="formItem__title sgpb-margin-right-20"><?php esc_html_e('Action on popup content click', 'popup-builder')?>:</span>
 			<div class="sgpb-onOffSwitch">
 				<input type="checkbox" id="sgpb-content-click" name="sgpb-content-click" class="sgpb-onOffSwitch-checkbox js-checkbox-accordion" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-content-click')); ?>>
 				<label class="sgpb-onOffSwitch__label" for="sgpb-content-click">
@@ -42,11 +46,11 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 			?>
 			<div class="sgpb-bg-black__opacity-02 sg-hide sg-full-width sgpb-padding-20" id="content-click-redirect">
 				<div class="subFormItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('URL', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('URL', 'popup-builder')?>:</span>
 					<input type="url" name="sgpb-click-redirect-to-url" id="redirect-to-url" class="grayFormItem__input" placeholder="http://" value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-click-redirect-to-url')); ?>">
 				</div>
 				<div class="formItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Redirect to new tab', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Redirect to new tab', 'popup-builder')?>:</span>
 					<div class="sgpb-onOffSwitch">
 						<input id="redirect" class="sgpb-onOffSwitch-checkbox" type="checkbox" name="sgpb-redirect-to-new-tab" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-redirect-to-new-tab'));?>>
 						<label class="sgpb-onOffSwitch__label" for="redirect">
@@ -59,11 +63,11 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 
 			<div class="sgpb-bg-black__opacity-02 sg-hide sg-full-width sgpb-padding-20" id="content-copy-to-clipboard">
 				<div class="subFormItem formItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Text', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Text', 'popup-builder')?>:</span>
 					<input type="text" name="sgpb-copy-to-clipboard-text" id="sgpb-copy-to-clipboard-text" class="subFormItem__input" value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-copy-to-clipboard-text')); ?>">
 				</div>
 				<div class="subFormItem formItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Close popup', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Close popup', 'popup-builder')?>:</span>
 					<div class="sgpb-onOffSwitch">
 						<input class="sgpb-onOffSwitch-checkbox" type="checkbox" name="sgpb-copy-to-clipboard-close-popup" id="sgpb-copy-to-clipboard-close-popup" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-copy-to-clipboard-close-popup')); ?>>
 						<label class="sgpb-onOffSwitch__label" for="sgpb-copy-to-clipboard-close-popup">
@@ -73,7 +77,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 					</div>
 				</div>
 				<div class="subFormItem formItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Show alert', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Show alert', 'popup-builder')?>:</span>
 					<div class="sgpb-onOffSwitch">
 						<input type="checkbox" id="sgpb-copy-to-clipboard-alert" class="js-checkbox-accordion sgpb-onOffSwitch-checkbox" name="sgpb-copy-to-clipboard-alert" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-copy-to-clipboard-alert')); ?>>
 						<label class="sgpb-onOffSwitch__label" for="sgpb-copy-to-clipboard-alert">
@@ -84,7 +88,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 				</div>
 				<div class="sg-full-width">
 					<div class="subFormItem formItem">
-						<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Message', SG_POPUP_TEXT_DOMAIN)?>:</span>
+						<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Message', 'popup-builder')?>:</span>
 						<input type="text" id="sgpb-copy-to-clipboard-message" class="subFormItem__input" name="sgpb-copy-to-clipboard-message" value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-copy-to-clipboard-message')); ?>">
 					</div>
 				</div>
@@ -93,7 +97,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 	<?php endif; ?>
 	<?php if (empty($removedOptions['sgpb-show-popup-same-user'])): ?>
 		<div class="formItem">
-			<span class="formItem__title"><?php esc_html_e('Popup showing limitation', SG_POPUP_TEXT_DOMAIN)?>:</span>
+			<span class="formItem__title"><?php esc_html_e('Popup showing limitation', 'popup-builder')?>:</span>
 			<div class="sgpb-onOffSwitch">
 				<input type="checkbox" id="sgpb-show-popup-same-user" name="sgpb-show-popup-same-user" class="js-checkbox-accordion sgpb-onOffSwitch-checkbox" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-show-popup-same-user')); ?>>
 				<label class="sgpb-onOffSwitch__label" for="sgpb-show-popup-same-user">
@@ -104,34 +108,34 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 			<div class="question-mark">B</div>
 			<div class="sgpb-info-wrapper">
 				<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-					<?php esc_html_e('Estimate the popup showing frequency to the same user.', SG_POPUP_TEXT_DOMAIN);?>
+					<?php esc_html_e('Estimate the popup showing frequency to the same user.', 'popup-builder');?>
 				</span>
 			</div>
 		</div>
 		<div class="sg-full-width sgpb-bg-black__opacity-02 sgpb-padding-x-20 formItem">
 			<div class="subForm noPadding">
 				<div class="subFormItem formItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Popup showing count', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Popup showing count', 'popup-builder')?>:</span>
 					<input type="number" min="1" disabled required id="sgpb-show-popup-same-user-count" class="subFormItem__input" name="sgpb-show-popup-same-user-count" value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-show-popup-same-user-count')); ?>" placeholder="e.g.: 1">
 					<div class="question-mark">B</div>
 					<div class="sgpb-info-wrapper">
 						<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-							<?php esc_html_e('Select how many times the popup will be shown for the same user.', SG_POPUP_TEXT_DOMAIN);?>
+							<?php esc_html_e('Select how many times the popup will be shown for the same user.', 'popup-builder');?>
 						</span>
 					</div>
 				</div>
 				<div class="subFormItem formItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Popup showing expiry', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Popup showing expiry', 'popup-builder')?>:</span>
 					<input type="number" min="0" disabled required id="sgpb-show-popup-same-user-expiry" class="subFormItem__input" name="sgpb-show-popup-same-user-expiry" value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-show-popup-same-user-expiry')); ?>" placeholder="e.g.: 1">
 					<div class="question-mark">B</div>
 					<div class="sgpb-info-wrapper">
 						<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-							<?php esc_html_e('Select the count of the days after which the popup will be shown to the same user, or set the value "0" if you want to save cookies by session.', SG_POPUP_TEXT_DOMAIN);?>
+							<?php esc_html_e('Select the count of the days after which the popup will be shown to the same user, or set the value "0" if you want to save cookies by session.', 'popup-builder');?>
 						</span>
 					</div>
 				</div>
 				<div class="subFormItem formItem">
-					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Apply option on each page', SG_POPUP_TEXT_DOMAIN)?>:</span>
+					<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Apply option on each page', 'popup-builder')?>:</span>
 					<div class="checkbox-wrapper">
 						<input type="checkbox" disabled id="sgpb-show-popup-same-user-page-level" name="sgpb-show-popup-same-user-page-level" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-show-popup-same-user-page-level')); ?>>
 						<label class="checkboxLabel" for="sgpb-show-popup-same-user-page-level"></label>
@@ -139,7 +143,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 					<div class="question-mark">B</div>
 					<div class="sgpb-info-wrapper">
 						<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-							<?php esc_html_e('If this option is checked the popup showing limitation will be saved for the current page. Otherwise, the limitation will refer site wide, and the popup will be shown for specific times on each page selected.The previously specified count of days will be reset every time you check/uncheck this option.', SG_POPUP_TEXT_DOMAIN);?>
+							<?php esc_html_e('If this option is checked the popup showing limitation will be saved for the current page. Otherwise, the limitation will refer site wide, and the popup will be shown for specific times on each page selected.The previously specified count of days will be reset every time you check/uncheck this option.', 'popup-builder');?>
 						</span>
 					</div>
 				</div>
@@ -148,7 +152,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 	<?php endif; ?>
 	<div class="formItem">
 		<span class="formItem__title">
-			<?php esc_html_e('Popup opening sound', SG_POPUP_TEXT_DOMAIN); ?>:
+			<?php esc_html_e('Popup opening sound', 'popup-builder'); ?>:
 		</span>
 		<div class="sgpb-onOffSwitch">
 			<input type="checkbox" id="open-sound" class="js-checkbox-accordion sgpb-onOffSwitch-checkbox" name="sgpb-open-sound" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-open-sound')); ?>>
@@ -160,7 +164,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 		<div class="question-mark">B</div>
 		<div class="sgpb-info-wrapper">
 			<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-				<?php esc_html_e('If this option is enabled the popup will appear with a sound. The sound option is not available on mobile devices, as there are restrictions on sound auto-play options for mobile devices.', SG_POPUP_TEXT_DOMAIN)?>
+				<?php esc_html_e('If this option is enabled the popup will appear with a sound. The sound option is not available on mobile devices, as there are restrictions on sound auto-play options for mobile devices.', 'popup-builder')?>
 			</span>
 		</div>
 	</div>
@@ -177,7 +181,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 		</div>
 	</div>
 	<div class="formItem">
-		<span class="formItem__title"><?php esc_html_e('Popup opening animation', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+		<span class="formItem__title"><?php esc_html_e('Popup opening animation', 'popup-builder'); ?>:</span>
 		<div class="sgpb-onOffSwitch">
 			<input type="checkbox" id="open-animation" class="js-checkbox-accordion sgpb-onOffSwitch-checkbox" name="sgpb-open-animation" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-open-animation')); ?>>
 			<label class="sgpb-onOffSwitch__label" for="open-animation">
@@ -189,26 +193,26 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 	<div class="subForm sgpb-padding-x-20 sgpb-width-100 sgpb-bg-black__opacity-02">
 		<div class="subForm formItem sgpb-align-item-baseline sgpb-flex-direction-column sgpb-select2-input-styles-animation-effect">
 			<div class="subFormItem sgpb-display-flex sgpb-align-item-center sgpb-position-relative sgpb-margin-bottom-20">
-				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Type', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Type', 'popup-builder'); ?>:</span>
 				<?php echo wp_kses(AdminHelper::createSelectBox($defaultData['openAnimationEfects'], $defaultAnimation, array('name' => 'sgpb-open-animation-effect', 'class'=>'js-sg-select2 sgpb-open-animation-effects select__select')), AdminHelper::allowed_html_tags()); ?>
 				<div class="sgpb-icons icons_blue sgpb-preview-animation sgpb-margin-x-20 sgpb-preview-open-animation">A</div>
 				<div id="js-open-animation-effect" class="sgpb-js-open-animation-effect"></div>
 			</div>
 			<div class="subFormItem sgpb-display-flex sgpb-align-item-center">
-				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Speed', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Speed', 'popup-builder'); ?>:</span>
 				<input type="number"
 				       id="sgpb-open-animation-speed" name="sgpb-open-animation-speed" value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-open-animation-speed'))?>"
 				       data-default="<?php echo esc_attr($popupTypeObj->getOptionDefaultValue('sgpb-open-animation-speed'))?>"
 				       class="subFormItem__input subFormItem__input_leftRounded" />
 				<div class="sgpb-margin-left-10 subFormItem__text__rightRounded">
-					<?php esc_html_e('Second(s)', SG_POPUP_TEXT_DOMAIN); ?>
+					<?php esc_html_e('Second(s)', 'popup-builder'); ?>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="formItem">
-		<span class="formItem__title"><?php esc_html_e('Popup closing animation', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+		<span class="formItem__title"><?php esc_html_e('Popup closing animation', 'popup-builder'); ?>:</span>
 		<div class="sgpb-onOffSwitch">
 			<input type="checkbox" id="close-animation" class="js-checkbox-accordion sgpb-onOffSwitch-checkbox" name="sgpb-close-animation" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-close-animation')); ?>>
 			<label class="sgpb-onOffSwitch__label" for="close-animation">
@@ -220,25 +224,25 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 	<div class="subForm sgpb-padding-x-20 sgpb-width-100 sgpb-bg-black__opacity-02">
 		<div class="subForm formItem sgpb-align-item-baseline sgpb-flex-direction-column sgpb-select2-input-styles-animation-effect">
 			<div class="subFormItem sgpb-display-flex sgpb-align-item-center sgpb-position-relative sgpb-margin-bottom-20">
-				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Type', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Type', 'popup-builder'); ?>:</span>
 				<?php echo wp_kses(AdminHelper::createSelectBox($defaultData['closeAnimationEfects'], $popupTypeObj->getOptionValue('sgpb-close-animation-effect'), array('name' => 'sgpb-close-animation-effect', 'class'=>'js-sg-select2 sgpb-close-animation-effects select__select')), $allowed_html); ?>
 				<div class="sgpb-icons icons_blue sgpb-preview-animation sgpb-margin-x-20 sgpb-preview-close-animation">A</div>
 				<div id="js-close-animation-effect" class="sgpb-js-close-animation-effect"></div>
 			</div>
 			<div class="subFormItem sgpb-display-flex sgpb-align-item-center">
-				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Speed', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+				<span class="subFormItem__title sgpb-margin-right-20"><?php esc_html_e('Speed', 'popup-builder'); ?>:</span>
 				<input type="number"
 				       min="0" step="0.1" data-default="<?php echo esc_attr($popupTypeObj->getOptionDefaultValue('sgpb-close-animation-speed'))?>"
 				       id="sgpb-close-animation-speed" name="sgpb-close-animation-speed" value="<?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-close-animation-speed'))?>"
 				       class="subFormItem__input subFormItem__input_leftRounded" />
 				<div class="sgpb-margin-left-10 subFormItem__text__rightRounded">
-					<?php esc_html_e('Second(s)', SG_POPUP_TEXT_DOMAIN); ?>
+					<?php esc_html_e('Second(s)', 'popup-builder'); ?>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="formItem">
-		<span class="formItem__title"><?php esc_html_e('Popup location', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+		<span class="formItem__title"><?php esc_html_e('Popup location', 'popup-builder'); ?>:</span>
 		<div class="sgpb-onOffSwitch">
 			<input type="checkbox" id="popup-fixed" class="js-checkbox-accordion sgpb-onOffSwitch-checkbox" name="sgpb-popup-fixed" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-popup-fixed')); ?>>
 			<label class="sgpb-onOffSwitch__label" for="popup-fixed">
@@ -265,7 +269,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 	</div>
 	<?php if (empty($removedOptions['sgpb-disable-page-scrolling'])): ?>
 		<div class="formItem">
-			<span class="formItem__title"><?php esc_html_e('Disable page scrolling', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+			<span class="formItem__title"><?php esc_html_e('Disable page scrolling', 'popup-builder'); ?>:</span>
 			<div class="sgpb-onOffSwitch">
 				<input type="checkbox" id="disable-page-scrolling" class="sgpb-onOffSwitch-checkbox" name="sgpb-disable-page-scrolling" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-disable-page-scrolling')); ?>>
 				<label class="sgpb-onOffSwitch__label" for="disable-page-scrolling">
@@ -276,14 +280,14 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 			<div class="question-mark">B</div>
 			<div class="sgpb-info-wrapper">
 				<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-					<?php esc_html_e('If this option is checked, the page won\'t scroll until the popup is open.', SG_POPUP_TEXT_DOMAIN)?>
+					<?php esc_html_e('If this option is checked, the page won\'t scroll until the popup is open.', 'popup-builder')?>
 				</span>
 			</div>
 		</div>
 	<?php endif; ?>
 	<?php if (empty($removedOptions['sgpb-enable-content-scrolling'])): ?>
 		<div class="formItem">
-			<span class="formItem__title"><?php esc_html_e('Enable content scrolling', SG_POPUP_TEXT_DOMAIN)?>:</span>
+			<span class="formItem__title"><?php esc_html_e('Enable content scrolling', 'popup-builder')?>:</span>
 			<div class="sgpb-onOffSwitch">
 				<input type="checkbox" id="content-scrolling" class="sgpb-onOffSwitch-checkbox" name="sgpb-enable-content-scrolling" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-enable-content-scrolling')); ?>>
 				<label class="sgpb-onOffSwitch__label" for="content-scrolling">
@@ -294,7 +298,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 			<div class="question-mark">B</div>
 			<div class="sgpb-info-wrapper">
 				<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-					<?php esc_html_e('If the content is larger than the specified dimensions, then the content will be scrollable.', SG_POPUP_TEXT_DOMAIN)?>
+					<?php esc_html_e('If the content is larger than the specified dimensions, then the content will be scrollable.', 'popup-builder')?>
 				</span>
 			</div>
 		</div>
@@ -302,7 +306,7 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 
 	<?php if (empty($removedOptions['sgpb-reopen-after-form-submission'])): ?>
 		<div class="formItem">
-			<span class="formItem__title"><?php esc_html_e('Reopen after form submission', SG_POPUP_TEXT_DOMAIN); ?>:</span>
+			<span class="formItem__title"><?php esc_html_e('Reopen after form submission', 'popup-builder'); ?>:</span>
 			<div class="sgpb-onOffSwitch">
 				<input type="checkbox" class="sgpb-onOffSwitch-checkbox" id="reopen-after-form-submission"  name="sgpb-reopen-after-form-submission" <?php echo esc_attr($popupTypeObj->getOptionValue('sgpb-reopen-after-form-submission')); ?>>
 				<label class="sgpb-onOffSwitch__label" for="reopen-after-form-submission">
@@ -313,32 +317,32 @@ if (!empty($removedOptions['content-copy-to-clipboard'])) {
 			<div class="question-mark">B</div>
 			<div class="sgpb-info-wrapper">
 				<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-					<?php esc_html_e('If this option is enabled, the popup will reopen after the form submission.', SG_POPUP_TEXT_DOMAIN)?>
+					<?php esc_html_e('If this option is enabled, the popup will reopen after the form submission.', 'popup-builder')?>
 				</span>
 			</div>
 		</div>
 	<?php endif; ?>
 	<?php if (empty($removedOptions['sgpb-popup-order'])): ?>
 		<div class="formItem formItem_itemsCentered">
-			<span class="formItem__title"><?php esc_html_e('Popup order', SG_POPUP_TEXT_DOMAIN)?>:</span>
+			<span class="formItem__title"><?php esc_html_e('Popup order', 'popup-builder')?>:</span>
 			<input type="number" min="0" name="sgpb-popup-order" id="sgpb-popup-order" class="formItem__input" value="<?php echo esc_attr((int)$popupTypeObj->getOptionValue('sgpb-popup-order')); ?>">
 			<div class="question-mark">B</div>
 			<div class="sgpb-info-wrapper">
 				<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
-					<?php esc_html_e('Select the priority number for your popup to appear on the page, along with other popups. The popup with a higher-order number will be behind the others with a lower-order number.', SG_POPUP_TEXT_DOMAIN); ?>
+					<?php esc_html_e('Select the priority number for your popup to appear on the page, along with other popups. The popup with a higher-order number will be behind the others with a lower-order number.', 'popup-builder'); ?>
 				</span>
 			</div>
 		</div>
 	<?php endif; ?>
 	<?php if (empty($removedOptions['sgpb-popup-delay'])): ?>
 		<div class="formItem formItem_itemsCentered">
-			<span class="formItem__title"><?php esc_html_e('Custom event delay', SG_POPUP_TEXT_DOMAIN)?>:</span>
+			<span class="formItem__title"><?php esc_html_e('Custom event delay', 'popup-builder')?>:</span>
 			<input type="number" min="0" name="sgpb-popup-delay" id="sgpb-popup-delay" class="formItem__input" value="<?php echo (int)esc_attr($popupTypeObj->getOptionValue('sgpb-popup-delay')); ?>">
 			<div class="question-mark">B</div>
 			<div class="sgpb-info-wrapper">
 				<span class="infoSelectRepeat samefontStyle sgpb-info-text" style="display: none;">
 					<?php esc_html_e('You can add an opening delay for the popup, in seconds. This will refer to custom events, like:
-										Shortcodes, custom CSS classes, HTML attributes, or JS called custom events.', SG_POPUP_TEXT_DOMAIN)?>
+										Shortcodes, custom CSS classes, HTML attributes, or JS called custom events.', 'popup-builder')?>
 				</span>
 			</div>
 		</div>

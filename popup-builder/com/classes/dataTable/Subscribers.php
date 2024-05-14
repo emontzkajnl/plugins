@@ -7,7 +7,7 @@ use sgpb\AdminHelper;
 use sgpbDataTable\SGPBTable;
 use sgpb\SubscriptionPopup;
 
-class Subscribers extends SGPBTable
+class SGPBSubscribers extends SGPBTable
 {
 	public function __construct()
 	{
@@ -18,7 +18,7 @@ class Subscribers extends SGPBTable
 		$this->setTablename($wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME);
 
 		$columns = array(
-			$this->tablename.'.id',
+			'id',
 			'firstName',
 			'lastName',
 			'email',
@@ -34,12 +34,12 @@ class Subscribers extends SGPBTable
 		$displayColumns = array(
 			'bulk' => $selectAllCheckbox,
 			'id' => 'ID',
-			'firstName' => __('First name', SG_POPUP_TEXT_DOMAIN),
-			'lastName' => __('Last name', SG_POPUP_TEXT_DOMAIN),
-			'email' => __('Email', SG_POPUP_TEXT_DOMAIN),
-			'cDate' => __('Date', SG_POPUP_TEXT_DOMAIN),
-			'subscriptionType' => __('Popup', SG_POPUP_TEXT_DOMAIN)
-			//'options' => __('Actions', SG_POPUP_TEXT_DOMAIN)
+			'firstName' => __('First name', 'popup-builder'),
+			'lastName' => __('Last name', 'popup-builder'),
+			'email' => __('Email', 'popup-builder'),
+			'cDate' => __('Date', 'popup-builder'),
+			'subscriptionType' => __('Popup', 'popup-builder')
+			//'options' => __('Actions', 'popup-builder')
 		);
 
 		$filterColumnsDisplaySettings = array(
@@ -76,7 +76,7 @@ class Subscribers extends SGPBTable
 		$row[1] = $row[0];
 
 		// show date more user friendly
-		$row[5] = date('d F Y', strtotime($row[5]));
+		$row[5] = gmdate('d F Y', strtotime($row[5]));
 
 		$id = $row[0];
 		$row[0] = '<div class="sgpb-wrapper checkbox-wrapper">
@@ -107,7 +107,7 @@ class Subscribers extends SGPBTable
 
 		<select class="select__select sgpb-margin-right-10" name="sgpb-subscription-popup" id="sgpb-subscription-popup">
 			<?php
-			$list .= '<option value="all">'.__('All', SG_POPUP_TEXT_DOMAIN).'</option>';
+			$list .= '<option value="all">'.__('All', 'popup-builder').'</option>';
 			foreach ($subscriptionPopups as $popupId => $popupTitle) {
 				if ($selectedPopup == $popupId) {
 					$selected = ' selected';
@@ -150,7 +150,7 @@ class Subscribers extends SGPBTable
 		<input type="hidden" class="sgpb-subscribers-date" name="sgpb-subscribers-date" value="<?php echo esc_attr($selectedDate);?>">
 		<select class="select__select sgpb-margin-right-10" name="sgpb-subscribers-dates" id="sgpb-subscribers-dates">
 			<?php
-			$gotDateList = '<option value="all">'.__('All dates', SG_POPUP_TEXT_DOMAIN).'</option>';
+			$gotDateList = '<option value="all">'.__('All dates', 'popup-builder').'</option>';
 			foreach ($uniqueDates as $date) {
 				if ($selectedDate == $date['date-value']) {
 					$selected = ' selected';
@@ -162,7 +162,7 @@ class Subscribers extends SGPBTable
 			}
 			if (empty($subscribersDates)) {
 				$dateValue = isset($date) && isset($date['date-value']) ? $date['date-value'] : '';
-				$gotDateList = '<option value="'.$dateValue.'"'.$selected.'>'.__('Date', SG_POPUP_TEXT_DOMAIN).'</option>';
+				$gotDateList = '<option value="'.$dateValue.'"'.$selected.'>'.__('Date', 'popup-builder').'</option>';
 			}
 			echo wp_kses($dateList.$gotDateList, $allowed_html);
 			?>
@@ -187,18 +187,18 @@ class Subscribers extends SGPBTable
 		?>
 		<div class="sgpb-display-flex sgpb-justify-content-between actions">
 			<div>
-				<label class="screen-reader-text" for="sgpb-subscription-popup"><?php esc_html_e('Filter by popup', SG_POPUP_TEXT_DOMAIN)?></label>
+				<label class="screen-reader-text" for="sgpb-subscription-popup"><?php esc_html_e('Filter by popup', 'popup-builder')?></label>
 				<?php echo wp_kses($this->getNavPopupsConditions(), $allowed_html); ?>
-				<label class="screen-reader-text" for="sgpb-subscribers-dates"><?php esc_html_e('Filter by date', SG_POPUP_TEXT_DOMAIN)?></label>
+				<label class="screen-reader-text" for="sgpb-subscribers-dates"><?php esc_html_e('Filter by date', 'popup-builder')?></label>
 				<?php  echo wp_kses($this->getNavDateConditions(), $allowed_html); ?>
-				<input name="filter_action" id="post-query-submit" class="buttonGroup__button buttonGroup__button_blueBg buttonGroup__button_unrounded" value="<?php esc_html_e('Filter', SG_POPUP_TEXT_DOMAIN)?>" type="submit">
+				<input name="filter_action" id="post-query-submit" class="buttonGroup__button buttonGroup__button_blueBg buttonGroup__button_unrounded" value="<?php esc_html_e('Filter', 'popup-builder')?>" type="submit">
 			</div>
 			<div>
 				<?php
 				if ($which == 'top') {
 					?>
 						<button type="button" class="sgpb-btn sgpb-btn-danger sgpb-btn-disabled sgpb-btn--rounded sg-subs-delete-button" data-ajaxNonce="<?php echo esc_attr(SG_AJAX_NONCE);?>">
-							<?php esc_html_e('Delete subscriber(s)', SG_POPUP_TEXT_DOMAIN)?>
+							<?php esc_html_e('Delete subscriber(s)', 'popup-builder')?>
 						</button>
 					<?php
 				}

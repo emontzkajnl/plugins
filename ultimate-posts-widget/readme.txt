@@ -5,8 +5,8 @@ License: MIT
 License URI: http://opensource.org/licenses/MIT
 Tags: widget, recent posts, custom post types, sticky posts, featured image, post thumbnail, excerpts, category, custom fields, list pages, widget query, microformats, customizable widget,  categories widget, tags widget, excerpt, widget templates, post author, post date, custom query, ultimate posts, comments, orderby, comment count
 Requires at least: 3.5
-Tested up to: 6.3
-Stable tag: 2.2.7
+Tested up to: 6.4.3
+Stable tag: 2.3.1
 
 The ultimate widget for displaying posts, custom post types or sticky posts with an array of options.
 
@@ -126,6 +126,26 @@ This plugin uses the [timthumb library](http://www.binarymoon.co.uk/projects/tim
 5. Order options tab
 
 == Changelog ==
+
+= 2.3.1 =
+* [NOTE] Adjusted sanitization for widget fields even further
+* [NOTE] Tested up with WordPress 6.4.3
+
+= 2.3.0 =
+* [NOTE] Upgraded analyst module to latest version
+* [NOTE] Improved sanitization of widget fields
+* [NOTE] Tested up with WordPress 6.4.2
+
+= 2.2.9 =
+* Resolved issue related to "exclude_current" missing index
+* Updated "Try it out" module
+
+= 2.2.8 =
+* Fixed incorrect calls to plugins_url
+* Updated banner module
+* Updated opt-in module
+* Tested with WordPress 6.4
+* Resolved issues with PHP 8.2
 
 = 2.2.7 =
 * Forced "Try it out" module to be disabled by default, user can still enable it manually.
@@ -327,8 +347,10 @@ This plugin uses the [timthumb library](http://www.binarymoon.co.uk/projects/tim
 * First release.
 
 == Upgrade Notice ==
-= 2.2.7 =
-* Forced "Try it out" module to be disabled by default, user can still enable it manually.
+
+= 2.3.1 =
+* [NOTE] Adjusted sanitization for widget fields even further
+* [NOTE] Tested up with WordPress 6.4.3
 
 == Installation ==
 

@@ -19,10 +19,10 @@
 		<div class="analyst-modal-def-top-padding" id="analyst-permissions-block" style="display: none">
 			<span>You’re granting these permissions:</span>
 			<ul class="analyst-install-permissions-list">
-				<li><strong>Your profile information</strong> (name and email) ​</li>
+				<li><strong>Your profile information</strong> (name and email) </li>
 				<li><strong>Your site information</strong> (URL, WP version, PHP info, plugins & themes)</li>
 				<li><strong>Plugin notices</strong> (updates, announcements, marketing, no spam)</li>
-				<li><strong>Plugin events</strong> (activation, deactivation and uninstall)​</li>
+				<li><strong>Plugin events</strong> (activation, deactivation and uninstall)</li>
 			</ul>
 		</div>
 		<div class="analyst-install-footer analyst-modal-def-top-padding">
@@ -48,7 +48,8 @@
         url: ajaxurl,
         method: 'POST',
         data: {
-          action: 'analyst_install_' + pluginId
+          action: 'analyst_install_' + pluginId,
+          nonce: analyst_opt_localize.nonce
         },
         success: function (data) {
 		  if (data && !data.success) {
@@ -103,11 +104,14 @@
     })
 
 	$('#analyst-install-skip').click(function () {
-      var pluginId = $('#analyst-install-modal').attr('analyst-plugin-id')
+    var pluginId = $('#analyst-install-modal').attr('analyst-plugin-id')
 
-	  $.post(ajaxurl, {action: 'analyst_skip_install_' + pluginId}).done(function () {
-		$('#analyst-install-modal').hide()
-      })
+	  $.post(ajaxurl, {
+      action: 'analyst_skip_install_' + pluginId,
+      nonce: analyst_opt_localize.nonce
+    }).done(function () {
+		  $('#analyst-install-modal').hide()
+    })
     })
   })(jQuery)
 </script>

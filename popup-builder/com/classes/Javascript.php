@@ -122,7 +122,7 @@ class Javascript
 				}
 				if (version_compare($wp_version, '4.5', '>')){
 					/* after wp 4.5 version */
-					ScriptsIncluder::addInlineScripts($localizeData['handle'], 'var '.$localizeData['name'].' = ' .json_encode($localizeData['data']).';' );
+					ScriptsIncluder::addInlineScripts($localizeData['handle'], 'var '.$localizeData['name'].' = ' .wp_json_encode($localizeData['data']).';' );
 				} else {
 					/* since wp 4.5 version */
 					ScriptsIncluder::localizeScript($localizeData['handle'], $localizeData['name'], $localizeData['data']);

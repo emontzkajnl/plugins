@@ -23,6 +23,11 @@
      */
     if (!class_exists('Inisev\Subs\Inisev_Try_Out_Plugins')) {
       class Inisev_Try_Out_Plugins {
+        
+        public $pluginDir;
+        public $pluginFile;
+        public $pluginName;
+        public $pluginPageURL;
 
         function __construct($plugin_file, $plugin_dir, $plugin_name, $plugin_menu_page) {
 
@@ -31,11 +36,13 @@
             add_action('wp_ajax_tifm_notice_actions', [&$this, 'noticeAjax']);
           }
           
-          if (get_option('_tifm_force_disable_feature_fix', 'no') === 'no') {
+          if (get_option('_tifm_feature_enabled') == 'enabled') {
+            update_option('_tifm_force_disable_feature_update', true);
+          } else if (get_option('_tifm_force_disable_feature_update', 'no') === 'no') {
+            delete_option('_tifm_feature_enabled');
             delete_option('_tifm_hide_notice_forever');
-            update_option('_tifm_feature_enabled', 'disabled');
-            update_option('_tifm_disable_feature_forever', true);
-            update_option('_tifm_force_disable_feature_fix', true);
+            delete_option('_tifm_disable_feature_forever');
+            update_option('_tifm_force_disable_feature_update', true);
           }
 
           global $pagenow;
@@ -68,17 +75,27 @@
           ?>
 
           <style media="screen">
+            #tifm_new_feature_notice {
+              margin-bottom: 32px;
+            }
+            
             #tifm_paragraph_notice {
               display: flex;
               flex-direction: row;
               justify-content: space-between;
             }
-
-            #tifm_paragraph_notice span {
+            
+            #tifm_new_feature_notice span {
               line-height: 30px;
             }
 
-            #tifm_paragraph_notice .tifm_darker_a {
+            #tifm_new_feature_notice .tifm_poweredby {
+              line-height: 30px;
+              position: absolute;
+              right: 0;
+            }
+
+            #tifm_paragraph_notice .tifm_darker_a, #tifm_paragraph_notice .tifm_darker_a_preview {
               color: #555;
             }
 
@@ -86,7 +103,7 @@
               color: #999;
             }
 
-            #tifm_paragraph_notice .tifm_brought_url {
+            #tifm_new_feature_notice .tifm_brought_url {
               color: #00a32a;
               text-decoration: none;
             }
@@ -95,8 +112,45 @@
               flex-grow: 1;
             }
 
+            #tifm_paragraph_notice .tifm-grow-2 {
+              flex-grow: 2;
+              text-align: right;
+              padding-right: 15px;
+            }
+
             #tifm_paragraph_notice .tifm-grow-5 {
               flex-grow: 5;
+            }
+            
+            #tifm_paragraph_notice .tifm_btn {
+              padding: 6px 18px;
+              border-radius: 4px;
+              font-size: 14px;
+              font-weight: 400;
+              text-decoration: none;
+              border: 1px solid black;
+              transition: 0.3s all;
+              opacity: 1;
+            }
+            
+            #tifm_paragraph_notice .tifm_btn_green {
+              background: #00a32a;
+              color: white;
+            }
+            
+            #tifm_paragraph_notice .tifm_btn_grey {
+              background: #d9e3f4;
+              margin-left: 15px;
+              color: black;
+            }
+            
+            #tifm_paragraph_notice .tifm_btn_green:hover, #tifm_paragraph_notice .tifm_btn_grey:hover {
+              opacity: 0.8;
+            }
+            
+            #tifm_paragraph_notice .tifm_btn_green:active, #tifm_paragraph_notice .tifm_btn_grey:active {
+              transition: 0 all !important;
+              opacity: 0.5;
             }
 
             @media screen and (max-width: 1400px) {
@@ -116,7 +170,9 @@
 
               $('#tifm_new_feature_notice').on('click', '.notice-dismiss', hideAndDismissNotice);
 
-              $('#tifm_new_feature_notice').on('click', '.tifm_darker_a', hideAndDismissNotice);
+              $('#tifm_new_feature_notice').on('click', '.tifm_darker_a', enableAndDismissNotice);
+              
+              $('#tifm_new_feature_notice').on('click', '.tifm_darker_a_preview', previewNotice);
 
               $('#tifm_new_feature_notice').on('click', '.tifm_darker_a_muted', disableFeatureAndDismiss);
 
@@ -125,10 +181,13 @@
               function hideAndDismissNotice(e) {
 
                 let dismiss = false;
+                let enable = false;
                 if (typeof e != 'string') {
                   e.preventDefault();
-                } else if (e = 'dismiss') {
+                } else if (e == 'dismiss') {
                   dismiss = true;
+                } else if (e == 'enable') {
+                  enable = true;
                 }
 
                 $('#tifm_new_feature_notice').hide(300);
@@ -140,6 +199,12 @@
                 if (dismiss == true) {
                   method = 'dismiss_notice_and_disable';
                 }
+                
+                if (enable == true) {
+                  method = 'dismiss_notice_and_enable';
+                }
+                
+                if (method == 'dismiss_notice') return;
 
                 $.post(ajaxurl, { action: 'tifm_notice_actions', nonce: nonce, method: method }).done(function () {
                   if (method == 'dismiss_notice_and_disable') {
@@ -150,11 +215,55 @@
                 });
 
               }
+              
+              let isDisplayed = false;
+              function previewNotice(e) {
+                
+                e.preventDefault();
+                if (isDisplayed) return hideNotice(e);
+                
+                $('#tifmPreviewCSS').remove();
+                
+                let $style = document.createElement('style');
+                    $style.setAttribute('media', 'screen');
+                    $style.setAttribute('id', 'tifmPreviewCSS');
+                
+                $style.innerText = '.tifm-btn{transform:scale(1.0)!important;opacity:1!important;max-height:60px!important;}';
+                
+                $('head').append($style);
+                
+                $('.tifm_darker_a_preview').text('Hide preview');
+                isDisplayed = true;
+                window.tifmObserver = true;
+                
+              }
+              
+              function hideNotice(e) {
+                
+                e.preventDefault();
+                if (!isDisplayed) return previewNotice(e);
+                
+                $('#tifmPreviewCSS').remove();
+                
+                $('.tifm_darker_a_preview').text('Show me a preview');
+                isDisplayed = false;
+                window.tifmObserver = false;
+                
+              }
 
               function disableFeatureAndDismiss(e) {
 
                 e.preventDefault();
+                hideNotice(e);
                 hideAndDismissNotice('dismiss');
+
+              }
+              
+              function enableAndDismissNotice(e) {
+
+                e.preventDefault();
+                previewNotice(e);
+                hideAndDismissNotice('enable');
 
               }
 
@@ -166,8 +275,14 @@
         public function tryItOutScript() {
           ?>
           <script type="text/javascript">
+            <?php if (get_option('_tifm_feature_enabled') == 'enabled'): ?>
+            window.tifmObserver = true;
+            <?php endif; ?>
             jQuery(document).ready(function($) {
+              
               function makeButton(slug) {
+                
+                if (typeof window.tifmObserver == 'undefined' || window.tifmObserver == false) return;
 
                 let a = document.createElement('A');
                     a.classList.add('button');
@@ -204,6 +319,7 @@
               });
 
               observer.observe(document.querySelector('body'), { subtree: false, childList: true });
+              
             });
           </script>
           <?php
@@ -213,27 +329,28 @@
 
           ?>
 
-          <div class="notice notice-success is-dismissible" id="tifm_new_feature_notice">
-            <p id="tifm_paragraph_notice">
-              <span class="tifm-grow-1">
-                <b>New: </b> Click on the&nbsp;
-                <a class="button" style="color:#2d9418;border-color:#2d9418;text-align:center;width:88px" href="#!">Try it first</a>
-                &nbsp;button to first test a plugin on a new WP instance.
-              </span>
+            <div class="notice notice-success is-dismissible" id="tifm_new_feature_notice">
+              <p id="tifm_paragraph_notice">
+                <span class="tifm-grow-1">
+                  <b>New: </b> Add a&nbsp;
+                  <a class="button" style="color:#2d9418;border-color:#2d9418;text-align:center;width:88px" href="#!">Try it first</a>
+                  &nbsp;button to try out plugins before installing on your site.
+                </span>
 
-              <span class="tifm-grow-5">
-                <a class="tifm_darker_a" href="#">Got it, close this notice</a>
-              </span>
+                <span class="tifm-grow-5">
+                  <a class="tifm_darker_a tifm_btn tifm_btn_green" href="#">Sounds cool!</a>
+                  <a class="tifm_darker_a_preview tifm_btn tifm_btn_grey" href="#">Show me a preview</a>
+                </span>
 
-              <span class="tifm-grow-1">
-                <a class="tifm_darker_a_muted" href="#">Disable this feature</a>
-              </span>
+                <span class="tifm-grow-2">
+                  <a class="tifm_darker_a_muted" href="#">Not needed, I'm good</a>
+                </span>
 
-              <span>
+              </p>
+              <span class="tifm_poweredby">
                 Brought to you by <a class="tifm_brought_url" href="<?php echo esc_html($this->pluginPageURL); ?>"><?php echo esc_html($this->pluginName); ?></a>
               </span>
-            </p>
-          </div>
+            </div>
 
           <?php
 
@@ -266,6 +383,14 @@
             wp_send_json_success();
             exit;
 
+          } else if ($method == 'dismiss_notice_and_enable') {
+            
+            update_option('_tifm_feature_enabled', 'enabled');
+            update_option('_tifm_hide_notice_forever', true);
+            delete_option('_tifm_disable_feature_forever');
+            wp_send_json_success();
+            exit;
+            
           } else if ($method == 'dismiss_notice_and_disable') {
 
             update_option('_tifm_hide_notice_forever', true);
@@ -286,7 +411,13 @@
         public function actionButtonHandler($links, $plugin) {
 
           $url = 'https://tastewp.com/plugins/' . $plugin['slug'] . '/?anchor=wpsite';
-          $button = ['<a class="button" style="color:#2d9418;border-color:#2d9418;text-align:center;width:88px" target="_blank" href="' . $url . '">Try it first</a>'];
+          $css = 'style="transition: 0.4s all;transform: scale(0.0);opacity:0;max-height:0px;"';
+          
+          if (get_option('_tifm_feature_enabled') == 'enabled') {
+            $css = '';
+          }
+          
+          $button = ['<div class="tifm-btn" ' . $css . '><a class="button" style="color:#2d9418;border-color:#2d9418;text-align:center;width:88px;" target="_blank" href="' . $url . '">Try it first</a></div>'];
           array_splice($links, 1, 0, $button);
 
           return $links;

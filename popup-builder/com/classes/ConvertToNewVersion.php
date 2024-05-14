@@ -1,7 +1,7 @@
 <?php
 namespace sgpb;
 use sgpb\AdminHelper;
-use \ConfigDataHelper;
+use \SGPBConfigDataHelper;
 
 class ConvertToNewVersion
 {
@@ -130,7 +130,7 @@ class ConvertToNewVersion
 	{
 		global $wpdb;
 		$subscribersSql = 'SELECT `id`, `firstName`, `lastName`, `email`, `subscriptionType`, `status` from '.$wpdb->prefix.'sg_subscribers';
-		$subscribers = $wpdb->get_results($subscribersSql, ARRAY_A);
+		$subscribers = $wpdb->get_results( $wpdb->prepare( $subscribersSql ), ARRAY_A);
 
 		if (empty($subscribers)) {
 			return false;
@@ -139,7 +139,7 @@ class ConvertToNewVersion
 		foreach ($subscribers as $subscriber) {
 			$subscriber['subscriptionType'] = $this->getPostByTitle($subscriber['subscriptionType']);
 
-			$date = date('Y-m-d');
+			$date = gmdate('Y-m-d');
 			$sql = $wpdb->prepare('INSERT INTO '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' (`firstName`, `lastName`, `email`, `cDate`, `subscriptionType`, `unsubscribed`) VALUES (%s, %s, %s, %s, %d, %d) ', $subscriber['firstName'], $subscriber['lastName'], $subscriber['email'], $date, $subscriber['subscriptionType'], 0);
 			$wpdb->query($sql);
 		}
@@ -223,7 +223,7 @@ class ConvertToNewVersion
 		global $wpdb;
 
 		$query = 'SELECT `id`, `type`, `title`, `options` from '.$wpdb->prefix.'sg_popup ORDER BY id';
-		$popups = $wpdb->get_results($query, ARRAY_A);
+		$popups = $wpdb->get_results( $wpdb->prepare( $query ), ARRAY_A);
 
 		return $popups;
 	}
@@ -430,7 +430,7 @@ class ConvertToNewVersion
 					'post_type'	  => 'page'
 				);
 
-				$searchResults = ConfigDataHelper::getPostTypeData($args);
+				$searchResults = SGPBConfigDataHelper::getPostTypeData($args);
 				if (!empty($searchResults)) {
 					$target['sgpb-target'][0][] = array('param' => 'page_selected', 'operator' => '==', 'value' => $searchResults);
 				}
@@ -455,7 +455,7 @@ class ConvertToNewVersion
 					'post_type'	  => 'post'
 				);
 
-				$searchResults = ConfigDataHelper::getPostTypeData($args);
+				$searchResults = SGPBConfigDataHelper::getPostTypeData($args);
 				if (!empty($searchResults)) {
 					$target['sgpb-target'][0][] = array('param' => 'post_selected', 'operator' => '==', 'value' => $searchResults);
 				}
@@ -485,7 +485,7 @@ class ConvertToNewVersion
 							'post_type'	  => $customPostType
 						);
 
-						$searchResults = ConfigDataHelper::getPostTypeData($args);
+						$searchResults = SGPBConfigDataHelper::getPostTypeData($args);
 						if (!empty($searchResults)) {
 							$target['sgpb-target'][0][] = array('param' => $customPostType.'_selected', 'operator' => '==', 'value' => $searchResults);
 						}

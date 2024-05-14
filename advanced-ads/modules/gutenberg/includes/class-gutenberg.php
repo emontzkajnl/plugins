@@ -228,7 +228,7 @@ class Advanced_Ads_Gutenberg {
 			$output['output']['wrapper_attrs']['style']['height'] = absint( $attr['height'] ) . 'px';
 		}
 
-		$align           = esc_attr( $attr['align'] ) ?? 'default';
+		$align           = esc_attr( $attr['align'] ?? 'default' );
 		$after_ad_filter = function( $output, $ad ) {
 			return $output . '<br style="clear: both; display: block; float: none;">';
 		};

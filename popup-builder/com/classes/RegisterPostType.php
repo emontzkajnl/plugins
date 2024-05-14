@@ -87,20 +87,20 @@ class RegisterPostType
 		$count = SGPBNotificationCenter::getAllActiveNotifications();
 		$count = '';
 		$labels = array(
-			'name'               => _x('Popup Builder', 'post type general name', SG_POPUP_TEXT_DOMAIN),
-			'singular_name'      => _x('Popup', 'post type singular name', SG_POPUP_TEXT_DOMAIN),
-			'menu_name'          => _x('Popup Builder', 'admin menu', SG_POPUP_TEXT_DOMAIN).$count,
-			'name_admin_bar'     => _x('Popup', 'add new on admin bar', SG_POPUP_TEXT_DOMAIN),
-			'add_new'            => _x('Add New', 'Popup', SG_POPUP_TEXT_DOMAIN),
-			'add_new_item'       => __('Add New Popup', SG_POPUP_TEXT_DOMAIN),
-			'new_item'           => __('New Popup', SG_POPUP_TEXT_DOMAIN),
-			'edit_item'          => __('Edit Popup', SG_POPUP_TEXT_DOMAIN),
-			'view_item'          => __('View Popup', SG_POPUP_TEXT_DOMAIN),
-			'all_items'          => __('All Popups', SG_POPUP_TEXT_DOMAIN),
-			'search_items'       => __('Search', SG_POPUP_TEXT_DOMAIN),
-			'parent_item_colon'  => __('Parent Popups:', SG_POPUP_TEXT_DOMAIN),
-			'not_found'          => __('No popups found.', SG_POPUP_TEXT_DOMAIN),
-			'not_found_in_trash' => __('No popups found in Trash.', SG_POPUP_TEXT_DOMAIN)
+			'name'               => _x('Popup Builder', 'post type general name', 'popup-builder'),
+			'singular_name'      => _x('Popup', 'post type singular name', 'popup-builder'),
+			'menu_name'          => _x('Popup Builder', 'admin menu', 'popup-builder').$count,
+			'name_admin_bar'     => _x('Popup', 'add new on admin bar', 'popup-builder'),
+			'add_new'            => _x('Add New', 'Popup', 'popup-builder'),
+			'add_new_item'       => __('Add New Popup', 'popup-builder'),
+			'new_item'           => __('New Popup', 'popup-builder'),
+			'edit_item'          => __('Edit Popup', 'popup-builder'),
+			'view_item'          => __('View Popup', 'popup-builder'),
+			'all_items'          => __('All Popups', 'popup-builder'),
+			'search_items'       => __('Search', 'popup-builder'),
+			'parent_item_colon'  => __('Parent Popups:', 'popup-builder'),
+			'not_found'          => __('No popups found.', 'popup-builder'),
+			'not_found_in_trash' => __('No popups found in Trash.', 'popup-builder')
 		);
 
 		return $labels;
@@ -136,6 +136,8 @@ class RegisterPostType
 		register_post_type($postType, $args);
 
 		$this->createPopupObjFromPopupType();
+		
+
 	}
 
 	private function createPopupObjFromPopupType()
@@ -203,7 +205,7 @@ class RegisterPostType
 		$popupClassName = $this->getPopupClassNameFromPopupType($popupType);
 
 		if (!file_exists($typePath.$popupClassName.'.php')) {
-			die(esc_html__('Popup class does not exist', SG_POPUP_TEXT_DOMAIN));
+			die(esc_html__('Popup class does not exist', 'popup-builder'));
 		}
 		require_once($typePath.$popupClassName.'.php');
 		$popupClassName = __NAMESPACE__.'\\'.$popupClassName;
@@ -211,8 +213,8 @@ class RegisterPostType
 		$popupTypeObj->setId($popupId);
 		$popupTypeObj->setType($popupType);
 		$this->setPopupTypeObj($popupTypeObj);
-
 		$popupTypeMainView = $popupTypeObj->getPopupTypeMainView();
+		
 		$popupTypeViewData = $popupTypeObj->getPopupTypeOptionsView();
 
 		if (!empty($popupTypeMainView)) {
@@ -227,6 +229,7 @@ class RegisterPostType
 	/*	if ($popupType == 'subscription') {
 			add_action('add_meta_boxes', array($this, 'rightBannerMetabox'));
 		}*/
+		
 	}
 
 	public function rightBannerMetabox()
@@ -238,7 +241,7 @@ class RegisterPostType
 		}
 		add_meta_box(
 			'popupTypeRightBannerView',
-			__('News', SG_POPUP_TEXT_DOMAIN),
+			__('News', 'popup-builder'),
 			array($this, 'popupTypeRightBannerView'),
 			SG_POPUP_POST_TYPE,
 			'side',
@@ -254,7 +257,8 @@ class RegisterPostType
 
 		$metaboxes['popupTypeMainView'] = array(
 			'key' => 'popupTypeMainView',
-			'displayName' => __($optionsView['metaboxTitle'], SG_POPUP_TEXT_DOMAIN),
+			/* translators: metabox Title. */
+			'displayName' => sprintf( '%s', $optionsView['metaboxTitle']),
 			'filePath' => $optionsView['filePath'],
 			'short_description' => $optionsView['short_description'],
 			SG_POPUP_POST_TYPE,
@@ -271,7 +275,7 @@ class RegisterPostType
 		$optionsView = $popupTypeObj->getPopupTypeMainView();
 		add_meta_box(
 			'popupTypeMainView',
-			__($optionsView['metaboxTitle'], SG_POPUP_TEXT_DOMAIN),
+			sprintf( '%s', $optionsView['metaboxTitle']),
 			array($this, 'popupTypeMainView'),
 			SG_POPUP_POST_TYPE,
 			'normal',
@@ -286,7 +290,8 @@ class RegisterPostType
 
 		$metaboxes['popupTypeOptionsView'] = array(
 			'key' => 'popupTypeOptionsView',
-			'displayName' => __($optionsView['metaboxTitle'], SG_POPUP_TEXT_DOMAIN),
+			/* translators: metabox Title. */
+			'displayName' => sprintf( '%s', $optionsView['metaboxTitle']),
 			'short_description' => $optionsView['short_description'],
 			'filePath' => $optionsView['filePath'],
 			SG_POPUP_POST_TYPE,
@@ -303,7 +308,8 @@ class RegisterPostType
 		$optionsView = $popupTypeObj->getPopupTypeOptionsView();
 		add_meta_box(
 			'popupTypeOptionsView',
-			__($optionsView['metaboxTitle'], SG_POPUP_TEXT_DOMAIN),
+			/* translators: metabox Title. */
+			sprintf( '%s', $optionsView['metaboxTitle']),
 			array($this, 'popupTypeOptionsView'),
 			SG_POPUP_POST_TYPE,
 			'normal',
@@ -315,8 +321,8 @@ class RegisterPostType
 	{
 		add_submenu_page(
 			'edit.php?post_type='.SG_POPUP_POST_TYPE,
-			__('Settings', SG_POPUP_TEXT_DOMAIN),
-			__('Settings', SG_POPUP_TEXT_DOMAIN),
+			__('Settings', 'popup-builder'),
+			__('Settings', 'popup-builder'),
 			'manage_options',
 			SG_POPUP_SETTINGS_PAGE,
 			array($this, 'settings')
@@ -324,8 +330,8 @@ class RegisterPostType
 
 		add_submenu_page(
 			'edit.php?post_type='.SG_POPUP_POST_TYPE,
-			__('Extend', SG_POPUP_TEXT_DOMAIN),
-			__('Extend', SG_POPUP_TEXT_DOMAIN),
+			__('Extend', 'popup-builder'),
+			__('Extend', 'popup-builder'),
 			'sgpb_manage_options',
 			SG_POPUP_EXTEND_PAGE,
 			array($this, 'extendLink')
@@ -333,8 +339,8 @@ class RegisterPostType
 
 		add_submenu_page(
 			'edit.php?post_type='.SG_POPUP_POST_TYPE,
-			__('Support', SG_POPUP_TEXT_DOMAIN),
-			__('Support', SG_POPUP_TEXT_DOMAIN),
+			__('Support', 'popup-builder'),
+			__('Support', 'popup-builder'),
 			'sgpb_manage_options',
 			SG_POPUP_SUPPORT_PAGE,
 			array($this, 'supportLink')
@@ -345,8 +351,8 @@ class RegisterPostType
 	{
 		add_submenu_page(
 			'edit.php?post_type='.SG_POPUP_POST_TYPE,
-			__('Add New', SG_POPUP_TEXT_DOMAIN),
-			__('Add New', SG_POPUP_TEXT_DOMAIN),
+			__('Add New', 'popup-builder'),
+			__('Add New', 'popup-builder'),
 			'sgpb_manage_options',
 			SG_POPUP_POST_TYPE,
 			array($this, 'popupTypesPage')
@@ -354,8 +360,8 @@ class RegisterPostType
 
 		add_submenu_page(
 			'edit.php?post_type='.SG_POPUP_POST_TYPE,
-			__('All Subscribers', SG_POPUP_TEXT_DOMAIN),
-			__('All Subscribers', SG_POPUP_TEXT_DOMAIN),
+			__('All Subscribers', 'popup-builder'),
+			__('All Subscribers', 'popup-builder'),
 			'sgpb_manage_options',
 			SG_POPUP_SUBSCRIBERS_PAGE,
 			array($this, 'subscribersPage')
@@ -363,8 +369,8 @@ class RegisterPostType
 
 		add_submenu_page(
 			'edit.php?post_type='.SG_POPUP_POST_TYPE,
-			__('Newsletter', SG_POPUP_TEXT_DOMAIN),
-			__('Newsletter', SG_POPUP_TEXT_DOMAIN),
+			__('Newsletter', 'popup-builder'),
+			__('Newsletter', 'popup-builder'),
 			'sgpb_manage_options',
 			SG_POPUP_NEWSLETTER_PAGE,
 			array($this, 'newsletter')
@@ -385,7 +391,7 @@ class RegisterPostType
 	{
 		add_meta_box(
 			'optionsMetaboxView',
-			__('Advanced', SG_POPUP_TEXT_DOMAIN),
+			__('Advanced', 'popup-builder'),
 			array($this, 'optionsMetaboxView'),
 			SG_POPUP_POST_TYPE,
 			'normal',
@@ -408,11 +414,12 @@ class RegisterPostType
 		$metabox = $additionalMetaboxes['allMetaboxesView'];
 		$popupTypeObj = $this->getPopupTypeObj();
 		$filepath = $metabox['filePath'];
-
+		
 		add_meta_box(
 			$key,
-			__($metabox['displayName'], SG_POPUP_TEXT_DOMAIN),
-			function() use ($filepath, $popupTypeObj) {
+			/* translators: %s: display Name*/
+			sprintf( '%s', $metabox['displayName']),			
+			function() use ($filepath, $popupTypeObj) {				
 				require_once $filepath;
 			},
 			SG_POPUP_POST_TYPE,
@@ -456,7 +463,7 @@ class RegisterPostType
 	public function popupTypeOptionsView()
 	{
 		$popupTypeObj = $this->getPopupTypeObj();
-		$optionsView = $popupTypeObj->getPopupTypeOptionsView();
+		$optionsView = $popupTypeObj->getPopupTypeOptionsView();		
 		if (file_exists($optionsView['filePath'])) {
 			require_once($optionsView['filePath']);
 		}
@@ -465,7 +472,7 @@ class RegisterPostType
 	public function popupTypeMainView()
 	{
 		$popupTypeObj = $this->getPopupTypeObj();
-		$optionsView = $popupTypeObj->getPopupTypeMainView();
+		$optionsView = $popupTypeObj->getPopupTypeMainView();		
 		if (file_exists($optionsView['filePath'])) {
 			require_once($optionsView['filePath']);
 		}

@@ -1,5 +1,8 @@
 <?php
-
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 class SgpbPopupConfig
 {
 	public static function addDefine($name, $value)
@@ -54,9 +57,9 @@ class SgpbPopupConfig
 		self::addDefine('SGPB_GAMIFICATION_PLUGIN_URL', 'https://popup-builder.com/product/gamification-popup-pick-a-gift-popup/');
 		self::addDefine('SGPB_AGE_VERIFICATION_PLUGIN_URL', 'https://popup-builder.com/product/age-restriction-popup/');
 		self::addDefine('SG_POPUP_ADMIN_URL', admin_url());
-		self::addDefine('SG_POPUP_BUILDER_URL', plugins_url().'/'.SG_POPUP_FOLDER_NAME.'/');
+		self::addDefine('SG_POPUP_BUILDER_URL', plugins_url().'/'.SGPB_POPUP_FOLDER_NAME.'/');
 		self::addDefine('SG_POPUP_PLUGIN_PATH', WP_PLUGIN_DIR.'/');
-		self::addDefine('SG_POPUP_BUILDER_PATH', SG_POPUP_PLUGIN_PATH.SG_POPUP_FOLDER_NAME.'/');
+		self::addDefine('SG_POPUP_BUILDER_PATH', SG_POPUP_PLUGIN_PATH.SGPB_POPUP_FOLDER_NAME.'/');
 		self::addDefine('SG_POPUP_COM_PATH', SG_POPUP_BUILDER_PATH.'com/');
 		self::addDefine('SG_POPUP_CONFIG_PATH', SG_POPUP_COM_PATH.'config/');
 		self::addDefine('SG_POPUP_PUBLIC_PATH', SG_POPUP_BUILDER_PATH.'public/');
@@ -130,9 +133,9 @@ class SgpbPopupConfig
 		self::addDefine('SG_POPUP_TEMPLATE_POST_TYPE', 'sgpbtemplate');
 		self::addDefine('SGPB_INACTIVE_EXTENSIONS', 'inactivePBExtensions');
 		self::addDefine('SGPB_POPUP_LICENSE_SCREEN', SG_POPUP_POST_TYPE.'_page_'.SGPB_POPUP_LICENSE);
-		self::addDefine('SGPB_SUBSCRIPTION_ERROR_MESSAGE', __('There was an error while trying to send your request. Please try again', SG_POPUP_TEXT_DOMAIN).'.');
-		self::addDefine('SGPB_SUBSCRIPTION_VALIDATION_MESSAGE', __('This field is required', SG_POPUP_TEXT_DOMAIN).'.');
-		self::addDefine('SGPB_SUBSCRIPTION_EMAIL_MESSAGE', __('Please enter a valid email address', SG_POPUP_TEXT_DOMAIN).'.');
+		self::addDefine('SGPB_SUBSCRIPTION_ERROR_MESSAGE', __('There was an error while trying to send your request. Please try again', 'popup-builder').'.');
+		self::addDefine('SGPB_SUBSCRIPTION_VALIDATION_MESSAGE', __('This field is required', 'popup-builder').'.');
+		self::addDefine('SGPB_SUBSCRIPTION_EMAIL_MESSAGE', __('Please enter a valid email address', 'popup-builder').'.');
 		self::addDefine('SGPB_TRANSIENT_TIMEOUT_HOUR', 60 * MINUTE_IN_SECONDS);
 		self::addDefine('SGPB_TRANSIENT_TIMEOUT_DAY', 24 * HOUR_IN_SECONDS);
 		self::addDefine('SGPB_TRANSIENT_TIMEOUT_WEEK', 7 * DAY_IN_SECONDS);
@@ -166,10 +169,10 @@ class SgpbPopupConfig
 		));
 
 		$SGPB_POPUP_TYPES['typeLabels'] = apply_filters('sgpbAddPopupTypeLabels', array(
-			'image' => __('Image', SG_POPUP_TEXT_DOMAIN),
-			'html' => __('HTML', SG_POPUP_TEXT_DOMAIN),
-			'fblike' => __('Facebook', SG_POPUP_TEXT_DOMAIN),
-			'subscription' => __('Subscription', SG_POPUP_TEXT_DOMAIN)
+			'image' => __('Image', 'popup-builder'),
+			'html' => __('HTML', 'popup-builder'),
+			'fblike' => __('Facebook', 'popup-builder'),
+			'subscription' => __('Subscription', 'popup-builder')
 		));
 	}
 }

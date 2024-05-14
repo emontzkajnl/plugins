@@ -2,7 +2,7 @@
  * Copyright 2012-2021, Theia Post Slider, WeCodePixels, https://wecodepixels.com
  */
 
-import { addQueryString, isHtml5StorageAvailable } from './helper';
+import {addQueryString, isHtml5StorageAvailable} from './helper';
 import * as async from './async';
 
 export class TheiaPostSlider {
@@ -192,33 +192,30 @@ export class TheiaPostSlider {
         }
 
         // Set up touch events.
-        if (typeof Hammer !== 'undefined') {
+        if (typeof ZingTouch !== 'undefined') {
             this.previousTouch = 0;
             this.minimumTimeBetweenGestures = 500;
 
-            // Eanble text selection.
-            delete Hammer.defaults.cssProps.userSelect;
+            const zt = new ZingTouch.Region(document.body, false, false);
 
-            // Create hammer.js instance.
-            const hammertime = new Hammer(this.slideContainer[0], {
-                inputClass: Hammer.TouchInput
-            });
-
-            hammertime
-                .on('swipeleft', () => {
-                    const t = (new Date).getTime();
-                    if (t - this.minimumTimeBetweenGestures >= this.previousTouch) {
-                        this.setNext();
-                        this.previousTouch = t;
-                    }
-                })
-                .on('swiperight', () => {
-                    const t = (new Date).getTime();
-                    if (t - this.minimumTimeBetweenGestures >= this.previousTouch) {
-                        this.setPrev();
-                        this.previousTouch = t;
-                    }
-                });
+            zt.bind(this.slideContainer, 'swipe', (e) => {
+                const t = (new Date).getTime();
+                if (t - this.minimumTimeBetweenGestures < this.previousTouch) {
+                    return;
+                }
+                if (e.detail.events[0].originalEvent.type !== 'touchend') {
+                    // Ignore swipe gestures via "mouseup".
+                    return;
+                }
+                const angle = parseInt(e.detail.data[0].currentDirection);
+                if (angle === 180) {
+                    this.setNext();
+                    this.previousTouch = t;
+                } else if (angle === 360) {
+                    this.setPrev();
+                    this.previousTouch = t;
+                }
+            }, false);
         }
 
         // Enable keyboard shortcuts

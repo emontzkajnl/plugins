@@ -22,8 +22,8 @@ gulp.task('js', function () {
 
     return gulp.src([
         'assets/js/async.js',
-        'assets/js/hammer.js',
         'assets/js/tps-tinymce-customcodes.js',
+        'node_modules/zingtouch/dist/zingtouch.js',
         'node_modules/iframe-resizer/js/iframeResizer.js'
     ])
         .pipe(sourcemaps.init())

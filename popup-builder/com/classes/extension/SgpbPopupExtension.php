@@ -24,7 +24,7 @@ class SgpbPopupExtension implements SgpbIPopupExtension
 	{
 		$jsFiles = array();
 		$localizeData = array();
-		$translatedData = ConfigDataHelper::getJsLocalizedData();
+		$translatedData = SGPBConfigDataHelper::getJsLocalizedData();
 		$currentPostType = AdminHelper::getCurrentPostType();
 		$newsletterPage = $this->getNewsletterPageKey();
 		$settingsPage = $this->getSettingsPageKey();
@@ -73,21 +73,21 @@ class SgpbPopupExtension implements SgpbIPopupExtension
 			'data' => array(
 				'allPopups' => AdminHelper::getGutenbergPopupsIdAndTitle(),
 				'allEvents' => AdminHelper::getGutenbergPopupsEvents(),
-				'title'   => __('Popup Builder', SG_POPUP_TEXT_DOMAIN),
-				'description'   => __('This block will help you to add Popup Builder’s shortcode inside the page content', SG_POPUP_TEXT_DOMAIN),
+				'title'   => __('Popup Builder', 'popup-builder'),
+				'description'   => __('This block will help you to add Popup Builder’s shortcode inside the page content', 'popup-builder'),
 				'i18n'=> array(
-					'title'            => __( 'WPForms', 'wpforms-lite' ),
-					'description'      => __( 'Select and display one of your forms.', 'wpforms-lite' ),
-					'form_keyword'     => __( 'form', 'wpforms-lite' ),
-					'form_select'      => __( 'Select Popup', 'wpforms-lite' ),
-					'form_settings'    => __( 'Form Settings', 'wpforms-lite' ),
-					'form_selected'    => __( 'Form', 'wpforms-lite' ),
-					'show_title'       => __( 'Show Title', 'wpforms-lite' ),
-					'show_description' => __( 'Show Description', 'wpforms-lite' ),
+					'title'            => __( 'WPForms', 'popup-builder' ),
+					'description'      => __( 'Select and display one of your forms.', 'popup-builder' ),
+					'form_keyword'     => __( 'form', 'popup-builder' ),
+					'form_select'      => __( 'Select Popup', 'popup-builder' ),
+					'form_settings'    => __( 'Form Settings', 'popup-builder' ),
+					'form_selected'    => __( 'Form', 'popup-builder' ),
+					'show_title'       => __( 'Show Title', 'popup-builder' ),
+					'show_description' => __( 'Show Description', 'popup-builder' ),
 				),
 				'logo_url' => SG_POPUP_IMG_URL.'bannerLogo.png',
 				'logo_classname' => 'sgpb-gutenberg-logo',
-				'clickText' => __('Click me', SG_POPUP_TEXT_DOMAIN)
+				'clickText' => __('Click me', 'popup-builder')
 			)
 		);
 
@@ -97,8 +97,8 @@ class SgpbPopupExtension implements SgpbIPopupExtension
 			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'sgpbSelect2.js');
 
 
-			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'Backend.js');
-			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'FloatingButton.js', 'dep' => array('Backend.js'),);
+			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'Backend.js', 'dep' => array('wp-color-picker'));
+			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'FloatingButton.js', 'dep' => array('Backend.js'));
 			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'NotificationCenter.js');
 			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'Popup.js');
 			$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'PopupConfig.js');
@@ -238,20 +238,20 @@ class SgpbPopupExtension implements SgpbIPopupExtension
 			$settingsPage
 		);
 		if (in_array($pageName, $allowPages)) {
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'jquery.dateTimePicker.min.css', 'dep' => array(), 'ver' => rand(1, 1000), 'inFooter' => false);
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgbp-bootstrap.css', 'dep' => array(), 'ver' => rand(1, 1000), 'inFooter' => false);
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'popupAdminStyles.css', 'dep' => array(), 'ver' => rand(1, 1000), 'inFooter' => false);
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'select2.min.css', 'dep' => array(), 'ver' => rand(1, 1000), 'inFooter' => false);
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'theme.css', 'dep' => array(), 'ver' => rand(1, 1000), 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'jquery.dateTimePicker.min.css', 'dep' => array(), 'ver' => wp_rand(1, 1000), 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgbp-bootstrap.css', 'dep' => array(), 'ver' => wp_rand(1, 1000), 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'popupAdminStyles.css', 'dep' => array(), 'ver' => wp_rand(1, 1000), 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'select2.min.css', 'dep' => array(), 'ver' => wp_rand(1, 1000), 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'theme.css', 'dep' => array(), 'ver' => wp_rand(1, 1000), 'inFooter' => false);
 			$cssFiles[] = array('folderUrl' => '', 'filename' => 'wp-color-picker');
 		}
 		else if ($pageName == SG_POPUP_SUBSCRIBERS_PAGE) {
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgbp-bootstrap.css', 'dep' => array(), 'ver' => SG_POPUP_VERSION, 'inFooter' => false);
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'popupAdminStyles.css', 'dep' => array(), 'ver' => SG_POPUP_VERSION, 'inFooter' => false);
-			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'select2.min.css', 'dep' => array(), 'ver' => SG_POPUP_VERSION, 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgbp-bootstrap.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'popupAdminStyles.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
+			$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'select2.min.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
 
 		}
-		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgpb-modal.css', 'dep' => array(), 'ver' => rand(1, 10000), 'inFooter' => false);
+		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgpb-modal.css', 'dep' => array(), 'ver' => wp_rand(1, 10000), 'inFooter' => false);
 
 		$cssData = array(
 			'cssFiles' => apply_filters('sgpbAdminCssFiles', $cssFiles)
@@ -261,7 +261,7 @@ class SgpbPopupExtension implements SgpbIPopupExtension
 
 	public function getFrontendScripts($page, $popupObjs)
 	{
-		$translatedData = ConfigDataHelper::getJsLocalizedData();
+		$translatedData = SGPBConfigDataHelper::getJsLocalizedData();
 		$jsFiles = array();
 		$localizeData = array();
 		$jsFiles[] = array('folderUrl'=> SG_POPUP_JS_URL, 'filename' => 'Popup.js', 'dep' => array('jquery'));
@@ -344,7 +344,7 @@ class SgpbPopupExtension implements SgpbIPopupExtension
 	public function getFrontendStyles($page, $data)
 	{
 		$cssFiles = array();
-		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'theme.css', 'dep' => array(), 'ver' => SG_POPUP_VERSION, 'inFooter' => false);
+		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'theme.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
 
 		$cssData = array(
 			'cssFiles' => apply_filters('sgpbFrontendCssFiles', $cssFiles)

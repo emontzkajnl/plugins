@@ -92,14 +92,18 @@ class SGPBTable extends SGPBListTable
 
 	public function prepare_items()
 	{
-		global $wpdb;
+		global $wpdb;		
+		
 		$table = $this->tablename;
-
-		$query = 'SELECT '.implode(', ', $this->columns).' FROM '.$table;
-		$this->customizeQuery($query);
-
-		$totalItems = count($wpdb->get_results($query)); //return the total number of affected rows
-
+		
+		$columns_name_placeholders = implode( ', ', array_fill( 0, count( $this->columns ), '%i' ) );		
+		  
+		$query = $wpdb->prepare( "SELECT $table.$columns_name_placeholders FROM `$table`", $this->columns );			
+		
+		$this->customizeQuery($query);		
+		
+		$totalItems = count( $wpdb->get_results( $query ) ); //return the total number of affected rows
+		
 		if ($this->previewPopup) {
 			$totalItems -= 1;
 		}
@@ -141,7 +145,7 @@ class SGPBTable extends SGPBListTable
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array($columns, $hidden, $sortable);
-		$items = $wpdb->get_results($query, ARRAY_N);
+		$items = $wpdb->get_results( $query, ARRAY_N);
 		/*Remove popup data when its class does not exist.*/
 		$this->customizeRowsData($items);
 
@@ -214,13 +218,13 @@ class SGPBTable extends SGPBListTable
 		}
 		?>
 		<div class="alignleft actions daterangeactions">
-			<label class="screen-reader-text" for="sgpb-subscription-popup"><?php esc_html_e('Filter by popup', SG_POPUP_TEXT_DOMAIN)?></label>
+			<label class="screen-reader-text" for="sgpb-subscription-popup"><?php esc_html_e('Filter by popup', 'popup-builder')?></label>
 			<?php echo wp_kses($this->getNavPopupsConditions(), AdminHelper::allowed_html_tags()); ?>
 
-			<label class="screen-reader-text" for="sgpb-subscribers-dates"><?php esc_html_e('Filter by date', SG_POPUP_TEXT_DOMAIN)?></label>
+			<label class="screen-reader-text" for="sgpb-subscribers-dates"><?php esc_html_e('Filter by date', 'popup-builder')?></label>
 			<?php  echo wp_kses($this->getNavDateConditions(), AdminHelper::allowed_html_tags()); ?>
 
-			<input name="filter_action" id="post-query-submit" class="button" value="<?php esc_html_e('Filter', SG_POPUP_TEXT_DOMAIN)?>" type="submit">
+			<input name="filter_action" id="post-query-submit" class="button" value="<?php esc_html_e('Filter', 'popup-builder')?>" type="submit">
 		</div>
 		<?php
 	}
@@ -296,7 +300,9 @@ class SGPBTable extends SGPBListTable
 	public function print_column_headers( $with_id = true ) {
 		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		$sbpb_server_host = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '';
+		$sbpb_server_requesturi = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field( $_SERVER['REQUEST_URI'] ) : '';
+		$current_url = set_url_scheme( 'http://' . $sbpb_server_host. $sbpb_server_requesturi );
 		$current_url = remove_query_arg( 'paged', $current_url );
 
 		if ( isset( $_GET['orderby'] ) )
@@ -345,7 +351,7 @@ class SGPBTable extends SGPBListTable
 					$class[] = $desc_first ? 'asc' : 'desc';
 				}
 
-				$column_display_name = '<a href="' . esc_url( add_query_arg( compact( 'orderby', 'order' ), $current_url ) ) . '"><span>' . $column_display_name . '</span><span class="sorting-indicator"></span></a>';
+				$column_display_name = '<a href="' . esc_url( add_query_arg( compact( 'orderby', 'order' ), $current_url ) ) . '"><span>' . $column_display_name . '</span><span class="sorting-indicator352"></span></a>';
 			}
 
 			$tag = ( 'bulk' === $column_key ) ? 'td' : 'th';

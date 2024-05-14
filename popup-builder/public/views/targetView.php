@@ -1,6 +1,9 @@
 <?php
 namespace sgpb;
-
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $targetData = $popupTypeObj->getOptionValue('sgpb-target');
 $popupTargetData = ConditionBuilder::createTargetConditionBuilder($targetData);
 $type = (!empty($_GET['sgpb_type'])) ? sanitize_text_field($_GET['sgpb_type']) : $popupTypeObj->getOptionValue('sgpb-type');

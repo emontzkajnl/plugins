@@ -46,6 +46,7 @@
         "dom4": "^2.1.5",
         "iframe-resizer": "^3.5.14",
         "slim-select": "^1.15.1",
-        "tiny-slider": "^2.9.3"
+        "tiny-slider": "^2.9.3",
+        "zingtouch": "^1.0.6"
     }
 }

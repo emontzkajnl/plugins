@@ -64,25 +64,25 @@ class SGPBFeedback
 	public function renderDeactivateFeedbackDialog() {
 		$deactivateReasons = array(
 			'no_longer_needed' => array(
-				'title' => __('I no longer need the plugin', SG_POPUP_TEXT_DOMAIN),
+				'title' => __('I no longer need the plugin', 'popup-builder'),
 				'input_placeholder' => ''
 			),
 			'found_a_better_plugin' => array(
-				'title' => __('I found a better plugin', SG_POPUP_TEXT_DOMAIN),
-				'input_placeholder' => __( 'Please share which plugin', SG_POPUP_TEXT_DOMAIN)
+				'title' => __('I found a better plugin', 'popup-builder'),
+				'input_placeholder' => __( 'Please share which plugin', 'popup-builder')
 			),
 			'couldnt_get_the_plugin_to_work' => array(
-				'title' => __('I couldn\'t get the plugin to work', SG_POPUP_TEXT_DOMAIN),
+				'title' => __('I couldn\'t get the plugin to work', 'popup-builder'),
 				'input_placeholder' => '',
-				'extra_help' => __('Having troubles? You can always count on us. Please try to contact us via <a href="https://popup-builder.com/">Live chat</a> or send a message to <a href="mailto:support@popup-builder.com">support@popup-builder.com</a>', SG_POPUP_TEXT_DOMAIN)
+				'extra_help' => __('Having troubles? You can always count on us. Please try to contact us via <a href="https://popup-builder.com/">Live chat</a> or send a message to <a href="mailto:support@popup-builder.com">support@popup-builder.com</a>', 'popup-builder')
 			),
 			'temporary_deactivation' => array(
-				'title' => __('It\'s a temporary deactivation', SG_POPUP_TEXT_DOMAIN),
+				'title' => __('It\'s a temporary deactivation', 'popup-builder'),
 				'input_placeholder' => ''
 			),
 			'other' => array(
-				'title' => __('Other', SG_POPUP_TEXT_DOMAIN),
-				'input_placeholder' => __('Please share the reason', SG_POPUP_TEXT_DOMAIN),
+				'title' => __('Other', 'popup-builder'),
+				'input_placeholder' => __('Please share the reason', 'popup-builder'),
 			)
 		);
 
@@ -93,7 +93,7 @@ class SGPBFeedback
 					<div class="row sgpb-feedback-popup-header sgpb-position-relative">
 						<div class="col-sm-3 sgpb-add-subscriber-header-column">
 							<h4>
-								<?php esc_html_e('Quick Feedback', SG_POPUP_TEXT_DOMAIN)?>
+								<?php esc_html_e('Quick Feedback', 'popup-builder')?>
 							</h4>
 						</div>
 						<div class="col-sm-1 sgpb-add-subscriber-header-spinner-column">
@@ -104,9 +104,9 @@ class SGPBFeedback
 					<div class="row">
 						<div class="col-md-12">
 							<h4 class="sgpb-feedback-descritpion">
-								<?php _e('If you have a moment, please share why you are deactivating <b>Popup Builder</b>', SG_POPUP_TEXT_DOMAIN)?>:
+								<?php esc_html_e('If you have a moment, please share why you are deactivating <b>Popup Builder</b>', 'popup-builder')?>:
 							</h4>
-							<p class="sgpb-feedback-error-message sg-hide-element"><?php esc_html_e('Please, select an option.', SG_POPUP_TEXT_DOMAIN)?></p>
+							<p class="sgpb-feedback-error-message sg-hide-element"><?php esc_html_e('Please, select an option.', 'popup-builder')?></p>
 						</div>
 					</div>
 					<div class="row">
@@ -130,10 +130,10 @@ class SGPBFeedback
 								<?php endforeach; ?>
 								<div class="row sgpb-feedback-btns-wrapper">
 									<div class="col-md-6">
-										<input type="button" class="btn btn-sm btn-success sgpb-feedback-submit" name="sgpb-feedback-submit" value="<?php esc_html_e('Submit & Deactivate', SG_POPUP_TEXT_DOMAIN); ?>">
+										<input type="button" class="btn btn-sm btn-success sgpb-feedback-submit" name="sgpb-feedback-submit" value="<?php esc_html_e('Submit & Deactivate', 'popup-builder'); ?>">
 									</div>
 									<div class="col-md-6">
-										<input type="button" class="btn btn-sm sgpb-feedback-submit-skip" name="sgpb-feedback-submit-skip" value="<?php esc_html_e('Skip & Deactivate', SG_POPUP_TEXT_DOMAIN); ?>">
+										<input type="button" class="btn btn-sm sgpb-feedback-submit-skip" name="sgpb-feedback-submit-skip" value="<?php esc_html_e('Skip & Deactivate', 'popup-builder'); ?>">
 									</div>
 								</div>
 							</form>

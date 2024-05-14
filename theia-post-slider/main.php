@@ -5,7 +5,8 @@ Plugin URI: https://wecodepixels.com/theia-post-slider-for-wordpress/?utm_source
 Description: Display multi-page posts using a slider, as a slideshow.
 Author: WeCodePixels
 Author URI: https://wecodepixels.com/?utm_source=theia-post-slider-for-wordpress
-Version: 2.7.5
+Version: 2.8.0
+Update URI: https://api.freemius.com
 Copyright: WeCodePixels
 */
 
@@ -13,7 +14,7 @@ Copyright: WeCodePixels
  * Copyright 2012-2021, Theia Post Slider, WeCodePixels, https://wecodepixels.com
  */
 
-define( 'THEIA_POST_SLIDER_VERSION', '2.7.5' );
+define( 'THEIA_POST_SLIDER_VERSION', '2.8.0' );
 define( 'THEIA_POST_SLIDER_DIR', __DIR__ );
 define( 'THEIA_POST_SLIDER_MAIN', __FILE__ );
 

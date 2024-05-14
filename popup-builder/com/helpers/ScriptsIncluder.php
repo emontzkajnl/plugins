@@ -1,6 +1,10 @@
 <?php
 namespace sgpb;
 
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * Popup Builder Includer
  *
@@ -29,7 +33,7 @@ class ScriptsIncluder
 		}
 
 		$dep = array();
-		$ver = SG_POPUP_VERSION;
+		$ver = SGPB_POPUP_VERSION;
 		$media = 'all';
 		$dirUrl = SG_POPUP_CSS_URL;
 
@@ -87,7 +91,7 @@ class ScriptsIncluder
 		}
 
 		$dep = array();
-		$ver = SG_POPUP_VERSION;
+		$ver = SGPB_POPUP_VERSION;
 		$inFooter = false;
 		$dirUrl = SG_POPUP_JS_URL;
 

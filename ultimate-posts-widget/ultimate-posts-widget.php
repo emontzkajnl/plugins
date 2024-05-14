@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Posts Widget
 Plugin URI: http://wordpress.org/plugins/ultimate-posts-widget/
 Description: The ultimate widget for displaying posts, custom post types or sticky posts with an array of options.
-Version: 2.2.7
+Version: 2.3.1
 Author: Clever Widgets
 Author URI: https://themecheck.info
 Text Domain: ultimate-posts-widget
@@ -90,6 +90,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       wp_localize_script( 'upw_admin_scripts', 'upw_admin_scripts_ajax_object',
         array(
           'ajaxurl' => admin_url( 'admin-ajax.php' ),
+          'nonce' => wp_create_nonce( 'upw_hide_admin_notification' ),
         )
       );
     }
@@ -122,9 +123,9 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       ob_start();
       extract( $args );
 
-      $title = apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title'], $instance, $this->id_base);
-			$title_link = $instance['title_link'];
-      $class = $instance['class'];
+      $title = esc_attr(apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title'], $instance, $this->id_base));
+			$title_link = esc_url($instance['title_link'], ['http', 'https']);
+      $class = esc_attr($instance['class']);
       $number = empty($instance['number']) ? -1 : $instance['number'];
       $types = empty($instance['types']) ? 'any' : explode(',', $instance['types']);
       $cats = empty($instance['cats']) ? '' : explode(',', $instance['cats']);
@@ -132,7 +133,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       $atcat = $instance['atcat'] ? true : false;
       $thumb_size = $instance['thumb_size'];
       $attag = $instance['attag'] ? true : false;
-      $exclude_current = $instance['exclude_current'] ? true : false;
+      $exclude_current = isset($instance['exclude_current']) ? ($instance['exclude_current'] == true) : false;
       $excerpt_length = $instance['excerpt_length'];
       $excerpt_readmore = $instance['excerpt_readmore'];
       $sticky = $instance['sticky'];
@@ -266,10 +267,10 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
     function update( $new_instance, $old_instance ) {
       $instance = $old_instance;
 
-      $instance['title'] = strip_tags( $new_instance['title'] );
-      $instance['class'] = strip_tags( $new_instance['class']);
-      $instance['title_link'] = strip_tags( $new_instance['title_link'] );
-      $instance['number'] = strip_tags( $new_instance['number'] );
+      $instance['title'] = esc_attr(strip_tags( $new_instance['title'] ));
+      $instance['class'] = esc_attr(strip_tags( $new_instance['class']));
+      $instance['title_link'] = esc_attr(strip_tags( $new_instance['title_link'] ));
+      $instance['number'] = esc_attr(strip_tags( $new_instance['number'] ));
       $instance['types'] = (isset( $new_instance['types'] )) ? implode(',', (array) $new_instance['types']) : '';
       $instance['cats'] = (isset( $new_instance['cats'] )) ? implode(',', (array) $new_instance['cats']) : '';
       $instance['tags'] = (isset( $new_instance['tags'] )) ? implode(',', (array) $new_instance['tags']) : '';
@@ -280,24 +281,24 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       $instance['show_content'] = isset( $new_instance['show_content'] );
       $instance['show_thumbnail'] = isset( $new_instance['show_thumbnail'] );
       $instance['show_date'] = isset( $new_instance['show_date'] );
-      $instance['date_format'] = strip_tags( $new_instance['date_format'] );
+      $instance['date_format'] = esc_attr(strip_tags( $new_instance['date_format'] ));
       $instance['show_title'] = isset( $new_instance['show_title'] );
       $instance['show_author'] = isset( $new_instance['show_author'] );
       $instance['show_comments'] = isset( $new_instance['show_comments'] );
-      $instance['thumb_size'] = strip_tags( $new_instance['thumb_size'] );
+      $instance['thumb_size'] = esc_attr(strip_tags( $new_instance['thumb_size'] ));
       $instance['show_readmore'] = isset( $new_instance['show_readmore']);
-      $instance['excerpt_length'] = strip_tags( $new_instance['excerpt_length'] );
-      $instance['excerpt_readmore'] = strip_tags( $new_instance['excerpt_readmore'] );
+      $instance['excerpt_length'] = esc_attr(strip_tags( $new_instance['excerpt_length'] ));
+      $instance['excerpt_readmore'] = esc_attr(strip_tags( $new_instance['excerpt_readmore'] ));
       $instance['sticky'] = $new_instance['sticky'];
       $instance['order'] = $new_instance['order'];
       $instance['orderby'] = $new_instance['orderby'];
       $instance['meta_key'] = $new_instance['meta_key'];
       $instance['show_cats'] = isset( $new_instance['show_cats'] );
       $instance['show_tags'] = isset( $new_instance['show_tags'] );
-      $instance['custom_fields'] = strip_tags( $new_instance['custom_fields'] );
-      $instance['template'] = strip_tags( $new_instance['template'] );
-			$instance['custom_empty'] = strip_tags( $new_instance['custom_empty'] );
-      $instance['template_custom'] = strip_tags( $new_instance['template_custom'] );
+      $instance['custom_fields'] = esc_attr(strip_tags( $new_instance['custom_fields'] ));
+      $instance['template'] = esc_attr(strip_tags( $new_instance['template'] ));
+			$instance['custom_empty'] = esc_attr(strip_tags( $new_instance['custom_empty'] ));
+      $instance['template_custom'] = esc_attr(strip_tags( $new_instance['template_custom'] ));
 
       if (current_user_can('unfiltered_html')) {
         $instance['before_posts'] =  $new_instance['before_posts'];
@@ -365,18 +366,18 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       ) );
 
       // Or use the instance
-      $title  = strip_tags($instance['title']);
-      $class  = strip_tags($instance['class']);
-      $title_link  = strip_tags($instance['title_link']);
-      $number = strip_tags($instance['number']);
+      $title  = esc_attr(strip_tags($instance['title']));
+      $class  = esc_attr(strip_tags($instance['class']));
+      $title_link  = esc_attr(strip_tags($instance['title_link']));
+      $number = esc_attr(strip_tags($instance['number']));
       $types  = $instance['types'];
       $cats = $instance['cats'];
       $tags = $instance['tags'];
       $atcat = $instance['atcat'];
       $thumb_size = $instance['thumb_size'];
       $attag = $instance['attag'];
-      $excerpt_length = strip_tags($instance['excerpt_length']);
-      $excerpt_readmore = strip_tags($instance['excerpt_readmore']);
+      $excerpt_length = esc_attr(strip_tags($instance['excerpt_length']));
+      $excerpt_readmore = esc_attr(strip_tags($instance['excerpt_readmore']));
       $order = $instance['order'];
       $orderby = $instance['orderby'];
       $meta_key = $instance['meta_key'];
@@ -393,10 +394,10 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
       $show_content = $instance['show_content'];
       $show_readmore = $instance['show_readmore'];
       $show_thumbnail = $instance['show_thumbnail'];
-			$custom_empty = strip_tags($instance['custom_empty']);
-      $custom_fields = strip_tags($instance['custom_fields']);
+			$custom_empty = esc_attr(strip_tags($instance['custom_empty']));
+      $custom_fields = esc_attr(strip_tags($instance['custom_fields']));
       $template = $instance['template'];
-      $template_custom = strip_tags($instance['template_custom']);
+      $template_custom = esc_attr(strip_tags($instance['template_custom']));
       $before_posts = format_to_edit($instance['before_posts']);
       $after_posts = format_to_edit($instance['after_posts']);
 
@@ -454,17 +455,17 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
 
         <p>
           <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title', 'ultimate-posts-widget' ); ?>:</label>
-          <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
         </p>
 
         <p>
           <label for="<?php echo $this->get_field_id( 'title_link' ); ?>"><?php _e( 'Title URL', 'ultimate-posts-widget' ); ?>:</label>
-          <input class="widefat" id="<?php echo $this->get_field_id( 'title_link' ); ?>" name="<?php echo $this->get_field_name( 'title_link' ); ?>" type="text" value="<?php echo $title_link; ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id( 'title_link' ); ?>" name="<?php echo $this->get_field_name( 'title_link' ); ?>" type="text" value="<?php echo esc_attr($title_link); ?>" />
         </p>
 
         <p>
           <label for="<?php echo $this->get_field_id( 'class' ); ?>"><?php _e( 'CSS class', 'ultimate-posts-widget' ); ?>:</label>
-          <input class="widefat" id="<?php echo $this->get_field_id( 'class' ); ?>" name="<?php echo $this->get_field_name( 'class' ); ?>" type="text" value="<?php echo $class; ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id( 'class' ); ?>" name="<?php echo $this->get_field_name( 'class' ); ?>" type="text" value="<?php echo esc_attr($class); ?>" />
         </p>
 
         <p>
@@ -479,7 +480,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
 
 				<p>
 					<label for="<?php echo $this->get_field_id( 'custom_empty' ); ?>"><?php _e( 'No posts found message', 'ultimate-posts-widget' ); ?>:</label>
-					<input class="widefat" id="<?php echo $this->get_field_id( 'custom_empty' ); ?>" name="<?php echo $this->get_field_name( 'custom_empty' ); ?>" type="text" value="<?php echo $custom_empty; ?>" placeholder="No posts found." />
+					<input class="widefat" id="<?php echo $this->get_field_id( 'custom_empty' ); ?>" name="<?php echo $this->get_field_name( 'custom_empty' ); ?>" type="text" value="<?php echo esc_attr($custom_empty); ?>" placeholder="No posts found." />
 				</p>
 
       </div>
@@ -497,12 +498,12 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
 
         <p<?php if ($template !== 'custom') echo ' style="display:none;"'; ?>>
           <label for="<?php echo $this->get_field_id('template_custom'); ?>"><?php _e('Custom Template Name', 'ultimate-posts-widget'); ?>:</label>
-          <input class="widefat" id="<?php echo $this->get_field_id('template_custom'); ?>" name="<?php echo $this->get_field_name('template_custom'); ?>" type="text" value="<?php echo $template_custom; ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id('template_custom'); ?>" name="<?php echo $this->get_field_name('template_custom'); ?>" type="text" value="<?php echo esc_attr($template_custom); ?>" />
         </p>
 
         <p>
           <label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of posts', 'ultimate-posts-widget' ); ?>:</label>
-          <input class="widefat" id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="number" value="<?php echo $number; ?>" min="-1" />
+          <input class="widefat" id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="number" value="<?php echo esc_attr($number); ?>" min="-1" />
         </p>
 
         <p>
@@ -517,7 +518,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
 
         <p<?php if (!$show_date) echo ' style="display:none;"'; ?>>
           <label for="<?php echo $this->get_field_id('date_format'); ?>"><?php _e( 'Date format', 'ultimate-posts-widget' ); ?>:</label>
-          <input class="widefat" type="text" id="<?php echo $this->get_field_id('date_format'); ?>" name="<?php echo $this->get_field_name('date_format'); ?>" value="<?php echo $date_format; ?>" />
+          <input class="widefat" type="text" id="<?php echo $this->get_field_id('date_format'); ?>" name="<?php echo $this->get_field_name('date_format'); ?>" value="<?php echo esc_attr($date_format); ?>" />
         </p>
 
         <p>
@@ -542,7 +543,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
 
         <p<?php if (!$show_excerpt) echo ' style="display:none;"'; ?>>
           <label for="<?php echo $this->get_field_id('excerpt_length'); ?>"><?php _e( 'Excerpt length (in words)', 'ultimate-posts-widget' ); ?>:</label>
-          <input class="widefat" type="number" id="<?php echo $this->get_field_id('excerpt_length'); ?>" name="<?php echo $this->get_field_name('excerpt_length'); ?>" value="<?php echo $excerpt_length; ?>" min="-1" />
+          <input class="widefat" type="number" id="<?php echo $this->get_field_id('excerpt_length'); ?>" name="<?php echo $this->get_field_name('excerpt_length'); ?>" value="<?php echo esc_attr($excerpt_length); ?>" min="-1" />
         </p>
 
         <p>
@@ -558,7 +559,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
         </p>
 
         <p<?php if (!$show_readmore  || (!$show_excerpt && !$show_content)) echo ' style="display:none;"'; ?>>
-          <input class="widefat" type="text" id="<?php echo $this->get_field_id('excerpt_readmore'); ?>" name="<?php echo $this->get_field_name('excerpt_readmore'); ?>" value="<?php echo $excerpt_readmore; ?>" />
+          <input class="widefat" type="text" id="<?php echo $this->get_field_id('excerpt_readmore'); ?>" name="<?php echo $this->get_field_name('excerpt_readmore'); ?>" value="<?php echo esc_attr($excerpt_readmore); ?>" />
         </p>
 
         <?php if ( function_exists('the_post_thumbnail') && current_theme_supports( 'post-thumbnails' ) ) : ?>
@@ -574,7 +575,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
           <p<?php if (!$show_thumbnail) echo ' style="display:none;"'; ?>>
             <select id="<?php echo $this->get_field_id('thumb_size'); ?>" name="<?php echo $this->get_field_name('thumb_size'); ?>" class="widefat">
               <?php foreach ($sizes as $size) : ?>
-                <option value="<?php echo $size; ?>"<?php if ($thumb_size == $size) echo ' selected'; ?>><?php echo $size; ?></option>
+                <option value="<?php echo sanitize_text_field($size); ?>"<?php if ($thumb_size == $size) echo ' selected'; ?>><?php echo $size; ?></option>
               <?php endforeach; ?>
               <option value="full"<?php if ($thumb_size == $size) echo ' selected'; ?>><?php _e('full'); ?></option>
             </select>
@@ -594,7 +595,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
 
         <p>
           <label for="<?php echo $this->get_field_id( 'custom_fields' ); ?>"><?php _e( 'Show custom fields (comma separated)', 'ultimate-posts-widget' ); ?>:</label>
-          <input class="widefat" id="<?php echo $this->get_field_id( 'custom_fields' ); ?>" name="<?php echo $this->get_field_name( 'custom_fields' ); ?>" type="text" value="<?php echo $custom_fields; ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id( 'custom_fields' ); ?>" name="<?php echo $this->get_field_name( 'custom_fields' ); ?>" type="text" value="<?php echo esc_attr($custom_fields); ?>" />
         </p>
 
       </div>
@@ -613,7 +614,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
             <?php
             $categories = get_categories( 'hide_empty=0' );
             foreach ($categories as $category ) { ?>
-              <option value="<?php echo $category->term_id; ?>" <?php if(is_array($cats) && in_array($category->term_id, $cats)) echo 'selected="selected"'; ?>><?php echo $category->cat_name;?></option>
+              <option value="<?php echo esc_attr($category->term_id); ?>" <?php if(is_array($cats) && in_array($category->term_id, $cats)) echo 'selected="selected"'; ?>><?php echo $category->cat_name;?></option>
             <?php } ?>
           </select>
         </p>
@@ -630,7 +631,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
               <option value="" <?php if (empty($tags)) echo 'selected="selected"'; ?>><?php _e('&ndash; Show All &ndash;') ?></option>
               <?php
               foreach ($tag_list as $tag) { ?>
-                <option value="<?php echo $tag->term_id; ?>" <?php if (is_array($tags) && in_array($tag->term_id, $tags)) echo 'selected="selected"'; ?>><?php echo $tag->name;?></option>
+                <option value="<?php echo esc_attr($tag->term_id); ?>" <?php if (is_array($tags) && in_array($tag->term_id, $tags)) echo 'selected="selected"'; ?>><?php echo $tag->name;?></option>
               <?php } ?>
             </select>
           </p>
@@ -644,7 +645,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
             $args = array( 'public' => true );
             $post_types = get_post_types( $args, 'names' );
             foreach ($post_types as $post_type ) { ?>
-              <option value="<?php echo $post_type; ?>" <?php if(is_array($types) && in_array($post_type, $types)) { echo 'selected="selected"'; } ?>><?php echo $post_type;?></option>
+              <option value="<?php echo esc_attr($post_type); ?>" <?php if(is_array($types) && in_array($post_type, $types)) { echo 'selected="selected"'; } ?>><?php echo $post_type;?></option>
             <?php } ?>
           </select>
         </p>
@@ -676,7 +677,7 @@ if (!class_exists('WP_Widget_Ultimate_Posts')) {
 
         <p<?php if ($orderby !== 'meta_value') echo ' style="display:none;"'; ?>>
           <label for="<?php echo $this->get_field_id( 'meta_key' ); ?>"><?php _e('Custom field', 'ultimate-posts-widget'); ?>:</label>
-          <input class="widefat" id="<?php echo $this->get_field_id('meta_key'); ?>" name="<?php echo $this->get_field_name('meta_key'); ?>" type="text" value="<?php echo $meta_key; ?>" />
+          <input class="widefat" id="<?php echo $this->get_field_id('meta_key'); ?>" name="<?php echo $this->get_field_name('meta_key'); ?>" type="text" value="<?php echo esc_attr($meta_key); ?>" />
         </p>
 
         <p>
@@ -805,10 +806,14 @@ add_action('admin_init', function () {
 	require_once 'banner/misc.php';
 });
 
-add_action( 'wp_ajax_nopriv_upw_hide_admin_notification', 'upw_hide_admin_notification_callback' );
 add_action( 'wp_ajax_upw_hide_admin_notification', 'upw_hide_admin_notification_callback' );
 
 function upw_hide_admin_notification_callback() {
+  
+  if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field($_POST['nonce']), 'upw_hide_admin_notification')) {
+    wp_send_json_error();
+    die;
+  }
 
   $option_name = 'upw_hide_admin_notification';
   $new_value = 'yes';

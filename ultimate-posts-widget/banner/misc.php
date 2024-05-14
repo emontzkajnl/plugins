@@ -34,6 +34,17 @@
         private $redi_slug = 'redirect-redirection/redirect-redirection.php';
         private $mpu_slug = 'pop-up-pop-up/pop-up-pop-up.php';
 
+        // Global variables
+        public $_root_file = null;
+        public $_root_dir = null;
+        public $page = null;
+        public $slug = null;
+        public $root = null;
+        public $slug_low = null;
+        public $hooked = null;
+        public $menu = null;
+        public $url = null;
+
         /*
         * Compile some variables for "future us"
         * Such as slug of current plugin, root dir of plugin
@@ -108,7 +119,7 @@
             define('INISEV_CAROUSEL_WIDGET', true);
 
             // Root URL for assets
-            $this->url = trailingslashit(plugins_url(null, $this->_root_file));
+            $this->url = trailingslashit(plugins_url('', $this->_root_file));
 
             // Load styles
             wp_enqueue_script('inisev-carousel-script', ($this->url . 'assets/index.min.js'), [], filemtime($this->_root_dir . '/assets/index.min.js'), true);

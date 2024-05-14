@@ -40,14 +40,14 @@ class SGPBReports
 		ScriptsIncluder::registerScript('DebugReport.js', array(
 				'dirUrl' => SG_POPUP_JS_URL,
 				'dep' => array('jquery'),
-				'ver' => SG_POPUP_VERSION,
+				'ver' => SGPB_POPUP_VERSION,
 				'inFooter' => true
 			)
 		);
 		ScriptsIncluder::enqueueScript('DebugReport.js');
 		if (version_compare($wp_version, '4.5', '>')){
 			/* after wp 4.5 version */
-			ScriptsIncluder::addInlineScripts('DebugReport.js', 'var SGPB_DEBUG_POPUP_BUILDER_DETAILS = ' .json_encode($SGPB_DEBUG_POPUP_BUILDER_DETAILS).';');
+			ScriptsIncluder::addInlineScripts('DebugReport.js', 'var SGPB_DEBUG_POPUP_BUILDER_DETAILS = ' .wp_json_encode($SGPB_DEBUG_POPUP_BUILDER_DETAILS).';');
 		} else {
 			/* since wp 4.5 version */
 			ScriptsIncluder::localizeScript('DebugReport.js', 'SGPB_DEBUG_POPUP_BUILDER_DETAILS', $SGPB_DEBUG_POPUP_BUILDER_DETAILS);
@@ -110,13 +110,30 @@ class SGPBReports
 	public function updateCookiesReportForCurrentPopup($popupId = 0)
 	{
 		global $SGPB_DEBUG_POPUP_BUILDER_DETAILS;
+		// Do not processing the whole input	
+		$essentialsgpbCookies = [
+			'SGPBSubmissionReloadPopup',
+			'SGPBShowingLimitationHomePage' . $popupId,
+			'SGPBShowingLimitationPage' . $popupId,
+			'SGPBShowingLimitationDomain' . $popupId,
+			'sgDontShowPopup' . $popupId,
+			'SGPBSubscription' . $popupId,
+			$popupId
+		];
 
-		foreach ($_COOKIE as $cookieName => $cookieValue) {
-			if (strpos($cookieName, (string)$popupId) != false) {
-				if (isset($SGPB_DEBUG_POPUP_BUILDER_DETAILS[$popupId]['cookies'][0]['name']) && $SGPB_DEBUG_POPUP_BUILDER_DETAILS[$popupId]['cookies'][0]['name'] == $cookieName) {
-					continue;
-				}
-				$SGPB_DEBUG_POPUP_BUILDER_DETAILS[$popupId]['cookies'][] = array('name' => $cookieName, 'value' => 'exists');
+		foreach ($essentialsgpbCookies as $essentialcookieName) {
+			if (isset($_COOKIE[$essentialcookieName])) {
+				$cookieValue = sanitize_text_field( $_COOKIE[$essentialcookieName] );	
+				if( !empty( $cookieValue ) )
+				{
+					if (strpos($essentialcookieName, (string)$popupId) !== false) {
+						if (isset($SGPB_DEBUG_POPUP_BUILDER_DETAILS[$popupId]['cookies'][0]['name']) &&
+							$SGPB_DEBUG_POPUP_BUILDER_DETAILS[$popupId]['cookies'][0]['name'] == $essentialcookieName) {
+							continue;
+						}
+						$SGPB_DEBUG_POPUP_BUILDER_DETAILS[$popupId]['cookies'][] = ['name' => $essentialcookieName, 'value' => 'exists'];
+					}
+				}				
 			}
 		}
 	}

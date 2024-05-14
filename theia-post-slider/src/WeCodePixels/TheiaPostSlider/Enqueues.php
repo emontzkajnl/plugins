@@ -27,10 +27,10 @@ class Enqueues {
             wp_enqueue_style( 'theiaPostSlider' );
         }
 
-        // Hammer.js
+        // ZingTouch.js
         if ( Options::get( 'enable_touch_gestures', 'tps_advanced' ) ) {
-            wp_register_script( 'hammer.js', THEIA_POST_SLIDER_PLUGINS_URL . 'dist/js/hammer.min.js', [], THEIA_POST_SLIDER_VERSION, true );
-            wp_enqueue_script( 'hammer.js' );
+            wp_register_script( 'zingtouch.js', THEIA_POST_SLIDER_PLUGINS_URL . 'dist/js/zingtouch.min.js', [], THEIA_POST_SLIDER_VERSION, true );
+            wp_enqueue_script( 'zingtouch.js' );
         }
 
         // The slider
@@ -52,7 +52,7 @@ class Enqueues {
             return $tag;
         }
 
-        if ( ! in_array( $handle, array( 'jquery', 'jquery-core', 'jquery-migrate', 'hammer.js', 'theiaPostSlider/theiaPostSlider.js', 'theiaPostSlider/main.js', 'theiaPostSlider/transition.js' ) ) ) {
+        if ( ! in_array( $handle, array( 'jquery', 'jquery-core', 'jquery-migrate', 'zingtouch.js', 'theiaPostSlider/theiaPostSlider.js', 'theiaPostSlider/main.js', 'theiaPostSlider/transition.js' ) ) ) {
             return $tag;
         }
 

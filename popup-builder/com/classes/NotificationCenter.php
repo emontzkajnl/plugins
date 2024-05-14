@@ -69,7 +69,7 @@ class SGPBNotificationCenter
 		/*if (empty($content)) {
 			update_option('sgpb-all-dismissed-notifications', array());
 		}*/
-		$content = json_encode($content);
+		$content = wp_json_encode($content);
 		update_option('sgpb-all-notifications-data', $content);
 	}
 
@@ -87,7 +87,7 @@ class SGPBNotificationCenter
 				$id = $notification['id'];
 				$notifications[$id] = $id;
 			}
-			update_option('sgpb-all-active-notifications', json_encode($notifications));
+			update_option('sgpb-all-active-notifications', wp_json_encode($notifications));
 		}
 	}
 
@@ -95,7 +95,7 @@ class SGPBNotificationCenter
 	{
 		$schedules['sgpb_notifications'] = array(
 			'interval' => SGPB_NOTIFICATIONS_CRON_REPEAT_INTERVAL * 3600,
-			'display' => __('Twice Daily', SG_POPUP_TEXT_DOMAIN)
+			'display' => __('Twice Daily', 'popup-builder')
 		);
 
 		return $schedules;
@@ -237,7 +237,7 @@ class SGPBNotificationCenter
 		$notificationId = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
 		$allDismissedNotifications = self::getAllDismissedNotifications();
 		$allDismissedNotifications[$notificationId] = $notificationId;
-		$allDismissedNotifications = json_encode($allDismissedNotifications);
+		$allDismissedNotifications = wp_json_encode($allDismissedNotifications);
 
 		update_option('sgpb-all-dismissed-notifications', $allDismissedNotifications);
 		$result = array();
@@ -256,7 +256,7 @@ class SGPBNotificationCenter
 		$notificationId = sanitize_text_field($_POST['id']);
 		$allRemovedNotifications = self::getAllRemovedNotifications();
 		$allRemovedNotifications[$notificationId] = $notificationId;
-		$allRemovedNotifications = json_encode($allRemovedNotifications);
+		$allRemovedNotifications = wp_json_encode($allRemovedNotifications);
 
 		update_option('sgpb-all-removed-notifications', $allRemovedNotifications);
 
@@ -274,7 +274,7 @@ class SGPBNotificationCenter
 		if (isset($allDismissedNotifications[$notificationId])) {
 			unset($allDismissedNotifications[$notificationId]);
 		}
-		$allDismissedNotifications = json_encode($allDismissedNotifications);
+		$allDismissedNotifications = wp_json_encode($allDismissedNotifications);
 
 		update_option('sgpb-all-dismissed-notifications', $allDismissedNotifications);
 		$result = array();

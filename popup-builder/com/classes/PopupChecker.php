@@ -2,7 +2,7 @@
 namespace sgpb;
 use \DateTime;
 use \DateTimeZone;
-use \ConfigDataHelper;
+use \SGPBConfigDataHelper;
 
 /**
  * Popup checker class to check if the popup must be loaded on the current page

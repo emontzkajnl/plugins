@@ -74,7 +74,7 @@ class ConditionCreator
 
 	public static function getOrRuleSeparator()
 	{
-		return '<h4 class="sgpb-rules-or"><span>'.__('OR', SG_POPUP_TEXT_DOMAIN).'</span></h4>';
+		return '<h4 class="sgpb-rules-or"><span>'.__('OR', 'popup-builder').'</span></h4>';
 	}
 
 	public static function createConditionRuleRow($conditionDataObj)
@@ -411,9 +411,9 @@ class ConditionCreator
 
 						if (!empty($ruleElementData['saved'])) {
 							if (isset($attr['isPostCategory'])){
-								$ruleElementData['data'] = \ConfigDataHelper::getTermsByIds($ruleElementData['saved']);
+								$ruleElementData['data'] = \SGPBConfigDataHelper::getTermsByIds($ruleElementData['saved']);
 							} elseif(isset($attr['isPostTag'])) {
-								$ruleElementData['data'] = \ConfigDataHelper::getTagsByIds($ruleElementData['saved']);
+								$ruleElementData['data'] = \SGPBConfigDataHelper::getTagsByIds($ruleElementData['saved']);
 							}
 							$savedData = $ruleElementData['saved'];
 						}
@@ -519,7 +519,7 @@ class ConditionCreator
 		$hiddenOptions = $eventsData['hiddenOptionData'];
 		$ruleId = $conditionDataObj->getRuleId();
 		if (empty($hiddenOptions[$conditionName])) {
-			return __('No Data', SG_POPUP_TEXT_DOMAIN);
+			return __('No Data', 'popup-builder');
 		}
 
 		$hiddenOptionsData = $hiddenOptions[$conditionName];
@@ -548,8 +548,8 @@ class ConditionCreator
 			</div>
 			<?php echo wp_kses(self::createHiddenFields($hiddenOptionsData, $conditionDataObj, $ruleId), AdminHelper::allowed_html_tags()); ?>
 			<div class="modal-footer">
-				<button type="button" class="sgpb-no-button events-option-close sgpb-modal-cancel sgpb-btn sgpb-btn-gray-light" href="#"><?php esc_html_e('Cancel', SG_POPUP_TEXT_DOMAIN); ?></button>
-				<button class="sgpb-btn sgpb-btn-blue sgpb-popup-option-save"><?php esc_html_e('Save', SG_POPUP_TEXT_DOMAIN); ?></button>
+				<button type="button" class="sgpb-no-button events-option-close sgpb-modal-cancel sgpb-btn sgpb-btn-gray-light" href="#"><?php esc_html_e('Cancel', 'popup-builder'); ?></button>
+				<button class="sgpb-btn sgpb-btn-blue sgpb-popup-option-save"><?php esc_html_e('Save', 'popup-builder'); ?></button>
 			</div>
 		</div>
 		<?php

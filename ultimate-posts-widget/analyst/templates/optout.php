@@ -52,7 +52,7 @@
 
 		var pluginId = $('#analyst-opt-out-modal').attr('analyst-plugin-id')
 
-        $mask.show()
+    $mask.show()
 		$error.hide()
 
 		var self = this
@@ -66,6 +66,7 @@
           method: 'POST',
           data: {
             action: 'analyst_opt_out_' + pluginId,
+            nonce: analyst_opt_localize.nonce
           },
           success: function (data) {
             $(self).text('Opt out')
@@ -83,8 +84,8 @@
 			isOptingOut = false
 
             var optInAction = $('<a />').attr({
-			  class: 'analyst-action-opt analyst-opt-in',
-			  'analyst-plugin-id': pluginId,
+			          class: 'analyst-action-opt analyst-opt-in',
+			          'analyst-plugin-id': pluginId,
                 'analyst-plugin-signed': '1'
             })
 			  .text('Opt In')

@@ -13,7 +13,7 @@ class FblikePopup extends SGPopup
 	{
 		return array(
 			'filePath' => SG_POPUP_TYPE_OPTIONS_PATH.'facebook.php',
-			'metaboxTitle' => 'Facebook Settings',
+			'metaboxTitle' => __('Facebook Settings', 'popup-builder'),
 			'short_description' => 'Select your Facebook page URL for liking and sharing it'
 		);
 	}
@@ -39,7 +39,7 @@ class FblikePopup extends SGPopup
 					var js, fjs = d.getElementsByTagName(s)[0];
 					if (d.getElementById(id)) return;
 					js = d.createElement(s); js.id = id;
-					js.src = 'https://connect.facebook.net/<?php echo $locale;?>/all.js#xfbml=1&version=v2.11&appId=<?php echo SGPB_FACEBOOK_APP_ID;?>';
+					js.src = '<?php echo esc_url('https://connect.facebook.net/'. esc_html( $locale ).'/all.js#xfbml=1&version=v2.11&appId='. esc_html(SGPB_FACEBOOK_APP_ID));?>';
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 			});
@@ -55,14 +55,14 @@ class FblikePopup extends SGPopup
 	{
 		ob_start();
 		?>
-			<div class='sg-fb-buttons-wrapper sgpb-fb-wrapper-<?php echo $layout;?>'>
+			<div class='sg-fb-buttons-wrapper sgpb-fb-wrapper-<?php echo esc_html( $layout );?>'>
 				<div class="fb-like"
-				     data-href="<?php echo $shareUrl; ?>"
-				     data-layout="<?php echo $layout; ?>"
+				     data-href="<?php echo esc_url( $shareUrl ); ?>"
+				     data-layout="<?php echo esc_attr( $layout ); ?>"
 				     data-action="like"
 				     data-size="small"
 				     data-show-faces="true"
-				     data-share="<?php echo $shareButtonStatus; ?>">
+				     data-share="<?php echo esc_attr( $shareButtonStatus ); ?>">
 				</div>
 			</div>
 		<?php
@@ -88,7 +88,7 @@ class FblikePopup extends SGPopup
 		?>
 		<div id="sg-facebook-like">
 			<div id="fb-root"></div>
-			<?php echo $buttonConfig; ?>
+			<?php echo wp_kses_post($buttonConfig); ?>
 			<?php echo $scripts; ?>
 		</div>
 		<?php

@@ -57,7 +57,7 @@ class PopupBuilderActivePackage
 			return $optionAvailable['status'];
 		}
 
-		if ($currentOptionSupportedMinVersion <= SG_POPUP_VERSION) {
+		if ($currentOptionSupportedMinVersion <= SGPB_POPUP_VERSION) {
 			if ($currentOptionSupportedMinPackage <= SGPB_POPUP_PKG) {
 				return true;
 			}

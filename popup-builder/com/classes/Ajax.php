@@ -1,6 +1,6 @@
 <?php
 namespace sgpb;
-use \ConfigDataHelper;
+use \SGPBConfigDataHelper;
 
 class Ajax
 {
@@ -109,11 +109,14 @@ class Ajax
 		array_walk_recursive($allPopupData, function(&$item){
 			$item = sanitize_text_field($item);
 		});
+		
 		$popupData = SGPopup::parsePopupDataFromData($allPopupData);
 		do_action('save_post_popupbuilder');
+		
 		$popupType = $popupData['sgpb-type'];
 		$popupClassName = SGPopup::getPopupClassNameFormType($popupType);
-		$popupClassPath = SGPopup::getPopupTypeClassPath($popupType);
+		$popupClassPath = SGPopup::getPopupTypeClassPath($popupType);		
+		
 		if(file_exists($popupClassPath.$popupClassName.'.php')) {
 			require_once($popupClassPath.$popupClassName.'.php');
 			$popupClassName = __NAMESPACE__.'\\'.$popupClassName;
@@ -189,9 +192,7 @@ class Ajax
 			$allPopupsCount[$popupId] = 0;
 		}
 
-		// 7, 12, 13 => exclude close, subscription success, contact success events
-		$stmt = $wpdb->prepare(' DELETE FROM '.$wpdb->prefix.'sgpb_analytics WHERE target_id = %d AND event_id NOT IN (7, 12, 13)', $popupId);
-		$popupAnalyticsData = $wpdb->get_var($stmt);
+		$popupAnalyticsData = $wpdb->get_var( $wpdb->prepare(' DELETE FROM '.$wpdb->prefix.'sgpb_analytics WHERE target_id = %d AND event_id NOT IN (7, 12, 13)', $popupId));
 
 		update_option('SgpbCounter', $allPopupsCount);
 
@@ -295,7 +296,7 @@ class Ajax
 		$firstName = isset($_POST['firstName']) ? sanitize_text_field($_POST['firstName']) : '';
 		$lastName = isset($_POST['lastName']) ? sanitize_text_field($_POST['lastName']) : '';
 		$email = isset($_POST['email']) ? sanitize_text_field($_POST['email']) : '';
-		$date = date('Y-m-d');
+		$date = gmdate('Y-m-d');
 
 		// we will use array_walk_recursive method for sanitizing current data because we can receive an multidimensional array!
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -381,7 +382,7 @@ class Ajax
 				$sql = $wpdb->prepare('SELECT submittedData FROM '.$subscribersTableName);
 				if(!empty($mapping['date'])) {
 					$date = $csvData[$mapping['date']];
-					$date = date('Y-m-d', strtotime($date));
+					$date = gmdate('Y-m-d', strtotime($date));
 				}
 				if($sql) {
 					$sql = $wpdb->prepare('INSERT INTO '.$subscribersTableName.' (firstName, lastName, email, cDate, subscriptionType, status, unsubscribed) VALUES (%s, %s, %s, %s, %d, %d, %d) ', $csvData[$mapping['firstName']], $csvData[$mapping['lastName']], $csvData[$mapping['email']], $date, $formId, 0, 0);
@@ -516,7 +517,7 @@ class Ajax
 		$popupPostId = isset($_POST['popupPostId']) ? (int)sanitize_text_field($_POST['popupPostId']) : '';
 
 		if(empty($formData)) {
-			echo SGPB_AJAX_STATUS_FALSE;
+			echo esc_html( SGPB_AJAX_STATUS_FALSE );
 			wp_die();
 		}
 
@@ -530,7 +531,7 @@ class Ajax
 		global $wpdb;
 
 		$status = SGPB_AJAX_STATUS_FALSE;
-		$date = date('Y-m-d');
+		$date = gmdate('Y-m-d');
 		$email = sanitize_email($formData['sgpb-subs-email']);
 		$firstName = sanitize_text_field($formData['sgpb-subs-first-name']);
 		$lastName = sanitize_text_field($formData['sgpb-subs-last-name']);
@@ -553,7 +554,7 @@ class Ajax
 			$status = SGPB_AJAX_STATUS_TRUE;
 		}
 
-		echo $status;
+		echo esc_html( $status );
 		wp_die();
 	}
 
@@ -568,7 +569,7 @@ class Ajax
 		});
 		$popupPostId = isset($_POST['popupPostId']) ? (int)sanitize_text_field($_POST['popupPostId']) : '';
 		if(empty($_POST)) {
-			echo SGPB_AJAX_STATUS_FALSE;
+			echo esc_html( SGPB_AJAX_STATUS_FALSE );
 			wp_die();
 		}
 		$email = isset($_POST['emailValue']) ? sanitize_email($_POST['emailValue']) : '';
@@ -612,7 +613,7 @@ class Ajax
 		if($count['countIds'] == 1 && !$takeReviewAfterFirstSubscription) {
 			// take review
 			update_option('sgpb-new-subscriber', 1);
-			$newSubscriberEmailTitle = __('Congrats! You have already 1 subscriber!', SG_POPUP_TEXT_DOMAIN);
+			$newSubscriberEmailTitle = __('Congrats! You have already 1 subscriber!', 'popup-builder');
 			$reviewEmailTemplate = AdminHelper::getFileFromURL(SG_POPUP_EMAIL_TEMPLATES_URL.'takeReviewAfterSubscribe.html');
 			$reviewEmailTemplate = preg_replace('/\[adminUserName]/', $adminUserName, $reviewEmailTemplate);
 			$sendStatus = wp_mail($adminEmail, $newSubscriberEmailTitle, $reviewEmailTemplate, $newSubscriberEmailHeader); //return true or false
@@ -628,10 +629,10 @@ class Ajax
 
 		switch($postTypeName){
 			case 'postCategories':
-				$searchResults  = ConfigDataHelper::getPostsAllCategories('post', [], $search);
+				$searchResults  = SGPBConfigDataHelper::getPostsAllCategories('post', [], $search);
 				break;
 			case 'postTags':
-				$searchResults  = ConfigDataHelper::getAllTags($search);
+				$searchResults  = SGPBConfigDataHelper::getAllTags($search);
 				break;
 			default:
 				$searchResults = $this->selectFromPost($postTypeName, $search);
@@ -666,7 +667,7 @@ class Ajax
 			'posts_per_page' => 100,
 			'post_type'      => $postTypeName
 		);
-		$searchResults = ConfigDataHelper::getPostTypeData($args);
+		$searchResults = SGPBConfigDataHelper::getPostTypeData($args);
 
 		return $searchResults;
 	}

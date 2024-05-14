@@ -1,4 +1,8 @@
 <?php
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 use sgpb\AdminHelper;
 use sgpb\SubscriptionPopup;
 @ini_set('auto_detect_line_endings', '1');
@@ -47,14 +51,14 @@ $formData =  array('' => 'Select Field') + AdminHelper::getSubscriptionColumnsBy
 ?>
 
 <div id="importSubscribersSecondStep">
-	<h1 id="importSubscriberHeader"><?php esc_html_e('Match Your Fields', SG_POPUP_TEXT_DOMAIN); ?></h1>
+	<h1 id="importSubscriberHeader"><?php esc_html_e('Match Your Fields', 'popup-builder'); ?></h1>
 	<div id="importSubscriberBody">
 		<div class="formItem sgpb-justify-content-around">
 			<div class="formItem__title">
-				<?php esc_html_e('Available fields', SG_POPUP_TEXT_DOMAIN); ?>
+				<?php esc_html_e('Available fields', 'popup-builder'); ?>
 			</div>
 			<div class="formItem__title">
-				<?php esc_html_e('Our list fields', SG_POPUP_TEXT_DOMAIN); ?>
+				<?php esc_html_e('Our list fields', 'popup-builder'); ?>
 			</div>
 		</div>
 		<?php foreach($csvFileArray[0] as $index => $current): ?>
@@ -78,7 +82,7 @@ $formData =  array('' => 'Select Field') + AdminHelper::getSubscriptionColumnsBy
 	</div>
 
 	<div id="importSubscriberFooter">
-		<input type="button" value="<?php esc_html_e('Save', SG_POPUP_TEXT_DOMAIN); ?>" class="sgpb-btn sgpb-btn-blue sgpb-save-subscriber" data-ajaxnonce="popupBuilderAjaxNonce">
+		<input type="button" value="<?php esc_html_e('Save', 'popup-builder'); ?>" class="sgpb-btn sgpb-btn-blue sgpb-save-subscriber" data-ajaxnonce="popupBuilderAjaxNonce">
 	</div>
 
 </div>

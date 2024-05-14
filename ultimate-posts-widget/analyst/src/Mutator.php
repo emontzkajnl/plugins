@@ -86,6 +86,9 @@ class Mutator
 		add_action('admin_enqueue_scripts', function () {
 			wp_enqueue_style('analyst_custom', analyst_assets_url('/css/customize.css'));
 			wp_enqueue_script('analyst_custom', analyst_assets_url('/js/customize.js'));
+      wp_localize_script('analyst_custom', 'analyst_opt_localize', array(
+        'nonce' => wp_create_nonce('analyst_opt_ajax_nonce')
+      ));
 		});
 	}
 
@@ -95,6 +98,35 @@ class Mutator
 	public function registerHooks()
 	{
 		add_action('wp_ajax_analyst_notification_dismiss', function () {
+      $capabilities = [
+        'activate_plugins',
+        'edit_plugins',
+        'install_plugins',
+        'update_plugins',
+        'delete_plugins',
+        'manage_network_plugins',
+        'upload_plugins'
+      ];
+      
+      // Allow if has any of above permissions
+      $hasPerms = false;
+      foreach ($capabilities as $i => $cap) {
+        if (current_user_can($cap)) {
+          $hasPerms = true;
+          break;
+        }
+      }
+      
+      if ($hasPerms == false) {
+        wp_send_json_error(['message' => 'no_permissions']);
+        die;
+      }
+      
+      if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field($_POST['nonce']), 'analyst_opt_ajax_nonce')) {
+        wp_send_json_error(['message' => 'invalid_nonce']);
+        die;
+      }
+      
 			$this->factory->remove(sanitize_text_field($_POST['id']));
 
 			$this->factory->sync();

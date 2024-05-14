@@ -67,7 +67,7 @@ class WOOSL_CodeAutoUpdate
 
 		$data = array(
 			'timeout' => strtotime('+3 hours', current_time('timestamp')),
-			'value'   => json_encode($value)
+			'value'   => wp_json_encode($value)
 		);
 
 		update_option($cache_key, $data, 'no');
@@ -169,7 +169,7 @@ class WOOSL_CodeAutoUpdate
 
 		$request_string = $this->prepare_request($action, $args);
 		if ($request_string === FALSE) {
-			return new WP_Error('plugins_api_failed', __('An error occour when try to identify the pluguin.' , 'woo-global-cart') . '&lt;/p> &lt;p>&lt;a href=&quot;?&quot; onclick=&quot;document.location.reload(); return false;&quot;>'. __( 'Try again', 'woo-global-cart' ) .'&lt;/a>');;
+			return new \WP_Error('plugins_api_failed', __('An error occour when try to identify the plugin.' , 'popup-builder') . '&lt;/p> &lt;p>&lt;a href=&quot;?&quot; onclick=&quot;document.location.reload(); return false;&quot;>'. __( 'Try again', 'popup-builder' ) .'&lt;/a>');;
 		}
 
 		global $wp_version;
@@ -181,7 +181,7 @@ class WOOSL_CodeAutoUpdate
 		));
 
 		if (is_wp_error($data) || $data['response']['code'] != 200) {
-			return new WP_Error('plugins_api_failed', __('An Unexpected HTTP Error occurred during the API request.' , 'woo-global-cart') . '&lt;/p> &lt;p>&lt;a href=&quot;?&quot; onclick=&quot;document.location.reload(); return false;&quot;>'. __( 'Try again', 'woo-global-cart' ) .'&lt;/a>', $data->get_error_message());
+			return new \WP_Error('plugins_api_failed', __('An Unexpected HTTP Error occurred during the API request.' , 'popup-builder') . '&lt;/p> &lt;p>&lt;a href=&quot;?&quot; onclick=&quot;document.location.reload(); return false;&quot;>'. __( 'Try again', 'popup-builder' ) .'&lt;/a>', $data->get_error_message());
 		}
 
 		$response_block = json_decode($data['body']);

@@ -1,9 +1,13 @@
 <?php
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $popupId = !empty($_GET['post']) ? (int)sanitize_text_field($_GET['post']) : 0;
 $editorModeJs = htmlentities('text/javascript');
 $editorModeCss = htmlentities('text/css');
 
-$defaultData = ConfigDataHelper::defaultData();
+$defaultData = SGPBConfigDataHelper::defaultData();
 $jsDefaultData = $defaultData['customEditorContent']['js'];
 $cssDefaultData = $defaultData['customEditorContent']['css'];
 
@@ -11,8 +15,8 @@ $savedData = get_post_meta($popupId , 'sg_popup_scripts', true);
 ?>
 
 <div class="sgpb-wrapper sgpb-customJsOrCss">
-	<p class="sgpb-customJsOrCss_text"><?php esc_html_e('This section is for adding custom codes (CSS or JS) for the popup, it requires some coding knowledge', SG_POPUP_TEXT_DOMAIN);?>.</p>
-	<p class="sgpb-customJsOrCss_text"><?php esc_html_e('You may use your custom codes for extra actions connected to the popup opening (before, after, etc.) in the fields below', SG_POPUP_TEXT_DOMAIN);?>.</p>
+	<p class="sgpb-customJsOrCss_text"><?php esc_html_e('This section is for adding custom codes (CSS or JS) for the popup, it requires some coding knowledge', 'popup-builder');?>.</p>
+	<p class="sgpb-customJsOrCss_text"><?php esc_html_e('You may use your custom codes for extra actions connected to the popup opening (before, after, etc.) in the fields below', 'popup-builder');?>.</p>
 	<!-- editor buttons -->
 	<div class="sgpb-tabs sgpb-margin-y-30">
 		<span class="sgpb-tab-link sgpb-tab-active sgpb-tab-1" onclick="SGPBBackend.prototype.changeTab(1)">JS</span>

@@ -93,8 +93,8 @@ class PopupBuilderInit
 
 	private function registerHooks()
 	{
-		register_activation_hook(SG_POPUP_FILE_NAME, array($this, 'activate'));
-		register_deactivation_hook(SG_POPUP_FILE_NAME, array($this, 'deactivate'));
+		register_activation_hook(SGPB_POPUP_FILE_NAME, array($this, 'activate'));
+		register_deactivation_hook(SGPB_POPUP_FILE_NAME, array($this, 'deactivate'));
 	}
 
 	public function activate()
@@ -110,7 +110,7 @@ class PopupBuilderInit
 		AdminHelper::removeSelectedTypeOptions('cron');		
 		AdminHelper::filterUserCapabilitiesForTheUserRoles('deactivate');
 		require_once(SG_POPUP_EXTENSION_PATH.'SgpbPopupExtensionRegister.php');
-		$pluginName = SG_POPUP_FILE_NAME;
+		$pluginName = SGPB_POPUP_FILE_NAME;
 		// remove AWeber extension from registered extensions
 		SgpbPopupExtensionRegister::remove($pluginName);				
 		

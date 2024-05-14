@@ -55,7 +55,7 @@ class Actions
 		add_action('save_post', array($this, 'savePost'), 100, 3);
 		add_action('wp_enqueue_scripts', array($this, 'enqueuePopupBuilderScripts'));
 		add_filter('sgpbOtherConditions', array($this ,'conditionsSatisfy'), 11, 1);
-		add_shortcode('sg_popup', array($this, 'popupShortcode'));
+		add_shortcode('sg_popup', array($this, 'sgpbPopupShortcode'));
 		add_filter('cron_schedules', array($this, 'cronAddMinutes'), 10, 1);
 		add_action('sgpb_send_newsletter', array($this, 'newsletterSendEmail'), 10, 1);
 		// add_action('sgpbGetBannerContentOnce', array($this, 'getBannerContent'), 10, 1);
@@ -87,9 +87,9 @@ class Actions
 	{
 		$currentPostType = AdminHelper::getCurrentPostType();
 		if(!empty($currentPostType) && ($currentPostType == SG_POPUP_POST_TYPE || $currentPostType == SG_POPUP_AUTORESPONDER_POST_TYPE || $currentPostType == SG_POPUP_TEMPLATE_POST_TYPE)) {
-			?>
-			<script type="text/javascript">
-				jQuery(document).ready(function ($) {
+			wp_register_script( 'sgpb-actions-js-footer', '', array("jquery"), '', true );
+			wp_enqueue_script( 'sgpb-actions-js-footer'  );
+			wp_add_inline_script( 'sgpb-actions-js-footer', "jQuery(document).ready(function ($) {
 					const myForm = $('.post-type-popupbuilder #posts-filter, .post-type-sgpbtemplate #posts-filter, .post-type-sgpbtemplate #posts-filter');
 					myForm.addClass('sgpb-table');
 					const searchValue = $('.post-type-popupbuilder #post-search-input, .post-type-sgpbtemplate #posts-filter, .post-type-sgpbautoresponder #posts-filter').val();
@@ -106,9 +106,7 @@ class Actions
 						$('.post-type-popupbuilder #post-search-input, .post-type-sgpbtemplate #post-search-input, .post-type-sgpbautoresponder #post-search-input').val($('#sgpbSearchInPosts').val());
 						$(myForm).submit();
 					})
-				});
-			</script>
-			<?php
+				});");			
 		}
 	}
 
@@ -225,7 +223,7 @@ class Actions
 
 		}
 		$licenseSectionUrl = menu_page_url(SGPB_POPUP_LICENSE, false);
-		$partOfContent = '<br><br><a href="'.esc_url($licenseSectionUrl).'">'.__('Follow the link', SG_POPUP_TEXT_DOMAIN).'</a> '.__('to finalize the activation.', SG_POPUP_TEXT_DOMAIN);
+		$partOfContent = '<br><br><a href="'.esc_url($licenseSectionUrl).'">'.__('Follow the link', 'popup-builder').'</a> '.__('to finalize the activation.', 'popup-builder');
 		if (function_exists('get_current_screen')) {
 			$screen = get_current_screen();
 			$screenId = $screen->id;
@@ -240,14 +238,14 @@ class Actions
 			?>
 			<div id="welcome-panel" class="update-nag sgpb-extensions-notices sgpb-license-notice">
 				<div class="welcome-panel-content">
-					<b><?php esc_html_e('Thank you for choosing our plugin!', SG_POPUP_TEXT_DOMAIN) ?></b>
+					<b><?php esc_html_e('Thank you for choosing our plugin!', 'popup-builder') ?></b>
 					<br>
 					<br>
-					<b><?php esc_html_e('You have activated Popup Builder extension(s). Please, don\'t forget to activate the license key(s) as well.', SG_POPUP_TEXT_DOMAIN) ?></b>
+					<b><?php esc_html_e('You have activated Popup Builder extension(s). Please, don\'t forget to activate the license key(s) as well.', 'popup-builder') ?></b>
 					<b><?php echo wp_kses($partOfContent, AdminHelper::allowed_html_tags()); ?></b>
 				</div>
-				<button type="button" class="notice-dismiss" onclick="jQuery('.sgpb-license-notice').remove();"><span class="screen-reader-text"><?php esc_html_e('Dismiss this notice.', SG_POPUP_TEXT_DOMAIN) ?></span></button>
-				<span class="sgpb-dont-show-again-license-notice"><?php esc_html_e('Don\'t show again.', SG_POPUP_TEXT_DOMAIN); ?></span>
+				<button type="button" class="notice-dismiss" onclick="jQuery('.sgpb-license-notice').remove();"><span class="screen-reader-text"><?php esc_html_e('Dismiss this notice.', 'popup-builder') ?></span></button>
+				<span class="sgpb-dont-show-again-license-notice"><?php esc_html_e('Don\'t show again.', 'popup-builder'); ?></span>
 			</div>
 			<?php
 			$content = ob_get_clean();
@@ -361,7 +359,7 @@ class Actions
 		$popupBuilderLangDir = apply_filters('popupBuilderLanguagesDirectory', $popupBuilderLangDir);
 
 		$locale = apply_filters('sgpbPluginLocale', get_locale(), SG_POPUP_TEXT_DOMAIN);
-		$mofile = sprintf('%1$s-%2$s.mo', SG_POPUP_TEXT_DOMAIN, $locale);
+		$mofile = sprintf('%1$s-%2$s.mo', 'popup-builder', $locale);
 
 		$mofileLocal = $popupBuilderLangDir.$mofile;
 
@@ -433,7 +431,7 @@ class Actions
 		$content = '';
 
 		// if popup builder has the old version
-		if (!get_option('SG_POPUP_VERSION')) {
+		if (!get_option('SGPB_POPUP_VERSION')) {
 			return $content;
 		}
 
@@ -466,13 +464,13 @@ class Actions
 	{
 		require_once SG_POPUP_LIBS_PATH.'Importer.php';
 		$importer = new WP_Import();
-		register_importer(SG_POPUP_POST_TYPE, SG_POPUP_POST_TYPE, __('Importer', SG_POPUP_TEXT_DOMAIN), array($importer, 'dispatch'));
+		register_importer(SG_POPUP_POST_TYPE, SG_POPUP_POST_TYPE, __('Importer', 'popup-builder'), array($importer, 'dispatch'));
 	}
 
 	public function pluginLoaded()
 	{
 		$this->registerImporter();
-		$versionPopup = get_option('SG_POPUP_VERSION');
+		$versionPopup = get_option('SGPB_POPUP_VERSION');
 		$convert = get_option('sgpbConvertToNewVersion');
 		$unsubscribeColumnFixed = get_option('sgpbUnsubscribeColumnFixed');
 		AdminHelper::makeRegisteredPluginsStaticPathsToDynamic();
@@ -590,7 +588,7 @@ class Actions
 		}
 	}
 
-	public function popupShortcode($args, $content)
+	public function sgpbPopupShortcode($args, $content)
 	{
 		if (empty($args) || empty($args['id'])) {
 			return $content;
@@ -711,12 +709,12 @@ class Actions
 	{
 		$schedules['sgpb_newsletter_send_every_minute'] = array(
 			'interval' => SGPB_CRON_REPEAT_INTERVAL * 60,
-			'display' => __('Once Every Minute', SG_POPUP_TEXT_DOMAIN)
+			'display' => __('Once Every Minute', 'popup-builder')
 		);
 
 		$schedules['sgpb_banners'] = array(
 			'interval' => SGPB_TRANSIENT_TIMEOUT_WEEK,
-			'display' => __('Once Every Week', SG_POPUP_TEXT_DOMAIN)
+			'display' => __('Once Every Week', 'popup-builder')
 		);
 
 		$schedules = apply_filters('sgpbCronTimeoutSettings', $schedules);
@@ -748,7 +746,7 @@ class Actions
 
 		$pattern = "/\[(\[?)(Unsubscribe)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]\*+(?:\[(?!\/\2\])[^\[]\*+)\*+)\[\/\2\])?)(\]?)/";
 		preg_match($pattern, $emailMessage, $matches);
-		$title = __('Unsubscribe', SG_POPUP_TEXT_DOMAIN);
+		$title = __('Unsubscribe', 'popup-builder');
 		if ($matches) {
 			$patternUnsubscribe = $matches[0];
 			// If user didn't change anything inside the [unsubscribe] shortcode $matches[2] will be equal to 'Unsubscribe'
@@ -772,7 +770,7 @@ class Actions
 		$selectionQuery = apply_filters('sgpbUserSelectionQuery', $selectionQuery);
 		$sql = $wpdb->prepare($selectionQuery .' and subscriptionType = %d limit 1', $subscriptionFormId);
 
-		$result = $wpdb->get_row($sql, ARRAY_A);
+		$result = $wpdb->get_row($sql, ARRAY_A);//db call ok
 		$currentStateEmailId = (int)$result['id'];
 		$getTotalSql = $wpdb->prepare('SELECT count(*) FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE unsubscribed = 0 and subscriptionType = %d', $subscriptionFormId);
 		$totalSubscribers = $wpdb->get_var($getTotalSql);
@@ -787,11 +785,11 @@ class Actions
 				$successTotal = 0;
 			}
 			$failedTotal = $totalSubscribers - $successTotal;
-
-			$emailMessageCustom = __('Your mail list %s delivered successfully!
-						%d of the %d emails succeeded, %d failed.
+			/* translators: subscription Form Title, success Total ,total Subscribers, failed Total . */
+			$emailMessageCustom = __('Your mail list %1$s delivered successfully!
+						%2$d of the %3$d emails succeeded, %4$d failed.
 						For more details, please download log file inside the plugin.
-						This email was generated via Popup Builder plugin.', SG_POPUP_TEXT_DOMAIN);
+						This email was generated via Popup Builder plugin.', 'popup-builder');
 			$emailMessageCustom = sprintf($emailMessageCustom, $subscriptionFormTitle, $successTotal, $totalSubscribers, $failedTotal);
 
 			wp_mail($fromEmail, $subscriptionFormTitle.' list has been successfully delivered!', $emailMessageCustom, $headers);
@@ -846,7 +844,7 @@ class Actions
 			$emailMessageCustom = apply_filters('sgpNewsletterSendingMessage', $emailMessageCustom);
 			$mailStatus = wp_mail($subscriber['email'], $mailSubject, $emailMessageCustom, $headers);
 			if (!$mailStatus) {
-				$errorLogSql = $wpdb->prepare('INSERT INTO '. $wpdb->prefix .SGPB_SUBSCRIBERS_ERROR_TABLE_NAME.' (`popupType`, `email`, `date`) VALUES (%s, %s, %s)', $subscriptionFormId, $subscriber['email'], date('Y-m-d H:i'));
+				$errorLogSql = $wpdb->prepare('INSERT INTO '. $wpdb->prefix .SGPB_SUBSCRIBERS_ERROR_TABLE_NAME.' (`popupType`, `email`, `date`) VALUES (%s, %s, %s)', $subscriptionFormId, $subscriber['email'], gmdate('Y-m-d H:i'));
 				$wpdb->query($errorLogSql);
 				continue;
 			}
@@ -872,7 +870,7 @@ class Actions
 	public function enqueuePopupBuilderScripts()
 	{
 		// for old popups
-		if (get_option('SG_POPUP_VERSION')) {
+		if (get_option('SGPB_POPUP_VERSION')) {
 			ConvertToNewVersion::saveCustomInserted();
 		}
 
@@ -907,7 +905,18 @@ class Actions
 		$adminUrl = admin_url();
 
 		if (isset($_GET['page']) && sanitize_text_field($_GET['page']) == 'PopupBuilder') {
-			_e('<span>Popup Builder plugin has been successfully updated. Please <a href="'.esc_url($adminUrl).'edit.php?post_type='.SG_POPUP_POST_TYPE.'">click here</a> to go to the new Dashboard of the plugin.</span>', SG_POPUP_TEXT_DOMAIN);
+			echo '<span>';
+					printf(
+						/* translators: Link to edit Popup item, location. */
+						esc_html__('Popup Builder plugin has been successfully updated. Please %1$s to go to the new Dashboard of the plugin.', 'popup-builder'),
+						sprintf(
+							/* translators: admin Url, Popup Post type. */
+							'<a href="%1$sedit.php?post_type=%2$s">click here</a>',
+								esc_url($adminUrl),
+								esc_html__( 'popupbuilder', 'text-domain' )
+						)
+					);
+					echo '</span>';
 			wp_die();
 		}
 		
@@ -998,13 +1007,30 @@ class Actions
 
 	public function savePost($postId = 0, $post = array(), $update = false)
 	{
+		global $SGPB_OPTIONS;
+	
 		if ($post->post_type !== SG_POPUP_POST_TYPE) {
 			return;
 		}
+		
+		if( !isset( $_POST['sgpb-type'] ) )
+		{
+			return;
+		}
+		/* Validate nonce */			
+		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( $_POST['_wpnonce'] ) : '';		
+		if ( empty( $nonce ) || !wp_verify_nonce( $nonce, 'update-post_'.$postId ) ) { 		
+			return;
+		}
+		
 		$allowToAction = AdminHelper::userCanAccessTo();
-		Functions::clearAllTransients();
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$postData = SGPopup::parsePopupDataFromData($_POST);
+		Functions::clearAllTransients();	
+		
+		// Do not processing the whole input
+		$essentialsgpbKeys  = array_column($SGPB_OPTIONS, 'name');	
+		$sgpb_postData = array_intersect_key($_POST, array_flip( $essentialsgpbKeys ));			
+		$postData = SGPopup::parsePopupDataFromData($sgpb_postData);
+			
 		$saveMode = '';
 		$postData['sgpb-post-id'] = $postId;
 		// If preview mode
@@ -1065,7 +1091,6 @@ class Actions
 				$popupClassPath = SGPopup::getPopupTypeClassPath($popupType);
 				require_once($popupClassPath.$popupClassName.'.php');
 				$popupClassName = __NAMESPACE__.'\\'.$popupClassName;
-
 				$popupClassName::create($postData, $saveMode, 1);
 			}
 		}
@@ -1073,7 +1098,7 @@ class Actions
 			$content = get_post_field('post_content', $postId);
 			SGPopup::deletePostCustomInsertedData($postId);
 			SGPopup::deletePostCustomInsertedEvents($postId);
-			/*We detect all the popups that were inserted as a custom ones, in the content.*/
+			/*We detect all the popups that were inserted as a custom ones, in the content.*/			
 			SGPopup::savePopupsFromContentClasses($content, $post);
 		}
 	}
@@ -1121,7 +1146,7 @@ class Actions
 		}
 		else if ($column == 'counter') {
 			$count = $popup->getPopupOpeningCountById($postId);
-			$counter =  '<div ><span>'.$count.'</span>'.'<input onclick="SGPBBackend.resetCount('.esc_attr($postId).', true);" type="button" name="" class="sgpb-btn sgpb-btn-dark-outline" value="'.__('reset', SG_POPUP_TEXT_DOMAIN).'"></div>';
+			$counter =  '<div ><span>'.$count.'</span>'.'<input onclick="SGPBBackend.resetCount('.esc_attr($postId).', true);" type="button" name="" class="sgpb-btn sgpb-btn-dark-outline" value="'.__('reset', 'popup-builder').'"></div>';
 			echo wp_kses($counter, AdminHelper::allowed_html_tags());
 		}
 		else if ($column == 'type') {
@@ -1170,8 +1195,24 @@ class Actions
 	 */
 	public function popupSaveAsNew($status = '')
 	{
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {
+			
+			wp_die(esc_html__('You do not have permission to clone the popup!', 'popup-builder'));
+		}
+		
+		/* Validate nonce */			
+		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( $_REQUEST['_wpnonce'] ) : '';			
+		$postId = (int) sanitize_text_field($_REQUEST['post']);			
+
+		if ( empty( $nonce ) || !wp_verify_nonce( $nonce, 'duplicate-post_'.$postId ) ) { 		
+			wp_die(esc_html__('You do not have permission to clone the popup!', 'popup-builder'));
+		}
+		
 		if (!(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && 'popupSaveAsNew' == sanitize_text_field($_REQUEST['action'])))) {
-			wp_die(esc_html__('No post to duplicate has been supplied!', SG_POPUP_TEXT_DOMAIN));
+			wp_die(esc_html__('No post to duplicate has been supplied!', 'popup-builder'));
 		}
 		// Get the original post
 		$id = (isset($_GET['post']) ? sanitize_text_field($_GET['post']) : sanitize_text_field($_POST['post']));
@@ -1214,7 +1255,8 @@ class Actions
 
 		}
 		else {
-			wp_die(esc_html__('Copy creation failed, could not find original: '.$id, SG_POPUP_TEXT_DOMAIN));
+			/* translators: ID of original. */
+			wp_die( sprintf( wp_kses_post( __('Copy creation failed, could not find original: %d','popup-builder') ), esc_html( $id ) ) );
 		}
 	}
 
@@ -1403,11 +1445,11 @@ class Actions
 		if ($post_type == SG_POPUP_POST_TYPE) {
 			// post(popup) updated
 			if (isset($messages['post'][1])) {
-				$messages['post'][1] = __('Popup updated.', SG_POPUP_TEXT_DOMAIN);
+				$messages['post'][1] = __('Popup updated.', 'popup-builder');
 			}
 			// post(popup) published
 			if (isset($messages['post'][6])) {
-				$messages['post'][6] = __('Popup published.', SG_POPUP_TEXT_DOMAIN);
+				$messages['post'][6] = __('Popup published.', 'popup-builder');
 			}
 		}
 		$messages = apply_filters('sgpbPostUpdateMessage', $messages);

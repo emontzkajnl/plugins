@@ -1,5 +1,9 @@
 <?php
 namespace sgpb;
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $eventsData = $popupTypeObj->getOptionValue('sgpb-events');
 $popupTargetData = ConditionBuilder::createEventsConditionBuilder($eventsData);
 $allowed_html = AdminHelper::allowed_html_tags();

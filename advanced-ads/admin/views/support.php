@@ -1,7 +1,11 @@
 <?php
 /**
  * The view for the support page
+ *
+ * @package AdvancedAds
+ * @author  Advanced Ads <info@wpadvancedads.com>
  */
+
 ?><div class="wrap">
 	<p><?php esc_html_e( 'Please fix the red highlighted issues on this page or try to understand their consequences before contacting support.', 'advanced-ads' ); ?></p>
 	<h2><?php esc_html_e( 'Possible Issues', 'advanced-ads' ); ?></h2>
@@ -54,7 +58,8 @@
 		?>
 		</p>
 	<?php endif; ?>
-<?php if ( $constants = Advanced_Ads_Checks::get_defined_constants() ) : ?>
+<?php $constants = Advanced_Ads_Checks::get_defined_constants(); ?>
+<?php if ( $constants ) : ?>
 	<h2><?php esc_html_e( 'Advanced Ads related constants enabled', 'advanced-ads' ); ?></h2>
 	<ul><li>
 	<?php
@@ -67,4 +72,3 @@
 	</p>
 <?php endif; ?>
 </div>
-<?php AdvancedAds\Modules\ProductExperimentationFramework\Module::get_instance()->render( 'support' ); ?>

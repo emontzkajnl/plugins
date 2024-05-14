@@ -32,7 +32,7 @@ class ImagePopup extends SGPopup
 	{
 		return array(
 			'filePath' => SG_POPUP_TYPE_MAIN_PATH.'image.php',
-			'metaboxTitle' => 'Image Settings',
+			'metaboxTitle' => __('Image Settings', 'popup-builder'),
 			'short_description' => 'Upload your feature image for the popup'
 		);
 	}

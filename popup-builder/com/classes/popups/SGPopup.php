@@ -1,6 +1,6 @@
 <?php
 namespace sgpb;
-use \ConfigDataHelper;
+use \SGPBConfigDataHelper;
 use \WP_Post;
 
 if (class_exists("sgpb\SGPopup")) {
@@ -417,7 +417,22 @@ abstract class SGPopup
 
 		return $sanitizedValue;
 	}
+	
+	public static function sanitize_multidimensional_array($array) {
+		$sanitized_array = array();
 
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				// If the value is an array, recursively sanitize it
+				$sanitized_array[$key] = SGPopup::sanitize_multidimensional_array($value);
+			} else {
+				// If the value is a string, sanitize it
+				$sanitized_array[$key] = is_string($value) ? sanitize_text_field($value) : $value;
+			}
+		}
+
+		return $sanitized_array;
+	}
 	public function recursiveSanitizeTextField($array)
 	{
 		if (!is_array($array)) {
@@ -458,29 +473,44 @@ abstract class SGPopup
 
 		return $array;
 	}
+	
+	
 
 	public static function parsePopupDataFromData($data)
 	{
-		$popupData = array();
-		$data = apply_filters('sgpbFilterOptionsBeforeSaving', $data);
-		foreach ($data as $key => $value) {
-			if ( !is_array( $value ) ) {
+		global $SGPB_OPTIONS;		
+		
+		// Do not processing the whole input
+		$essentialsgpbKeys  = array_column($SGPB_OPTIONS, 'name');				
+		$popupData = array();		
+		$data = apply_filters('sgpbFilterOptionsBeforeSaving', $data);		
+		foreach ($data as $key => $value) {			
+			// Skip processing if the key is not essential
+			if (!in_array($key, $essentialsgpbKeys)) {
+				continue;
+			}	
+			if ( !is_array( $value ) ) {				
 				//Sanitize URL to avoid 404 error
 				if ( strpos( $key, '-url' ) === false )				
 					$value = sanitize_text_field( $value );
 				else
-					$value = wp_sanitize_redirect( $value );	
+					$value = wp_sanitize_redirect( $value );					
 			}
-			if (strpos($key, 'sgpb') === 0) {				
-				$popupData[$key] = $value;
+			else
+			{			        
+				$value = SGPopup::sanitize_multidimensional_array( $value );
 			}
+			
+			$popupData[$key] = $value;		
+			
 			if (is_array($value) && isset($value['name']) && strpos($value['name'], 'sgpb') === 0) {
-				$popupData[$value['name']] = sanitize_text_field( $value['value'] );
+				$popupData[$value['name']] = sanitize_text_field( $value['value'] );			
 			}
 			else if (is_array($value) && isset($value['name']) && strpos($value['name'], 'post_ID') === 0) {
 				$popupData['sgpb-post-id'] = (int) sanitize_text_field( $value['value'] );
-			}
+			}					
 		}
+		
 		return $popupData;
 	}
 
@@ -535,6 +565,7 @@ abstract class SGPopup
 			$this->setEvents($data['sgpb-events']);
 			unset($data['sgpb-events']);
 		}
+		
 		$data = $this->customScriptsSave($data);
 		$this->setOptions($data);
 
@@ -584,13 +615,17 @@ abstract class SGPopup
 		$popupId = $this->getId();
 		$popupContent = $this->getContent();
 
-		$defaultData = ConfigDataHelper::defaultData();
+		$defaultData = SGPBConfigDataHelper::defaultData();
 		$defaultDataJs = $defaultData['customEditorContent']['js']['helperText'];
 		$defaultDataCss = $defaultData['customEditorContent']['css']['oldDefaultValue'];
 
 		$finalData = array('js' => array(), 'css' => array());
 		$alreadySavedData = get_post_meta($popupId, 'sg_popup_scripts', true);
 
+		if( !isset( $data['sgpb-css-editor'] ) )
+		{
+			$data['sgpb-css-editor'] = '';
+		}
 		// get styles
 		$finalData['css'] = $data['sgpb-css-editor'];
 		$defaultDataCss = $defaultDataCss[0];
@@ -606,6 +641,10 @@ abstract class SGPopup
 
 		// get scripts
 		foreach ($defaultDataJs as $key => $value) {
+			if( !isset( $data['sgpb-'.$key] ) )
+			{
+				continue;
+			}
 			if ($data['sgpb-'.$key] == '') {
 				unset($data['sgpb-'.$key]);
 				continue;
@@ -667,9 +706,9 @@ abstract class SGPopup
 					}
 
 					if (isset($valueAttrs['isPostCategory'])){
-						$targetData[$groupId][$ruleId]['value'] = ConfigDataHelper::getTermsByIds($ruleData['value']);
+						$targetData[$groupId][$ruleId]['value'] = SGPBConfigDataHelper::getTermsByIds($ruleData['value']);
 					} elseif(isset($valueAttrs['isPostTag'])) {
-						$targetData[$groupId][$ruleId]['value'] = ConfigDataHelper::getTagsBySlug($ruleData['value']);
+						$targetData[$groupId][$ruleId]['value'] = SGPBConfigDataHelper::getTagsBySlug($ruleData['value']);
 					}
 
 					/*
@@ -683,7 +722,7 @@ abstract class SGPopup
 							'post_type'      => $postType
 						);
 
-						$searchResults = ConfigDataHelper::getPostTypeData($args);
+						$searchResults = SGPBConfigDataHelper::getPostTypeData($args);
 
 						$targetData[$groupId][$ruleId]['value'] = $searchResults;
 					}
@@ -765,7 +804,7 @@ abstract class SGPopup
 							'post_type'      => SG_POPUP_POST_TYPE
 						);
 
-						$searchResults = ConfigDataHelper::getPostTypeData($args);
+						$searchResults = SGPBConfigDataHelper::getPostTypeData($args);
 						$popupOptions['sgpb-behavior-after-special-events'][$groupId][$ruleId]['value'] = $searchResults;
 					}
 				}
@@ -1131,7 +1170,7 @@ abstract class SGPopup
 				'post_type' => SG_POPUP_POST_TYPE,
 				'post__in'  => array($popupId)
 			);
-			$postById = ConfigDataHelper::getPostTypeData($args);
+			$postById = SGPBConfigDataHelper::getPostTypeData($args);
 			//When target data does not exist
 			if (empty($postById)) {
 				continue;
@@ -1309,7 +1348,7 @@ abstract class SGPopup
 			$wrap = 'a';
 		}		
 		?>
-		<<?php echo $wrap; ?>
+		<<?php echo wp_kses_post($wrap); ?>
 		<?php if ($wrap == 'a') : ?>
 		href="javascript:void(0)"
 		<?php endif ?>
@@ -1499,7 +1538,7 @@ abstract class SGPopup
 		}
 
 		if (!file_exists($typePath.$popupClassName.'.php')) {
-			wp_die(esc_html__('Popup class does not exist', SG_POPUP_TEXT_DOMAIN));
+			wp_die(esc_html__('Popup class does not exist', 'popup-builder'));
 		}
 		require_once($typePath.$popupClassName.'.php');
 
@@ -1586,7 +1625,7 @@ abstract class SGPopup
 			'post_type' => SG_POPUP_POST_TYPE
 		);
 		$allPopups = array();
-		$allPostData = ConfigDataHelper::getQueryDataByArgs($args);
+		$allPostData = SGPBConfigDataHelper::getQueryDataByArgs($args);
 
 		if (empty($allPostData)) {
 			return $allPopups;
@@ -1754,10 +1793,10 @@ abstract class SGPopup
 			'post_type' => SG_POPUP_POST_TYPE,
 			'post_status' => array('trash', 'publish')
 		);
-		if (!class_exists('ConfigDataHelper')) {
+		if (!class_exists('SGPBConfigDataHelper')) {
 			return $activePopupsQuery;
 		}
-		$allPostData = ConfigDataHelper::getQueryDataByArgs($args);
+		$allPostData = SGPBConfigDataHelper::getQueryDataByArgs($args);
 		$args['checkActivePopupType'] = true;
 		$allPopups = $allPostData->posts;
 		foreach ($allPopups as $post) {

@@ -185,13 +185,13 @@ class Functions
 	public static function getDatabaseEngine()
 	{
 		global $wpdb;
-		$dbName = $wpdb->dbname;
+		$dbName = $wpdb->dbname;	
 		$engine = 'InnoDB';
-		$engineCheckSql = "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = '$dbName'";
-		$result = $wpdb->get_results($engineCheckSql, ARRAY_A);
+		$engineCheckSql = "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s";
+		$result = $wpdb->get_results( $wpdb->prepare( $engineCheckSql , $dbName), ARRAY_A);
 		if (!empty($result)) {
-			$engineCheckSql = "SHOW TABLE STATUS WHERE Name = '".$wpdb->prefix."users' AND Engine = 'MyISAM'";
-			$result = $wpdb->get_results($engineCheckSql, ARRAY_A);
+			$engineCheckSql = "SHOW TABLE STATUS WHERE Name = '".$wpdb->prefix."users' AND Engine = %s";
+			$result = $wpdb->get_results( $wpdb->prepare( $engineCheckSql, 'MyISAM' ), ARRAY_A);
 			if (isset($result[0]['Engine']) && $result[0]['Engine'] == 'MyISAM') {
 				$engine = 'MyISAM';
 			}

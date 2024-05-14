@@ -62,7 +62,7 @@ class MediaButton
 			return '';
 		}
 
-		$buttonTitle = __('Insert custom JS variable', SG_POPUP_TEXT_DOMAIN);
+		$buttonTitle = __('Insert custom JS variable', 'popup-builder');
 		ob_start();
 			@include(SG_POPUP_VIEWS_PATH.'jsVariableView.php');
 		$jsVariableContent = ob_get_contents();
@@ -113,7 +113,7 @@ class MediaButton
 			return '';
 		}
 
-		$buttonTitle = __('Insert popup', SG_POPUP_TEXT_DOMAIN);
+		$buttonTitle = __('Insert popup', 'popup-builder');
 
 		$img = '<span class="dashicons dashicons-welcome-widgets-menus" style="padding: 3px 2px 0px 0px"></span>';
 		$output = '<a data-id="sgpb-hidden-media-popup" href="javascript:void(0);" class="button sgpb-insert-media-button-js" title="'.$buttonTitle.'" style="padding-left: .4em;">'. $img.$buttonTitle.'</a>';

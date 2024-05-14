@@ -1,16 +1,19 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: Popup Builder Gold\n"
-"POT-Creation-Date: 2018-12-21 13:59+0400\n"
-"PO-Revision-Date: 2018-12-21 13:58+0400\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-23 10:06+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Loco-Source-Locale: vi_VN\n"
+"X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-WPHeader: popup-builder-gold.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -19,6 +22,8 @@ msgstr ""
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
+"\n"
+"X-Loco-Parser: loco_parse_po"
 
 #: com/classes/Actions.php:210
 msgid "Importer"
@@ -81,7 +86,7 @@ msgstr ""
 msgid "No Data"
 msgstr ""
 
-#: com/classes/ConditionCreator.php:475 public/views/jsVariableView.php:57
+#: com/classes/ConditionCreator.php:475 public/views/jsVariableView.php:57 
 #: public/views/mediaButton.php:42 public/views/subscribers.php:101
 msgid "Cancel"
 msgstr ""
@@ -90,10 +95,10 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: com/classes/Filters.php:90 public/views/closeSettingsView.php:201
-#: public/views/conditionsView.php:31 public/views/conditionsView.php:58
-#: public/views/conditionsView.php:85 public/views/conditionsView.php:112
-#: public/views/conditionsView.php:133 public/views/optionsView.php:319
+#: com/classes/Filters.php:90 public/views/closeSettingsView.php:201 
+#: public/views/conditionsView.php:31 public/views/conditionsView.php:58 
+#: public/views/conditionsView.php:85 public/views/conditionsView.php:112 
+#: public/views/conditionsView.php:133 public/views/optionsView.php:319 
 #: public/views/popupDesignView.php:88
 msgid "UNLOCK OPTION"
 msgstr ""
@@ -106,7 +111,7 @@ msgstr ""
 msgid "Enabled (show popup)"
 msgstr ""
 
-#: com/classes/Filters.php:317 public/views/optionsView.php:190
+#: com/classes/Filters.php:317 public/views/optionsView.php:190 
 #: public/views/optionsView.php:227
 msgid "Type"
 msgstr ""
@@ -168,7 +173,7 @@ msgctxt "Popup"
 msgid "Add New"
 msgstr ""
 
-#: com/classes/RegisterPostType.php:93 public/views/popupTypes.php:14
+#: com/classes/RegisterPostType.php:93 public/views/popupTypes.php:14 
 #: public/views/popupTypes.php:25
 msgid "Add New Popup"
 msgstr ""
@@ -275,17 +280,17 @@ msgstr ""
 msgid "Extend"
 msgstr ""
 
-#: com/classes/RegisterPostType.php:326 com/classes/RegisterPostType.php:327
+#: com/classes/RegisterPostType.php:326 com/classes/RegisterPostType.php:327 
 #: public/views/mainRateUsBanner.php:44
 msgid "Support"
 msgstr ""
 
-#: com/classes/RegisterPostType.php:338 com/classes/RegisterPostType.php:339
+#: com/classes/RegisterPostType.php:338 com/classes/RegisterPostType.php:339 
 #: public/views/mainActionButtons.php:7
 msgid "Add New"
 msgstr ""
 
-#: com/classes/RegisterPostType.php:347 com/classes/RegisterPostType.php:348
+#: com/classes/RegisterPostType.php:347 com/classes/RegisterPostType.php:348 
 #: public/views/subscribers.php:30
 msgid "Subscribers"
 msgstr ""
@@ -306,7 +311,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: com/classes/Updates.php:152 com/classes/Updates.php:181
+#: com/classes/Updates.php:152 com/classes/Updates.php:181 
 #: com/classes/Updates.php:213
 msgid "An error occurred, please try again."
 msgstr ""
@@ -337,12 +342,12 @@ msgstr ""
 msgid "Invalid license key for current site."
 msgstr ""
 
-#: com/classes/dataTable/Subscribers.php:30 com/config/dataConfig.php:862
+#: com/classes/dataTable/Subscribers.php:30 com/config/dataConfig.php:862 
 #: public/views/options/subscription.php:111 public/views/subscribers.php:88
 msgid "First name"
 msgstr ""
 
-#: com/classes/dataTable/Subscribers.php:31 com/config/dataConfig.php:865
+#: com/classes/dataTable/Subscribers.php:31 com/config/dataConfig.php:865 
 #: public/views/options/subscription.php:142 public/views/subscribers.php:93
 msgid "Last name"
 msgstr ""
@@ -427,7 +432,7 @@ msgstr ""
 msgid "Selected tags"
 msgstr ""
 
-#: com/config/dataConfig.php:54 com/config/dataConfig.php:424
+#: com/config/dataConfig.php:54 com/config/dataConfig.php:424 
 #: com/helpers/ConfigDataHelper.php:1087
 msgid "Add"
 msgstr ""
@@ -436,14 +441,14 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: com/config/dataConfig.php:59 com/config/dataConfig.php:429
-#: public/views/conditionsView.php:24 public/views/conditionsView.php:51
+#: com/config/dataConfig.php:59 com/config/dataConfig.php:429 
+#: public/views/conditionsView.php:24 public/views/conditionsView.php:51 
 #: public/views/conditionsView.php:78 public/views/conditionsView.php:105
 msgid "Is"
 msgstr ""
 
-#: com/config/dataConfig.php:60 com/config/dataConfig.php:430
-#: public/views/conditionsView.php:24 public/views/conditionsView.php:51
+#: com/config/dataConfig.php:60 com/config/dataConfig.php:430 
+#: public/views/conditionsView.php:24 public/views/conditionsView.php:51 
 #: public/views/conditionsView.php:78 public/views/conditionsView.php:105
 msgid "Is not"
 msgstr ""
@@ -672,7 +677,7 @@ msgstr ""
 msgid "Behaviors"
 msgstr ""
 
-#: com/config/dataConfig.php:659 com/helpers/ConfigDataHelper.php:525
+#: com/config/dataConfig.php:659 com/helpers/ConfigDataHelper.php:525 
 #: com/helpers/ConfigDataHelper.php:632
 msgid "Redirect to URL"
 msgstr ""
@@ -709,7 +714,7 @@ msgstr ""
 msgid "Enter the URL of the page should be redirected to."
 msgstr ""
 
-#: com/config/dataConfig.php:721 public/views/mediaButton.php:21
+#: com/config/dataConfig.php:721 public/views/mediaButton.php:21 
 #: public/views/options/subscription.php:362
 msgid "Select popup"
 msgstr ""
@@ -909,8 +914,8 @@ msgstr ""
 
 #: com/helpers/AdminHelper.php:1320
 msgid ""
-"<h1 class=\"sgpb-review-h1\"><strong class=\"sgrb-review-strong\">Wow!</"
-"strong> <b>Popup Builder</b> plugin helped you to share your message via "
+"<h1 class=\"sgpb-review-h1\"><strong class=\"sgrb-review-strong\">Wow!"
+"</strong> <b>Popup Builder</b> plugin helped you to share your message via "
 "<strong class=\"sgrb-review-strong\">"
 msgstr ""
 
@@ -1051,7 +1056,7 @@ msgstr ""
 msgid "Vertical"
 msgstr ""
 
-#: com/helpers/ConfigDataHelper.php:436 com/helpers/ConfigDataHelper.php:693
+#: com/helpers/ConfigDataHelper.php:436 com/helpers/ConfigDataHelper.php:693 
 #: com/helpers/ConfigDataHelper.php:700 com/helpers/ConfigDataHelper.php:719
 msgid "None"
 msgstr ""
@@ -1080,7 +1085,7 @@ msgstr ""
 msgid "On hover"
 msgstr ""
 
-#: com/helpers/ConfigDataHelper.php:513 com/helpers/ConfigDataHelper.php:620
+#: com/helpers/ConfigDataHelper.php:513 com/helpers/ConfigDataHelper.php:620 
 #: public/views/options/subscription.php:340
 msgid "Success message"
 msgstr ""
@@ -1278,8 +1283,8 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: com/libs/Importer.php:112 com/libs/Importer.php:121
-#: com/libs/Importer.php:173 com/libs/Importer.php:178
+#: com/libs/Importer.php:112 com/libs/Importer.php:121 
+#: com/libs/Importer.php:173 com/libs/Importer.php:178 
 #: com/libs/Importer.php:187
 msgid "Sorry, there has been an error."
 msgstr ""
@@ -1325,8 +1330,8 @@ msgstr ""
 msgid ""
 "To make it easier for you to edit and save the imported content, you may "
 "want to reassign the author of the imported item to an existing user of this "
-"site. For example, you may want to import all the entries as <code>admin</"
-"code>s entries."
+"site. For example, you may want to import all the entries as <code>"
+"admin</code>s entries."
 msgstr ""
 
 #: com/libs/Importer.php:253
@@ -1588,7 +1593,7 @@ msgid ""
 "parser..."
 msgstr ""
 
-#: com/libs/parsers.php:86 com/libs/parsers.php:91 com/libs/parsers.php:308
+#: com/libs/parsers.php:86 com/libs/parsers.php:91 com/libs/parsers.php:308 
 #: com/libs/parsers.php:504
 msgid ""
 "This does not appear to be a WXR file, missing/invalid WXR version number"
@@ -1639,14 +1644,14 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: public/views/closeSettingsView.php:112 public/views/dimensionsView.php:20
-#: public/views/options/subscription.php:187
+#: public/views/closeSettingsView.php:112 public/views/dimensionsView.php:20 
+#: public/views/options/subscription.php:187 
 #: public/views/options/subscription.php:261
 msgid "Width"
 msgstr ""
 
-#: public/views/closeSettingsView.php:123 public/views/dimensionsView.php:25
-#: public/views/options/subscription.php:195
+#: public/views/closeSettingsView.php:123 public/views/dimensionsView.php:25 
+#: public/views/options/subscription.php:195 
 #: public/views/options/subscription.php:269
 msgid "Height"
 msgstr ""
@@ -1684,13 +1689,13 @@ msgid ""
 "The users will not be able to close the popup, if this option is checked"
 msgstr ""
 
-#: public/views/conditionsView.php:10 public/views/conditionsView.php:37
-#: public/views/conditionsView.php:64 public/views/conditionsView.php:91
+#: public/views/conditionsView.php:10 public/views/conditionsView.php:37 
+#: public/views/conditionsView.php:64 public/views/conditionsView.php:91 
 #: public/views/conditionsView.php:118
 msgid "Condition"
 msgstr ""
 
-#: public/views/conditionsView.php:13 public/views/conditionsView.php:40
+#: public/views/conditionsView.php:13 public/views/conditionsView.php:40 
 #: public/views/conditionsView.php:67 public/views/conditionsView.php:94
 msgid "Page operator"
 msgstr ""
@@ -1731,14 +1736,14 @@ msgstr ""
 msgid "number of pages"
 msgstr ""
 
-#: public/views/dimensionsView.php:21 public/views/dimensionsView.php:27
-#: public/views/dimensionsView.php:38 public/views/dimensionsView.php:42
+#: public/views/dimensionsView.php:21 public/views/dimensionsView.php:27 
+#: public/views/dimensionsView.php:38 public/views/dimensionsView.php:42 
 #: public/views/dimensionsView.php:46 public/views/dimensionsView.php:50
 msgid "Ex: 100, 100px or 100%"
 msgstr ""
 
-#: public/views/dimensionsView.php:21 public/views/dimensionsView.php:27
-#: public/views/dimensionsView.php:38 public/views/dimensionsView.php:42
+#: public/views/dimensionsView.php:21 public/views/dimensionsView.php:27 
+#: public/views/dimensionsView.php:38 public/views/dimensionsView.php:42 
 #: public/views/dimensionsView.php:46 public/views/dimensionsView.php:50
 msgid "It must be number  + px or %"
 msgstr ""
@@ -1991,12 +1996,12 @@ msgstr ""
 msgid "Confirmation text"
 msgstr ""
 
-#: public/views/options/subscription.php:120
+#: public/views/options/subscription.php:120 
 #: public/views/options/subscription.php:151
 msgid "Placeholder"
 msgstr ""
 
-#: public/views/options/subscription.php:128
+#: public/views/options/subscription.php:128 
 #: public/views/options/subscription.php:159
 msgid "Required field"
 msgstr ""
@@ -2013,7 +2018,7 @@ msgstr ""
 msgid "Border width"
 msgstr ""
 
-#: public/views/options/subscription.php:211
+#: public/views/options/subscription.php:211 
 #: public/views/options/subscription.php:293
 msgid "Background color"
 msgstr ""
@@ -2022,7 +2027,7 @@ msgstr ""
 msgid "Border color"
 msgstr ""
 
-#: public/views/options/subscription.php:231
+#: public/views/options/subscription.php:231 
 #: public/views/options/subscription.php:303
 msgid "Text color"
 msgstr ""
@@ -2153,7 +2158,7 @@ msgstr ""
 msgid "Speed"
 msgstr ""
 
-#: public/views/optionsView.php:208 public/views/optionsView.php:245
+#: public/views/optionsView.php:208 public/views/optionsView.php:245 
 #: public/views/optionsView.php:335
 msgid "Second(s)"
 msgstr ""
@@ -2435,4 +2440,42 @@ msgstr ""
 
 #. Author URI of the plugin/theme
 msgid "http://www.sygnoos.com"
+msgstr ""
+
+msgid "An error occour when try to identify the plugin."
+msgstr ""
+
+msgid "Try again"
+msgstr ""
+
+msgid "An Unexpected HTTP Error occurred during the API request."
+msgstr ""
+
+msgid "WPForms"
+msgstr ""
+
+msgid "Select and display one of your forms."
+msgstr ""
+
+msgid "form"
+msgstr ""
+
+msgid "Form Settings"
+msgstr ""
+
+msgid "Form"
+msgstr ""
+
+msgid "Show Title"
+msgstr ""
+
+msgid "Show Description"
+msgstr ""
+
+msgid "Click me"
+msgstr ""
+
+msgid ""
+"This block will help you to add Popup Builder’s shortcode inside the page "
+"content"
 msgstr ""

@@ -437,12 +437,11 @@ class SubscriptionPopup extends SGPopup
 	}
 
 	private function getSubscriptionValidationScripts($validateObj)
-	{
-		$script = '<script type="text/javascript">';
-		$script .= $validateObj;
-		$script .= '</script>';
-
-		return $script;
+	{		
+		wp_register_script( 'sgpb-subscriptionpopup-js-footer', '', array("jquery"), '', true );
+		wp_enqueue_script( 'sgpb-subscriptionpopup-js-footer'  );
+		wp_add_inline_script( 'sgpb-subscriptionpopup-js-footer', $validateObj);
+		return '';		
 	}
 
 	public function getFormCustomStyles($styleData)
@@ -490,7 +489,7 @@ class SubscriptionPopup extends SGPopup
 	{
 		$optionsViewData = array(
 			'filePath' => SG_POPUP_TYPE_OPTIONS_PATH . 'subscription.php',
-			'metaboxTitle' => 'Subscription Settings',
+			'metaboxTitle' => __('Subscription Settings', 'popup-builder'),
 			'short_description' => 'Create subscription form, customize the fields and styles'
 		);
 
@@ -524,10 +523,10 @@ class SubscriptionPopup extends SGPopup
 		ob_start();
 		?>
 		<div class="subs-form-messages sgpb-alert sgpb-alert-success sg-hide-element">
-			<p><?php echo $successMessage; ?></p>
+			<p><?php echo wp_kses_post( $successMessage ); ?></p>
 		</div>
 		<div class="subs-form-messages sgpb-alert sgpb-alert-danger sg-hide-element">
-			<p><?php echo $errorMessage; ?></p>
+			<p><?php echo wp_kses_post( $errorMessage ); ?></p>
 		</div>
 		<?php
 		$messages = ob_get_contents();
@@ -662,7 +661,7 @@ class SubscriptionPopup extends SGPopup
 			$title = $subscriptionForm->getTitle();
 			$id = $subscriptionForm->getId();
 			if ($title == '') {
-				$title = '('.__('no title', SG_POPUP_TEXT_DOMAIN).')';
+				$title = '('.__('no title', 'popup-builder').')';
 			}
 			$subsFormList[$id] = $title;
 		}
@@ -674,7 +673,8 @@ class SubscriptionPopup extends SGPopup
 	{
 		$subsDateList = array();
 		global $wpdb;
-		$subscriptionPopups = $wpdb->get_results('SELECT id, cDate FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME, ARRAY_A);
+		
+		$subscriptionPopups = $wpdb->get_results( $wpdb->prepare('SELECT id, cDate FROM %i', $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME), ARRAY_A);
 
 		foreach ($subscriptionPopups as $subscriptionForm) {
 			$id = $subscriptionForm['id'];

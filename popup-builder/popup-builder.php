@@ -3,7 +3,7 @@
 * Plugin Name: Popup Builder
 * Plugin URI: https://popup-builder.com
 * Description: The most complete popup plugin. Html, image, iframe, shortcode, video and many other popup types. Manage popup dimensions, effects, themes and more.
-* Version: 4.2.7
+* Version: 4.3.0
 * Author: Looking Forward Software Incorporated.
 * Author URI: https://popup-builder.com
 * License: GPLv2
@@ -20,12 +20,12 @@ if (class_exists('SgpbPopupConfig')) {
 	wp_die('Please, deactivate the FREE version of Popup Builder plugin before upgrading to PRO.');
 }
 
-if (!defined('SG_POPUP_FILE_NAME')) {
-	define('SG_POPUP_FILE_NAME', plugin_basename(__FILE__));
+if (!defined('SGPB_POPUP_FILE_NAME')) {
+	define('SGPB_POPUP_FILE_NAME', plugin_basename(__FILE__));
 }
 
-if (!defined('SG_POPUP_FOLDER_NAME')) {
-	define('SG_POPUP_FOLDER_NAME', plugin_basename(dirname(__FILE__)));
+if (!defined('SGPB_POPUP_FOLDER_NAME')) {
+	define('SGPB_POPUP_FOLDER_NAME', plugin_basename(dirname(__FILE__)));
 }
 
 require_once(plugin_dir_path(__FILE__).'com/boot.php');

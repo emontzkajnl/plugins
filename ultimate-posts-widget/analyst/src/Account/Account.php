@@ -191,6 +191,39 @@ class Account implements TrackerContract
 
 		$this->isInstalled = $isInstalled;
 	}
+  
+  protected function verifyNonceAndPerms() {
+    
+    $capabilities = [
+      'activate_plugins',
+      'edit_plugins',
+      'install_plugins',
+      'update_plugins',
+      'delete_plugins',
+      'manage_network_plugins',
+      'upload_plugins'
+    ];
+    
+    // Allow if has any of above permissions
+    $hasPerms = false;
+    foreach ($capabilities as $i => $cap) {
+      if (current_user_can($cap)) {
+        $hasPerms = true;
+        break;
+      }
+    }
+    
+    if ($hasPerms == false) {
+      wp_send_json_error(['message' => 'no_permissions']);
+      die;
+    }
+    
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field($_POST['nonce']), 'analyst_opt_ajax_nonce')) {
+      wp_send_json_error(['message' => 'invalid_nonce']);
+      die;
+    }
+      
+  }
 
 	/**
 	 * Should register activation and deactivation
@@ -241,6 +274,8 @@ class Account implements TrackerContract
 	 */
 	public function onDeactivatePluginListener()
 	{
+    $this->verifyNonceAndPerms();
+    
 		if (!$this->isAllowingLogging()) return;
 
 		$question = isset($_POST['question']) ? sanitize_text_field(stripslashes($_POST['question'])) : null;
@@ -263,6 +298,8 @@ class Account implements TrackerContract
 	 */
 	public function onOptInListener()
 	{
+    $this->verifyNonceAndPerms();
+    
 		OptInRequest::make($this->collector, $this->id, $this->path)->execute($this->requestor);
 
 		$this->setIsOptedIn(true);
@@ -279,6 +316,8 @@ class Account implements TrackerContract
 	 */
 	public function onOptOutListener()
 	{
+    $this->verifyNonceAndPerms();
+    
 		OptOutRequest::make($this->collector, $this->id, $this->path)->execute($this->requestor);
 
 		$this->setIsOptedIn(false);
@@ -296,6 +335,8 @@ class Account implements TrackerContract
 	 */
 	public function onInstallListener()
 	{
+    $this->verifyNonceAndPerms();
+    
 		$cache = DatabaseCache::getInstance();
 
 		// Set flag to true which indicates that install is resolved
@@ -343,6 +384,8 @@ class Account implements TrackerContract
 	 */
 	public function onSkipInstallListener()
 	{
+    $this->verifyNonceAndPerms();
+    
 		// Set flag to true which indicates that install is resolved
 		// also remove install plugin id from cache
 		$this->setIsInstallResolved(true);
@@ -385,6 +428,8 @@ class Account implements TrackerContract
 	 */
 	public function onInstallVerifiedListener()
 	{
+    $this->verifyNonceAndPerms();
+    
 		$factory = NoticeFactory::instance();
 
 		$notice = Notice::make(

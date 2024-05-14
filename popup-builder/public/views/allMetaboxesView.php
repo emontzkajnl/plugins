@@ -1,6 +1,11 @@
 <?php
 namespace sgpb;
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $metaboxes = apply_filters('sgpbAdditionalMetaboxes', array());
+
 ?>
 
 <div class="sgpb sgpb-options">
@@ -11,20 +16,22 @@ $metaboxes = apply_filters('sgpbAdditionalMetaboxes', array());
 	?>
 	<div class="sgpb-options-menu"
 	     id="<?php echo esc_attr($key); ?>">
-		<h3 class="sgpb-options-menu-header"><?php echo wp_kses($metabox['displayName'], 'post'); ?></h3>
+		<h3 class="sgpb-options-menu-header"><?php echo isset( $metabox['displayName'] ) ? wp_kses($metabox['displayName'], 'post') :  ''; ?></h3>
 		<span class="sgpb-options-menu-header__sub"><?php  echo esc_html($metabox['short_description']); ?></span>
 	</div>
 
 	<div class="sgpb-options-content">
 		<div id="options-<?php echo esc_attr($key); ?>" class="sgpb-metabox sgpb-metabox-options ">
-			<p class="sgpb-header-h1 sgpb-margin-top-20 sgpb-margin-bottom-50"><?php echo wp_kses($metabox['displayName'], 'post'); ?></p>
+			<p class="sgpb-header-h1 sgpb-margin-top-20 sgpb-margin-bottom-50"><?php echo isset( $metabox['displayName'] ) ?  wp_kses($metabox['displayName'], 'post') : ''; ?></p>
 			<?php require_once( $metabox['filePath'] ); ?>
 		</div>
 	</div>
 	<?php }; ?>
 </div>
-<script type="text/javascript">
-	let hash = window.location.hash.replace(/^#/,'');
+<?php
+	wp_register_script( 'sgpb-allmetaboxesview-js-footer', '', array("jquery"), '', true );
+	wp_enqueue_script( 'sgpb-allmetaboxesview-js-footer'  );
+	wp_add_inline_script( 'sgpb-allmetaboxesview-js-footer', "let hash = window.location.hash.replace(/^#/,'');
 	if (hash) {
 		jQuery('#'+hash).addClass('sgpb-options-menu-active');
 	} else {
@@ -61,5 +68,5 @@ $metaboxes = apply_filters('sgpbAdditionalMetaboxes', array());
 			}
 			jQuery('#allMetaboxesView').css('min-height', minHeightShouldBe+'px');
 		}
-	});
-</script>
+	});");
+?>

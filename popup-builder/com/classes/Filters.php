@@ -174,11 +174,11 @@ class Filters
 
 		$allExtensions = \SgpbDataConfig::allExtensionsKeys();
 		$allExtensions = wp_list_pluck($allExtensions, 'pluginKey');
-		$allExtensions[] = SG_POPUP_FILE_NAME;
+		$allExtensions[] = SGPB_POPUP_FILE_NAME;
 
 		$rowMeta = array(
-			'rateus' => '<a href="'.SG_POPUP_RATE_US_URL.'" target="_blank">'.esc_html__('Rate us', SG_POPUP_TEXT_DOMAIN).'</a>',
-			'support' => '<a href="'.SG_POPUP_SUPPORT_URL.'" target="_blank">'.esc_html__('Support', SG_POPUP_TEXT_DOMAIN).'</a>'
+			'rateus' => '<a href="'.SG_POPUP_RATE_US_URL.'" target="_blank">'.esc_html__('Rate us', 'popup-builder').'</a>',
+			'support' => '<a href="'.SG_POPUP_SUPPORT_URL.'" target="_blank">'.esc_html__('Support', 'popup-builder').'</a>'
 		);
 
 		if (in_array($pluginFile, $allExtensions)) {
@@ -197,20 +197,20 @@ class Filters
 
 		$allExtensions = \SgpbDataConfig::allExtensionsKeys();
 		$allExtensions = wp_list_pluck($allExtensions, 'pluginKey');
-		$allExtensions[] = SG_POPUP_FILE_NAME;
+		$allExtensions[] = SGPB_POPUP_FILE_NAME;
 
 		$settingPageUrl = admin_url().'edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SG_POPUP_SETTINGS_PAGE;
 
 		$links = array(
-			'settings' => '<a href="'.$settingPageUrl.'" target="_blank">'.esc_html__('Settings', SG_POPUP_TEXT_DOMAIN).'</a>',
-			'docs' => '<a href="'.SG_POPUP_TICKET_URL.'" target="_blank">'.esc_html__('Docs', SG_POPUP_TEXT_DOMAIN).'</a>'
+			'settings' => '<a href="'.$settingPageUrl.'" target="_blank">'.esc_html__('Settings', 'popup-builder').'</a>',
+			'docs' => '<a href="'.SG_POPUP_TICKET_URL.'" target="_blank">'.esc_html__('Docs', 'popup-builder').'</a>'
 		);
 
 		if (in_array($pluginFile, $allExtensions)) {
-			if ($pluginFile == SG_POPUP_FILE_NAME) {
+			if ($pluginFile == SGPB_POPUP_FILE_NAME) {
 				$getActiveExtensions = AdminHelper::getAllExtensions();
 				if (empty($getActiveExtensions['active'])) {
-					$links['upgrade'] = '<a style="color: #4364eb;" href="'.SG_POPUP_BUNDLE_URL.'" target="_blank">'.esc_html__('Upgrade', SG_POPUP_TEXT_DOMAIN).'</a>';
+					$links['upgrade'] = '<a style="color: #4364eb;" href="'.SG_POPUP_BUNDLE_URL.'" target="_blank">'.esc_html__('Upgrade', 'popup-builder').'</a>';
 				}
 			}
 			$actions = isset($actions) ? array_merge($links, (array)$actions) : $links;
@@ -328,11 +328,12 @@ class Filters
 
 		if ($hasInactiveExtensions && $inactive == 'inactive') {
 			$licenseSectionUrl = menu_page_url(SGPB_POPUP_LICENSE, false);
-			$partOfContent = '<br><br>'.__('<a href="'.$licenseSectionUrl.'">Follow the link</a> to finalize the activation.', SG_POPUP_TEXT_DOMAIN);
-			$message = '<b>'.__('Thank you for choosing our plugin!', SG_POPUP_TEXT_DOMAIN).'</b>';
+			/* translators: license Section Url. */
+			$partOfContent = '<br><br>'.printf( wp_kses_post(__('<a href="%s">Follow the link</a> to finalize the activation.', 'popup-builder')) ,esc_url( $licenseSectionUrl ) );
+			$message = '<b>'.__('Thank you for choosing our plugin!', 'popup-builder').'</b>';
 			$message .= '<br>';
 			$message .= '<br>';
-			$message .= '<b>'.__('You have activated Popup Builder extension(s). Please, don\'t forget to activate the license key(s) as well.', SG_POPUP_TEXT_DOMAIN).'</b>';
+			$message .= '<b>'.__('You have activated Popup Builder extension(s). Please, don\'t forget to activate the license key(s) as well.', 'popup-builder').'</b>';
 			$message .= '<b>'.$partOfContent.'</b>';
 
 			$inactiveExtensionNotice['priority'] = 1;
@@ -413,11 +414,11 @@ class Filters
 		$otherConditionsCanBeUsed = PopupBuilderActivePackage::canUseSection('popupOtherConditionsSection');
 		if (!$otherConditionsCanBeUsed) {
 			$otherConditionsProLabel .= '<a href="'.SG_POPUP_SCHEDULING_URL.'" target="_blank" class="sgpb-pro-label-metabox">';
-			$otherConditionsProLabel .= __('UNLOCK OPTION', SG_POPUP_TEXT_DOMAIN).'</a>';
+			$otherConditionsProLabel .= __('UNLOCK OPTION', 'popup-builder').'</a>';
 		}
 		$metaboxes['allMetaboxesView'] = array(
 			'key' => 'allMetaboxesView',
-			'displayName' => 'Main Options',
+			'displayName' => __('Main Options', 'popup-builder'),
 			'short_description' => 'main options',
 			'filePath' => SG_POPUP_VIEWS_PATH.'allMetaboxesView.php',
 			'priority' => 'high'
@@ -425,7 +426,7 @@ class Filters
 
 		$metaboxes['targetMetaboxView'] = array(
 			'key' => 'targetMetaboxView',
-			'displayName' => 'Display Rules',
+			'displayName' => __('Display Rules', 'popup-builder'),
 			'short_description' => 'Select where on the website to trigger the popup',
 			'filePath' => SG_POPUP_VIEWS_PATH.'targetView.php',
 			'priority' => 'high'
@@ -433,7 +434,7 @@ class Filters
 
 		$metaboxes['eventsMetaboxView'] = array(
 			'key' => 'eventsMetaboxView',
-			'displayName' => 'Events',
+			'displayName' => __('Events', 'popup-builder'),
 			'short_description' => 'Select the specific actions that will trigger the popup, default event is on load',
 			'filePath' => SG_POPUP_VIEWS_PATH.'eventsView.php',
 			'priority' => 'high'
@@ -441,7 +442,7 @@ class Filters
 
 		$metaboxes['conditionsMetaboxView'] = array(
 			'key' => 'conditionsMetaboxView',
-			'displayName' => 'Conditions',
+			'displayName' => __('Conditions', 'popup-builder'),
 			'short_description' => 'Select advanced conditions for more professional targeting',
 			'filePath' => SG_POPUP_VIEWS_PATH.'conditionsView.php',
 			'priority' => 'high'
@@ -449,7 +450,7 @@ class Filters
 
 		$metaboxes['behaviorAfterSpecialEventsMetaboxView'] = array(
 			'key' => 'behaviorAfterSpecialEventsMetaboxView',
-			'displayName' => 'Behavior After Special Events',
+			'displayName' => __('Behavior After Special Events', 'popup-builder'),
 			'short_description' => 'Select special events that will trigger the popup',
 			'filePath' => SG_POPUP_VIEWS_PATH.'behaviorAfterSpecialEventsView.php',
 			'priority' => 'high'
@@ -457,7 +458,7 @@ class Filters
 
 		$metaboxes['popupDesignMetaBoxView'] = array(
 			'key' => 'popupDesignMetaBoxView',
-			'displayName' => 'Design',
+			'displayName' => __('Design', 'popup-builder'),
 			'short_description' => 'Customize design, background and overlay of the popup',
 			'filePath' => SG_POPUP_VIEWS_PATH.'popupDesignView.php',
 			'priority' => 'high'
@@ -465,7 +466,7 @@ class Filters
 
 		$metaboxes['closeSettings'] = array(
 			'key' => 'closeSettings',
-			'displayName' => 'Closing',
+			'displayName' => __('Closing', 'popup-builder'),
 			'short_description' => 'Select the desired popup closing method, customize close button',
 			'filePath' => SG_POPUP_VIEWS_PATH.'closeSettingsView.php',
 			'priority' => 'high'
@@ -473,7 +474,7 @@ class Filters
 
 		$metaboxes['dimensions'] = array(
 			'key' => 'dimensions',
-			'displayName' => 'Dimensions',
+			'displayName' => __('Dimensions', 'popup-builder'),
 			'short_description' => 'Make your popup mobile friendly and responsive for all devices',
 			'filePath' => SG_POPUP_VIEWS_PATH.'dimensionsView.php',
 			'priority' => 'high'
@@ -481,7 +482,7 @@ class Filters
 
 		$metaboxes['optionsMetaboxView'] = array(
 			'key' => 'optionsMetaboxView',
-			'displayName' => 'Advanced',
+			'displayName' => __('Advanced', 'popup-builder'),
 			'short_description' => 'Use advanced features for popup animations, opening and closing actions',
 			'filePath' => SG_POPUP_VIEWS_PATH.'optionsView.php',
 			'priority' => 'high'
@@ -497,7 +498,7 @@ class Filters
 
 		$metaboxes['floatingButton'] = array(
 			'key' => 'floatingButton',
-			'displayName' => 'Floating Button',
+			'displayName' => __('Floating Button', 'popup-builder'),
 			'short_description' => 'Set the popup to appear on a scrollable call to action button',
 			'filePath' => SG_POPUP_VIEWS_PATH.'floatingButton.php',
 			'context' => 'side',
@@ -506,7 +507,7 @@ class Filters
 
 		$metaboxes['popupOpeningCounter'] = array(
 			'key' => 'popupOpeningCounter',
-			'displayName' => 'Statistics',
+			'displayName' => __('Statistics', 'popup-builder'),
 			'short_description' => 'Enable or disable the counts of the popup',
 			'filePath' => SG_POPUP_VIEWS_PATH.'popupOpeningCounter.php',
 			'context' => 'side',
@@ -515,7 +516,7 @@ class Filters
 
 		$metaboxes['customCssJs'] = array(
 			'key' => 'customCssJs',
-			'displayName' => 'Custom JS or CSS',
+			'displayName' => __('Custom JS or CSS', 'popup-builder'),
 			'short_description' => 'Add custom JS and/or CSS code for extra control',
 			'filePath' => SG_POPUP_VIEWS_PATH.'customEditor.php',
 			'priority' => 'low'
@@ -793,18 +794,18 @@ class Filters
 		unset($columns['date']);
 
 		$additionalItems = array();
-		$additionalItems['counter'] = __('Views', SG_POPUP_TEXT_DOMAIN);
-		$additionalItems['onOff'] = __('Status', SG_POPUP_TEXT_DOMAIN);
+		$additionalItems['counter'] = __('Views', 'popup-builder');
+		$additionalItems['onOff'] = __('Status', 'popup-builder');
 		$filterColumnsDisplaySettings = apply_filters('sgpbAddRandomColumnIntoAllPopupsViewTable', $additionalItems);
 
 		if (isset($filterColumnsDisplaySettings['sgpbIsRandomEnabled'])){
 			$additionalItems = $filterColumnsDisplaySettings;
 		}
 
-		$additionalItems['type'] = __('Type', SG_POPUP_TEXT_DOMAIN);
-		$additionalItems['shortcode'] = __('Shortcode', SG_POPUP_TEXT_DOMAIN);
-		$additionalItems['className'] = __('Class', SG_POPUP_TEXT_DOMAIN);
-		$additionalItems['options'] = __('Actions', SG_POPUP_TEXT_DOMAIN);
+		$additionalItems['type'] = __('Type', 'popup-builder');
+		$additionalItems['shortcode'] = __('Shortcode', 'popup-builder');
+		$additionalItems['className'] = __('Class', 'popup-builder');
+		$additionalItems['options'] = __('Actions', 'popup-builder');
 
 		return $columns + $additionalItems;
 	}
@@ -826,8 +827,8 @@ class Filters
 		$url = AdminHelper::popupGetClonePostLink($post->ID , 'display', false);
 
 		$actions['clone'] = '<a href="'.$url.'" title="';
-		$actions['clone'] .= esc_attr__("Clone this item", SG_POPUP_TEXT_DOMAIN);
-		$actions['clone'] .= '">'. esc_html__('Clone', SG_POPUP_TEXT_DOMAIN).'</a>';
+		$actions['clone'] .= esc_attr__("Clone this item", 'popup-builder');
+		$actions['clone'] .= '">'. esc_html__('Clone', 'popup-builder').'</a>';
 
 		return $actions;
 	}
@@ -867,9 +868,9 @@ class Filters
 	/* media button styles */
 	public function sgpbAdminCssFiles($cssFiles)
 	{
-		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgbp-bootstrap.css', 'dep' => array(), 'ver' => SG_POPUP_VERSION, 'inFooter' => false);
-		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'select2.min.css', 'dep' => array(), 'ver' => SG_POPUP_VERSION, 'inFooter' => false);
-		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'popupAdminStyles.css', 'dep' => array(), 'ver' => SG_POPUP_VERSION, 'inFooter' => false);
+		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgbp-bootstrap.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
+		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'select2.min.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
+		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'popupAdminStyles.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
 		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'newDesignFromBuild.css', 'dep' => array(), 'ver' => rand(1, 10000), 'inFooter' => false);
 
 		return $cssFiles;

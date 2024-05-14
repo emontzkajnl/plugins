@@ -4,8 +4,8 @@ Contributors: cybernetikz
 Donate link:
 Tags: nofollow,link,rel=nofollow,rel nofollow,seo,nofollow links,external link,external links,nofollow for external link,nofollow external link,nofollow external links
 Requires at least: 2.8.6
-Tested up to: 5.5.1
-Stable tag: 1.2.3
+Tested up to: 6.5.2
+Stable tag: 1.2.4
 License: GPL2
 
 Automatically insert `rel=nofollow` and `target=_blank` to all the external links into your website posts, pages or menus. Support exclude domain.
@@ -54,6 +54,10 @@ Ans: Yes it does.
 2. Options page for Exclude Domains.
 
 == Changelog ==
+
+= 1.2.3 =
+* check compatibility with latest php version 8.0-8.2
+* check functionality in latest WordPress version 6.5.2
 
 = 1.2.3 =
 * check compatibility with latest php version 7.1-7.4

@@ -39,7 +39,7 @@ class Updates
 
 	public function menu()
 	{
-		add_submenu_page('edit.php?post_type='.SG_POPUP_POST_TYPE, __('License', SG_POPUP_TEXT_DOMAIN), __('License', SG_POPUP_TEXT_DOMAIN), 'sgpb_manage_options', SGPB_POPUP_LICENSE, array($this, 'pluginLicense'));
+		add_submenu_page('edit.php?post_type='.SG_POPUP_POST_TYPE, __('License', 'popup-builder'), __('License', 'popup-builder'), 'sgpb_manage_options', SGPB_POPUP_LICENSE, array($this, 'pluginLicense'));
 	}
 
 	public function sanitizeLicense($new)
@@ -86,74 +86,99 @@ class Updates
 
 		return wp_remote_get($requestUri);
 	}
-
+	private function sgpbVerifyNonceLicense()
+	{
+		/* Validate nonce */			
+		$nonce = isset( $_POST['sgpb_nonce'] ) ? sanitize_text_field( $_POST['sgpb_nonce'] ) : '';			
+		
+		if ( empty( $nonce ) || !wp_verify_nonce( $nonce, 'sgpb_nonce' ) ) {
+			$message = __('You do not have permission to access this page!', 'popup-builder');
+			$baseUrl = admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE);
+			$redirect = add_query_arg(array('message' => urlencode($message)), $baseUrl);
+			wp_redirect($redirect);
+			exit();
+		}		
+	}
 	public function sgpbActivateLicense()
 	{
+		
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {
+			
+			wp_die(esc_html__('You do not have permission to access this page!', 'popup-builder'));
+		}	
+					
 		$licenses = $this->getLicenses();
-
-		foreach ($licenses as $license) {
-			$key = isset($license['key']) ? $license['key'] : '';
-			$itemId = isset($license['itemId']) ? $license['itemId'] : '';
-			$this->licenseKey = $key;
-
-			if (isset($_POST['sgpb-license-key-'.$key])) {
-				$this->sanitizeLicense(sanitize_key($_POST['sgpb-license-key-'.$key]));
-			}
-
-			// listen for our activate button to be clicked
-			if (isset($_POST['sgpb-license-activate-'.$key])) {
-				// run a quick security check
-				if (!check_admin_referer('sgpb_nonce', 'sgpb_nonce')) {
-					return; // get out if we didn't click the Activate button
+		
+		if( !empty( $licenses ) )
+		{
+			
+			foreach ($licenses as $license) {
+				$key = isset($license['key']) ? $license['key'] : '';
+				$itemId = isset($license['itemId']) ? $license['itemId'] : '';
+				$this->licenseKey = $key;
+				
+				if (isset($_POST['sgpb-license-key-'.$key])) {
+					$this->sgpbVerifyNonceLicense();				
+					$this->sanitizeLicense(sanitize_key($_POST['sgpb-license-key-'.$key]));
 				}
-				// retrieve the license from the database
-				$license = trim(get_option('sgpb-license-key-'.$key));
-				$data = $this->activateLicense($license, $itemId);
-				if (!is_wp_error($data) && $data['response']['code'] == 200) {
-					$dataBody = json_decode($data['body']);
-					if (isset($dataBody[0]->status)) {
-						if ($dataBody[0]->status == 'success' && ($dataBody[0]->status_code == 's100' || $dataBody[0]->status_code == 's101')) {
-							update_option('sgpb-license-status-'.$key, 'valid');
-							$hasInactiveExtensions = AdminHelper::hasInactiveExtensions();
 
-							if (empty($hasInactiveExtensions)) {
-								delete_option('SGPB_INACTIVE_EXTENSIONS');
+				// listen for our activate button to be clicked
+				if (isset($_POST['sgpb-license-activate-'.$key])) {
+					$this->sgpbVerifyNonceLicense();
+					// retrieve the license from the database
+					$license = trim(get_option('sgpb-license-key-'.$key));
+					$data = $this->activateLicense($license, $itemId);
+					if (!is_wp_error($data) && $data['response']['code'] == 200) {
+						$dataBody = json_decode($data['body']);
+						if (isset($dataBody[0]->status)) {
+							if ($dataBody[0]->status == 'success' && ($dataBody[0]->status_code == 's100' || $dataBody[0]->status_code == 's101')) {
+								update_option('sgpb-license-status-'.$key, 'valid');
+								$hasInactiveExtensions = AdminHelper::hasInactiveExtensions();
+
+								if (empty($hasInactiveExtensions)) {
+									delete_option('SGPB_INACTIVE_EXTENSIONS');
+								}
+
+								wp_redirect(admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE));
+								exit();
 							}
-
-							wp_redirect(admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE));
-							exit();
 						}
 					}
-				}
 
-				$message = __('An error occurred, please try again.', SG_POPUP_TEXT_DOMAIN);
-				$baseUrl = admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE);
-				$redirect = add_query_arg(array('sl_activation' => 'false', 'message' => urlencode($message)), $baseUrl);
-				wp_redirect($redirect);
-				exit();
-			}
-
-			if (isset($_POST['sgpb-license-deactivate'.$key])) {
-				$license = trim(get_option('sgpb-license-key-'.$key));
-				// data to send in our API request
-				$response = $this->deactivateLicense($license, $itemId);
-				if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
-					$message = __('An error occurred, please try again.', SG_POPUP_TEXT_DOMAIN);
+					$message = __('An error occurred, please try again.', 'popup-builder');
 					$baseUrl = admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE);
-					$redirect = add_query_arg(array('message' => urlencode($message)), $baseUrl);
+					$redirect = add_query_arg(array('sl_activation' => 'false', 'message' => urlencode($message)), $baseUrl);
 					wp_redirect($redirect);
 					exit();
 				}
-				else {
-					$status = false;
-					$licenseData = json_decode(wp_remote_retrieve_body($response));
-					if (isset($licenseData->success)) {
-						$status = $licenseData->success;
+
+				if (isset($_POST['sgpb-license-deactivate'.$key])) {
+					
+					$this->sgpbVerifyNonceLicense();
+					$license = trim(get_option('sgpb-license-key-'.$key));
+					// data to send in our API request
+					$response = $this->deactivateLicense($license, $itemId);
+					if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
+						$message = __('An error occurred, please try again.', 'popup-builder');
+						$baseUrl = admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE);
+						$redirect = add_query_arg(array('message' => urlencode($message)), $baseUrl);
+						wp_redirect($redirect);
+						exit();
 					}
-					update_option('sgpb-license-status-'.$key, $status);
-					update_option('SGPB_INACTIVE_EXTENSIONS', 'inactive');
-					wp_redirect(admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE));
-					exit();
+					else {
+						$status = false;
+						$licenseData = json_decode(wp_remote_retrieve_body($response));
+						if (isset($licenseData->success)) {
+							$status = $licenseData->success;
+						}
+						update_option('sgpb-license-status-'.$key, $status);
+						update_option('SGPB_INACTIVE_EXTENSIONS', 'inactive');
+						wp_redirect(admin_url('edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SGPB_POPUP_LICENSE));
+						exit();
+					}
 				}
 			}
 		}
