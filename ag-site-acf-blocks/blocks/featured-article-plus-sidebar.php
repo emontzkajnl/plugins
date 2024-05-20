@@ -9,30 +9,62 @@
  $side_article_two = get_field('side_article_two');
  $side_article_three = get_field('side_article_three');
 
+ $featured_cat = get_the_category($featured_image->ID);
+ $article_one_cat = get_the_category($side_article_one->ID);
+ $article_two_cat = get_the_category($side_article_two->ID);
+ $article_three_cat = get_the_category($side_article_three->ID);
+ 
+
 $id = 'ag-featured-post-sidebar-' . $block['id'];
 
-$className = 'ag-featured-post-sidebar row';
+$className = 'faps row';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 } ?>
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-<div class="col-12 m-col-9">
+<div class="col-12 m-col-8">
     <a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>">
-        <div class="faps-featured" style="background-image: url('<?php echo get_the_post_thumbnail_url( $featured_image->ID, 'large' ); ?>');">
-            <h2 class="faps-title title-link"><?php echo $featured_image->post_title; ?></h2>
-        </div>
+    <?php echo get_the_post_thumbnail( $featured_image->ID, 'large', array('class' => 'faps__featured') ); ?>
+        <!-- <div class="faps-featured" style="background-image: url('<?php //echo get_the_post_thumbnail_url( $featured_image->ID, 'large' ); ?>');"></div> -->
     </a>
+    <?php if ($article_one_cat) {
+        echo '<p class="mfc-cat-title"><a href="'.get_category_link($article_one_cat[0]).'">'.$article_one_cat[0]->name.'</a></p>';
+    } ?>
+    <a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>">
+        <h2 class="faps__featured-title title-link"><?php echo $featured_image->post_title; ?></h2>
+    </a>
+    <?php echo get_the_excerpt( $featured_image->ID ); ?>
     </div>
-<div class="col-12 m-col-3">
-    <a class="title-link faps-sideblock" href="<?php echo get_the_permalink($side_article_one->ID); ?>" style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_one->ID, 'large' ); ?>');">
-        <h3 class="faps-title title-link"><?php echo $side_article_one->post_title; ?></h3>
-    </a>
-    <a class="title-link faps-sideblock" href="<?php echo get_the_permalink($side_article_two->ID); ?>"  style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_two->ID, 'large' ); ?>');">
-        <h3 class="faps-title title-link"><?php echo $side_article_two->post_title; ?></h3>
-    </a>
-    <a class="title-link faps-sideblock" href="<?php echo get_the_permalink($side_article_three->ID); ?>" style="background-image: url('<?php echo get_the_post_thumbnail_url( $side_article_three->ID, 'large' ); ?>');">
-        <h3 class="faps-title title-link"><?php echo $side_article_three->post_title; ?></h3>
-    </a>
+<div class="col-12 m-col-4">
+    <div class="faps__side-block">
+    <a class="faps__img-container" href="<?php echo get_the_permalink($side_article_one->ID); ?>"><?php echo get_the_post_thumbnail( $side_article_one->ID, 'large'); ?>  </a>  
+    <div class="faps__side-text">
+        <?php if ($article_one_cat) {
+            echo '<p class="mfc-cat-title"><a href="'.get_category_link($article_one_cat[0]).'">'.$article_one_cat[0]->name.'</a></p>';
+        } ?>
+        <h3 class="faps__title title-link"><a class="title-link" href="<?php echo get_the_permalink($side_article_one->ID); ?>"><?php echo $side_article_one->post_title; ?></a></h3>
+    </div>
+    </div>
+    <div class="faps__side-block">
+    <a class="faps__img-container" href="<?php echo get_the_permalink($side_article_two->ID); ?>" ><?php echo get_the_post_thumbnail( $side_article_two->ID, 'large'); ?>   </a> 
+    <div class="faps__side-text">
+        <?php if ($article_two_cat) {
+            echo '<p class="mfc-cat-title"><a href="'.get_category_link($article_two_cat[0]).'">'.$article_two_cat[0]->name.'</a></p>';
+        } ?>
+   
+        <h3 class="faps__title title-link"><a class="title-link" href="<?php echo get_the_permalink($side_article_two->ID); ?>"><?php echo $side_article_two->post_title; ?></a></h3>
+    </div>
+    </div>
+    <div class="faps__side-block">
+    <a class="faps__img-container" href="<?php echo get_the_permalink($side_article_three->ID); ?>"   ><?php echo get_the_post_thumbnail( $side_article_three->ID, 'large'); ?>   </a> 
+        <div class="faps__side-text">
+        <?php if ($article_three_cat) {
+            echo '<p class="mfc-cat-title"><a href="'.get_category_link($article_three_cat[0]).'">'.$article_three_cat[0]->name.'</a></p>';
+        } ?>
+
+        <h3 class="faps__title title-link"><a class="title-link" href="<?php echo get_the_permalink($side_article_three->ID); ?>"><?php echo $side_article_three->post_title; ?></a></h3>
+        </div>
+    </div>
 </div>
 </div>
