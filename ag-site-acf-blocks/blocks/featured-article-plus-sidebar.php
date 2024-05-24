@@ -37,6 +37,7 @@ if( !empty($block['className']) ) {
     <?php echo get_the_excerpt( $featured_image->ID ); ?>
     </div>
 <div class="col-12 m-col-4">
+    <h3 class="section-heading">MOST POPULAR</h3>
     <div class="faps__side-block">
     <a class="faps__img-container" href="<?php echo get_the_permalink($side_article_one->ID); ?>"><?php echo get_the_post_thumbnail( $side_article_one->ID, 'large'); ?>  </a>  
     <div class="faps__side-text">

@@ -12,8 +12,6 @@ if( !empty($block['className']) ) {
 $magPost = get_posts(array(
     'number_posts'      => 1,
     'post_type'         => 'magazine'
-    // 'category'          => 86,
-
 ));
 $magPost = $magPost[0];
 $heading = get_field('heading');

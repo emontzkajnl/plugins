@@ -1,0 +1,9 @@
+{
+    "name":     "acf/mfc-magazine-social",
+    "title":    "MFC Magazine Social Block",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "mfc-magazine-social.php"
+    }
+}

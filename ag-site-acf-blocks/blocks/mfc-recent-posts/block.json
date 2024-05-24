@@ -1,0 +1,9 @@
+{
+    "name":     "acf/mfc-recent-posts",
+    "title":    "MFC Recent Posts",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "mfc-recent-posts.php"
+    }
+}
