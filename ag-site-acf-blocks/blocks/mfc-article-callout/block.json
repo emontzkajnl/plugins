@@ -1,0 +1,9 @@
+{
+    "name":     "acf/mfc-article-callout",
+    "title":    "MFC Article Callout Block",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "mfc-article-callout.php"
+    }
+}
