@@ -50,7 +50,7 @@ if ($count == 5 && function_exists('the_ad_placement')) {
 endwhile;
 echo '</div>'; //row
 if ($max_pages > 1) {
-    echo '<button class="color__primary mfcrp__button">Load More</button>';
+    echo '<button class="mfcrp__button">Load More</button>';
     echo '<div class="row mfcrp__results"></div>';
 }
 endif;

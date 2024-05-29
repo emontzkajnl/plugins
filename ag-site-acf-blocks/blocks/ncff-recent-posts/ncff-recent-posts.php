@@ -47,7 +47,7 @@ if ($recent_query->have_posts()): ?>
             window.maxRecentPages = <?php echo $max_pages; ?>;
         </script>
         <?php echo '<div style="text-align: center;">';
-            echo '<button class="ncff-recent__btn background__primary">Load More</button>';
+            echo '<button class="ncff-recent__btn color__primary ">Load More</button>';
             echo '</div>';
     }
     
