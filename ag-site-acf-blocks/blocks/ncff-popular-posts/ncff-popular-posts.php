@@ -55,5 +55,6 @@ $pop_query = new WP_Query($args); ?>
             echo '</div>';
     }
 endif;
+wp_reset_postdata(  );
 ?>
 </div>

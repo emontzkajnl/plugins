@@ -18,11 +18,13 @@ $recipe_id = $recipe->ID;
 $text = get_field('custom_text');
 $recipe_url = get_field('recipe_link', $recipe_id);
 $recipe_img_url = get_field('recipe_image_link', $recipe_id);
+$orientation = get_field('orientation');
 
 
 ?>
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className);  ?>">
+    <?php //print_r($orientation); ?>
     <h3 class="page-header">Recipe</h3>
     <img src="<?php echo esc_attr($recipe_img_url ); ?>" />
     <?php echo '<h3 class="recipe-block-title">'.get_the_title($recipe_id ).'</h3>'; ?>
