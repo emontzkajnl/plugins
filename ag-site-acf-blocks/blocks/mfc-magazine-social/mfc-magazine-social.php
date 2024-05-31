@@ -21,7 +21,7 @@ $facebook = get_field('facebook', 'options');
 $pinterest = get_field('pinterest', 'options');
 $instagram = get_field('instagram', 'options');
 ?>
-<div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
+<div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>" style="margin-bottom: 30px;">
     <div class="container mfcms__container">
         <div class="mfcms__mag-container">
             <?php echo get_the_post_thumbnail( $magPost->ID, 'post-thumbnail' ,array('style' => 'width: 200px; height: auto;')); ?>

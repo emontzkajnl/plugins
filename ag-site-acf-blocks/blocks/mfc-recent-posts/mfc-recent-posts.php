@@ -22,7 +22,7 @@ $max_pages = $recent_posts->max_num_pages;
 ?>
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <?php if ($recent_posts->have_posts()): ?>
-<h2 class="mfcrp__section-heading section-heading">Most Recent</h2>
+<h2 class="mfcrp__section-heading section-heading"><span>Most Recent</span></h2>
 <?php $count = 1;
 echo '<div class="row">';
 while ($recent_posts->have_posts()): $recent_posts->the_post(); 
@@ -35,7 +35,7 @@ if ($count == 5 && function_exists('the_ad_placement')) {
         echo '</div><div class="row">';
 } 
 ?>
-<div class="col-12 m-col-6">
+<div class="col-12 m-col-6 mfcrp__item">
     <div class="mfcrp__img">
         <a href="<?php echo get_the_permalink(); ?>">
         <?php echo get_the_post_thumbnail( get_the_ID(), 'large' ); ?>
