@@ -21,7 +21,7 @@ $facebook = get_field('facebook', 'options');
 $pinterest = get_field('pinterest', 'options');
 $instagram = get_field('instagram', 'options');
 ?>
-<div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>" style="margin-bottom: 30px;">
+<div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>" style="margin-bottom: 80px;">
     <div class="container mfcms__container">
         <div class="mfcms__mag-container">
             <?php echo get_the_post_thumbnail( $magPost->ID, 'post-thumbnail' ,array('style' => 'width: 200px; height: auto;')); ?>
@@ -34,7 +34,7 @@ $instagram = get_field('instagram', 'options');
         </div>
         <div class="mfcms__social-container">
         <h3 class="handwritten">Connect with Us</h3>
-        <p>Follow us to get news, recipes, share your thoughts and more.</p>
+        <p class="mfcms__connect-text">Follow us to get news, recipes, share your thoughts and more.</p>
         <ul class="mfc-social-icons">
                     <?php
                         echo $facebook ? '<li class="facebook"><a href="'.esc_url($facebook).'" target="_blank"><svg style="max-width: 25px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"/></svg></a></li>' : '';

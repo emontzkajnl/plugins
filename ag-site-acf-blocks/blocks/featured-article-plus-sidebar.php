@@ -31,10 +31,8 @@ if( !empty($block['className']) ) {
     <?php if ($article_one_cat) {
         echo '<p class="mfc-cat-title"><a href="'.get_category_link($article_one_cat[0]).'">'.$article_one_cat[0]->name.'</a></p>';
     } ?>
-    <a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>">
-        <h2 class="faps__featured-title title-link"><?php echo $featured_image->post_title; ?></h2>
-    </a>
-    <?php echo get_the_excerpt( $featured_image->ID ); ?>
+    <h2 class="faps__featured-title title-link"><a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>"><?php echo $featured_image->post_title; ?></a></h2>
+    <?php echo '<p class="faps__featured-excerpt">'.get_the_excerpt( $featured_image->ID ).'</p>'; ?>
     </div>
 <div class="col-12 m-col-4">
     <h3 class="section-heading">MOST POPULAR</h3>
