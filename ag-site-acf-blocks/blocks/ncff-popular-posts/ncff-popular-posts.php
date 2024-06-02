@@ -15,7 +15,8 @@ $args = array(
     'paginated'             => 1,
     'paged'                 => $paged,
     'post_status'           => 'publish',
-    'orderby'               => 'meta_value',
+    'orderby'               => 'meta_value_num',
+    'order'                 => 'DESC',
     'meta_key'              => 'wpb_post_views_count'
 );
 $pop_query = new WP_Query($args); ?>
