@@ -23,7 +23,7 @@ if( !empty($block['className']) ) {
 } ?>
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-<div class="col-12 m-col-8">
+<div class="col-12 m-col-8 faps__featured-col">
     <a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>">
     <?php echo get_the_post_thumbnail( $featured_image->ID, 'large', array('class' => 'faps__featured') ); ?>
         <!-- <div class="faps-featured" style="background-image: url('<?php //echo get_the_post_thumbnail_url( $featured_image->ID, 'large' ); ?>');"></div> -->
@@ -34,8 +34,7 @@ if( !empty($block['className']) ) {
     <h2 class="faps__featured-title title-link"><a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>"><?php echo $featured_image->post_title; ?></a></h2>
     <?php echo '<p class="faps__featured-excerpt">'.get_the_excerpt( $featured_image->ID ).'</p>'; ?>
     </div>
-<div class="col-12 m-col-4">
-    <h3 class="section-heading">MOST POPULAR</h3>
+<div class="col-12 m-col-4 faps__sidebar-col">
     <div class="faps__side-block">
     <a class="faps__img-container" href="<?php echo get_the_permalink($side_article_one->ID); ?>"><?php echo get_the_post_thumbnail( $side_article_one->ID, 'large'); ?>  </a>  
     <div class="faps__side-text">
