@@ -24,7 +24,7 @@ $max_pages = $recent_posts->max_num_pages;
 <?php if ($recent_posts->have_posts()): ?>
 <h2 class="mfcrp__section-heading section-heading"><span>Most Recent</span></h2>
 <?php $count = 1;
-echo '<div class="row">';
+echo '<div id="mfcrp__results"><div class="row ">';
 while ($recent_posts->have_posts()): $recent_posts->the_post(); 
 $cat = get_the_category(); 
 $cat = $cat[0]; 
@@ -44,11 +44,11 @@ if ($count == 5 && function_exists('the_ad_placement')) {
     <?php if ($cat) {
         echo '<div class="mfc-cat-title"><a href="'.get_category_link( $cat ).'">'.$cat->name.'</a></div>';
     } ?>
-    <h3 class="mfcrp__title"><?php echo get_the_title(); ?></h3>
+    <h3 class="mfcrp__title"><a class="title-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>
 </div>
 <?php $count++; 
 endwhile;
-echo '</div>'; //row
+echo '</div></div>'; //row mfcrp__results
 if ($max_pages > 1) {
     echo '<button class="mfcrp__button">Load More</button>';
     echo '<div class="row mfcrp__results"></div>';
