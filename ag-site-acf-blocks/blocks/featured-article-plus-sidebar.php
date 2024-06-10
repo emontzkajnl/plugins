@@ -24,10 +24,12 @@ if( !empty($block['className']) ) {
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <div class="col-12 m-col-8 faps__featured-col">
+    <div class="faps__featured-img-container">
     <a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>">
     <?php echo get_the_post_thumbnail( $featured_image->ID, 'large', array('class' => 'faps__featured') ); ?>
         <!-- <div class="faps-featured" style="background-image: url('<?php //echo get_the_post_thumbnail_url( $featured_image->ID, 'large' ); ?>');"></div> -->
     </a>
+    </div>
     <?php if ($article_one_cat) {
         echo '<p class="mfc-cat-title"><a href="'.get_category_link($article_one_cat[0]).'">'.$article_one_cat[0]->name.'</a></p>';
     } ?>
