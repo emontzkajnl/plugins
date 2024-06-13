@@ -1,0 +1,471 @@
+@import "../../assets/css/mixins";
+body .site-content {
+    .widget_must_read_wrapper {
+        display: block;
+
+        .block-title {
+            margin-top: 0;
+            margin-bottom: 24px;
+            line-height: 20px;
+
+            &.block_header_1 {
+                margin-top: 0;
+                margin-bottom: 24px;
+                line-height: 20px;
+            }
+        }
+
+        ul {
+            padding-left: 0;
+
+            li {
+                padding: 0;
+            }
+        }
+
+        .list_view_item {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            margin-bottom: 20px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .img-wrap {
+                display: block;
+                width: 39%;
+                overflow: hidden;
+                border-radius: 5px;
+
+                a {
+                    img {
+                        width: 100%;
+                        @include transitionAll();
+                    }
+                }
+            }
+
+            .meta-wrap {
+                display: block;
+                width: 61%;
+                padding-left: 19px;
+                padding-top: 4px;
+
+                .meta-top {
+                    display: block;
+                    margin-bottom: 5px;
+
+                    h3 {
+                        font-size: 14px;
+                        letter-spacing: 0px;
+                        line-height: 22px;
+                        margin-top: 0;
+                        margin-bottom: 0;
+                        font-weight: 700;
+
+                        a {
+                            @include transitionAll();
+                        }
+                    }
+                }
+
+                .meta-middle {
+                    .meta {
+                        display: flex;
+                        flex-wrap: nowrap;
+
+                        li {
+                            display: flex;
+                            flex-direction: row;
+                            flex-wrap: nowrap;
+                            justify-content: flex-start;
+                            align-items: center;
+                            margin-right: 20px;
+                            line-height: 24px;
+                            font-size: 12px;
+
+                            span {
+                                font-size: 13px;
+                                margin-right: 6px;
+
+                                &.stm-gm-icon-like {
+                                }
+
+                                &.stm-gm-icon-eye {
+                                    font-size: 11px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.wmrw_style_2 {
+            .block-title {
+                margin-bottom: 35px;
+                letter-spacing: 1px;
+            }
+
+            .list_view_item {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: flex-start;
+                margin-bottom: 20px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .img-wrap {
+                    display: block;
+                    width: 27%;
+                    overflow: hidden;
+                    border-radius: 0;
+
+                    a {
+                        img {
+                            width: 100%;
+                            @include transitionAll();
+                        }
+                    }
+                }
+
+                .meta-wrap {
+                    display: block;
+                    width: 73%;
+                    padding-left: 19px;
+                    padding-top: 6px;
+
+                    .meta-top {
+                        display: block;
+                        margin-bottom: 13px;
+
+                        h3 {
+                            font-size: 14px;
+                            letter-spacing: 0px;
+                            line-height: 18px;
+                            margin-top: 0;
+                            margin-bottom: 0;
+                            font-weight: 700;
+
+                            a {
+                                @include transitionAll();
+                            }
+                        }
+                    }
+
+                    .meta-middle {
+                        .meta {
+                            display: flex;
+                            flex-wrap: nowrap;
+
+                            li {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                justify-content: flex-start;
+                                align-items: center;
+                                margin-right: 20px;
+                                line-height: 20px;
+                                font-size: 12px;
+
+                                span {
+                                    font-size: 13px;
+                                    margin-right: 6px;
+
+                                    &.stm-gm-icon-like {
+                                    }
+
+                                    &.stm-gm-icon-eye {
+                                        font-size: 11px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.stmt-template-demo_three {
+    .site-content {
+        .widget_must_read_wrapper {
+            background: transparent;
+
+            .block-title {
+                margin-bottom: 29px;
+            }
+
+            ul {
+                li {
+                    .img-wrap {
+                        width: 32.5%;
+                    }
+
+                    .meta-wrap {
+                        width: 67%;
+                        padding-top: 0;
+
+                        .meta-top {
+                            .heading-title {
+                                font-size: 16px;
+                                line-height: 22px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.stmt-template-cryptomag {
+    .site-content {
+        .widget_must_read_wrapper {
+            background: transparent !important;
+        }
+    }
+}
+
+.editor-block-list__block {
+    .widget_must_read_wrapper {
+        display: block;
+
+        .block-title {
+            margin: 0 0 28px;
+            letter-spacing: 0;
+            line-height: 20px;
+        }
+
+        .list_view_item {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            margin-bottom: 20px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .img-wrap {
+                display: block;
+                width: 39%;
+                overflow: hidden;
+                border-radius: 5px;
+
+                a {
+                    img {
+                        @include transitionAll();
+                    }
+                }
+            }
+
+            .meta-wrap {
+                display: block;
+                width: 61%;
+                padding-left: 19px;
+                padding-top: 9px;
+
+                .meta-top {
+                    display: block;
+                    margin-bottom: 5px;
+
+                    h3 {
+                        font-size: 16px;
+                        letter-spacing: 0px;
+                        line-height: 24px;
+                        margin-top: 0;
+                        margin-bottom: 0;
+                        font-weight: 700;
+
+                        a {
+                            @include transitionAll();
+                        }
+                    }
+                }
+
+                .meta-middle {
+                    .meta {
+                        display: flex;
+                        flex-wrap: nowrap;
+
+                        li {
+                            display: flex;
+                            flex-direction: row;
+                            flex-wrap: nowrap;
+                            justify-content: flex-start;
+                            align-items: center;
+                            margin-right: 20px;
+                            line-height: 24px;
+                            font-size: 12px;
+
+                            span {
+                                font-size: 13px;
+                                margin-right: 6px;
+
+                                &.stm-gm-icon-like {
+                                }
+
+                                &.stm-gm-icon-eye {
+                                    font-size: 11px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.wmrw_style_2 {
+            .block-title {
+                margin-bottom: 35px;
+                letter-spacing: 1px;
+            }
+
+            .list_view_item {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: flex-start;
+                margin-bottom: 20px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .img-wrap {
+                    display: block;
+                    width: 27%;
+                    overflow: hidden;
+                    border-radius: 0;
+
+                    a {
+                        img {
+                            width: 100%;
+                            @include transitionAll();
+                        }
+                    }
+                }
+
+                .meta-wrap {
+                    display: block;
+                    width: 73%;
+                    padding-left: 19px;
+                    padding-top: 6px;
+
+                    .meta-top {
+                        display: block;
+                        margin-bottom: 13px;
+
+                        h3 {
+                            font-size: 14px;
+                            letter-spacing: 0px;
+                            line-height: 18px;
+                            margin-top: 0;
+                            margin-bottom: 0;
+                            font-weight: 700;
+
+                            a {
+                                @include transitionAll();
+                            }
+                        }
+                    }
+
+                    .meta-middle {
+                        .meta {
+                            display: flex;
+                            flex-wrap: nowrap;
+
+                            li {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                justify-content: flex-start;
+                                align-items: center;
+                                margin-right: 20px;
+                                line-height: 20px;
+                                font-size: 12px;
+
+                                span {
+                                    font-size: 13px;
+                                    margin-right: 6px;
+
+                                    &.stm-gm-icon-like {
+                                    }
+
+                                    &.stm-gm-icon-eye {
+                                        font-size: 11px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.stmt-template-demo_three .editor-block-list__block {
+    .widget_must_read_wrapper {
+        background: transparent;
+
+        .block-title {
+            margin-bottom: 29px;
+        }
+
+        ul {
+            li {
+                .img-wrap {
+                    width: 32.5%;
+                }
+
+                .meta-wrap {
+                    width: 67%;
+                    padding-top: 0;
+
+                    .meta-top {
+                        .heading-title {
+                            font-size: 16px;
+                            line-height: 22px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    body {
+        .site-content {
+            .widget_must_read_wrapper {
+                .list_view_item {
+                    .meta-wrap {
+                        padding-top: 0;
+
+                        .meta-top {
+                            margin-bottom: 0;
+
+                            h3 {
+                                line-height: 20px;
+
+                                a {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,114 @@
+@import "../../assets/css/mixins";
+body .site-content {
+    .widget_search_wrapper {
+
+        .search_container {
+            
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+
+            .beauty_search {
+                margin: 35px 30px 10px 30px;
+
+                button {
+                    border: 0;
+                    background: transparent;
+                    transition: 0.5s;
+                    &:hover {
+                        transform: scale(1.2);
+                        cursor: pointer;
+                    }
+                }
+
+                .searchContainer {
+                    padding: 5px 0 5px 10px;
+                    display: inline-flex;
+                    width: 100%;
+                    border-radius: 5px;
+                    overflow: hidden;
+                    background: #f5f5f5;
+                }
+
+                .searchIcon {
+                    padding: 0.5rem;
+                    font-size: 24px;
+                    color: #222222;
+                    -webkit-text-stroke: 1px white;
+                }
+
+                .searchBox {
+                    font-size: 20px;
+                    color: gray;
+                    background: #f5f5f5;
+                    border: 0;
+                    padding: 0.5rem 0.5rem 0.5rem 0;
+                    flex: 1;
+                    &::-webkit-input-placeholder {
+                        font-size: 16px;
+                    }
+                }
+                input:focus {
+                    outline: none !important;
+                }
+            }
+
+        }
+    }
+}
+
+.editor-block-list__block {
+    .widget_search_wrapper {
+
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+
+        .beauty_search {
+
+            margin: 35px 30px 10px 30px;
+
+            button {
+                border: 0;
+                background: transparent;
+                transition: 0.5s;
+                &:hover {
+                    transform: scale(1.2);
+                    cursor: pointer;
+                }
+            }
+
+            .searchContainer {
+                padding: 5px 0 5px 10px;
+                display: inline-flex;
+                width: 100%;
+                border-radius: 5px;
+                overflow: hidden;
+                background: #f5f5f5;
+            }
+
+            .searchIcon {
+                padding: 0.5rem;
+                font-size: 24px;
+                color: #222222;
+                -webkit-text-stroke: 1px white;
+            }
+
+            .searchBox {
+                font-size: 20px;
+                color: gray;
+                background: #f5f5f5;
+                border: 0;
+                padding: 0.5rem 0.5rem 0.5rem 0;
+                flex: 1;
+                &::-webkit-input-placeholder {
+                    font-size: 16px;
+                }
+            }
+            input:focus {
+                outline: none !important;
+            }
+        }
+
+    }
+}

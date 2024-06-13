@@ -1,0 +1,1123 @@
+@import "../../assets/css/mixins";
+body .site-content {
+    .stm_gutenberg_single_post_wrap {
+
+        .container {
+            padding: 0;
+
+            .stm_gutenberg_single_post {
+
+                .block-title {
+                    margin-bottom: 78px;
+                    margin-top: 0;
+                }
+
+                .stm_gutenberg_sp-content {
+
+                    .stmt-sticky-post {
+                        display: block;
+                        overflow: hidden;
+                        width: auto;
+                        padding: 0 5px;
+                        position: absolute;
+                        top: 30px;
+                        left: 45px;
+                        z-index: 10;
+                        text-transform: uppercase;
+                        font-size: 10px;
+                        line-height: 20px;
+                        color: #ffffff;
+                        letter-spacing: 3px;
+                        font-weight: 400;
+                    }
+
+                    .s-p-wrap {
+                        display: block;
+                        position: relative;
+                        overflow: hidden;
+
+                        .meta {
+                            display: flex;
+                            flex-wrap: nowrap;
+
+                            li {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                justify-content: flex-start;
+                                align-items: center;
+                                margin-right: 20px;
+                                line-height: 20px;
+
+                                a {
+                                    font-size: 11px;
+                                    border-radius: 2px;
+                                    text-transform: uppercase;
+                                    font-weight: 400;
+                                    padding: 1px 10px;
+                                    letter-spacing: 1px;
+                                    opacity: 0.9;
+                                    @include transitionAll();
+
+                                    &:hover {
+                                        opacity: 1;
+                                    }
+                                }
+
+                                span {
+                                    font-size: 16px;
+                                    margin-right: 6px;
+
+                                    &.stm-gm-icon-eye {
+                                        font-size: 12px;
+                                    }
+                                }
+                            }
+                        }
+
+                        .row .col > a {
+                            @include transitionAll();
+                        }
+
+                        &.style_1 {
+                            padding: 0 15px;
+
+                            h3 {
+                                font-size: 40px;
+                                line-height: 46px;
+                                margin-top: -6px;
+                                letter-spacing: -0.5px;
+                                margin-bottom: 37px;
+                                font-weight: 700;
+
+                                a {
+                                    @include transitionAll();
+                                }
+                            }
+
+                            .meta {
+                                li {
+                                    padding: 0;
+                                }
+                            }
+
+                            .excerpt {
+                                display: block;
+                                font-size: 16px;
+                                font-weight: 300;
+                                margin-top: 24px;
+                                margin-bottom: 21px;
+                                line-height: 28px;
+                                padding-right: 10px;
+
+                                p {
+                                    margin: 0;
+                                }
+                            }
+
+                            .row .col-md-5 > a {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                align-items: center;
+                                justify-content: flex-start;
+                                font-size: 13px;
+                                font-weight: 300;
+
+                                span {
+                                    font-size: 20px;
+                                    margin-right: 5px;
+                                    padding: 1px;
+                                }
+                            }
+                        }
+
+                        &.style_2 {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            min-height: 480px;
+
+                            &:after {
+                                content: '';
+                                background: #222222;
+                                opacity: 0.5;
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                display: block;
+                                width: 100%;
+                                height: 100%;
+                                @include transitionAll();
+                            }
+
+                            .bg-img-wrap {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                width: 100%;
+                                background-size: cover;
+                                background-position: 0 50%;
+                                z-index: 0;
+                                @include transitionAll();
+                            }
+
+                            .stm_gutenberg_flex_column_c_c {
+                                display: block;
+                                position: relative;
+                                z-index: 99;
+                                max-width: 62%;
+                                text-align: center;
+                                padding-top: 45px;
+
+                                h3 {
+                                    line-height: 50px;
+                                    font-size: 45px;
+                                    margin-top: 17px;
+                                    margin-bottom: 53px;
+                                    text-align: center;
+                                    letter-spacing: -1px;
+
+                                    a {
+                                        @include transitionAll();
+                                    }
+                                }
+
+                                .meta {
+                                    justify-content: center;
+
+                                    li {
+                                        font-size: 13px;
+                                        font-weight: 300;
+                                        padding: 0;
+
+                                        &.category {
+                                            opacity: 0.9;
+                                            @include transitionAll();
+                                        }
+
+                                        a {
+                                        }
+
+                                        span {
+                                            font-size: 13px;
+
+                                            &.icon-calendar-text {
+                                                font-size: 15px;
+                                            }
+
+                                            &.stm-gm-icon-eye {
+                                                font-size: 11px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            &:hover {
+                                &:after {
+                                    opacity: 0.7;
+                                }
+
+                                .bg-img-wrap {
+                                    transform: scale(1.05);
+                                }
+                            }
+                        }
+
+                        &.style_3 {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: flex-start;
+                            min-height: 450px;
+                            margin: 0;
+
+                            &:after {
+                                content: '';
+                                background: #222222;
+                                opacity: 0.5;
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                display: block;
+                                width: 100%;
+                                height: 100%;
+                                @include transitionAll();
+                            }
+
+                            .bg-img-wrap {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                width: 100%;
+                                background-size: cover;
+                                background-position: 50% 50%;
+                                z-index: 0;
+                                @include transitionAll();
+                            }
+
+                            .stm_gutenberg_flex_column_c_c {
+                                display: block;
+                                position: relative;
+                                z-index: 19;
+                                text-align: center;
+                                padding-top: 112px;
+                                width: 100%;
+
+                                h3 {
+                                    font-weight: 700;
+                                    line-height: 44px;
+                                    margin: 19px auto 21px;
+                                    text-align: center;
+                                    max-width: 50%;
+
+                                    a {
+                                        color: #ffffff;
+                                        @include transitionAll();
+                                    }
+                                }
+
+                                .meta {
+                                    justify-content: center;
+
+                                    li {
+                                        font-size: 13px;
+                                        font-weight: 300;
+                                        padding: 0;
+
+                                        &.category {
+                                            opacity: 0.9;
+                                            @include transitionAll();
+                                            font-size: 12px;
+                                            line-height: 18px;
+                                            a {
+                                                padding: 2px 10px 0px;
+                                                color: #ffffff;
+                                                font-weight: 500;
+                                            }
+                                        }
+
+                                        a {
+                                        }
+
+                                        span {
+                                            font-size: 13px;
+
+                                            &.icon-calendar-text {
+                                                font-size: 15px;
+                                            }
+
+                                            &.stm-gm-icon-eye {
+                                                font-size: 11px;
+                                            }
+                                        }
+
+                                        .post-author {
+                                            display: flex;
+                                            flex-direction: row;
+                                            flex-wrap: nowrap;
+                                            align-items: center;
+                                            justify-content: flex-start;
+                                            color: #ffffff;
+                                            margin-right: 0;
+                                            font-size: 14px;
+                                            font-weight: 600;
+
+
+                                            .author-avatar {
+                                                display: block;
+                                                overflow: hidden;
+                                                border-radius: 20px;
+                                                margin-right: 10px;
+                                                img {}
+                                            }
+                                        }
+
+                                        &.post-date {
+                                            position: relative;
+                                            color: #ffffff;
+                                            font-size: 14px;
+                                            margin-left: 0;
+                                            padding-left: 15px;
+
+                                            span {
+                                                font-size: 16px;
+                                            }
+
+                                            &:before {
+                                                @include leftDivider(#ffffff, 1, 17);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            &:hover {
+                                &:after {
+                                    opacity: 0.7;
+                                }
+
+                                .bg-img-wrap {
+                                    transform: scale(1.05);
+                                }
+                            }
+                        }
+
+                        &.style_4 {
+                            display: block;
+
+                            .bg-img-wrap {
+                                display: block;
+                                min-height: 370px;
+                                background-size: cover;
+                            }
+
+                            .meta-wrap {
+                                max-width: 88%;
+                                margin: -10% auto 0;
+                                padding: 25px 45px 23px;
+
+                                .meta {
+                                    .category {
+                                        margin-right: 15px;
+
+                                        a {
+                                            font-size: 12px;
+                                            font-weight: 500;
+                                            padding: 0;
+                                        }
+                                    }
+                                }
+
+                                h4 {
+                                    margin: 0;
+                                    line-height: 34px;
+
+                                    a{
+                                        @include transitionAll();
+                                    }
+                                }
+
+                                .excerpt {
+                                    display: block;
+                                    margin-top: 24px;
+                                    padding-top: 24px;
+                                    position: relative;
+
+                                    &:before {
+                                        content: '';
+                                        display: block;
+                                        width: 9%;
+                                        height: 1px;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        z-index: 11;
+                                    }
+                                }
+
+                                .meta-bottom {
+                                    display: flex;
+                                    flex-direction: row;
+                                    flex-wrap: nowrap;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    margin-top: 17px;
+
+                                    .meta {
+                                        li {
+                                            letter-spacing: 0;
+                                            .normal-font {
+
+                                                .normal {
+                                                    font-size: 12px;
+                                                    margin-right: 3px;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    .read_more {
+                                        text-transform: uppercase;
+                                        font-size: 12px;
+                                        letter-spacing: 2px;
+
+                                        i {
+                                            margin-left: 10px;
+
+                                            &:before {
+                                                font-size: 8px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .full_width {
+            max-width: 100%;
+        }
+
+        .full_width_with_content {
+            max-width: 100%;
+        }
+
+        @media(max-width: 1024px) {
+            .container {
+                .stm_gutenberg_single_post {
+                    .stm_gutenberg_sp-content {
+                        .s-p-wrap{
+                            &.style_3 {
+                                .stm_gutenberg_flex_column_c_c {
+                                    .meta {
+                                        li {
+                                            .post-author {
+                                                .author-avatar {
+                                                    img {
+                                                        border-radius: 20px;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        @media(max-width: 768px) {
+            .container {
+                .stm_gutenberg_single_post {
+                    .stm_gutenberg_sp-content {
+                        .s-p-wrap {
+                            .row {
+                                flex-direction: column-reverse;
+
+                                > .col-12 {
+                                    width: 100%;
+                                    max-width: 100%;
+
+                                    .img-wrap {
+                                        img {
+                                            display: block;
+                                            width: 100%;
+                                        }
+                                    }
+
+                                    h3 {
+                                        margin-top: 20px;
+                                        a {
+                                            font-size: 30px;
+                                            line-height: 30px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        @media(max-width: 767px) {
+
+        }
+        @media(max-width: 600px) {
+            .container {
+                .stm_gutenberg_single_post {
+                    .stm_gutenberg_sp-content {
+                        .s-p-wrap {
+                            &.style_4 {
+                                .meta-wrap {
+                                    .meta-bottom {
+                                        flex-wrap: wrap;
+
+                                        .meta {
+                                            flex-wrap: wrap;
+
+                                            li {
+                                                white-space: nowrap;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        @media(max-width: 500px) {
+            .container {
+                .stm_gutenberg_single_post {
+                    .block-title {
+                        margin-bottom: 40px;
+                    }
+
+                    .stm_gutenberg_sp-content {
+
+                        .s-p-wrap {
+                            &.style_2 {
+                                .stm_gutenberg_flex_column_c_c {
+                                    width: 94%;
+                                    max-width: 94%;
+
+                                    h3 {
+                                        max-width: 95%;
+                                        a {
+                                            font-size: 30px;
+                                            line-height: 34px;
+                                        }
+                                    }
+
+                                    .meta {
+                                        flex-wrap: wrap;
+
+
+                                        li {
+                                            margin-bottom: 15px;
+                                        }
+                                    }
+                                }
+                            }
+
+                            .row {
+                                > .col-12 {
+                                    .meta {
+                                        flex-wrap: wrap;
+
+                                        li {
+                                            margin-bottom: 15px;
+                                        }
+                                    }
+
+                                    .excerpt {
+                                        margin-top: 10px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        @media(max-width: 450px) {
+            .container {
+                .stm_gutenberg_single_post {
+                    .stm_gutenberg_sp-content {
+                        .s-p-wrap {
+                            &.style_4 {
+                                .meta-wrap {
+                                    padding: 25px;
+
+                                    .meta-bottom {
+                                        flex-wrap: wrap;
+
+                                        .meta {
+                                            flex-wrap: wrap;
+                                            margin-bottom: 5px;
+
+                                            li {
+                                                white-space: nowrap;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        @media(max-width: 430px) {
+        }
+        @media(max-width: 320px) {
+        }
+    }
+}
+
+
+/*ADMIN STYLES*/
+.editor-block-list__block {
+    .stm_gutenberg_single_post_wrap {
+
+        .container {
+
+            .stm_gutenberg_single_post {
+
+                .block-title {
+                    margin-bottom: 78px;
+                    margin-top: 0;
+                }
+
+                .stm_gutenberg_sp-content {
+
+                    .stmt-sticky-post {
+                        display: block;
+                        overflow: hidden;
+                        background: #4fbe6e;
+                        width: auto;
+                        padding: 0 7px;
+                        position: absolute;
+                        top: 30px;
+                        left: 45px;
+                        z-index: 10;
+                        text-transform: uppercase;
+                        font-size: 10px;
+                        line-height: 22px;
+                        color: #ffffff;
+                        letter-spacing: 3px;
+                        font-weight: 400;
+                    }
+
+                    .s-p-wrap {
+                        display: block;
+                        position: relative;
+                        overflow: hidden;
+
+                        .meta {
+                            display: flex;
+                            flex-wrap: nowrap;
+
+                            li {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                justify-content: flex-start;
+                                align-items: center;
+                                margin-right: 20px;
+                                line-height: 20px;
+
+                                a {
+                                    font-size: 11px;
+                                    border-radius: 2px;
+                                    text-transform: uppercase;
+                                    font-weight: 400;
+                                    padding: 1px 10px;
+                                    letter-spacing: 1px;
+                                    opacity: 0.9;
+                                    @include transitionAll();
+
+                                    &:hover {
+                                        opacity: 1;
+                                    }
+                                }
+
+                                span {
+                                    font-size: 16px;
+                                    margin-right: 6px;
+
+                                    &.stm-gm-icon-eye {
+                                        font-size: 12px;
+                                    }
+                                }
+                            }
+                        }
+
+                        .row .col > a {
+                            @include transitionAll();
+                        }
+
+                        &.style_1 {
+                            h3 {
+                                font-size: 40px;
+                                line-height: 46px;
+                                margin-top: -6px;
+                                letter-spacing: -0.5px;
+                                margin-bottom: 35px;
+                                font-weight: 700;
+
+                                a {
+                                    @include transitionAll();
+                                }
+                            }
+
+                            .excerpt {
+                                display: block;
+                                font-size: 16px;
+                                font-weight: 300;
+                                margin-top: 24px;
+                                margin-bottom: 21px;
+                                line-height: 28px;
+                                padding-right: 10px;
+
+                                p {
+                                    margin: 0;
+                                }
+                            }
+
+                            .row .col-md-5 > a {
+                                display: flex;
+                                flex-direction: row;
+                                flex-wrap: nowrap;
+                                align-items: center;
+                                justify-content: flex-start;
+                                font-size: 13px;
+                                font-weight: 300;
+
+                                span {
+                                    font-size: 20px;
+                                    margin-right: 5px;
+                                    padding: 1px;
+                                }
+                            }
+                        }
+
+                        &.style_2 {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            min-height: 480px;
+
+                            &:after {
+                                content: '';
+                                background: #222222;
+                                opacity: 0.5;
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                display: block;
+                                width: 100%;
+                                height: 100%;
+                                @include transitionAll();
+                            }
+
+                            .bg-img-wrap {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                width: 100%;
+                                background-size: cover;
+                                background-position: 0 50%;
+                                z-index: 0;
+                                @include transitionAll();
+                            }
+
+                            .stm_gutenberg_flex_column_c_c {
+                                display: block;
+                                position: relative;
+                                z-index: 99;
+                                text-align: center;
+                                padding-top: 45px;
+
+                                h3 {
+                                    max-width: 62%;
+                                    line-height: 50px;
+                                    font-size: 45px;
+                                    margin-top: 17px;
+                                    margin-bottom: 53px;
+                                    text-align: center;
+                                    letter-spacing: -1px;
+
+                                    a {
+                                        @include transitionAll();
+                                    }
+                                }
+
+                                .meta {
+                                    justify-content: center;
+
+                                    li {
+                                        font-size: 13px;
+                                        font-weight: 300;
+
+                                        &.category {
+                                            opacity: 0.9;
+                                            @include transitionAll();
+                                        }
+
+                                        a {
+                                        }
+
+                                        span {
+                                            font-size: 13px;
+
+                                            &.icon-calendar-text {
+                                                font-size: 15px;
+                                            }
+
+                                            &.stm-gm-icon-eye {
+                                                font-size: 11px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            &:hover {
+                                &:after {
+                                    opacity: 0.7;
+                                }
+
+                                .bg-img-wrap {
+                                    transform: scale(1.05);
+                                }
+                            }
+                        }
+
+                        &.style_3 {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: flex-start;
+                            min-height: 450px;
+                            margin: 0 -10px;
+
+                            &:after {
+                                content: '';
+                                background: #222222;
+                                opacity: 0.5;
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                display: block;
+                                width: 100%;
+                                height: 100%;
+                                @include transitionAll();
+                            }
+
+                            .bg-img-wrap {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                width: 100%;
+                                background-size: cover;
+                                background-position: 50% 50%;
+                                z-index: 0;
+                                @include transitionAll();
+                            }
+
+                            .stm_gutenberg_flex_column_c_c {
+                                display: block;
+                                position: relative;
+                                z-index: 99;
+                                text-align: center;
+                                padding-top: 112px;
+
+                                h3 {
+                                    max-width: 50%;
+                                    font-weight: 700;
+                                    line-height: 44px;
+                                    margin: 19px auto 21px;
+                                    text-align: center;
+
+                                    a {
+                                        color: #ffffff;
+                                        @include transitionAll();
+                                    }
+                                }
+
+                                .meta {
+                                    justify-content: center;
+
+                                    li {
+                                        font-size: 13px;
+                                        font-weight: 300;
+
+                                        &.category {
+                                            opacity: 0.9;
+                                            @include transitionAll();
+                                            font-size: 12px;
+                                            line-height: 18px;
+                                            a {
+                                                padding: 2px 10px 0px;
+                                                color: #ffffff;
+                                                font-weight: 500;
+                                            }
+                                        }
+
+                                        a {
+                                        }
+
+                                        span {
+                                            font-size: 13px;
+
+                                            &.icon-calendar-text {
+                                                font-size: 15px;
+                                            }
+
+                                            &.stm-gm-icon-eye {
+                                                font-size: 11px;
+                                            }
+                                        }
+
+                                        .post-author {
+                                            display: flex;
+                                            flex-direction: row;
+                                            flex-wrap: nowrap;
+                                            align-items: center;
+                                            justify-content: flex-start;
+                                            color: #ffffff;
+                                            margin-right: 0;
+                                            font-size: 14px;
+                                            font-weight: 600;
+
+
+                                            .author-avatar {
+                                                display: block;
+                                                overflow: hidden;
+                                                border-radius: 20px;
+                                                margin-right: 10px;
+                                                img {
+                                                    border-radius: 20px;
+                                                }
+                                            }
+                                        }
+
+                                        &.post-date {
+                                            position: relative;
+                                            color: #ffffff;
+                                            font-size: 14px;
+                                            margin-left: 0;
+                                            padding-left: 15px;
+
+                                            span {
+                                                font-size: 16px;
+                                            }
+
+                                            &:before {
+                                                @include leftDivider(#ffffff, 1, 17);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            &:hover {
+                                &:after {
+                                    opacity: 0.7;
+                                }
+
+                                .bg-img-wrap {
+                                    transform: scale(1.05);
+                                }
+                            }
+                        }
+
+                        &.style_4 {
+                            display: block;
+                            border-bottom: 1px solid #bfbfbf;
+
+                            .bg-img-wrap {
+                                display: block;
+                                min-height: 370px;
+                                background-size: cover;
+                            }
+
+                            .meta-wrap {
+                                max-width: 88%;
+                                margin: -10% auto 0;
+                                background: #fff;
+                                padding: 25px 45px 23px;
+
+                                .meta {
+                                    .category {
+                                        margin-right: 15px;
+
+                                        a {
+                                            font-size: 12px;
+                                            font-weight: 500;
+                                            padding: 0;
+                                        }
+                                    }
+                                }
+
+                                h4 {
+                                    margin: 0;
+                                    line-height: 34px;
+                                }
+
+                                .excerpt {
+                                    display: block;
+                                    margin-top: 24px;
+                                    padding-top: 24px;
+                                    position: relative;
+
+                                    &:before {
+                                        content: '';
+                                        display: block;
+                                        width: 9%;
+                                        height: 1px;
+                                        background: #bfbfbf;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        z-index: 11;
+                                    }
+                                }
+
+                                .meta-bottom {
+                                    display: flex;
+                                    flex-direction: row;
+                                    flex-wrap: nowrap;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    margin-top: 17px;
+
+                                    .meta {
+                                        li {
+                                            letter-spacing: 0;
+
+                                            .normal-font {
+                                                color: #4fbe6e;
+
+                                                .normal {
+                                                    font-size: 12px;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    .read_more {
+                                        text-transform: uppercase;
+                                        font-size: 12px;
+
+                                        i {
+                                            margin-left: 10px;
+
+                                            &:before {
+                                                font-size: 8px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .full_width {
+            max-width: 100%;
+        }
+
+        .full_width_with_content {
+            max-width: 100%;
+        }
+    }
+}
