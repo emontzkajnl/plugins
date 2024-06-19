@@ -24,10 +24,13 @@ $twitter = get_field('twitter', 'options');
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>" style="margin-bottom: 80px;">
     <div class="container mfcms__container">
         <div class="mfcms__mag-container">
+            <a href="<?php echo get_the_permalink( $magPost->ID); ?>">
             <?php echo get_the_post_thumbnail( $magPost->ID, 'post-thumbnail' ,array('style' => 'width: 200px; height: auto;')); ?>
+            </a>
             <div class="mfcms__mag-text">
             <h3 class="handwritten">Read the Magazine</h3>
             <p><?php echo $magPost->post_content; ?></p>
+            <a href="<?php echo get_the_permalink( $magPost->ID); ?>"><button>Latest Issue</button></a>
             </div>
             
 
