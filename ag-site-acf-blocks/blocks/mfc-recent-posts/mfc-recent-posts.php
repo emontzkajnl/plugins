@@ -29,12 +29,12 @@ while ($recent_posts->have_posts()): $recent_posts->the_post();
 $cat = get_the_category(); 
 $cat = $cat[0]; 
 // if fifth post, insert advanced ads, close and open .row 
-if ($count == 5 && function_exists('the_ad_placement')) {
-    echo '</div><div style="text-align: center;">'; 
-        the_ad_placement('in-content');
-        echo '</div><div class="row">';
-} 
-?>
+// if ($count == 5 && function_exists('the_ad_placement')) {
+//     echo '</div><div style="text-align: center;">'; 
+//         the_ad_placement('in-content');
+//         echo '</div><div class="row">';
+// } 
+// ?>
 <div class="col-12 m-col-6 mfcrp__item">
     <div class="mfcrp__img">
         <a href="<?php echo get_the_permalink(); ?>">

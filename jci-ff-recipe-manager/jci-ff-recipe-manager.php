@@ -133,6 +133,7 @@ function update_recipes() {
 						'post_title'	=>  $b['title']['rendered'],
 						'post_status'	=> 'publish',
 						'post_type'		=> 'ff_recipe',
+						'post_content'	=> $b['post_content'],
 						'meta_input'   	=> array(
 							'ff_id'			=> $b['id'],
 							'recipe_link'	=> $b['link'],
