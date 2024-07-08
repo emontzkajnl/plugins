@@ -10,13 +10,14 @@
 /**
  * User subject
  *
+ * @since 6.9.32 https://github.com/aamplugin/advanced-access-manager/issues/390
  * @since 6.9.11 https://github.com/aamplugin/advanced-access-manager/issues/279
  * @since 6.2.2  Fixed bug with settings inheritance from the Default subject
  * @since 6.0.2  Enhanced stability of the code
  * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.9.11
+ * @version 6.9.32
  */
 class AAM_Core_Subject_User extends AAM_Core_Subject
 {
@@ -106,7 +107,7 @@ class AAM_Core_Subject_User extends AAM_Core_Subject
         $caps = $this->caps;
 
         foreach (array_keys($caps) as $cap) {
-            if (AAM_Framework_Manager::roles()->is_role($cap)) {
+            if (wp_roles()->is_role($cap)) {
                 unset($caps[$cap]);
             }
         }
@@ -182,7 +183,9 @@ class AAM_Core_Subject_User extends AAM_Core_Subject
             if ($base) {
                 $this->_parent = new AAM_Core_Subject_Role($base);
 
-                $multi = AAM::api()->getConfig('core.settings.multiSubject', false);
+                $multi = AAM::api()->configs()->get_config(
+                    'core.settings.multiSubject'
+                );
 
                 if ($multi && count($roles)) {
                     $siblings = array();
@@ -244,141 +247,6 @@ class AAM_Core_Subject_User extends AAM_Core_Subject
         }
 
         return $subject;
-    }
-
-    /**
-     * Validate current authenticated user status
-     *
-     * @return void
-     *
-     * @since 6.9.11 https://github.com/aamplugin/advanced-access-manager/issues/279
-     * @since 6.0.0  Initial implementation of the method
-     *
-     * @access public
-     * @version 6.9.11
-     */
-    public function validateStatus()
-    {
-        $status = $this->checkUserExpiration();
-
-        if ($status !== true) {
-            $this->resetUserExpiration();
-
-            // Trigger specified action
-            switch ($status['action']) {
-                case 'change-role':
-                    $this->set_role($status['meta']);
-                    break;
-
-                case 'delete':
-                    require_once(ABSPATH . 'wp-admin/includes/user.php');
-                    wp_delete_user(
-                        $this->getId(),
-                        AAM_Core_Config::get('core.reasign.ownership.user')
-                    );
-                    // Finally logout
-
-                case 'logout':
-                    wp_logout();
-                    break;
-
-                default:
-                    do_action('aam_process_inactive_user_action', $status, $this);
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Set user expiration meta
-     *
-     * @param array $settings
-     *
-     * @return boolean
-     *
-     * @access public
-     * @version 6.0.0
-     */
-    public function setUserExpiration($settings)
-    {
-        if (array_key_exists('action', $settings) === false) {
-            $settings['action'] = 'logout';
-        }
-
-        return update_user_option(
-            $this->getId(), self::EXPIRATION_OPTION, $settings
-        ) !== false;
-    }
-
-    /**
-     * Get user expiration data
-     *
-     * @return array|null
-     *
-     * @since 6.0.2 Making sure that we are covering scenario when expiration flag
-     *              contains corrupted data in the database
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.0.2
-     */
-    public function getUserExpiration()
-    {
-        $response = get_user_option(self::EXPIRATION_OPTION, $this->getId());
-
-        if (!empty($response)) {
-            try {
-                $response['expires'] = new DateTime(
-                    '@' . $response['expires'], new DateTimeZone('UTC')
-                );
-            } catch (Exception $e) {
-                _doing_it_wrong(
-                    __CLASS__ . '::' . __METHOD__,
-                    $e->getMessage(),
-                    AAM_VERSION
-                );
-                $response['expires'] = new DateTime('now', new DateTimeZone('UTC'));
-            }
-        }
-
-        return $response;
-    }
-
-    /**
-     * Reset user expiration meta
-     *
-     * @return boolean
-     *
-     * @access public
-     * @version 6.0.0
-     */
-    public function resetUserExpiration()
-    {
-        return delete_user_option($this->getId(), self::EXPIRATION_OPTION);
-    }
-
-    /**
-     * Check if user account is expired
-     *
-     * @return array|bool
-     *
-     * @access protected
-     * @version 6.0.0
-     */
-    protected function checkUserExpiration()
-    {
-        $status     = true;
-        $expiration = $this->getUserExpiration();
-
-        if (!empty($expiration)) {
-            $compare  = new DateTime('now', new DateTimeZone('UTC'));
-
-            if ($expiration['expires']->getTimestamp() <= $compare->getTimestamp()) {
-                $status = $expiration;
-            }
-        }
-
-        return $status;
     }
 
 }

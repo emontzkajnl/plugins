@@ -52,6 +52,19 @@ class AAM_Service_SecureLogin
     const FEATURE_FLAG = 'core.service.secure-login.enabled';
 
     /**
+     * Default configurations
+     *
+     * @version 6.9.34
+     */
+    const DEFAULT_CONFIG = [
+        'core.service.secure-login.enabled'             => true,
+        'service.secureLogin.feature.singleSession'     => false,
+        'service.secureLogin.feature.bruteForceLockout' => false,
+        'service.secure_login.time_window'              => '+20 minutes',
+        'service.secure_login.login_attempts'           => 8
+    ];
+
+    /**
      * Config options aliases
      *
      * The option names changed, but to stay backward compatible, we need to support
@@ -74,6 +87,16 @@ class AAM_Service_SecureLogin
      */
     protected function __construct()
     {
+        add_filter('aam_get_config_filter', function($result, $key) {
+            if (is_null($result) && array_key_exists($key, self::DEFAULT_CONFIG)) {
+                $result = self::DEFAULT_CONFIG[$key];
+            }
+
+            return $result;
+        }, 10, 2);
+
+        $enabled = AAM_Framework_Manager::configs()->get_config(self::FEATURE_FLAG);
+
         if (is_admin()) {
             // Hook that returns the detailed information about the nature of the
             // service. This is used to display information about service on the
@@ -89,14 +112,14 @@ class AAM_Service_SecureLogin
             }, 1);
 
             // Register additional tab for the Settings
-            if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+            if ($enabled) {
                 add_action('aam_init_ui_action', function () {
                     AAM_Backend_Feature_Settings_Security::register();
                 }, 1);
             }
         }
 
-        if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+        if ($enabled) {
             $this->initializeHooks();
         }
     }
@@ -123,10 +146,6 @@ class AAM_Service_SecureLogin
         // Register custom RESTful API endpoint for login
         add_action('rest_api_init', array($this, 'registerRESTfulRoute'));
 
-        // User login control
-        add_filter('wp_authenticate_user', array($this, 'validateUserStatus'), 1, 2);
-        add_filter('aam_verify_user_filter', array($this, 'validateUserStatus'));
-
         // Redefine the wp-login.php header message
         add_filter('login_message', array($this, 'loginMessage'));
 
@@ -136,22 +155,25 @@ class AAM_Service_SecureLogin
         add_action('wp_login_failed', array($this, 'trackFailedLoginAttempt'));
 
         // AAM UI controls
-        add_filter('aam_user_row_actions_filter', function($actions, $user) {
+        add_filter('aam_prepare_user_item_filter', function($user) {
+
             // Move this to the Secure Login Service
-            if (current_user_can('aam_toggle_users')) {
-                $status    = get_user_meta($user->ID, 'aam_user_status', true);
-                $actions[] = ($status === 'locked' ? 'unlock' : 'lock');
+            if (current_user_can('edit_user', $user['id'])
+                && current_user_can('aam_toggle_users')
+            ) {
+                array_push(
+                    $user['permissions'],
+                    $user['status'] === 'inactive' ? 'allow_unlock' : 'allow_lock'
+                );
             }
 
-            return $actions;
-        }, 10, 2);
-        add_filter('aam_ajax_filter', array($this, 'handleAjax'), 10, 3);
+            return $user;
+        });
         add_filter('aam_user_expiration_actions_filter', function($actions) {
             $actions['lock'] = __('Block User Account', AAM_KEY);
 
             return $actions;
         });
-        add_action('aam_process_inactive_user_action', array($this, 'lockUser'), 10, 2);
 
         // AAM Core integration
         add_action('aam_initialize_user_action', function(AAM_Core_Subject_User $user) {
@@ -378,7 +400,9 @@ class AAM_Service_SecureLogin
     public function manageAuthCookie($cookie, $user_id, $expiration, $scheme, $token)
     {
         // Remove all other sessions if single session feature is enabled
-        if (AAM_Core_Config::get('service.secureLogin.feature.singleSession', false)) {
+        if (AAM_Framework_Manager::configs()->get_config(
+            'service.secureLogin.feature.singleSession'
+        )) {
             $sessions = WP_Session_Tokens::get_instance($user_id);
 
             if (count($sessions->get_all()) > 1) {
@@ -402,7 +426,9 @@ class AAM_Service_SecureLogin
     public function trackFailedLoginAttempt()
     {
         // Track failed attempts only if Brute Force Lockout is enabled
-        if (AAM_Core_Config::get('service.secureLogin.feature.bruteForceLockout', false)) {
+        if (AAM_Framework_Manager::configs()->get_config(
+            'service.secureLogin.feature.bruteForceLockout'
+        )) {
             $this->updateLoginAttemptsTransient(1);
         }
     }
@@ -426,18 +452,18 @@ class AAM_Service_SecureLogin
         $attempts = AAM_Core_Cache::get($name);
 
         if ($attempts !== false) {
-            $timeout  = get_option("_transient_timeout_{$name}");
             $attempts = intval($attempts) + $counter;
+
+            AAM_Core_Cache::update($name, $attempts);
         } else {
-            $attempts = 1;
             $timeout  = strtotime(
                 $this->_getConfigOption(
                     'service.secure_login.time_window', '+20 minutes'
                 )
             );
-        }
 
-        AAM_Core_Cache::set($name, $attempts, $timeout - time());
+            AAM_Core_Cache::set($name, 1, $timeout - time());
+        }
     }
 
     /**
@@ -478,7 +504,9 @@ class AAM_Service_SecureLogin
     public function enhanceAuthentication($response)
     {
         // Brute Force Lockout
-        if (AAM_Core_Config::get('service.secureLogin.feature.bruteForceLockout', false)) {
+        if (AAM_Framework_Manager::configs()->get_config(
+            'service.secureLogin.feature.bruteForceLockout'
+        )) {
             $attempts  = AAM_Core_Cache::get($this->_getLoginAttemptKeyName());
             $threshold = $this->_getConfigOption(
                 'service.secure_login.login_attempts', 8
@@ -493,41 +521,6 @@ class AAM_Service_SecureLogin
         }
 
         return $response;
-    }
-
-    /**
-     * Validate user status
-     *
-     * Check if user is locked or not
-     *
-     * @param WP_Error $user
-     *
-     * @return WP_Error|WP_User
-     *
-     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
-     * @since 6.0.0  Initial implementation of the method
-     *
-     * @access public
-     * @version 6.9.10
-     */
-    public function validateUserStatus($user)
-    {
-        // Check if user is blocked
-        if (is_a($user, 'WP_User')) {
-            $status = get_user_meta($user->ID, 'aam_user_status', true);
-
-            if ($status === 'locked') {
-                $user = new WP_Error(
-                    405,
-                    AAM_Backend_View_Helper::preparePhrase(
-                        '[ERROR]: User is locked. Contact website administrator.',
-                        'strong'
-                    )
-                );
-            }
-        }
-
-        return $user;
     }
 
     /**
@@ -558,118 +551,6 @@ class AAM_Service_SecureLogin
     }
 
     /**
-     * Handle AAM UI ajax calls
-     *
-     * @param mixed                 $response
-     * @param AAM_Core_Subject_User $user
-     * @param string                $action
-     *
-     * @return mixed
-     *
-     * @since 6.3.1 https://github.com/aamplugin/advanced-access-manager/issues/43
-     * @since 6.0.0 Initial implementation of the method
-     *
-     * @access public
-     * @version 6.3.1
-     */
-    public function handleAjax($response, $user, $action)
-    {
-        if ($action === 'Service_SecureLogin.toggleUserStatus') {
-            $result   = $this->toggleUserStatus($user);
-            $response = wp_json_encode(
-                array('status' => ($result ? 'success' : 'failure'))
-            );
-        }
-
-        return $response;
-    }
-
-    /**
-     * Lock user
-     *
-     * This method is invoked when user is expired
-     *
-     * @param array                 $trigger
-     * @param AAM_Core_Subject_User $user
-     *
-     * @return void
-     *
-     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
-     * @since 6.0.0  Initial implementation of the method
-     *
-     * @access public
-     * @version 6.9.10
-     */
-    public function lockUser(array $trigger, AAM_Core_Subject_User $user)
-    {
-        if ($trigger['action'] === 'lock') {
-            $this->changeUserStatus($user->getPrincipal(), true);
-            wp_logout();
-        }
-    }
-
-    /**
-     * Toggle user status
-     *
-     * Either block or unblock user record
-     *
-     * @param AAM_Core_Subject_User $user
-     *
-     * @return void
-     *
-     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
-     * @since 6.0.0  Initial implementation of the method
-     *
-     * @access protected
-     * @version 6.9.10
-     */
-    protected function toggleUserStatus(AAM_Core_Subject_User $user)
-    {
-        $result = false;
-
-        if (current_user_can('aam_toggle_users') && current_user_can('edit_users')) {
-            if (apply_filters('aam_user_can_manage_level_filter', true, $user->getMaxLevel())) {
-                // User is not allowed to lock himself
-                if (intval($user->getId()) !== get_current_user_id()) {
-                    $status = get_user_meta($user->ID, 'aam_user_status', true);
-                    $result = $this->changeUserStatus(
-                        $user->getPrincipal(), $status !== 'locked'
-                    );
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Change user status
-     *
-     * @param WP_User $user
-     * @param bool    $lock
-     *
-     * @return boolean
-     *
-     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
-     * @since 6.0.0  Initial implementation of the method
-     *
-     * @access protected
-     * @version 6.9.10
-     */
-    protected function changeUserStatus(WP_User $user, $lock)
-    {
-        if ($lock) {
-            add_user_meta($user->ID, 'aam_user_status', 'locked');
-        } else {
-            delete_user_meta($user->ID, 'aam_user_status');
-        }
-
-        clean_user_cache($user);
-
-        return true;
-    }
-
-    /**
      * Get configuration option
      *
      * @param string $option
@@ -685,10 +566,12 @@ class AAM_Service_SecureLogin
      */
     private function _getConfigOption($option, $default = null)
     {
-        $value = AAM_Core_Config::get($option);
+        $value = AAM_Framework_Manager::configs()->get_config($option);
 
         if (is_null($value) && array_key_exists($option, self::OPTION_ALIAS)) {
-            $value = AAM_Core_Config::get(self::OPTION_ALIAS[$option]);
+            $value = AAM_Framework_Manager::configs()->get_config(
+                self::OPTION_ALIAS[$option]
+            );
         }
 
         return is_null($value) ? $default : $value;

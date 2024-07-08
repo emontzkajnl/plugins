@@ -60,9 +60,19 @@ class AAM_Service_DeniedRedirect
      */
     protected function __construct()
     {
+        add_filter('aam_get_config_filter', function($result, $key) {
+            if ($key === self::FEATURE_FLAG && is_null($result)) {
+                $result = true;
+            }
+
+            return $result;
+        }, 10, 2);
+
+        $enabled = AAM_Framework_Manager::configs()->get_config(self::FEATURE_FLAG);
+
         if (is_admin()) {
             // Hook that initialize the AAM UI part of the service
-            if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+            if ($enabled) {
                 add_action('aam_init_ui_action', function () {
                     AAM_Backend_Feature_Main_Redirect::register();
                 });
@@ -82,8 +92,7 @@ class AAM_Service_DeniedRedirect
             }, 25);
         }
 
-        // Hook that initialize the AAM UI part of the service
-        if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+        if ($enabled) {
             $this->initializeHooks();
         }
     }
@@ -144,8 +153,8 @@ class AAM_Service_DeniedRedirect
             'aam_generated_policy_filter', array($this, 'generatePolicy'), 10, 3
         );
 
-         // Register RESTful API endpoints
-         AAM_Core_Restful_AccessDeniedRedirectService::bootstrap();
+        // Register RESTful API endpoints
+        AAM_Restful_AccessDeniedRedirectService::bootstrap();
 
         // Service fetch
         $this->registerService();

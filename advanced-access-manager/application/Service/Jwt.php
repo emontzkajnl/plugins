@@ -75,6 +75,21 @@ class AAM_Service_Jwt
     );
 
     /**
+     * Default configurations
+     *
+     * @version 6.9.34
+     */
+    const DEFAULT_CONFIG = [
+        'core.service.jwt.enabled'     => true,
+        'service.jwt.registry_size'    => 10,
+        'service.jwt.bearer'           => 'header,query_param,post_param,cookie',
+        'service.jwt.header_name'      => 'HTTP_AUTHENTICATION',
+        'service.jwt.cookie_name'      => 'aam_jwt_token',
+        'service.jwt.post_param_name'  => 'aam-jwt',
+        'service.jwt.query_param_name' => 'aam-jwt'
+    ];
+
+    /**
      * Constructor
      *
      * @return void
@@ -84,9 +99,19 @@ class AAM_Service_Jwt
      */
     protected function __construct()
     {
+        add_filter('aam_get_config_filter', function($result, $key) {
+            if (is_null($result) && array_key_exists($key, self::DEFAULT_CONFIG)) {
+                $result = self::DEFAULT_CONFIG[$key];
+            }
+
+            return $result;
+        }, 10, 2);
+
+        $enabled = AAM_Framework_Manager::configs()->get_config(self::FEATURE_FLAG);
+
         if (is_admin()) {
             // Hook that initialize the AAM UI part of the service
-            if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+            if ($enabled) {
                 add_action('aam_init_ui_action', function () {
                     AAM_Backend_Feature_Main_Jwt::register();
                 });
@@ -106,8 +131,7 @@ class AAM_Service_Jwt
             }, 20);
         }
 
-        // Hook that initialize the AAM UI part of the service
-        if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+        if ($enabled) {
             $this->initializeHooks();
         }
     }
@@ -148,7 +172,7 @@ class AAM_Service_Jwt
         });
 
         // Register RESTful API
-        AAM_Core_Restful_JwtService::bootstrap();
+        AAM_Restful_JwtService::bootstrap();
 
         // Register API endpoint
         add_action('rest_api_init', array($this, 'registerAPI'));
@@ -665,9 +689,9 @@ class AAM_Service_Jwt
 
                 if (!is_wp_error($result)) {
                     // Verify that user is can be logged in
-                    $user = apply_filters(
-                        'aam_verify_user_filter', new WP_User($result->userId)
-                    );
+                    $user = AAM_Framework_Manager::users([
+                        'error_handling' => 'wp_error'
+                    ])->verify_user_state($result->userId);
 
                     if (!is_wp_error($user)) {
                         $userId = $result->userId;
@@ -757,24 +781,29 @@ class AAM_Service_Jwt
 
         if (!is_wp_error($claims)) {
             // Check if account is active
-            $user = apply_filters(
-                'aam_verify_user_filter', new WP_User($claims->userId)
-            );
+            $user = AAM_Framework_Manager::users([
+                'error_handling' => 'wp_error'
+            ])->verify_user_state($claims->userId);
         }
 
         if (isset($user) && !is_wp_error($user)) {
             wp_set_current_user($claims->userId);
             wp_set_auth_cookie($claims->userId);
 
-            do_action(
-                'aam_set_user_expiration_action',
-                array_merge(
-                    array('expires' => $claims->exp),
-                    property_exists($claims, 'trigger') ? (array)$claims->trigger : array()
-                )
-            );
+            // If we are authenticating with passwordless, that manually set user's
+            // expiration attributes
+            $data = [ 'expires_at' => $claims->exp ];
 
-            do_action('wp_login', $user->user_login, $user);
+            if (property_exists($claims, 'trigger')) {
+                $data['trigger'] = [
+                    'type'    => $claims->trigger->action,
+                    'to_role' => $claims->trigger->meta
+                ];
+            }
+
+            AAM_Framework_Manager::users()->update($claims->userId, $data);
+
+            do_action('wp_login', $user->user_login, $user->get_wp_user());
 
             // Determine where to redirect user and safely redirect & finally just
             // redirect user to the homepage
@@ -785,7 +814,7 @@ class AAM_Service_Jwt
                     'login_redirect',
                     (!empty($redirect_to) ? $redirect_to : admin_url()),
                     '',
-                    $user
+                    $user->get_wp_user()
                 )
             );
 
@@ -936,10 +965,12 @@ class AAM_Service_Jwt
      */
     private function _getConfigOption($option, $default = null)
     {
-        $value = AAM_Core_Config::get($option);
+        $value = AAM_Framework_Manager::configs()->get_config($option);
 
         if (is_null($value) && array_key_exists($option, self::OPTION_ALIAS)) {
-            $value = AAM_Core_Config::get(self::OPTION_ALIAS[$option]);
+            $value = AAM_Framework_Manager::configs()->get_config(
+                self::OPTION_ALIAS[$option]
+            );
         }
 
         return is_null($value) ? $default : $value;

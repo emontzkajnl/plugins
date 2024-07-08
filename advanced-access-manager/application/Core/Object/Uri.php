@@ -10,13 +10,15 @@
 /**
  * URI object
  *
- * @since 6.5.0 https://github.com/aamplugin/advanced-access-manager/issues/105
- * @since 6.3.0 Fixed bug where home page could not be protected
- * @since 6.1.0 Fixed bug with incorrectly halted inheritance mechanism
- * @since 6.0.0 Initial implementation of the class
+ * @since 6.9.31 https://github.com/aamplugin/advanced-access-manager/issues/385
+ * @since 6.9.28 https://github.com/aamplugin/advanced-access-manager/issues/371
+ * @since 6.5.0  https://github.com/aamplugin/advanced-access-manager/issues/105
+ * @since 6.3.0  Fixed bug where home page could not be protected
+ * @since 6.1.0  Fixed bug with incorrectly halted inheritance mechanism
+ * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.5.0
+ * @version 6.9.31
  */
 class AAM_Core_Object_Uri extends AAM_Core_Object
 {
@@ -31,11 +33,13 @@ class AAM_Core_Object_Uri extends AAM_Core_Object
     /**
      * @inheritdoc
      *
-     * @since 6.5.0 https://github.com/aamplugin/advanced-access-manager/issues/105
-     * @since 6.1.0 Fixed bug with incorrectly halted inheritance mechanism
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.31 https://github.com/aamplugin/advanced-access-manager/issues/385
+     * @since 6.9.28 https://github.com/aamplugin/advanced-access-manager/issues/371
+     * @since 6.5.0  https://github.com/aamplugin/advanced-access-manager/issues/105
+     * @since 6.1.0  Fixed bug with incorrectly halted inheritance mechanism
+     * @since 6.0.0  Initial implementation of the method
      *
-     * @version 6.5.0
+     * @version 6.9.31
      */
     protected function initialize()
     {
@@ -44,14 +48,16 @@ class AAM_Core_Object_Uri extends AAM_Core_Object
         // Making sure that all URL are lowercase
         $normalized = array();
         foreach($option as $key => $val) {
-            $normalized[strtolower($key)] = $val;
+            $normalized[$this->_toLower($key)] = $val;
         }
 
-        $this->determineOverwritten($normalized);
+        $this->setExplicitOption($option);
 
         // Trigger custom functionality that may populate the menu options. For
         // example, this hooks is used by Access Policy service
-        $normalized = apply_filters('aam_uri_object_option_filter', $normalized, $this);
+        $normalized = apply_filters(
+            'aam_uri_object_option_filter', $normalized, $this
+        );
 
         $this->setOption(is_array($normalized) ? $normalized : array());
     }
@@ -64,19 +70,20 @@ class AAM_Core_Object_Uri extends AAM_Core_Object
      *
      * @return null|array
      *
-     * @since 6.4.0 https://github.com/aamplugin/advanced-access-manager/issues/77
-     * @since 6.3.0 https://github.com/aamplugin/advanced-access-manager/issues/17
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.28 https://github.com/aamplugin/advanced-access-manager/issues/371
+     * @since 6.4.0  https://github.com/aamplugin/advanced-access-manager/issues/77
+     * @since 6.3.0  https://github.com/aamplugin/advanced-access-manager/issues/17
+     * @since 6.0.0  Initial implementation of the method
      *
      * @access public
-     * @version 6.4.0
+     * @version 6.9.28
      */
     public function findMatch($s, $params = array())
     {
         $match = null;
 
         // Normalize the search URI
-        $s = strtolower(rtrim($s,  '/'));
+        $s = $this->_toLower(rtrim($s,  '/'));
 
         foreach ($this->normalizeOrder() as $uri => $rule) {
             $meta = wp_parse_url($uri);
@@ -228,6 +235,24 @@ class AAM_Core_Object_Uri extends AAM_Core_Object
         }
 
         return array_merge($denied, $allowed);
+    }
+
+    /**
+     * Convert string to its lowercase
+     *
+     * @param string $str
+     *
+     * @return string
+     *
+     * @access private
+     * @version 6.9.28
+     */
+    private function _toLower($str)
+    {
+        return call_user_func(
+            function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower',
+            $str
+        );
     }
 
 }

@@ -26,6 +26,8 @@
  * Subject principal is underlying WordPress core user or role. Not all Subjects have
  * principals (e.g. Visitor or Default).
  *
+ * @since 6.9.33 https://github.com/aamplugin/advanced-access-manager/issues/392
+ * @since 6.9.30 https://github.com/aamplugin/advanced-access-manager/issues/379
  * @since 6.9.22 https://github.com/aamplugin/advanced-access-manager/issues/344
  * @since 6.9.21 https://github.com/aamplugin/advanced-access-manager/issues/342
  * @since 6.9.6  https://github.com/aamplugin/advanced-access-manager/issues/249
@@ -35,7 +37,7 @@
  * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.9.22
+ * @version 6.9.33
  */
 abstract class AAM_Core_Subject
 {
@@ -350,55 +352,77 @@ abstract class AAM_Core_Subject
     }
 
     /**
+     * Reload the entire object
+     *
+     * This will trigger the inheritance mechanism again
+     *
+     * @param string  $type
+     * @param mixed   $id
+     * @param boolean $skipInheritance
+     *
+     * @return AAM_Core_Object
+     *
+     * @access public
+     * @version 6.9.33
+     */
+    public function reloadObject($type, $id = null, $skipInheritance = false)
+    {
+        $suffix = ($skipInheritance ? '_direct' : '_full');
+
+        // Check if there is an object with specified ID and if so, purge it
+        if (isset($this->_objects[$type . $id . $suffix])) {
+            unset($this->_objects[$type . $id . $suffix]);
+        }
+
+        return $this->getObject($type, $id, $skipInheritance);
+    }
+
+    /**
      * Inherit access settings for provided object from the parent subject(s)
      *
      * @param AAM_Core_Object $object
      *
      * @return array
      *
+     * @since 6.9.30 https://github.com/aamplugin/advanced-access-manager/issues/379
      * @since 6.9.21 https://github.com/aamplugin/advanced-access-manager/issues/342
      * @since 6.7.0  https://github.com/aamplugin/advanced-access-manager/issues/152
      * @since 6.0.0  Initial implementation of the method
      *
      * @access protected
-     * @version 6.9.21
+     * @version 6.9.30
      */
     protected function inheritFromParent(AAM_Core_Object $object)
     {
-        $subject = $this->getParent();
+        $parent = $this->getParent();
 
-        if (is_a($subject, 'AAM_Core_Subject')) {
-            $option = $subject->getObject(
+        if (is_a($parent, 'AAM_Core_Subject')) {
+            $option = $parent->getObject(
                 $object::OBJECT_TYPE,
                 $object->getId()
             )->getOption();
 
             // Merge access settings if multi-roles option is enabled
-            $multi = AAM::api()->getConfig('core.settings.multiSubject', false);
+            $multi = AAM::api()->configs()->get_config('core.settings.multiSubject');
 
-            if ($multi && $subject->hasSiblings()) {
-                foreach ($subject->getSiblings() as $sibling) {
+            if ($multi && $parent->hasSiblings()) {
+                foreach ($parent->getSiblings() as $sibling) {
                     $obj = $sibling->getObject(
                         $object::OBJECT_TYPE,
                         $object->getId()
                     );
 
-                    if (method_exists($obj, 'mergeAlignOption')) {
-                        $option = $obj->mergeAlignOption($option, $subject->getObject(
-                            $object::OBJECT_TYPE,
-                            $object->getId()
-                        ));
-                    } else {
-                        $option = $obj->mergeOption($option);
-                    }
+                    $option = $obj->mergeOption($option, $parent->getObject(
+                        $object::OBJECT_TYPE,
+                        $object->getId()
+                    ));
                 }
             }
 
             // Merge access settings while reading hierarchical chain
-            $option = array_replace_recursive($option, $object->getOption());
-
-            // Finally set the option for provided object
-            $object->setOption($option);
+            $object->setOption(
+                array_replace_recursive($option, $object->getOption())
+            );
         }
 
         return $object->getOption();
@@ -430,9 +454,9 @@ abstract class AAM_Core_Subject
      */
     public function updateOption($value, $object, $id = null)
     {
-        return AAM_Core_AccessSettings::getInstance()->set(
-            $this->getOptionName($object, $id), $value
-        )->save();
+        return AAM_Framework_Manager::settings([
+            'subject' => $this
+        ])->set_setting($this->getOptionName($object, $id), $value);
     }
 
     /**
@@ -448,9 +472,9 @@ abstract class AAM_Core_Subject
      */
     public function readOption($object, $id = null)
     {
-        return AAM_Core_AccessSettings::getInstance()->get(
-            $this->getOptionName($object, $id)
-        );
+        return AAM_Framework_Manager::settings([
+            'subject' => $this
+        ])->get_setting($this->getOptionName($object, $id), []);
     }
 
     /**
@@ -466,9 +490,9 @@ abstract class AAM_Core_Subject
      */
     public function deleteOption($object, $id = null)
     {
-        return AAM_Core_AccessSettings::getInstance()->delete(
-            $this->getOptionName($object, $id)
-        )->save();
+        return AAM_Framework_Manager::settings([
+            'subject' => $this
+        ])->delete_setting($this->getOptionName($object, $id));
     }
 
     /**
@@ -484,12 +508,7 @@ abstract class AAM_Core_Subject
      */
     public function getOptionName($object, $id)
     {
-        $subjectId = $this->getId();
-
-        $name  = static::UID . ($subjectId ? ".{$subjectId}" : '') . '.';
-        $name .= $object . ($id ? ".{$id}" : '');
-
-        return $name;
+        return $object . ($id ? ".{$id}" : '');
     }
 
     /**
@@ -517,13 +536,9 @@ abstract class AAM_Core_Subject
      */
     public function reset()
     {
-        $id = static::UID;
-
-        if ($this->getId() !== null) {
-            $id .= '.' . $this->getId();
-        }
-
-        return AAM_Core_AccessSettings::getInstance()->delete($id)->save();
+        return AAM_Framework_Manager::settings([
+            'subject' => $this
+        ])->reset();
     }
 
 }

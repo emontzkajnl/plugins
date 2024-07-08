@@ -10,6 +10,7 @@
 /**
  * Backend manager
  *
+ * @since 6.9.30 https://github.com/aamplugin/advanced-access-manager/issues/377
  * @since 6.9.20 https://github.com/aamplugin/advanced-access-manager/issues/335
  * @since 6.9.13 https://github.com/aamplugin/advanced-access-manager/issues/303
  * @since 6.9.8  https://github.com/aamplugin/advanced-access-manager/issues/262
@@ -26,7 +27,7 @@
  * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.9.20
+ * @version 6.9.30
  */
 class AAM_Backend_Manager
 {
@@ -57,7 +58,7 @@ class AAM_Backend_Manager
         add_action('aam_iframe_footer_action', array($this, 'printFooterJavascript'));
 
         // Alter user edit screen with support for multiple roles
-        if (AAM::api()->getConfig('core.settings.multiSubject', false)) {
+        if (AAM::api()->configs()->get_config('core.settings.multiSubject')) {
             add_action('edit_user_profile', array($this, 'editUserProfilePage'));
             add_action('user_new_form', array($this, 'addNewUserPage'));
 
@@ -99,7 +100,7 @@ class AAM_Backend_Manager
             $this->checkForPremiumAddonUpdate();
         }
 
-        if (AAM::api()->getConfig('core.settings.restful', true) === false) {
+        if (AAM::api()->configs()->get_config('core.settings.restful', true) === false) {
             AAM_Core_Console::add(
                 __('The RESTful API is disabled. This may affect the AAM UI. Enable it on the AAM Settings page.', AAM_KEY)
             );
@@ -164,11 +165,12 @@ class AAM_Backend_Manager
      *
      * @return void
      *
+     * @since 6.9.30 https://github.com/aamplugin/advanced-access-manager/issues/377
      * @since 6.9.14 https://github.com/aamplugin/advanced-access-manager/issues/308
      * @since 6.9.5  Initial implementation of the method
      *
      * @access public
-     * @version 6.9.14
+     * @version 6.9.30
      */
     protected function checkForLegacyAddons()
     {
@@ -184,22 +186,30 @@ class AAM_Backend_Manager
 
         if (array_key_exists('aam-plus-package/bootstrap.php', $plugins)) {
             AAM_Core_Console::add(sprintf(
-                __('The Plus Package is deprecated as a stand-alone addon. Check the %sWe are migrating%s article for more information.', AAM_KEY),
+                __('The Plus Package was deprecated and is no longer maintained. %sLearn more%s.', AAM_KEY),
                 '<a href="https://aamportal.com/blog/we-are-migrating?ref=plugin">', '</a>'
             ));
         }
 
         if (array_key_exists('aam-ip-check/bootstrap.php', $plugins)) {
             AAM_Core_Console::add(sprintf(
-                __('The IP Check is deprecated as a stand-alone addon. Check the %sWe are migrating%s article for more information.', AAM_KEY),
+                __('The IP Check was deprecated and is no longer maintained. %sLearn more%s.', AAM_KEY),
                 '<a href="https://aamportal.com/blog/we-are-migrating?ref=plugin">', '</a>'
             ));
         }
 
         if (array_key_exists('aam-role-hierarchy/bootstrap.php', $plugins)) {
             AAM_Core_Console::add(sprintf(
-                __('The Role Hierarchy is deprecated as a stand-alone addon. Check the %sWe are migrating%s article for more information.', AAM_KEY),
+                __('The Role Hierarchy was deprecated and is no longer maintained. %sLearn more%s.', AAM_KEY),
                 '<a href="https://aamportal.com/blog/we-are-migrating?ref=plugin">', '</a>'
+            ));
+        }
+
+        if (defined('AAM_COMPLETE_PACKAGE')
+            && version_compare(AAM_COMPLETE_PACKAGE, '6.1.7') === -1) {
+            AAM_Core_Console::add(sprintf(
+                __('Upgrade the AAM premium add-on to version 6.1.7 or higher to ensure all features function correctly. %sLearn more%s.', AAM_KEY),
+                '<a href="https://aamportal.com/question/update-premium-addon-warning?ref=plugin">', '</a>'
             ));
         }
     }
@@ -250,14 +260,14 @@ class AAM_Backend_Manager
                 'url' => array(
                     'editUser'  => esc_url(admin_url('user-edit.php')),
                     'addUser'   => esc_url(admin_url('user-new.php')),
+                    'editPost'  => esc_url(admin_url('post.php')),
+                    'editTerm'  => esc_url(admin_url('term.php')),
                     'addPolicy' => esc_url(admin_url('post-new.php?post_type=aam_policy'))
                 ),
-                'level'     => AAM::getUser()->getMaxLevel(),
                 'subject'   => array(
                     'type'  => $subject->getSubjectType(),
                     'id'    => $subject->getId(),
-                    'name'  => $subject->getName(),
-                    'level' => $subject->getMaxLevel()
+                    'name'  => $subject->getName()
                 ),
                 'system' => array(
                     'apiEndpoint' => AAM_Core_API::getAPIEndpoint()
@@ -319,7 +329,7 @@ class AAM_Backend_Manager
      *
      * @return void
      *
-     * @since 6.6.2 Fixed https://github.com/aamplugin/advanced-access-manager/issues/138
+     * @since 6.6.2 https://github.com/aamplugin/advanced-access-manager/issues/138
      * @since 6.0.0 Initial implementation of the method
      *
      * @access public
@@ -329,7 +339,9 @@ class AAM_Backend_Manager
     {
         $user = get_user_by('ID', $id);
 
-        $is_multirole = AAM::api()->getConfig('core.settings.multiSubject', false);
+        $is_multirole = AAM::api()->configs()->get_config(
+            'core.settings.multiSubject'
+        );
 
         if ($is_multirole && current_user_can('promote_user', $id)) {
             $roles = filter_input(

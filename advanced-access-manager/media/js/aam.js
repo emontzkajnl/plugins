@@ -8,7 +8,7 @@
  /**
   *
   */
-(function ($) {
+ (function ($) {
 
     /**
      * Local representation of AAM object
@@ -42,7 +42,7 @@
      */
     function GetRoles(cb) {
         if (cache.roles === null) {
-            $.ajax(`${getLocal().rest_base}aam/v2/roles`, {
+            $.ajax(`${getLocal().rest_base}aam/v2/service/roles`, {
                 type: 'GET',
                 headers: {
                     'X-WP-Nonce': getLocal().rest_nonce
@@ -135,6 +135,8 @@
                         $(this).val('');
                     }
                 });
+
+                $('.error-container', container).addClass('hidden');
             }
 
             /**
@@ -159,7 +161,7 @@
                     getAAM().applyFilters('role-list-fields', fields);
 
                     // Prepare the RESTful API endpoint
-                    let url = `${getLocal().rest_base}aam/v2/roles`;
+                    let url = `${getLocal().rest_base}aam/v2/service/roles`;
 
                     if (url.indexOf('rest_route') === -1) {
                         url += `?fields=${fields.join(',')}`;
@@ -535,7 +537,7 @@
 
 
                         if (data.name) {
-                            $.ajax(`${getLocal().rest_base}aam/v2/role`, {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/roles`, {
                                 type: 'POST',
                                 headers: {
                                     'X-WP-Nonce': getLocal().rest_nonce
@@ -596,7 +598,7 @@
                             if ($(this).attr('name')) {
                                 if ($(this).attr('type') === 'checkbox') {
                                     data[$(this).attr('name')] = $(this).is(':checked') ? 1 : 0;
-                                } else {
+                                } else if (!$(this).prop('disabled')) {
                                     const v = $.trim($(this).val());
 
                                     if (v) {
@@ -607,7 +609,7 @@
                         });
 
                         if (data.name) {
-                            $.ajax(`${getLocal().rest_base}aam/v2/role/${$(_this).data('role')}`, {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/role/${$(_this).data('role')}`, {
                                 type: 'POST',
                                 headers: {
                                     'X-WP-Nonce': getLocal().rest_nonce,
@@ -659,7 +661,7 @@
 
                         ResetCache('roles');
 
-                        $.ajax(`${getLocal().rest_base}aam/v2/role/${$(_this).data('role')}`, {
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/role/${$(_this).data('role')}`, {
                             type: 'POST',
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce,
@@ -736,45 +738,41 @@
             }
 
             /**
+             * Update user status
              *
-             * @param {type} id
-             * @param {type} btn
-             * @returns {undefined}
+             * @param {number} id
+             * @param {object} btn
+             *
+             * @returns {void}
              */
-            function blockUser(id, btn) {
-                var state = ($(btn).hasClass('icon-lock') ? 0 : 1);
+            function updateUserStatus(id, btn) {
+                const status = ($(btn).hasClass('icon-lock') ? 'active' : 'inactive');
 
-                $.ajax(getLocal().ajaxurl, {
+                $.ajax({
+                    url: `${getLocal().rest_base}aam/v2/service/user/${id}?fields=status`,
                     type: 'POST',
-                    dataType: 'json',
+                    headers: {
+                        'X-WP-Nonce': getLocal().rest_nonce
+                    },
                     data: {
-                        action: 'aam',
-                        // TODO: Refactor and move this to the SecureLogin service
-                        sub_action: 'Service_SecureLogin.toggleUserStatus',
-                        _ajax_nonce: getLocal().nonce,
-                        subject: 'user',
-                        subjectId: id
+                        status
                     },
                     beforeSend: function () {
                         $(btn).attr('class', 'aam-row-action icon-spin4 animate-spin');
                     },
                     success: function (response) {
-                        if (response.status === 'success') {
-                            if (state === 1) {
-                                $(btn).attr({
-                                    'class': 'aam-row-action icon-lock text-danger',
-                                    'title': getAAM().__('Unlock user'),
-                                    'data-original-title': getAAM().__('Unlock user')
-                                });
-                            } else {
-                                $(btn).attr({
-                                    'class': 'aam-row-action icon-lock-open text-warning',
-                                    'title': getAAM().__('Lock user'),
-                                    'data-original-title': getAAM().__('Lock user')
-                                });
-                            }
+                        if (response.status === 'inactive') {
+                            $(btn).attr({
+                                'class': 'aam-row-action icon-lock text-danger',
+                                'title': getAAM().__('Unlock user'),
+                                'data-original-title': getAAM().__('Unlock user')
+                            });
                         } else {
-                            getAAM().notification('danger', getAAM().__('Failed to lock user'));
+                            $(btn).attr({
+                                'class': 'aam-row-action icon-lock-open text-success',
+                                'title': getAAM().__('Lock user'),
+                                'data-original-title': getAAM().__('Lock user')
+                            });
                         }
                     },
                     error: function () {
@@ -794,7 +792,7 @@
 
                     const payload = {
                         user_id: $('#reset-user-expiration-btn').attr('data-user-id'),
-                        expires_at: (new Date($('#user-expires').val() * 1000)).toISOString(),
+                        expires_at: $('#user-expires').val(),
                     };
 
                     if (action) {
@@ -804,12 +802,12 @@
                             }
                         }
 
-                        if (action === 'change-role') {
+                        if (action === 'change_role') {
                             payload.additional_claims.trigger.meta = $('#expiration-change-role').val();
                         }
                     }
 
-                    $.ajax(`${getLocal().rest_base}aam/v2/service/jwt`, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/jwts`, {
                         type: 'POST',
                         dataType: 'json',
                         data: payload,
@@ -834,32 +832,94 @@
             //initialize the user list table
             $('#user-list').DataTable({
                 autoWidth: false,
-                ordering: true,
+                ordering: false,
                 dom: 'ftrip',
                 stateSave: true,
                 pagingType: 'simple',
                 serverSide: true,
                 processing: true,
-                ajax: {
-                    url: getLocal().ajaxurl,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: function (params) {
-                        params.action = 'aam';
-                        params.sub_action = 'Subject_User.getTable';
-                        params._ajax_nonce = getLocal().nonce;
-                        params.role = $('#user-list-filter').val();
-                        params.subject = getAAM().getSubject().type;
-                        params.subjectId = getAAM().getSubject().id;
-                        params.ui = getLocal().ui;
-                        params.policyId = $('#aam-policy-id').val();
+                ajax: function(filters, cb) {
+                    const fields = [
+                        'roles',
+                        'display_name',
+                        'permissions',
+                        'user_level',
+                        'expiration'
+                    ];
 
-                        return params;
+                    if(getAAM().isUI('principal')) {
+                        fields.push('policies');
                     }
+
+                    $.ajax({
+                        url: `${getLocal().rest_base}aam/v2/service/users`,
+                        type: 'GET',
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
+                        },
+                        data: {
+                            search: filters.search.value,
+                            per_page: filters.length,
+                            offset: filters.start,
+                            fields: fields.join(','),
+                            role: $('#user-list-filter').val()
+                        },
+                        success: function (response) {
+                            const result = {
+                                data: [],
+                                recordsTotal: 0,
+                                recordsFiltered: 0
+                            };
+
+                            // Transform the received data into DT format
+                            const policyId = parseInt($('#aam-policy-id').val(), 10);
+
+                            $.each(response.list, (_, user) => {
+                                const actions = [];
+
+                                if (getLocal().ui === 'principal' && policyId) {
+                                    if (user.policies && user.policies.includes(policyId)) {
+                                        actions.push('detach');
+                                    } else {
+                                        actions.push('attach');
+                                    }
+                                } else {
+                                    if (user.permissions.includes('allow_manage')) {
+                                        actions.push('manage');
+                                    }
+
+                                    if (user.permissions.includes('allow_edit')) {
+                                        actions.push('edit');
+                                    } else {
+                                        actions.push('no-edit');
+                                    }
+
+                                    if (user.permissions.includes('allow_unlock')) {
+                                        actions.push('unlock');
+                                    } else if (user.permissions.includes('allow_lock')) {
+                                        actions.push('lock');
+                                    }
+                                }
+
+                                result.data.push([
+                                    user.id,
+                                    user.roles.join(', '),
+                                    user.display_name,
+                                    actions.join(','),
+                                    user.user_level,
+                                    user.expiration || null
+                                ]);
+                            });
+
+                            result.recordsTotal    = response.summary.total_count;
+                            result.recordsFiltered = response.summary.filtered_count;
+
+                            cb(result);
+                        }
+                    });
                 },
                 columnDefs: [
-                    { visible: false, targets: [0, 1, 4, 5] },
-                    { orderable: false, targets: [0, 1, 3, 4, 5] }
+                    { visible: false, targets: [0, 1, 4, 5] }
                 ],
                 language: {
                     search: '_INPUT_',
@@ -993,13 +1053,12 @@
 
                                             if (data[5]) {
                                                 $('#reset-user-expiration-btn').removeClass('hidden');
-                                                var settings = data[5].split('|');
-                                                $('#user-expires').val(settings[0]);
-                                                $('#action-after-expiration').val(settings[1]);
+                                                $('#user-expires').val(data[5].expires_at);
+                                                $('#action-after-expiration').val(data[5].trigger.type);
 
-                                                if (settings[1] === 'change-role') {
+                                                if (data[5].trigger.type === 'change_role') {
                                                     $('#expiration-change-role-holder').removeClass('hidden');
-                                                    getAAM().loadRoleList(settings[2]);
+                                                    getAAM().loadRoleList(data[5].trigger.to_role);
                                                 } else {
                                                     getAAM().loadRoleList();
                                                     $('#expiration-change-role-holder').addClass('hidden');
@@ -1032,7 +1091,7 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-lock-open text-success'
                                         }).bind('click', function () {
-                                            blockUser(data[0], $(this));
+                                            updateUserStatus(data[0], $(this));
                                         }).attr({
                                             'data-toggle': "tooltip",
                                             'title': getAAM().__('Lock user')
@@ -1056,7 +1115,7 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-lock text-danger'
                                         }).bind('click', function () {
-                                            blockUser(data[0], $(this));
+                                            updateUserStatus(data[0], $(this));
                                         }).attr({
                                             'data-toggle': "tooltip",
                                             'title': getAAM().__('Unlock user')
@@ -1150,7 +1209,7 @@
             });
 
             $('#action-after-expiration').bind('change', function () {
-                if ($(this).val() === 'change-role') {
+                if ($(this).val() === 'change_role') {
                     $('#expiration-change-role-holder').removeClass('hidden');
                 } else {
                     $('#expiration-change-role-holder').addClass('hidden');
@@ -1194,34 +1253,48 @@
             });
 
             $('#user-expiration-datapicker').on('dp.change', function (res) {
-                $('#user-expires').val(res.date.unix());
+                $('#user-expires').val(res.date.format());
             });
 
             //edit role button
             $('#edit-user-expiration-btn').bind('click', function () {
                 var _this = this;
 
-                $.ajax(getLocal().ajaxurl, {
+                // Get currently editing user ID
+                const id = $(_this).attr('data-user-id');
+
+                // Preparing the payload
+                const payload = {
+                    expires_at: $('#user-expires').val()
+                };
+
+                // Gathering expiration attributes
+                const expiration_trigger = $('#action-after-expiration').val() || 'logout';
+
+                if (expiration_trigger) {
+                    payload.trigger = {
+                        type: expiration_trigger
+                    };
+
+                    if (expiration_trigger === 'change_role') {
+                        payload.trigger.to_role = $('#expiration-change-role').val();
+                    }
+                }
+
+                $.ajax({
+                    url: `${getLocal().rest_base}aam/v2/service/user/${id}`,
                     type: 'POST',
-                    dataType: 'json',
+                    headers: {
+                        'X-WP-Nonce': getLocal().rest_nonce
+                    },
                     data: {
-                        action: 'aam',
-                        sub_action: 'Subject_User.saveExpiration',
-                        _ajax_nonce: getLocal().nonce,
-                        user: $(_this).attr('data-user-id'),
-                        expires: $('#user-expires').val(),
-                        after: $('#action-after-expiration').val(),
-                        role: $('#expiration-change-role').val()
+                        expiration: payload
                     },
                     beforeSend: function () {
                         $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
                     },
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            $('#user-list').DataTable().ajax.reload();
-                        } else {
-                            getAAM().notification('danger', response.reason);
-                        }
+                    success: function () {
+                        $('#user-list').DataTable().ajax.reload();
                     },
                     error: function () {
                         getAAM().notification('danger');
@@ -1237,24 +1310,20 @@
             $('#reset-user-expiration-btn').bind('click', function () {
                 var _this = this;
 
-                $.ajax(getLocal().ajaxurl, {
+                const id = $(_this).attr('data-user-id');
+
+                $.ajax({
+                    url: `${getLocal().rest_base}aam/v2/service/user/${id}`,
                     type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Subject_User.resetExpiration',
-                        _ajax_nonce: getLocal().nonce,
-                        user: $(_this).attr('data-user-id')
+                    headers: {
+                        'X-WP-Nonce': getLocal().rest_nonce,
+                        'X-HTTP-Method-Override': 'DELETE'
                     },
                     beforeSend: function () {
                         $(_this).text(getAAM().__('Resetting...')).attr('disabled', true);
                     },
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            $('#user-list').DataTable().ajax.reload();
-                        } else {
-                            getAAM().notification('danger', response.reason);
-                        }
+                    success: function () {
+                        $('#user-list').DataTable().ajax.reload();
                     },
                     error: function () {
                         getAAM().notification('danger');
@@ -1465,37 +1534,37 @@
              * @param {Int}  id
              */
             function deletePolicy(id, btn) {
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Main_Policy.delete',
-                        _ajax_nonce: getLocal().nonce,
-                        id: id
-                    },
-                    beforeSend: function () {
-                        $(btn).attr('data-original', $(btn).text());
-                        $(btn).text(getAAM().__('Deleting...')).attr('disabled', true);
-                    },
-                    success: function (response) {
-                        if (response.status === 'success') {
+                getAAM().queueRequest(function () {
+                    $.ajax(`${getLocal().rest_base}wp/v2/aam_policy/${id}`, {
+                        type: 'POST',
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'DELETE'
+                        },
+                        dataType: 'json',
+                        data: {
+                            force: true
+                        },
+                        beforeSend: function () {
+                            $(btn).attr('data-original', $(btn).text());
+                            $(btn).text(getAAM().__('Deleting...')).attr(
+                                'disabled', true
+                            );
+                        },
+                        success: function () {
                             $('#policy-list').DataTable().ajax.reload();
-                        } else {
-                            getAAM().notification(
-                                'danger'
+                        },
+                        error: function () {
+                            getAAM().notification('danger');
+                        },
+                        complete: function () {
+                            $('#delete-policy-modal').modal('hide');
+
+                            $(btn).text($(btn).attr('data-original')).attr(
+                                'disabled', false
                             );
                         }
-                    },
-                    error: function () {
-                        getAAM().notification('danger');
-                    },
-                    complete: function () {
-                        $('#delete-policy-modal').modal('hide');
-                        $(btn).text($(btn).attr('data-original')).attr(
-                            'disabled', false
-                        );
-                    }
+                    });
                 });
             }
 
@@ -1854,27 +1923,26 @@
 
             /**
              *
-             * @param {type} items
-             * @param {type} status
-             * @param {type} successCallback
-             * @returns {undefined}
+             * @param {Number}   item
+             * @param {Boolean}  is_restricted
+             * @param {Callback} cb
+             *
+             * @returns {Void}
              */
-            function save(items, status, successCallback) {
+            function save(item, is_restricted, cb) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/backend-menu/${item}`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Menu.save',
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            _ajax_nonce: getLocal().nonce,
-                            items: items,
-                            status: status
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'PATCH'
                         },
+                        dataType: 'json',
+                        data: getAAM().prepareRequestSubjectData({
+                            is_restricted
+                        }),
                         success: function (response) {
-                            successCallback(response);
+                            cb(response);
                         },
                         error: function () {
                             getAAM().notification('danger');
@@ -1891,48 +1959,37 @@
                 if ($('#admin_menu-content').length) {
                     $('.aam-restrict-menu').each(function () {
                         $(this).bind('click', function () {
-                            var _this = $(this);
-                            var status = ($('i', $(this)).hasClass('icon-lock') ? 1 : 0);
+                            var _this  = $(this);
+                            var status = $('i', $(this)).hasClass('icon-lock');
                             var target = _this.data('target');
 
                             $('i', _this).attr('class', 'icon-spin4 animate-spin');
 
-                            var items = new Array(_this.data('menu-id'));
+                            save(_this.data('menu-id'), status, function () {
+                                $('#aam-menu-overwrite').show();
 
-                            $('input', target).each(function () {
-                                $(this).prop('checked', status ? true : false);
-                                items.push($(this).data('menu-id'));
-                            });
+                                if (status) { //locked the menu
+                                    $('.aam-menu-expended-list', target).append(
+                                        $('<div/>', { 'class': 'aam-lock' }).append(
+                                            getAAM().__('The entire menu is restricted with all submenus')
+                                        )
+                                    );
+                                    _this.removeClass('btn-danger').addClass('btn-primary');
+                                    _this.html('<i class="icon-lock-open"></i>' + getAAM().__('Show Menu'));
 
-                            save(items, status, function (result) {
-                                if (result.status === 'success') {
-                                    $('#aam-menu-overwrite').show();
-
-                                    if (status) { //locked the menu
-                                        $('.aam-menu-expended-list', target).append(
-                                            $('<div/>', { 'class': 'aam-lock' }).append(
-                                                getAAM().__('The entire menu is restricted with all submenus')
-                                            )
-                                        );
-                                        _this.removeClass('btn-danger').addClass('btn-primary');
-                                        _this.html('<i class="icon-lock-open"></i>' + getAAM().__('Show Menu'));
-
-                                        var ind = $('<i/>', {
-                                            'class': 'aam-panel-title-icon icon-lock text-danger'
-                                        });
-                                        $('.panel-title', target + '-heading').append(ind);
-                                    } else {
-                                        _this.removeClass('btn-primary').addClass('btn-danger');
-
-                                        _this.html(
-                                            '<i class="icon-lock"></i>' + getAAM().__('Restrict Menu')
-                                        );
-                                        $('.panel-title .icon-lock', target + '-heading').remove();
-
-                                        getAAM().fetchContent('main');
-                                    }
+                                    var ind = $('<i/>', {
+                                        'class': 'aam-panel-title-icon icon-lock text-danger'
+                                    });
+                                    $('.panel-title', target + '-heading').append(ind);
                                 } else {
-                                    _this.prop('checked', !status);
+                                    _this.removeClass('btn-primary').addClass('btn-danger');
+
+                                    _this.html(
+                                        '<i class="icon-lock"></i>' + getAAM().__('Restrict Menu')
+                                    );
+                                    $('.panel-title .icon-lock', target + '-heading').remove();
+
+                                    getAAM().fetchContent('main');
                                 }
                             });
                         });
@@ -1951,23 +2008,27 @@
                         $(this).bind('click', function () {
                             var _this = $(this);
 
-                            const status = _this.hasClass('icon-lock-open') ? 1 : 0;
+                            const status = _this.hasClass('icon-lock-open');
 
                             // Show loading indicator
                             _this.attr('class', 'aam-accordion-action icon-spin4 animate-spin');
 
                             save(
-                                [_this.data('menu-id')],
+                                _this.data('menu-id'),
                                 status,
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-menu-overwrite').show();
+                                function () {
+                                    $('#aam-menu-overwrite').show();
 
-                                        if (status) {
-                                            _this.attr('class', 'aam-accordion-action icon-lock text-danger');
-                                        } else {
-                                            _this.attr('class', 'aam-accordion-action icon-lock-open text-success');
-                                        }
+                                    if (status) {
+                                        _this.attr(
+                                            'class',
+                                            'aam-accordion-action icon-lock text-danger'
+                                        );
+                                    } else {
+                                        _this.attr(
+                                            'class',
+                                            'aam-accordion-action icon-lock-open text-success'
+                                        );
                                     }
                                 }
                             );
@@ -1976,7 +2037,32 @@
 
                     //reset button
                     $('#menu-reset').bind('click', function () {
-                        getAAM().reset('Main_Menu.reset', $(this));
+                        const _this = $(this);
+
+                        getAAM().queueRequest(function () {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/backend-menu`, {
+                                type: 'POST',
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce,
+                                    'X-HTTP-Method-Override': 'DELETE'
+                                },
+                                dataType: 'json',
+                                data: getAAM().prepareRequestSubjectData(),
+                                beforeSend: function () {
+                                    _this.attr('data-original-label', _this.text());
+                                    _this.text(getAAM().__('Resetting...'));
+                                },
+                                success: function () {
+                                    getAAM().fetchContent('main');
+                                },
+                                error: function () {
+                                    getAAM().notification('danger');
+                                },
+                                complete: function () {
+                                    _this.text(_this.attr('data-original-label'));
+                                }
+                            });
+                        });
                     });
 
                     $('[data-toggle="toggle"]', '#admin_menu-content').bootstrapToggle();
@@ -2000,27 +2086,26 @@
 
             /**
              *
-             * @param {type} items
-             * @param {type} status
-             * @param {type} successCallback
-             * @returns {undefined}
+             * @param {Number}   item
+             * @param {Boolean}  status
+             * @param {Callback} successCallback
+             *
+             * @returns {Void}
              */
-            function save(items, status, successCallback) {
+            function save(item, is_hidden, cb) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/admin-toolbar/${item}`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Toolbar.save',
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            _ajax_nonce: getLocal().nonce,
-                            items: items,
-                            status: status
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'PATCH'
                         },
+                        dataType: 'json',
+                        data: getAAM().prepareRequestSubjectData({
+                            is_hidden
+                        }),
                         success: function (response) {
-                            successCallback(response);
+                            cb(response);
                         },
                         error: function () {
                             getAAM().notification('danger');
@@ -2037,49 +2122,39 @@
                 if ($('#toolbar-content').length) {
                     $('.aam-restrict-toolbar').each(function () {
                         $(this).bind('click', function () {
-                            var _this = $(this);
-                            var status = ($('i', $(this)).hasClass('icon-lock') ? 1 : 0);
+                            var _this  = $(this);
+                            var status = $('i', $(this)).hasClass('icon-lock');
                             var target = _this.data('target');
 
                             $('i', _this).attr('class', 'icon-spin4 animate-spin');
 
-                            var items = new Array(_this.data('toolbar'));
+                            save(_this.data('toolbar'), status, function () {
+                                $('#aam-toolbar-overwrite').show();
 
-                            $('.aam-accordion-action', target).each(function () {
-                                items.push($(this).data('toolbar'));
-                            });
+                                if (status) { //locked the menu
+                                    $('.aam-menu-expended-list', target).append(
+                                        $('<div/>', { 'class': 'aam-lock' }).append(
+                                            getAAM().__('The entire menu is restricted with all submenus')
+                                        )
+                                    );
+                                    _this.removeClass('btn-danger').addClass('btn-primary');
+                                    _this.html('<i class="icon-lock-open"></i>' + getAAM().__('Show Menu'));
 
-                            save(items, status, function (result) {
-                                if (result.status === 'success') {
-                                    $('#aam-toolbar-overwrite').show();
-
-                                    if (status) { //locked the menu
-                                        $('.aam-menu-expended-list', target).append(
-                                            $('<div/>', { 'class': 'aam-lock' }).append(
-                                                getAAM().__('The entire menu is restricted with all submenus')
-                                            )
-                                        );
-                                        _this.removeClass('btn-danger').addClass('btn-primary');
-                                        _this.html('<i class="icon-lock-open"></i>' + getAAM().__('Show Menu'));
-
-                                        //add menu restricted indicator
-                                        var ind = $('<i/>', {
-                                            'class': 'aam-panel-title-icon icon-lock text-danger'
-                                        });
-                                        $('.panel-title', target + '-heading').append(ind);
-                                    } else {
-                                        _this.removeClass('btn-primary').addClass('btn-danger');
-
-                                        _this.html(
-                                            '<i class="icon-lock"></i>' + getAAM().__('Hide Menu')
-                                        );
-
-                                        $('.panel-title .icon-lock', target + '-heading').remove();
-
-                                        getAAM().fetchContent('main');
-                                    }
+                                    //add menu restricted indicator
+                                    var ind = $('<i/>', {
+                                        'class': 'aam-panel-title-icon icon-lock text-danger'
+                                    });
+                                    $('.panel-title', target + '-heading').append(ind);
                                 } else {
-                                    _this.prop('checked', !status);
+                                    _this.removeClass('btn-primary').addClass('btn-danger');
+
+                                    _this.html(
+                                        '<i class="icon-lock"></i>' + getAAM().__('Hide Menu')
+                                    );
+
+                                    $('.panel-title .icon-lock', target + '-heading').remove();
+
+                                    getAAM().fetchContent('main');
                                 }
                             });
                         });
@@ -2093,32 +2168,63 @@
                         });
                     });
 
-                    //reset button
+                    // Reset button
                     $('#toolbar-reset').bind('click', function () {
-                        getAAM().reset('Main_Toolbar.reset', $(this));
+                        const _this = $(this);
+
+                        getAAM().queueRequest(function () {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/admin-toolbar`, {
+                                type: 'POST',
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce,
+                                    'X-HTTP-Method-Override': 'DELETE'
+                                },
+                                dataType: 'json',
+                                data: getAAM().prepareRequestSubjectData(),
+                                beforeSend: function () {
+                                    _this.attr('data-original-label', _this.text());
+                                    _this.text(getAAM().__('Resetting...'));
+                                },
+                                success: function () {
+                                    getAAM().fetchContent('main');
+                                },
+                                error: function () {
+                                    getAAM().notification('danger');
+                                },
+                                complete: function () {
+                                    _this.text(_this.attr('data-original-label'));
+                                }
+                            });
+                        });
                     });
 
                     $('.aam-accordion-action', '#toolbar-list').each(function () {
                         $(this).bind('click', function () {
-                            var _this = $(this);
-
-                            const status = _this.hasClass('icon-lock-open') ? 1 : 0;
+                            var _this    = $(this);
+                            const status = _this.hasClass('icon-lock-open');
 
                             // Show loading indicator
-                            _this.attr('class', 'aam-accordion-action icon-spin4 animate-spin');
+                            _this.attr(
+                                'class',
+                                'aam-accordion-action icon-spin4 animate-spin'
+                            );
 
                             save(
                                 [_this.data('toolbar')],
                                 status,
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-toolbar-overwrite').show();
+                                function () {
+                                    $('#aam-toolbar-overwrite').show();
 
-                                        if (status) {
-                                            _this.attr('class', 'aam-accordion-action icon-lock text-danger');
-                                        } else {
-                                            _this.attr('class', 'aam-accordion-action icon-lock-open text-success');
-                                        }
+                                    if (status) {
+                                        _this.attr(
+                                            'class',
+                                            'aam-accordion-action icon-lock text-danger'
+                                        );
+                                    } else {
+                                        _this.attr(
+                                            'class',
+                                            'aam-accordion-action icon-lock-open text-success'
+                                        );
                                     }
                                 }
                             );
@@ -2147,58 +2253,31 @@
 
             /**
              *
-             * @param {type} items
-             * @param {type} status
-             * @param {type} successCallback
-             * @returns {undefined}
+             * @param {Number}   item
+             * @param {Boolean}  status
+             * @param {Callback} successCallback
+             *
+             * @returns {Void}
              */
-            function save(items, status, successCallback) {
+            function save(item, is_hidden, cb) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/component/${item}`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Metabox.save',
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            _ajax_nonce: getLocal().nonce,
-                            items: items,
-                            status: status
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'PATCH'
                         },
+                        dataType: 'json',
+                        data: getAAM().prepareRequestSubjectData({
+                            is_hidden
+                        }),
                         success: function (response) {
-                            successCallback(response);
+                            cb(response);
                         },
                         error: function () {
                             getAAM().notification('danger');
                         }
                     });
-                });
-            }
-
-            /**
-             *
-             * @returns {undefined}
-             */
-            function getContent() {
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'html',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Main_Metabox.getContent',
-                        _ajax_nonce: getLocal().nonce,
-                        subject: getAAM().getSubject().type,
-                        subjectId: getAAM().getSubject().id
-                    },
-                    success: function (response) {
-                        $('#metabox-content').replaceWith(response);
-                        $('#metabox-content').addClass('active');
-                        initialize();
-                    },
-                    error: function () {
-                        getAAM().notification('danger');
-                    }
                 });
             }
 
@@ -2217,7 +2296,7 @@
                             fetchData(endpoints, index + 1, btn);
                         } else {
                             btn.attr('class', 'icon-arrows-cw');
-                            getContent();
+                            getAAM().fetchContent('main');
                         }
                     }
                 });
@@ -2279,7 +2358,7 @@
                             complete: function () {
                                 $('#init-url-btn').text(getAAM().__('Initialize'));
                                 $('#init-url-modal').modal('hide');
-                                getContent();
+                                getAAM().fetchContent('main');
                             }
                         });
                     });
@@ -2294,30 +2373,62 @@
 
                     //reset button
                     $('#metabox-reset').bind('click', function () {
-                        getAAM().reset('Main_Metabox.reset', $(this));
+                        const _this = $(this);
+
+                        getAAM().queueRequest(function () {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/components`, {
+                                type: 'POST',
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce,
+                                    'X-HTTP-Method-Override': 'DELETE'
+                                },
+                                dataType: 'json',
+                                data: getAAM().prepareRequestSubjectData(),
+                                beforeSend: function () {
+                                    _this.attr('data-original-label', _this.text());
+                                    _this.text(getAAM().__('Resetting...'));
+                                },
+                                success: function () {
+                                    getAAM().fetchContent('main');
+                                },
+                                error: function () {
+                                    getAAM().notification('danger');
+                                },
+                                complete: function () {
+                                    _this.text(_this.attr('data-original-label'));
+                                }
+                            });
+                        });
                     });
 
                     $('.aam-accordion-action', '#metabox-list').each(function () {
                         $(this).bind('click', function () {
                             var _this = $(this);
 
-                            const status = _this.hasClass('icon-lock-open') ? 1 : 0;
+                            const status = _this.hasClass('icon-lock-open');
 
                             // Show loading indicator
-                            _this.attr('class', 'aam-accordion-action icon-spin4 animate-spin');
+                            _this.attr(
+                                'class',
+                                'aam-accordion-action icon-spin4 animate-spin'
+                            );
 
                             save(
-                                [$(this).data('metabox')],
+                                $(this).data('metabox'),
                                 status,
-                                function (result) {
-                                    if (result.status === 'success') {
-                                        $('#aam-metabox-overwrite').show();
+                                function () {
+                                    $('#aam-metabox-overwrite').show();
 
-                                        if (status) {
-                                            _this.attr('class', 'aam-accordion-action icon-lock text-danger');
-                                        } else {
-                                            _this.attr('class', 'aam-accordion-action icon-lock-open text-success');
-                                        }
+                                    if (status) {
+                                        _this.attr(
+                                            'class',
+                                            'aam-accordion-action icon-lock text-danger'
+                                        );
+                                    } else {
+                                        _this.attr(
+                                            'class',
+                                            'aam-accordion-action icon-lock-open text-success'
+                                        );
                                     }
                                 }
                             );
@@ -2344,6 +2455,22 @@
 
             /**
              *
+             * @param {*} attr
+             * @returns
+             */
+            function PreparePayload(attr = {}) {
+                const payload = Object.assign({}, attr);
+
+                if (getAAM().getSubject().type === 'role') {
+                    payload.role_id = getAAM().getSubject().id;
+                } else if (getAAM().getSubject().type === 'user') {
+                    payload.user_id = getAAM().getSubject().id;
+                }
+
+                return payload;
+            }
+            /**
+             *
              * @param {type} capability
              * @param {type} btn
              * @returns {undefined}
@@ -2354,37 +2481,42 @@
                 //show indicator
                 $(btn).attr('class', 'aam-row-action icon-spin4 animate-spin');
 
+                // Prepare request payload
+                const payload = PreparePayload({
+                    [granted ? 'add_capabilities' : 'remove_capabilities'] : [
+                        capability
+                    ]
+                });
+
+                // Determine endpoint
+                let endpoint = `${getLocal().rest_base}aam/v2/service`;
+
+                if (payload.role_id) {
+                    endpoint += `/role/${payload.role_id}`
+                } else if (payload.user_id) {
+                    endpoint += `/user/${payload.user_id}`
+                }
+
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(endpoint, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Capability.save',
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id,
-                            _ajax_nonce: getLocal().nonce,
-                            capability: capability,
-                            effect: granted
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'PATCH'
                         },
-                        success: function (result) {
-                            if (result.status === 'success') {
-                                if (granted) {
-                                    $(btn).attr('class', 'aam-row-action text-success icon-check');
-                                } else {
-                                    $(btn).attr('class', 'aam-row-action text-muted icon-check-empty');
-                                }
+                        dataType: 'json',
+                        data: payload,
+                        success: function () {
+                            if (granted) {
+                                $(btn).attr(
+                                    'class',
+                                    'aam-row-action text-success icon-check'
+                                );
                             } else {
-                                if (granted) {
-                                    getAAM().notification(
-                                        'danger',
-                                        getAAM().__('WordPress core does not allow to grant this capability')
-                                    );
-                                    $(btn).attr('class', 'aam-row-action text-muted icon-check-empty');
-                                } else {
-                                    $(btn).attr('class', 'aam-row-action text-success icon-check');
-                                }
-                                getAAM().notification(getAAM().__('Failed to process request'));
+                                $(btn).attr(
+                                    'class',
+                                    'aam-row-action text-muted icon-check-empty'
+                                );
                             }
                         },
                         error: function () {
@@ -2401,41 +2533,34 @@
              * @param {Boolean} subjectOnly
              * @param {Object}  btn
              */
-            function deleteCapability(capability, subjectOnly, btn) {
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Main_Capability.delete',
-                        _ajax_nonce: getLocal().nonce,
-                        subject: getAAM().getSubject().type,
-                        subjectId: getAAM().getSubject().id,
-                        capability: capability,
-                        subjectOnly: subjectOnly
-                    },
-                    beforeSend: function () {
-                        $(btn).attr('data-original', $(btn).text());
-                        $(btn).text(getAAM().__('Deleting...')).attr('disabled', true);
-                    },
-                    success: function (response) {
-                        if (response.status === 'success') {
+            function deleteCapability(capability, btn, scoped = false) {
+                getAAM().queueRequest(function () {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/capability/${encodeURIComponent(capability)}`, {
+                        type: 'POST',
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'DELETE'
+                        },
+                        dataType: 'json',
+                        data: (scoped ? PreparePayload() : {}),
+                        beforeSend: function () {
+                            $(btn).attr('data-original', $(btn).text());
+                            $(btn).text(getAAM().__('Deleting...')).attr('disabled', true);
+                        },
+                        success: function () {
                             $('#capability-list').DataTable().ajax.reload();
-                        } else {
-                            getAAM().notification(
-                                'danger', response.message
+                        },
+                        error: function () {
+                            getAAM().notification('danger');
+                        },
+                        complete: function () {
+                            $('#delete-capability-modal').modal('hide');
+
+                            $(btn).text(getAAM().__('Delete For All Roles')).attr(
+                                'disabled', false
                             );
                         }
-                    },
-                    error: function () {
-                        getAAM().notification('danger');
-                    },
-                    complete: function () {
-                        $('#delete-capability-modal').modal('hide');
-                        $(btn).text($(btn).attr('data-original')).attr(
-                            'disabled', false
-                        );
-                    }
+                    });
                 });
             }
 
@@ -2445,25 +2570,66 @@
              */
             function initialize() {
                 if ($('#capability-content').length) {
-                    //initialize the role list table
+                    const data = {
+                        fields: 'description,permissions,is_granted,is_assigned',
+                        list_all: true
+                    };
+
+                    if (getAAM().getSubject().type === 'role') {
+                        data.role_id = getAAM().getSubject().id;
+                    } else if (getAAM().getSubject().type === 'user') {
+                        data.user_id = getAAM().getSubject().id;
+                    }
+
+                    // Initialize the capability list table
                     const capTable = $('#capability-list').DataTable({
                         autoWidth: false,
                         ordering: false,
                         pagingType: 'simple',
                         serverSide: false,
                         ajax: {
-                            url: getLocal().ajaxurl,
-                            type: 'POST',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Main_Capability.getTable',
-                                _ajax_nonce: getLocal().nonce,
-                                subject: getAAM().getSubject().type,
-                                subjectId: getAAM().getSubject().id
-                            }
+                            url: `${getLocal().rest_base}aam/v2/service/capabilities`,
+                            type: 'GET',
+                            data,
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            dataType: 'json',
+                            dataSrc: function (json) {
+                                // Transform the received data into DT format
+                                const data = [];
+
+                                $.each(json, (_, capability) => {
+                                    const actions = [];
+
+                                    let prefix = capability.permissions.includes('allow_toggle') ? '' : 'no-';
+
+                                    if (capability.is_granted) {
+                                        actions.push(`${prefix}checked`);
+                                    } else {
+                                        actions.push(`${prefix}unchecked`);
+                                    }
+
+                                    prefix = capability.permissions.includes('allow_update') ? '' : 'no-';
+                                    actions.push(`${prefix}edit`);
+
+                                    prefix = capability.permissions.includes('allow_delete') ? '' : 'no-';
+                                    actions.push(`${prefix}delete`);
+
+                                    data.push([
+                                        capability.slug,
+                                        capability.description,
+                                        actions.join(','),
+                                        capability.is_granted,
+                                        capability
+                                    ])
+                                });
+
+                                return data;
+                            },
                         },
                         columnDefs: [
-                            { visible: false, targets: [0, 4] }
+                            { visible: false, targets: [0, 3, 4] }
                         ],
                         language: {
                             search: '_INPUT_',
@@ -2473,8 +2639,8 @@
                             infoEmpty: getAAM().__('No capabilities'),
                             lengthMenu: '_MENU_'
                         },
-                        createdRow: function (row, data, index, cells) {
-                            var actions = data[3].split(',');
+                        createdRow: function (row, data, _, cells) {
+                            var actions = data[2].split(',');
 
                             var container = $('<div/>', { 'class': 'aam-row-actions' });
                             $.each(actions, function (i, action) {
@@ -2513,9 +2679,9 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-pencil text-warning'
                                         }).bind('click', function () {
-                                            $('#capability-id').val(data[0]);
+                                            $('#update-capability-slug').val(data[0]);
                                             $('#update-capability-btn').attr('data-cap', data[0]);
-                                            $('#edit-capability-modal').modal('show');
+                                            $('#update-capability-modal').modal('show');
                                         }));
                                         break;
 
@@ -2529,28 +2695,22 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action icon-trash-empty text-danger'
                                         }).bind('click', function () {
-                                            var message = $('.aam-confirm-message', '#delete-capability-modal').data('message');
+                                            let message = $(
+                                                '.aam-confirm-message',
+                                                '#delete-capability-modal'
+                                            ).data('message');
 
                                             // replace some dynamic parts
-                                            message = message.replace('%s', '<b>' + data[0] + '</b>');
-                                            message = message.replace('%n', '<b>' + getAAM().getSubject().name + '</b>')
-                                            $('.aam-confirm-message', '#delete-capability-modal').html(message);
+                                            message = message.replace(
+                                                '%s', '<b>' + data[0] + '</b>'
+                                            );
 
-                                            // Update delete button message
-                                            var btn = $('#delete-subject-cap-btn').data('message');
-                                            btn = btn.replace('%n', getAAM().getSubject().name);
+                                            $(
+                                                '.aam-confirm-message',
+                                                '#delete-capability-modal'
+                                            ).html(message);
 
-                                            $('#delete-subject-cap-btn').text(btn);
-
-                                            if (getAAM().getSubject().type !== 'role') {
-                                                $('#delete-all-roles-cap-btn').hide();
-                                            } else {
-                                                $('#delete-all-roles-cap-btn').show();
-                                            }
-
-                                            $('#capability-id').val(data[0]);
-                                            $('#delete-subject-cap-btn').attr('data-cap', data[0]);
-                                            $('#delete-all-roles-cap-btn').attr('data-cap', data[0]);
+                                            $('#delete-capability-btn').attr('data-cap', data[0]);
                                             $('#delete-capability-modal').modal('show');
                                         }));
                                         break;
@@ -2570,28 +2730,31 @@
                                         break;
                                 }
                             });
-                            $('td:eq(2)', row).html(container);
+                            $('td:eq(1)', row).html(container);
+
+                            $('td:eq(0)', row).html(
+                                `<strong>${data[0]}</strong><br/>
+                                <small>${data[1] || 'No description provided'}</small>`
+                            );
                         }
                     });
 
                     $('a', '#capability-groups').each(function () {
                         $(this).bind('click', function () {
                             var table = $('#capability-list').DataTable();
+
                             if ($(this).data('assigned') === true) {
-                                table.column(4).search(true).draw();
+                                table.column(3).search(true).draw();
                             } else if ($(this).data('unassigned') === true) {
-                                table.column(4).search(false).draw();
+                                table.column(3).search(false).draw();
                             } else if ($(this).data('clear') === true) {
-                                table.column(1).search('').draw();
-                            } else {
-                                table.column(1).search($(this).text()).draw();
+                                table.columns().search('').draw();
                             }
                         });
                     });
 
                     $('#add-capability-modal').on('shown.bs.modal', function (e) {
                         $('#new-capability-name').val('');
-                        $('#assign-new-capability').prop('checked', true);
                         $('#new-capability-name').focus();
                     });
 
@@ -2602,43 +2765,36 @@
                     $('#add-capability-btn').bind('click', function () {
                         var _this = this;
 
-                        var capability = $.trim($('#new-capability-name').val());
+                        const slug = $.trim($('#new-capability-name').val());
                         $('#new-capability-name').parent().removeClass('has-error');
-                        var assign = $('#assign-new-capability').is(':checked');
 
-                        if (capability) {
-                            $.ajax(getLocal().ajaxurl, {
-                                type: 'POST',
-                                dataType: 'json',
-                                data: {
-                                    action: 'aam',
-                                    sub_action: 'Main_Capability.save',
-                                    _ajax_nonce: getLocal().nonce,
-                                    capability: capability,
-                                    assignToMe: assign,
-                                    effect: true,
-                                    subject: getAAM().getSubject().type,
-                                    subjectId: getAAM().getSubject().id
-                                },
-                                beforeSend: function () {
-                                    $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
-                                },
-                                success: function (response) {
-                                    if (response.status === 'success') {
+                        if (slug) {
+                            const payload = PreparePayload({
+                                slug
+                            });
+
+                            getAAM().queueRequest(function () {
+                                $.ajax(`${getLocal().rest_base}aam/v2/service/capabilities`, {
+                                    type: 'POST',
+                                    headers: {
+                                        'X-WP-Nonce': getLocal().rest_nonce
+                                    },
+                                    dataType: 'json',
+                                    data: payload,
+                                    beforeSend: function () {
+                                        $(_this).text(getAAM().__('Saving...')).attr('disabled', true);
+                                    },
+                                    success: function () {
                                         $('#add-capability-modal').modal('hide');
                                         $('#capability-list').DataTable().ajax.reload();
-                                    } else {
-                                        getAAM().notification(
-                                            'danger', getAAM().__('Failed to add new capability')
-                                        );
+                                    },
+                                    error: function () {
+                                        getAAM().notification('danger');
+                                    },
+                                    complete: function () {
+                                        $(_this).text(getAAM().__('Add Capability')).attr('disabled', false);
                                     }
-                                },
-                                error: function () {
-                                    getAAM().notification('danger');
-                                },
-                                complete: function () {
-                                    $(_this).text(getAAM().__('Add Capability')).attr('disabled', false);
-                                }
+                                });
                             });
                         } else {
                             $('#new-capability-name').parent().addClass('has-error');
@@ -2646,53 +2802,52 @@
                     });
 
                     $('#update-capability-btn').bind('click', function () {
-                        var btn = this;
-                        var cap = $.trim($('#capability-id').val());
+                        const btn      = this;
+                        const old_slug = $(this).attr('data-cap');
+                        const new_slug = $.trim($('#update-capability-slug').val())
 
-                        if (cap) {
-                            $.ajax(getLocal().ajaxurl, {
-                                type: 'POST',
-                                dataType: 'json',
-                                data: {
-                                    action: 'aam',
-                                    sub_action: 'Main_Capability.update',
-                                    subject: getAAM().getSubject().type,
-                                    subjectId: getAAM().getSubject().id,
-                                    _ajax_nonce: getLocal().nonce,
-                                    capability: $(this).attr('data-cap'),
-                                    updated: cap
-                                },
-                                beforeSend: function () {
-                                    $(btn).text(getAAM().__('Saving...')).attr('disabled', true);
-                                },
-                                success: function (response) {
-                                    if (response.status === 'success') {
+                        if (new_slug) {
+                            // Prepare request payload
+                            const payload = {
+                                new_slug
+                            };
+
+                            getAAM().queueRequest(function () {
+                                $.ajax(`${getLocal().rest_base}aam/v2/service/capability/${encodeURIComponent(old_slug)}`, {
+                                    type: 'POST',
+                                    headers: {
+                                        'X-WP-Nonce': getLocal().rest_nonce,
+                                        'X-HTTP-Method-Override': 'PATCH'
+                                    },
+                                    dataType: 'json',
+                                    data: payload,
+                                    beforeSend: function () {
+                                        $(btn).text(getAAM().__('Saving...')).attr('disabled', true);
+                                    },
+                                    success: function () {
                                         $('#capability-list').DataTable().ajax.reload();
-                                    } else {
-                                        getAAM().notification(
-                                            'danger', response.message
+                                    },
+                                    error: function () {
+                                        getAAM().notification('danger');
+                                    },
+                                    complete: function () {
+                                        $('#update-capability-modal').modal('hide');
+
+                                        $(btn).text(getAAM().__('Update For All Roles')).attr(
+                                            'disabled', false
                                         );
                                     }
-                                },
-                                error: function () {
-                                    getAAM().notification('danger');
-                                },
-                                complete: function () {
-                                    $('#edit-capability-modal').modal('hide');
-                                    $(btn).text(getAAM().__('Update Capability')).attr(
-                                        'disabled', false
-                                    );
-                                }
+                                });
                             });
                         }
                     });
 
-                    $('#delete-subject-cap-btn').bind('click', function () {
-                        deleteCapability($(this).attr('data-cap'), true, $(this));
-                    });
+                    $('#delete-capability-btn').bind('click', function () {
+                        if (getAAM().getSubject().type === 'user') {
+                            deleteCapability($(this).attr('data-cap'), $(this), true);
+                        }
 
-                    $('#delete-all-roles-cap-btn').bind('click', function () {
-                        deleteCapability($(this).attr('data-cap'), false, $(this));
+                        deleteCapability($(this).attr('data-cap'), $(this));
                     });
                 }
             }
@@ -2712,14 +2867,125 @@
         (function ($) {
 
             /**
-             * Table extra filter
-             *
-             * @type Object
+             * Breadcrumb
              */
-            var filter = {
-                type: null,
-                id:   null
-            };
+            let breadcrumb = [
+                {
+                    label: getAAM().__('Root'),
+                    level_type: null,
+                    level_id: null
+                },
+                {
+                    label: getAAM().__('Post Types'),
+                    level_type: 'type_list',
+                    level_id: null
+                }
+            ];
+
+            // Internal cache
+            const cache = {};
+
+            /**
+             *
+             * @returns
+             */
+            function CurrentLevel() {
+                return breadcrumb[breadcrumb.length - 1];
+            }
+
+            /**
+             *
+             */
+            function RenderBreadcrumb(reload) {
+                // Resetting the breadcrumb
+                $('.aam-post-breadcrumb').empty();
+
+                $.each(breadcrumb, function(i, level) {
+                    if (level.level_type === null) { // Root, append home icon
+                        $('.aam-post-breadcrumb').append('<i class="icon-home"></i>');
+                    } else {
+                        $('.aam-post-breadcrumb').append('<i class="icon-angle-double-right"></i>');
+                    }
+
+                    if (i === breadcrumb.length - 1) { // last element
+                        $('.aam-post-breadcrumb').append(
+                            $('<span/>').text(level.label)
+                        );
+                    } else {
+                        $('.aam-post-breadcrumb').append(
+                            $('<a/>').attr({
+                                'href': '#',
+                                'data-type': level.level_type,
+                                'data-id': level.level_id,
+                                'data-level': i
+                            }).bind('click', function(event) {
+                                event.preventDefault();
+
+                                breadcrumb = breadcrumb.slice(
+                                    0, $(this).data('level') + 1
+                                );
+
+                                // Take into consideration the "Root" level click
+                                if (breadcrumb.length === 1) {
+                                    breadcrumb.push({
+                                        label: getAAM().__('Post Types'),
+                                        level_type: 'type_list',
+                                        level_id: null
+                                    });
+                                    $('.aam-type-taxonomy-filter').val('type_list');
+                                }
+
+                                $('.aam-access-form').removeClass('active');
+
+                                RenderBreadcrumb();
+                            }).text(level.label)
+                        );
+                    }
+                });
+
+                AdjustList(reload);
+            }
+
+            /**
+             *
+             * @param {*} node
+             */
+            function AddToBreadcrumb(node) {
+                // If the last breadcrumb item has the same level, replace it
+                const last = breadcrumb[breadcrumb.length - 1];
+
+                if (node.level_type === last.level_type) {
+                    breadcrumb.pop();
+                }
+
+                breadcrumb.push(node);
+
+                RenderBreadcrumb(node.reload);
+            }
+
+            /**
+             *
+             * @param {*} level_type
+             * @param {*} level_id
+             * @param {*} label
+             */
+            function ReplaceInBreadcrumb(level_type, level_id, label) {
+                breadcrumb.pop();
+
+                AddToBreadcrumb({
+                    level_type,
+                    level_id,
+                    label
+                });
+            }
+
+            /**
+             *
+             */
+            function NavigateBack() {
+                breadcrumb.pop();
+                RenderBreadcrumb(false);
+            }
 
             /**
              *
@@ -2756,6 +3022,21 @@
                                     'data-id': object_id
                                 });
                             }
+
+                            // Manually update the data in a table because both
+                            // Post Types & Taxonomies are static tables
+                            if (['type', 'taxonomy'].includes(object)) {
+                                let row = null;
+
+                                if (object === 'type') {
+                                    row = cache.post_types.data.filter(t => t[0] === object_id).pop();
+                                } else {
+                                    row = cache.taxonomies.data.filter(t => t[0] === object_id).pop();
+                                }
+
+                                row[4].is_inherited = false;
+                            }
+
                             successCallback(response);
                         },
                         error: function () {
@@ -2772,13 +3053,7 @@
              * @param {*} btn
              * @param {*} callback
              */
-            function loadAccessForm(object, id, btn, callback) {
-                if ($.inArray(object, ['cat', 'tag']) !== -1) {
-                    object = 'term';
-                } else if ($.inArray(object, ['taxonomy-category', 'taxonomy-tag']) !== -1) {
-                    object = 'taxonomy';
-                }
-
+            function RenderAccessForm(level_type, level_id, btn, callback) {
                 //reset the form first
                 var container = $('.aam-access-form');
 
@@ -2793,8 +3068,8 @@
                         sub_action: 'renderContent',
                         partial: 'post-access-form',
                         _ajax_nonce: getLocal().nonce,
-                        type: object,
-                        id: id,
+                        type: level_type,
+                        id: level_id,
                         subject: getAAM().getSubject().type,
                         subjectId: getAAM().getSubject().id
                     },
@@ -2806,10 +3081,10 @@
                     },
                     success: function (response) {
                         $('#aam-access-form-container').html(response);
-                        $('#post-list_wrapper').addClass('aam-hidden');
+                        $('#post-content .dataTables_wrapper').addClass('hidden');
                         container.addClass('active');
 
-                        initializeAccessForm(object, id);
+                        InitializeAccessForm(level_type, level_id);
 
                         if (typeof callback === 'function') {
                             callback.call();
@@ -2830,26 +3105,10 @@
 
             /**
              *
-             * @param {type} type
-             * @param {type} id
-             * @param {type} title
-             * @returns {undefined}
-             */
-            function addBreadcrumbLevel(type, id, title) {
-                var level = $((type === 'type' ? '<a/>' : '<span/>')).attr({
-                    'href': '#',
-                    'data-level': type,
-                    'data-id': id
-                }).append($('<i/>', { 'class': 'icon-angle-double-right' })).append(title);
-                $('.aam-post-breadcrumb').append(level);
-            }
-
-            /**
-             *
              * @param {*} object
              * @param {*} id
              */
-            function initializeAccessForm(object, id) {
+            function InitializeAccessForm(object, id) {
                 // Initialize the checkbox events
                 $('.aam-row-action', '#aam-access-form-container').each(function () {
                     // Initialize each access property
@@ -2864,7 +3123,7 @@
                             object,
                             id,
                             function () {
-                                loadAccessForm(object, id, null, function() {
+                                RenderAccessForm(object, id, null, function() {
                                     // Trigger modal to collection additional data
                                     if (btn.data('trigger') && checked) {
                                         $('#' + btn.data('trigger')).trigger('click');
@@ -2891,30 +3150,49 @@
 
                 // Initialize the Reset to default button
                 $('#content-reset').bind('click', function () {
-                    var type = $(this).attr('data-type');
-                    var id = $(this).attr('data-id');
+                    const type   = $(this).attr('data-type');
+                    const id     = $(this).attr('data-id');
+                    const obj_id = id.split('|')[0];
 
-                    $.ajax(getLocal().ajaxurl, {
+                    const payload = {};
+
+                    if (CurrentLevel().scope) {
+                        payload.scope = CurrentLevel().scope;
+
+                        if (payload.scope === 'post') {
+                            payload.post_type = CurrentLevel().scope_id;
+                        }
+                    }
+
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/content/${type}/${obj_id}`, {
                         type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            action: 'aam',
-                            sub_action: 'Main_Post.reset',
-                            _ajax_nonce: getLocal().nonce,
-                            type: type,
-                            id: id,
-                            subject: getAAM().getSubject().type,
-                            subjectId: getAAM().getSubject().id
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'DELETE'
                         },
+                        data: getAAM().prepareRequestSubjectData(payload),
                         beforeSend: function () {
                             var label = $('#content-reset').text();
                             $('#content-reset').attr('data-original-label', label);
                             $('#content-reset').text(getAAM().__('Resetting...'));
                         },
-                        success: function (response) {
-                            if (response.status === 'success') {
-                                $('#post-overwritten').addClass('hidden');
-                                loadAccessForm(type, id);
+                        success: function () {
+                            $('#post-overwritten').addClass('hidden');
+
+                            RenderAccessForm(type, id);
+
+                            // Manually update the data in a table because both
+                            // Post Types & Taxonomies are static tables
+                            if (['type', 'taxonomy'].includes(type)) {
+                                let row = null;
+
+                                if (type === 'type') {
+                                    row = cache.post_types.data.filter(t => t[0] === obj_id).pop();
+                                } else {
+                                    row = cache.taxonomies.data.filter(t => t[0] === obj_id).pop();
+                                }
+
+                                row[4].is_inherited = true;
                             }
                         },
                         complete: function () {
@@ -2941,7 +3219,7 @@
                         id,
                         function () {
                             $('#modal-hidden').modal('hide');
-                            loadAccessForm(object, id);
+                            RenderAccessForm(object, id);
                         }
                     );
                 });
@@ -2960,7 +3238,7 @@
                         id,
                         function () {
                             $('#modal-teaser').modal('hide');
-                            loadAccessForm(object, id);
+                            RenderAccessForm(object, id);
                         }
                     );
                 });
@@ -2979,7 +3257,7 @@
                         id,
                         function () {
                             $('#modal-limited').modal('hide');
-                            loadAccessForm(object, id);
+                            RenderAccessForm(object, id);
                         }
                     );
                 });
@@ -3013,7 +3291,7 @@
                                         getAAM().__('Counter was reset successfully')
                                     );
                                     $('#modal-limited').modal('hide');
-                                    loadAccessForm(object, id);
+                                    RenderAccessForm(object, id);
                                 }
                             },
                             error: function () {
@@ -3053,7 +3331,7 @@
                         id,
                         function () {
                             $('#modal-redirect').modal('hide');
-                            loadAccessForm(object, id);
+                            RenderAccessForm(object, id);
                         }
                     );
                 });
@@ -3072,7 +3350,7 @@
                         id,
                         function () {
                             $('#modal-password').modal('hide');
-                            loadAccessForm(object, id);
+                            RenderAccessForm(object, id);
                         }
                     );
                 });
@@ -3091,7 +3369,7 @@
                         id,
                         function () {
                             $('#modal-cease').modal('hide');
-                            loadAccessForm(object, id);
+                            RenderAccessForm(object, id);
                         }
                     );
                 });
@@ -3119,7 +3397,7 @@
             }
 
             getAAM().addHook('load-access-form', function(params) {
-                loadAccessForm(...params);
+                RenderAccessForm(...params);
             });
 
             getAAM().addHook('save-post-settings', function(params) {
@@ -3128,205 +3406,363 @@
 
             /**
              *
+             * @param {*} cb
              */
-            function initialize() {
-                if ($('#post-content').length) {
-                    //reset filter to default
-                    filter.type = null;
-                    filter.id = null;
+            function FetchPostTypeList(cb) {
+                if (cache.post_types === undefined) {
+                    // Fetching the list of all registered post types.
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/content/types`, {
+                        type: 'GET',
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
+                        },
+                        data: getAAM().prepareRequestSubjectData(),
+                        success: function (response) {
+                            const types = [];
 
-                    //initialize the role list table
-                    $('#post-list').DataTable({
+                            $.each(response.list, (_, item) => {
+                                types.push([
+                                    item.slug,
+                                    item.icon || (item.is_hierarchical ? 'dashicons-admin-page' : 'dashicons-media-default'),
+                                    item.title,
+                                    ['drilldown', 'manage'],
+                                    item
+                                ]);
+                            });
+
+                            cache.post_types = {
+                                data: types,
+                                recordsTotal: response.summary.total_count,
+                                recordsFiltered: response.summary.filtered_count
+                            };
+
+                            cb(cache.post_types);
+                        }
+                    });
+                } else {
+                    cb(cache.post_types);
+                }
+            }
+
+            /**
+             *
+             * @param {*} cb
+             */
+            function FetchTaxonomyList(cb) {
+                // Fetching the list of all registered post types.
+                if (cache.taxonomies === undefined) {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/content/taxonomies`, {
+                        type: 'GET',
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
+                        },
+                        data: getAAM().prepareRequestSubjectData(),
+                        success: function (response) {
+                            const taxonomies = [];
+
+                            $.each(response.list, (_, item) => {
+                                taxonomies.push([
+                                    item.slug,
+                                    item.is_hierarchical ? 'dashicons-category' : 'dashicons-tag',
+                                    item.title,
+                                    ['drilldown', 'manage'],
+                                    item
+                                ]);
+                            });
+
+                            cache.taxonomies = {
+                                data: taxonomies,
+                                recordsTotal: response.summary.total_count,
+                                recordsFiltered: response.summary.filtered_count
+                            };
+
+                            cb(cache.taxonomies);
+                        }
+                    });
+                } else {
+                    cb(cache.taxonomies);
+                }
+            }
+
+            /**
+             *
+             * @param {*} filters
+             * @param {*} cb
+             */
+            function FetchPostList(filters, cb) {
+                // Fetching the list of posts
+                $.ajax(`${getLocal().rest_base}aam/v2/service/content/posts`, {
+                    type: 'GET',
+                    headers: {
+                        'X-WP-Nonce': getLocal().rest_nonce
+                    },
+                    data: getAAM().prepareRequestSubjectData({
+                        type: CurrentLevel().level_id,
+                        offset: filters.start,
+                        per_page: filters.length,
+                        search: filters.search.value
+                    }),
+                    success: function (response) {
+                        const result = {
+                            data: [],
+                            recordsTotal: 0,
+                            recordsFiltered: 0
+                        };
+
+                        if (response && response.list) {
+                            $.each(response.list, (_, item) => {
+                                result.data.push([
+                                    item.id,
+                                    item.icon || (item.is_hierarchical ? 'dashicons-admin-page' : 'dashicons-media-default'),
+                                    item.title,
+                                    ['edit', 'manage'],
+                                    item
+                                ]);
+                            });
+
+                            result.recordsTotal = response.summary.total_count;
+                            result.recordsFiltered = response.summary.filtered_count;
+                        }
+
+                        cb(result);
+                    }
+                });
+            }
+
+            /**
+             *
+             * @param {*} filters
+             * @param {*} cb
+             */
+            function FetchTermList(filters, cb) {
+                const payload = {
+                    taxonomy: CurrentLevel().level_id,
+                    offset: filters.start,
+                    per_page: filters.length,
+                    search: filters.search.value
+                };
+
+                if (CurrentLevel().scope) {
+                    payload.scope     = CurrentLevel().scope;
+                    payload.post_type = CurrentLevel().scope_id;
+                }
+
+                // Fetching the list of terms
+                $.ajax(`${getLocal().rest_base}aam/v2/service/content/terms`, {
+                    type: 'GET',
+                    headers: {
+                        'X-WP-Nonce': getLocal().rest_nonce
+                    },
+                    data: getAAM().prepareRequestSubjectData(payload),
+                    success: function (response) {
+                        const result = {
+                            data: [],
+                            recordsTotal: 0,
+                            recordsFiltered: 0
+                        };
+
+                        $.each(response.list, (_, item) => {
+                            result.data.push([
+                                item.id,
+                                item.is_hierarchical ? 'dashicons-category' : 'dashicons-tag',
+                                item.title,
+                                getAAM().applyFilters(
+                                    'aam-term-actions',
+                                    ['edit', 'manage'],
+                                    item
+                                ),
+                                item
+                            ]);
+                        });
+
+                        result.recordsTotal = response.summary.total_count;
+                        result.recordsFiltered = response.summary.filtered_count;
+
+                        cb(result);
+                    }
+                });
+            }
+
+            /**
+             *
+             */
+            function AdjustList(reload = true) {
+                const current = CurrentLevel();
+
+                if ([null, 'type_list'].includes(current.level_type)) {
+                    PrepareTypeListTable(reload);
+                } else if (current.level_type === 'taxonomy_list') {
+                    PrepareTaxonomyListTable(reload);
+                } else if (current.level_type === 'type_posts') {
+                    PreparePostListTable(reload);
+                } else if (current.level_type === 'type_terms') {
+                    PrepareTermListTable(CurrentLevel().scope, reload);
+                } else if (current.level_type === 'taxonomy_terms') {
+                    PrepareTermListTable(null, reload)
+                }
+            }
+
+            /**
+             *
+             * @returns
+             */
+            function RenderTypeTaxonomySwitch(){
+                const current = CurrentLevel();
+                const options = [
+                    {
+                        value: 'type_list',
+                        label: getAAM().__('Post Types'),
+                        selected: [null, 'type_list'].includes(current.level_type)
+                    },
+                    {
+                        value: 'taxonomy_list',
+                        label: getAAM().__('Taxonomies'),
+                        selected: current.level_type === 'taxonomy_list'
+                    }
+                ];
+
+                return $('<select>').attr({
+                    'class': 'form-control input-sm aam-ml-1 aam-type-taxonomy-filter aam-filtered-list'
+                }).html(
+                    options.map(o => `'<option value="${o.value}" ${o.selected ? 'selected' : ''}>${o.label}</option>`).join('')
+                ).bind('change', function () {
+                    $(`.aam-type-taxonomy-filter option[value="${$(this).val()}"]`).prop(
+                        'selected', true
+                    );
+
+                    ReplaceInBreadcrumb(
+                        $(this).val(), null, $('option:selected', $(this)).text()
+                    );
+                });
+            }
+
+            /**
+             *
+             * @param {*} filter_id
+             */
+            function RenderPostTaxonomySwitch(filter_id) {
+                FetchTaxonomyList(function(response) {
+                    const current = CurrentLevel();
+                    const options = [
+                        {
+                            value: `type_posts:${current.level_id}`,
+                            label: getAAM().__('Only %s List').replace('%s', CurrentLevel().label),
+                            selected: current.level_type === 'type'
+                        }
+                    ];
+                    $.each(response.data.filter(t => t[4].post_types.includes(current.level_id)), function(_, item) {
+                        options.push({
+                            value: `type_terms:${current.level_id}:${item[0]}`,
+                            label: item[2],
+                            selected: current.level_type === 'taxonomy' && current.level_id === item[0]
+                        });
+                    });
+
+                    const filter_controller = $('<select>').attr({
+                        'class': 'form-control input-sm aam-ml-1 aam-post-taxonomy-filter aam-filtered-list'
+                    }).html(
+                        options.map(o => `'<option value="${o.value}" ${o.selected ? 'selected' : ''}>${o.label}</option>`).join('')
+                    ).bind('change', function () {
+                        const value                       = $(this).val();
+                        const [level_type, post_type, id] = $(this).val().split(':');
+
+                        AddToBreadcrumb({
+                            level_type,
+                            level_id: id,
+                            label: $(`.aam-post-taxonomy-filter option:selected`).text(),
+                            scope: 'post',
+                            scope_id: post_type
+                        });
+
+                        $(`.aam-post-taxonomy-filter option[value="${value}"]`).prop(
+                            'selected', true
+                        );
+                    });
+
+                    if ($('.aam-post-taxonomy-filter', filter_id).length) {
+                        $('.aam-post-taxonomy-filter', filter_id).replaceWith(filter_controller);
+                    } else {
+                        $(filter_id).append(filter_controller);
+                    }
+                });
+            }
+
+            /**
+             *
+             * @param {*} data
+             */
+            function NavigateToAccessForm(data) {
+                RenderAccessForm(data.level_type, data.level_id, data.btn, () => {
+                    // Update the breadcrumb
+                    AddToBreadcrumb({
+                        level_type: data.level_type,
+                        level_id: data.level_id,
+                        label: data.label,
+                        scope: data.scope,
+                        scope_id: data.scope_id
+                    });
+                });
+            }
+
+            /**
+             *
+             */
+            function PrepareTypeListTable() {
+                $('#post-content .dataTables_wrapper').addClass('hidden');
+                $('#post-content .table').addClass('hidden');
+
+                if (!$('#type-list').hasClass('dataTable')) {
+                    $('#type-list').DataTable({
                         autoWidth: false,
-                        ordering: true,
+                        ordering: false,
                         pagingType: 'simple',
                         processing: true,
-                        serverSide: true,
-                        ajax: {
-                            url: getLocal().ajaxurl,
-                            type: 'POST',
-                            data: function (data) {
-                                data.action = 'aam';
-                                data.sub_action = 'Main_Post.getTable';
-                                data._ajax_nonce = getLocal().nonce;
-                                data.subject = getAAM().getSubject().type;
-                                data.subjectId = getAAM().getSubject().id;
-                                data.type = filter.type;
-                                data.typeId = filter.id;
-                            }
+                        saveState: true,
+                        ajax: function(_, cb) {
+                            FetchPostTypeList(cb);
                         },
                         columnDefs: [
-                            { visible: false, targets: [0, 1, 5, 6, 7] },
-                            { orderable: false, targets: [0, 1, 2, 4, 5, 6] }
+                            { visible: false, targets: [0, 4] },
+                            { searchable: false, targets: [0, 1, 3, 4] }
                         ],
                         language: {
                             search: '_INPUT_',
                             searchPlaceholder: getAAM().__('Search'),
-                            info: getAAM().__('_TOTAL_ object(s)'),
+                            info: getAAM().__('_TOTAL_ type(s)'),
                             infoFiltered: '',
                             lengthMenu: '_MENU_'
                         },
                         initComplete: function () {
-                            $('#post-list_filter .form-control').bind('change', function () {
-                                if ($(this).val()) {
-                                    $(this).addClass('highlight');
-                                } else {
-                                    $(this).removeClass('highlight');
-                                }
-                            });
+                            // Adding the root level controls
+                            $('#type-list_length').append(RenderTypeTaxonomySwitch());
                         },
-                        rowCallback: function (row, data) {
-                            // Object type icon
-                            var icon = 'icon-doc-text-inv';
-                            var tooltip = getAAM().__('Post');
+                        rowCallback: function(row, data) {
+                            let overwritten = '';
 
-                            switch (data[2]) {
-                                case 'type':
-                                    icon = 'icon-box';
-                                    tooltip = getAAM().__('Post Type');
-                                    break;
-
-                                case 'taxonomy-category':
-                                    icon = 'icon-folder';
-                                    tooltip = getAAM().__('Hierarchical Taxonomy');
-                                    break;
-
-                                case 'cat':
-                                    icon = 'icon-folder';
-                                    tooltip = getAAM().__('Hierarchical Term');
-                                    break;
-
-                                case 'taxonomy-tag':
-                                    icon = 'icon-tag';
-                                    tooltip = getAAM().__('Tag Taxonomy');
-                                    break;
-
-                                case 'tag':
-                                    icon = 'icon-tag';
-                                    tooltip = getAAM().__('Tag');
-                                    break;
-
-                                default:
-                                    break;
+                            if (!data[4].is_inherited) {
+                                overwritten = ' aam-access-overwritten';
                             }
 
-                            if (data[6]) {
-                                $('td:eq(0)', row).html($('<i/>', {
-                                    'class': icon + ' aam-access-overwritten',
-                                    'data-toggle': "tooltip",
-                                    'title': getAAM().__('Customized Settings')
-                                }));
-                            } else {
-                                $('td:eq(0)', row).html($('<i/>', {
-                                    'class': icon,
-                                    'data-toggle': "tooltip",
-                                    'title': tooltip
-                                }));
-                            }
+                            $('td:eq(0)', row).html(
+                                `<div class="dashicons-before ${data[1]}${overwritten}"></div>`
+                            );
 
-                            // Update the title to a link
-                            if (data[2] === 'type') {
+                            // Decorating the post type title & make it actionable
                                 $('td:eq(1)', row).html($('<a/>', {
-                                    href: '#'
-                                }).bind('click', function () {
-                                    //visual feedback - show loading icon
-                                    $('td:eq(0)', row).html(
-                                        '<i class="icon-spin4 animate-spin"></i>'
-                                    );
-                                    //set filter
-                                    filter.type = 'type';
-                                    filter.id = data[0];
+                                href: '#'
+                            }).bind('click', function () {
+                                AddToBreadcrumb({
+                                    level_type: 'type_posts',
+                                    level_id: data[0],
+                                    label: data[2]
+                                });
+                            }).html(data[2]));
 
-                                    //finally reload the data
-                                    $('#post-list').DataTable().search('');
-                                    $('#post-list').DataTable().ajax.reload();
+                            $('td:eq(1)', row).append(`<sup>${data[0]}</sup>`);
 
-                                    //update the breadcrumb
-                                    addBreadcrumbLevel('type', data[0], data[3]);
-                                }).html(data[3]));
-                                $('td:eq(1)', row).append('<sup> ' + getAAM().__('post type') + '</sup>');
+                            const container = $('<div/>', { 'class': 'aam-row-actions' });
 
-                                // Add additional information about post type
-                                $('td:eq(1)', row).append(
-                                    $('<i class="aam-row-subtitle"></i>')
-                                    .append($('<span/>').text(getAAM().__('Slug:') + ' '))
-                                    .append($('<strong/>').text(data[0]))
-                                );
-                            } else if ($.inArray(data[2], ['taxonomy-category', 'taxonomy-tag']) !== -1) {
-                                $('td:eq(1)', row).html($('<a/>', {
-                                    href: '#'
-                                }).bind('click', function () {
-                                    //visual feedback - show loading icon
-                                    $('td:eq(0)', row).html(
-                                        '<i class="icon-spin4 animate-spin"></i>'
-                                    );
-                                    //set filter
-                                    filter.type = 'taxonomy';
-                                    filter.id = data[0];
-
-                                    //finally reload the data
-                                    $('#post-list').DataTable().search('');
-                                    $('#post-list').DataTable().ajax.reload();
-
-                                    //update the breadcrumb
-                                    addBreadcrumbLevel('taxonomy', data[0], data[3]);
-                                }).html(data[3]));
-                                $('td:eq(1)', row).append('<sup> ' + getAAM().__('taxonomy') + '</sup>');
-
-                                $('td:eq(1)', row).append(
-                                    $('<i class="aam-row-subtitle"></i>')
-                                    .append($('<span/>').text(getAAM().__('Slug:') + ' '))
-                                    .append($('<strong/>').text(data[0]))
-                                );
-                            } else if (data[2] === 'cat') {
-                                $('td:eq(1)', row).html($('<span/>').text(data[3]));
-
-                                let sub = $('<i class="aam-row-subtitle"></i>');
-
-                                if (data[5]) {
-                                    sub.append($('<span/>').text(getAAM().__('Parent') + ': '));
-                                    sub.append($('<strong/>').text(data[5] + '; '));
-                                }
-
-                                sub.append($('<span/>').text(getAAM().__('ID:') + ' '));
-                                sub.append($('<strong/>').text(data[0].split('|')[0] + '; '));
-                                sub.append($('<span/>').text(getAAM().__('Slug:') + ' '));
-                                sub.append($('<strong/>').text(data[7]));
-
-                                $('td:eq(1)', row).append(sub);
-                            } else if (data[2] === 'tag') {
-                                $('td:eq(1)', row).html($('<span/>').text(data[3]));
-
-                                $('td:eq(1)', row).append(
-                                    $('<i class="aam-row-subtitle"></i>')
-                                    .append($('<span/>').text(getAAM().__('ID:') + ' '))
-                                    .append($('<strong/>').text(data[0].split('|')[0] + '; '))
-                                    .append($('<span/>').text(getAAM().__('Slug:') + ' '))
-                                    .append($('<strong/>').text(data[7]))
-                                );
-                            } else {
-                                $('td:eq(1)', row).html($('<span/>').text(data[3]));
-
-                                let sub = $('<i class="aam-row-subtitle"></i>');
-
-                                if (data[5]) {
-                                    sub.append($('<span/>').text(getAAM().__('Parent') + ': '));
-                                    sub.append($('<strong/>').text(data[5] + '; '));
-                                }
-
-                                sub.append($('<span/>').text(getAAM().__('ID:') + ' '));
-                                sub.append($('<strong/>').text(data[0] + '; '));
-                                sub.append($('<span/>').text(getAAM().__('Slug:') + ' '));
-                                sub.append($('<strong/>').text(data[7]));
-
-                                $('td:eq(1)', row).append(sub);
-                            }
-
-                            //update the actions
-                            var actions = data[4].split(',');
-
-                            var container = $('<div/>', { 'class': 'aam-row-actions' });
-                            $.each(actions, function (i, action) {
+                            $.each(data[3], function (_, action) {
                                 switch (action) {
                                     case 'drilldown':
                                         $(container).append($('<i/>', {
@@ -3344,8 +3780,218 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action text-info icon-cog'
                                         }).bind('click', function () {
-                                            loadAccessForm(data[2], data[0], $(this), function () {
-                                                addBreadcrumbLevel('edit', data[2], data[3]);
+                                            NavigateToAccessForm({
+                                                level_type: 'type',
+                                                level_id: data[0],
+                                                label: data[2],
+                                                btn: $(this)
+                                            });
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Manage Access')
+                                        }));
+                                        $('.tooltip').remove();
+                                        break;
+
+                                    default:
+                                        getAAM().triggerHook('post-action', {
+                                            container: container,
+                                            action: action,
+                                            data: data
+                                        });
+                                        break;
+                                }
+                            });
+                            $('td:eq(2)', row).html(container);
+                        }
+                    });
+                } else {
+                    $('#type-list').DataTable().ajax.reload(null, false);
+                }
+
+                $('#type-list_wrapper .table').removeClass('hidden');
+                $('#type-list_wrapper').removeClass('hidden');
+            }
+
+            /**
+             *
+             */
+            function PrepareTaxonomyListTable() {
+                $('#post-content .dataTables_wrapper').addClass('hidden');
+                $('#post-content .table').addClass('hidden');
+
+                if (!$('#taxonomy-list').hasClass('dataTable')) {
+                    $('#taxonomy-list').DataTable({
+                        autoWidth: false,
+                        ordering: false,
+                        pagingType: 'simple',
+                        processing: true,
+                        saveState: true,
+                        ajax: function(_, cb) {
+                            FetchTaxonomyList(cb);
+                        },
+                        columnDefs: [
+                            { visible: false, targets: [0, 4] },
+                            { searchable: false, targets: [0, 1, 3, 4] }
+                        ],
+                        language: {
+                            search: '_INPUT_',
+                            searchPlaceholder: getAAM().__('Search'),
+                            info: getAAM().__('_TOTAL_ taxonomy(s)'),
+                            infoFiltered: '',
+                            lengthMenu: '_MENU_'
+                        },
+                        initComplete: function () {
+                            // Adding the root level controls
+                            $('#taxonomy-list_length').append(RenderTypeTaxonomySwitch());
+                        },
+                        rowCallback: function(row, data) {
+                            let overwritten = '';
+
+                            if (!data[4].is_inherited) {
+                                overwritten = ' aam-access-overwritten';
+                            }
+
+                            $('td:eq(0)', row).html(
+                                `<div class="dashicons-before ${data[1]}${overwritten}"></div>`
+                            );
+
+                            // Decorating the post type title & make it actionable
+                                $('td:eq(1)', row).html($('<a/>', {
+                                href: '#'
+                            }).bind('click', function () {
+                                AddToBreadcrumb({
+                                    level_type: 'taxonomy_terms',
+                                    level_id: data[0],
+                                    label: data[2]
+                                });
+                            }).html(data[2]));
+
+                            $('td:eq(1)', row).append(`<sup>${data[0]}</sup>`);
+
+                            const container = $('<div/>', { 'class': 'aam-row-actions' });
+
+                            $.each(data[3], function (_, action) {
+                                switch (action) {
+                                    case 'drilldown':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action text-success icon-level-down'
+                                        }).bind('click', function () {
+                                            $('td:eq(1) > a', row).trigger('click');
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Drill-Down')
+                                        }));
+                                        $('.tooltip').remove();
+                                        break;
+
+                                    case 'manage':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action text-info icon-cog'
+                                        }).bind('click', function () {
+                                            NavigateToAccessForm({
+                                                level_type: 'taxonomy',
+                                                level_id: data[0],
+                                                label: data[2],
+                                                btn: $(this)
+                                            });
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Manage Access')
+                                        }));
+                                        $('.tooltip').remove();
+                                        break;
+
+                                    default:
+                                        getAAM().triggerHook('post-action', {
+                                            container: container,
+                                            action: action,
+                                            data: data
+                                        });
+                                        break;
+                                }
+                            });
+                            $('td:eq(2)', row).html(container);
+                        }
+                    });
+                } else {
+                    $('#taxonomy-list').DataTable().ajax.reload(null, false);
+                }
+
+                $('#taxonomy-list_wrapper .table').removeClass('hidden');
+                $('#taxonomy-list_wrapper').removeClass('hidden');
+            }
+
+            /**
+             *
+             */
+            function PreparePostListTable(reload = false) {
+                $('#post-content .dataTables_wrapper').addClass('hidden');
+                $('#post-content .table').addClass('hidden');
+
+                if (!$('#post-list').hasClass('dataTable')) {
+                    $('#post-list').DataTable({
+                        autoWidth: false,
+                        ordering: false,
+                        processing: true,
+                        serverSide: true,
+                        pagingType: 'simple_numbers',
+                        ajax: function(filters, cb) {
+                            FetchPostList(filters, cb);
+                        },
+                        columnDefs: [
+                            { visible: false, targets: [0, 4] },
+                            { searchable: false, targets: [0, 1, 3, 4] }
+                        ],
+                        language: {
+                            search: '_INPUT_',
+                            searchPlaceholder: getAAM().__('Search'),
+                            info: getAAM().__('_TOTAL_ post(s)'),
+                            infoFiltered: '',
+                            lengthMenu: '_MENU_'
+                        },
+                        initComplete: function () {
+                            // Adding the root level controls
+                            RenderPostTaxonomySwitch('#post-list_length');
+                        },
+                        rowCallback: function(row, data) {
+                            let overwritten = '';
+
+                            if (!data[4].is_inherited) {
+                                overwritten = ' aam-access-overwritten';
+                            }
+
+                            $('td:eq(0)', row).html(
+                                `<div class="dashicons-before ${data[1]}${overwritten}"></div>`
+                            );
+
+                            // Decorating the post type title & make it actionable
+                                $('td:eq(1)', row).html($('<a/>', {
+                                href: '#'
+                            }).bind('click', function () {
+                                NavigateToAccessForm({
+                                    level_type: 'post',
+                                    level_id: data[0],
+                                    label: data[2],
+                                    btn: $('.icon-cog', row)
+                                });
+                            }).html(data[2]));
+
+                            $('td:eq(1)', row).append(`<sup>ID: ${data[0]}</sup>`);
+
+                            const container = $('<div/>', { 'class': 'aam-row-actions' });
+
+                            $.each(data[3], function (_, action) {
+                                switch (action) {
+                                    case 'manage':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action text-info icon-cog'
+                                        }).bind('click', function () {
+                                            NavigateToAccessForm({
+                                                level_type: 'post',
+                                                level_id: data[0],
+                                                label: data[2],
+                                                btn: $(this)
                                             });
                                         }).attr({
                                             'data-toggle': "tooltip",
@@ -3358,7 +4004,10 @@
                                         $(container).append($('<i/>', {
                                             'class': 'aam-row-action text-warning icon-pencil'
                                         }).bind('click', function () {
-                                            window.open(data[1], '_blank');
+                                            window.open(
+                                                getLocal().url.editPost + `?post=${data[0]}&action=edit`,
+                                                '_blank'
+                                            );
                                         }).attr({
                                             'data-toggle': "tooltip",
                                             'title': getAAM().__('Edit')
@@ -3383,35 +4032,186 @@
                             $('td:eq(2)', row).html(container);
                         }
                     });
-
-                    //initialize the breadcrumb
-                    $('.aam-post-breadcrumb').delegate('a', 'click', function () {
-                        filter.type = $(this).data('level');
-                        filter.id   = $(this).data('id');
-
-                        $('#post-list').DataTable().ajax.reload();
-                        $(this).nextAll().remove();
-                        $('.aam-slide-form').removeClass('active');
-                        $('#post-list_wrapper').removeClass('aam-hidden');
-                        $('#post-overwritten').addClass('hidden');
-                    });
-
-                    //go back button
-                    $('.aam-slide-form').delegate('.post-back', 'click', function () {
-                        $('.aam-slide-form').removeClass('active');
-                        $('#post-list_wrapper').removeClass('aam-hidden');
-                        $('.aam-post-breadcrumb span:last').remove();
-                        $('#post-term--overwritten').addClass('hidden');
-                    });
+                } else {
+                    // Reload list of posts
+                    $('#post-list').DataTable().ajax.reload(null, reload);
+                    // Reload the list of taxonomies
+                    RenderPostTaxonomySwitch('#post-list_length');
                 }
 
-                if ($('#aam-access-form-container').is(':empty') === false) {
-                    if ($('#content-object-type').val()) {
-                        loadAccessForm(
-                            $('#content-object-type').val(),
-                            $('#content-object-id').val()
-                        );
-                    }
+                $('#post-list_wrapper .table').removeClass('hidden');
+                $('#post-list_wrapper').removeClass('hidden');
+            }
+
+            /**
+             *
+             * @param {*} scope
+             */
+            function PrepareTermListTable(scope = null, reload = false) {
+                $('#post-content .dataTables_wrapper').addClass('hidden');
+                $('#post-content .table').addClass('hidden');
+
+                $('#term-list').attr('data-scope', scope);
+
+                if (!$('#term-list').hasClass('dataTable')) {
+                    $('#term-list').DataTable({
+                        autoWidth: false,
+                        ordering: false,
+                        pagingType: 'simple',
+                        processing: true,
+                        serverSide: true,
+                        pagingType: 'simple_numbers',
+                        ajax: function(filters, cb) {
+                            FetchTermList(filters, cb);
+                        },
+                        columnDefs: [
+                            { visible: false, targets: [0, 4] },
+                            { searchable: false, targets: [0, 1, 3, 4] }
+                        ],
+                        language: {
+                            search: '_INPUT_',
+                            searchPlaceholder: getAAM().__('Search'),
+                            info: getAAM().__('_TOTAL_ term(s)'),
+                            infoFiltered: '',
+                            lengthMenu: '_MENU_'
+                        },
+                        rowCallback: function(row, data) {
+                            let overwritten = '';
+
+                            if (!data[4].is_inherited) {
+                                overwritten = ' aam-access-overwritten';
+                            }
+
+                            $('td:eq(0)', row).html(
+                                `<div class="dashicons-before ${data[1]}${overwritten}"></div>`
+                            );
+
+                            // Decorating the term title & make it actionable
+                                $('td:eq(1)', row).html($('<a/>', {
+                                href: '#'
+                            }).bind('click', function () {
+                                const scope  = $('#term-list').attr('data-scope');
+                                let scope_id = null;
+
+                                // Preparing internal AAM term's id
+                                let id = `${data[0]}|${data[4].taxonomy}`;
+
+                                // If scope is post, then we are withing certain
+                                // post type
+                                if (scope === 'post') {
+                                    id      += `|${data[4].post_type}`;
+                                    scope_id = data[4].post_type;
+                                }
+
+                                NavigateToAccessForm({
+                                    level_type: 'term',
+                                    level_id: id,
+                                    label: data[2],
+                                    btn:  $('.icon-cog', row),
+                                    scope,
+                                    scope_id
+                                });
+                            }).html(data[2]));
+
+                            $('td:eq(1)', row).append(`<sup>ID: ${data[0]}</sup>`);
+
+                            const container = $('<div/>', { 'class': 'aam-row-actions' });
+
+                            $.each(data[3], function (_, action) {
+                                switch (action) {
+                                    case 'manage':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action text-info icon-cog'
+                                        }).bind('click', function () {
+                                            const scope = $('#term-list').attr('data-scope');
+                                            let scope_id = null;
+
+                                            // Preparing internal AAM term's id
+                                            let id = `${data[0]}|${data[4].taxonomy}`;
+
+                                            // If scope is post, then we are withing certain
+                                            // post type
+                                            if (scope === 'post') {
+                                                id      += `|${data[4].post_type}`;
+                                                scope_id = data[4].post_type;
+                                            }
+
+                                            NavigateToAccessForm({
+                                                level_type: 'term',
+                                                level_id: id,
+                                                label: data[2],
+                                                btn: $(this),
+                                                scope,
+                                                scope_id
+                                            });
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Manage Access')
+                                        }));
+                                        $('.tooltip').remove();
+                                        break;
+
+                                    case 'edit':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action text-warning icon-pencil'
+                                        }).bind('click', function () {
+                                            const url = getLocal().url.editTerm + `?taxonomy=${data[4].taxonomy}&tag_ID=${data[0]}`;
+                                            window.open(url, '_blank');
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Edit')
+                                        }));
+                                        break;
+
+                                    case 'no-edit':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action text-muted icon-pencil'
+                                        }));
+                                        break;
+
+                                    default:
+                                        getAAM().triggerHook('post-action', {
+                                            container: container,
+                                            action: action,
+                                            data: data
+                                        });
+                                        break;
+                                }
+                            });
+                            $('td:eq(2)', row).html(container);
+                        }
+                    });
+                } else {
+                    $('#term-list').DataTable().ajax.reload(null, reload);
+                }
+
+                $('#term-list_wrapper .table').removeClass('hidden');
+                $('#term-list_wrapper').removeClass('hidden');
+            }
+
+            /**
+             *
+             */
+            function initialize() {
+                if ($('#post-content').length) {
+                    RenderBreadcrumb();
+
+                    // Go back button
+                    $('.aam-slide-form').delegate('.post-back', 'click', function () {
+                        $('.aam-slide-form').removeClass('active');
+                        NavigateBack();
+                    });
+
+                    // Adjust current list when switching between subjects or pages
+                    AdjustList();
+                }
+
+                // Take into consideration the initial load of a AAM Metabox
+                const level_type = $('#content-object-type').val();
+                const level_id = $('#content-object-id').val();
+
+                if (level_type) {
+                    InitializeAccessForm(level_type, level_id);
                 }
             }
 
@@ -3435,7 +4235,7 @@
              */
             function save(payload, successCallback) {
                 getAAM().queueRequest(function () {
-                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/403`, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/access-denied`, {
                         type: 'POST',
                         headers: {
                             'X-WP-Nonce': getLocal().rest_nonce
@@ -3537,7 +4337,7 @@
                     $('#redirect-reset').bind('click', function () {
                         const _btn = $(this);
 
-                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/403`, {
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/access-denied`, {
                             type: 'POST',
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce,
@@ -3830,7 +4630,7 @@
              */
             function save(payload, successCallback) {
                 getAAM().queueRequest(function () {
-                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/404`, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/not-found`, {
                         type: 'POST',
                         headers: {
                             'X-WP-Nonce': getLocal().rest_nonce
@@ -3868,7 +4668,7 @@
                             // provided
                             const type = $(this).val();
 
-                            if (type === 'default') {
+                            if (['default', 'login_redirect'].includes(type)) {
                                 save(getAAM().prepareRequestSubjectData({ type }), () => {
                                     $('#aam-404redirect-overwrite').show();
                                 });
@@ -3903,7 +4703,7 @@
                     $('#404redirect-reset').bind('click', function () {
                         const _btn = $(this);
 
-                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/404`, {
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/redirect/not-found`, {
                             type: 'POST',
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce,
@@ -4021,7 +4821,7 @@
                         pagingType: 'simple',
                         serverSide: false,
                         ajax: {
-                            url: `${getLocal().rest_base}aam/v2/service/api-route`,
+                            url: `${getLocal().rest_base}aam/v2/service/api-routes`,
                             type: 'GET',
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce
@@ -4098,10 +4898,11 @@
                     $('#route-reset').bind('click', function () {
                         const _btn = $(this);
 
-                        $.ajax(`${getLocal().rest_base}aam/v2/service/api-route/reset`, {
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/api-routes`, {
                             type: 'POST',
                             headers: {
-                                'X-WP-Nonce': getLocal().rest_nonce
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
                             },
                             data: getAAM().prepareRequestSubjectData(),
                             dataType: 'json',
@@ -4171,10 +4972,11 @@
                     $('#uri-reset').bind('click', function () {
                         const _btn = $(this);
 
-                        $.ajax(`${getLocal().rest_base}aam/v2/service/url/reset`, {
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/urls`, {
                             type: 'POST',
                             headers: {
-                                'X-WP-Nonce': getLocal().rest_nonce
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
                             },
                             data: getAAM().prepareRequestSubjectData(),
                             dataType: 'json',
@@ -4243,6 +5045,8 @@
 
                             if (editingRule !== null) {
                                 endpoint += '/' + editingRule[0];
+                            } else {
+                                endpoint += 's'
                             }
 
                             $.ajax(endpoint, {
@@ -4315,7 +5119,7 @@
                         stateSave: true,
                         serverSide: false,
                         ajax: {
-                            url: `${getLocal().rest_base}aam/v2/service/url`,
+                            url: `${getLocal().rest_base}aam/v2/service/urls`,
                             type: 'GET',
                             headers: {
                                 'X-WP-Nonce': getLocal().rest_nonce
@@ -4496,6 +5300,460 @@
         })(jQuery);
 
         /**
+         * User Manager Interface
+         *
+         * @param {jQuery} $
+         *
+         * @returns {void}
+         */
+         (function ($) {
+
+            /**
+             *
+             */
+            function initialize() {
+                const container = '#user-governance-content';
+
+                if ($(container).length) {
+                    GetRoles(function(roles) {
+                        $('#user-governance-role-targets').autocomplete({
+                            minLength: 3,
+                            source: (request, cb) => {
+                                const term = request.term
+                                    .split(',')
+                                    .map(v => $.trim(v))
+                                    .filter(v => v != '')
+                                    .pop();
+
+                                cb(roles.map(r => ({
+                                    label: r.name,
+                                    value: r.slug
+                                })).filter(r => (new RegExp('^' + term, 'i')).test(r.label)));
+                            },
+                            select: function(event, ui ) {
+                                event.preventDefault();
+                                const current = $('#user-governance-role-targets').val();
+                                const values  = current.split(',').map(v => $.trim(v));
+
+                                // Remove last value as it is something that was typed
+                                values.pop();
+
+                                values.push(ui.item.value);
+
+                                $('#user-governance-role-targets').val(values.join(', ') + ', ');
+                            }
+                        });
+                    });
+
+                    let resolved_users = [];
+                    let editing_rule   = null;
+
+                    $('#user-governance-user-targets').autocomplete({
+                        minLength: 3,
+                        source: (request, cb) => {
+                            const term = request.term
+                                .split(',')
+                                .map(v => $.trim(v))
+                                .filter(v => v != '')
+                                .pop();
+
+                            if (!resolved_users.includes(term)){
+                                $.ajax(`${getLocal().rest_base}wp/v2/service/users?context=edit&search=${term}`, {
+                                    type: 'GET',
+                                    contentType: 'application/json',
+                                    dataType: 'json',
+                                    headers: {
+                                        'X-WP-Nonce': getLocal().rest_nonce
+                                    },
+                                    success: function (response) {
+                                        cb(response.map(u => ({
+                                            label: u.name,
+                                            value: u.username
+                                        })));
+                                    },
+                                    error: function () {
+                                        getAAM().notification('danger');
+                                    },
+                                    complete: function () {
+                                    }
+                                });
+                            }
+                        },
+                        select: function(event, ui ) {
+                            event.preventDefault();
+                            const current = $('#user-governance-user-targets').val();
+                            const values  = current.split(',').map(v => $.trim(v));
+
+                            // Remove last value as it is something that was typed
+                            values.pop();
+
+                            values.push(ui.item.value);
+
+                            resolved_users = values;
+
+                            $('#user-governance-user-targets').val(values.join(', ') + ', ');
+                        }
+                    });
+
+                    $('#user-governance-rule-type').bind('change', function() {
+                        const type = $(this).val();
+
+                        // Hiding all the input values first
+                        $('.user-governance-targets').addClass('hidden');
+
+                        // Now, hiding all the controls
+                        $('.user-governance-control').addClass('hidden');
+
+                        // Show proper input field based on rule type
+                        $('.user-governance-targets').each(function() {
+                            if ($(this).data('rule-types').split(',').includes(type)) {
+                                $(this).removeClass('hidden');
+                            }
+                        });
+
+                        // Show proper controls based on rule type
+                        $('.user-governance-control').each(function() {
+                            if ($(this).data('rule-types').split(',').includes(type)) {
+                                $(this).removeClass('hidden');
+                            }
+                        });
+                    });
+
+                    $('[data-toggle="toggle"]', container).bootstrapToggle();
+
+                    //reset button
+                    $('#user-governance-reset').bind('click', function () {
+                        const _btn = $(this);
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/identity-governance`, {
+                            type: 'POST',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            beforeSend: function () {
+                                var label = _btn.text();
+                                _btn.attr('data-original-label', label);
+                                _btn.text(getAAM().__('Resetting...'));
+                            },
+                            success: function () {
+                                getAAM().fetchContent('main');
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                _btn.text(_btn.attr('data-original-label'));
+                            }
+                        });
+                    });
+
+                    $('#user-governance-save-btn').bind('click', function (event) {
+                        event.preventDefault();
+
+                        // Collecting all the necessary information
+                        const data = {
+                            rule_type: $('#user-governance-rule-type').val(),
+                            permissions: []
+                        }
+
+                        let valid = data.rule_type ? true : false;
+
+                        $('.user-governance-control', '#user-governance-model').each(function() {
+                            if ($(this).data('rule-types').split(',').includes(data.rule_type)) {
+                                data.permissions.push({
+                                    permission: $('input[data-toggle="toggle"]', this).attr('name'),
+                                    effect: $('input[data-toggle="toggle"]', this).prop('checked') ? 'deny' : 'allow'
+                                });
+                            }
+                        });
+
+                        $('.user-governance-targets').each(function() {
+                            if ($(this).data('rule-types').split(',').includes(data.rule_type)) {
+                                const name = $('.form-control', this).attr('name');
+                                data[name] = $('.form-control', this).val().split(',')
+                                    .map(u => $.trim(u))
+                                    .filter(u => u);
+
+                                if (data[name].length === 0) {
+                                    valid = false;
+                                }
+                            }
+                        });
+
+                        if (valid) {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/identity-governance`, {
+                                type: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify(
+                                    getAAM().prepareRequestSubjectData(data)
+                                ),
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce
+                                },
+                                beforeSend: function () {
+                                    $('#user-governance-save-btn').text(
+                                        getAAM().__('Saving...')
+                                    ).attr('disabled', true);
+                                },
+                                success: function () {
+                                    $('#user-governance-list').DataTable().ajax.reload();
+                                    $('#aam-user-governance-overwrite').show();
+                                },
+                                error: function () {
+                                    getAAM().notification('danger');
+                                },
+                                complete: function () {
+                                    $('#user-governance-model').modal('hide');
+                                    $('#user-governance-save-btn').text(getAAM().__('Save')).attr('disabled', false);
+                                }
+                            });
+                        }
+                    });
+
+                    $('#user-governance-update-btn').bind('click', function (event) {
+                        event.preventDefault();
+
+                        // Collecting all the necessary information
+                        const data = editing_rule;
+
+                        // Reset permissions
+                        data.permissions = [];
+
+                        $('.user-governance-control').each(function() {
+                            if ($(this).data('rule-types').split(',').includes(data.rule_type)) {
+                                data.permissions.push({
+                                    permission: $('input[data-toggle="toggle"]', this).attr('name'),
+                                    effect: $('input[data-toggle="toggle"]', this).prop('checked') ? 'deny' : 'allow'
+                                });
+                            }
+                        });
+
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/identity-governance/${editing_rule.id}`, {
+                            type: 'POST',
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            data: JSON.stringify(
+                                getAAM().prepareRequestSubjectData(data)
+                            ),
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            beforeSend: function () {
+                                $('#user-governance-update-btn').text(
+                                    getAAM().__('Updating...')
+                                ).attr('disabled', true);
+                            },
+                            success: function () {
+                                $('#user-governance-list').DataTable().ajax.reload();
+                                $('#aam-user-governance-overwrite').show();
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                $('#user-governance-edit-model').modal('hide');
+                                $('#user-governance-update-btn')
+                                    .text(getAAM().__('Update'))
+                                    .attr('disabled', false);
+                            }
+                        });
+                    });
+
+                    $('#user-governance-delete-btn').bind('click', function (event) {
+                        event.preventDefault();
+
+                        const id = $('#user-governance-delete-btn').attr('data-id');
+
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/identity-governance/${id}`, {
+                            type: 'POST',
+                            dataType: 'json',
+                            data: getAAM().prepareRequestSubjectData(),
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce,
+                                'X-HTTP-Method-Override': 'DELETE'
+                            },
+                            beforeSend: function () {
+                                $('#user-governance-delete-btn').text(
+                                    getAAM().__('Deleting...')
+                                ).attr('disabled', true);
+                            },
+                            success: function () {
+                                $('#user-governance-list').DataTable().ajax.reload();
+                            },
+                            error: function () {
+                                getAAM().notification('danger');
+                            },
+                            complete: function () {
+                                $('#user-governance-delete-model').modal('hide');
+                                $('#user-governance-delete-btn').text(getAAM().__('Delete')).attr('disabled', false);
+                            }
+                        });
+                    });
+
+                    $('#user-governance-list').DataTable({
+                        autoWidth: false,
+                        ordering: false,
+                        dom: 'ftrip',
+                        pagingType: 'simple',
+                        processing: true,
+                        stateSave: true,
+                        serverSide: false,
+                        ajax: {
+                            url: `${getLocal().rest_base}aam/v2/service/identity-governance`,
+                            type: 'GET',
+                            headers: {
+                                'X-WP-Nonce': getLocal().rest_nonce
+                            },
+                            data: getAAM().prepareRequestSubjectData(),
+                            dataType: 'json',
+                            dataSrc: function (json) {
+                                // Transform the received data into DT format
+                                const data = [];
+
+                                $.each(json, (_, rule) => {
+                                    const actions = ['edit'];
+
+                                    if (rule.is_inherited) {
+                                        actions.push('no-delete');
+                                    } else {
+                                        actions.push('delete');
+                                    }
+
+                                    data.push([
+                                        rule.id,
+                                        rule.display_name,
+                                        rule,
+                                        actions.join(',')
+                                    ]);
+                                });
+
+                                return data;
+                            },
+                        },
+                        language: {
+                            search: '_INPUT_',
+                            searchPlaceholder: getAAM().__('Search'),
+                            info: getAAM().__('_TOTAL_ URI(s)'),
+                            infoFiltered: ''
+                        },
+                        columnDefs: [
+                            { visible: false, targets: [0, 2] }
+                        ],
+                        initComplete: function () {
+                            var create = $('<a/>', {
+                                'href': '#',
+                                'class': 'btn btn-primary'
+                            }).html('<i class="icon-plus"></i> ' + getAAM().__('Create'))
+                                .bind('click', function () {
+                                    $('.form-clearable', '#user-governance-model').val('');
+                                    $('#user-governance-model').modal('show');
+
+                                    $('input[data-toggle="toggle"', '#user-governance-model').bootstrapToggle(
+                                        'off'
+                                    );
+
+                                    $('.user-governance-targets').addClass('hidden');
+                                    $('.user-governance-control').addClass('hidden');
+
+                                    editing_rule = null;
+                                });
+
+                            $('.dataTables_filter', '#user-governance-list_wrapper').append(create);
+                        },
+                        createdRow: function (row, data) {
+                            var actions = data[3].split(',');
+
+                            var container = $('<div/>', { 'class': 'aam-row-actions' });
+                            $.each(actions, function (i, action) {
+                                switch (action) {
+                                    case 'edit':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action icon-pencil text-warning'
+                                        }).bind('click', function () {
+                                            // Now, hiding all the controls
+                                            $('#user-governance-edit-model .user-governance-control').addClass('hidden');
+
+                                            // Show proper controls based on rule type
+                                            $('#user-governance-edit-model .user-governance-control').each(function() {
+                                                if ($(this).data('rule-types').split(',').includes(data[2].rule_type)) {
+                                                    $(this).removeClass('hidden');
+                                                }
+                                            });
+
+                                            // Show only controls that are applicable to the rule type
+                                            $.each(data[2].permissions, function(_, p) {
+                                                $('input[name="' + p.permission + '"]', '#user-governance-edit-model').bootstrapToggle(
+                                                    p.effect === 'deny' ? 'on': 'off'
+                                                );
+                                            });
+
+                                            editing_rule = data[2];
+
+                                            $('#user-governance-update-btn').attr('data-id', data[0]);
+                                            $('#user-governance-edit-model').modal('show');
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Edit Rule')
+                                        }));
+                                        break;
+
+                                    case 'no-edit':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action icon-pencil text-muted'
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Inherited')
+                                        }));
+                                        break;
+
+                                    case 'delete':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action icon-trash-empty text-danger'
+                                        }).bind('click', function () {
+                                            $('#user-governance-delete-btn').attr('data-id', data[0]);
+                                            $('#user-governance-delete-model').modal('show');
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Delete Rule')
+                                        }));
+                                        break;
+
+                                    case 'no-delete':
+                                        $(container).append($('<i/>', {
+                                            'class': 'aam-row-action icon-trash-empty text-muted'
+                                        }).attr({
+                                            'data-toggle': "tooltip",
+                                            'title': getAAM().__('Inherited')
+                                        }));
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            });
+
+                            $('td:eq(1)', row).html(container);
+
+                            // Decorate the display row
+                            $('td:eq(0)', row).html(
+                                data[1] + '<sup>' + data[2].rule_type + '</sup>'
+                            )
+                        }
+                    });
+
+                    getAAM().triggerHook('init-user-governance-edit-form');
+                }
+            }
+
+            getAAM().addHook('init', initialize);
+        })(jQuery);
+
+        /**
          * JWT Interface
          *
          * @param {jQuery} $
@@ -4556,7 +5814,7 @@
                     });
 
                     // Prepare the URL endpoint
-                    let url  = `${getLocal().rest_base}aam/v2/service/jwt`;
+                    let url  = `${getLocal().rest_base}aam/v2/service/jwts`;
                         url += `?user_id=${getAAM().getSubject().id}&fields=claims,token,id,signed_url,is_valid`;
 
                     $('#jwt-list').DataTable({
@@ -4697,7 +5955,7 @@
                             console.log(e);
                         }
 
-                        $.ajax(`${getLocal().rest_base}aam/v2/service/jwt?fields=token,signed_url`, {
+                        $.ajax(`${getLocal().rest_base}aam/v2/service/jwts?fields=token,signed_url`, {
                             type: 'POST',
                             dataType: 'json',
                             data: payload,
@@ -4811,15 +6069,15 @@
              */
             function save(param, value) {
                 getAAM().queueRequest(function () {
-                    $.ajax(getLocal().ajaxurl, {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/configs`, {
                         type: 'POST',
                         dataType: 'json',
                         data: {
-                            action: 'aam',
-                            sub_action: 'Settings_Manager.save',
-                            _ajax_nonce: getLocal().nonce,
-                            param: param,
-                            value: value
+                            key: param,
+                            value
+                        },
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce
                         },
                         error: function () {
                             getAAM().notification('danger');
@@ -4861,7 +6119,7 @@
                             );
 
                             // Build toggler
-                            var checked = (parseInt(data.status) === 1 ? 'checked' : '');
+                            var checked = data.status ? 'checked' : '';
                             var toggler = '<input data-toggle="toggle" name="' + data.setting + '" id="utility-' + data.setting + '" ' + checked + ' type="checkbox" data-on="' + getAAM().__('Enabled') + '" data-off="' + getAAM().__('Disabled') + '" data-size="small" />';
 
                             $('td:eq(1)', row).html(toggler);
@@ -4889,37 +6147,48 @@
                     });
 
                     $('#clear-settings').bind('click', function () {
-                        $.ajax(getLocal().ajaxurl, {
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Settings_Manager.clearSettings',
-                                _ajax_nonce: getLocal().nonce,
-                            },
-                            beforeSend: function () {
-                                $('#clear-settings').prop('disabled', true);
-                                $('#clear-settings').text(getAAM().__('Processing...'));
-                            },
-                            success: function (response) {
-                                if (response.status === 'success') {
-                                    getAAM().notification(
-                                        'success',
-                                        getAAM().__('All settings has been cleared successfully')
-                                    );
-                                    location.reload();
-                                } else {
-                                    getAAM().notification('danger', response.reason);
+                        $('#clear-settings').prop('disabled', true);
+                        $('#clear-settings').text(getAAM().__('Processing...'));
+
+                        getAAM().queueRequest(function () {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/configs`, {
+                                type: 'POST',
+                                dataType: 'json',
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce,
+                                    'X-HTTP-Method-Override': 'DELETE'
+                                },
+                                error: function () {
+                                    getAAM().notification('danger');
+                                },
+                                complete: function () {
+                                    $('#clear-settings').prop('disabled', false);
+                                    $('#clear-settings').text(getAAM().__('Clear'));
+                                    $('#clear-settings-modal').modal('hide');
                                 }
-                            },
-                            error: function () {
-                                getAAM().notification('danger');
-                            },
-                            complete: function () {
-                                $('#clear-settings').prop('disabled', false);
-                                $('#clear-settings').text(getAAM().__('Clear'));
-                                $('#clear-settings-modal').modal('hide');
-                            }
+                            });
+                        });
+
+                        getAAM().queueRequest(function () {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/settings`, {
+                                type: 'POST',
+                                dataType: 'json',
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce,
+                                    'X-HTTP-Method-Override': 'DELETE'
+                                },
+                                success: () => {
+                                    location.reload();
+                                },
+                                error: function () {
+                                    getAAM().notification('danger');
+                                },
+                                complete: function () {
+                                    $('#clear-settings').prop('disabled', false);
+                                    $('#clear-settings').text(getAAM().__('Clear'));
+                                    $('#clear-settings-modal').modal('hide');
+                                }
+                            });
                         });
                     });
                 }
@@ -4936,18 +6205,20 @@
                     );
 
                     editor.on("blur", function () {
-                        $.ajax(getLocal().ajaxurl, {
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                action: 'aam',
-                                sub_action: 'Settings_ConfigPress.save',
-                                _ajax_nonce: getLocal().nonce,
-                                config: editor.getValue()
-                            },
-                            error: function () {
-                                getAAM().notification('danger');
-                            }
+                        getAAM().queueRequest(function () {
+                            $.ajax(`${getLocal().rest_base}aam/v2/service/configpress`, {
+                                type: 'POST',
+                                dataType: 'json',
+                                data: {
+                                    ini: editor.getValue()
+                                },
+                                headers: {
+                                    'X-WP-Nonce': getLocal().rest_nonce
+                                },
+                                error: function () {
+                                    getAAM().notification('danger');
+                                }
+                            });
                         });
                     });
                 }
@@ -5072,33 +6343,29 @@
             $('#reset-subject-btn').bind('click', function() {
                 const _this = $(this);
 
-                $.ajax(getLocal().ajaxurl, {
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'aam',
-                        sub_action: 'Settings_Manager.clearSubjectSettings',
-                        _ajax_nonce: getLocal().nonce,
-                        subject: getAAM().getSubject().type,
-                        subjectId: getAAM().getSubject().id
-                    },
-                    beforeSend: function () {
-                        _this.text(getAAM().__('Resetting...')).prop('disabled', true);
-                    },
-                    success: function (response) {
-                        if (response.status === 'success') {
+                getAAM().queueRequest(function () {
+                    $.ajax(`${getLocal().rest_base}aam/v2/service/settings`, {
+                        type: 'POST',
+                        dataType: 'json',
+                        data: getAAM().prepareRequestSubjectData(),
+                        headers: {
+                            'X-WP-Nonce': getLocal().rest_nonce,
+                            'X-HTTP-Method-Override': 'DELETE'
+                        },
+                        beforeSend: function () {
+                            _this.text(getAAM().__('Resetting...')).prop('disabled', true);
+                        },
+                        success: function () {
                             getAAM().fetchContent('main');
                             $('#reset-subject-modal').modal('hide');
-                        } else {
-                            getAAM().notification('danger', response.reason);
+                    },
+                        error: function () {
+                            getAAM().notification('danger');
+                        },
+                        complete: function () {
+                            _this.text(getAAM().__('Reset')).prop('disabled', false);
                         }
-                    },
-                    error: function () {
-                        getAAM().notification('danger');
-                    },
-                    complete: function () {
-                        _this.text(getAAM().__('Reset')).prop('disabled', false);
-                    }
+                    });
                 });
             });
         })(jQuery);
@@ -5538,15 +6805,13 @@
             this.setSubject(
                 subject.type,
                 subject.id,
-                subject.name,
-                subject.level
+                subject.name
             );
         } else if (getLocal().subject.type) {
             this.setSubject(
                 getLocal().subject.type,
                 getLocal().subject.id,
-                getLocal().subject.name,
-                getLocal().subject.level
+                getLocal().subject.name
             );
         } else {
             $('#aam-subject-banner').addClass('hidden');
@@ -5679,13 +6944,6 @@
 
             // Second set the name of the subject
             $('.aam-current-subject').append($('<strong/>').text(name));
-
-            // Highlight screen if the same level
-            if (parseInt(level) >= getLocal().level || type === 'default') {
-                $('.aam-current-subject').addClass('danger');
-            } else {
-                $('.aam-current-subject').removeClass('danger');
-            }
         }
 
         this.triggerHook('setSubject');

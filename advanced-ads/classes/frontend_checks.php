@@ -943,7 +943,7 @@ class Advanced_Ads_Frontend_Checks {
 
 					// Check for the `googletag` variable created in the page header or directly in the body alongside the ad slot definition.
 					if ( typeof window.googletag !== 'undefined' ) {
-						advads_gam_debug_link.className = advads_gam_debug_link.className.replace( 'hidden', '' );
+						advadsGamDebugLink.className = advadsGamDebugLink.className.replace( 'hidden', '' );
 					}
 				}
 				// look for Google Ad Manager tags with a delay of 2 seconds

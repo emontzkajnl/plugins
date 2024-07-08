@@ -331,6 +331,17 @@ class Advanced_Ads_Admin_Notices {
 			}
 		}
 
+		// 2024 AA 10 year anniversary
+		if ( time() > 1719464400 &&
+			time() <= 1720047600 && Conditional::is_screen_advanced_ads() ) {
+			$options = $this->options();
+			$closed  = isset( $options['closed'] ) ? $options['closed'] : [];
+
+			if ( ! isset( $closed['promo-10ya'] ) ) {
+				$this->notices[] = 'promo-10ya';
+			}
+		}
+
 		if ( [] === $this->notices ) {
 			return;
 		}

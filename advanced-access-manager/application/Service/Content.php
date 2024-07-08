@@ -10,6 +10,7 @@
 /**
  * Posts & Terms service
  *
+ * @since 6.9.29 https://github.com/aamplugin/advanced-access-manager/issues/375
  * @since 6.9.26 https://github.com/aamplugin/advanced-access-manager/issues/360
  * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/268
  * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/264
@@ -26,7 +27,7 @@
  * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.9.26
+ * @version 6.9.29
  */
 class AAM_Service_Content
 {
@@ -48,6 +49,17 @@ class AAM_Service_Content
      * @version 6.0.0
      */
     const FEATURE_FLAG = 'core.service.content.enabled';
+
+    /**
+     * Default configurations
+     *
+     * @version 6.9.34
+     */
+    const DEFAULT_CONFIG = [
+        'core.service.content.enabled'             => true,
+        'core.service.content.manageAllPostTypes'  => false,
+        'core.service.content.manageAllTaxonomies' => false
+    ];
 
     /**
      * Post view counter
@@ -86,16 +98,26 @@ class AAM_Service_Content
      */
     protected function __construct()
     {
+        add_filter('aam_get_config_filter', function($result, $key) {
+            if (is_null($result) && array_key_exists($key, self::DEFAULT_CONFIG)) {
+                $result = self::DEFAULT_CONFIG[$key];
+            }
+
+            return $result;
+        }, 10, 2);
+
+        $enabled = AAM_Framework_Manager::configs()->get_config(self::FEATURE_FLAG);
+
         if (is_admin()) {
             // Hook that initialize the AAM UI part of the service
-            if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+            if ($enabled) {
                 add_action('aam_init_ui_action', function () {
                     AAM_Backend_Feature_Main_Post::register();
                 });
 
                 // Check if Access Manager metabox feature is enabled
-                $metaboxEnabled = AAM_Core_Config::get(
-                    'ui.settings.renderAccessMetabox', false
+                $metaboxEnabled = AAM_Framework_Manager::configs()->get_config(
+                    'ui.settings.renderAccessMetabox'
                 );
 
                 if ($metaboxEnabled && current_user_can('aam_manage_content')) {
@@ -134,7 +156,7 @@ class AAM_Service_Content
             }, 20);
         }
 
-        if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+        if ($enabled) {
             $this->initializeHooks();
         }
     }
@@ -189,15 +211,16 @@ class AAM_Service_Content
      *
      * @return void
      *
-     * @since 6.4.0 Enhanced https://github.com/aamplugin/advanced-access-manager/issues/71
-     * @since 6.1.0 Fixed the bug where `do_not_allow` capability was mapped to the
-     *              list of post type capabilities
-     * @since 6.0.2 Removed invocation for the pseudo-cap mapping for post types
-     * @since 6.0.1 Fixed bug related to enabling commenting on all posts
-     * @since 6.0.0 Initial implementation of the method
+     * @since 6.9.29 https://github.com/aamplugin/advanced-access-manager/issues/375
+     * @since 6.4.0  https://github.com/aamplugin/advanced-access-manager/issues/71
+     * @since 6.1.0  Fixed the bug where `do_not_allow` capability was mapped to the
+     *               list of post type capabilities
+     * @since 6.0.2  Removed invocation for the pseudo-cap mapping for post types
+     * @since 6.0.1  Fixed bug related to enabling commenting on all posts
+     * @since 6.0.0  Initial implementation of the method
      *
      * @access protected
-     * @version 6.4.0
+     * @version 6.9.29
      */
     protected function initializeHooks()
     {
@@ -215,7 +238,7 @@ class AAM_Service_Content
             add_filter('get_pages', array($this, 'filterPages'), 999);
 
             // Manage access to frontend posts & pages
-            add_action('wp', array($this, 'wp'), 999);
+            add_action('wp', array($this, 'wp'), PHP_INT_MAX);
         }
 
         // Control post visibility
@@ -285,6 +308,9 @@ class AAM_Service_Content
                 $list, $this->_convertToPostStatements($res, $opts)
             );
         }, 10, 3);
+
+        // Register RESTful API
+        AAM_Restful_ContentService::bootstrap();
 
         // Service fetch
         $this->registerService();
@@ -653,7 +679,9 @@ class AAM_Service_Content
      */
     public function checkPassExpiration($expire)
     {
-        $overwrite = AAM_Core_Config::get('feature.post.password.expires', null);
+        $overwrite = AAM_Framework_Manager::configs()->get_config(
+            'feature.post.password.expires', null
+        );
 
         if (!is_null($overwrite)) {
             $expire = ($overwrite ? time() + strtotime($overwrite) : 0);

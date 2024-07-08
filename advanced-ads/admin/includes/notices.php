@@ -68,5 +68,17 @@ $advanced_ads_admin_notices = apply_filters(
 			),
 			'global' => true,
 		],
+		// Black Friday 2023 promotion.
+		'promo-10ya'          => [
+			'type'   => 'promo',
+			'text'   => sprintf(
+			/* translators: %1$s is the markup for the discount value, %2$s starts a button link, %3$s closes the button link. */
+				__( 'Advanced Ads is turning 10! Come celebrate with us and enjoy a %1$s discount. %2$sSave now%3$s', 'advanced-ads' ),
+				'<span style="font-weight: bold; font-size: 1.6em; vertical-align: sub;">30%</span>',
+				'<a class="button button-primary" target="_blank" href="https://wpadvancedads.com/10-year-anniversary/?utm_source=advanced-ads&utm_medium=link&utm_campaign=10ya">',
+				'</a>'
+			),
+			'global' => true,
+		],
 	]
 );

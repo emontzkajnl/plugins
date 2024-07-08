@@ -50,9 +50,19 @@ class AAM_Service_Toolbar
      */
     protected function __construct()
     {
+        add_filter('aam_get_config_filter', function($result, $key) {
+            if ($key === self::FEATURE_FLAG && is_null($result)) {
+                $result = true;
+            }
+
+            return $result;
+        }, 10, 2);
+
+        $enabled = AAM_Framework_Manager::configs()->get_config(self::FEATURE_FLAG);
+
         if (is_admin()) {
             // Hook that initialize the AAM UI part of the service
-            if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+            if ($enabled) {
                 add_action('aam_init_ui_action', function () {
                     AAM_Backend_Feature_Main_Toolbar::register();
                 });
@@ -80,7 +90,7 @@ class AAM_Service_Toolbar
             }, 10);
         }
 
-        if (AAM_Core_Config::get(self::FEATURE_FLAG, true)) {
+        if ($enabled) {
             $this->initializeHooks();
         }
     }
@@ -178,7 +188,7 @@ class AAM_Service_Toolbar
                     $nodes   = $wp_admin_bar->get_nodes();
 
                     foreach ((is_array($nodes) ? $nodes : array()) as $id => $node) {
-                        if (!$node->group && $toolbar->isHidden($id, true)) {
+                        if (!$node->group && $toolbar->isHidden($id)) {
                             if (!empty($node->parent)) { // update parent node with # link
                                 $parent = $wp_admin_bar->get_node($node->parent);
                                 if ($parent && ($parent->href === $node->href)) {
@@ -208,7 +218,7 @@ class AAM_Service_Toolbar
         });
 
         // Register RESTful API endpoints
-        AAM_Core_Restful_AdminToolbarService::bootstrap();
+        AAM_Restful_AdminToolbarService::bootstrap();
     }
 
     /**

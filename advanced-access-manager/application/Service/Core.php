@@ -10,6 +10,8 @@
 /**
  * AAM core service
  *
+ * @since 6.9.33 https://github.com/aamplugin/advanced-access-manager/issues/392
+ * @since 6.9.32 https://github.com/aamplugin/advanced-access-manager/issues/390
  * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
  * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/268
  * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/265
@@ -24,7 +26,7 @@
  * @since 6.0.0  Initial implementation of the class
  *
  * @package AAM
- * @version 6.9.10
+ * @version 6.9.33
  */
 class AAM_Service_Core
 {
@@ -39,10 +41,24 @@ class AAM_Service_Core
     const PLUGIN_CHECK_URI = 'api.wordpress.org/plugins/update-check';
 
     /**
+     * Default configurations
+     *
+     * @version 6.9.34
+     */
+    const DEFAULT_CONFIG = [
+        'core.settings.tips'              => true,
+        'core.settings.multiSubject'      => false,
+        'ui.settings.renderAccessMetabox' => false,
+        'core.settings.merge.preference'  => 'deny',
+        'core.export.groups'              => [ 'settings', 'config', 'roles' ]
+    ];
+
+    /**
      * Constructor
      *
      * @access protected
      *
+     * @since 6.9.32 https://github.com/aamplugin/advanced-access-manager/issues/390
      * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
      * @since 6.9.9  https://github.com/aamplugin/advanced-access-manager/issues/268
      * @since 6.9.5  https://github.com/aamplugin/advanced-access-manager/issues/243
@@ -56,13 +72,21 @@ class AAM_Service_Core
      * @since 6.0.0  Initial implementation of the method
      *
      * @return void
-     * @version 6.9.10
+     * @version 6.9.32
      */
     protected function __construct()
     {
+        add_filter('aam_get_config_filter', function($result, $key) {
+            if (is_null($result) && array_key_exists($key, self::DEFAULT_CONFIG)) {
+                $result = self::DEFAULT_CONFIG[$key];
+            }
+
+            return $result;
+        }, 10, 2);
+
         if (is_admin()) {
-            $metaboxEnabled = AAM_Core_Config::get(
-                'ui.settings.renderAccessMetabox', false
+            $metaboxEnabled = AAM_Framework_Manager::configs()->get_config(
+                'ui.settings.renderAccessMetabox'
             );
 
             if ($metaboxEnabled && current_user_can('aam_manager')) {
@@ -71,8 +95,6 @@ class AAM_Service_Core
 
             // Hook that initialize the AAM UI part of the service
             add_action('aam_init_ui_action', function () {
-                AAM_Backend_Feature_Subject_User::register();
-
                 AAM_Backend_Feature_Settings_Service::register();
                 AAM_Backend_Feature_Settings_Core::register();
                 AAM_Backend_Feature_Settings_Content::register();
@@ -131,18 +153,18 @@ class AAM_Service_Core
 
         // Check if user has ability to perform certain task based on provided
         // capability and meta data
-        add_filter('map_meta_cap', array($this, 'mapMetaCaps'), 999, 4);
+        add_filter('map_meta_cap', array($this, 'map_meta_cap'), 999, 4);
 
-        // User expiration hook
-        add_action('aam_set_user_expiration_action', function($settings) {
-            AAM::getUser()->setUserExpiration($settings);
-        });
+        // User authentication control
+        add_filter(
+            'wp_authenticate_user', array($this, 'authenticate_user'), 1, 2
+        );
 
         // Run upgrades if available
         AAM_Core_Migration::run();
 
         // Bootstrap RESTful API
-        AAM_Core_Restful::bootstrap();
+        AAM_Restful_MuService::bootstrap();
     }
 
     /**
@@ -188,7 +210,7 @@ class AAM_Service_Core
      * @access public
      * @version 6.9.9
      */
-    public function mapMetaCaps($caps, $cap, $user_id, $args)
+    public function map_meta_cap($caps, $cap, $user_id, $args)
     {
         $objectId = (isset($args[0]) ? $args[0] : null);
 
@@ -198,7 +220,7 @@ class AAM_Service_Core
                 is_string($capability) && (strpos($capability, 'aam_') === 0)
                 && !AAM_Core_API::capExists($capability)
             ) {
-                $caps[$i] = AAM_Core_Config::get(
+                $caps[$i] = AAM_Framework_Manager::configs()->get_config(
                     'page.capability',
                     'administrator'
                 );
@@ -230,6 +252,96 @@ class AAM_Service_Core
     }
 
     /**
+     * Validate user status
+     *
+     * Check if user is locked or not
+     *
+     * @param WP_Error $user
+     *
+     * @return WP_Error|WP_User
+     *
+     * @since 6.9.10 https://github.com/aamplugin/advanced-access-manager/issues/276
+     * @since 6.0.0  Initial implementation of the method
+     *
+     * @access public
+     * @version 6.9.10
+     */
+    public function authenticate_user($user)
+    {
+        // Check if user is blocked
+        if (is_a($user, 'WP_User')) {
+            $result = AAM_Framework_Manager::users([
+                'error_handling' => 'wp_error'
+            ])->verify_user_state($user);
+
+            if (is_wp_error($result)) {
+                $user = $result;
+            }
+        }
+
+        return $user;
+    }
+
+    /**
+     * Verify user status and act accordingly if user is no longer active or
+     * expired
+     *
+     * @return void
+     *
+     * @access public
+     * @version 6.9.33
+     */
+    public function verify_user_status()
+    {
+        if (is_user_logged_in()) {
+            $user = AAM_Framework_Manager::users()->get_user(
+                get_current_user_id()
+            );
+
+            // If user status is inactive - immediately logout user
+            if ($user->is_user_active() === false) {
+                wp_logout();
+                exit;
+            } elseif ($user->is_user_access_expired()) {
+                // Trigger specified action
+                switch ($user->expiration_trigger['type']) {
+                    case 'change-role':
+                    case 'change_role':
+                        $user->set_role(
+                            $user->expiration_trigger['type']
+                        );
+                        $user->reset('expiration');
+                        break;
+
+                    case 'delete':
+                        require_once(ABSPATH . 'wp-admin/includes/user.php');
+
+                        wp_delete_user(
+                            $user->ID,
+                            AAM_Framework_Manager::configs()->get_config(
+                                'core.reasign.ownership.user'
+                            )
+                        );
+                        break;
+
+                    case 'lock':
+                        $user->update(['status' => $user::STATUS_INACTIVE]);
+                        $user->reset('expiration');
+                        // And logout immediately
+
+                    case 'logout':
+                        wp_logout();
+                        exit;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
      * Check if specific action for plugins is allowed
      *
      * @param string $action
@@ -243,7 +355,9 @@ class AAM_Service_Core
      */
     protected function checkPluginsAction($action, $caps, $cap)
     {
-        $allow = apply_filters('aam_allowed_plugin_action_filter', null, $action);
+        $allow = apply_filters(
+            'aam_allowed_plugin_action_filter', null, $action
+        );
 
         if ($allow !== null) {
             $caps[] = $allow ? $cap : 'do_not_allow';

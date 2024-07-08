@@ -26,20 +26,28 @@ final class AAM_Core_Gateway
      * Prevent from fatal errors
      *
      * @param string $name
-     * @param array  $arguments
+     * @param array  $args
      *
      * @return void
      *
      * @access public
      * @version 6.0.0
      */
-    public function __call($name, $arguments)
+    public function __call($name, $args)
     {
-        _doing_it_wrong(
-            __CLASS__ . '::' . __METHOD__,
-            "The method {$name} is not defined in the AAM API",
-            AAM_VERSION
-        );
+        $result = null;
+
+        if (method_exists('AAM_Framework_Manager', $name)) {
+            $result = call_user_func_array("AAM_Framework_Manager::{$name}", $args);
+        } else {
+            _doing_it_wrong(
+                __CLASS__ . '::' . __METHOD__,
+                "The method {$name} is not defined in the AAM API",
+                AAM_VERSION
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -52,10 +60,11 @@ final class AAM_Core_Gateway
      *
      * @access public
      * @version 6.0.0
+     * @deprecated 6.9.34 Use AAM_Framework_Manager::configs()->get_config instead
      */
     public function getConfig($option, $default = null)
     {
-        return AAM_Core_Config::get($option, $default);
+        return AAM_Framework_Manager::configs()->get_config($option, $default);
     }
 
     /**
@@ -68,10 +77,11 @@ final class AAM_Core_Gateway
      *
      * @access public
      * @version 6.0.0
+     * @deprecated 6.9.34 Use AAM_Framework_Manager::configs()->set_config instead
      */
     public function updateConfig($option, $value)
     {
-        return AAM_Core_Config::set($option, $value);
+        return AAM_Framework_Manager::configs()->set_config($option, $value);
     }
 
     /**
@@ -83,10 +93,11 @@ final class AAM_Core_Gateway
      *
      * @access public
      * @version 6.0.0
+     * @deprecated 6.9.34 Use AAM_Framework_Manager::configs()->reset_config instead
      */
     public function deleteConfig($option)
     {
-        return AAM_Core_Config::delete($option);
+        return AAM_Framework_Manager::configs()->reset_config($option);
     }
 
     /**
@@ -195,7 +206,9 @@ final class AAM_Core_Gateway
             $subject = AAM::getUser();
         }
 
-        if (AAM_Core_Config::get(AAM_Service_AccessPolicy::FEATURE_FLAG, true)) {
+        if (AAM_Framework_Manager::configs()->get_config(
+            AAM_Service_AccessPolicy::FEATURE_FLAG, true
+        )) {
             $manager = AAM_Core_Policy_Factory::get($subject, $skipInheritance);
         } else {
             $manager = null;
@@ -240,18 +253,17 @@ final class AAM_Core_Gateway
 
         // If preference is not explicitly defined, fetch it from the AAM configs
         if (is_null($preference)) {
-            $default_preference = $this->getConfig(
-                'core.settings.merge.preference',
-                'deny'
+            $default_preference = $this->configs()->get_config(
+                'core.settings.merge.preference'
             );
 
-            $preference = $this->getConfig(
+            $preference = $this->configs()->get_config(
                 "core.settings.{$objectType}.merge.preference",
                 $default_preference
             );
         }
 
-        // first get the complete list of unique keys
+        // First get the complete list of unique keys
         $keys = array_keys($set1);
         foreach (array_keys($set2) as $key) {
             if (!in_array($key, $keys, true)) {
