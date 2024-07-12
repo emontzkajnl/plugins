@@ -480,15 +480,11 @@ abstract class SGPopup
 	{
 		global $SGPB_OPTIONS;		
 		
-		// Do not processing the whole input
-		$essentialsgpbKeys  = array_column($SGPB_OPTIONS, 'name');				
+		// Do not processing the whole input					
 		$popupData = array();		
 		$data = apply_filters('sgpbFilterOptionsBeforeSaving', $data);		
 		foreach ($data as $key => $value) {			
-			// Skip processing if the key is not essential
-			if (!in_array($key, $essentialsgpbKeys)) {
-				continue;
-			}	
+			// Skip processing if the key is not essential				
 			if ( !is_array( $value ) ) {				
 				//Sanitize URL to avoid 404 error
 				if ( strpos( $key, '-url' ) === false )				

@@ -91,6 +91,12 @@ class Ajax
 			wp_die('');
 		}
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		if (!isset($_POST['post_ID'])){
 			wp_die(0);
 		}
@@ -129,6 +135,12 @@ class Ajax
 	public function dontShowReviewPopup()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		update_option('SGPBCloseReviewPopup-notification', true);
 		do_action('sgpbGetNotifications');
 		wp_die();
@@ -137,6 +149,12 @@ class Ajax
 	public function changeReviewPopupPeriod()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		$messageType = isset($_POST['messageType']) ? sanitize_text_field($_POST['messageType']) : '';
 
 		if($messageType == 'count') {
@@ -172,6 +190,12 @@ class Ajax
 	public function resetPopupOpeningCount()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		if (!isset($_POST['popupId'])){
 			wp_die(0);
 		}
@@ -201,6 +225,12 @@ class Ajax
 	public function dontShowAskReviewBanner()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		update_option('sgpbDontShowAskReviewBanner', 1);
 		echo esc_html(SGPB_AJAX_STATUS_TRUE);
 		wp_die();
@@ -209,6 +239,12 @@ class Ajax
 	public function dontShowProblemAlert()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		update_option('sgpb_alert_problems', 1);
 		echo esc_html(SGPB_AJAX_STATUS_TRUE);
 		wp_die();
@@ -217,6 +253,12 @@ class Ajax
 	public function extensionNotificationPanel()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		update_option('sgpb_extensions_updated', 1);
 		echo esc_html(SGPB_AJAX_STATUS_TRUE);
 		wp_die();
@@ -225,6 +267,12 @@ class Ajax
 	public function closeMainRateUsBanner()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		update_option('sgpb-hide-support-banner', 1);
 		do_action('sgpbGetNotifications');
 		wp_die();
@@ -233,6 +281,12 @@ class Ajax
 	public function closeLicenseNoticeBanner()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		update_option('sgpb-hide-license-notice-banner', 1);
 		wp_die();
 	}
@@ -240,7 +294,7 @@ class Ajax
 	public function addToCounter()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
-
+		
 		if(isset($_GET['sg_popup_preview_id']) && !isset($_POST['params'])) {
 			wp_die(0);
 		}
@@ -275,7 +329,12 @@ class Ajax
 		global $wpdb;
 
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
-
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		if (empty($_POST['subscribersId'])){
 			wp_die();
 		}
@@ -292,6 +351,12 @@ class Ajax
 		global $wpdb;
 
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		$status = SGPB_AJAX_STATUS_FALSE;
 		$firstName = isset($_POST['firstName']) ? sanitize_text_field($_POST['firstName']) : '';
 		$lastName = isset($_POST['lastName']) ? sanitize_text_field($_POST['lastName']) : '';
@@ -331,6 +396,12 @@ class Ajax
 	public function importSubscribers()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		$formId = isset($_POST['popupSubscriptionList']) ? (int)sanitize_text_field($_POST['popupSubscriptionList']) : '';
 		$fileURL = isset($_POST['importListURL']) ? sanitize_text_field($_POST['importListURL']) : '';
 		ob_start();
@@ -345,6 +416,12 @@ class Ajax
 	public function importSettings()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		ob_start();
 		require_once SG_POPUP_VIEWS_PATH.'importPopupsView.php';
 		$content = ob_get_contents();
@@ -357,6 +434,12 @@ class Ajax
 	public function saveImportedSubscribers()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		@ini_set('auto_detect_line_endings', '1');
 		$formId = isset($_POST['popupSubscriptionList']) ? (int)sanitize_text_field($_POST['popupSubscriptionList']) : '';
 		$fileURL = isset($_POST['importListURL']) ? sanitize_text_field($_POST['importListURL']) : '';
@@ -406,6 +489,13 @@ class Ajax
 			exit();
 		}
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
+		
 		global $wpdb;
 
 		// we will use array_walk_recursive method for sanitizing current data because we can receive an multidimensional array!
@@ -437,7 +527,12 @@ class Ajax
 	public function checkSameOrigin()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
-
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}	
 		$url = isset($_POST['iframeUrl']) ? esc_url_raw($_POST['iframeUrl']) : '';
 		$status = SGPB_AJAX_STATUS_FALSE;
 
@@ -561,6 +656,12 @@ class Ajax
 	public function sgpbSubsciptionFormSubmittedAction()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$submissionData = isset($_POST['formData']) ? $_POST['formData'] : "[]";
 		parse_str($submissionData, $formData);
@@ -623,6 +724,12 @@ class Ajax
 	public function select2SearchData()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce_ajax');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 
 		$postTypeName = isset($_POST['searchKey']) ? sanitize_text_field($_POST['searchKey']) : ''; // TODO strongly validate postTypeName example: use ENUM
 		$search = isset($_POST['searchTerm']) ? sanitize_text_field($_POST['searchTerm']) : '';
@@ -675,6 +782,12 @@ class Ajax
 	public function addConditionGroupRow()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce_ajax');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		global $SGPB_DATA_CONFIG_ARRAY;
 
 		$groupId = isset($_POST['groupId']) ? (int)sanitize_text_field($_POST['groupId']) : '';
@@ -697,6 +810,12 @@ class Ajax
 	public function addConditionRuleRow()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce_ajax');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		$data = '';
 		global $SGPB_DATA_CONFIG_ARRAY;
 		$targetType = isset($_POST['conditionName']) ? sanitize_text_field($_POST['conditionName']) : '';
@@ -719,6 +838,12 @@ class Ajax
 	public function changeConditionRuleRow()
 	{
 		check_ajax_referer(SG_AJAX_NONCE, 'nonce_ajax');
+		/**
+		 * We only allow administrator to do this action
+		*/ 			
+		if ( ! current_user_can( 'manage_options' ) ) {			
+			wp_die(esc_html__('You do not have permission to do this action!', 'popup-builder'));
+		}
 		$data = '';
 		global $SGPB_DATA_CONFIG_ARRAY;
 

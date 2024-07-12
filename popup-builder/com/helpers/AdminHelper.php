@@ -578,7 +578,12 @@ class AdminHelper
 
 	public static function getCurrentUserRole()
 	{
-		$role = array('administrator');
+		if( !function_exists('wp_get_current_user'))
+		{
+			require_once( ABSPATH . '/wp-includes/pluggable.php' ); 
+		}
+		
+		$role = array();
 
 		if (is_multisite()) {
 			$getUsersObj = array();
@@ -601,10 +606,12 @@ class AdminHelper
 
 			return $role;
 		}
-
-		global $current_user;
-		if (!empty($current_user)) {
-            $role = $current_user->roles;
+		
+		if( is_user_logged_in() ) {
+			$current_user = wp_get_current_user();
+			if (!empty($current_user)) {
+				$role = $current_user->roles;
+			}
 		}
 
 		return $role;
@@ -993,9 +1000,10 @@ class AdminHelper
 	{
 		$getUsageDays = self::getPopupUsageDays();
 		/* translators: Usage Days */
-		$firstHeader = sprintf('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">%1$s</strong> %2$s %3$d %4$s</h1>', 
+		$firstHeader = sprintf('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">%1$s</strong> %2$s %3$d %4$s</h1>',
 			__('This is great!','popup-builder'),
 			__('We have noticed that you are using Popup Builder plugin on your site for','popup-builder'),
+			esc_html( $getUsageDays ),
 			__('days, we are thankful for that.','popup-builder')
 		);
 		$popupContent = self::getMaxOpenPopupContent($firstHeader, 'days');
@@ -1197,14 +1205,13 @@ class AdminHelper
 			$maxCountDefine = $counterMaxPopup['maxCount'];
 		}
 		/* translators: popup Title, max Count Define */
-		$firstHeader = 
-		//sprintf( __('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">Awesome news!</strong> <b>Popup Builder</b>plugin helped you to share your message via<strong class="sgrb-review-strong">%1$s</strong>popup with your visitors for<strong class="sgrb-review-strong">%2$d times!</strong></h1>', 'popup-builder'), $popupTitle, $maxCountDefine);
-		sprintf('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">%1$s</strong> <b>%2$s</b> %3$s <strong class="sgrb-review-strong">%4$s </strong>%5$s<strong class="sgrb-review-strong">%6$d %7$s</strong></h1>', 
+		$firstHeader = sprintf('<h1 class="sgpb-review-h1"><strong class="sgrb-review-strong">%1$s</strong> <b>%2$s</b> %3$s <strong class="sgrb-review-strong">%4$s </strong>%5$s <strong class="sgrb-review-strong">%6$d %7$s</strong></h1>', 
 			__('Awesome news!','popup-builder'),
 			__('Popup Builder','popup-builder'),
 			__('plugin helped you to share your message via','popup-builder'),
 			esc_html( $popupTitle ),
 			__('popup with your visitors for','popup-builder'),
+			esc_html( $maxCountDefine ),
 			__('times!','popup-builder')			
 		);
 		$popupContent = self::getMaxOpenPopupContent($firstHeader, 'count');

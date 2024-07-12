@@ -102,13 +102,7 @@ class Updates
 	public function sgpbActivateLicense()
 	{
 		
-		/**
-		 * We only allow administrator to do this action
-		*/ 			
-		if ( ! current_user_can( 'manage_options' ) ) {
-			
-			wp_die(esc_html__('You do not have permission to access this page!', 'popup-builder'));
-		}	
+		
 					
 		$licenses = $this->getLicenses();
 		
@@ -127,6 +121,13 @@ class Updates
 
 				// listen for our activate button to be clicked
 				if (isset($_POST['sgpb-license-activate-'.$key])) {
+					/**
+					 * We only allow administrator to do this action
+					*/ 			
+					if ( ! current_user_can( 'manage_options' ) ) {
+						
+						wp_die(esc_html__('You do not have permission to access this page!', 'popup-builder'));
+					}	
 					$this->sgpbVerifyNonceLicense();
 					// retrieve the license from the database
 					$license = trim(get_option('sgpb-license-key-'.$key));
@@ -157,6 +158,13 @@ class Updates
 
 				if (isset($_POST['sgpb-license-deactivate'.$key])) {
 					
+					/**
+					 * We only allow administrator to do this action
+					*/ 			
+					if ( ! current_user_can( 'manage_options' ) ) {
+						
+						wp_die(esc_html__('You do not have permission to access this page!', 'popup-builder'));
+					}	
 					$this->sgpbVerifyNonceLicense();
 					$license = trim(get_option('sgpb-license-key-'.$key));
 					// data to send in our API request

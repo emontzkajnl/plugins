@@ -41,6 +41,7 @@ use PublishPress\Future\Modules\Expirator\Migrations\V30000ReplaceFooterPlacehol
 use PublishPress\Future\Modules\Expirator\Migrations\V30000WPCronToActionsScheduler;
 use PublishPress\Future\Modules\Expirator\Migrations\V30001RestorePostMeta;
 use PublishPress\Future\Modules\Expirator\Models\ActionArgsModel;
+use PublishPress\Future\Modules\Expirator\Interfaces\ActionArgsModelInterface;
 use PublishPress\Future\Modules\Expirator\Models\CurrentUserModel;
 use PublishPress\Future\Modules\Expirator\Models\ExpirablePostModel;
 use PublishPress\Future\Modules\Expirator\Models\ExpirationActionsModel;
@@ -56,6 +57,7 @@ use PublishPress\Future\Modules\WooCommerce\Module as ModuleWooCommerce;
 use PublishPress\Future\Modules\Expirator\Migrations\V30000ActionArgsSchema;
 use PublishPress\Future\Modules\Expirator\Migrations\V30104ArgsColumnLength;
 use PublishPress\Future\Modules\Expirator\Models\PostTypeDefaultDataModelFactory;
+use PublishPress\Future\Modules\ProFeaturesAds\Module as ProFeaturesAdsModule;
 use PublishPress\Psr\Container\ContainerInterface;
 
 return [
@@ -104,6 +106,10 @@ return [
             ServicesAbstract::MODULE_SETTINGS,
             ServicesAbstract::MODULE_WOOCOMMERCE,
         ];
+
+        if (! defined('PUBLISHPRESS_FUTURE_PRO_PLUGIN_VERSION')) {
+            $modulesServiceList[] = ServicesAbstract::MODULE_PRO_FEATURES_ADS;
+        }
 
         $modules = [];
         foreach ($modulesServiceList as $service) {
@@ -358,6 +364,17 @@ return [
         );
     },
 
+    /**
+     * @return ModuleInterface
+     */
+    ServicesAbstract::MODULE_PRO_FEATURES_ADS => static function (ContainerInterface $container) {
+        return new ProFeaturesAdsModule(
+            $container->get(ServicesAbstract::HOOKS),
+            $container->get(ServicesAbstract::BASE_URL),
+            $container->get(ServicesAbstract::PLUGIN_VERSION)
+        );
+    },
+
     ServicesAbstract::POST_MODEL_FACTORY => static function (ContainerInterface $container) {
         return function ($postId) use ($container) {
             return new PostModel(
@@ -518,8 +535,8 @@ return [
         };
     },
 
-    ServicesAbstract::ACTION_ARGS_MODEL_FACTORY => static function (ContainerInterface $container) {
-        return function () use ($container) {
+    ServicesAbstract::ACTION_ARGS_MODEL_FACTORY => static function (ContainerInterface $container): Closure {
+        return function () use ($container): ActionArgsModelInterface {
             return new ActionArgsModel(
                 $container->get(ServicesAbstract::EXPIRATION_ACTIONS_MODEL)
             );

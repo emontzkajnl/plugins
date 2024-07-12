@@ -19,7 +19,7 @@ defined('ABSPATH') or die('Direct access not allowed.');
 class Module implements ModuleInterface
 {
     /**
-     * @var \PublishPress\Future\Core\HookableInterface;
+     * @var \PublishPress\Future\Core\HookableInterface
      */
     private $hooks;
 
@@ -182,7 +182,7 @@ class Module implements ModuleInterface
 
     private function factoryShortcodeController()
     {
-        return new Controllers\ShortcodeController();
+        return new Controllers\ShortcodeController($this->hooks);
     }
 
     private function factoryPostsListController()

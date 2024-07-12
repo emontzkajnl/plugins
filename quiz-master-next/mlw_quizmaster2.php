@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Quiz And Survey Master
  * Description: Easily and quickly add quizzes and surveys to your website.
- * Version: 9.0.1
+ * Version: 9.0.5
  * Author: ExpressTech
  * Author URI: https://quizandsurveymaster.com/
  * Plugin URI: https://expresstech.io/
@@ -43,7 +43,7 @@ class MLWQuizMasterNext {
 	 * @var string
 	 * @since 4.0.0
 	 */
-	public $version = '9.0.1';
+	public $version = '9.0.5';
 
 	/**
 	 * QSM Alert Manager Object
@@ -161,7 +161,14 @@ class MLWQuizMasterNext {
 		$this->add_hooks();
 	}
 
-	//Check admin capabilities
+	/**
+	 * Check admin capabilities.
+	 *
+	 * @since 9.0.0
+	 * @param string $check_permission permission type
+	 *
+	 * @return boolean current user has permission
+	 */
 	public function qsm_is_admin( $check_permission = 'manage_options' ) {
 		if ( ! function_exists( 'wp_get_current_user' ) && file_exists( ABSPATH . "wp-includes/pluggable.php" ) ) {
 			require_once( ABSPATH . "wp-includes/pluggable.php" );
@@ -170,6 +177,81 @@ class MLWQuizMasterNext {
 			require_once( ABSPATH . "wp-includes/capabilities.php" );
 		}
 		return ( function_exists( 'wp_get_current_user' ) && function_exists( 'current_user_can' ) && current_user_can( $check_permission ) );
+	}
+
+	/**
+	 * sanitize HTML data.
+	 * HTML is saved as encoded and at ouput same as decoded. encoded html may pass though most of
+	 * the WordPress sanitization function. This function sanitize it to remove
+	 * unfiltered HTML content
+	 *
+	 * @since 9.0.3
+	 * @param HTML $html html data
+	 *
+	 * @return HTML sanitized HTML
+	 */
+	public function sanitize_html( $html = '', $kses = true ) {
+		if ( empty( $html ) ) {
+			return $html;
+		}
+		return $kses ? wp_kses_post( $html ) : sanitize_text_field( $html );
+	}
+
+	/**
+	 * Get failed alter qmn table query list.
+	 *
+	 * @since 9.0.2
+	 * @return array  alter qmn table query list
+	 */
+	public function get_failed_alter_table_queries() {
+		$failed_queries = get_option( 'qmn_failed_alter_table_queries', array() );
+		return is_array( $failed_queries ) ? $failed_queries : array();
+	}
+
+	/**
+	 * Execute WP db query and save query if failed to execute
+	 *
+	 * @since 9.0.2
+	 * @param string $query SQL Query
+	 *
+	 * @return boolean query executed or not
+	 */
+	public function wpdb_alter_table_query( $query ) {
+		// Check if admin or empty query.
+		if ( empty( $query ) || ! function_exists( 'is_admin' ) || ! is_admin() ) {
+			return false;
+		}
+
+		global $wpdb;
+		$query = trim( $query );
+
+		// check if a query for qsm tables alter only.
+		if ( empty( $wpdb ) || 0 != stripos( $query, 'ALTER TABLE' ) || false === stripos( $query, 'mlw_' ) ) {
+			return false;
+		}
+
+		// Execute query.
+		$res = $wpdb->query( $query );
+
+		// Get failed alter table query list.
+		$failed_queries = $this->get_failed_alter_table_queries();
+
+		if ( ! empty( $res ) ) {
+			if ( ! empty( $failed_queries ) && in_array( $query, $failed_queries, true ) ) {
+				// Remove failed query from list.
+				$failed_queries = array_diff( $failed_queries, array( $query ) );
+				// Update failed queries list.
+				update_option( 'qmn_failed_alter_table_queries', $failed_queries );
+			}
+			return true;
+		} elseif ( empty( $failed_queries ) || ! in_array( $query, $failed_queries, true ) ) {
+			// Add query to the list.
+			$failed_queries[] = $query;
+			// Update failed queries list.
+			update_option( 'qmn_failed_alter_table_queries', $failed_queries );
+		}
+
+		return false;
 	}
 
 	/**
@@ -305,6 +387,7 @@ class MLWQuizMasterNext {
 	 */
 	public function qsm_admin_scripts_style( $hook ) {
 		global $mlwQuizMasterNext;
+
 		// admin styles
 		wp_enqueue_style( 'qsm_admin_style', plugins_url( 'css/qsm-admin.css', __FILE__ ), array(), $this->version );
 		if ( is_rtl() ) {
@@ -390,7 +473,8 @@ class MLWQuizMasterNext {
 			}
 		}
 		// load admin JS after all dependencies are loaded
-		wp_enqueue_script( 'qsm_admin_js', plugins_url( 'js/qsm-admin.js', __FILE__ ), array( 'jquery', 'backbone', 'underscore', 'wp-util', 'jquery-ui-sortable', 'jquery-touch-punch', 'qsm-jquery-multiselect-js' ), $this->version, true );
+		/**  Fixed wpApiSettings is not defined js error by using 'wp-api-request' core script to allow the use of localized version of wpApiSettings. **/
+		wp_enqueue_script( 'qsm_admin_js', plugins_url( 'js/qsm-admin.js', __FILE__ ), array( 'jquery', 'backbone', 'underscore', 'wp-util', 'jquery-ui-sortable', 'jquery-touch-punch', 'qsm-jquery-multiselect-js', 'wp-api-request' ), $this->version, true );
 		wp_enqueue_style( 'jquer-multiselect-css', QSM_PLUGIN_CSS_URL . '/jquery.multiselect.min.css', array(), $this->version );
 		wp_enqueue_script( 'qsm-jquery-multiselect-js', QSM_PLUGIN_JS_URL . '/jquery.multiselect.min.js', array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'micromodal_script', plugins_url( 'js/micromodal.min.js', __FILE__ ), array( 'jquery', 'qsm_admin_js' ), $this->version, true );
@@ -638,6 +722,7 @@ class MLWQuizMasterNext {
 			global $qsm_quiz_list_page;
 			$enabled            = get_option( 'qsm_multiple_category_enabled' );
 			$menu_position = self::get_free_menu_position(26.1, 0.3);
+			$settings = (array) get_option( 'qmn-settings' );
 			if ( ! class_exists('QSM_User_Role') ) {
 				$user = wp_get_current_user();
 				if ( in_array( 'subscriber', (array) $user->roles, true ) ) {
@@ -656,6 +741,15 @@ class MLWQuizMasterNext {
 			}
 			add_submenu_page( 'options.php', __( 'Settings', 'quiz-master-next' ), __( 'Settings', 'quiz-master-next' ), 'edit_posts', 'mlw_quiz_options', 'qsm_generate_quiz_options' );
 			add_submenu_page( 'qsm_dashboard', __( 'Results', 'quiz-master-next' ), __( 'Results', 'quiz-master-next' ), 'moderate_comments', 'mlw_quiz_results', 'qsm_generate_admin_results_page' );
+
+			// Failed Submission.
+			if ( ! empty( $settings['enable_qsm_log'] ) && $settings['enable_qsm_log'] ) {
+				add_submenu_page( 'qsm_dashboard', __( 'Failed Submission', 'quiz-master-next' ), __( 'Failed Submission', 'quiz-master-next' ), 'moderate_comments', 'qsm-quiz-failed-submission', array( $this, 'admin_failed_submission_page' ) );
+			}
+			// Failed DB Query.
+			if ( ! empty( $settings['enable_qsm_log'] ) && $settings['enable_qsm_log'] && $this->get_failed_alter_table_queries() ) {
+				add_submenu_page( 'qsm_dashboard', __( 'Failed DB Queries', 'quiz-master-next' ), __( 'Failed Database Queries', 'quiz-master-next' ), 'moderate_comments', 'qsm-database-failed-queries', array( $this, 'qsm_database_failed_queries' ) );
+			}
 			add_submenu_page( 'options.php', __( 'Result Details', 'quiz-master-next' ), __( 'Result Details', 'quiz-master-next' ), 'moderate_comments', 'qsm_quiz_result_details', 'qsm_generate_result_details' );
 			add_submenu_page( 'qsm_dashboard', __( 'Settings', 'quiz-master-next' ), __( 'Settings', 'quiz-master-next' ), 'manage_options', 'qmn_global_settings', array( 'QMNGlobalSettingsPage', 'display_page' ) );
 			add_submenu_page( 'qsm_dashboard', __( 'Tools', 'quiz-master-next' ), __( 'Tools', 'quiz-master-next' ), 'manage_options', 'qsm_quiz_tools', 'qsm_generate_quiz_tools' );
@@ -669,6 +763,75 @@ class MLWQuizMasterNext {
 			// Register screen option for dashboard page
 			add_action( 'screen_settings', 'qsm_dashboard_screen_options', 10, 2 );
 		}
+	}
+
+	/**
+	 * Failed Submission Table
+	 *
+	 * Display failed submission table.
+	 *
+	 * @since 9.0.2
+	 * @return void
+	 */
+	public function admin_failed_submission_page() {
+		$file_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'php/admin/class-failed-submission.php';
+		if ( file_exists( $file_path ) ) {
+			include_once $file_path;
+			if ( ! class_exists( 'QmnFailedSubmissions' ) ) {
+				return;
+			}
+			$QmnFailedSubmissions = new QmnFailedSubmissions();
+			$QmnFailedSubmissions->render_list_table();
+		}
+	}
+
+	/**
+	 * Failed Database queries
+	 *
+	 * Display failed Database queries.
+	 *
+	 * @since 9.0.3
+	 * @return void
+	 */
+	public function qsm_database_failed_queries() {
+		?>
+		<div class="wrap">
+			<div>
+				<h2>
+					<?php esc_html_e( 'Failed DB Queries', 'quiz-master-next' );?>
+				</h2>
+			</div>
+			<div class="qsm-alerts">
+				<?php $this->alertManager->showAlerts(); ?>
+			</div>
+			<?php qsm_show_adverts(); ?>
+			<table class="widefat" aria-label="<?php esc_attr_e( 'Failed DB Query Table', 'quiz-master-next' );?>">
+				<thead>
+					<tr>
+						<th><?php esc_html_e( 'Query', 'quiz-master-next' );?></th>
+						<th><?php esc_html_e( 'Action', 'quiz-master-next' );?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					$failed_queries = $this->get_failed_alter_table_queries();
+					if ( ! empty( $failed_queries ) && is_array( $failed_queries ) ) {
+						foreach ( $failed_queries as $key => $query ) { ?>
+							<tr>
+								<td>
+									<?php echo esc_attr( $query ); ?>
+								</td>
+								<td>
+									<button data-query="<?php echo esc_attr( $key ); ?>" type="button"  data-nonce="<?php echo esc_attr( wp_create_nonce( 'qmn_check_db' ) ); ?>" class="button button-primary qsm-check-db-fix-btn"><?php esc_html_e( 'Check If Already Fixed', 'quiz-master-next' );?></button>
+								</td>
+							</tr>
+						<?php }
+					} ?>
+				</tbody>
+			</table>
+		</div>
+		<?php
+		add_action('admin_footer', 'qsm_quiz_options_notice_template');
 	}
 
 	/**
@@ -741,8 +904,6 @@ class MLWQuizMasterNext {
 			<?php
 		}
 	}
-
-
 }
 
 global $mlwQuizMasterNext;

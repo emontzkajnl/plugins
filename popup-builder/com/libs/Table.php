@@ -98,7 +98,7 @@ class SGPBTable extends SGPBListTable
 		
 		$columns_name_placeholders = implode( ', ', array_fill( 0, count( $this->columns ), '%i' ) );		
 		  
-		$query = $wpdb->prepare( "SELECT $table.$columns_name_placeholders FROM `$table`", $this->columns );			
+		$query = $wpdb->prepare( "SELECT $table.$columns_name_placeholders FROM `$table`", str_replace( $table.'.', '', $this->columns ) );		
 		
 		$this->customizeQuery($query);		
 		

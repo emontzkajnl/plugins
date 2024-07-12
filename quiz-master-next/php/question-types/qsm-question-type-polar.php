@@ -41,7 +41,10 @@ function qmn_polar_display( $id, $question, $answers ) {
 	}
 	$new_question_title = $mlwQuizMasterNext->pluginHelper->get_question_setting( $id, 'question_title' );
 	qsm_question_title_func( $question, '', $new_question_title, $id );
-
+	$show = true;
+	$show = apply_filters( 'qsm_check_advance_polar_show_status', $show, $id );
+	echo apply_filters( 'qmn_polar_display_front_before', '', $id, $question, $answers );
+	if ( $show ) {
 	?>
 	<span class="mlw_qmn_question question-type-polar-s">
 		<div class='left-polar-title'> <?php
@@ -66,7 +69,7 @@ function qmn_polar_display( $id, $question, $answers ) {
 			<?php
 		} else {
 			$left_title = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $answers[0][0], 'answer-' . $id . '-0', "QSM Answers" );
-			echo do_shortcode( wp_kses_post( $left_title ) );
+			echo wp_kses_post( do_shortcode( $left_title ) );
 		}
 		?> </div>
 		<div class='slider-main-wrapper'>
@@ -95,11 +98,12 @@ function qmn_polar_display( $id, $question, $answers ) {
 			<?php
 		} else {
 			$right_title = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $answers[1][0], 'answer-' . $id . '-1', "QSM Answers" );
-			echo do_shortcode( wp_kses_post( $right_title ) );
+			echo wp_kses_post( do_shortcode( $right_title ) );
 		}
 		?></div>
 	</span>
 	<?php
+	}
 	echo apply_filters( 'qmn_polar_display_front', '', $id, $question, $answers );
 }
 

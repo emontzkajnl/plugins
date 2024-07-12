@@ -143,7 +143,7 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 		 * Register the Email Test screen
 		 */
 		public function addPurgeDataSubmenu() {
-			$page = add_submenu_page( '', sprintf( __( '%s Setup', 'post-smtp' ), __( 'Post SMTP', 'post-smtp' ) ), __( 'Post SMTP', 'post-smtp' ), Postman::MANAGE_POSTMAN_CAPABILITY_NAME, PostmanAdminController::MANAGE_OPTIONS_PAGE_SLUG, array(
+			$page = add_submenu_page( ' ', sprintf( __( '%s Setup', 'post-smtp' ), __( 'Post SMTP', 'post-smtp' ) ), __( 'Post SMTP', 'post-smtp' ), Postman::MANAGE_POSTMAN_CAPABILITY_NAME, PostmanAdminController::MANAGE_OPTIONS_PAGE_SLUG, array(
 					$this,
 					'outputPurgeDataContent',
 			) );
@@ -266,6 +266,16 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 
 				}
 				else {
+
+					/**
+					 * Filter the URL of the Postman SMTP Wizard
+					 * 
+					 * @param string $slug The URL page of the Postman SMTP Wizard
+					 * 
+					 * @since 2.9.4
+					 */
+					$slug = apply_filters( 'post_smtp_wizard_url_page', PostmanConfigurationController::CONFIGURATION_WIZARD_SLUG );
+					
 					printf( 
 						'<div class="ps-config-bar">
 							<span >%s</span>
@@ -276,7 +286,7 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 						</div>',
 						wp_kses_post( $statusMessage ),
 						esc_html__( 'Get Started by Setup Wizard!', 'post-smtp' ),
-						esc_attr( $this->getPageUrl( PostmanConfigurationController::CONFIGURATION_WIZARD_SLUG ) ),
+						esc_attr( $this->getPageUrl( $slug ) ),
 						esc_html__( 'Start the Wizard', 'post-smtp' )
 					);
 				}
@@ -284,6 +294,15 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 			}
 
 			//Main Content
+
+			/**
+			 * Filter the URL of the Postman SMTP Wizard
+			 * 
+			 * @param string $slug The URL page of the Postman SMTP Wizard
+			 * 
+			 * @since 2.9.4
+			 */
+			$slug = apply_filters( 'post_smtp_wizard_url_page', PostmanConfigurationController::CONFIGURATION_WIZARD_SLUG );
 			?>
 			<div class="ps-flex ps-home-main">
 				<div class="ps-setting-box">
@@ -292,7 +311,7 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 						<h3 class="ps-ib ps-vm"><?php esc_html_e( 'Configuration', 'post-smtp' ); ?></h3>
 					</div> 
 					<div class="ps-wizard">
-						<a href="<?php esc_attr_e( $this->getPageUrl( PostmanConfigurationController::CONFIGURATION_WIZARD_SLUG ) ) ?>" class="button button-primary"><?php esc_html_e( 'Start the Wizard', 'post-smtp' ); ?></a>
+						<a href="<?php esc_attr_e( $this->getPageUrl( $slug ) ) ?>" class="button button-primary"><?php esc_html_e( 'Start the Wizard', 'post-smtp' ); ?></a>
 						<h4><?php esc_html_e( 'OR', 'post-smtp' ); ?></h4>
 						<div>
 							<a href="<?php echo esc_url( $this->getPageUrl( PostmanConfigurationController::CONFIGURATION_SLUG ) ) ?>">
@@ -383,31 +402,31 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 						<h3 class="ps-ib ps-vm"><?php esc_html_e( 'Extensions', 'post-smtp' ); ?></h3>
 					</div> 
 					<div>
-						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/office-365-extension-for-post-smtp/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" /><?php echo esc_html( 'Microsoft 365/ Office 365' ); ?></a>
+						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/office-365-extension-for-post-smtp/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" /><?php echo esc_html__( 'Microsoft 365/ Office 365', 'post-smtp' ); ?></a>
 						<span class="<?php echo $badgesDisplay; ?>">Pro</span>
 					</div>
 					<div>
-						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/post-smtp-extension-for-amazon-ses/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	<?php echo esc_html( 'Amazon SES' ); ?></a>
+						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/post-smtp-extension-for-amazon-ses/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" ><?php echo esc_html__( 'Amazon SES', 'post-smtp' ); ?></a>
 						<span class="<?php echo $badgesDisplay; ?>">Pro</span>
 					</div>
 					<div>
-						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/email-log-attachment/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	<?php echo esc_html( 'Email Log attachment support' ); ?></a>
+						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/email-log-attachment/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" ><?php echo esc_html__( 'Email Log attachment support', 'post-smtp' ); ?></a>
 						<span class="<?php echo $badgesDisplay; ?>">Pro</span>
 					</div>
 					<div>
-						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/reporting-and-tracking-extension/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	<?php echo esc_html( 'Report & Tracking' ); ?></a>
+						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/reporting-and-tracking-extension/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" ><?php echo esc_html__( 'Report & Tracking', 'post-smtp' ); ?></a>
 						<span class="<?php echo $badgesDisplay; ?>">Pro</span>
 					</div>
 					<div>
-						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/advanced-email-delivery/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	<?php echo esc_html( 'Advanced Email Delivery & Logs' ); ?></a>
+						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/advanced-email-delivery/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" ><?php echo esc_html__( 'Advanced Email Delivery & Logs', 'post-smtp' ); ?></a>
 						<span class="<?php echo $badgesDisplay; ?>">Pro</span>
 					</div>
 					<div>
-						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/twilio-extension-pro/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	<?php echo esc_html( 'Twilio' ); ?></a>
+						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/twilio-extension-pro/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" ><?php echo esc_html__( 'Twilio', 'post-smtp' ); ?></a>
 						<span class="<?php echo $badgesDisplay; ?>">Pro</span>
 					</div>
 					<div>
-						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/zoho-mail-pro-extension/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	<?php echo esc_html( 'Zoho Mail' ); ?></a>
+						<a href="<?php echo esc_url( 'https://postmansmtp.com/extensions/zoho-mail-pro-extension/?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin' ); ?>" target="_blank"><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" ><?php echo esc_html__( 'Zoho Mail', 'post-smtp' ); ?></a>
 						<span class="<?php echo $badgesDisplay; ?>">Pro</span>
 					</div>
 				</div>
@@ -419,43 +438,43 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 					<div>
 						<a href="<?php echo esc_url( 'https://postmansmtp.com/help-configure-post-smtp/' ); ?>" target="_blank" >
 							<img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />
-							<?php echo esc_html( 'Need help setup everything? (paid)' ); ?>
+							<?php echo esc_html__( 'Need help setup everything? (paid)', 'post-smtp' ); ?>
 						</a>
 					</div>
 					<div>
 						<a href="<?php echo $this->getPageUrl( PostmanConnectivityTestController::PORT_TEST_SLUG ); ?>">
 							<img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	
-							<?php echo esc_html( 'Connectivity Test' ); ?>
+							<?php echo esc_html__( 'Connectivity Test', 'post-smtp' ); ?>
 						</a>
 					</div>
 					<div>
 						<a href="<?php echo $this->getPageUrl( PostmanDiagnosticTestController::DIAGNOSTICS_SLUG ); ?>">
 							<img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	
-							<?php echo esc_html( 'Diagnostic Test' ); ?>
+							<?php echo esc_html__( 'Diagnostic Test', 'post-smtp' ); ?>
 						</a>
 					</div>
 					<div>
 						<a href="#" class="release-lock-file" data-security="<?php esc_attr_e( wp_create_nonce( "postman" ) ); ?>" >
 							<img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	
-							<?php echo esc_html( 'Release Lock File Error' ); ?>
+							<?php echo esc_html__( 'Release Lock File Error', 'post-smtp' ); ?>
 						</a>
 					</div>
 					<div>
 						<a href="<?php echo esc_url( 'https://postmansmtp.com/forums/' ); ?>" target="_blank">
 							<img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	
-							<?php echo esc_html( 'Online Support' ); ?>
+							<?php echo esc_html__( 'Online Support', 'post-smtp' ); ?>
 						</a>
 					</div>
 					<div>
 						<a href="<?php echo esc_url( 'https://www.facebook.com/groups/post.smtp' ); ?>" target="_blank">
 							<img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	
-							<?php echo esc_html( 'Facebook Group' ); ?>
+							<?php echo esc_html__( 'Facebook Group', 'post-smtp' ); ?>
 						</a>
 					</div>
 					<div>
 						<a href="<?php echo esc_url( 'https://postmansmtp.com/category/guides/' ); ?>" target="_blank">
 							<img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/finger.png' ) ?>" width="15" />	
-							<?php echo esc_html( 'Guides' ); ?>
+							<?php echo esc_html__( 'Guides', 'post-smtp' ); ?>
 						</a>
 					</div>
 				</div>
@@ -501,7 +520,7 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 				if ( $this->options->isNew() ) {
 					printf( 
 						'<h3 style="padding-top:10px">%s</h3>', 
-						esc_html( 'Thank-you for choosing Postman!', 'post-smtp' ) 
+						esc_html__( 'Thank-you for choosing Postman!', 'post-smtp' ) 
 					);
 					/* translators: where %s is the URL of the Setup Wizard */
 					printf( 
@@ -527,7 +546,7 @@ if ( ! class_exists( 'PostmanViewController' ) ) {
 							esc_html__( 'Please consider', 'post-smtp' ),
 							esc_url( 'https://wordpress.org/support/plugin/post-smtp/reviews/?filter=5' ),
 							esc_html__( 'leaving a review', 'post-smtp' ),
-							esc_html( 'to help spread the word! :D', 'post-smtp' )
+							__( 'to help spread the word! :D', 'post-smtp' )
 						);
 					}
 

@@ -226,6 +226,9 @@ class SGPBMenu
      */
     public function save($menu_id, $item_id)
     {
+        if (!isset($_POST['menu-item-pb'])) { // phpcs:ignore WordPress.Security.NonceVerification			
+			return;
+		}
         if ( current_user_can( 'edit_theme_options' ) ) {
 			check_admin_referer( 'update-nav_menu', 'update-nav-menu-nonce' );
 			delete_post_meta($item_id, '_menu_sgpb_popup_id');

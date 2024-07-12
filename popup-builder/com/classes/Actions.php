@@ -1027,8 +1027,12 @@ class Actions
 		Functions::clearAllTransients();	
 		
 		// Do not processing the whole input
-		$essentialsgpbKeys  = array_column($SGPB_OPTIONS, 'name');	
-		$sgpb_postData = array_intersect_key($_POST, array_flip( $essentialsgpbKeys ));			
+		$sgpb_postData = array_filter(	
+			$_POST,
+			function ($key) { return preg_match('/sgpb-*/', $key) === 1;},			
+			ARRAY_FILTER_USE_KEY
+		);		
+		
 		$postData = SGPopup::parsePopupDataFromData($sgpb_postData);
 			
 		$saveMode = '';

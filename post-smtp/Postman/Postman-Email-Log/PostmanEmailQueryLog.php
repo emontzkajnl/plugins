@@ -116,7 +116,7 @@ class PostmanEmailQueryLog {
         }
 
         //Date Filter :)
-        if( isset( $args['from'] ) ) {
+        if( isset( $args['from'] ) && !empty( $args['from'] ) ) {
                 
             $this->query .= $this->db->prepare( 
                 " {$clause_for_date} pl.`time` >= %d",
@@ -125,9 +125,9 @@ class PostmanEmailQueryLog {
 
         }
 
-        if( isset( $args['to'] ) ) {
+        if( isset( $args['to'] ) && !empty( $args['to'] ) ) {
 
-            $clause_for_date = ( empty( $args['search'] ) && !isset( $args['from'] ) ) ? " WHERE" : " AND";
+            $clause_for_date = strpos( $this->query, 'WHERE' ) !== FALSE ? ' AND' : ' WHERE';
 
             $this->query .= $this->db->prepare(
                 " {$clause_for_date} pl.`time` <= %d",
@@ -135,10 +135,33 @@ class PostmanEmailQueryLog {
             );
 
         }
+
+        // Status Filter
+        $clause_for_status = '';
+        if( !empty( $args['status'] ) ) {
+
+            $clause_for_status = strpos( $this->query, 'WHERE' ) !== FALSE ? ' AND' : ' WHERE';
+
+        }
+        if( $args['status'] == 'success' ) {
+
+            $this->query .= "{$clause_for_status} `success` = 1 ";
+
+        }
+        elseif ( $args['status'] == 'failed' ) {
+
+            $this->query .= "{$clause_for_status} `success` != 1 ";
+
+        }
+        else {
+
+            $this->query .= '';
+
+        }
 		
 		if( isset( $args['site_id'] ) && $args['site_id'] != -1 ) {
 
-            $clause_for_site = ( empty( $args['search'] ) ) ? " WHERE" : " AND";
+            $clause_for_site = ( empty( $args['search'] ) && strpos( $this->query, 'WHERE' ) === false ) ? " WHERE" : " AND";
 			
             $this->query .= " {$clause_for_site} lm.meta_value = '{$args['site_id']}'";
 
@@ -170,7 +193,7 @@ class PostmanEmailQueryLog {
             );
 
         }
-
+        
         return $this->db->get_results( $this->query );
 
     }
@@ -205,7 +228,10 @@ class PostmanEmailQueryLog {
     public function get_total_row_count() {
 
         return $this->db->get_results(
-            "SELECT COUNT(*) as count FROM `{$this->table}`;"
+            $this->db->prepare(
+                "SELECT COUNT(*) as count FROM %i;",
+                $this->table
+            )
         );
 
     }
@@ -220,7 +246,10 @@ class PostmanEmailQueryLog {
     public function get_last_log_id() {
 
         $result = $this->db->get_results(
-            "SELECT id FROM `{$this->table}` ORDER BY id DESC LIMIT 1;"
+            $this->db->prepare(
+                "SELECT id FROM %i ORDER BY id DESC LIMIT 1;",
+                $this->table
+            )
         );
 
         return empty( $result ) ? false : $result[0]->id;
@@ -241,7 +270,10 @@ class PostmanEmailQueryLog {
         $ids = $ids == -1 ? '' : "WHERE id IN ({$ids});";
 
         return $this->db->query(
-            "DELETE FROM `{$this->table}` {$ids}"
+            $this->db->prepare(
+                "DELETE FROM %i {$ids}",
+                $this->table
+            )
         );
 
     }
@@ -260,7 +292,10 @@ class PostmanEmailQueryLog {
         $ids = $ids == -1 ? '' : "WHERE id IN ({$ids});";
 
         return $this->db->get_results(
-            "SELECT * FROM `{$this->table}` {$ids}"
+            $this->db->prepare(
+                "SELECT * FROM %i {$ids}",
+                $this->table
+            )
         );
 
 
