@@ -30,8 +30,8 @@ if( !empty($block['className']) ) {
         <!-- <div class="faps-featured" style="background-image: url('<?php //echo get_the_post_thumbnail_url( $featured_image->ID, 'large' ); ?>');"></div> -->
     </a>
     </div>
-    <?php if ($article_one_cat) {
-        echo '<p class="mfc-cat-title"><a href="'.get_category_link($article_one_cat[0]).'">'.$article_one_cat[0]->name.'</a></p>';
+    <?php if ($featured_cat) {
+        echo '<p class="mfc-cat-title"><a href="'.get_category_link($featured_cat[0]).'">'.$featured_cat[0]->name.'</a></p>';
     } ?>
     <h2 class="faps__featured-title title-link"><a class="title-link" href="<?php echo get_the_permalink($featured_image->ID); ?>"><?php echo $featured_image->post_title; ?></a></h2>
     <?php echo '<p class="faps__featured-excerpt">'.get_the_excerpt( $featured_image->ID ).'</p>'; ?>
