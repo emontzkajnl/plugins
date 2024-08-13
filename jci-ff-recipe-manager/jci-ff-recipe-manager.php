@@ -78,7 +78,7 @@ function register_recipe_block() {
 			'title'			=> __('ILFB Recipe Block', 'ff-recipe'),
 			'mode'			=> 'preview',
 			'description'	=> __('Link out to Farm Flavor Recipe', 'ff-recipe'),
-			'render_template'	=> plugin_dir_path(__FILE__) . 'block/recipe-block.php',
+			'render_template'	=> plugin_dir_path(__FILE__) . 'block/ilfb-recipe-block.php',
 			'icon'              => 'layout', 
 			'keywords'		=> array()
 		));
@@ -88,6 +88,15 @@ function register_recipe_block() {
 			'mode'			=> 'preview',
 			'description'	=> __('Link out to Farm Flavor Recipe', 'ff-recipe'),
 			'render_template'	=> plugin_dir_path(__FILE__) . 'block/ncff-recipe-block.php',
+			'icon'              => 'layout', 
+			'keywords'		=> array()
+		));
+		acf_register_block_type(array(
+			'name'			=> 'mfc_recipe_block',
+			'title'			=> __('MFC Recipe Block', 'ff-recipe'),
+			'mode'			=> 'preview',
+			'description'	=> __('Link out to Farm Flavor Recipe', 'ff-recipe'),
+			'render_template'	=> plugin_dir_path(__FILE__) . 'block/mfc-recipe-block.php',
 			'icon'              => 'layout', 
 			'keywords'		=> array()
 		));
@@ -118,7 +127,7 @@ function update_recipes() {
 
 		// if (! $body['data']): 
 			foreach($body as $b) {
-
+				// print_r($b, true);
 				$this_post = get_posts(array(
 					'numberposts'	=> 1,
 					'post_status'	=> array('publish, draft'),
@@ -133,7 +142,8 @@ function update_recipes() {
 						'post_title'	=>  $b['title']['rendered'],
 						'post_status'	=> 'publish',
 						'post_type'		=> 'ff_recipe',
-						'post_content'	=> $b['post_content'],
+						'post_content'	=> $b['content']['rendered'],
+						'post_excerpt'	=> $b['excerpt']['rendered'],
 						'meta_input'   	=> array(
 							'ff_id'			=> $b['id'],
 							'recipe_link'	=> $b['link'],

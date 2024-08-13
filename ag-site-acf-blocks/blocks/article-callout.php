@@ -13,7 +13,7 @@ if( !empty($block['className']) ) {
 $article = get_field('article');
 $article_id = $article->ID;
 $categories = get_the_terms( $article_id, 'category' );
-$cat = $categories[0];
+$cat = $categories ?  $categories[0] : null;
 // print_r($categories);
 // echo get_term_link($cat->term_id );
 ?>
@@ -23,7 +23,9 @@ $cat = $categories[0];
         <?php echo get_the_post_thumbnail($article_id ); ?>
     </div>
     <div class="article-callout__text">
+        <?php if ($cat): ?>
         <h4 class="article-callout__category"><a href ="<?php echo get_term_link($cat->term_id ); ?>"><?php echo $cat->name; ?></a></h4>
+        <?php endif; ?>
         <h3 class="article-callout__title"><a href="<?php echo get_the_permalink($article_id ); ?>"><?php echo get_the_title($article_id); ?></a></h3>
         <p><?php echo get_the_excerpt($article_id ); ?></p>
     </div>
