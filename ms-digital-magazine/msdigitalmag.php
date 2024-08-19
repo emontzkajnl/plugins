@@ -28,4 +28,10 @@ function create_post_type() {
 	);
 }
 
+function add_digital_magazine_fields(){
+	// Controls display textarea for copy under magazine embed
+	add_meta_box('Digital Magazine', 'Digital Magazine', 'jcidm_magazine', 'magazine', 'normal');
+}
+
+
 add_action( 'init', 'create_post_type' );
