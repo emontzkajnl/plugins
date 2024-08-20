@@ -1,6 +1,7 @@
 {
     "name":     "acf/video-section",
     "title":    "Video Section",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

@@ -1,6 +1,7 @@
 {
     "name":     "acf/ncff-event-filter",
     "title":    "NCFF Event Search and Filter Pro",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

@@ -1,6 +1,7 @@
 {
     "name":     "acf/mfc-magazine-social",
     "title":    "MFC Magazine Social Block",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

@@ -1,6 +1,7 @@
 {
     "name":     "acf/ilfb-article-list",
     "title":    "ILFB Article List",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

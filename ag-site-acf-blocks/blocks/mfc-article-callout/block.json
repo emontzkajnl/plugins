@@ -1,6 +1,7 @@
 {
     "name":     "acf/mfc-article-callout",
     "title":    "MFC Article Callout Block",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

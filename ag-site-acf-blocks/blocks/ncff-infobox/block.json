@@ -1,6 +1,7 @@
 {
     "name":     "acf/ncff-infobox",
     "title":    "NCFF Info Box",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

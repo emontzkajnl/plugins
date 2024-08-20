@@ -1,6 +1,7 @@
 {
     "name":     "acf/podcast-player",
     "title":    "ILFB Podcast Player",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

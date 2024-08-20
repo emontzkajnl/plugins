@@ -1,6 +1,7 @@
 {
     "name":     "acf/ncff-article-link",
     "title":    "NCFF Article Link",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",

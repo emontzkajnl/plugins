@@ -1,6 +1,7 @@
 {
     "name":     "acf/ncff-popular-posts",
     "title":    "NCFF Popular Posts",
+    "category": "livability",
     "icon":     "layout",
     "acf":      {
         "mode":     "preview",
