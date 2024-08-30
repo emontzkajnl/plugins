@@ -12,7 +12,7 @@ $fa_one = get_field('top_article');
 $fa_two = get_field('article_two');
 $fa_three = get_field('article_three');
 ?>
-<div class="container">
+<div class="offwhite-bkgrnd">
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <div class="ncff-featured__top-container">
 <div class="ncff-featured__top-img-container">
