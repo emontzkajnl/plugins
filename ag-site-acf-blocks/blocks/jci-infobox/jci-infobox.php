@@ -1,10 +1,10 @@
 <?php 
 /**
- * NCFF Infobox  Block
+ * JCI Infobox Block
  */
 
-$id = 'ncff-infobox-' . $block['id'];
-$className = 'ncff-infobox ';
+$id = 'jci-infobox-' . $block['id'];
+$className = 'jci-infobox ';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 } 
@@ -14,7 +14,7 @@ $link = get_field('link');
 ?>
 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-<div class="ncff-infobox__container">
+<div class="jci-infobox__container">
     <?php echo $infobox; 
     if ($link) {
         $text = $link['title'] ? $link['title'] : "Learn More";
@@ -24,4 +24,3 @@ $link = get_field('link');
     } ?>
 </div>
 </div>
-

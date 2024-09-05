@@ -60,7 +60,7 @@ function my_acf_init_block_types() {
         ));
         acf_register_block_type(array(
             'name'              => 'article_callout',
-            'title'             => __('Article Callout', 'acf-blocks'),
+            'title'             => __('JCI Article Callout', 'acf-blocks'),
             'description'       => __('Displays box to link a single article', 'acf-blocks'),
             'mode'              => 'preview',
             'render_template'   => plugin_dir_path(__FILE__) . 'blocks/article-callout.php',
@@ -78,7 +78,7 @@ function my_acf_init_block_types() {
         ));
         acf_register_block_type(array(
             'name'              => 'callout_box',
-            'title'             => __('Callout Box', 'acf-blocks'),
+            'title'             => __('JCI Callout Box', 'acf-blocks'),
             'description'       => __('Display a callout box with any content you wish and optional icon', 'acf-blocks'),
             'mode'              => 'preview',
             'render_template'   => plugin_dir_path(__FILE__) . 'blocks/callout-box.php',
@@ -94,6 +94,7 @@ function my_acf_init_block_types() {
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-popular-posts/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-article-link/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-infobox/block.json');
+        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/jci-infobox/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-event-filter/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-magazine-social/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-recent-posts/block.json');
