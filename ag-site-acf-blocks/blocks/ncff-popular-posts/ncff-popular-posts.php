@@ -33,7 +33,7 @@ $pop_query = new WP_Query($args); ?>
         $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;
         ?>
         <div class="col-12 m-col-3 s-col-6">
-        <div class="ncff-popular__container nc-panel">
+        <div class="ncff-popular__container object-fit-image nc-panel">
             <div class="ncff-popular__img-container">
                 <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail( ).'</a>'; ?>
             </div>
