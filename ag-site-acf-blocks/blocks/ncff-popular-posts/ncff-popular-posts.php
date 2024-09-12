@@ -23,7 +23,7 @@ $pop_query = new WP_Query($args); ?>
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <?php if ($pop_query->have_posts()):
 
-    echo '<h2 class="ncff-section-title">Most Popular</h2><div class="row ncff-popular__row">';
+    echo '<h2 class="ncff-section-title">Most Popular</h2><div class="ncff-popular__row"><div class="row">';
     while ($pop_query->have_posts()):
         $pop_query->the_post(); 
         $ID = get_the_ID(); 
@@ -44,7 +44,7 @@ $pop_query = new WP_Query($args); ?>
             </div> <!-- container -->
         </div> <!-- col-12 -->
     <?php endwhile;
-    echo '</div>'; // row
+    echo '</div></div>'; // popular__row, row
     $max_pages = $pop_query->max_num_pages;
     if ($max_pages > 1) {
         ?>
