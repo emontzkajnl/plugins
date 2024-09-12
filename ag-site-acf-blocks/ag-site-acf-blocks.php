@@ -99,6 +99,7 @@ function my_acf_init_block_types() {
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-magazine-social/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-recent-posts/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-article-callout/block.json');
+        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mih-featured-articles/block.json');
         wp_register_script('podcast-block',plugin_dir_path(__FILE__) . '/blocks/ilfb-podcast-player/podcast-style.js',array(), null, true);
     }
 } 

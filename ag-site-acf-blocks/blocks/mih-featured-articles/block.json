@@ -1,0 +1,9 @@
+{
+    "name":     "acf/mih-featured-articles",
+    "title":    "MIH Featured Articles",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "mih-featured-articles.php"
+    }
+}
