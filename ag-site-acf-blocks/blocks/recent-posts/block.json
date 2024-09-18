@@ -1,0 +1,10 @@
+{
+    "name":     "acf/recent-posts",
+    "title":    "JCI Recent Posts",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "recent-posts.php"
+    }
+}

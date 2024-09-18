@@ -1,0 +1,10 @@
+{
+    "name":     "acf/magazine-social",
+    "title":    "JCI Magazine Social Block",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "magazine-social.php"
+    }
+}

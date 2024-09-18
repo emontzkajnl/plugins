@@ -1,0 +1,10 @@
+{
+    "name":     "acf/mih-recipes",
+    "title":    "MIH Recipes",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "mih-recipes.php"
+    }
+}
