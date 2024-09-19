@@ -32,7 +32,7 @@ if ($directory_query->have_posts()): ?>
         </div>
         <div class="mih-directories__text-container">
             <div class="mih-directories__title">
-                <h3><?php echo get_the_title(); ?></h3>
+                <h3><a href="<?php echo get_the_permalink(); ?> " class="unstyle-link"><?php echo get_the_title(); ?></a></h3>
             </div>
         </div>
     </div>

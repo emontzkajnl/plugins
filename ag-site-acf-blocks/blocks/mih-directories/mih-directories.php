@@ -28,7 +28,7 @@ if ($directory_query->have_posts()): ?>
         <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
         </div>
         <div class="mih-directories__text-container">
-            <h3 class="mih-directories__title"><?php echo get_the_title(); ?></h3>
+            <h3 class="mih-directories__title"><a class="unstyle-link" href="<?php echo get_the_permalink( ); ?>"><?php echo get_the_title(); ?></a></h3>
         </div>
     </div>
     </div>
