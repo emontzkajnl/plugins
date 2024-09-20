@@ -3,28 +3,28 @@
  *MIH Farm Directories and Maps Block
  */
 
-$id = 'mih-directories' . $block['id'];
+$id = 'mih-recipes' . $block['id'];
 $className = 'mih-directories ';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 } 
 $paged = ( get_query_var('page') ) ? get_query_var('page') : 1;
 $args = array(
-    'paginated'         => 1,
     'paged'             => $paged,
     'posts_per_page'    => 4,
     'post_type'         => 'post',
     'category_name'     => 'recipes',
     'post_status'       => 'publish'
 );
-$directory_query = new WP_Query($args);
-
-if ($directory_query->have_posts()): ?>
+$recipe_query = new WP_Query($args);
+if ($recipe_query->have_posts()):
+   $max_pages = $recipe_query->max_num_pages; ?>
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <h2 class="section-heading">My Indiana Home Recipes</h2>
+<div class="mih-recipes-container">
 <div class="row">
-    <?php while ($directory_query->have_posts()):
-    $directory_query->the_post(); ?>
+    <?php while ($recipe_query->have_posts()):
+    $recipe_query->the_post(); ?>
     <div class="col-12 l-col-3 m-col-6">
     <div class="mih-directories__panel">
         <div class="mih-directories__img-container">
@@ -38,6 +38,12 @@ if ($directory_query->have_posts()): ?>
     </div>
     </div>
     <?php endwhile;
-    echo '</div></div>'; // row, mih-directories
+    echo '</div></div></div>'; // row, mih-directories, mih-recipes-container
+    if ($max_pages > 1) { 
+        ?>
+        <div style="text-align: center;">
+        <button data-max="<?php echo $max_pages; ?>" id="load-more-mih-recipes">Load More</button>
+    </div>
+    <?php }
 endif;
 wp_reset_postdata();
