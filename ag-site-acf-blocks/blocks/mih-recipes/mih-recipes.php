@@ -38,12 +38,13 @@ if ($recipe_query->have_posts()):
     </div>
     </div>
     <?php endwhile;
-    echo '</div></div></div>'; // row, mih-directories, mih-recipes-container
+    echo '</div></div>'; // row, mih-directories, mih-recipes-container
     if ($max_pages > 1) { 
         ?>
         <div style="text-align: center;">
         <button data-max="<?php echo $max_pages; ?>" id="load-more-mih-recipes">Load More</button>
     </div>
     <?php }
+    echo '</div'; // container
 endif;
 wp_reset_postdata();
