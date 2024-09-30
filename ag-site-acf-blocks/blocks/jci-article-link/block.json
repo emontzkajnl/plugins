@@ -1,0 +1,10 @@
+{
+    "name":     "acf/jci-article-link",
+    "title":    "JCI Article Link",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "jci-article-link.php"
+    }
+}

@@ -93,6 +93,7 @@ function my_acf_init_block_types() {
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-recent-posts/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-popular-posts/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-article-link/block.json');
+        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/jci-article-link/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-infobox/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/jci-infobox/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-event-filter/block.json');
