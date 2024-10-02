@@ -32,7 +32,7 @@ if ($recent_query->have_posts()): ?>
                 <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
             </div>
             <div class="jci-recent__text-container">
-            <p class="category-name"><?php echo $cat_name; ?></p>
+            <p class="jci-recent__category"><?php echo $cat_name; ?></p>
             <h2 class="jci-recent__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
             <div class="jci-recent__excerpt"><?php echo the_excerpt( ); ?></div>
             </div>
