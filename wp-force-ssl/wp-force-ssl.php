@@ -5,11 +5,11 @@
   Description: Redirect all traffic from HTTP to HTTPS and fix other SSL issues.
   Author: WebFactory Ltd
   Author URI: https://www.webfactoryltd.com/
-  Version: 1.66
+  Version: 1.67
   Text Domain: wp-force-ssl
   Requires at least: 4.6
   Requires PHP: 5.2
-  Tested up to: 6.5
+  Tested up to: 6.6
 
   Copyright 2019 - 2024  WebFactory Ltd  (email: support@webfactoryltd.com)
 
@@ -148,7 +148,7 @@ class wpForceSSL
   {
     check_ajax_referer('wpfs_dismiss_notice');
 
-    if (!current_user_can('administrator')) {
+    if (!current_user_can('manage_options')) {
       wp_send_json_error('You are not allowed to run this action.');
     }
 
@@ -209,7 +209,8 @@ class wpForceSSL
     global $wp_force_ssl_tests;
 
     check_ajax_referer('run_tests_nonce_action');
-    if (!current_user_can('administrator')) {
+
+    if (!current_user_can('manage_options')) {
       wp_send_json_error('You are not allowed to run this action.');
     }
 
@@ -241,7 +242,7 @@ class wpForceSSL
     $meta = $this->get_meta();
     $pointers = array();
 
-    if (!$meta['hide_welcome_pointer'] && !$this->is_plugin_page() && current_user_can('administrator')) {
+    if (!$meta['hide_welcome_pointer'] && !$this->is_plugin_page() && current_user_can('manage_options')) {
       $pointers['_nonce_dismiss_pointer'] = wp_create_nonce('wpfs_dismiss_notice');
       $pointers['welcome'] = array('target' => '#menu-settings', 'edge' => 'left', 'align' => 'right', 'content' => 'Thank you for installing the <b style="font-weight: 800;">WP Force SSL</b> plugin!<br>Open <a href="' . admin_url('options-general.php?page=wpfs-settings') . '">Settings - WP Force SSL</a> to access SSL settings.');
 
@@ -347,7 +348,7 @@ class wpForceSSL
 
     if (
       'yes' != $this->options['wpfs_adminbar_menu'] ||
-      false === current_user_can('administrator') ||
+      false === current_user_can('manage_options') ||
       false === apply_filters('wp_force_ssl_show_admin_bar', true)
     ) {
       return;
@@ -398,7 +399,7 @@ class wpForceSSL
   // add widget to dashboard
   function add_widget()
   {
-    if (current_user_can('administrator') && $this->options['wpfs_dashboard_widget'] == 'yes') {
+    if (current_user_can('manage_options') && $this->options['wpfs_dashboard_widget'] == 'yes') {
       add_meta_box('wpfssl_status', 'WP Force SSL Status', array($this, 'widget_content'), 'dashboard', 'side', 'high');
     }
   } // add_widget
@@ -544,7 +545,7 @@ class wpForceSSL
   function settings_page_content()
   {
     // double check for admin privileges
-    if (!current_user_can('administrator')) {
+    if (!current_user_can('manage_options')) {
       wp_die('Sorry, you are not allowed to access this page.');
     }
 
@@ -819,7 +820,7 @@ class wpForceSSL
 
     echo '</table></form>';
 
-    echo '<p><a href="#" class="button button-primary save-ssl-options">' . __('Save Settings', 'wp-force-ssl') . '</a></p>';
+    echo '<p><a href="#" class="button button-primary save-ssl-options">' . esc_html__('Save Settings', 'wp-force-ssl') . '</a></p>';
   } //tab_settings
 
 
@@ -913,7 +914,7 @@ class wpForceSSL
    */
   public function notice_min_wp_version()
   {
-    echo '<div class="error"><p>' . sprintf(__('WP Force SSL plugin <b>requires WordPress version 4.6</b> or higher to function properly. You are using WordPress version %s. Please <a href="%s">update it</a>.', 'wp-force-ssl'), get_bloginfo('version'), admin_url('update-core.php')) . '</p></div>';
+    wpForceSSL_Utility::wp_kses_wf('<div class="error"><p>' . sprintf(__('WP Force SSL plugin <b>requires WordPress version 4.6</b> or higher to function properly. You are using WordPress version %s. Please <a href="%s">update it</a>.', 'wp-force-ssl'), get_bloginfo('version'), admin_url('update-core.php')) . '</p></div>');
   } // notice_min_wp_version_error
 
 
@@ -954,6 +955,10 @@ class wpForceSSL
   {
     check_ajax_referer('save_settting_nonce_action');
 
+    if (false === current_user_can('manage_options')) {
+      wp_die('Sorry, you have to be an admin to run this action.');
+    }
+
     $wpfs_ssl = isset($_POST['wpfs_ssl']) ? 'yes' : 'no';
     $wpfs_hsts = isset($_POST['wpfs_hsts']) ? 'yes' : 'no';
     $wpfs_expect_ct = isset($_POST['wpfs_expect_ct']) ? 'yes' : 'no';
@@ -985,6 +990,10 @@ class wpForceSSL
     global $wp_force_ssl_tests;
 
     check_ajax_referer('test_ssl_nonce_action');
+
+    if (false === current_user_can('manage_options')) {
+      wp_die('Sorry, you have to be an admin to run this action.');
+    }
 
     if (isset($_REQUEST['force']) && (bool)$_REQUEST['force'] === true) {
       $nocache = true;

@@ -16,8 +16,8 @@ use AC\ListScreenRepository\Storage;
 use AC\Type\ColumnWidth;
 use AC\Type\Uri;
 use ACP\Search\DefaultSegmentTrait;
+use ACP\Settings\General\LayoutStyle;
 use ACP\Settings\ListScreen\HideOnScreen;
-use ACP\Settings\Option\LayoutStyle;
 use WP_User;
 
 class Table extends Script
@@ -33,12 +33,15 @@ class Table extends Script
 
     private $storage;
 
+    private $layout_style;
+
     public function __construct(
         Absolute $location,
         ListScreen $list_screen,
         ColumnSize\UserStorage $user_storage,
         ColumnSize\ListStorage $list_storage,
-        Storage $storage
+        Storage $storage,
+        LayoutStyle $layout_style
     ) {
         parent::__construct('acp-table', $location, [Script\GlobalTranslationFactory::HANDLE, 'jquery-ui-sortable']);
 
@@ -46,6 +49,7 @@ class Table extends Script
         $this->user_storage = $user_storage;
         $this->list_storage = $list_storage;
         $this->storage = $storage;
+        $this->layout_style = $layout_style;
     }
 
     public function register(): void
@@ -150,9 +154,7 @@ class Table extends Script
 
     private function get_column_set_style(): string
     {
-        $option = new LayoutStyle();
-
-        return $option->get() ?: LayoutStyle::OPTION_DROPDOWN;
+        return $this->layout_style->get_style();
     }
 
     private function is_column_order_active(): bool

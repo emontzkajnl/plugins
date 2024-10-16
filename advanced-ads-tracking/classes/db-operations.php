@@ -40,28 +40,28 @@ class Advanced_Ads_Tracking_Dbop {
 	 * Advanced_Ads_Tracking_Dbop constructor.
 	 */
 	private function __construct() {
-		$this->remove_periods    = array(
+		$this->remove_periods    = [
 			'beforethisyear' => __( 'everything before this year', 'advanced-ads-tracking' ),
 			'first6months'   => __( 'first 6 months', 'advanced-ads-tracking' ),
-		);
-		$this->export_periods    = array(
+		];
+		$this->export_periods    = [
 			'last12months'   => __( 'last 12 months', 'advanced-ads-tracking' ),
 			'lastyear'       => __( 'last year', 'advanced-ads-tracking' ),
 			'thisyear'       => __( 'this year', 'advanced-ads-tracking' ),
 			'beforethisyear' => __( 'everything before this year', 'advanced-ads-tracking' ),
 			'first6months'   => __( 'first 6 months', 'advanced-ads-tracking' ),
-		);
+		];
 		$this->wpdb              = $GLOBALS['wpdb'];
 		$this->impressions_table = Advanced_Ads_Tracking_Util::get_instance()->get_impression_table();
 		$this->clicks_table      = Advanced_Ads_Tracking_Util::get_instance()->get_click_table();
 
-		add_filter( 'advanced-ads-tracking-get-period-bounds', array( $this, 'add_remove_periods_bounds' ), 25, 2 );
+		add_filter( 'advanced-ads-tracking-get-period-bounds', [ $this, 'add_remove_periods_bounds' ], 25, 2 );
 
 		// AJAX ACTION
-		add_action( 'wp_ajax_advads_tracking_remove', array( $this, 'ajax_remove' ) );
-		add_action( 'wp_ajax_advads_tracking_export', array( $this, 'ajax_export' ) );
-		add_action( 'wp_ajax_advads_tracking_reset', array( $this, 'ajax_reset' ) );
-		add_action( 'wp_ajax_advads_tracking_debug_mode', array( $this, 'ajax_debug_mode' ) );
+		add_action( 'wp_ajax_advads_tracking_remove', [ $this, 'ajax_remove' ] );
+		add_action( 'wp_ajax_advads_tracking_export', [ $this, 'ajax_export' ] );
+		add_action( 'wp_ajax_advads_tracking_reset', [ $this, 'ajax_reset' ] );
+		add_action( 'wp_ajax_advads_tracking_debug_mode', [ $this, 'ajax_debug_mode' ] );
 	}
 
 	/**
@@ -69,7 +69,7 @@ class Advanced_Ads_Tracking_Dbop {
 	 */
 	public function ajax_debug_mode() {
 		if ( ! wp_verify_nonce( $_POST['nonce'], 'advads_tracking_dbop' ) || ! current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
-			wp_send_json_error( array(), 401 );
+			wp_send_json_error( [], 401 );
 		}
 
 		// end debugging.
@@ -77,7 +77,7 @@ class Advanced_Ads_Tracking_Dbop {
 			if ( delete_option( Advanced_Ads_Tracking_Debugger::DEBUG_OPT ) ) {
 				wp_send_json_success();
 			}
-			wp_send_json_error( array( 'message' => __( "Can't delete debugging option", 'advanced-ads-tracking' ) ) );
+			wp_send_json_error( [ 'message' => __( "Can't delete debugging option", 'advanced-ads-tracking' ) ] );
 		}
 
 		// try creating the debug file.
@@ -89,18 +89,18 @@ class Advanced_Ads_Tracking_Dbop {
 				__( ' Please make sure the directory %s is writable', 'advanced-ads-tracking' ),
 				sprintf( '<code>%s</code>', WP_CONTENT_DIR )
 			);
-			wp_send_json_error( array( 'message' => $message ), 400 );
+			wp_send_json_error( [ 'message' => $message ], 400 );
 		}
 
 		// try saving debug option.
-		if ( update_option( Advanced_Ads_Tracking_Debugger::DEBUG_OPT, array(
+		if ( update_option( Advanced_Ads_Tracking_Debugger::DEBUG_OPT, [
 			'id'   => $_POST['ad'] === 'all' ? true : (int) $_POST['ad'],
 			'time' => time(),
-		) ) ) {
+		] ) ) {
 			wp_send_json_success();
 		}
 
-		wp_send_json_error( array( 'message' => __( "Can't save debugging option", 'advanced-ads-tracking' ) ) );
+		wp_send_json_error( [ 'message' => __( "Can't save debugging option", 'advanced-ads-tracking' ) ] );
 	}
 
 	/**
@@ -136,25 +136,25 @@ class Advanced_Ads_Tracking_Dbop {
 
 		switch ( $this->reset_stats_db( $ad_id ) ) {
 			case 1:
-				return array(
+				return [
 					'status' => true,
 					'msg'    => esc_attr__( 'All impressions and clicks removed.', 'advanced-ads-tracking' ),
-				);
+				];
 			case - 1:
-				return array(
+				return [
 					'status' => false,
 					'msg'    => (int) $ad_id < 1
 						? esc_attr__( 'No stats removed.', 'advanced-ads-tracking' )
 						/* Translators: %d is the ad_id */
 						: sprintf( esc_attr__( 'No stats for ad ID %d removed.', 'advanced-ads-tracking' ), $ad_id ),
-				);
+				];
 			case 0:
 			default:
-				return array(
+				return [
 					'status' => true,
 					/* Translators: %d is the ad_id */
 					'msg'    => sprintf( esc_attr__( 'Impressions and clicks for ad ID %d removed.', 'advanced-ads-tracking' ), $ad_id ),
-				);
+				];
 		}
 	}
 
@@ -247,6 +247,11 @@ class Advanced_Ads_Tracking_Dbop {
 		die;
 	}
 
+	/**
+	 * AJAX callback to generate a stats export.
+	 *
+	 * @return void
+	 */
 	public function ajax_export() {
 		if ( false !== wp_verify_nonce( $_GET['nonce'], 'advads_tracking_dbop' ) && current_user_can( Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' ) ) ) {
 			$period = ( $_GET['period'] ) ? stripslashes( $_GET['period'] ) : false;
@@ -257,13 +262,20 @@ class Advanced_Ads_Tracking_Dbop {
 				echo 'invalid period';
 				die;
 			} else {
-				$file_name = 'Advanced_Ads_Stats';
+				$file_name = sprintf(
+					'%s-advanced-ads-stats',
+					sanitize_title( preg_replace(
+						'#^(?:[^:]+:)?//(?:www\.)?([^/]+)#',
+						'$1',
+						get_bloginfo( 'url' )
+					) )
+				);
 				if ( ! empty( $data['impressions'] ) ) {
 					$first_date = key( $data['impressions'] );
 					end( $data['impressions'] );
 					$end_date = key( $data['impressions'] );
 					reset( $data['impressions'] );
-					$file_name .= "_{$first_date}_{$end_date}";
+					$file_name .= "-{$first_date}_{$end_date}";
 				}
 				$file_name .= '.csv';
 
@@ -331,29 +343,29 @@ class Advanced_Ads_Tracking_Dbop {
 					// from and to are from jQuery-ui DatePicker
 					$from   = explode( '/', $from );
 					$to     = explode( '/', $to );
-					$result = array(
+					$result = [
 						$from[2] . '-' . $from[0] . '-' . $from[1],
 						$to[2] . '-' . $to[0] . '-' . $to[1],
-					);
+					];
 				} else {
 					// already converted
-					$result = array( $from, $to );
+					$result = [ $from, $to ];
 				}
 				break;
 			case 'lastyear':
 				$last_year = (string) ( (int) $now->format( 'Y' ) - 1 );
-				$result    = array( $last_year . '-01-01', $last_year . '-12-31' );
+				$result    = [ $last_year . '-01-01', $last_year . '-12-31' ];
 				break;
 
 			case 'thisyear':
-				$result = array( $now->format( 'Y' ) . '-01-01', $now->format( 'Y-m-d' ) );
+				$result = [ $now->format( 'Y' ) . '-01-01', $now->format( 'Y-m-d' ) ];
 				break;
 
 			default: // last12months
 				$last_month = date_create( $now->format( 'Y-' ) . ( (int) $now->format( 'm' ) - 1 ) . '-1' );
 				$end_date   = date_create( $last_month->format( 'Y-m-t' ) );
 				$start_date = date_create( ( (int) $now->format( 'Y' ) - 1 ) . $now->format( '-m' ) . '-01' );
-				$result     = array( $start_date->format( 'Y-m-d' ), $end_date->format( 'Y-m-d' ) );
+				$result     = [ $start_date->format( 'Y-m-d' ), $end_date->format( 'Y-m-d' ) ];
 		}
 
 		return apply_filters( 'advanced-ads-tracking-get-period-bounds', $result, $period_name );
@@ -373,7 +385,7 @@ class Advanced_Ads_Tracking_Dbop {
 				$now  = date_create( 'now', Advanced_Ads_Tracking_Util::get_wp_timezone() );
 				$year = (int) $now->format( 'Y' ) - 1;
 
-				return array( self::MIN_DATE, $year . '-12-31' );
+				return [ self::MIN_DATE, $year . '-12-31' ];
 			case 'first6months':
 				$first_date = date_create( $this->get_first_record_date( 'Y-m-d' ) );
 				$year       = (int) $first_date->format( 'Y' );
@@ -386,7 +398,7 @@ class Advanced_Ads_Tracking_Dbop {
 				}
 				$end_date = date_create( $year . '-' . $month . '-01' );
 
-				return array( $first_date->format( 'Y-m-d' ), $end_date->format( 'Y-m-t' ) );
+				return [ $first_date->format( 'Y-m-d' ), $end_date->format( 'Y-m-t' ) ];
 			default:
 				// Return the result as is.
 				return $result;
@@ -404,7 +416,8 @@ class Advanced_Ads_Tracking_Dbop {
 		global $wpdb;
 		$util              = Advanced_Ads_Tracking_Util::get_instance();
 		$impressions_table = $util->get_impression_table();
-		$result            = $wpdb->get_results( "SELECT `timestamp` FROM ${impressions_table} ORDER BY `timestamp` ASC LIMIT 1" );
+		// phpcs:ignore WordPress.DB.PreparedSQL -- we can't prepare the table names.
+		$result            = $wpdb->get_results( "SELECT `timestamp` FROM {$impressions_table} ORDER BY `timestamp` ASC LIMIT 1" );
 		if ( ! $result ) {
 			return '';
 		}
@@ -429,26 +442,26 @@ class Advanced_Ads_Tracking_Dbop {
 		$bounds = $this->get_period_bounds( $period, $from, $to );
 		$util   = Advanced_Ads_Tracking_Util::get_instance();
 		$admin  = new Advanced_Ads_Tracking_Admin();
-		$bounds = $period === 'custom' ? array( $from, $to ) : $this->get_period_bounds( $period, $from, $to );
-		$_ads   = Advanced_Ads::get_ads( array( 'post_status' => array( 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ) ) );
-		$ads    = array();
+		$bounds = $period === 'custom' ? [ $from, $to ] : $this->get_period_bounds( $period, $from, $to );
+		$_ads   = Advanced_Ads::get_ads( [ 'post_status' => [ 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ] ] );
+		$ads    = [];
 		foreach ( $_ads as $ad ) {
 			$ads[] = (string) $ad->ID;
 		}
 		// SQL query arguments
-		$sql_args = array(
+		$sql_args = [
 			'period'      => 'custom',
 			'groupby'     => 'day',
 			'ad_id'       => $ads,
 			'groupFormat' => 'Y-m-d',
 			'from'        => $bounds[0],
 			'to'          => $bounds[1],
-		);
+		];
 
 		$imprs  = $admin->load_stats( $sql_args, $util->get_impression_table() );
 		$clicks = $admin->load_stats( $sql_args, $util->get_click_table() );
 
-		return array( $imprs, $clicks );
+		return [ $imprs, $clicks ];
 	}
 
 	/**
@@ -456,11 +469,11 @@ class Advanced_Ads_Tracking_Dbop {
 	 */
 	private function remove( $period ) {
 		if ( ! array_key_exists( $period, $this->remove_periods ) ) {
-			return array(
+			return [
 				'status' => false,
 				'msg'    => 'invalid period',
 				'value'  => $period,
-			);
+			];
 		}
 		$util             = Advanced_Ads_Tracking_Util::get_instance();
 		$click_table      = $util->get_click_table();
@@ -478,7 +491,7 @@ class Advanced_Ads_Tracking_Dbop {
 
 		$result = $wpdb->query( $query );
 		if ( false === $result ) {
-			return array( 'status' => false );
+			return [ 'status' => false ];
 		} else {
 			// OPTIMIZE to retrieve unused space
 			$o1 = "OPTIMIZE TABLE $impression_table";
@@ -486,7 +499,7 @@ class Advanced_Ads_Tracking_Dbop {
 
 			$ro1    = $wpdb->query( $o1 );
 			$ro2    = $wpdb->query( $o2 );
-			$return = array( 'status' => true );
+			$return = [ 'status' => true ];
 			if ( false === $ro1 || false === $ro2 ) {
 				$return['alt-msg'] = 'optimize-failure';
 			}
@@ -498,7 +511,7 @@ class Advanced_Ads_Tracking_Dbop {
 	/**
 	 *  Get info about db size
 	 *
-	 * @return assoc array
+	 * @return array
 	 */
 	public function get_db_size() {
 		global $wpdb;
@@ -556,14 +569,14 @@ class Advanced_Ads_Tracking_Dbop {
 			$oldest_impression  = $_oldest_impression->format( 'U' );
 		}
 
-		return array(
+		return [
 			'impression_row_count' => $impressions_row_count,
 			'click_row_count'      => $clicks_row_count,
 			'first_impression'     => $oldest_impression, // UNIX timestamp | NULL
 			'first_click'          => $oldest_click, // UNIX timestamp | NULL
 			'impression_in_kb'     => $impression_size,
 			'click_in_kb'          => $click_size,
-		);
+		];
 	}
 
 	/**
@@ -589,10 +602,10 @@ class Advanced_Ads_Tracking_Dbop {
 
 		// phpcs:enable
 
-		return array(
-			'impressions' => array_map( 'intval', $imp ),
-			'clicks'      => array_map( 'intval', $clk ),
-		);
+		return [
+			'impressions' => array_map( function( $value ) { return (int) $value; }, $imp ),
+			'clicks'      => array_map( function( $value ) { return (int) $value; }, $clk ),
+		];
 	}
 
 	/**
@@ -603,40 +616,40 @@ class Advanced_Ads_Tracking_Dbop {
 		if ( empty( $bounds ) ) {
 			return false;
 		}
-		$_ads  = Advanced_Ads::get_ads( array( 'post_status' => array( 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ) ) );
+		$_ads  = Advanced_Ads::get_ads( [ 'post_status' => [ 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ] ] );
 		$stats = $this->load_stats( $period, $bounds[0], $bounds[1] );
 
 		if ( false === $stats[0] ) {
 			return false;
 		}
 		list( $imprs, $clicks ) = $stats;
-		$ads = array();
+		$ads = [];
 		foreach ( $_ads as $ad ) {
 			$ads[ $ad->ID ] = $ad->post_title;
 		}
 
-		return array(
+		return [
 			'ads'         => $ads,
 			'impressions' => $imprs,
 			'clicks'      => $clicks,
-		);
+		];
 	}
 
 	/**
 	 *  Output the period selection inputs for exporting and compressing data
 	 */
-	public static function period_select_inputs( $args = array() ) {
-		$default_args = array(
-			'period'         => array( '', '' ),
-			'from'           => array( '', '' ),
-			'to'             => array( '', '' ),
+	public static function period_select_inputs( $args = [] ) {
+		$default_args = [
+			'period'         => [ '', '' ],
+			'from'           => [ '', '' ],
+			'to'             => [ '', '' ],
 			'custom'         => true,
-			'period-options' => array(
+			'period-options' => [
 				'last12months' => __( 'last 12 months', 'advanced-ads-tracking' ),
 				'lastyear'     => __( 'last year', 'advanced-ads-tracking' ),
 				'thisyear'     => __( 'this year', 'advanced-ads-tracking' ),
-			),
-		);
+			],
+		];
 		$_args        = $args + $default_args;
 		if ( isset( $args['period-options'] ) && is_array( $args['period-options'] ) ) {
 			$_args['period-options'] = $args['period-options'];

@@ -13,8 +13,8 @@ use WP_Error;
 use AdvancedAds\Utilities\WordPress;
 use AdvancedAds\Modules\OneClick\Helpers;
 use AdvancedAds\Modules\OneClick\Options;
-use AdvancedAds\Modules\OneClick\AdsTxt\Detector;
 use AdvancedAds\Framework\Utilities\Params;
+use AdvancedAds\Modules\OneClick\AdsTxt\Detector;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
 
 defined( 'ABSPATH' ) || exit;
@@ -75,7 +75,7 @@ class Ajax implements Integration_Interface {
 
 		wp_send_json_success(
 			[
-				'message'       => esc_html__( 'Pubguru successfully connected.', 'advanced-ads' ),
+				'message'       => esc_html__( 'We have successfully migrated your MonetizeMore Pubguru Ad Units to your WordPress site. The existing placements and ads have been paused.', 'advanced-ads' ),
 				'hasTrafficCop' => Helpers::has_traffic_cop( $config ),
 			]
 		);
@@ -106,26 +106,14 @@ class Ajax implements Integration_Interface {
 	public function module_status_changed(): void {
 		check_ajax_referer( 'pubguru_module_changed', 'security' );
 
-		$module     = Params::post( 'module', [] );
-		$status     = Params::post( 'status', false, FILTER_VALIDATE_BOOLEAN );
-		$option_key = 'pubguru_module_' . $module;
+		$module = Params::post( 'module', [] );
+		$status = Params::post( 'status', false, FILTER_VALIDATE_BOOLEAN );
 
-		update_option( $option_key, $status );
+		Options::module( $module, $status );
 
-		do_action( 'pubguru_module_status_changed', $module, $status );
+		$data = apply_filters( 'pubguru_module_status_changed', [], $module, $status );
 
-		$notice = '';
-
-		if ( 'ads_txt' === $module && $status ) {
-			$detector = new Detector();
-			if ( $detector->detect_files() ) {
-				ob_start();
-				$detector->show_notice();
-				$notice = ob_get_clean();
-			}
-		}
-
-		wp_send_json_success( [ 'notice' => $notice ] );
+		wp_send_json_success( $data );
 	}
 
 	/**
@@ -136,9 +124,21 @@ class Ajax implements Integration_Interface {
 	public function backup_ads_txt(): void {
 		check_ajax_referer( 'pubguru_backup_adstxt', 'security' );
 
-		( new Detector() )->backup_file();
+		$notice = '';
+		$result = ( new Detector() )->backup_file();
+		if ( false === $result ) {
+			$notice = sprintf(
+				'<div class="notice notice-error flex items-center p-4">%s</div>',
+				esc_html__( 'An error has occurred please try again.', 'advanced-ads' )
+			);
+			wp_send_json_error( $notice );
+		}
 
-		wp_send_json_success();
+		$notice = sprintf(
+			'<div class="notice notice-success flex items-center p-4">%s</div>',
+			esc_html__( 'File successfully backed up.', 'advanced-ads' )
+		);
+		wp_send_json_success( $notice );
 	}
 
 	/**

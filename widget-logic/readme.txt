@@ -1,9 +1,12 @@
 === Widget Logic ===
-Contributors: wpchefgadget
-Tags: widget, sidebar, content, conditional tags, toggle
+Contributors: widgetlogics
+Tags: widget, sidebar, conditional tags, blocks, gutenberg widgets
 Requires at least: 3.0
-Tested up to: 5.2.2
-Stable tag: 5.10.4
+Tested up to: 6.6
+Stable tag: 6.0.4
+Requires PHP: 5.4
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Widget Logic lets you control on which pages widgets appear using WP's conditional tags.
 
@@ -13,6 +16,13 @@ This plugin gives every widget an extra control field called "Widget logic" that
 PLEASE NOTE The widget logic you introduce is EVAL'd directly. Anyone who has access to edit widget appearance will have the right to add any code, including malicious and possibly destructive functions. There is an optional filter 'widget_logic_eval_override' which you can use to bypass the EVAL with your own code if needed. (See [Other Notes](other_notes/)).
 
 The configuring and options are in the usual widget admin interface.
+
+BIG UPDATE:
+
+* Now you can control widget in Gutenberg Widgets editor as well as in Classic Editor. It is just as easy as before but also in gutenberg view.
+
+* Pre-installed widgets let you add special widget with one click of the mouse. First pre-installed widget is Live Match that let you add widget of one random live football game with real time score updates (teams logos, livescore, minute of the match, tournament name). And more interesting widgets to come!
+
 
 = Configuration =
 
@@ -30,7 +40,18 @@ Aside from logic against your widgets, there are three options added to the foot
 
 *  Don't cache widget logic results -- From v .58 the widget logic code should only execute once, but that might cause unexpected results with some themes, so this option is here to turn that behaviour off. (The truth/false of the code will be evaluated every time the sidebars_widgets filter is called.
 
+= Interaction with External Services =
+
+Widget Logic uses the external service to obtain up-to-date information about the results of football matches. [widgetlogic.org](https://widgetlogic.org) is a source of sports information, that provides a wide range of information about football, including various leagues, tournaments, and championships from around the world.
+
+The functioning of the [widgetlogic.org](https://widgetlogic.org) service is based on delivering real-time data about selected matches without the need to refresh the page. This means that data is automatically updated without requiring page reload. This approach ensures users quick and uninterrupted access to the latest sports data without the effort of manually updating information, allowing them to stay informed about ongoing events in real-time.
+
 == Frequently Asked Questions ==
+
+= Can I use Widget Logic in Gutenberg widgets view? =
+
+Yes, you can! Starting from 6.0.0 you can use Widget Logic in Gutenberg widgets and in Classic Widgets. So if you have earlier version, please update plugin.
+
 
 = What can I try if it's not working? =
 
@@ -96,10 +117,36 @@ Tighten up your definitions with PHPs 'logical AND' &&, for example:
 
 == Screenshots ==
 
-1. The 'Widget logic' field at work in standard widgets.
-2. The plugin options are at the foot of the usual widget admin page… `wp_reset_query` option, 'load logic point' and 'evaluate more than once'. You can also export and import your site's WL options as a plain text file for a quick backup/restore and to help troubleshoot issues.
+1. The 'Widget logic' field at work in Gutenberg widgets.
+2. The 'Widget logic' field at work in Classic widgets.
+3. The plugin options are at the foot of the usual widget admin page… `wp_reset_query` option, 'load logic point' and 'evaluate more than once'. You can also export and import your site's WL options as a plain text file for a quick backup/restore and to help troubleshoot issues.
+4. Pre-installed 'Live Match' widget in widgets section
+5. Pre-installed 'Live Match' widget on website
 
 == Changelog ==
+
+= 6.0.4 =
+
+* load of External Services only when Live Match widget used
+
+= 6.0.3 =
+
+* added settings option for enable new functionality
+
+= 6.0.2 =
+
+* fixed bug for php7.2
+
+= 6.0.1 =
+
+* Bug fixes
+
+= 6.0.0 =
+
+* Gutenberg widgets editor added
+* Pre-installed widgets added (Live Match)
+* Bug fixes
+* Code cleanup
 
 = 5.10.4 =
 

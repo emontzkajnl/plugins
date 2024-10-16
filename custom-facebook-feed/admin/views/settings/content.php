@@ -49,6 +49,7 @@
                 ?>
             </div>
         </form>
+        <?php include_once CFF_PLUGIN_DIR . 'admin/views/sections/footer_socials.php'; ?>
     </div>
 </div>
 <?php

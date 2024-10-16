@@ -1,4 +1,7 @@
 <?php
+
+use AdvancedAds\Utilities\Conditional;
+
 defined( 'WPINC' ) || exit;
 
 class Advanced_Ads_Responsive_Amp_Admin {
@@ -23,7 +26,11 @@ class Advanced_Ads_Responsive_Amp_Admin {
 	 * Enqueue admin-specific JavaScript.
 	 */
 	public function enqueue_admin_scripts() {
-		if ( Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ) {
+		$is_screen = method_exists( 'AdvancedAds\Utilities\Conditional', 'is_screen_advanced_ads' )
+			? Conditional::is_screen_advanced_ads()
+			: Advanced_Ads_Admin::screen_belongs_to_advanced_ads();
+
+		if ( $is_screen ) {
 			$uriRelPath = plugin_dir_url( __FILE__ );
 		    wp_enqueue_script( ADVADS_SLUG . '-amp-admin', $uriRelPath . 'assets/admin.js', array( 'jquery' ), AAR_VERSION );
 			wp_localize_script( ADVADS_SLUG . '-amp-admin', 'advanced_ads_amp_admin', array(

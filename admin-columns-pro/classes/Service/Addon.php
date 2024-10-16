@@ -6,7 +6,7 @@ namespace ACP\Service;
 
 use AC\Registerable;
 use ACP\AddonFactory;
-use ACP\Settings\Option\IntegrationStatus;
+use ACP\Settings\General\IntegrationStatus;
 
 final class Addon implements Registerable
 {
@@ -15,10 +15,13 @@ final class Addon implements Registerable
 
     private $addon_factory;
 
-    public function __construct(array $addons, AddonFactory $addon_factory)
+    private $integration_status;
+
+    public function __construct(array $addons, AddonFactory $addon_factory, IntegrationStatus $integration_status)
     {
         $this->addons = $addons;
         $this->addon_factory = $addon_factory;
+        $this->integration_status = $integration_status;
     }
 
     public function register(): void
@@ -54,9 +57,9 @@ final class Addon implements Registerable
 
     private function is_active(string $addon): bool
     {
-        $status = new IntegrationStatus(sprintf('ac-addon-%s', $addon));
+        $is_active = $this->integration_status->is_active(sprintf('ac-addon-%s', $addon));
 
-        return apply_filters('acp/addon/' . $addon . '/active', $status->is_active());
+        return apply_filters('acp/addon/' . $addon . '/active', $is_active);
     }
 
 }

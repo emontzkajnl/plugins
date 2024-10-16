@@ -15,9 +15,7 @@
 	);
 	?>
 	<p class="description">
-		<a href="https://webmasters.googleblog.com/2019/09/evolving-nofollow-new-ways-to-identify.html" target="_blank">
-			<?php esc_html_e( "Read Google's recommendation on Google Webmaster Central Blog.", 'advanced-ads-tracking' ); ?>
-		</a>
+		<a href="https://webmasters.googleblog.com/2019/09/evolving-nofollow-new-ways-to-identify.html" target="_blank" class="advads-external-link"><?php esc_html_e( "Read Google's recommendation on Google Webmaster Central Blog.", 'advanced-ads-tracking' ); ?></a>
 	</p>
 </label>
 <br/>

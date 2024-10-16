@@ -18,7 +18,7 @@ class Advanced_Ads_Tracking_Amp {
 	 *
 	 * @var array
 	 */
-	private $ads = array();
+	private $ads = [];
 
 	/**
 	 * Advanced_Ads_Tracking_Amp constructor.
@@ -36,7 +36,7 @@ class Advanced_Ads_Tracking_Amp {
 			return;
 		}
 
-		add_action( 'advanced-ads-output', array( $this, 'get_tracking_methods' ) );
+		add_action( 'advanced-ads-output', [ $this, 'get_tracking_methods' ] );
 	}
 
 	/**
@@ -58,13 +58,13 @@ class Advanced_Ads_Tracking_Amp {
 				'<amp-pixel src="%s" layout="nodisplay"></amp-pixel>',
 				esc_url(
 					add_query_arg(
-						array(
+						[
 							'ads'      => array_keys( $ads ),
 							'action'   => 'aatrack-records',
 							'referrer' => urlencode( $referrer ),
 							'bid'      => $bid,
 							'handler'  => urlencode( 'Frontend on AMP' ),
-						),
+						],
 						$this->plugin->is_legacy_ajax() ? admin_url( 'admin-ajax.php' ) : content_url( '/ajax-handler.php' )
 					)
 				)
@@ -94,25 +94,25 @@ class Advanced_Ads_Tracking_Amp {
 			if ( empty( $ga_uid ) ) {
 				continue;
 			}
-			$amp_analytics = array(
-				'requests' => array(
+			$amp_analytics = [
+				'requests' => [
 					'impressionEvent' => '${event}&ni=1',
-				),
-				'vars'     => array(
+				],
+				'vars'     => [
 					'account'       => $ga_uid,
 					'eventCategory' => 'Advanced Ads',
 					'eventAction'   => __( 'Impressions', 'advanced-ads-tracking' ),
-				),
-				'triggers' => array(),
-			);
+				],
+				'triggers' => [],
+			];
 			foreach ( $ads as $ad_id => $ad_title ) {
-				$amp_analytics['triggers'][ 'impression of ad ' . $ad_id ] = array(
+				$amp_analytics['triggers'][ 'impression of ad ' . $ad_id ] = [
 					'on'      => 'visible',
 					'request' => 'impressionEvent',
-					'vars'    => array(
+					'vars'    => [
 						'eventLabel' => sprintf( '[%d] %s', $ad_id, $ad_title ),
-					),
-				);
+					],
+				];
 			}
 
 			printf( '<amp-analytics type="googleanalytics"><script type="application/json">%s</script></amp-analytics>', wp_json_encode( $amp_analytics ) );
@@ -161,8 +161,8 @@ class Advanced_Ads_Tracking_Amp {
 			return $options[ $blog_id ];
 		}
 		$option = function_exists( 'get_blog_option' )
-			? get_blog_option( $blog_id, $this->plugin->options_slug, array() )
-			: get_option( $this->plugin->options_slug, array() );
+			? get_blog_option( $blog_id, $this->plugin->options_slug, [] )
+			: get_option( $this->plugin->options_slug, [] );
 
 		$options[ $blog_id ] = $option;
 
@@ -193,7 +193,7 @@ class Advanced_Ads_Tracking_Amp {
 			return;
 		}
 		// try setting the tracking method to amp-pixel.
-		add_filter( 'advanced-ads-tracking-method', array( $this, 'set_tracking_method' ) );
+		add_filter( 'advanced-ads-tracking-method', [ $this, 'set_tracking_method' ] );
 		$blog_id = get_current_blog_id();
 
 		// collect ad ids per blog.
@@ -218,24 +218,24 @@ class Advanced_Ads_Tracking_Amp {
 	 */
 	private function tracking_pixel_actions() {
 		// Transitional/Standard mode.
-		add_action( 'wp_footer', array( $this, 'add_tracking_pixel' ) );
+		add_action( 'wp_footer', [ $this, 'add_tracking_pixel' ] );
 
 		// WP AMP — Accelerated Mobile Pages for WordPress and WooCommerce (https://codecanyon.net/item/wp-amp-accelerated-mobile-pages-for-wordpress-and-woocommerce/16278608).
-		add_action( 'amphtml_after_footer', array( $this, 'add_tracking_pixel' ) );
+		add_action( 'amphtml_after_footer', [ $this, 'add_tracking_pixel' ] );
 
 		// AMP - AMP Project Contributors (https://wordpress.org/plugins/amp/), Reader mode.
 		// AMP for WP - Accelerated Mobile Pages for WordPress (https://wordpress.org/plugins/accelerated-mobile-pages/).
-		add_action( 'amp_post_template_footer', array( $this, 'add_tracking_pixel' ) );
+		add_action( 'amp_post_template_footer', [ $this, 'add_tracking_pixel' ] );
 
 		// AMP WP - pixelative (https://wordpress.org/plugins/amp-wp/).
-		add_action( 'amp_wp_template_footer', array( $this, 'add_tracking_pixel' ) );
+		add_action( 'amp_wp_template_footer', [ $this, 'add_tracking_pixel' ] );
 	}
 
 	/**
 	 * Output relevant scripts for AMP Analytics tracking.
 	 */
 	private function amp_analytics_actions() {
-		$actions = array(
+		$actions = [
 			// AMP - AMP Project Contributors (https://wordpress.org/plugins/amp/), Transitional/Standard mode.
 			'amp'        => 'wp',
 			// AMP - AMP Project Contributors (https://wordpress.org/plugins/amp/), Reader mode.
@@ -243,15 +243,15 @@ class Advanced_Ads_Tracking_Amp {
 			'amp_reader' => 'amp_post_template',
 			// AMP WP - pixelative (https://wordpress.org/plugins/amp-wp/).
 			'amp_wp'     => 'amp_wp_template',
-		);
+		];
 
 		foreach ( $actions as $action ) {
 			if ( ! did_action( $action . '_head' ) ) {
-				add_action( $action . '_head', array( $this, 'add_amp_analytics' ) );
+				add_action( $action . '_head', [ $this, 'add_amp_analytics' ] );
 			} else {
-				add_action( $action . '_footer', array( $this, 'add_amp_analytics' ) );
+				add_action( $action . '_footer', [ $this, 'add_amp_analytics' ] );
 			}
-			add_action( $action . '_footer', array( $this, 'add_amp_analytics_ads' ) );
+			add_action( $action . '_footer', [ $this, 'add_amp_analytics_ads' ] );
 		}
 	}
 }

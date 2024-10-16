@@ -39,22 +39,24 @@ class Detector implements Integration_Interface {
 		}
 
 		if ( $this->detect_files() ) {
-			add_action( 'pubguru_notices', [ $this, 'show_notice' ] );
+			add_action( 'all_admin_notices', [ $this, 'show_notice' ] );
 		}
 	}
 
 	/**
 	 * Detect file exists
 	 *
+	 * @param string $file file name.
+	 *
 	 * @return bool
 	 */
-	public function detect_files(): bool {
+	public function detect_files( $file = 'ads.txt' ): bool {
 		$wp_filesystem = $this->get_filesystem();
 		if ( null === $wp_filesystem ) {
 			return false;
 		}
 
-		return $wp_filesystem->exists( ABSPATH . '/ads.txt' );
+		return $wp_filesystem->exists( ABSPATH . '/' . $file );
 	}
 
 	/**
@@ -63,12 +65,20 @@ class Detector implements Integration_Interface {
 	 * @return bool
 	 */
 	public function backup_file(): bool {
-		$wp_filesystem = $this->get_filesystem();
-		if ( null === $wp_filesystem ) {
-			return false;
-		}
+		$source      = ABSPATH . '/ads.txt';
+		$destination = $source . '.bak';
+		return $this->move_file( $source, $destination );
+	}
 
-		return $wp_filesystem->move( ABSPATH . '/ads.txt', ABSPATH . '/ads.txt.bak' );
+	/**
+	 * Revert file
+	 *
+	 * @return bool
+	 */
+	public function revert_file(): bool {
+		$source      = ABSPATH . '/ads.txt.bak';
+		$destination = ABSPATH . 'ads.txt';
+		return $this->move_file( $source, $destination );
 	}
 
 	/**
@@ -78,19 +88,14 @@ class Detector implements Integration_Interface {
 	 */
 	public function show_notice(): void {
 		?>
-		<div class="flex shadow-lg rounded">
-			<div class="bg-red-600 p-3 rounded-l flex items-center">
-				<svg focusable="false" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" class="fill-current text-white w-5" viewBox="0 0 32 32" aria-hidden="true"><path d="M2,16H2A14,14,0,1,0,16,2,14,14,0,0,0,2,16Zm23.15,7.75L8.25,6.85a12,12,0,0,1,16.9,16.9ZM8.24,25.16A12,12,0,0,1,6.84,8.27L23.73,25.16a12,12,0,0,1-15.49,0Z"></path><title>Error</title></svg>
+		<div class="notice notice-error flex items-center p-4">
+			<div>
+				<strong><?php esc_html_e( 'File alert!', 'advanced-ads' ); ?></strong> <?php esc_html_e( 'Physical ads.txt found. In order to use PubGuru service you need to delete it or back it up.', 'advanced-ads' ); ?>
 			</div>
 
-			<div class="p-3 bg-white rounded-r w-full flex justify-between items-center">
-				<div>
-					<span class="font-medium"><?php esc_html_e( 'File alert!', 'advanced-ads' ); ?></span> <?php esc_html_e( 'Physical ads.txt found. In order to use PubGuru service you need to delete it.', 'advanced-ads' ); ?>
-				</div>
-				<button class="js-btn-backup-adstxt px-3 py-2 rounded text-xs bg-blue-600 text-white hover:bg-blue-700" data-text="<?php esc_attr_e( 'Backup the File', 'advanced-ads' ); ?>" data-loading="<?php esc_attr_e( 'Backing Up', 'advanced-ads' ); ?>" data-done="<?php esc_attr_e( 'Backed Up', 'advanced-ads' ); ?>" data-security="<?php echo wp_create_nonce( 'pubguru_backup_adstxt' ); // phpcs:ignore ?>">
-					<?php esc_html_e( 'Backup the File', 'advanced-ads' ); ?>
-				</button>
-			</div>
+			<button class="!ml-auto button button-primary js-btn-backup-adstxt" data-text="<?php esc_attr_e( 'Backup the File', 'advanced-ads' ); ?>" data-loading="<?php esc_attr_e( 'Backing Up', 'advanced-ads' ); ?>" data-done="<?php esc_attr_e( 'Backed Up', 'advanced-ads' ); ?>" data-security="<?php echo wp_create_nonce( 'pubguru_backup_adstxt' ); // phpcs:ignore ?>">
+				<?php esc_html_e( 'Backup the File', 'advanced-ads' ); ?>
+			</button>
 		</div>
 		<?php
 	}
@@ -100,7 +105,7 @@ class Detector implements Integration_Interface {
 	 *
 	 * @return object
 	 */
-	public function get_filesystem() {
+	private function get_filesystem() {
 		global $wp_filesystem;
 
 		if ( empty( $wp_filesystem ) ) {
@@ -109,5 +114,23 @@ class Detector implements Integration_Interface {
 		}
 
 		return $wp_filesystem;
+	}
+
+	/**
+	 * Handle file operations (backup or revert)
+	 *
+	 * @param string $source      Source file path.
+	 * @param string $destination Destination file path.
+	 *
+	 * @return bool
+	 */
+	private function move_file( string $source, string $destination ): bool {
+		$wp_filesystem = $this->get_filesystem();
+
+		if ( null === $wp_filesystem || ! $wp_filesystem->is_writable( $source ) ) {
+			return false;
+		}
+
+		return $wp_filesystem->move( $source, $destination );
 	}
 }

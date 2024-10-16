@@ -20,8 +20,8 @@
         </div>
         <div class="cff-cta-right">
             <span class="cff-cta-btn">
-                <a :href="upgradeUrl" class="cff-btn-blue" target="_blank">
-                    {{genericText.tryDemo}}
+                <a :href="upgradeUrl" class="cff-btn-green" target="_blank">
+                    {{genericText.getStarted}}
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0.166016 10.6584L8.99102 1.83341H3.49935V0.166748H11.8327V8.50008H10.166V3.00841L1.34102 11.8334L0.166016 10.6584Z" fill="white"/>
                     </svg>
@@ -76,3 +76,5 @@
         </svg>
     </button>
 </div>
+
+<?php include_once CFF_PLUGIN_DIR . 'admin/views/sections/footer_socials.php'; ?>

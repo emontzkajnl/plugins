@@ -170,6 +170,7 @@ class CFF_Support {
 				'additionalR' => __( 'Additional Resources', 'custom-facebook-feed' ),
 				'toHelp' => __( 'To help you get the most out of the plugin', 'custom-facebook-feed' ),
 				'needMore' => __( 'Need more support? We’re here to help.', 'custom-facebook-feed' ),
+				'neverPost' => '*' . __( 'Do not include your "System Info" with forum posts.', 'custom-facebook-feed' ),
 				'ourFast' => __( 'Our fast and friendly support team is always happy to help!', 'custom-facebook-feed' ),
 				'systemInfo' => __( 'System Info', 'custom-facebook-feed' ),
 				'exportSettings' => __( 'Export Settings', 'custom-facebook-feed' ),
@@ -195,7 +196,7 @@ class CFF_Support {
                 'moreHelp' => __( 'More help on Getting started', 'custom-facebook-feed' ),
                 'viewDoc' => __( 'View Documentation', 'custom-facebook-feed' ),
                 'viewBlog' => __( 'View Blog', 'custom-facebook-feed' ),
-                'submitTicket' => __( 'Submit a Support Ticket', 'custom-facebook-feed' ),
+                'submitTicket' => __( 'Get Help in the WordPress.org Forum', 'custom-facebook-feed' ),
                 'copy' => __( 'Copy', 'custom-facebook-feed' ),
                 'copied' => __( 'Copied', 'custom-facebook-feed' ),
                 'copy' => __( 'Copy', 'custom-facebook-feed' ),
@@ -648,10 +649,13 @@ class CFF_Support {
      * @return string $url
      */
     public function get_support_url() {
-        $url = 'https://smashballoon.com/custom-facebook-feed/support/';
         $license_type = CFF_Utils::cff_is_pro_version() ? 'pro' : 'free';
+		if ($license_type === 'free') {
+			return 'https://wordpress.org/support/plugin/custom-facebook-feed/';
+		}
 
-        $args = array();
+	    $url = 'https://smashballoon.com/custom-facebook-feed/support/';
+	    $args = array();
         $license_key = get_option( 'cff_license_key' );
         if ( $license_key ) {
             $license_key = sb_encrypt_decrypt( 'encrypt', $license_key );

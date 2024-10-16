@@ -190,9 +190,9 @@ abstract class Strategy
                  *
                  * @since 1.0
                  */
-                $value = apply_filters('ac/export/value', $value, $column, $id, $this->list_screen);
+                $value = (string)apply_filters('ac/export/value', $value, $column, $id, $this->list_screen);
 
-                $row[$header] = $value;
+                $row[$header] = $this->escape_data($value, $column);
             }
 
             /**
@@ -208,6 +208,40 @@ abstract class Strategy
         }
 
         return $rows;
+    }
+
+    private function apply_escape_data(Column $column): bool
+    {
+        return (bool)apply_filters('ac/export/value/escape', true, $column);
+    }
+
+    /**
+     * @see https://owasp.org/www-community/attacks/CSV_Injection
+     */
+    public function escape_data(string $data, Column $column): string
+    {
+        if ( ! $this->apply_escape_data($column)) {
+            return $data;
+        }
+
+        if (is_numeric($data)) {
+            return $data;
+        }
+
+        $characters = [
+            '=',
+            '+',
+            '-',
+            '@',
+            chr(0x09), // Tab (\t)
+            chr(0x0d), // Carriage Return (\r)
+        ];
+
+        if (in_array(mb_substr($data, 0, 1), $characters, true)) {
+            $data = sprintf("'%s", $data);
+        }
+
+        return $data;
     }
 
     /**

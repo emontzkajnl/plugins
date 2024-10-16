@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AdvancedAdsTracking\\Compatibility' => $baseDir . '/public/class-compatibility.php',
     'Advanced_Ads_Tracking' => $baseDir . '/public/public.php',
     'Advanced_Ads_Tracking_Admin' => $baseDir . '/admin/admin.php',
     'Advanced_Ads_Tracking_Ajax' => $baseDir . '/classes/ajax.php',

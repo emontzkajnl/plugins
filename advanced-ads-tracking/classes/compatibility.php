@@ -8,7 +8,8 @@ class Advanced_Ads_Tracking_Compatibility {
 	 * Advanced_Ads_Tracking_Compatibility constructor.
 	 */
 	public function __construct() {
-		add_filter( 'advanced-ads-compatibility-critical-inline-js', array( self::class, 'critical_inline_js' ), 10, 2 );
+		add_filter( 'advanced-ads-compatibility-critical-inline-js', [ self::class, 'critical_inline_js' ], 10, 2 );
+		add_filter( 'rocket_preload_links_exclusions', [ self::class, 'exclude_linkout_from_rocket_preload' ] );
 	}
 
 	/**
@@ -23,5 +24,19 @@ class Advanced_Ads_Tracking_Compatibility {
 		$inline_js[] = sprintf( 'id="%stracking"', $frontend_prefix );
 
 		return $inline_js;
+	}
+
+	/**
+	 * Add the linkout link base to be excluded from WP Rocket's link preloading.
+	 *
+	 * @param iterable $links Array with existing links/fragments.
+	 *
+	 * @return iterable
+	 */
+	public static function exclude_linkout_from_rocket_preload( iterable $links ): iterable {
+		// RegEx for excluding all links starting with the link-base prefix.
+		$links[] = sprintf( '/%s/.+', Advanced_Ads_Tracking_Util::get_instance()->get_link_base() );
+
+		return $links;
 	}
 }

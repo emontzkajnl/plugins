@@ -300,8 +300,8 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 		}
 
 		$conditions['buddypress_group'] = [
-			'label'       => __( 'BuddyBoss group', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads based on existing BuddyBoss groups.', 'advanced-ads-pro' ),
+			'label'       => __( 'BuddyPress group', 'advanced-ads-pro' ),
+			'description' => __( 'Display ads based on existing BuddyPress groups.', 'advanced-ads-pro' ),
 			'metabox'     => [ 'Advanced_Ads_Pro_Module_BuddyPress', 'group_metabox' ],
 			'check'       => [ 'Advanced_Ads_Pro_Module_BuddyPress', 'group_check' ],
 			'options'     => [
@@ -309,6 +309,12 @@ class Advanced_Ads_Pro_Module_BuddyPress {
 			],
 			'helplink' => 'https://wpadvancedads.com/manual/buddyboss-ads/?utm_source=advanced-ads?utm_medium=link&utm_campaign=condition-buddyboss-group',
 		];
+
+		if ( self::is_buddyboss() ) {
+			$conditions['buddypress_group']['label']       = __( 'BuddyBoss group', 'advanced-ads-pro' );
+			$conditions['buddypress_group']['description'] = __( 'Display ads based on existing BuddyBoss groups.', 'advanced-ads-pro' );
+		}
+
 		return $conditions;
 	}
 

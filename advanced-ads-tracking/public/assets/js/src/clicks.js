@@ -130,7 +130,7 @@ var AdvAdsClickTracker = {
 							break;
 						}
 					}
-				}, false );
+				}, {capture: true} );
 			}
 		);
 
@@ -176,14 +176,14 @@ var AdvAdsClickTracker = {
 	 * Send message to ajax handler
 	 */
 	ajaxSend: function ( element ) {
-		var dataId       = element.getAttribute( 'data-advadstrackid' );
-		var bId          = element.getAttribute( 'data-advadstrackbid' );
-		var redirectLink = element.getAttribute( 'data-advadsredirect' );
+		var dataId       = element.getAttribute( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackid' ) );
+		var bId          = element.getAttribute( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackbid' ) );
+		var redirectLink = element.getAttribute( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'redirect' ) );
 		if ( dataId === null ) {
 			var parent   = AdvAdsTrackingUtils.findParentByClassName( element, [advadsTracking.targetClass] );
-			dataId       = parent.getAttribute( 'data-advadstrackid' );
-			bId          = parent.getAttribute( 'data-advadstrackbid' );
-			redirectLink = parent.getAttribute( 'data-advadsredirect' );
+			dataId       = parent.getAttribute( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackid' ) );
+			bId          = parent.getAttribute( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackbid' ) );
+			redirectLink = parent.getAttribute( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'redirect' ) );
 		}
 
 		var ajaxHandler = advads_tracking_urls[bId];

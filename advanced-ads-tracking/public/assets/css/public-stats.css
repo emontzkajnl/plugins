@@ -155,3 +155,19 @@ input, textarea, select {
 	font-size: .9em;
 	text-align: center;
 }
+
+#period-form {
+	display: inline-block;
+}
+
+.hidden {
+	display: none;
+}
+
+#image-ad-preview {
+	text-align: center;
+}
+
+#image-ad-preview img {
+	display: inline-block;
+}

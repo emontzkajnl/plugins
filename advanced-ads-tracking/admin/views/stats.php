@@ -1,59 +1,59 @@
 <?php
-
+/**
+ * Render the Statistics page under Advanced Ads > Statistics
+ *
+ * @var string $tracking_method Tracking method as selected in the Tracking settings.
+ */
 global $wpdb;
 
-$ad_titles        = array();
-$autocomplete_src = array();
+$ad_titles        = [];
+$autocomplete_src = [];
 foreach ( $all_ads as $_ad ) {
 	$ad_titles[ $_ad->ID ] = $_ad->post_title;
-	$autocomplete_src[]    = array(
+	$autocomplete_src[]    = [
 		'label' => $_ad->post_title,
 		'value' => $_ad->ID,
-	);
+	];
 }
 
 $ad_titles['length'] = count( $ad_titles );
-
-$analytics_home_url = 'https://analytics.google.com/analytics/web/';
-/* Translators: Google Analytics URL */
-$analytics_notice = sprintf( __( 'You are currently tracking ads with Google Analytics. The statistics can be viewed only within your <a href="%s" target="_blank">Analytics account</a>.', 'advanced-ads-tracking' ), $analytics_home_url );
 
 /**
  *  Ad groups
  */
 $ad_model            = new Advanced_Ads_Model( $wpdb );
-$terms               = $ad_model->get_ad_groups( array( 'post_status' => array( 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ) ) );
-$groups_to_ads       = array();
-$ads_to_groups       = array();
-$groups_autocomplete = array();
+$terms               = $ad_model->get_ad_groups( [ 'post_status' => [ 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ] ] );
+$groups_to_ads       = [];
+$ads_to_groups       = [];
+$groups_autocomplete = [];
 foreach ( $terms as $ad_group ) {
-	$_group     = new Advanced_Ads_Group( $ad_group->term_id, array(
-		'post_status' => array( 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ),
-	) );
+	$_group     = new Advanced_Ads_Group( $ad_group->term_id, [
+		'post_status' => [ 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ],
+	] );
 	$_group_ads = $_group->get_all_ads();
-	$__ads      = array();
+	$__ads      = [];
 	if ( is_array( $_group_ads ) ) {
 		foreach ( $_group_ads as $__ad ) {
-			$__ads[ $__ad->ID ] = array(
+			$__ads[ $__ad->ID ] = [
 				'ID'    => $__ad->ID,
 				'title' => $__ad->post_title,
-			);
+			];
 			if ( ! isset( $ads_to_groups[ $__ad->ID ] ) ) {
-				$ads_to_groups[ $__ad->ID ] = array();
+				$ads_to_groups[ $__ad->ID ] = [];
 			}
 			$ads_to_groups[ $__ad->ID ][] = $ad_group->term_id;
 		}
 	}
-	$groups_to_ads[ $ad_group->term_id ] = array(
+	$groups_to_ads[ $ad_group->term_id ] = [
 		'ID'   => $ad_group->term_id,
 		'slug' => $ad_group->slug,
 		'name' => $ad_group->name,
 		'ads'  => $__ads,
-	);
-	$groups_autocomplete[]               = array(
+	];
+	$groups_autocomplete[]               = [
 		'label' => $ad_group->name,
 		'value' => $ad_group->term_id,
-	);
+	];
 }
 $group_count             = count( $groups_to_ads );
 $groups_to_ads['length'] = $group_count;
@@ -68,8 +68,20 @@ $formated_number = number_format_i18n( 12345.678, 3 );
 	var numbersFormated  = "<?php echo str_replace( '"', '\"', $formated_number ); ?>";
 </script>
 <div class="wrap">
-	<?php if ( 'ga' === $this->plugin->get_tracking_method() ) : ?>
-		<div style="background-color:#ffffff;padding:10px; border-left: 5px solid #00bcd4;"><span><?php echo $analytics_notice; ?></span></div>
+	<h2 style="display: none;"><!-- There needs to be an empty H2 headline at the top of the page so that WordPress can properly position admin notifications --></h2>
+	<?php if ( $tracking_method === 'ga' ) : ?>
+		<div class="notice advads-notice">
+			<p>
+				<?php
+					printf(
+						// translators: %1$s is the opening link tag, %2$s is the closing link tag.
+						esc_html__( 'You are currently tracking ads with Google Analytics. The statistics can be viewed only within your %1$sAnalytics account%2$s.', 'advanced-ads-tracking' ),
+						'<a href="https://analytics.google.com/analytics/web/" class="advads-external-link" target="_blank">',
+						'</a>'
+					);
+				?>
+			</p>
+		</div>
 	<?php endif; ?>
 	<div class="postbox advads-box">
 		<h2 class="hndle"><?php esc_html_e( 'Filter', 'advanced-ads-tracking' ); ?>
@@ -111,15 +123,15 @@ $formated_number = number_format_i18n( 12345.678, 3 );
 					<fieldset class="load-from-file-fields" style="display:none;">
 						<?php
 						if ( current_user_can( advanced_ads_tracking_db_cap() ) ) :
-							$load_from_file_period_args = array(
-								'period-options' => array(
+							$load_from_file_period_args = [
+								'period-options' => [
 									'latestmonth' => esc_html__( 'latest month', 'advanced-ads-tracking' ),
 									'firstmonth'  => esc_html__( 'first month', 'advanced-ads-tracking' ),
-								),
-								'period'         => array( 'stats-file-period', '' ),
-								'from'           => array( 'stats-file-from', '' ),
-								'to'             => array( 'stats-file-to', '' ),
-							);
+								],
+								'period'         => [ 'stats-file-period', '' ],
+								'from'           => [ 'stats-file-from', '' ],
+								'to'             => [ 'stats-file-to', '' ],
+							];
 							Advanced_Ads_Tracking_Dbop::period_select_inputs( $load_from_file_period_args );
 							?>
 							<button class="button button-primary" disabled id="load-stats-from-file"><?php esc_html_e( 'load stats', 'advanced-ads-tracking' ); ?></button>
@@ -190,7 +202,7 @@ $formated_number = number_format_i18n( 12345.678, 3 );
 			</script>
 		</div>
 		<div id="group-filter-wrap">
-			<?php if ( $groups_to_ads['length'] > 1 ) : ?>
+			<?php if ( $groups_to_ads['length'] > 0 ) : ?>
 				<label><strong><?php esc_html_e( 'Filter by group', 'advanced-ads-tracking' ); ?></strong></label><br/>
 				<input id="group-filter" class="donotreversedisable" type="text" value=""/>
 			<?php endif; ?>

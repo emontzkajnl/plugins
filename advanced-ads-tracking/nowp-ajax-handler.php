@@ -13,13 +13,13 @@
 $start_time = microtime( true );
 
 // set some headers to avoid caching.
-$headers = array(
+$headers = [
 	'X-Content-Type-Options: nosniff',
 	'Cache-Control: no-cache, must-revalidate, max-age=0, smax-age=0',
 	'Expires: Sat, 26 Jul 1997 05:00:00 GMT',
 	'X-Accel-Expires: 0',
 	'X-Robots-Tag: noindex',
-);
+];
 foreach ( $headers as $header ) {
 	@header( $header );
 }
@@ -46,7 +46,7 @@ if ( empty( $data['ads'] ) || ! is_array( $data['ads'] ) ) {
 	die( 'no ads' );
 }
 
-if ( empty( $data['action'] ) || ! in_array( $data['action'], array( 'aatrack-records', 'aatrack-click' ), true ) ) {
+if ( empty( $data['action'] ) || ! in_array( $data['action'], [ 'aatrack-records', 'aatrack-click' ], true ) ) {
 	die( 'nothing to do' );
 }
 
@@ -79,7 +79,7 @@ if ( ! $mysqli ) {
 $prefix = $data['bid'] > 1 ? '%7$s' . $data['bid'] . '_' : '%7$s';
 $table  = $data['action'] === 'aatrack-records' ? 'advads_impressions' : 'advads_clicks';
 
-foreach ( array_count_values( array_filter( array_map( 'intval', $data['ads'] ) ) ) as $ad_id => $count ) {
+foreach ( array_count_values( array_filter( array_map( function( $value ) { return (int) $value; }, $data['ads'] ) ) ) as $ad_id => $count ) {
 	$error_msg = adt_track( $ad_id, $mysqli, $prefix, $table, $count );
 
 	// 9: debugging active, 10: ad_id to debug.
@@ -116,7 +116,7 @@ function adt_track( $ad_id, $mysqli, $prefix, $table, $count ) {
 	$ts    = advads_timestamp();
 	$count = (int) $count;
 	// 7: table prefix.
-	$success = mysqli_query( $mysqli, "INSERT INTO `${prefix}${table}` (`ad_id`, `timestamp`, `count`) VALUES (${ad_id}, ${ts}, ${count}) ON DUPLICATE KEY UPDATE `count` = `count`+ ${count}" );
+	$success = mysqli_query( $mysqli, "INSERT INTO `{$prefix}{$table}` (`ad_id`, `timestamp`, `count`) VALUES ({$ad_id}, {$ts}, {$count}) ON DUPLICATE KEY UPDATE `count` = `count`+ {$count}" );
 
 	if ( $success ) {
 		return '';

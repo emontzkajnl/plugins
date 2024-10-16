@@ -6,16 +6,19 @@ use AC\IntegrationRepository;
 use AC\Nonce;
 use AC\Request;
 use AC\RequestAjaxHandler;
-use ACP\Settings\Option\IntegrationStatus;
+use ACP\Settings\General\IntegrationStatus;
 
 class IntegrationToggle implements RequestAjaxHandler
 {
 
     private $repository;
 
-    public function __construct(IntegrationRepository $repository)
+    private $integration_status;
+
+    public function __construct(IntegrationRepository $repository, IntegrationStatus $integration_status)
     {
         $this->repository = $repository;
+        $this->integration_status = $integration_status;
     }
 
     public function handle(): void
@@ -33,14 +36,10 @@ class IntegrationToggle implements RequestAjaxHandler
         if ( ! $integration) {
             wp_send_json_error();
         }
-
-        $option = new IntegrationStatus(
-            $integration->get_slug()
-        );
-
-        $request->get('status')
-            ? $option->set_active()
-            : $option->set_inactive();
+        
+        '1' === $request->get('status')
+            ? $this->integration_status->set_active($integration->get_slug())
+            : $this->integration_status->set_inactive($integration->get_slug());
 
         wp_send_json_success();
     }

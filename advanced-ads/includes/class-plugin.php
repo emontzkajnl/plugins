@@ -10,7 +10,6 @@
 namespace AdvancedAds;
 
 use AdvancedAds\Admin;
-use AdvancedAds\Groups;
 use AdvancedAds\Framework;
 use AdvancedAds\Framework\Loader;
 use AdvancedAds\Installation\Install;
@@ -19,6 +18,15 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Plugin.
+ *
+ * Containers:
+ *
+ * @property Shortcodes           $shortcodes Shortcodes handler.
+ * @property Assets_Registry      $registry   Assets registry.
+ * @property Framework\JSON       $json       JSON handler.
+ * @property Admin\Admin_Menu     $screens    Admin screens.
+ * @property Frontend\Ad_Renderer $renderer   Ads renderer.
+ * @property Frontend\Manager     $frontend   Frontend manager.
  */
 class Plugin extends Loader {
 
@@ -56,18 +64,15 @@ class Plugin extends Loader {
 	 */
 	private function setup(): void {
 		$this->define_constants();
+		$this->includes_functions();
 		$this->includes();
+		$this->includes_admin();
 
 		/**
 		 * Old loading strategy
 		 *
 		 * TODO: need to remove it in future.
 		 */
-
-		// Load public functions (might be used by modules, other plugins or theme).
-		require_once ADVADS_ABSPATH . 'includes/functions.php';
-		require_once ADVADS_ABSPATH . 'includes/cap_map.php';
-
 		// Public-Facing and Core Functionality.
 		\Advanced_Ads::get_instance();
 		\Advanced_Ads_ModuleLoader::loadModules( ADVADS_ABSPATH . 'modules/' ); // enable modules, requires base class.
@@ -77,7 +82,10 @@ class Plugin extends Loader {
 			\Advanced_Ads_Admin::get_instance();
 		}
 
+		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ], -1 );
+
+		// Load it all.
 		$this->load();
 	}
 
@@ -95,6 +103,23 @@ class Plugin extends Loader {
 		 * @since 1.47.0
 		 */
 		do_action( 'advanced-ads-loaded' );
+	}
+
+	/**
+	 * Load the plugin text domain for translation.
+	 *
+	 * @return void
+	 */
+	public function load_textdomain(): void {
+		$locale = get_user_locale();
+		$locale = apply_filters( 'plugin_locale', $locale, 'advanced-ads' );
+
+		unload_textdomain( 'advanced-ads' );
+		if ( false === load_textdomain( 'advanced-ads', WP_LANG_DIR . '/plugins/advanced-ads-' . $locale . '.mo' ) ) {
+			load_textdomain( 'advanced-ads', WP_LANG_DIR . '/advanced-ads/advanced-ads-' . $locale . '.mo' );
+		}
+
+		load_plugin_textdomain( 'advanced-ads', false, dirname( ADVADS_PLUGIN_BASENAME ) . '/languages' );
 	}
 
 	/**
@@ -144,19 +169,40 @@ class Plugin extends Loader {
 	 * @return void
 	 */
 	private function includes(): void {
+		// Common.
 		$this->register_initializer( Install::class );
 		$this->register_integration( Entities::class );
-		$this->register_integration( Assets_Registry::class );
+		$this->register_integration( Assets_Registry::class, 'registry' );
 		$this->register_integration( Framework\JSON::class, 'json', [ 'advancedAds' ] );
 		$this->register_integration( Groups\Manager::class, 'group_manager' );
+	}
 
-		// Only in admin area.
-		if ( is_admin() ) {
-			$this->register_integration( Admin\Action_Links::class );
-			$this->register_integration( Admin\Assets::class );
-			$this->register_integration( Admin\Header::class );
-			$this->register_integration( Admin\TinyMCE::class );
-			$this->register_integration( Admin\Admin_Menu::class );
+	/**
+	 * Includes files used in admin.
+	 *
+	 * @return void
+	 */
+	private function includes_admin(): void {
+		// Early bail!!
+		if ( ! is_admin() ) {
+			return;
 		}
+
+		$this->register_integration( Admin\Action_Links::class );
+		$this->register_integration( Admin\Assets::class );
+		$this->register_integration( Admin\Header::class );
+		$this->register_integration( Admin\TinyMCE::class );
+		$this->register_integration( Admin\Admin_Menu::class );
+		$this->register_integration( Admin\Page_Quick_Edit::class );
+	}
+
+	/**
+	 * Includes the necessary functions files.
+	 *
+	 * @return void
+	 */
+	private function includes_functions(): void {
+		require_once ADVADS_ABSPATH . 'includes/functions.php';
+		require_once ADVADS_ABSPATH . 'includes/cap_map.php';
 	}
 }

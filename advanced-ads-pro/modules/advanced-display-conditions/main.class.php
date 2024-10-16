@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:ignoreFile
+
 /**
  * The Advanced Display Conditions module.
  *
@@ -174,21 +175,22 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 	 * @return bool
 	 */
 	public static function check_page_template( $options, Advanced_Ads_Ad $ad ) {
-		if (!isset($options['value']) || !is_array($options['value'])) {
+		// Early bail!!
+		if ( ! isset( $options['value'] ) || ! is_array( $options['value'] ) ) {
 		    return false;
 		}
 
-		if (isset($options['operator']) && $options['operator'] === 'is_not') {
-		    $operator = 'is_not';
-		} else {
-		    $operator = 'is';
+		$operator   = 'is_not' === ( $options['operator'] ?? '' ) ? 'is_not' : 'is';
+		$ad_options = $ad->options();
+		$post       = $ad_options['post'] ?? null;
+
+		if ( null === $post ) {
+			return false;
 		}
 
-		$ad_options = $ad->options();
-		$post = isset( $ad_options['post'] ) ? $ad_options['post'] : null;
-		$post_template = get_page_template_slug( $post['id'] );
+		$post_template = get_page_template_slug( $post['id'] ) ?? '';
 
-		if (!Advanced_Ads_Display_Conditions::can_display_ids($post_template, $options['value'], $operator)) {
+		if ( ! Advanced_Ads_Display_Conditions::can_display_ids( $post_template, $options['value'], $operator ) ) {
 		    return false;
 		}
 
@@ -398,7 +400,6 @@ class Advanced_Ads_Pro_Module_Advanced_Display_Conditions {
 	 * @param int $index index of the condition
 	 */
 	static function metabox_page_template( $options, $index = 0, $form_name = '' ) {
-
 	    if ( ! isset ( $options['type'] ) || '' === $options['type'] ) { return; }
 
 	    $type_options = Advanced_Ads_Display_Conditions::get_instance()->conditions;

@@ -5,7 +5,7 @@
  * Plugin Name:       Advanced Ads – Tracking
  * Plugin URI:        https://wpadvancedads.com/add-ons/tracking/
  * Description:       Track ad impressions and clicks.
- * Version:           2.3.1
+ * Version:           2.8.1
  * Author:            Advanced Ads GmbH
  * Author URI:        https://wpadvancedads.com
  * Text Domain:       advanced-ads-tracking
@@ -22,3 +22,4 @@ require_once __DIR__ . '/bootstrap.php';
 
 // init plugin
 require_once __DIR__ . '/addon-init.php';
+

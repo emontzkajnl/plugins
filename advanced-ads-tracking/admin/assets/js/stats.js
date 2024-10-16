@@ -227,7 +227,8 @@
 				],
 				searching: false,
 				destroy:   true,
-				language:  window._dataTableLang
+				language:  window._dataTableLang,
+				order: [[0, 'desc']]
 			} );
 		} else {
 			// compare periods
@@ -337,7 +338,8 @@
 		if ( ! $( '#' + wrapId ).length ) {
 			return;
 		}
-		var adHeader = ( $( '#display-filter-list .display-filter-group' ).length ) ? statsLocale.group : statsLocale.ad;
+		var isGroup = $( '#display-filter-list .display-filter-group' ).length;
+		var adHeader = isGroup ? statsLocale.group : statsLocale.ad;
 		if ( undefined === dataB ) {
 			// simple period
 			var totalImprA  = 0;
@@ -354,7 +356,7 @@
 				'</table>' );
 			for ( var id in data ) {
 				// if there is a filter, skip deleted ads
-				if ( ( $( '#display-filter-list .display-filter-elem' ).length || $( '#display-filter-list .display-filter-group' ).length ) && 'deleted' == id ) {
+				if ( ( $( '#display-filter-list .display-filter-elem' ).length || isGroup ) && 'deleted' == id ) {
 					continue;
 				}
 				totalImprA  += data[id]['impr'];
@@ -366,11 +368,14 @@
 				} else if ( 'deleted' != id ) {
 					title = adTitles[id];
 				}
-				var row = '<tr><td>' + title + '</td>' +
-					'<td>' + formatNumber( data[id]['impr'] ) + '<input type="hidden" value="' + data[id]['impr'] + '" /></td>' +
-					'<td>' + formatNumber( data[id]['click'] ) + '<input type="hidden" value="' + data[id]['click'] + '" /></td>' +
-					'<td>' + formatNumber( ctr, 2 ) + '%<input type="hidden" value="' + ( ctr * 100 ) + '" /></td>' +
-					'</tr>';
+				var link = isGroup ? `admin.php?page=advanced-ads-groups#modal-group-edit-${id}` : `post.php?post=${id}&action=edit`;
+				const row = `<tr>
+					<td><a class="advads-stats-table__adlink" href="${adminUrl}${link}">${title}</a></td>
+					<td>${formatNumber(data[id]['impr'])}<input type="hidden" value="${data[id]['impr']}" /></td>
+					<td>${formatNumber(data[id]['click'])}<input type="hidden" value="${data[id]['click']}" /></td>
+					<td>${formatNumber(ctr, 2)}%<input type="hidden" value="${ctr * 100}" /></td>
+					</tr>`;
+
 				theTable.find( 'tbody' ).append( $( row ) );
 			};
 			var totalCtrA = ( 0 != totalImprA ) ? ( ( 100 * totalClickA / totalImprA ) ) : '0.00';
@@ -2805,7 +2810,7 @@
 								that.graph.destroy();
 							};
 							clearTables();
-							$( '#advads-stats-graph' ).empty().append( $( '<h4 class="advads-error-message">' + statsLocale.invalidRecord + '</h4>' ) );
+							$( '#advads-stats-graph' ).empty().append( $( '<p class="advads-notice-inline advads-error">' + statsLocale.invalidRecord + '</p>' ) );
 						}
 						$( '.ajax-spinner' ).remove();
 						that._reverseDisabled( 'wpbody-content' );

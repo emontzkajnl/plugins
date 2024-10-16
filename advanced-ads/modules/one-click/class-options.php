@@ -36,4 +36,24 @@ class Options {
 
 		return update_option( self::CONFIG_KEY, $data );
 	}
+
+	/**
+	 * Read and Write pubguru module status
+	 *
+	 * @param string $module Module name.
+	 * @param bool   $status Module status.
+	 *
+	 * @return bool
+	 */
+	public static function module( $module, $status = null ): bool {
+		$option_key = 'pubguru_module_' . $module;
+
+		if ( null === $status ) {
+			return boolval( get_option( $option_key, false ) );
+		}
+
+		update_option( $option_key, $status );
+
+		return $status;
+	}
 }

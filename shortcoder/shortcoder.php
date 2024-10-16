@@ -4,13 +4,13 @@ Plugin Name: Shortcoder
 Plugin URI: https://www.aakashweb.com/wordpress-plugins/shortcoder/
 Description: Shortcoder plugin allows to create a custom shortcodes for HTML, JavaScript and other snippets. Now the shortcodes can be used in posts/pages and the snippet will be replaced in place.
 Author: Aakash Chakravarthy
-Version: 6.3.2
+Version: 6.4
 Author URI: https://www.aakashweb.com/
 Text Domain: shortcoder
 Domain Path: /languages
 */
 
-define( 'SC_VERSION', '6.3.2' );
+define( 'SC_VERSION', '6.4' );
 define( 'SC_PATH', plugin_dir_path( __FILE__ ) ); // All have trailing slash
 define( 'SC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SC_ADMIN_URL', trailingslashit( plugin_dir_url( __FILE__ ) . 'admin' ) );
@@ -80,7 +80,7 @@ final class Shortcoder{
             $sc_content = self::replace_sc_params( $sc_content, $atts );
             $sc_content = self::replace_wp_params( $sc_content, $enclosed_content );
             $sc_content = self::replace_custom_fields( $sc_content );
-            $sc_content = do_shortcode( $sc_content );
+            $sc_content = self::process_content( $sc_content, $sc_settings );
         }
 
         $sc_content = apply_filters( 'sc_mod_output', $sc_content, $atts, $sc_settings, $enclosed_content );
@@ -127,7 +127,8 @@ final class Shortcoder{
             '_sc_disable_sc' => 'no',
             '_sc_disable_admin' => 'no',
             '_sc_editor' => '',
-            '_sc_allowed_devices' => 'all'
+            '_sc_allowed_devices' => 'all',
+            '_sc_execute_blocks' => 'no'
         ));
 
     }
@@ -340,6 +341,18 @@ final class Shortcoder{
 
         }
         
+        return $content;
+
+    }
+
+    public static function process_content( $content, $settings ){
+
+        $content = do_shortcode( $content );
+
+        if( $settings[ '_sc_execute_blocks' ] == 'yes' ){
+            $content = do_blocks( $content );
+        }
+
         return $content;
 
     }

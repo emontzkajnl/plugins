@@ -35,7 +35,7 @@ class Install extends Base {
 	 */
 	protected function activate(): void {
 		// TODO: inform modules.
-		( new Capabilities() )->create_capabilities();
+		Capabilities::get_instance()->create_capabilities();
 	}
 
 	/**
@@ -45,7 +45,7 @@ class Install extends Base {
 	 */
 	protected function deactivate(): void {
 		// TODO: inform modules.
-		( new Capabilities() )->remove_capabilities();
+		Capabilities::get_instance()->remove_capabilities();
 	}
 
 	/**

@@ -65,11 +65,7 @@ final class Templates implements Renderable
 
     public function sort_by_label(array $a, array $b): int
     {
-        if ($a['label_page'] !== $b['label_page']) {
-            return $a['label_page'] > $b['label_page'] ? 1 : 0;
-        }
-
-        return $a['label_view'] > $b['label_view'] ? 1 : 0;
+        return $a['label_page'] <=> $b['label_page'];
     }
 
     private function render_description(ListScreen $list_screen): string

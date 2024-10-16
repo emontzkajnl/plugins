@@ -30,6 +30,8 @@ $(document).ready(function(){
 
         $('.sc_params_list').appendTo('body');
 
+        $('.sc_title_shortcut').val($('input[name="post_title"]').val());
+
     }
 
     var set_sc_preview_text = function(name){
@@ -272,6 +274,14 @@ $(document).ready(function(){
         });
     });
 
+    $('.sc_title_shortcut').on('keyup paste', function(e){
+        $('input[name="post_title"]').val($(this).val());
+    });
+
+    $('input[name="post_title"]').on('keyup paste', function(e){
+        $('.sc_title_shortcut').val($(this).val());
+    });
+
     $('.cfe_amt').on('click', function(){
         var $btn = $(this).closest('.cfe_form').find('.cfe_btn');
         $btn.attr('href', $btn.data('link') + $(this).val());
@@ -279,19 +289,25 @@ $(document).ready(function(){
 
     $('.subscribe_btn').click(function(e){
         e.preventDefault();
-        var action = $(this).parent().data('action');
-        $.ajax({
-            type: 'get',
-            url: action,
-            cache: false,
-            dataType: 'jsonp',
-            data: {
-                'EMAIL': $('.subscribe_email_box').val()
-            },
-            success : function(data) {
-            }
-        });
-        $('.subscribe_confirm').show();
+
+        var form = $('<form>', {
+            action: 'https://news.aakashweb.com/subscription/form',
+            method: 'POST',
+            target: '_blank'
+        }).append($('<input>', {
+            type: 'hidden',
+            name: 'email',
+            value: $('.subscribe_email_box').val()
+        })).append($('<input>', {
+            type: 'hidden',
+            name: 'l',
+            value: '6aacb87c-0434-4ac1-b53c-22d7790ec4ac'
+        }));
+
+        $('body').append(form);
+        form.submit();
+        form.remove();
+
     });
 
     init();

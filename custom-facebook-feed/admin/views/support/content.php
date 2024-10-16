@@ -98,6 +98,7 @@
                 </div>
                 <div class="sb-cb-content">
                     <h3>{{genericText.needMore}}</h3>
+                    <p>{{genericText.neverPost}}</p>
                     <a :href="supportUrl" target="_blank" class="sb-cb-btn">
                         {{buttons.submitTicket}}
                         <span v-html="icons.rightAngle"></span>

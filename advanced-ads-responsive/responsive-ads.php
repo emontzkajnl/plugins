@@ -1,11 +1,11 @@
 <?php
 /**
- * Advanced Ads – Responsive Ads
+ * Advanced Ads – AMP Ads
  *
- * Plugin Name:       Advanced Ads – Responsive Ads
+ * Plugin Name:       Advanced Ads – AMP Ads
  * Plugin URI:        https://wpadvancedads.com/add-ons/responsive-ads/
- * Description:       Improve ad display on mobile devices and AMP pages
- * Version:           1.11.0
+ * Description:       Ready your ads for AMP power!
+ * Version:           1.12.2
  * Author:            Advanced Ads GmbH
  * Author URI:        https://wpadvancedads.com
  * Text Domain:       advanced-ads-responsive
@@ -20,6 +20,8 @@ if ( ! defined( 'WPINC' ) ) {
 // Only load if not already existing (maybe within another plugin I created).
 if ( ! class_exists( 'Advanced_Ads_Responsive' ) ) {
 
+	define( 'AAR_AMP_ADSENSE_ONLY', true);
+
 	// Load basic path and url to the plugin.
 	define( 'AAR_BASE_PATH', plugin_dir_path( __FILE__ ) );
 	define( 'AAR_BASE_URL', plugin_dir_url( __FILE__ ) );
@@ -28,9 +30,9 @@ if ( ! class_exists( 'Advanced_Ads_Responsive' ) ) {
 	// Plugin slug and textdoamin.
 	define( 'AAR_SLUG', 'responsive-ads' );
 
-	define( 'AAR_VERSION', '1.11.0' );
+	define( 'AAR_VERSION', '1.12.2' );
 	define( 'AAR_PLUGIN_URL', 'https://wpadvancedads.com' );
-	define( 'AAR_PLUGIN_NAME', 'Responsive Ads' );
+	define( 'AAR_PLUGIN_NAME', 'AMP Ads' );
 
 	// Public-Facing Functionality.
 	include_once plugin_dir_path( __FILE__ ) . 'classes/plugin.php';
@@ -51,3 +53,4 @@ if ( ! class_exists( 'Advanced_Ads_Responsive' ) ) {
 
 	include_once AAR_BASE_PATH . 'modules/amp/main.php';
 }
+

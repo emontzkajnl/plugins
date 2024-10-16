@@ -393,6 +393,7 @@ class Advanced_Ads_Geo_Admin {
 				echo wp_kses( $current_location, array(
 					'br'   => [],
 					'span' => [ 'class' => true ],
+					'a'    => [ 'href' => true, 'target' => true ],
 				) );
 				?>
 			</p>
@@ -517,12 +518,19 @@ class Advanced_Ads_Geo_Admin {
 
 		// If we failed, through a message, otherwise proceed.
 		if ( is_wp_error( $temp_file ) ) {
-			$message = 'Advanced Ads Geo: ' . sprintf(
-				__( 'Error downloading database from: %1$s - %2$s', 'advanced-ads-pro' ),
+
+			$error_code = $temp_file->get_error_data()['code'] ?? '';
+			$error_body = $temp_file->get_error_data()['body'] ?? '';
+
+			/* translators: 1: The download URL, 2: The HTTP error code, 3: The HTTP header title, 4: The response body */
+			$result['message'] = sprintf(
+				__( 'Error downloading database from: %1$s - %2$s %3$s - %4$s', 'advanced-ads-pro' ),
 				wp_parse_url( $download_url, PHP_URL_HOST ), // Do not expose the license key from query string.
-				$temp_file->get_error_message()
+				$error_code,
+				$temp_file->get_error_message(),
+				$error_body
 			);
-			error_log( $message );
+			error_log( 'Advanced Ads Geo: ' . $result['message'] );
 		} else {
 			// The dir where the archive was downloaded.
 			$temp_file_dir = dirname( $temp_file );
@@ -541,11 +549,11 @@ class Advanced_Ads_Geo_Admin {
 					true
 				);
 			} catch ( Exception $e ) {
-				$result['message'] = 'Advanced Ads Geo: ' . sprintf(
+				$result['message'] = sprintf(
 					esc_html__( 'Could not open downloaded database for reading: %s', 'advanced-ads-pro' ),
 					$temp_file . ', ' . $e->getMessage()
 				);
-				error_log( $result['message'] );
+				error_log( 'Advanced Ads Geo: ' . $result['message'] );
 				return $result;
 			} finally {
 				unlink( $temp_file );
@@ -556,8 +564,8 @@ class Advanced_Ads_Geo_Admin {
 			global $wp_filesystem;
 
 			if ( ! isset( $wp_filesystem->method ) || 'direct' != $wp_filesystem->method ) {
-				$result['message'] = 'Advanced Ads Geo: ' . __( 'Could not access filesystem', 'advanced-ads-pro' );
-				error_log( $result['message'] );
+				$result['message'] = __( 'Could not access filesystem', 'advanced-ads-pro' );
+				error_log( 'Advanced Ads Geo: ' . $result['message'] );
 				return $result;
 			}
 
@@ -566,7 +574,7 @@ class Advanced_Ads_Geo_Admin {
 			$wp_filesystem->delete( $extracted_dir_full, false, 'd' );
 
 			if ( ! $renamed ) {
-				$result['message'] = 'Advanced Ads Geo: ' . sprintf( __( 'Could not open database for writing %s', 'advanced-ads-pro' ), $db_file );
+				$result['message'] = sprintf( __( 'Could not open database for writing %s', 'advanced-ads-pro' ), $db_file );
 				// Remove corrupted file.
 				$wp_filesystem->delete( $db_file, false, 'f' );
 			} else {

@@ -25,6 +25,7 @@ class Registered extends AC\Column\User\Registered
 
     public function register_settings()
     {
+        $this->add_setting(new AC\Settings\Column\Date($this));
         $this->add_setting(new Filtering\Settings\Date($this));
     }
 

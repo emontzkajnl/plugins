@@ -1,10 +1,10 @@
-=== Advanced Ads – Responsive Ads ===
+=== Advanced Ads – AMP Ads ===
 Requires at least: 3.5
-Tested up to: 6.1
-Requires PHP: 5.6
-Stable tag: 1.11.0
+Tested up to: 6.3
+Requires PHP: 7.2
+Stable tag: 1.12.2
 
-Display ads based on the browser size of the visitor’s device.
+Ready your ads for AMP power!
 
 == Distribution ==
 
@@ -14,24 +14,16 @@ Please see also https://wpadvancedads.com/terms/.
 
 == Description ==
 
-With responsive layouts and a wide range of devices serving banners with a fixed size can become a huge pain.
-
-Using Responsive Ads you can define a minimal and maximal width a browser must have in order to see an ad.
+This add-on ensures your ads effortlessly integrate with Accelerated Mobile Pages. Experience superior ad engagement, higher click rates, and amplified revenue with ease.
 
 **Features**
 
-* set minimal and maximal browser width to display ads for
-* converts AdSense automatically into AMP format
-* support for AMP versions of every ad network that offers them
-* display condition to show or hide specific ads on AMP pages
+* convert AdSense automatically into AMP format
+* support AMP versions of every ad network that offers them
+* provide a display condition to show or hide specific ads on AMP pages
 * set custom sizes for AdSense responsive ads
-* set default AdSense sizes to rectangle, vertical or horizontal
-* customize AdSense Responsive Matched Content unit for desktop and mobile
-* list all ads by their responsive settings on the dashboard
-* frontend assistant to display ad, container, and window size for admins
-* detect tablets
-* force responsive image ads if not supported by the theme
-* ads are updated when the screen resizes and Cache Busting in Pro is enabled
+* set default AdSense sizes to rectangle, vertical, or horizontal
+* customize AdSense Multiplex ad units for desktop and mobile
 
 Tested with the following AMP plugins
 
@@ -44,10 +36,24 @@ Tested with the following AMP plugins
 
 == Installation ==
 
-Responsive Ads is based on the free Advanced Ads plugin, a simple and powerful ad management solution for WordPress. Before using this plugin download, install and activate Advanced Ads for free from http://wordpress.org/plugins/advanced-ads/.
-You can use Advanced Ads along any other ad management plugin and don’t need to switch completely.
+AMP Ads is based on the free Advanced Ads plugin, a simple and powerful ad management solution for WordPress. Before using this plugin download, install, and activate Advanced Ads for free from http://wordpress.org/plugins/advanced-ads/.
+You can use Advanced Ads along with any other ad management plugin and don’t need to switch completely.
 
 == Changelog ==
+
+= 1.12.2 =
+- Fix: show the licence field when Advanced Ads Pro is disabled
+
+= 1.12.1 =
+- Fix: prevent notification from showing infinitely
+
+= 1.12.0 =
+
+- Feature: rebrand add-on as “Advanced Ads AMP Ads”
+- Feature: move the Browser Width condition to Advanced Ads Pro
+- Feature: move feature to reload ads on screen size change to Advanced Ads Pro
+- Feature: move feature to enforce responsive image ads for themes without support to Advanced Ads Pro
+- Feature: remove the size assistant feature that helped determine the size of ads in the frontend
 
 = 1.11.0 =
 
@@ -343,4 +349,4 @@ You can use Advanced Ads along any other ad management plugin and don’t need t
 = 1.0 =
 * first plugin version
 
-Build: 2023-09-e1b75372
+Build: 2024-10-4cc8daa5

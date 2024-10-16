@@ -11,7 +11,7 @@ final class Advanced_Ads_Tracking_Util {
 	const MOD_WEEK  = 1000000;
 	const MOD_MONTH = 100000000;
 
-	const DB_VERSION            = '1.5';
+	const DB_VERSION            = '1.6';
 	const TABLE_BASENAME        = 'advads_impressions';
 	const TABLE_CLICKS_BASENAME = 'advads_clicks';
 
@@ -43,15 +43,15 @@ final class Advanced_Ads_Tracking_Util {
 	 *
 	 * @var array
 	 */
-	protected $blog_data = array(
-		'ajaxurls'         => array(),
-		'gaUIDs'           => array(),
-		'gaAnonymIP'       => array(),
-		'methods'          => array(),
-		'linkbases'        => array(),
-		'allads'           => array(),
-		'parallelTracking' => array(),
-	);
+	protected $blog_data = [
+		'ajaxurls'         => [],
+		'gaUIDs'           => [],
+		'gaAnonymIP'       => [],
+		'methods'          => [],
+		'linkbases'        => [],
+		'allads'           => [],
+		'parallelTracking' => [],
+	];
 
 	/**
 	 * Array of bots that should get ads displayed but not trigger ad impressions/clicks.
@@ -59,7 +59,7 @@ final class Advanced_Ads_Tracking_Util {
 	 *
 	 * @var array
 	 */
-	protected $bots = array( 'AspiegelBot', 'BingPreview', 'bingbot', 'datanyze', 'ecosia', 'Googlebot', 'Google-AMPHTML', 'GoogleAdSenseInfeed', 'Hexometer', 'mediapartners', '^Mozilla\/5\.0$', 'Barkrowler', 'Seekport Crawler', 'Sogou web spider', 'WP Rocket', 'FlyingPress' );
+	protected $bots = [ 'AspiegelBot', 'BingPreview', 'bingbot', 'datanyze', 'ecosia', 'Googlebot', 'Google-AMPHTML', 'GoogleAdSenseInfeed', 'Hexometer', 'mediapartners', '^Mozilla\/5\.0$', 'Barkrowler', 'Seekport Crawler', 'Sogou web spider', 'WP Rocket', 'FlyingPress' ];
 
 	/**
 	 * Singleton instance.
@@ -92,13 +92,14 @@ final class Advanced_Ads_Tracking_Util {
 	 */
 	public static function get_expired_post_status() {
 		static $post_status;
-		if ( $post_status === null && class_exists( 'Advanced_Ads_Ad_Expiration' ) ) {
-			$post_status = Advanced_Ads_Ad_Expiration::POST_STATUS;
-		} else {
-			$post_status = '';
+
+		if ( class_exists( 'Advanced_Ads_Ad_Expiration' ) ) {
+			if ( $post_status === Advanced_Ads_Ad_Expiration::POST_STATUS || empty( $post_status ) ) {
+				return Advanced_Ads_Ad_Expiration::POST_STATUS;
+			}
 		}
 
-		return $post_status;
+		return '';
 	}
 
 	/**
@@ -142,9 +143,12 @@ final class Advanced_Ads_Tracking_Util {
 				$this->blog_data['ajaxurls'][ $bid ] = $handler;
 			}
 		}
-		$options = get_option( $this->plugin->options_slug, array() );
+		$options = get_option( $this->plugin->options_slug, [] );
 		if ( ! isset( $this->blog_data['gaUIDs'][ $bid ] ) ) {
-			$this->blog_data['gaUIDs'][ $bid ] = isset( $options['ga-UID'] ) ? $options['ga-UID'] : '';
+			$this->blog_data['gaUIDs'][ $bid ] = array_filter( array_map( 'trim', explode(
+				',',
+				isset( $options['ga-UID'] ) ? $options['ga-UID'] : ''
+			) ) );
 		}
 
 		if ( ! isset( $this->blog_data['gaAnonymIP'][ $bid ] ) ) {
@@ -159,30 +163,28 @@ final class Advanced_Ads_Tracking_Util {
 
 		if ( ! isset( $this->blog_data['linkbases'][ $bid ] ) ) {
 			$permalink = get_option( 'permalink_structure' );
-			$linkbase  = isset( $options['linkbase'] ) ? $options['linkbase'] : Advanced_Ads_Tracking::CLICKLINKBASE;
-			$base      = apply_filters( 'advanced-ads-tracking-click-url-base', $linkbase, false );
+			$link_base = $this->get_link_base();
 
-			if ( empty( $permalink ) ) {
-				$linkbase = $base;
-			} else {
-				$linkbase = home_url( '/' . $base . '/' );
+			if ( ! empty( $permalink ) ) {
+				$link_base = trailingslashit( home_url( $link_base ) );
 			}
 
-			$this->blog_data['linkbases'][ $bid ] = $linkbase;
+			$this->blog_data['linkbases'][ $bid ] = $link_base;
 		}
+
 		if ( ! isset( $this->blog_data['allads'][ $bid ] ) ) {
-			$ads = Advanced_Ads::get_instance()->get_model()->get_ads( array(
-				'post_status' => array( 'publish', 'future', 'draft', 'pending' ),
-			) );
+			$ads = Advanced_Ads::get_instance()->get_model()->get_ads( [
+				'post_status' => [ 'publish', 'future', 'draft', 'pending' ],
+			] );
 			foreach ( $ads as $ad ) {
 				$ad_object                                             = new Advanced_Ads_Ad( $ad->ID );
 				$tracking_plugin                                       = Advanced_Ads_Tracking_Plugin::get_instance();
-				$this->blog_data['allads'][ $bid ][ (string) $ad->ID ] = array(
+				$this->blog_data['allads'][ $bid ][ (string) $ad->ID ] = [
 					'title'      => $ad->post_title,
 					'target'     => $this->get_target_url( $ad_object ),
 					'impression' => $tracking_plugin->check_ad_tracking_enabled( $ad_object ),
 					'click'      => $tracking_plugin->check_ad_tracking_enabled( $ad_object, 'click' ),
-				);
+				];
 			}
 		}
 	}
@@ -251,9 +253,9 @@ final class Advanced_Ads_Tracking_Util {
 		// Run $runs times.
 		for ( $y = 0; $y < $runs; $y ++ ) {
 			// Define arrays to save data.
-			$values        = array();
-			$values_clicks = array();
-			$place_holders = array();
+			$values        = [];
+			$values_clicks = [];
+			$place_holders = [];
 			for ( $n = $i; $n > 0; $n -- ) {
 
 				// Create random date in given period.
@@ -263,11 +265,15 @@ final class Advanced_Ads_Tracking_Util {
 				// Get random ad ids but minimum 2.
 				$sub_ids = array_rand( $ids, wp_rand( 2, $num_ids ) );
 				foreach ( $sub_ids as $sub_id ) {
-					$sub_id = $ids[ $sub_id ];
+					$sub_id   = $ids[ $sub_id ];
+					$tendency = 1 + ( crc32( $sub_id ) % 100 ) / 100;  // This will return a value between 1 and 1.99
 
-					// Create random data.
-					array_push( $values, $ts, $sub_id, ( ( wp_rand( 0, 10 ) + wp_rand( 0, 10 ) ) * wp_rand( 1, 5 ) ) );
-					array_push( $values_clicks, $ts, $sub_id, ( ( wp_rand( 0, 2 ) + wp_rand( 0, 3 ) ) * wp_rand( 1, 3 ) ) );
+					// generate a random number of impressions
+					$impressions = ( ( wp_rand( 0, 10 ) + wp_rand( 0, 10 ) ) * wp_rand( 1, 5 ) );
+					array_push( $values, $ts, $sub_id, $impressions );
+					// generate clicks with approximately 3% of impressions, varying between -70% and +100%
+					array_push( $values_clicks, $ts, $sub_id, round( $impressions * $tendency * 0.015 * ( wp_rand( 30, 200 ) / 100 ) ) );
+
 					$place_holders[] = "('%d', '%d', '%d')";
 				}
 			}
@@ -316,33 +322,32 @@ final class Advanced_Ads_Tracking_Util {
 	 * @param int|null $timestamp reference time (default: now; server time).
 	 * @param bool     $fixed     whether to return a fixed hour (on stat per day per ad).
 	 *
-	 * @return int  db formatted timestamp in WordPress local time
+	 * @return string  db formatted timestamp in WordPress local time
 	 * @since 1.0.0
 	 */
 	public function get_timestamp( $timestamp = null, $fixed = false ) {
-		$time = gmdate( 'c', (int) $timestamp < 1 ? time() : $timestamp );
+		// This specific format is required to work with WordPress core < 5.3.0
+		$time = gmdate( 'Y-m-d H:i:s', (int) $timestamp < 1 ? time() : $timestamp );
 
-		// Default timestamp.
-		$ts = get_date_from_gmt( $time, 'ymWdH' );
+		preg_match( '/(?<y>\d{2})(?<m>\d{2})(?<W>\d{2})(?<d>\d{2})(?<H>\d{2})/', get_date_from_gmt( $time, 'ymWdH' ), $timestamp_exploded );
+		$timestamp_exploded = array_filter( $timestamp_exploded, 'is_string', ARRAY_FILTER_USE_KEY );
+		$week               = (int) $timestamp_exploded['W'];
+		$month              = (int) $timestamp_exploded['m'];
 
 		// Check for week/month inconsistencies.
-		$week  = (int) get_date_from_gmt( $time, 'W' );
-		$month = (int) get_date_from_gmt( $time, 'm' );
-
-		if ( 52 <= $week && 1 === $month ) {
+		if ( $week >= 52 && $month === 1 ) {
 			// Still week 52 but already in January.
-			$ts = get_date_from_gmt( $time, 'ym01dH' );
-		} elseif ( 12 === $month && $week > 52 ) {
+			$timestamp_exploded['W'] = '01';
+		} elseif ( $month === 12 && $week > 52 ) {
 			// Still in December but week 53.
-			$ts = get_date_from_gmt( $time, 'ym52dH' );
+			$timestamp_exploded['W'] = '52';
 		}
 
 		if ( $fixed ) {
-			$ts = substr( $ts, 0, - 2 );
-			$ts .= self::FIXED_HOUR;
+			$timestamp_exploded['H'] = self::FIXED_HOUR;
 		}
 
-		return $ts;
+		return implode( '', $timestamp_exploded );
 	}
 
 	/**
@@ -354,7 +359,7 @@ final class Advanced_Ads_Tracking_Util {
 	 * @return string
 	 */
 	public function get_date_from_db( $db_time, $format ) {
-		$date = array_combine( array( 'year', 'month', 'week', 'day', 'hour' ), str_split( $db_time, 2 ) );
+		$date = array_combine( [ 'year', 'month', 'week', 'day', 'hour' ], str_split( $db_time, 2 ) );
 		// -TODO since month and day have special meaning when `0` this was hot-fixed
 		$time = mktime( (int) $date['hour'], 0, 0, max( $date['month'], 1 ), max( $date['day'], 1 ), (int) $date['year'] );
 
@@ -375,7 +380,7 @@ final class Advanced_Ads_Tracking_Util {
 			$ad_id = $ad_id['ad_id'];
 		}
 
-		$this->track_impressions( array( $ad_id ), $start_time );
+		$this->track_impressions( [ $ad_id ], $start_time );
 	}
 
 	/**
@@ -385,7 +390,7 @@ final class Advanced_Ads_Tracking_Util {
 	 * @param int   $start_time Timestamp when tracking started, gets passed to log.
 	 */
 	public function track_impressions( array $ad_ids, $start_time ) {
-		$ad_ids = array_filter( array_map( 'intval', $ad_ids ), function( $ad_id ) {
+		$ad_ids = array_filter( array_map( function( $value ) { return (int) $value; }, $ad_ids ), function( $ad_id ) {
 			return $this->is_tracking_allowed( $ad_id, $this->impressions_table );
 		} );
 		if ( empty( $ad_ids ) ) {
@@ -448,10 +453,10 @@ final class Advanced_Ads_Tracking_Util {
 		 */
 		$main_plugin = Advanced_Ads::get_instance();
 		// Add bots that should see ads but not track them to the bots list.
-		add_filter( 'advanced-ads-bots', array( $this, 'add_bots_triggering_ajax' ) );
+		add_filter( 'advanced-ads-bots', [ $this, 'add_bots_triggering_ajax' ] );
 		$is_bot = $main_plugin->is_bot();
 		// Remove the filter to have a clean bots list again.
-		remove_filter( 'advanced-ads-bots', array( $this, 'add_bots_triggering_ajax' ) );
+		remove_filter( 'advanced-ads-bots', [ $this, 'add_bots_triggering_ajax' ] );
 
 		if (
 			$main_plugin->is_cache_bot()
@@ -519,25 +524,26 @@ final class Advanced_Ads_Tracking_Util {
 	 *
 	 * @return array with impressions and clicks by ad id.
 	 * @since 1.2.6
+	 * phpcs:disable WordPress.DB.PreparedSQL -- we can't prepare the table names.
 	 */
 	public function get_sums() {
-		static $sums = array(
-			'impressions' => array(),
-			'clicks'      => array(),
-		);
+		static $sums = [
+			'impressions' => [],
+			'clicks'      => [],
+		];
 
 		// we've already queried the database, short-circuit return sums.
 		if ( ! empty( array_filter( $sums ) ) ) {
 			return $sums;
 		}
 
-		foreach ( array( 'clicks', 'impressions' ) as $metric ) {
-			$table = $this->{"${metric}_table"};
+		foreach ( [ 'clicks', 'impressions' ] as $metric ) {
+			$table = $this->{"{$metric}_table"};
 			// check for the presence of table.
-			if ( ! $this->wpdb->query( "SHOW TABLES LIKE '${table}'" ) ) {
+			if ( ! $this->wpdb->query( "SHOW TABLES LIKE '{$table}'" ) ) {
 				continue;
 			}
-			if ( $this->wpdb->query( "SELECT SQL_NO_CACHE `ad_id`, SUM(`count`) as `count` FROM  ${table} GROUP BY `ad_id`" ) ) {
+			if ( $this->wpdb->query( "SELECT SQL_NO_CACHE `ad_id`, SUM(`count`) as `count` FROM  {$table} GROUP BY `ad_id`" ) ) {
 				foreach ( $this->wpdb->last_result as $row ) {
 					$sums[ $metric ][ $row->ad_id ] = $row->count;
 				}
@@ -546,6 +552,7 @@ final class Advanced_Ads_Tracking_Util {
 
 		return $sums;
 	}
+	// phpcs:enable
 
 	/**
 	 * Get the sums for an ad from the db, not the cached value.
@@ -556,10 +563,10 @@ final class Advanced_Ads_Tracking_Util {
 	 * @return array
 	 */
 	public function get_sums_for_ad( $ad_id, $use_clicks = false ) {
-		$sums = array(
+		$sums = [
 			'impressions' => 0,
 			'clicks'      => 0,
-		);
+		];
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- we can't prepare the table names.
 		$sums['impressions'] = (int) $this->wpdb->get_var(
@@ -590,7 +597,7 @@ final class Advanced_Ads_Tracking_Util {
 	 *
 	 * @return string
 	 */
-	private function get_email_report_content( $report_args = array() ) {
+	private function get_email_report_content( $report_args = [] ) {
 		$period = isset( $report_args['period'] ) ? $report_args['period'] : '';
 		$ad_id  = isset( $report_args['ads'] ) ? $report_args['ads'] : 'all';
 
@@ -598,28 +605,28 @@ final class Advanced_Ads_Tracking_Util {
 			$ad_id = absint( $ad_id );
 		}
 
-		$valid_period = array( 'last30days', 'last12months', 'lastmonth' );
+		$valid_period = [ 'last30days', 'last12months', 'lastmonth' ];
 		if ( ! in_array( $period, $valid_period, true ) ) {
 			$period = 'last30days';
 		}
 
-		$textual_period = array(
+		$textual_period = [
 			'last30days'   => __( ' the last 30 days', 'advanced-ads-tracking' ),
 			'lastmonth'    => __( ' the last month', 'advanced-ads-tracking' ),
 			'last12months' => __( ' the last 12 months', 'advanced-ads-tracking' ),
-		);
+		];
 
 		$admin_class = new Advanced_Ads_Tracking_Admin();
 
 		$today = date_create( 'now', self::get_wp_timezone() );
-		$args  = array(
-			'ad_id'       => array(),
+		$args  = [
+			'ad_id'       => [],
 			'period'      => 'lastmonth',
 			'groupby'     => 'day',
 			'groupFormat' => 'Y-m-d',
 			'from'        => null,
 			'to'          => null,
-		);
+		];
 
 		if ( $period === 'last30days' ) {
 			$start_ts = (int) $today->format( 'U' );
@@ -655,7 +662,7 @@ final class Advanced_Ads_Tracking_Util {
 		}
 
 		$impr_stats   = $admin_class->load_stats( $args, $this->impressions_table );
-		$clicks_stats = $admin_class->load_stats( $args, $this->clicks_table );
+		$click_stats = $admin_class->load_stats( $args, $this->clicks_table );
 
 		$ad_name      = false;
 		$public_stats = false;
@@ -664,121 +671,74 @@ final class Advanced_Ads_Tracking_Util {
 		 *  Filter ad ids to allow correct display if no stats for the corresponding ad
 		 */
 		if ( $ad_id !== 'all' ) {
-			$__imprs  = array();
-			$__clicks = array();
+			$__imprs  = [];
+			$__clicks = [];
 			foreach ( $impr_stats as $date => $impression ) {
 				$key = (string) $ad_id;
 				if ( array_key_exists( $key, $impression ) ) {
-					$__imprs[ $date ] = array( $key => $impression[ $key ] );
+					$__imprs[ $date ] = [ $key => $impression[ $key ] ];
 				} else {
-					$__imprs[ $date ] = array( $key => 0 );
+					$__imprs[ $date ] = [ $key => 0 ];
 				}
-				if ( isset( $clicks_stats[ $date ] ) ) {
-					if ( array_key_exists( $key, $clicks_stats[ $date ] ) ) {
-						$__clicks[ $date ] = array( $key => absint( $clicks_stats[ $date ][ $key ] ) );
+				if ( isset( $click_stats[ $date ] ) ) {
+					if ( array_key_exists( $key, $click_stats[ $date ] ) ) {
+						$__clicks[ $date ] = [ $key => absint( $click_stats[ $date ][ $key ] ) ];
 					} else {
-						$__clicks[ $date ] = array( $key => 0 );
+						$__clicks[ $date ] = [ $key => 0 ];
 					}
 				} else {
-					$__clicks[ $date ] = array( $key => 0 );
+					$__clicks[ $date ] = [ $key => 0 ];
 				}
 			}
 			$impr_stats   = $__imprs;
-			$clicks_stats = $__clicks;
+			$click_stats  = $__clicks;
 			$public       = new Advanced_Ads_Tracking_Public_Stats( $ad_id );
 			$ad_name      = $public->get_name( true );
 			$public_stats = $public->get_url();
 		}
 
-		$cell_style   = 'style="padding: 0.6em;text-align:right;border:1px solid;"';
-		$header_style = 'style="padding: 0.8em;text-align:center;font-size:1.1em;font-weight:bold;"';
+		$cell_style   = 'padding: 0.6em;text-align:right;border:1px solid;';
+		$header_style = 'padding: 0.8em;text-align:center;font-size:1.1em;font-weight:bold;';
 
-		$impr_sum  = 0;
-		$click_sum = 0;
 		ob_start();
-
-		?>
-		<div style="margin-top:0.4em;margin-bottom:0.4em;margin-right:auto;margin-left:auto;position:relative;width:420px;overflow:visible;">
-			<h3 style="font-size:1.3em;"><?php echo bloginfo( 'name' ); ?></h3>
-			<?php if ( $ad_name ) : ?>
-				<?php // translators: %1$s is the ad name; %2$s a period string. ?>
-				<h4 style="font-size:1.2em;"><?php printf( __( '%1$s statistics for %2$s', 'advanced-ads-tracking' ), '<strong><em>' . $ad_name . '</em></strong>', $textual_period[ $period ] ); ?></h4>
-			<?php else : ?>
-				<?php // translators: %s is a period string. ?>
-				<h4 style="font-size:1.2em;"><?php printf( __( 'Ads statistics for %s', 'advanced-ads-tracking' ), $textual_period[ $period ] ); ?></h4>
-			<?php endif; ?>
-			<?php do_action( 'advanced-ads-tracking-email-report-below-headline' ); ?>
-			<?php
-			if ( ! $impr_stats ) : // No impression stats found.
-				?>
-				<p style="font-size:1.1em;"><em><?php _e( 'There is no data for the given period, yet.', 'advanced-ads-tracking' ); ?></em></p>
-			<?php
-			else : // There are some stats.
-				?>
-				<table style="border:1px solid;border-collapse:collapse;">
-					<thead>
-					<th <?php echo $header_style; ?>><?php _e( 'date', 'advanced-ads-tracking' ); ?></th>
-					<th <?php echo $header_style; ?>><?php _e( 'impressions', 'advanced-ads-tracking' ); ?></th>
-					<th <?php echo $header_style; ?>><?php _e( 'clicks', 'advanced-ads-tracking' ); ?></th>
-					<th <?php echo $header_style; ?>>
-						<span title="<?php echo esc_attr( __( 'click through rate', 'advanced-ads-tracking' ) ); ?>" style="cursor:help;"><?php _e( 'CTR', 'advanced-ads-tracking' ); ?></span>
-					</th>
-					</thead>
-					<tbody>
-					<?php $impr_stats = array_reverse( $impr_stats ); ?>
-					<?php foreach ( $impr_stats as $date => $impr ) : ?>
-						<?php
-						$total_impr   = ( is_array( $impr ) ) ? array_sum( $impr ) : 0;
-						$total_clicks = ( isset( $clicks_stats[ $date ] ) && is_array( $clicks_stats[ $date ] ) ) ? array_sum( $clicks_stats[ $date ] ) : 0;
-						$ctr          = ( $total_impr !== 0 ) ? number_format( 100 * $total_clicks / $total_impr, 2 ) . '%' : '0.00%';
-						/**
-						 *  Avoid sending the partial stats (if any at the moment the email is sent) for the current day for the "last 30 days".
-						 */
-						if ( $period === 'last30days' && $date === $today->format( 'Y-m-d' ) ) {
-							continue;
-						}
-						/**
-						 *  Avoid printing the 13th month (the current month) for last 12 months
-						 */
-						if ( $period === 'last12months' && $date === $today->format( 'Y-m-01' ) ) {
-							continue;
-						}
-						$impr_sum  += $total_impr;
-						$click_sum += $total_clicks
-						?>
-						<tr>
-							<td <?php echo $cell_style; ?>>
-								<?php
-								if ( $period === 'last12months' ) {
-									echo date_i18n( 'F Y', strtotime( $date ) );
-								} else {
-									echo date_i18n( get_option( 'date_format' ), strtotime( $date ) );
-								}
-								?>
-							</td>
-							<td <?php echo $cell_style; ?>><?php echo $total_impr; ?></td>
-							<td <?php echo $cell_style; ?>><?php echo $total_clicks; ?></td>
-							<td <?php echo $cell_style; ?>><?php echo $ctr; ?></td>
-						</tr>
-					<?php endforeach; ?>
-					<tr style="font-weight:600;">
-						<td <?php echo $cell_style; ?>><?php _e( 'Total', 'advanced-ads-tracking' ); ?></td>
-						<td <?php echo $cell_style; ?>><?php echo $impr_sum; ?></td>
-						<td <?php echo $cell_style; ?>><?php echo $click_sum; ?></td>
-						<td <?php echo $cell_style; ?>><?php echo ( $click_sum === 0 ) ? '0.00 %' : number_format( 100 * $click_sum / $impr_sum, 2 ) . ' %'; ?></td>
-					</tr>
-					</tbody>
-				</table>
-				<?php if ( $ad_name ) : ?>
-				<p><a href="<?php echo esc_url( $public_stats ); ?>" target="_blank" style="font-size:1.1em;color:#1fa1d0;text-decoration:none;font-weight:bold;"><?php _e( 'View the live statistics', 'advanced-ads-tracking' ); ?></a></p>
-			<?php endif; ?>
-			<?php
-			endif;
-			do_action( 'advanced-ads-tracking-email-report-below-content' );
-			?>
-		</div>
-		<?php
+		include AAT_BASE_PATH . 'public/views/email-report-body.php';
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get aggregated stats by ad for an entire period
+	 *
+	 * @param array $impressions impressions count by date from `Advanced_Ads_Tracking_Admin::load_stats()`.
+	 * @param array $clicks      clicks count by date from `Advanced_Ads_Tracking_Admin::load_stats()`.
+	 *
+	 * @return array
+	 */
+	private function get_aggergated_stats_by_ad( $impressions, $clicks ) {
+		$results  = [];
+		$ad_names = [];
+		foreach ( $impressions as $stats ) {
+			foreach ( $stats as $id => $count ) {
+				$post_object     = get_post( $id );
+				$ad_names[ $id ] = $post_object->post_title;
+				if ( ! isset( $results[ $ad_names[ $id ] ] ) ) {
+					$results[ $ad_names[ $id ] ] = [
+						'impressions' => 0,
+						'clicks'      => 0,
+					];
+				}
+				$results[ $ad_names[ $id ] ]['impressions'] += (int) $count;
+			}
+		}
+		foreach ( $clicks as $stats ) {
+			foreach ( $stats as $id => $count ) {
+				$results[ $ad_names[ $id ] ]['clicks'] += (int) $count;
+			}
+		}
+		foreach ( $results as $name => $stats ) {
+			$results[ $name ]['ctr'] = $stats['impressions'] !== 0 ? number_format( 100 * $stats['clicks'] / $stats['impressions'], 2 ) . '%' : '0.00%';
+		}
+
+		return $results;
 	}
 
 	/**
@@ -790,10 +750,10 @@ final class Advanced_Ads_Tracking_Util {
 	 */
 	public function send_individual_ad_report( array $params ) {
 		if ( ! isset( $params['subject'], $params['to'], $params['id'], $params['period'] ) ) {
-			return array(
+			return [
 				'status' => false,
 				'error'  => '',
-			);
+			];
 		}
 
 		$bcc = explode( ',', $params['to'] );
@@ -803,28 +763,28 @@ final class Advanced_Ads_Tracking_Util {
 		$sender  = isset( $options['email-sender-name'] ) ? $options['email-sender-name'] : 'Advanced Ads';
 		$from    = isset( $options['email-sender-address'] ) ? $options['email-sender-address'] : 'noreply@' . wp_parse_url( get_bloginfo( 'url' ), PHP_URL_HOST );
 
-		$headers = array(
+		$headers = [
 			'Content-Type: text/html; charset=UTF-8',
 			'From: ' . $sender . ' <' . $from . '>',
-		);
+		];
 		if ( ! empty( $bcc ) ) {
 			$headers[] = 'Bcc: ' . implode( ',', $bcc );
 		}
 
 		ob_start();
 
-		$content = $this->get_email_report_content( array(
+		$content = $this->get_email_report_content( [
 			'period' => $params['period'],
 			'ads'    => $params['id'],
-		) );
+		] );
 
 		$result = wp_mail( $to, $params['subject'], $content, $headers );
 		$error  = ob_get_clean();
 
-		return array(
+		return [
 			'status' => $result,
 			'error'  => $error,
-		);
+		];
 	}
 
 	/**
@@ -835,27 +795,30 @@ final class Advanced_Ads_Tracking_Util {
 	public function send_email_report() {
 		$options = $this->plugin->options();
 		if ( empty( $options['email-addresses'] ) ) {
-			return array(
+			return [
 				'status' => false,
 				'error'  => '',
-			);
+			];
 		}
 		$period  = $options['email-stats-period'];
-		$content = $this->get_email_report_content( array( 'period' => $period ) );
+		$content = $this->get_email_report_content( [
+			'period'          => $period,
+			'secondary_table' => true,
+		] );
 		if ( ! $content ) {
-			return array(
+			return [
 				'status' => false,
 				'error'  => '',
-			);
+			];
 		}
 
 		$bcc     = explode( ',', $options['email-addresses'] );
 		$to      = array_shift( $bcc );
 		$subject = $options['email-subject'];
-		$headers = array(
+		$headers = [
 			'Content-Type: text/html; charset=UTF-8',
 			'From: ' . $options['email-sender-name'] . ' <' . $options['email-sender-address'] . '>',
-		);
+		];
 
 		if ( ! empty( $bcc ) ) {
 			$headers[] = 'Bcc: ' . implode( ',', $bcc );
@@ -865,10 +828,10 @@ final class Advanced_Ads_Tracking_Util {
 		$result = wp_mail( $to, $subject, $content, $headers );
 		$error  = ob_get_clean();
 
-		return array(
+		return [
 			'status' => $result,
 			'error'  => $error,
-		);
+		];
 	}
 
 	/**
@@ -884,7 +847,7 @@ final class Advanced_Ads_Tracking_Util {
 		}
 
 		$options    = $ad->options();
-		$ad_options = isset( $options['tracking'] ) ? $options['tracking'] : array();
+		$ad_options = isset( $options['tracking'] ) ? $options['tracking'] : [];
 
 		// Get url.
 		if ( ! empty( $ad_options['link'] ) ) {
@@ -925,5 +888,26 @@ final class Advanced_Ads_Tracking_Util {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Get the link cloaking base from the database or the default value and allow filtering.
+	 *
+	 * @return string
+	 */
+	public function get_link_base(): string {
+		static $link_base;
+		if ( ! isset( $link_base ) ) {
+			$link_base = Advanced_Ads_Tracking_Plugin::get_instance()->options()['linkbase'] ?? Advanced_Ads_Tracking::CLICKLINKBASE;
+
+			/**
+			 * Filter the click url/link cloaking fragment.
+			 *
+			 * @param string $link_base The current fragment from options or default value.
+			 */
+			$link_base = (string) apply_filters( 'advanced-ads-tracking-click-url-base', $link_base, false );
+		}
+
+		return $link_base;
 	}
 }

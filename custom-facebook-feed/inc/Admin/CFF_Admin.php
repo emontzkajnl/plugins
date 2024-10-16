@@ -74,6 +74,17 @@ class CFF_Admin{
 			'https://smashballoon.com/custom-facebook-feed/?utm_campaign=facebook-free&utm_source=menu-link&utm_medium=upgrade-link&utm_content=UpgradeToPro',
 			''
 		);
+		if(version_compare(PHP_VERSION, '7.4.0') >= 0 && !is_plugin_active('feeds-for-tiktok/feeds-for-tiktok.php') && !is_plugin_active('tiktok-feeds-pro/tiktok-feeds-pro.php'))
+		{
+			add_submenu_page(
+				'cff-top',
+				__( 'TikTok Feeds', 'custom-facebook-feed' ) . '<span class="cff-notice-alert"><span>New!</span> </span></span>',
+				'<span class="cff_get_tiktok">' . __( 'TikTok Feeds', 'custom-facebook-feed' ) . '</span>'. '<span class="cff-notice-alert cff-new-indicator"><span>New!</span></span>',
+				$cap,
+				'admin.php?page=sbtt',
+				''
+			);
+		}
 
     	//Show a Reviews plugin menu item if it isn't already installed
 		if( !is_plugin_active( 'reviews-feed/sb-reviews.php' ) && !is_plugin_active( 'reviews-feed-pro/sb-reviews-pro.php' )  && current_user_can( 'activate_plugins' ) && current_user_can( 'install_plugins' ) )
@@ -81,7 +92,7 @@ class CFF_Admin{
 			add_submenu_page(
 				'cff-top',
 				__( 'Reviews Feed', 'custom-facebook-feed' ),
-				'<span class="cff_get_sbr">' . __( 'Reviews Feed', 'custom-facebook-feed' ) . '<span class="cff-notice-alert"><span>New!</span> </span></span>',
+				'<span class="cff_get_sbr">' . __( 'Reviews Feed', 'custom-facebook-feed' ) ,
 				$cap,
 				'admin.php?page=sbr',
 				''

@@ -1,7 +1,7 @@
 === Advanced Ads – Sticky Ads ===
 Requires at least: Advanced Ads 1.22, Advanced Ads Pro 2.8.2, Tracking 1.19
 Tested up to: 5.6
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 
 Sticky Ad allows to stick an ad to a position in the browser window and scroll with the content.
 
@@ -38,6 +38,13 @@ The Sticky Ads plugin is based on the free Advanced Ads plugin, a simple and pow
 You can use Advanced Ads along any other ad management plugin and don’t need to switch completely.
 
 == Changelog ==
+
+= 1.8.5 =
+
+- Improvement: add Greek and German translations (Austria, Switzerland)
+- Fix: unify descriptions on the settings page
+- Fix: prevent sticky placements triggering termination notifications even without changes
+- Fix: replace deprecated functions
 
 = 1.8.4 =
 
@@ -256,4 +263,4 @@ You can use Advanced Ads along any other ad management plugin and don’t need t
 = 1.0 =
 * first plugin version with sticky ads browser and browser test
 
-Build: 2022-05-d539e98d
+Build: 2024-06-6a25e15b

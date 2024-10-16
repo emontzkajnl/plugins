@@ -96,7 +96,6 @@ final class AdminColumnsPro
     {
         $request_ajax_handlers = new RequestAjaxHandlers();
         $request_ajax_handlers
-            ->add('acp-ajax-activate', $container->get(RequestHandler\Ajax\LicenseActivate::class))
             ->add('acp-list-screen-create', $container->get(RequestHandler\Ajax\ListScreenCreate::class))
             ->add('acp-daily-subscription-update', $container->get(RequestHandler\Ajax\SubscriptionUpdate::class))
             ->add('acp-update-plugins-check', $container->get(RequestHandler\Ajax\UpdatePlugins::class))

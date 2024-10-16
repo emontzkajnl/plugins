@@ -1,9 +1,9 @@
-=== Smash Balloon Social Photo Feed - Best Social Feed Plugin for WordPress ===
+=== Smash Balloon Social Photo Feed – Easy Social Feeds Plugin ===
 Contributors: smashballoon, craig-at-smash-balloon, am, smub
 Tags: Instagram, Instagram feed, Instagram photos, Instagram widget, Instagram gallery
 Requires at least: 4.1
-Tested up to: 6.5
-Stable tag: 6.3.1
+Tested up to: 6.6
+Stable tag: 6.5.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -310,6 +310,34 @@ If you like our WordPress Instagram plugin, then consider checking out our other
 Visit [WPBeginner](https://wpbeginner.com/?utm_campaign=instagram-free&utm_source=readme&utm_medium=whats-next-links) to learn from our [WordPress Tutorials](https://www.wpbeginner.com/category/wp-tutorials/?utm_campaign=instagram-free&utm_source=readme&utm_medium=whats-next-links) and about the [best WordPress plugins](https://www.wpbeginner.com/category/plugins/?utm_campaign=instagram-free&utm_source=readme&utm_medium=whats-next-links).
 
 == Changelog ==
+= 6.5.1 =
+* Fix: Plugin hardening;
+
+= 6.5.0 =
+* New: Added webp image support for the local image optimization feature. This will improve the performance of your feed by serving images in the webp format when possible.
+* New: Added Blocks to easily use our other social media feeds.
+* Fix: Fixed an issue with images not loading in the post editor when using the Instagram Feed block.
+
+= 6.4.3 =
+* New: Added support for new version of CookieYes GDPR plugin.
+* New: Updated the URL for oEmbed auth flow.
+* Fix: Resolved conflict with TikTok Feeds and removed assets when callout is not shown.
+* Fix: Fixed issues with admin notices not dismissing properly.
+
+= 6.4.2 =
+* Fix: PHP fatal error caused by dependencies not being prefixed with the correct namespace.
+
+= 6.4.1 =
+* Fix: PHP fatal error that could occur in some circumstances when using the plugin.
+* Fix: JS error that occurred on the frontend.
+
+= 6.4 =
+* New: Added a checklist and callout feature to help users get started with all Smash Balloon products installed
+* Tweak: Added some improvements to our onboarding wizard to make it clear what certain steps do.
+* Tweak: Made improvements to our oEmbed connection process.
+* Fix: Fixed AJAX themes not loading jQuery dependency causing the feed to break in some circumstances.
+* Translations: Updated our translation .pot file.
+
 = 6.3.1 =
 * Fix: Fixed some admin notices not dismissing as expected.
 * Fix: Fixed an issue that would cause a fatal error when trying to delete the plugin.
@@ -452,3 +480,21 @@ Visit [WPBeginner](https://wpbeginner.com/?utm_campaign=instagram-free&utm_sourc
 * New: Color Scheme option. It's now easier than ever to change colors across your feed without needing to adjust individual color settings. Just set a color scheme to effortlessly change colors across your entire feed.
 * New: You can now change the number of columns in your feed across desktop, tablet, and mobile.
 * New: Easily import and export feed settings to make it simple to move feeds across sites.
+
+== Privacy Policy ==
+
+=**Data Collection**=
+
+Instagram Feed does not collect any personal data from your Meta accounts (Instagram, Facebook). All data retrieved from the Meta API is used solely for the purpose of displaying your feed on your WordPress site.
+
+=**External Connections**=
+
+This plugin connects to three external sites:
+
+* **Smashballoon.com**: Used for connecting and authenticating your sources. Occasionally, it sends dynamic notices to users. These notices can include information about major API changes, critical updates, and marketing messages.
+
+* **Instagram.com and Facebook.com**: Used to fetch posts so your visitors can view them directly on your site without needing to leave.
+
+=**Data Usage**=
+
+All data retrieved from the Meta API is used solely for displaying your Instagram feed on your WordPress site. No personal data is collected, stored, or shared beyond this purpose.

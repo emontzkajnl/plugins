@@ -3,34 +3,65 @@
  */
 jQuery( document ).ready( function () {
 	jQuery( '#advanced-ads-ad-parameters textarea#advads-ad-content-plain' ).on( 'keyup', advads_tracking_check_link );
-	jQuery( '#advads-url' ).on( 'keyup', advads_tracking_check_link );
-	if ( Advanced_Ads_Admin.editor && Advanced_Ads_Admin.editor.codemirror ) {
-		Advanced_Ads_Admin.editor.codemirror.on( 'keyup', advads_tracking_check_link );
-	}
+
 	advads_tracking_display_click_limit_field( jQuery( '#advanced-ad-type input:checked' ).val() );
 } );
 
+/**
+ * Validate urlfield & code editor url logic
+ */
+jQuery(window).on("load", function () {
+    const advadsUrl = jQuery("#advads-url");
+    const codemirror = Advanced_Ads_Admin.editor?.codemirror;
+
+    function advads_tracking_check() {
+        advads_tracking_check_editor();
+        advads_tracking_check_link();
+    }
+
+    advadsUrl?.on("keyup", advads_tracking_check);
+    codemirror?.on("keyup", advads_tracking_check);
+});
+/**
+ * onload check if url field is empty and %link% exists.
+ */
+jQuery(function(){
+	advads_tracking_check_editor();
+});
+/**
+ * Show notice if %link% is in the editor but the URL field is empty.
+ * Show notice if URL exists but %link% is not in the editor.
+ */
+function advads_tracking_check_editor() {
+	const text = Advanced_Ads_Admin.get_ad_source_editor_text();
+	const advadsUrl = jQuery("#advads-url");
+	const condition1 = text && text.includes(" href=") && text.includes("%link%");
+	const condition2 = advadsUrl && "" === advadsUrl.val();
+
+	jQuery(".advads-ad-notice-tracking-missing-url-field").toggleClass(
+		"hidden",
+		!(condition1 && condition2)
+	);
+}
 /**
  * Display click tracking limitation fields based on ad type
  *
  * @param {string} ad_type
  */
 function advads_tracking_display_click_limit_field( ad_type ) {
-	// display / hide click tracking row
-	if ( 0 <= advads_tracking_clickable_ad_types.indexOf( ad_type ) ) {
-		jQuery( '.advads-tracking-click-limit-row' ).show();
-	} else {
-		jQuery( '.advads-tracking-click-limit-row' ).hide();
-	}
+	// Show / hide click tracking row.
+	jQuery( '.advads-tracking-click-limit-row' ).toggle( advads_tracking_clickable_ad_types.indexOf( ad_type ) !== - 1 );
+	const optionsList = jQuery( '#advanced-ads-ad-parameters' ).siblings( '.advads-option-list' );
+	const tracking    = optionsList.find( 'span.label:first-of-type' ).add( optionsList.find( ' > div:first-of-type' ) ).add( optionsList.find( ' > hr:first-of-type' ) );
 
-	// hide target, url and nofollow field for adsense
-	var div   = jQuery( 'input[name="advanced_ad[tracking][nofollow]"],input[name="advanced_ad[tracking][target]"],#advads-url' ).closest( 'div' );
-	var label = div.prev();
-	var hr    = div.next();
-	if ( ad_type === 'adsense' || ad_type === 'group' ) {
-		div.add( label ).add( hr ).hide();
-	} else {
-		div.add( label ).add( hr ).show();
+	switch ( ad_type ) {
+		case 'adsense':
+		case 'gam':
+		case 'group':
+			optionsList.find( '> * ' ).not( tracking ).hide();
+			break;
+		default:
+			optionsList.find( '> * ' ).show();
 	}
 }
 
@@ -41,7 +72,6 @@ jQuery( document ).on( 'change', '#advanced-ad-type input', function () {
 /**
  * Check if there is a link attribute in the content field that is not %link%
  *
- * @param {obj} contentfield field selector
  * @returns {undefined}
  */
 function advads_tracking_check_link() {

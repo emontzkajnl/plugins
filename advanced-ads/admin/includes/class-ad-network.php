@@ -239,7 +239,7 @@ abstract class Advanced_Ads_Ad_Network {
 		$js_path = $this->get_javascript_base_path();
 		if ( $js_path ) {
 			$id = $this->get_js_library_name();
-			wp_enqueue_script( $id, $js_path, [ 'jquery' ] );
+			wp_enqueue_script( $id, $js_path, [ 'jquery', wp_advads()->registry->prefix_it( 'admin' ) ] );
 			// next we have to pass the data.
 			$data = [
 				'nonce' => $this->get_nonce(),

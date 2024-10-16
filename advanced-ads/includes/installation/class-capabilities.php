@@ -17,6 +17,13 @@ defined( 'ABSPATH' ) || exit;
 class Capabilities {
 
 	/**
+	 * Instance
+	 *
+	 * @var object
+	 */
+	protected static $instance;
+
+	/**
 	 * Registered capabilities.
 	 *
 	 * @var array
@@ -35,6 +42,20 @@ class Capabilities {
 	 */
 	public function __construct() {
 		$this->register_defaults();
+	}
+
+	/**
+	 * Get instance
+	 *
+	 * @return Capabilities
+	 */
+	public static function get_instance() {
+		// If the single instance hasn't been set, set it now.
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
 	}
 
 	/**

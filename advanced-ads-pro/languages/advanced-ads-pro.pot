@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Advanced Ads Pro plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Advanced Ads Pro 2.26.0\n"
+"Project-Id-Version: Advanced Ads Pro 2.26.3\n"
 "Report-Msgid-Bugs-To: https://wpadvancedads.com/support/\n"
 "Last-Translator: Thomas Maier <post@webzunft.de>\n"
 "Language-Team: webgilde <support@wpadvancedads.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-13T08:46:55+00:00\n"
+"POT-Creation-Date: 2024-09-04T11:48:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: advanced-ads-pro\n"
@@ -147,16 +147,16 @@ msgstr ""
 #. translators: Link to parallax manual
 #: modules/ad-server/views/module-settings.php:15
 #: modules/ads-for-adblockers/views/settings.php:14
-#: modules/advanced-display-conditions/main.class.php:499
+#: modules/advanced-display-conditions/main.class.php:500
 #: modules/advanced-display-conditions/views/metabox-string.php:12
 #: modules/advanced-visitor-conditions/main.class.php:293
 #: modules/advanced-visitor-conditions/main.class.php:384
 #: modules/advanced-visitor-conditions/main.class.php:441
 #: modules/advanced-visitor-conditions/main.class.php:478
-#: modules/buddypress/buddypress.class.php:352
+#: modules/buddypress/buddypress.class.php:358
 #: modules/cache-busting/views/settings.php:14
-#: modules/click-fraud-protection/click-fraud-protection.class.php:133
-#: modules/click-fraud-protection/click-fraud-protection.class.php:141
+#: modules/click-fraud-protection/click-fraud-protection.class.php:140
+#: modules/click-fraud-protection/click-fraud-protection.class.php:148
 #: modules/click-fraud-protection/views/settings.php:12
 #: modules/gamipress/views/visitor-condition-achievement.php:34
 #: modules/gamipress/views/visitor-condition-points.php:41
@@ -268,66 +268,66 @@ msgstr ""
 msgid "Ad block disguise"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:35
+#: modules/advanced-display-conditions/main.class.php:36
 msgid "url parameters"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:36
+#: modules/advanced-display-conditions/main.class.php:37
 msgid "Display ads based on the current URL parameters (everything following %s), except values following #."
-msgstr ""
-
-#: modules/advanced-display-conditions/main.class.php:49
-#: modules/advanced-display-conditions/main.class.php:68
-msgid "%s template"
 msgstr ""
 
 #: modules/advanced-display-conditions/main.class.php:50
 #: modules/advanced-display-conditions/main.class.php:69
+msgid "%s template"
+msgstr ""
+
+#: modules/advanced-display-conditions/main.class.php:51
+#: modules/advanced-display-conditions/main.class.php:70
 msgid "Display ads based on the template of the %s post type."
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:80
+#: modules/advanced-display-conditions/main.class.php:81
 msgid "WPML language"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:81
+#: modules/advanced-display-conditions/main.class.php:82
 msgid "Display ads based on the page language set by the WPML plugin."
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:88
+#: modules/advanced-display-conditions/main.class.php:89
 msgid "parent page"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:89
+#: modules/advanced-display-conditions/main.class.php:90
 msgid "Display ads based on parent page."
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:95
+#: modules/advanced-display-conditions/main.class.php:96
 msgid "post meta"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:96
+#: modules/advanced-display-conditions/main.class.php:97
 msgid "Display ads based on post meta."
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:102
+#: modules/advanced-display-conditions/main.class.php:103
 msgid "pagination"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:103
+#: modules/advanced-display-conditions/main.class.php:104
 msgid "Display ads based on the index of a split page"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:109
+#: modules/advanced-display-conditions/main.class.php:110
 msgid "post content"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:110
+#: modules/advanced-display-conditions/main.class.php:111
 msgid "Display ads based on words and phrases within the post or page content. Dynamically added text might not be considered."
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:421
-#: modules/advanced-display-conditions/main.class.php:476
+#: modules/advanced-display-conditions/main.class.php:422
+#: modules/advanced-display-conditions/main.class.php:477
 #: modules/advanced-visitor-conditions/main.class.php:327
 #: modules/advanced-visitor-conditions/main.class.php:370
 #: modules/gamipress/views/visitor-condition-achievement.php:16
@@ -337,8 +337,8 @@ msgstr ""
 msgid "is"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:422
-#: modules/advanced-display-conditions/main.class.php:477
+#: modules/advanced-display-conditions/main.class.php:423
+#: modules/advanced-display-conditions/main.class.php:478
 #: modules/advanced-visitor-conditions/main.class.php:328
 #: modules/advanced-visitor-conditions/main.class.php:371
 #: modules/gamipress/views/visitor-condition-achievement.php:17
@@ -348,27 +348,27 @@ msgstr ""
 msgid "is not"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:493
+#: modules/advanced-display-conditions/main.class.php:494
 msgid "no languages set up in WPML"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:529
+#: modules/advanced-display-conditions/main.class.php:530
 msgid "any of"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:530
+#: modules/advanced-display-conditions/main.class.php:531
 msgid "all of"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:531
+#: modules/advanced-display-conditions/main.class.php:532
 msgid "meta key"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:561
+#: modules/advanced-display-conditions/main.class.php:562
 msgid "from %s to %s"
 msgstr ""
 
-#: modules/advanced-display-conditions/main.class.php:564
+#: modules/advanced-display-conditions/main.class.php:565
 msgid "count from end"
 msgstr ""
 
@@ -597,11 +597,19 @@ msgid "Display ads based on BuddyBoss profile fields."
 msgstr ""
 
 #: modules/buddypress/buddypress.class.php:303
-msgid "BuddyBoss group"
+msgid "BuddyPress group"
 msgstr ""
 
 #: modules/buddypress/buddypress.class.php:304
-#: modules/buddypress/buddypress.class.php:350
+msgid "Display ads based on existing BuddyPress groups."
+msgstr ""
+
+#: modules/buddypress/buddypress.class.php:314
+msgid "BuddyBoss group"
+msgstr ""
+
+#: modules/buddypress/buddypress.class.php:315
+#: modules/buddypress/buddypress.class.php:356
 msgid "Display ads based on existing BuddyBoss groups."
 msgstr ""
 
@@ -641,7 +649,7 @@ msgid "No profile fields found"
 msgstr ""
 
 #: modules/cache-busting/admin-ui.class.php:45
-#: modules/geo/classes/admin.php:421
+#: modules/geo/classes/admin.php:422
 msgid "You are not allowed to do this."
 msgstr ""
 
@@ -792,27 +800,27 @@ msgstr ""
 msgid "Click Fraud Protection"
 msgstr ""
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:95
+#: modules/click-fraud-protection/click-fraud-protection.class.php:102
 msgid "max. ad clicks"
 msgstr ""
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:96
+#: modules/click-fraud-protection/click-fraud-protection.class.php:103
 msgid "Display ad only if a click limit has not been reached."
 msgstr ""
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:126
+#: modules/click-fraud-protection/click-fraud-protection.class.php:133
 msgid "within"
 msgstr ""
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:128
+#: modules/click-fraud-protection/click-fraud-protection.class.php:135
 msgid "hours"
 msgstr ""
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:139
+#: modules/click-fraud-protection/click-fraud-protection.class.php:146
 msgid "Ignore global Click Fraud Protection"
 msgstr ""
 
-#: modules/click-fraud-protection/click-fraud-protection.class.php:301
+#: modules/click-fraud-protection/click-fraud-protection.class.php:308
 msgid "Click Fraud Protection enabled"
 msgstr ""
 
@@ -1061,53 +1069,53 @@ msgstr ""
 msgid "Location based on your IP address"
 msgstr ""
 
-#: modules/geo/classes/admin.php:425
+#: modules/geo/classes/admin.php:426
 msgid "The upload dir is not available"
 msgstr ""
 
-#: modules/geo/classes/admin.php:429
+#: modules/geo/classes/admin.php:430
 msgid "Please provide a MaxMind license key"
 msgstr ""
 
-#: modules/geo/classes/admin.php:498
+#: modules/geo/classes/admin.php:499
 msgid "Database updated successfully!"
 msgstr ""
 
-#: modules/geo/classes/admin.php:516
+#: modules/geo/classes/admin.php:517
 msgid "Database update failed"
 msgstr ""
 
-#: modules/geo/classes/admin.php:521
-msgid "Error downloading database from: %1$s - %2$s"
+#: modules/geo/classes/admin.php:527
+msgid "Error downloading database from: %1$s - %2$s %3$s - %4$s"
 msgstr ""
 
-#: modules/geo/classes/admin.php:545
+#: modules/geo/classes/admin.php:553
 msgid "Could not open downloaded database for reading: %s"
 msgstr ""
 
-#: modules/geo/classes/admin.php:559
+#: modules/geo/classes/admin.php:567
 msgid "Could not access filesystem"
 msgstr ""
 
-#: modules/geo/classes/admin.php:569
+#: modules/geo/classes/admin.php:577
 msgid "Could not open database for writing %s"
 msgstr ""
 
 #. translators: 1: The number of search results.
-#: modules/geo/classes/admin.php:690
+#: modules/geo/classes/admin.php:698
 msgid "Found %1$d results. Please pick the one, you want to use."
 msgstr ""
 
-#: modules/geo/classes/admin.php:691
+#: modules/geo/classes/admin.php:699
 msgid "Your search did not return any results."
 msgstr ""
 
-#: modules/geo/classes/admin.php:692
+#: modules/geo/classes/admin.php:700
 msgid "There was an error connecting to the search service."
 msgstr ""
 
 #. translators: 1: A link to the geo location service.
-#: modules/geo/classes/admin.php:694
+#: modules/geo/classes/admin.php:702
 msgid "You can search for the geo coordinates manually at %1$s."
 msgstr ""
 

@@ -9,100 +9,77 @@
  */
 
 $options = $this->plugin->options();
+$general_options = Advanced_Ads::get_instance()->options();
 ?>
 <div class="advads-option-list">
 	<span class="label"><?php esc_html_e( 'tracking', 'advanced-ads-tracking' ); ?></span>
 	<div>
 		<select name="advanced_ad[tracking][enabled]">
 			<?php foreach ( $tracking_choices as $key => $value ) : ?>
-				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $enabled, $key ); ?>><?php echo esc_html( $value ); ?></option>
+				<option value="<?php echo esc_attr( $key ); ?>"<?php selected( $enabled, $key ); ?>>
+				<?php
+					echo wp_kses(
+							sprintf(
+								/* Translators: %1$s is the option value and %1$s is the default value */
+								'%1$s' . ( $key === 'default' ? ' (%2$s)' : ''),
+								esc_html__($value),
+								$this->plugin->get_default_track_method()
+							),
+							'advanced-ads-tracking'
+						); ?>
+				</option>
 			<?php endforeach; ?>
 		</select>
-		<p class="description">
-			<?php
-			printf(
-				wp_kses(
-					// translators: %$s is the plugin url.
-					__( 'Please visit the %1$smanual%2$s to learn more about click tracking.', 'advanced-ads-tracking' ),
-					array(
-						'a' => array(
-							'href'   => array(),
-							'target' => array(),
-						),
-					)
-				),
-				'<a href="' . esc_url( ADVADS_URL ) . 'manual/tracking-documentation" target="_blank">',
-				'</a>'
-			);
-			?>
-		</p>
+		<a href="https://wpadvancedads.com/manual/tracking-documentation/?utm_source=advanced-ads?utm_medium=link&utm_campaign=ad-edit-tracking" class="advads-manual-link" target="_blank">
+			<?php esc_html_e( 'Manual', 'advanced-ads-tracking' ); ?>
+		</a>
 	</div>
 	<hr/>
-	<?php
-	if ( $ad->type === 'group' || $ad->type === 'adsense' ) {
-		echo '</div>';
-
-		return;
-	}
-	?>
-	<label for="advads-url" class="label"><?php _e( 'url', 'advanced-ads-tracking' ); ?></label>
+	<label for="advads-url" class="label"><?php esc_html_e( 'Target URL', 'advanced-ads-tracking' ); ?></label>
 	<div>
 		<?php if ( $link && strpos( $ad->content, '%link%' ) === false && ( strpos( $ad->content, 'href=' ) !== false || strpos( $ad->content, '<script' ) !== false || strpos( $ad->content, '<iframe' ) !== false ) ) : ?>
-			<p class="description advads-metabox-notices ">
-				<span class="error">
-					<?php esc_html_e( 'Based on your configuration it seems that you do not need to specify an external link. You can leave the url field empty.', 'advanced-ads' ); ?>
-				</span>
+			<p class="advads-notice-inline advads-idea">
+				<?php
+					esc_html_e( 'Based on your configuration, it seems that you do not need to specify an external link. You can leave the URL field empty.', 'advanced-ads-tracking' );
+
+					printf(
+						// translators: %s is an inline code snippet
+						esc_html__( 'If you enable the link cloaking option, please replace the links you want to track in the ad code with the tracking placeholder (%s). Otherwise, Advanced Ads will not record clicks on this ad.', 'advanced-ads-tracking' ),
+						'<code>%link%</code>'
+					);
+				?>
+				<a href="<?php echo esc_url( ADVADS_URL ); ?>manual/tracking-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=ad-edit-cloaking#Click_tracking_and_link_cloaking" class="advads-manual-link" target="_blank"><?php esc_html_e( 'Manual', 'advanced-ads-tracking' ); ?></a>
 			</p>
 		<?php endif; ?>
 
-
 		<input type="url" name="advanced_ad[url]" id="advads-url" class="advads-ad-url" style="width:60%;"
-			   value="<?php echo $link; ?>"
-			   placeholder="<?php esc_html_e( 'https://www.example.com/', 'advanced-ads' ); ?>"/>
-		<p class="description">
-			<?php esc_html_e( 'Link to target site including http(s)', 'advanced-ads' ); ?>
-		</p>
+			   value="<?php echo esc_url( $link ); ?>"
+			   placeholder="<?php echo 'https://www.example.com/'; ?>"/>
+		<a href="<?php echo esc_url( ADVADS_URL ); ?>manual/tracking-documentation/?utm_source=advanced-ads&utm_medium=link&utm_campaign=ad-edit-tracking-url#Click_tracking_and_link_cloaking" class="advads-manual-link" target="_blank"><?php esc_html_e( 'Manual', 'advanced-ads-tracking' ); ?></a>
 		<p class="description">
 			<?php
-			echo wp_kses(
-				__( 'Don’t use this field on JavaScript ad tags (like from Google AdSense). If you are using your own <code>&lt;a&gt;</code> tag, use <code>href="%link%"</code> to insert the tracking link.', 'advanced-ads-tracking' ),
-				array(
-					'code' => array(),
-				)
-			);
-			?>
+				esc_html_e( 'Links your ad to the target URL.', 'advanced-ads-tracking' );
+				echo ' ';
+				echo wp_kses(
+					__( 'If the ad code contains an <code>&lt;a&gt;</code> tag with a link target, copy the URL into the Target URL field and add <code>"%link%"</code> to your ad code.', 'advanced-ads-tracking' ),
+					[
+						'code' => [],
+					]
+				);
+				?>
 		</p>
-		<?php
-		$supported_placeholder_array = array(
-			'[POST_ID]'   => __( 'post ID', 'advanced-ads-tracking' ),
-			'[POST_SLUG]' => __( 'post slug', 'advanced-ads-tracking' ),
-			'[CAT_SLUG]'  => __( 'a comma-separated list of category slugs', 'advanced-ads-tracking' ),
-			'[AD_ID]'     => __( 'ID of the ad', 'advanced-ads-tracking' ),
-		);
-		$supported_placeholders      = implode( '</code>, <code>', array_keys( $supported_placeholder_array ) );
-		$supported_placeholder_texts = implode( ', ', $supported_placeholder_array );
-
-		?>
-		<p class="description">
-			<?php
-			printf(
-				wp_kses(
-						// translators: %1$s is a list of placeholder like [POST_ID] and %2$s the appropriate names like "post ID"
-					__( 'You can use %1$s in the url to insert %2$s into the url.', 'advanced-ads-tracking' ),
-					array(
-						'code' => array(),
-					)
-				),
-				wp_kses(
-					'<code>' . $supported_placeholders . '</code>',
-					array(
-						'code' => array(),
-					)
-				),
-				esc_html( $supported_placeholder_texts )
-			);
-			?>
-		</p>
+		<ul id="ad-parameters-box-notices__target-url" class="advads-metabox-notices">
+			<li class="advads-ad-notice-tracking-link-placeholder-missing error hidden">
+				<?php
+				printf(
+					/* translators: %s is the HTML tags displayed in the frontend. */
+					esc_html__( 'Use the %1$s parameter in your editor, or remove %2$s from Target URL.', 'advanced-ads-tracking' ),
+					'<code>%link%</code>',
+					'<code>URL</code>'
+				);
+				?>
+			</li>
+		</ul>
 		<p>
 			<label for="advads-cloaking">
 				<input type="checkbox" name="advanced_ad[tracking][cloaking]" id="advads-cloaking" <?php checked( $cloaking_enabled ); ?> <?php disabled( $cloaking_cb_disabled ); ?>/>
@@ -140,7 +117,17 @@ $options = $this->plugin->options();
 		<label><input name="advanced_ad[tracking][target]" type="radio"
 					  value="new" <?php checked( $target, 'new' ); ?>/><?php esc_html_e( 'new window', 'advanced-ads-tracking' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'Where to open the link (if present).', 'advanced-ads-tracking' ); ?></p>
+		<span class="advads-help"><span class="advads-tooltip">
+			<?php esc_html_e( 'Where to open the link (if present).', 'advanced-ads-tracking' ); ?>
+			<br/>
+			<?php
+				/* Translators: %s is the default value ("new window" or "same window") */
+				printf(
+					esc_html__( 'It is "%s" by default. You can change this in the General settings.', 'advanced-ads-tracking' ),
+					esc_html__( ( $general_options['target-blank'] ?? false ) ? 'new window' : 'same window', 'advanced-ads-tracking' )
+				);
+			?>
+		</span></span>
 	</div>
 	<hr/>
 	<span class="label"><?php esc_html_e( 'Add “nofollow”', 'advanced-ads-tracking' ); ?></span>
@@ -154,7 +141,22 @@ $options = $this->plugin->options();
 		<label><input name="advanced_ad[tracking][nofollow]" type="radio"
 					  value="0" <?php checked( $nofollow, 0 ); ?>/><?php esc_html_e( 'no', 'advanced-ads-tracking' ); ?>
 		</label>
-		<p class="description"><?php echo wp_kses( __( 'Add <code>rel="nofollow"</code> to tracking links.', 'advanced-ads-tracking' ), array( 'code' => array() ) ); ?></p>
+		<span class="advads-help">
+			<span class="advads-tooltip">
+				<?php
+					echo wp_kses( __( 'Add <code>rel="nofollow"</code> to tracking links.', 'advanced-ads-tracking' ), [ 'code' => [] ] );
+				?>
+				<br/>
+				<?php
+					/* Translators: %1$s is the default value ("yes" or "no") */
+					printf(
+						esc_html__( 'It is "%1$s" by default. You can change this in the Tracking settings.', 'advanced-ads-tracking' ),
+						esc_html__( $options['nofollow'] ? 'yes' : 'no', 'advanced-ads-tracking' )
+					);
+				?>
+
+			</span>
+		</span>
 	</div>
 	<hr/>
 	<span class="label"><?php esc_attr_e( 'Add “sponsored”', 'advanced-ads-tracking' ); ?></span>
@@ -171,12 +173,22 @@ $options = $this->plugin->options();
 			<input name="advanced_ad[tracking][sponsored]" type="radio" value="0" <?php checked( $sponsored, '0' ); ?>/>
 			<?php esc_attr_e( 'no', 'advanced-ads-tracking' ); ?>
 		</label>
-		<p class="description">
-			<?php
-			/* Translators: %s <code>rel="sponsored"</code> */
-			printf( esc_html__( 'Add %s to tracking links.', 'advanced-ads-tracking' ), '<code>rel="sponsored"</code>' );
-			?>
-		</p>
+		<span class="advads-help">
+			<span class="advads-tooltip">
+				<?php
+					/* Translators: %s <code>rel="sponsored"</code> */
+					printf( esc_html__( 'Add %s to tracking links.', 'advanced-ads-tracking' ), '<code>rel="sponsored"</code>' );
+				?>
+				<br/>
+				<?php
+					/* Translators: %1$s is the default value ("yes" or "no") */
+					printf(
+						esc_html__( 'It is "%1$s" by default. You can change this in the Tracking settings.', 'advanced-ads-tracking' ),
+						esc_html__( $options['sponsored'] ? 'yes' : 'no', 'advanced-ads-tracking' )
+					);
+				?>
+			</span>
+		</span>
 	</div>
 	<hr/>
 </div>

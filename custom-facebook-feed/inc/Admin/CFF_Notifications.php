@@ -106,7 +106,7 @@ class CFF_Notifications {
 
 		$output = '';
 
-		$upgrade_url = 'https://smashballoondemo.com/?utm_campaign=facebook-free&utm_source=lite-upgrade-bar';
+		$upgrade_url = 'https://smashballoon.com/pricing/facebook-feed/?utm_campaign=facebook-free&utm_source=lite-upgrade-bar&utm_content=upgradingToPro';
 		$output .= '<div class="cff-header-notice" id="cff-header-upgrade-notice">';
 		$output .= sprintf(
 			'<span class="cff-notice-bar-message">%s <a href="%s" target="_blank" rel="noopener noreferrer">%s</a></span>',

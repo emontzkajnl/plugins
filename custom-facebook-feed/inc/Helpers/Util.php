@@ -41,6 +41,15 @@ class Util {
 		}
 		$installed_plugins = get_plugins();
 
+		$is_tiktok_installed = false;
+		$tiktok_plugin       = 'feeds-for-tiktok/feeds-for-tiktok.php';
+		if ( isset( $installed_plugins['tiktok-feeds-pro/tiktok-feeds-pro.php'] ) ) {
+			$is_tiktok_installed = true;
+			$tiktok_plugin       = 'tiktok-feeds-pro/tiktok-feeds-pro.php';
+		} elseif ( isset( $installed_plugins['feeds-for-tiktok/feeds-for-tiktok.php'] ) ) {
+			$is_tiktok_installed = true;
+		}
+
 		$is_facebook_installed = false;
 		$facebook_plugin = 'custom-facebook-feed/custom-facebook-feed.php';
 		if( isset( $installed_plugins['custom-facebook-feed-pro/custom-facebook-feed.php'] ) 
@@ -107,12 +116,14 @@ class Util {
 			'is_twitter_installed' => $is_twitter_installed,
 			'is_youtube_installed' => $is_youtube_installed,
 			'is_reviews_installed' => $is_reviews_installed,
+			'is_tiktok_installed' => $is_tiktok_installed,
 			'is_social_wall_installed' => $is_social_wall_installed,
 			'facebook_plugin' => $facebook_plugin,
 			'instagram_plugin' => $instagram_plugin,
 			'twitter_plugin' => $twitter_plugin,
 			'youtube_plugin' => $youtube_plugin,
 			'reviews_plugin' => $reviews_plugin,
+			'tiktok_plugin' => $tiktok_plugin,
 			'social_wall_plugin' => $social_wall_plugin,
 			'installed_plugins' => $installed_plugins
 		);
@@ -151,6 +162,11 @@ class Util {
 				'installed' => $plugins['is_social_wall_installed'],
 				'active' => is_plugin_active( $plugins['social_wall_plugin'] ),
 				'plugin_file' => $plugins['social_wall_plugin']
+			),
+			'tiktok' => array(
+				'installed' => $plugins['is_tiktok_installed'],
+				'active' => is_plugin_active( $plugins['tiktok_plugin'] ),
+				'plugin_file' => $plugins['tiktok_plugin']
 			),
 			'reviews' => array(
 				'installed' => $plugins['is_reviews_installed'],

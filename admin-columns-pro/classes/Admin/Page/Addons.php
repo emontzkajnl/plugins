@@ -4,12 +4,26 @@ namespace ACP\Admin\Page;
 
 use AC;
 use AC\Asset\Assets;
+use AC\Asset\Location;
+use AC\IntegrationRepository;
 use AC\Renderable;
 use AC\View;
-use ACP\Settings\Option\IntegrationStatus;
+use ACP\Settings\General\IntegrationStatus;
 
 class Addons extends AC\Admin\Page\Addons
 {
+
+    private $integration_status;
+
+    public function __construct(
+        IntegrationStatus $integration_status,
+        Location\Absolute $location,
+        IntegrationRepository $integrations,
+        Renderable $head
+    ) {
+        parent::__construct($location, $integrations, $head);
+        $this->integration_status = $integration_status;
+    }
 
     public function get_assets(): Assets
     {
@@ -26,7 +40,7 @@ class Addons extends AC\Admin\Page\Addons
 
         return (new View([
             'integration' => $addon->get_slug(),
-            'status'      => (new IntegrationStatus($addon->get_slug()))->is_active(),
+            'status'      => $this->integration_status->is_active($addon->get_slug()),
         ]))->set_template('admin/page/component/addon-action');
     }
 

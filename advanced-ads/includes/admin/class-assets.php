@@ -9,11 +9,9 @@
 
 namespace AdvancedAds\Admin;
 
+use AdvancedAds\Entities;
 use Advanced_Ads_AdSense_Admin;
 use Advanced_Ads_Display_Conditions;
-use AdvancedAds\Assets_Registry;
-use AdvancedAds\Entities;
-use AdvancedAds\Utilities\Data;
 use AdvancedAds\Utilities\Conditional;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
 
@@ -42,11 +40,11 @@ class Assets implements Integration_Interface {
 	public function enqueue_styles(): void {
 		$screen = get_current_screen();
 
-		Assets_Registry::enqueue_style( 'ui' );
-		Assets_Registry::enqueue_style( 'admin' );
+		wp_advads()->registry->enqueue_style( 'ui' );
+		wp_advads()->registry->enqueue_style( 'admin' );
 
 		if ( 'post' === $screen->base && Entities::POST_TYPE_AD === $screen->post_type ) {
-			Assets_Registry::enqueue_style( 'ad-positioning' );
+			wp_advads()->registry->enqueue_style( 'ad-positioning' );
 		}
 	}
 
@@ -62,8 +60,8 @@ class Assets implements Integration_Interface {
 		$this->enqueue_endpoints();
 
 		// TODO: add conditional loading.
-		Assets_Registry::enqueue_script( 'admin-global' );
-		Assets_Registry::enqueue_script( 'find-adblocker' );
+		wp_advads()->registry->enqueue_script( 'admin-global' );
+		wp_advads()->registry->enqueue_script( 'find-adblocker' );
 
 		$params = [
 			'ajax_nonce'           => wp_create_nonce( 'advanced-ads-admin-ajax-nonce' ),
@@ -76,9 +74,9 @@ class Assets implements Integration_Interface {
 		wp_advads()->json->add( 'ajax_nonce', wp_create_nonce( 'advanced-ads-admin-ajax-nonce' ), 'advadsglobal' );
 
 		if ( Conditional::is_screen_advanced_ads() ) {
-			Assets_Registry::enqueue_script( 'admin' );
-			Assets_Registry::enqueue_script( 'conditions' );
-			Assets_Registry::enqueue_script( 'wizard' );
+			wp_advads()->registry->enqueue_script( 'admin' );
+			wp_advads()->registry->enqueue_script( 'conditions' );
+			wp_advads()->registry->enqueue_script( 'wizard' );
 
 			$translation_array = [
 				'condition_or'                  => __( 'or', 'advanced-ads' ),
@@ -117,7 +115,12 @@ class Assets implements Integration_Interface {
 
 		// Ad edit screen.
 		if ( 'post' === $screen->base && Entities::POST_TYPE_AD === $screen->post_type ) {
-			Assets_Registry::enqueue_script( 'ad-positioning' );
+			wp_advads()->registry->enqueue_script( 'ad-positioning' );
+		}
+
+		if ( in_array( $screen->id, [ 'edit-post', 'edit-page' ], true ) && current_user_can( 'edit_posts' ) ) {
+			wp_advads()->registry->enqueue_script( 'page-quick-edit' );
+			wp_advads()->json->add( 'page_quick_edit', [ 'nonce' => wp_create_nonce( 'advads-post-quick-edit' ) ] );
 		}
 	}
 

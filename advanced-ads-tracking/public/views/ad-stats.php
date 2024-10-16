@@ -7,7 +7,9 @@ if ( ! defined( 'WPINC' ) ) {
 if ( ! isset( $ad_id ) ) {
 	die;
 }
-$period     = ( isset( $_GET['period'] ) && ! empty( $_GET['period'] ) ) ? stripslashes( $_GET['period'] ) : 'last30days';
+$period     = ( ! empty( $_GET['period'] ) ) ? stripslashes( $_GET['period'] ) : 'last30days';
+$from       = ( ! empty( $_GET['from'] ) ) ? stripslashes( $_GET['from'] ) : null;
+$to         = ( ! empty( $_GET['to'] ) ) ? stripslashes( $_GET['to'] ) : null;
 $ad         = new Advanced_Ads_Ad( $ad_id );
 $ad_options = $ad->options();
 $ad_name    = ( isset( $ad_options['tracking']['public-name'] ) && ! empty( $ad_options['tracking']['public-name'] ) ) ? $ad_options['tracking']['public-name'] : $ad->title;
@@ -16,13 +18,14 @@ $ad_name    = ( isset( $ad_options['tracking']['public-name'] ) && ! empty( $ad_
 <html <?php language_attributes(); ?>>
 <head>
 	<meta charset="<?php echo get_option( 'blog_charset' ); ?>">
-	<title><?php echo esc_url( get_bloginfo( 'name' ) ); ?>|<?php esc_html_e( 'Ad Statistics', 'advanced-ads-tracking' ); ?></title>
+	<title><?php echo esc_html( get_bloginfo( 'name' ) ); ?> | <?php esc_html_e( 'Ad Statistics', 'advanced-ads-tracking' ); ?></title>
 	<meta name="robots" content="noindex, nofollow"/>
 	<script type="text/javascript">
 		var AAT_SPINNER_URL = '<?php echo esc_url( AAT_BASE_URL . 'public/assets/images/spinner-2x.gif' ); ?>';
 	</script>
 	<script type="text/javascript" src="<?php echo includes_url( '/js/jquery/jquery.js' ); ?>"></script>
 	<script type="text/javascript" src="<?php echo includes_url( '/js/jquery/jquery-migrate.min.js' ); ?>"></script>
+	<script type="text/javascript" src="<?php echo includes_url( '/js/jquery/ui/datepicker.min.js' ); ?>"></script>
 	<script type="text/javascript"
 			src="<?php echo AAT_BASE_URL . 'admin/assets/jqplot/jquery.jqplot.min.js'; ?>"></script>
 	<script type="text/javascript"
@@ -39,6 +42,7 @@ $ad_name    = ( isset( $ad_options['tracking']['public-name'] ) && ! empty( $ad_
 	?>
 	<link rel="stylesheet" href="<?php echo AAT_BASE_URL . 'admin/assets/jqplot/jquery.jqplot.min.css'; ?>"/>
 	<link rel="stylesheet" href="<?php echo AAT_BASE_URL . 'public/assets/css/public-stats.css'; ?>"/>
+	<link rel="stylesheet" href="<?php echo AAT_BASE_URL . 'admin/assets/jquery-ui/jquery-ui.min.css'; ?>"/>
 	<?php do_action( 'advanced-ads-public-stats-head' ); ?>
 </head>
 <body>
@@ -58,10 +62,18 @@ $ad_name    = ( isset( $ad_options['tracking']['public-name'] ) && ! empty( $ad_
 							<option value="last30days" <?php selected( 'last30days', $period ); ?>><?php _e( 'last 30 days', 'advanced-ads-tracking' ); ?></option>
 							<option value="lastmonth" <?php selected( 'lastmonth', $period ); ?>><?php _e( 'last month', 'advanced-ads-tracking' ); ?></option>
 							<option value="last12months" <?php selected( 'last12months', $period ); ?>><?php _e( 'last 12 months', 'advanced-ads-tracking' ); ?></option>
+							<option value="custom" <?php selected( 'custom', $period ); ?>><?php _e( 'custom', 'advanced-ads-tracking' ); ?></option>
 						</select>
-						<input type="submit" class="button button-primary"
-							   value="<?php echo esc_attr( __( 'Load', 'advanced-ads-tracking' ) ); ?>"/>
 					</form>
+					<?php
+						$form_attr = '';
+						if( $period === 'custom' ) {
+							$form_attr = 'form="period-form" required';
+						}
+					?>
+					<input <?php echo $form_attr; ?> type="text" name="from" class="stats-from<?php echo $period !== 'custom' ? ' hidden' : ''; ?>" value="<?php echo esc_attr( $from ); ?>" autocomplete="off" size="10" maxlength="10" placeholder="<?php esc_html_e( 'from', 'advanced-ads-tracking' ); ?>"/>
+					<input <?php echo $form_attr; ?> type="text" name="to" class="stats-to<?php echo $period !== 'custom' ? ' hidden' : ''; ?>" value="<?php echo esc_attr( $to ); ?>" autocomplete="off" size="10" maxlength="10" placeholder="<?php esc_html_e( 'to', 'advanced-ads-tracking' ); ?>"/>
+					<input form="period-form" type="submit" class="button button-primary" value="<?php echo esc_attr( __( 'Load', 'advanced-ads-tracking' ) ); ?>"/>
 				</td>
 			</tr>
 			</tbody>
@@ -73,14 +85,14 @@ $wptz  = Advanced_Ads_Tracking_Util::get_wp_timezone();
 $today = date_create( 'now', $wptz );
 
 $admin_class = new Advanced_Ads_Tracking_Admin();
-$args        = array(
-	'ad_id'       => array( $ad_id ), // actually no effect
+$args        = [
+	'ad_id'       => [ $ad_id ], // actually no effect
 	'period'      => 'lastmonth',
 	'groupby'     => 'day',
 	'groupFormat' => 'Y-m-d',
 	'from'        => null,
 	'to'          => null,
-);
+];
 
 if ( $period === 'last30days' ) {
 	$start_ts = (int) $today->format( 'U' );
@@ -110,6 +122,22 @@ if ( $period === 'last12months' ) {
 	$args['to']   = $today->format( 'm/d/Y' );
 }
 
+if ( $period === 'custom' ) {
+	if ( empty( $from ) || empty( $to ) ) {
+		return false;
+	}
+
+	$custom_from          = new DateTime($from);
+	$custom_to            = new DateTime($to);
+	$day_difference       = $custom_from->diff($custom_to)->days;
+	$is_custom_days_limit = $day_difference > 28;
+	$args['groupby']      = $is_custom_days_limit ? 'month' : 'day';
+
+	$args['period'] = 'custom';
+	$args['from']   = $custom_from->format('m/d/Y');
+	$args['to']     = $custom_to->format('m/d/Y');
+}
+
 $impr_stats   = $admin_class->load_stats( $args, $this->impressions_table );
 $clicks_stats = $admin_class->load_stats( $args, $this->clicks_table );
 
@@ -123,8 +151,8 @@ if ( ! $impr_stats && is_array( $clicks_stats ) ) {
 	}
 }
 
-$impr_series   = array();
-$clicks_series = array();
+$impr_series   = [];
+$clicks_series = [];
 $first_date    = false;
 $max_clicks    = 0;
 $max_impr      = 0;
@@ -136,17 +164,17 @@ if ( isset( $impr_stats ) && is_array( $impr_stats ) ) {
 		}
 		$impr = 0;
 		if ( isset( $impressions[ $ad_id ] ) ) {
-			$impr_series[] = array( $date, $impressions[ $ad_id ] );
+			$impr_series[] = [ $date, $impressions[ $ad_id ] ];
 			$impr          = $impressions[ $ad_id ];
 		} else {
-			$impr_series[] = array( $date, 0 );
+			$impr_series[] = [ $date, 0 ];
 		}
 		$clicks = 0;
 		if ( isset( $clicks_stats[ $date ] ) && isset( $clicks_stats[ $date ][ $ad_id ] ) ) {
-			$clicks_series[] = array( $date, $clicks_stats[ $date ][ $ad_id ] );
+			$clicks_series[] = [ $date, $clicks_stats[ $date ][ $ad_id ] ];
 			$clicks          = $clicks_stats[ $date ][ $ad_id ];
 		} else {
-			$clicks_series[] = array( $date, 0 );
+			$clicks_series[] = [ $date, 0 ];
 		}
 		if ( $impr > $max_impr ) {
 			$max_impr = $impr;
@@ -156,7 +184,7 @@ if ( isset( $impr_stats ) && is_array( $impr_stats ) ) {
 		}
 	}
 }
-$lines = array( $impr_series, $clicks_series );
+$lines = [ $impr_series, $clicks_series ];
 ?>
 <div id="stats-content">
 	<script type="text/javascript">
@@ -164,7 +192,7 @@ $lines = array( $impr_series, $clicks_series );
 			axes:        {
 				xaxis:  {
 					renderer:     null,
-					<?php if ( $period === 'last12months' ) : ?>
+					<?php if ( $period === 'last12months' || ( $period === 'custom' && $is_custom_days_limit ) ) : ?>
 					tickOptions:  {formatString: '%b %Y'},
 					<?php else : ?>
 					tickOptions:  {formatString: '%b%d'},
@@ -231,6 +259,12 @@ $lines = array( $impr_series, $clicks_series );
 		};
 		var lines             = <?php echo json_encode( $lines ); ?>;
 	</script>
+	<?php if ( $ad->type === 'image' ) : ?>
+	<div id="image-ad-preview">
+		<?php $src = wp_get_attachment_image_src( $ad->options()['output']['image_id'], 'medium' ); ?>
+		<img src="<?php echo esc_url( $src[0] ); ?>" alt=""/>
+	</div>
+	<?php endif; ?>
 	<div id="public-stat-graph"></div>
 	<div id="graph-legend">
 		<div class="legend-item">
@@ -261,7 +295,7 @@ $lines = array( $impr_series, $clicks_series );
 				<tr>
 					<td>
 						<?php
-						if ( $period === 'last12months' ) {
+						if ( $period === 'last12months' || ($period === 'custom' && $is_custom_days_limit ) ) {
 							echo date_i18n( 'M Y', strtotime( $date ) );
 						} else {
 							echo date_i18n( get_option( 'date_format' ), strtotime( $date ) );
@@ -285,7 +319,7 @@ $lines = array( $impr_series, $clicks_series );
 					<td>
 						<?php
 						$ctr = 0;
-						if ( $impr !== 0 ) {
+						if ( (int) $impr !== 0 ) {
 							$ctr = $click / $impr * 100;
 						}
 						echo number_format( $ctr, 2 ) . ' %';
@@ -297,7 +331,7 @@ $lines = array( $impr_series, $clicks_series );
 				<td><?php _e( 'Total', 'advanced-ads-tracking' ); ?></td>
 				<td><?php echo number_format_i18n( $impr_sum ); ?></td>
 				<td><?php echo number_format_i18n( $click_sum ); ?></td>
-				<td><?php echo ( $click_sum === 0 ) ? number_format_i18n( 0, 2 ) . ' %' : number_format_i18n( 100 * $click_sum / $impr_sum, 2 ) . ' %'; ?></td>
+				<td><?php echo ( $impr_sum === 0 ) ? '0' : number_format_i18n( 100 * $click_sum / $impr_sum, 2 ) . ' %'; ?></td>
 			</tr>
 		<?php endif; ?>
 		</tbody>

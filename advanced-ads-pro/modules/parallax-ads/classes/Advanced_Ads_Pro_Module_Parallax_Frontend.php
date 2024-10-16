@@ -176,7 +176,9 @@ A_CB_SCRIPT;
 	right: 0;
 	bottom: 0;
 	left: 0;
+	clip-path: inset(0);
 	clip: rect(auto, auto, auto, auto);
+	overflow: hidden;
 }
 
 .{$this->frontend_prefix}parallax-inner {
@@ -185,6 +187,9 @@ A_CB_SCRIPT;
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	will-change: transform;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 .{$this->frontend_prefix}parallax-content {
@@ -206,6 +211,7 @@ A_CB_SCRIPT;
 	object-fit: cover;
 	object-position: center;
 	max-width: 100%;
+	height: auto;
 }
 CSS;
 	}

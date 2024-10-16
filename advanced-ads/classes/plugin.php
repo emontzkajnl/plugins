@@ -89,9 +89,6 @@ class Advanced_Ads_Plugin {
 	 * Execute various hooks after WordPress and all plugins are available
 	 */
 	public function wp_plugins_loaded() {
-		// Load plugin text domain.
-		$this->load_plugin_textdomain();
-
 		// Load public-facing style sheet and JavaScript.
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_head', [ $this, 'print_head_scripts' ], 7 );
@@ -266,13 +263,6 @@ class Advanced_Ads_Plugin {
 	}
 
 	/**
-	 * Load the plugin text domain for translation.
-	 */
-	public function load_plugin_textdomain() {
-		load_plugin_textdomain( 'advanced-ads', false, ADVADS_BASE_DIR . '/languages' );
-	}
-
-	/**
 	 * Shortcode to include ad in frontend
 	 *
 	 * @param array $atts shortcode attributes.
@@ -427,7 +417,7 @@ class Advanced_Ads_Plugin {
 				$this->internal_options = $defaults;
 				$this->update_internal_options( $this->internal_options );
 
-				self::get_instance()->create_capabilities();
+				Capabilities::get_instance()->create_capabilities();
 			}
 
 			// for versions installed prior to 1.5.3 set installed date for now.
@@ -544,9 +534,9 @@ class Advanced_Ads_Plugin {
 	 * @deprecated 1.47.0
 	 */
 	public function create_capabilities() {
-		_deprecated_function( __METHOD__, '1.47.0', 'AdvancedAds\Installation\Capabilities::create_capabilities()' );
+		_deprecated_function( __METHOD__, '1.47.0', 'AdvancedAds\Installation\Capabilities::get_instance()->create_capabilities();' );
 
-		( new Capabilities() )->create_capabilities();
+		Capabilities::get_instance()->create_capabilities();
 	}
 
 	/**

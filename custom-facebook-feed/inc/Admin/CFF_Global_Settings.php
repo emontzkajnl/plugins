@@ -871,8 +871,8 @@ class CFF_Global_Settings {
 			$has_license_error = true;
 		}
 
-		$upgrade_url			= 'https://smashballoondemo.com/?utm_campaign=facebook-free&utm_source=settings';
-		$footer_upgrade_url		= 'https://smashballoondemo.com/?utm_campaign=facebook-free&utm_source=settings&utm_medium=footer-banner&utm_content=Try Demo';
+		$upgrade_url			= 'https://smashballoon.com/pricing/?utm_campaign=facebook-free&utm_source=settings';
+		$footer_upgrade_url		= 'https://smashballoon.com/pricing/facebook-feed/?utm_campaign=facebook-free&utm_source=settings&utm_medium=footer-banner&utm_content=GetStarted';
 		$usage_tracking_url 	= 'https://smashballoon.com/custom-facebook-feed/docs/usage-tracking/';
 		$feed_issue_email_url 	= 'https://smashballoon.com/email-report-is-not-in-my-inbox/';
 

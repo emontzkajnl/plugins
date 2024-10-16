@@ -1434,3 +1434,11 @@ Gutenberg block
 	color: #dc3232;
 	text-decoration: underline;
 }
+
+.rollback-block header {
+    background-color: #f9f9f9;
+    border: solid #c3c4c7;
+    padding: 10px;
+    margin: 30px -12px 15px;
+    border-width: 1px 0;
+}

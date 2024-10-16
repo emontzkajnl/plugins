@@ -3869,3 +3869,11 @@ body .sbi_review_step1_notice .sbi-btn-link:not(:last-child) {
 .sbi-admin-notices.sbi-admin-notices-spaced-p {
 	padding: 20px 120px 20px 82px;
 }
+
+#oembed_api_change_reconnect.sbi-admin-notices {
+	border-radius: 3px;
+	border: 1px solid #D6ECD1;
+	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05), 0px 4px 5px 0px rgba(0, 0, 0, 0.05);
+	background: #E6F4E3;
+	color: #203E1A;
+}

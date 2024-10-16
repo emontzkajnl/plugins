@@ -1,5 +1,21 @@
 == Changelog ==
 
+= 2.27.0 (September 4, 2024) =
+
+- Improvement: update third-party libraries to prevent deprecation messages in PHP 8.3
+- Improvement: add support for Youzify groups
+- Fix: resolve a PHP error when `$_SERVER['HTTP_HOST']` is not set
+
+= 2.26.3 (August 6, 2024) =
+
+- Fix: resolve Parallax issues on Safari for iOS mobile
+
+= 2.26.2 (June 27, 2024) =
+
+- Improvement: display enhanced error messages when processing MaxMind database
+- Fix: resolve a compatibility issue with the Gravity Forms plugin
+- Fix: resolve a PHP warning when using display conditions
+
 = 2.26.1 (March 13, 2024) =
 
 - Improvement: update German, German (Austria), German (Switzerland) and German (formal) translations

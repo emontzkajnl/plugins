@@ -755,36 +755,37 @@ if(!sbi_js_exists) {
 
           if (typeof this.resizedImages[id]['sizes'] !== 'undefined') {
             var foundSizes = [];
+            var extension = (typeof this.resizedImages[id]['extension'] !== 'undefined') ? this.resizedImages[id]['extension'] : '.jpg';
             if (typeof this.resizedImages[id]['sizes']['full'] !== 'undefined') {
-              srcSet[640] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'full.jpg';
+              srcSet[640] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'full' + extension;
               foundSizes.push(640);
             }
             if (typeof this.resizedImages[id]['sizes']['low'] !== 'undefined') {
-              srcSet[320] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'low.jpg';
+              srcSet[320] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'low' + extension;
               foundSizes.push(320);
             }
             if (typeof this.resizedImages[id]['sizes']['thumb'] !== 'undefined') {
               foundSizes.push(150);
-              srcSet[150] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'thumb.jpg';
+              srcSet[150] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'thumb' + extension;
             }
             if (this.settings.favorLocal) {
               if (foundSizes.indexOf(640) === -1) {
                 if (foundSizes.indexOf(320) > -1) {
-                  srcSet[640] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'low.jpg';
+                  srcSet[640] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'low' + extension;
                 }
               }
               if (foundSizes.indexOf(320) === -1) {
                 if (foundSizes.indexOf(640) > -1) {
-                  srcSet[320] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'full.jpg';
+                  srcSet[320] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'full' + extension;
                 } else if (foundSizes.indexOf(150) > -1) {
-                  srcSet[320] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'thumb.jpg';
+                  srcSet[320] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'thumb' + extension;
                 }
               }
               if (foundSizes.indexOf(150) === -1) {
                 if (foundSizes.indexOf(320) > -1) {
-                  srcSet[150] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'low.jpg';
+                  srcSet[150] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'low' + extension;
                 } else if (foundSizes.indexOf(640) > -1) {
-                  srcSet[150] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'full.jpg';
+                  srcSet[150] = sb_instagram_js_options.resized_url + this.resizedImages[id].id + 'full' + extension;
                 }
               }
             }
@@ -865,7 +866,11 @@ if(!sbi_js_exists) {
         if (this.settings.consentGiven || !this.settings.gdpr) {
           return true;
         }
-        if (typeof CLI_Cookie !== "undefined") { // GDPR Cookie Consent by WebToffee
+        if (typeof window.cookieyes !== "undefined") { // CookieYes | GDPR Cookie Consent by CookieYes
+          if (typeof window.cookieyes._ckyConsentStore.get !== 'undefined') {
+            this.settings.consentGiven = window.cookieyes._ckyConsentStore.get('functional') === 'yes';
+          }
+        } else if (typeof CLI_Cookie !== "undefined") { // GDPR Cookie Consent by WebToffee
           if (CLI_Cookie.read(CLI_ACCEPT_COOKIE_NAME) !== null)  {
 
             // WebToffee no longer uses this cookie but being left here to maintain backwards compatibility
@@ -1000,10 +1005,10 @@ if(!sbi_js_exists) {
     });
 
     // GDPR Cookie Consent by WebToffee
-    $('.cli-user-preference-checkbox').on('click',function(){
+    $('.cli-user-preference-checkbox, .cky-notice button').on('click',function(){
       setTimeout(function() {
         $.each(window.sbi.feeds,function(index){
-          window.sbi.feeds[ index ].settings.consentGiven = false;
+          window.sbi.feeds[index].checkConsent();
           window.sbi.feeds[ index ].afterConsentToggled();
         });
       },1000);

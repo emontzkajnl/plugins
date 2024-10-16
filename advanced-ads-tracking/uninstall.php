@@ -31,6 +31,7 @@ $installer->uninstall();
  * Remove database options and tables if user wishes.
  */
 function advanced_ads_tracking_uninstall() {
+	global $wpdb;
 	$options_name     = 'advanced-ads-tracking';
 	$tracking_options = get_option( $options_name );
 	if ( isset( $tracking_options['uninstall'] ) && $tracking_options['uninstall'] ) {

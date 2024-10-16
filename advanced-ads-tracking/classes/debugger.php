@@ -9,7 +9,7 @@ class Advanced_Ads_Tracking_Debugger {
 	const DEBUG_OPT          = 'advads_track_debug';
 	const DEBUG_FILENAME_OPT = 'advads_track_debug_filename';
 	const DEBUG_HOURS        = 48;
-	const HEADERS            = array( 'Date', 'Database Table', 'Ad ID', 'Remote IP', 'Handler', 'URL', 'User Agent', 'Execution Time', 'Errors' );
+	const HEADERS            = [ 'Date', 'Database Table', 'Ad ID', 'Remote IP', 'Handler', 'URL', 'User Agent', 'Execution Time', 'Errors' ];
 
 	/**
 	 * Get the debug filename.
@@ -53,10 +53,10 @@ class Advanced_Ads_Tracking_Debugger {
 		) {
 			return update_option(
 				self::DEBUG_OPT,
-				array(
+				[
 					'id'   => self::parse_debug_constant(),
 					'time' => 0,
-				)
+				]
 			);
 		}
 
@@ -166,7 +166,7 @@ class Advanced_Ads_Tracking_Debugger {
 
 		fputcsv(
 			$handle,
-			array(
+			[
 				self::date_i18n( 'Y-m-d H:i:s' ),
 				$table,
 				$id,
@@ -176,7 +176,7 @@ class Advanced_Ads_Tracking_Debugger {
 				self::get_user_agent(),
 				$execution_time < 0 ? 'n/a' : $execution_time,
 				$error_message,
-			)
+			]
 		);
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
@@ -350,7 +350,7 @@ class Advanced_Ads_Tracking_Debugger {
 		$filename = sprintf(
 			'advanced-ads-tracking-%s-%s.csv',
 			$domain,
-			wp_hash( implode( '', array( $domain, time() ) ) )
+			wp_hash( implode( '', [ $domain, time() ] ) )
 		);
 		// save the filename to the db.
 		add_option( self::DEBUG_FILENAME_OPT, $filename );

@@ -8,7 +8,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: Admin Columns <info@admincolumns.com>\n"
 "Last-Translator: Codepress <info@codepress.nl\n"
-"POT-Creation-Date: 2024-05-03 07:43+0000\n"
+"POT-Creation-Date: 2024-10-01 08:10+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: admin-columns-pro/classes/Admin/Encoder.php:54, admin-columns-pro/classes/Settings/Column/CustomFieldType.php:83, admin-columns-pro/classes/Settings/Column/User.php:24, admin-columns-pro/addons/gravityforms/classes/Column/Entry/Custom/User.php:14
+#: admin-columns-pro/classes/Admin/Encoder.php:54, admin-columns-pro/classes/Settings/Column/CustomFieldType.php:86, admin-columns-pro/classes/Settings/Column/User.php:24, admin-columns-pro/addons/gravityforms/classes/Column/Entry/Custom/User.php:14
 msgid "User"
 msgstr ""
 
@@ -258,7 +258,7 @@ msgstr ""
 msgid "Invalid value supplied for export counter."
 msgstr ""
 
-#: admin-columns-pro/classes/Export/Strategy.php:256
+#: admin-columns-pro/classes/Export/Strategy.php:290
 msgid "No exportable columns found."
 msgstr ""
 
@@ -314,23 +314,23 @@ msgstr ""
 msgid "Successfully imported %s for %s."
 msgstr ""
 
-#: admin-columns-pro/classes/RequestHandler/LicenseActivate.php:93
+#: admin-columns-pro/classes/RequestHandler/LicenseActivate.php:72
 msgid "Empty license key."
 msgstr ""
 
-#: admin-columns-pro/classes/RequestHandler/LicenseActivate.php:99
+#: admin-columns-pro/classes/RequestHandler/LicenseActivate.php:78
 msgid "Invalid license key."
 msgstr ""
 
-#: admin-columns-pro/classes/RequestHandler/LicenseActivate.php:119
+#: admin-columns-pro/classes/RequestHandler/LicenseActivate.php:98
 msgid "Product is activated, but automatic updates are disabled."
 msgstr ""
 
-#: admin-columns-pro/classes/RequestHandler/LicenseUpdate.php:59
+#: admin-columns-pro/classes/RequestHandler/LicenseUpdate.php:53
 msgid "License information has been updated."
 msgstr ""
 
-#: admin-columns-pro/classes/RequestHandler/ListScreenCreate.php:61, admin-columns-pro/classes/RequestHandler/Ajax/ListScreenCreate.php:72
+#: admin-columns-pro/classes/RequestHandler/ListScreenCreate.php:60, admin-columns-pro/classes/RequestHandler/Ajax/ListScreenCreate.php:72
 msgid "Name can not be empty."
 msgstr ""
 
@@ -454,11 +454,11 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: admin-columns-pro/classes/Admin/Page/Addons.php:41, admin-columns-pro/classes/Settings/Column/NetworkSite/Theme.php:87
+#: admin-columns-pro/classes/Admin/Page/Addons.php:55, admin-columns-pro/classes/Settings/Column/NetworkSite/Theme.php:87
 msgid "Active"
 msgstr ""
 
-#: admin-columns-pro/classes/Admin/Page/Addons.php:51
+#: admin-columns-pro/classes/Admin/Page/Addons.php:65
 msgid "Available"
 msgstr ""
 
@@ -599,53 +599,53 @@ msgstr ""
 msgid "This plugin is up to date"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:63
+#: admin-columns-pro/classes/Asset/Script/Table.php:67
 msgctxt "number of items"
 msgid "%s more"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:64
+#: admin-columns-pro/classes/Asset/Script/Table.php:68
 msgid "Switch View"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:67
+#: admin-columns-pro/classes/Asset/Script/Table.php:71
 msgctxt "column-resize-button"
 msgid "Reset"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:68
+#: admin-columns-pro/classes/Asset/Script/Table.php:72
 msgid "Columns"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:69, admin-columns-pro/classes/Settings/ListScreen/HideOnScreen/ColumnResize.php:10
+#: admin-columns-pro/classes/Asset/Script/Table.php:73, admin-columns-pro/classes/Settings/ListScreen/HideOnScreen/ColumnResize.php:10
 msgid "Resize Columns"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:72
+#: admin-columns-pro/classes/Asset/Script/Table.php:76
 msgid "Restore the current column widths and order to their defaults."
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:73, admin-columns-pro/classes/Asset/Script/Table.php:82, admin-columns-pro/classes/Editing/Asset/Script/Table.php:198
+#: admin-columns-pro/classes/Asset/Script/Table.php:77, admin-columns-pro/classes/Asset/Script/Table.php:86, admin-columns-pro/classes/Editing/Asset/Script/Table.php:198
 msgid "Are you sure?"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:75
+#: admin-columns-pro/classes/Asset/Script/Table.php:79
 msgid "Save changes"
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:78
+#: admin-columns-pro/classes/Asset/Script/Table.php:82
 msgid "Save the current column widths and order changes as the new default for ALL users."
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:84
+#: admin-columns-pro/classes/Asset/Script/Table.php:88
 msgid "Reset columns to their default widths and order."
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:88
+#: admin-columns-pro/classes/Asset/Script/Table.php:92
 msgid "Save the current column widths and order changes."
 msgstr ""
 
-#: admin-columns-pro/classes/Asset/Script/Table.php:230
+#: admin-columns-pro/classes/Asset/Script/Table.php:232
 msgid "Filtered by: %s"
 msgstr ""
 
@@ -661,7 +661,7 @@ msgstr ""
 msgid "Post Type"
 msgstr ""
 
-#: admin-columns-pro/classes/Column/Media/AspectRatio.php:19
+#: admin-columns-pro/classes/Column/Media/AspectRatio.php:21
 msgid "Aspect Ratio"
 msgstr ""
 
@@ -708,7 +708,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: admin-columns-pro/classes/Column/NetworkSite/Path.php:13, admin-columns-pro/classes/Migrate/Admin/Section/Templates.php:119, admin-columns-pro/classes/Migrate/Admin/Table/Export.php:169
+#: admin-columns-pro/classes/Column/NetworkSite/Path.php:13, admin-columns-pro/classes/Migrate/Admin/Section/Templates.php:115, admin-columns-pro/classes/Migrate/Admin/Table/Export.php:169
 msgid "Path"
 msgstr ""
 
@@ -1021,7 +1021,7 @@ msgstr ""
 msgid "Add Row"
 msgstr ""
 
-#: admin-columns-pro/classes/RequestHandler/Ajax/Feedback.php:30, admin-columns-pro/classes/RequestHandler/Ajax/LicenseActivate.php:79
+#: admin-columns-pro/classes/RequestHandler/Ajax/Feedback.php:30
 msgid "Invalid request"
 msgstr ""
 
@@ -1035,14 +1035,6 @@ msgstr ""
 
 #: admin-columns-pro/classes/RequestHandler/Ajax/Feedback.php:59
 msgid "Thank you very much for your feedback!"
-msgstr ""
-
-#: admin-columns-pro/classes/RequestHandler/Ajax/LicenseActivate.php:85
-msgid "Empty license."
-msgstr ""
-
-#: admin-columns-pro/classes/RequestHandler/Ajax/LicenseActivate.php:89
-msgid "Invalid license."
 msgstr ""
 
 #: admin-columns-pro/classes/Search/Labels/Date.php:12
@@ -1109,11 +1101,11 @@ msgstr ""
 msgid "Leave preview mode"
 msgstr ""
 
-#: admin-columns-pro/classes/Settings/Column/CustomFieldType.php:75
+#: admin-columns-pro/classes/Settings/Column/CustomFieldType.php:78
 msgid "Select"
 msgstr ""
 
-#: admin-columns-pro/classes/Settings/Column/CustomFieldType.php:79
+#: admin-columns-pro/classes/Settings/Column/CustomFieldType.php:82
 msgid "Post"
 msgstr ""
 
@@ -2111,11 +2103,11 @@ msgctxt "export"
 msgid "This will affect {0}"
 msgstr ""
 
-#: admin-columns-pro/classes/Migrate/Admin/Section/Templates.php:102
+#: admin-columns-pro/classes/Migrate/Admin/Section/Templates.php:98
 msgid "and"
 msgstr ""
 
-#: admin-columns-pro/classes/Migrate/Admin/Section/Templates.php:122, admin-columns-pro/classes/Migrate/Admin/Table/Export.php:144
+#: admin-columns-pro/classes/Migrate/Admin/Section/Templates.php:118, admin-columns-pro/classes/Migrate/Admin/Table/Export.php:144
 msgid "File"
 msgstr ""
 
@@ -2581,7 +2573,7 @@ msgstr ""
 msgid "Paid Amount"
 msgstr ""
 
-#: admin-columns-pro/addons/woocommerce/classes/Column/Order/PaymentMethod.php:18, admin-columns-pro/addons/woocommerce/classes/Column/ShopOrder/PaymentMethod.php:20, admin-columns-pro/addons/woocommerce/classes/Settings/HideOnScreen/FilterSubscriptionPayment.php:10
+#: admin-columns-pro/addons/woocommerce/classes/Column/Order/PaymentMethod.php:18, admin-columns-pro/addons/woocommerce/classes/Column/ShopOrder/PaymentMethod.php:21, admin-columns-pro/addons/woocommerce/classes/Settings/HideOnScreen/FilterSubscriptionPayment.php:10
 msgid "Payment Method"
 msgstr ""
 

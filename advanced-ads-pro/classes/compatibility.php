@@ -80,7 +80,7 @@ class Advanced_Ads_Pro_Compatibility {
 	 * @return void
 	 */
 	public function gravity_forms_init() {
-		if ( ! function_exists( 'gravity_form_enqueue_scripts' ) ) {
+		if ( is_admin() || ! function_exists( 'gravity_form_enqueue_scripts' ) ) {
 			return;
 		}
 		$has_ajaxcb_placement = false;

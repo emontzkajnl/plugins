@@ -9,7 +9,7 @@
 	<input type="text" name="<?php echo esc_attr( $this->plugin->options_slug ); ?>[ga-UID]" value="<?php echo esc_attr( $uid ); ?>" <?php echo esc_attr( $is_ga ? 'required' : '' ); ?> />
 </label>
 <p class="description">
-	<?php esc_html_e( 'The Google Analytics property you want the data to be sent to.', 'advanced-ads-tracking' ); ?>
+	<?php esc_html_e( 'One or more Google Analytics properties to which you want the data to be sent. Separate multiple properties with commas.', 'advanced-ads-tracking' ); ?>
 	<br>
 	<?php
 	printf(

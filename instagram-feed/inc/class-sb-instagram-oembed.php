@@ -28,7 +28,7 @@ class SB_Instagram_Oembed // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingN
 	{
 		if (self::can_do_oembed()) {
 			if (self::can_check_for_old_oembeds()) {
-				add_action('the_post', array( 'SB_Instagram_Oembed', 'check_page_for_old_oembeds' ));
+				add_action('init', array('SB_Instagram_Oembed', 'clear_checks'));
 			}
 			add_filter('oembed_providers', array( 'SB_Instagram_Oembed', 'oembed_providers' ), 10, 1);
 			add_filter('oembed_fetch_url', array( 'SB_Instagram_Oembed', 'oembed_set_fetch_url' ), 10, 3);
@@ -98,10 +98,8 @@ class SB_Instagram_Oembed // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingN
 	 */
 	public static function can_check_for_old_oembeds()
 	{
-		/**
-		 * TODO: if setting is enabled
-		 */
-		return true;
+		$sbi_statuses = get_option('sbi_statuses', array());
+		return !isset($sbi_statuses['clear_old_oembed_checks']);
 	}
 
 	/**
@@ -214,7 +212,7 @@ class SB_Instagram_Oembed // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingN
 	 */
 	public static function oembed_url()
 	{
-		return 'https://graph.facebook.com/v8.0/instagram_oembed';
+		return 'https://graph.facebook.com/instagram_oembed';
 	}
 
 	/**
@@ -240,10 +238,8 @@ class SB_Instagram_Oembed // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingN
 			if (isset($if_database_settings['connected_accounts'])) {
 				$connected_accounts = $if_database_settings['connected_accounts'];
 				foreach ($connected_accounts as $connected_account) {
-					if (empty($oembed_token_settings['access_token'])) {
-						if (isset($connected_account['type']) && $connected_account['type'] === 'business') {
-							$oembed_token_settings['access_token'] = $connected_account['access_token'];
-						}
+					if (empty($oembed_token_settings['access_token']) && isset($connected_account['type']) && $connected_account['type'] === 'business') {
+						$oembed_token_settings['access_token'] = $connected_account['access_token'];
 					}
 				}
 			}
@@ -279,31 +275,6 @@ class SB_Instagram_Oembed // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingN
 		}
 
 		return $will_expire;
-	}
-
-	/**
-	 * Before links in the content are processed, old oembed post meta
-	 * records are deleted so new oembed data will be retrieved and saved.
-	 * If this check has been done and no old oembeds are found, a flag
-	 * is saved as post meta to skip the process.
-	 *
-	 * @since 2.5/5.8
-	 */
-	public static function check_page_for_old_oembeds()
-	{
-		if (is_admin()) {
-			return;
-		}
-
-		$post_ID       = get_the_ID();
-		$done_checking = (int) get_post_meta($post_ID, '_sbi_oembed_done_checking', true) === 1;
-
-		if (! $done_checking) {
-			$num_found = self::delete_instagram_oembed_caches($post_ID);
-			if ($num_found === 0) {
-				update_post_meta($post_ID, '_sbi_oembed_done_checking', 1);
-			}
-		}
 	}
 
 	/**
@@ -358,6 +329,10 @@ class SB_Instagram_Oembed // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingN
 		    FROM $table_name
 		    WHERE meta_key = '_sbi_oembed_done_checking';"
 		);
+
+		$sbi_statuses = get_option('sbi_statuses', array());
+		$sbi_statuses['clear_old_oembed_checks'] = true;
+		update_option('sbi_statuses', $sbi_statuses);
 	}
 }
 

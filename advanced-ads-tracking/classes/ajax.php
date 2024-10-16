@@ -12,16 +12,16 @@ class Advanced_Ads_Tracking_Ajax {
 	 */
 	public function __construct() {
 		// register callback
-		add_action( 'wp_ajax_' . self::TRACK_IMPRESSION, array( $this, 'track' ) ); // logged in users
-		add_action( 'wp_ajax_nopriv_' . self::TRACK_IMPRESSION, array( $this, 'track' ) ); // frontend, not logged in
-		add_action( 'wp_ajax_' . self::TRACK_CLICK, array( $this, 'track' ) ); // logged in users
-		add_action( 'wp_ajax_nopriv_' . self::TRACK_CLICK, array( $this, 'track' ) ); // frontend, not logged in
+		add_action( 'wp_ajax_' . self::TRACK_IMPRESSION, [ $this, 'track' ] ); // logged in users
+		add_action( 'wp_ajax_nopriv_' . self::TRACK_IMPRESSION, [ $this, 'track' ] ); // frontend, not logged in
+		add_action( 'wp_ajax_' . self::TRACK_CLICK, [ $this, 'track' ] ); // logged in users
+		add_action( 'wp_ajax_nopriv_' . self::TRACK_CLICK, [ $this, 'track' ] ); // frontend, not logged in
 
-		add_action( 'wp_ajax_advads-tracking-check-slug', array( $this, 'check_slug' ) );
-		add_action( 'wp_ajax_advads-tracking-immediate-report', array( $this, 'immedate_report' ) );
-		add_action( 'wp_ajax_advads_load_stats', array( $this, 'load_stats' ) );
-		add_action( 'wp_ajax_advads_load_stats_file', array( $this, 'load_stats_file' ) );
-		add_action( 'wp_ajax_advads_stats_file_info', array( $this, 'get_stats_file_info' ) );
+		add_action( 'wp_ajax_advads-tracking-check-slug', [ $this, 'check_slug' ] );
+		add_action( 'wp_ajax_advads-tracking-immediate-report', [ $this, 'immedate_report' ] );
+		add_action( 'wp_ajax_advads_load_stats', [ $this, 'load_stats' ] );
+		add_action( 'wp_ajax_advads_load_stats_file', [ $this, 'load_stats_file' ] );
+		add_action( 'wp_ajax_advads_stats_file_info', [ $this, 'get_stats_file_info' ] );
 	}
 
 	public function get_stats_file_info() {
@@ -30,16 +30,16 @@ class Advanced_Ads_Tracking_Ajax {
 			die;
 		}
 		$data   = $this->parse_csv( (int) $_POST['id'] );
-		$result = array(
+		$result = [
 			'status' => false,
-		);
+		];
 		if ( isset( $data['firstdate'] ) ) {
-			$result = array(
+			$result = [
 				'status'    => true,
 				'firstdate' => $data['firstdate'],
 				'lastdate'  => $data['lastdate'],
 				'ads'       => implode( '-', array_keys( $data['ads'] ) ),
-			);
+			];
 		}
 		header( 'Content-Type: application/json' );
 		echo json_encode( $result );
@@ -55,22 +55,22 @@ class Advanced_Ads_Tracking_Ajax {
 	 */
 	private function parse_csv( $id ) {
 		$file   = get_attached_file( $id );
-		$result = array(
-			'impressions' => array(),
-			'clicks'      => array(),
-			'ads'         => array(),
+		$result = [
+			'impressions' => [],
+			'clicks'      => [],
+			'ads'         => [],
 			'status'      => true,
-		);
+		];
 		WP_Filesystem();
 		global $wp_filesystem;
 		$data = $wp_filesystem->get_contents( $file );
 		if ( ! $data ) {
 			// Ureadable file.
-			return array(
+			return [
 				'status' => false,
 				'msg',
 				__( 'unable to read file', 'advanced-ads-tracking' ),
-			);
+			];
 		}
 		// Remove evntual BOM.
 		$bom  = pack( 'H*', 'EFBBBF' );
@@ -83,7 +83,7 @@ class Advanced_Ads_Tracking_Ajax {
 			if ( empty( $line ) ) {
 				continue;
 			}
-			$cells       = array();
+			$cells       = [];
 			$_cells      = explode( ',', $line );
 			$cells_count = count( $_cells );
 
@@ -103,18 +103,18 @@ class Advanced_Ads_Tracking_Ajax {
 				$cells = $_cells;
 			}
 
-			$cells = array_map( array( $this, 'trim_outer_quotes' ), $cells );
+			$cells = array_map( [ $this, 'trim_outer_quotes' ], $cells );
 			$ts    = (int) str_replace( '-', '', $cells[0] );
 
 			// Impressions.
 			if ( ! isset( $result['impressions'][ $ts ] ) ) {
-				$result['impressions'][ $ts ] = array();
+				$result['impressions'][ $ts ] = [];
 			}
 			$result['impressions'][ $ts ][ $cells[1] ] = (int) $cells[2];
 
 			// Clicks.
 			if ( ! isset( $result['clicks'][ $ts ] ) ) {
-				$result['clicks'][ $ts ] = array();
+				$result['clicks'][ $ts ] = [];
 			}
 			$result['clicks'][ $ts ][ $cells[1] ] = (int) $cells[3];
 
@@ -161,7 +161,7 @@ class Advanced_Ads_Tracking_Ajax {
 		if ( false === wp_verify_nonce( $nonce, 'advads-stats-page' ) ) {
 			die;
 		}
-		$result = array( 'status' => false );
+		$result = [ 'status' => false ];
 		parse_str( $_POST['args'], $args );
 		$data = $this->parse_csv( (int) $args['file'] );
 		if ( isset( $data['status'] ) && $data['status'] ) {
@@ -180,12 +180,12 @@ class Advanced_Ads_Tracking_Ajax {
 	 *  Prepare data from CSV before sending it back to the browser
 	 */
 	private function prepare_stats_from_file( $data, $period, $from, $to, $groupby ) {
-		$result = array(
+		$result = [
 			'status' => true,
-			'stats'  => array(),
-		);
-		$_from  = (int) str_replace( array( '-', '/' ), array( '', '' ), $from );
-		$_to    = (int) str_replace( array( '-', '/' ), array( '', '' ), $to );
+			'stats'  => [],
+		];
+		$_from  = (int) str_replace( [ '-', '/' ], [ '', '' ], $from );
+		$_to    = (int) str_replace( [ '-', '/' ], [ '', '' ], $to );
 
 		$periodstart = '';
 		$periodend   = '';
@@ -210,12 +210,12 @@ class Advanced_Ads_Tracking_Ajax {
 				$periodstart = $from;
 				$periodend   = $to;
 		}
-		$imprs        = array();
-		$clicks       = array();
+		$imprs        = [];
+		$clicks       = [];
 		$adIDs        = array_keys( $data['ads'] );
 		$date         = null;
-		$group_clicks = array();
-		$group_imprs  = array();
+		$group_clicks = [];
+		$group_imprs  = [];
 
 		end( $data['impressions'] );
 		$last_ts = key( $data['impressions'] );
@@ -248,8 +248,8 @@ class Advanced_Ads_Tracking_Ajax {
 							$clicks[ $date ] = $group_clicks;
 
 							$date         = $_date->format( 'Y-m' );
-							$group_clicks = array();
-							$group_imprs  = array();
+							$group_clicks = [];
+							$group_imprs  = [];
 						}
 						foreach ( $adIDs as $ad_id ) {
 							if ( ! isset( $group_imprs[ $ad_id ] ) ) {
@@ -278,8 +278,8 @@ class Advanced_Ads_Tracking_Ajax {
 						}
 						$imprs[ $date ]  = $group_imprs;
 						$clicks[ $date ] = $group_clicks;
-						$group_clicks    = array();
-						$group_imprs     = array();
+						$group_clicks    = [];
+						$group_imprs     = [];
 					}
 					break;
 				case 'week':
@@ -307,8 +307,8 @@ class Advanced_Ads_Tracking_Ajax {
 							$clicks[ $date ] = $group_clicks;
 
 							$date         = $_date->format( 'o-\WW' );
-							$group_clicks = array();
-							$group_imprs  = array();
+							$group_clicks = [];
+							$group_imprs  = [];
 						}
 						foreach ( $adIDs as $ad_id ) {
 							if ( ! isset( $group_imprs[ $ad_id ] ) ) {
@@ -337,18 +337,18 @@ class Advanced_Ads_Tracking_Ajax {
 						}
 						$imprs[ $date ]  = $group_imprs;
 						$clicks[ $date ] = $group_clicks;
-						$group_clicks    = array();
-						$group_imprs     = array();
+						$group_clicks    = [];
+						$group_imprs     = [];
 					}
 					break;
 				default: // day
 					$date = self::split_date( $ts );
 					if ( $ts >= $_from && $ts <= $_to ) {
 						if ( ! isset( $imprs[ $date ] ) ) {
-							$imprs[ $date ] = array();
+							$imprs[ $date ] = [];
 						}
 						if ( ! isset( $clicks[ $date ] ) ) {
-							$clicks[ $date ] = array();
+							$clicks[ $date ] = [];
 						}
 						foreach ( $adIDs as $ad_id ) {
 							if ( isset( $_imprs[ $ad_id ] ) ) {
@@ -399,14 +399,14 @@ class Advanced_Ads_Tracking_Ajax {
 		if ( false === wp_verify_nonce( $nonce, 'advads-stats-page' ) ) {
 			die;
 		}
-		$result = array( 'status' => false );
+		$result = [ 'status' => false ];
 		parse_str( $_POST['args'], $args );
 
 		if ( ! empty( $args['period'] ) ) {
 			$util             = Advanced_Ads_Tracking_Util::get_instance();
 			$admin            = new Advanced_Ads_Tracking_Admin();
 			$result['status'] = true;
-			$result['stats']  = array();
+			$result['stats']  = [];
 
 			/**
 			 *  Prepare all locale dependant and groupby dependant variables needed jqplot and datatable
@@ -417,12 +417,12 @@ class Advanced_Ads_Tracking_Ajax {
 
 			// groupby-s formating
 			$groupby  = $args['groupby'];
-			$groupbys = array(
+			$groupbys = [
 				// group format, axis label, value conversion for graph
-				'day'   => array( 'Y-m-d', __( 'day', 'advanced-ads-tracking' ), _x( 'Y-m-d', 'date format on stats page', 'advanced-ads-tracking' ) ),
-				'week'  => array( 'o-\WW', __( 'week', 'advanced-ads-tracking' ), _x( 'Y-m-d', 'date format on stats page', 'advanced-ads-tracking' ) ),
-				'month' => array( 'Y-m', __( 'month', 'advanced-ads-tracking' ), _x( 'Y-m', 'date format on stats page', 'advanced-ads-tracking' ) ),
-			);
+				'day'   => [ 'Y-m-d', __( 'day', 'advanced-ads-tracking' ), _x( 'Y-m-d', 'date format on stats page', 'advanced-ads-tracking' ) ],
+				'week'  => [ 'o-\WW', __( 'week', 'advanced-ads-tracking' ), _x( 'Y-m-d', 'date format on stats page', 'advanced-ads-tracking' ) ],
+				'month' => [ 'Y-m', __( 'month', 'advanced-ads-tracking' ), _x( 'Y-m', 'date format on stats page', 'advanced-ads-tracking' ) ],
+			];
 
 			if ( ! isset( $groupbys[ $groupby ] ) ) {
 				$groupby = null;
@@ -437,12 +437,12 @@ class Advanced_Ads_Tracking_Ajax {
 			/**
 			 *  Load result from DB
 			 */
-			$sql_args = array(
+			$sql_args = [
 				'period'      => $args['period'],
 				'groupby'     => $args['groupby'],
 				'ad_id'       => explode( '-', $_POST['ads'] ),
 				'groupFormat' => $groupFormat,
-			);
+			];
 
 			if ( $args['period'] === 'custom' ) {
 				$sql_args['from'] = $args['from'];
@@ -452,7 +452,7 @@ class Advanced_Ads_Tracking_Ajax {
 			$impr   = $admin->load_stats( $sql_args, $util->get_impression_table() );
 			$clicks = $admin->load_stats( $sql_args, $util->get_click_table() );
 			if ( ! is_array( $clicks ) ) {
-				$clicks = array();
+				$clicks = [];
 			}
 			$firstdate = '';
 
@@ -556,12 +556,12 @@ class Advanced_Ads_Tracking_Ajax {
 				$result['stats']['firstDate']        = $firstdate;
 			}
 		}
-		if ( ! empty( $firstdate ) && intval( str_replace( '-', '', $firstdate ) ) < 20100101 ) {
+		if ( ! empty( $firstdate ) && (int) str_replace( '-', '', $firstdate ) < 20100101 ) {
 			// an invalid date has been found in the records
-			$result = array(
+			$result = [
 				'status' => false,
 				'msg'    => 'invalid-record',
-			);
+			];
 		}
 		header( 'Content-Type: application/json' );
 		echo json_encode( $result );
@@ -576,9 +576,9 @@ class Advanced_Ads_Tracking_Ajax {
 		if ( false === wp_verify_nonce( $nonce, 'advads-tracking-public-stats' ) ) {
 			die;
 		}
-		$result = array(
+		$result = [
 			'status' => false,
-		);
+		];
 		$result = Advanced_Ads_Tracking_Util::get_instance()->send_email_report();
 		header( 'Content-Type: application/json' );
 		echo json_encode( $result );
@@ -595,9 +595,9 @@ class Advanced_Ads_Tracking_Ajax {
 		if ( false === wp_verify_nonce( $nonce, 'advads-tracking-public-stats' ) ) {
 			die;
 		}
-		$result = array(
+		$result = [
 			'status' => false,
-		);
+		];
 		$title  = ( isset( $_POST['title'] ) && ! empty( $_POST['title'] ) ) ? stripslashes( $_POST['title'] ) : false;
 
 		if ( $title ) {
@@ -606,10 +606,10 @@ class Advanced_Ads_Tracking_Ajax {
 			$category = get_term_by( 'slug', $to_slug, 'category' );
 			$tag      = get_term_by( 'slug', $to_slug, 'post_tag' );
 			$link     = get_term_by( 'slug', $to_slug, 'link_category' );
-			$posts    = new WP_Query( array(
+			$posts    = new WP_Query( [
 				'post_type' => 'any',
 				'name'      => $to_slug,
-			) );
+			] );
 
 			if ( $posts->have_posts() ) {
 				$result['msg'] = __( 'This base name collides with an existing WordPress content (blog post, page or any public custom content)', 'advanced-ads-tracking' );
@@ -647,7 +647,7 @@ class Advanced_Ads_Tracking_Ajax {
 			die( 'nothing to track' );
 		}
 
-		$ad_ids = array_filter( array_map( 'intval', $_REQUEST['ads'] ) );
+		$ad_ids = array_filter( array_map( function( $value ) { return (int) $value; }, $_REQUEST['ads'] ) );
 
 		if ( empty( $_REQUEST['ads'] ) ) {
 			die( 'nothing to track' );

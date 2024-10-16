@@ -1,4 +1,7 @@
 <?php
+
+use AdvancedAds\Utilities\Conditional;
+
 class Advanced_Ads_Sticky_Admin {
 
 	/**
@@ -35,10 +38,10 @@ class Advanced_Ads_Sticky_Admin {
 	/**
 	 * load actions and filters
 	 */
-	public function wp_admin_plugins_loaded(){
+	public function wp_admin_plugins_loaded() {
 
 
-		if( ! class_exists( 'Advanced_Ads_Admin', false ) ) {
+		if ( ! class_exists( 'Advanced_Ads_Admin', false ) ) {
 			// show admin notice
 			add_action( 'admin_notices', array( $this, 'missing_plugin_notice' ) );
 
@@ -69,9 +72,9 @@ class Advanced_Ads_Sticky_Admin {
 	/**
 	* show warning if Advanced Ads js is not activated
 	*/
-	public function missing_plugin_notice(){
+	public function missing_plugin_notice() {
 		$plugins = get_plugins();
-		if( isset( $plugins['advanced-ads/advanced-ads.php'] ) ){ // is installed, but not active
+		if ( isset( $plugins['advanced-ads/advanced-ads.php'] ) ) { // is installed, but not active
 			$link = '<a class="button button-primary" href="' . wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads/advanced-ads.php&amp', 'activate-plugin_advanced-ads/advanced-ads.php' ) . '">'. __('Activate Now', 'advanced-ads-sticky') .'</a>';
 		} else {
 			$link = '<a class="button button-primary" href="' . wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . 'advanced-ads'), 'install-plugin_' . 'advanced-ads') . '">'. __('Install Now', 'advanced-ads-sticky') .'</a>';
@@ -79,7 +82,7 @@ class Advanced_Ads_Sticky_Admin {
 		echo '
 		<div class="error">
 		  <p>'.sprintf(__('<strong>%s</strong> requires the <strong><a href="https://wpadvancedads.com" target="_blank">Advanced Ads</a></strong> plugin to be installed and activated on your site.', 'advanced-ads-sticky'), 'Advanced Ads – Sticky Ads') .
-		     '&nbsp;' . $link . '</p></div>';
+			 '&nbsp;' . $link . '</p></div>';
 	}
 
 	/**
@@ -90,15 +93,22 @@ class Advanced_Ads_Sticky_Admin {
 	 */
 	function admin_scripts( $hook_suffix ) {
 
-	    if( ! class_exists( 'Advanced_Ads_Admin' ) ) {
-		    return;
-	    };
+		if ( ! class_exists( 'Advanced_Ads_Admin' ) ) {
+			return;
+		}
 
-	    if ( Advanced_Ads_Admin::screen_belongs_to_advanced_ads() ){
-		    // add color picker script
-		    wp_enqueue_style( 'wp-color-picker' );
-		    wp_enqueue_script( 'wp-color-picker' );
-	    }
+		$is_screen = false;
+		if ( method_exists( 'AdvancedAds\Utilities\Conditional', 'is_screen_advanced_ads' ) ) {
+			$is_screen = Conditional::is_screen_advanced_ads();
+		} elseif ( method_exists( 'Advanced_Ads_Admin', 'screen_belongs_to_advanced_ads' ) ) {
+			$is_screen = Advanced_Ads_Admin::screen_belongs_to_advanced_ads();
+		}
+
+		if ( $is_screen ) {
+			// add color picker script
+			wp_enqueue_style( 'wp-color-picker' );
+			wp_enqueue_script( 'wp-color-picker' );
+		}
 	}
 
 	/**
@@ -112,7 +122,7 @@ class Advanced_Ads_Sticky_Admin {
 		}
 
 		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
-		if ( ! $post_id ){
+		if ( ! $post_id ) {
 			return;
 		}
 		$ad = new Advanced_Ads_Ad( $post_id );
@@ -134,7 +144,7 @@ class Advanced_Ads_Sticky_Admin {
 	 *
 	 * @since 1.0.0
 	 */
-	public function render_metabox(){
+	public function render_metabox() {
 		global $post;
 		$ad = new Advanced_Ads_Ad( $post->ID );
 		$options = $ad->options();
@@ -156,7 +166,7 @@ class Advanced_Ads_Sticky_Admin {
 	 *
 	 * @since 1.0.0
 	 */
-	public function save_options($options = array(), $ad = 0){
+	public function save_options($options = array(), $ad = 0) {
 
 		// sanitize sticky options
 		$positions = array();
@@ -167,7 +177,7 @@ class Advanced_Ads_Sticky_Admin {
 
 		// sanitize positions
 		if ( ! empty($_POST['advanced_ad']['sticky']['position']) ) {
-			foreach ( $_POST['advanced_ad']['sticky']['position'] as $_position => $_value ){
+			foreach ( $_POST['advanced_ad']['sticky']['position'] as $_position => $_value ) {
 				if ( $_value != '' ) {
 					$positions[ $_position ] = intval( $_value ); }
 			}
@@ -183,7 +193,7 @@ class Advanced_Ads_Sticky_Admin {
 	 *
 	 * @since 1.0.0
 	 */
-	public function settings_init(){
+	public function settings_init() {
 
 		// don’t initiate if main plugin not loaded
 		if ( ! class_exists( 'Advanced_Ads_Admin' ) ) { return; }
@@ -225,17 +235,17 @@ class Advanced_Ads_Sticky_Admin {
 	 *
 	 * @since 1.2.0
 	 */
-	public function render_settings_license_callback(){
-	    $licenses = get_option( ADVADS_SLUG . '-licenses', array() );
-	    $license_key = isset($licenses['sticky']) ? $licenses['sticky'] : '';
-	    $license_status = get_option( $this->plugin->options_slug . '-license-status', false );
-	    $index = 'sticky';
-	    $plugin_name = AASADS_PLUGIN_NAME;
-	    $options_slug = $this->plugin->options_slug;
-	    $plugin_url = self::PLUGIN_LINK;
+	public function render_settings_license_callback() {
+		$licenses = get_option( ADVADS_SLUG . '-licenses', array() );
+		$license_key = isset($licenses['sticky']) ? $licenses['sticky'] : '';
+		$license_status = get_option( $this->plugin->options_slug . '-license-status', false );
+		$index = 'sticky';
+		$plugin_name = AASADS_PLUGIN_NAME;
+		$options_slug = $this->plugin->options_slug;
+		$plugin_url = self::PLUGIN_LINK;
 
-	    // template in main plugin
-	    include ADVADS_BASE_PATH . 'admin/views/setting-license.php';
+		// template in main plugin
+		include ADVADS_BASE_PATH . 'admin/views/setting-license.php';
 	}
 
 	/**
@@ -243,7 +253,7 @@ class Advanced_Ads_Sticky_Admin {
 	 *
 	 * @since 1.0.0
 	 */
-	public function render_settings_section_callback(){
+	public function render_settings_section_callback() {
 		_e( 'Settings for the Sticky Ads add-on', 'advanced-ads-sticky' );
 	}
 
@@ -252,11 +262,10 @@ class Advanced_Ads_Sticky_Admin {
 	 *
 	 * @since 1.0.0
 	 */
-	public function render_settings_scroll_callback(){
+	public function render_settings_scroll_callback() {
 		$options = $this->plugin->options();
 		$check_position_fixed = isset($options['sticky']['check-position-fixed']) ? $options['sticky']['check-position-fixed'] : 0;
-		echo '<input name="'.ADVADS_SLUG.'[sticky][check-position-fixed]" id="advanced-ads-sticky-check-position-fixed" type="checkbox" value="1" ' . checked( 1, $check_position_fixed, false ) . ' />';
-		echo '<p class="description">'. __( 'Activate this if you experience problems with sticky ads and/or a lot of your visitors use old mobile devices. It will check browser capability and position the ad inline after scrolling. Technically speaking: removes <em>position: fixed</em>, if not supported.', 'advanced-ads-sticky' ) .'</p>';
+		require AASADS_BASE_PATH . '/admin/views/settings/general/activate-sticky-ads.php';
 	}
 
 	/**
@@ -266,7 +275,7 @@ class Advanced_Ads_Sticky_Admin {
 	 * @param arr $types existing placements
 	 * @return arr $types
 	 */
-	public function add_sticky_placement( $types ){
+	public function add_sticky_placement( $types ) {
 
 		// fixed header bar
 		$types['sticky_header'] = array(
@@ -321,58 +330,58 @@ class Advanced_Ads_Sticky_Admin {
 	 * @param string $placement_slug id of the placement
 	 *
 	 */
-	public function sticky_placement_content( $placement_slug, $placement ){
-	    
-	    if( ! class_exists( 'Advanced_Ads_Admin_Options' ) ){
-		    echo 'Please update to Advanced Ads 1.8';
-		    return;
-	    }
-	    
-	    switch ( $placement['type'] ){
-		    case 'sticky_header' :
-		    case 'sticky_footer' :
-			
+	public function sticky_placement_content( $placement_slug, $placement ) {
+
+		if ( ! class_exists( 'Advanced_Ads_Admin_Options' ) ) {
+			echo 'Please update to Advanced Ads 1.8';
+			return;
+		}
+
+		switch ( $placement['type'] ) {
+			case 'sticky_header' :
+			case 'sticky_footer' :
+
 				$options = isset( $placement['options']['sticky'] ) ? $placement['options']['sticky'] : array();
 				$option_name = "advads[placements][$placement_slug][options][sticky]";
-			
+
 				// position
 				ob_start();
 				?><input type="text" value="<?php if ( isset($placement['options']['sticky_bg_color']) ) { echo $placement['options']['sticky_bg_color']; } ?>" class="advads-sticky-bg-color-field" name="advads[placements][<?php echo $placement_slug; ?>][options][sticky_bg_color]"/>
-				    <p class="description"><?php _e( 'When selecting a background color, the sticky bar will cover the whole screen width.', 'advanced-ads-sticky' ); ?></p><?php
+					<p class="description"><?php _e( 'When selecting a background color, the sticky bar will cover the whole screen width.', 'advanced-ads-sticky' ); ?></p><?php
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-background', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-background',
 					__( 'background', 'advanced-ads-sticky' ),
 					$option_content );
-				
+
 				// trigger
 				ob_start();
 				include AASADS_BASE_PATH . '/admin/views/trigger.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-trigger', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-trigger',
 					__( 'show the ad', 'advanced-ads-sticky' ),
 					$option_content );
-				
+
 				// effect
 				ob_start();
 				include AASADS_BASE_PATH . '/admin/views/effects.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-effect', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-effect',
 					__( 'effect', 'advanced-ads-sticky' ),
 					$option_content );
-				
+
 				// close button
 				ob_start();
 				include AASADS_BASE_PATH . '/admin/views/close-button.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-close-button', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-close-button',
 					__( 'close button', 'advanced-ads-sticky' ),
 					$option_content );
 
@@ -384,14 +393,14 @@ class Advanced_Ads_Sticky_Admin {
 				include AASADS_BASE_PATH . '/admin/views/size.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-dimension', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-dimension',
 					__( 'size', 'advanced-ads-sticky' ),
 					$option_content );
 			break;
-		    case 'sticky_left_sidebar' :
-		    case 'sticky_right_sidebar' :
-			
+			case 'sticky_left_sidebar' :
+			case 'sticky_right_sidebar' :
+
 				$options = isset( $placement['options']['sticky'] ) ? $placement['options']['sticky'] : array();
 				$option_name = "advads[placements][$placement_slug][options][sticky]";
 
@@ -414,46 +423,46 @@ class Advanced_Ads_Sticky_Admin {
 					'placement-sticky-effect',
 					__( 'effect', 'advanced-ads-sticky' ),
 					$option_content );
-			
+
 				// position
 				ob_start();
 				?><label><input type="checkbox" name="advads[placements][<?php echo $placement_slug; ?>][options][sticky_is_fixed]" value="1" <?php
-				    if ( isset($placement['options']['sticky_is_fixed']) ) { checked( $placement['options']['sticky_is_fixed'], 1 ); }
+					if ( isset($placement['options']['sticky_is_fixed']) ) { checked( $placement['options']['sticky_is_fixed'], 1 ); }
 				?>/><?php _e( 'fix to window position', 'advanced-ads-sticky' ); ?></label><?php
 				include AASADS_BASE_PATH . '/admin/views/vertical-center.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-position', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-position',
 					__( 'Position', 'advanced-ads-sticky' ),
 					$option_content );
-				
+
 				// element selector
 				ob_start();
 				?><div id="advads-frontend-element-<?php echo $placement_slug; ?>"><input type="text" name="advads[placements][<?php echo $placement_slug; ?>][options][sticky_element]" value="<?php
-				    echo (isset($placement['options']['sticky_element'])) ? $placement['options']['sticky_element'] : '';
-				    ?>" class="advads-frontend-element"/>
+					echo (isset($placement['options']['sticky_element'])) ? $placement['options']['sticky_element'] : '';
+					?>" class="advads-frontend-element"/>
 					<button style="display:none; color: red;" type="button" class="advads-deactivate-frontend-picker button"><?php _ex( 'stop selection', 'frontend picker',  'advanced-ads-sticky' ); ?></button>
 					<button type="button" class="advads-activate-frontend-picker button" data-placementid="<?php echo esc_attr( $placement_slug ); ?>" data-action="edit-placement"><?php _e( 'select position', 'advanced-ads-sticky' ); ?></button>
 				</div>
 				<p class="description"><?php _e( 'Use <a href="https://api.jquery.com/category/selectors/" target="_blank">jQuery selectors</a> to select a custom parent element or if automatic wrapper detection doesn’t work, e.g. #container_id, .container_class', 'advanced-ads-sticky' ); ?></p>
 				<?php $option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-element', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-element',
 					__( 'parent element', 'advanced-ads-sticky' ),
 					$option_content );
-				
+
 				// close button
 				ob_start();
 				include AASADS_BASE_PATH . '/admin/views/close-button.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-close-button', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-close-button',
 					__( 'close button', 'advanced-ads-sticky' ),
 					$option_content );
-				
+
 				// dimensions
 				$width = isset( $placement['options']['placement_width'] ) ? absint( $placement['options']['placement_width'] ) : 0;
 				$height = isset( $placement['options']['placement_height'] ) ? absint( $placement['options']['placement_height'] ) : 0;
@@ -462,15 +471,15 @@ class Advanced_Ads_Sticky_Admin {
 				include AASADS_BASE_PATH . '/admin/views/size.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-dimension', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-dimension',
 					__( 'size', 'advanced-ads-sticky' ),
 					$option_content );
-				
-		    break;
-		    case 'sticky_left_window' :
-		    case 'sticky_right_window' :
-			
+
+			break;
+			case 'sticky_left_window' :
+			case 'sticky_right_window' :
+
 				$options = isset( $placement['options']['sticky'] ) ? $placement['options']['sticky'] : array();
 				$option_name = "advads[placements][$placement_slug][options][sticky]";
 
@@ -479,8 +488,8 @@ class Advanced_Ads_Sticky_Admin {
 				include AASADS_BASE_PATH . '/admin/views/trigger.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-trigger', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-trigger',
 					__( 'show the ad', 'advanced-ads-sticky' ),
 					$option_content );
 
@@ -489,21 +498,21 @@ class Advanced_Ads_Sticky_Admin {
 				include AASADS_BASE_PATH . '/admin/views/effects.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-effect', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-effect',
 					__( 'effect', 'advanced-ads-sticky' ),
-					$option_content );			
+					$option_content );
 
 				// position
 				ob_start();
 				?><label><input type="checkbox" name="advads[placements][<?php echo $placement_slug; ?>][options][sticky_is_fixed]" value="1" <?php
 					if ( isset($placement['options']['sticky_is_fixed']) ) { checked( $placement['options']['sticky_is_fixed'], 1 ); }
-				    ?>/><?php _e( 'fix to window position', 'advanced-ads-sticky' ); ?></label><?php
+					?>/><?php _e( 'fix to window position', 'advanced-ads-sticky' ); ?></label><?php
 				include AASADS_BASE_PATH . '/admin/views/vertical-center.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-position', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-position',
 					__( 'Position', 'advanced-ads-sticky' ),
 					$option_content );
 
@@ -512,8 +521,8 @@ class Advanced_Ads_Sticky_Admin {
 				include AASADS_BASE_PATH . '/admin/views/close-button.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-close-button', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-close-button',
 					__( 'close button', 'advanced-ads-sticky' ),
 					$option_content );
 
@@ -525,13 +534,13 @@ class Advanced_Ads_Sticky_Admin {
 				include AASADS_BASE_PATH . '/admin/views/size.php';
 				$option_content = ob_get_clean();
 
-				Advanced_Ads_Admin_Options::render_option( 
-					'placement-sticky-dimension', 
+				Advanced_Ads_Admin_Options::render_option(
+					'placement-sticky-dimension',
 					__( 'size', 'advanced-ads-sticky' ),
 					$option_content );
-			
-		    break;
-	    }
+
+			break;
+		}
 	}
 
 	/**
@@ -539,13 +548,17 @@ class Advanced_Ads_Sticky_Admin {
 	 *  activate color picker fields
 	 *
 	 * @since 1.3
-	 * @param type $placements array with placements
+	 * @param array $placements array with placements
 	 */
-	public function placements_list_after( $placements = array() ){
+	public function placements_list_after( $placements = [] ) {
 		?><script>
-		jQuery(document).ready(function($){
-			jQuery('.advads-sticky-bg-color-field').wpColorPicker();
-		});
+			jQuery( $ => {
+				for ( const modal of document.getElementsByClassName( 'advads-modal' ) ) {
+					modal.addEventListener( 'advads-modal-opened', e => {
+						jQuery('.advads-sticky-bg-color-field').wpColorPicker();
+					});
+				}
+			});
 		</script>
 		<?php
 		// Check if the following code is included in the basic plugin.
@@ -557,13 +570,13 @@ class Advanced_Ads_Sticky_Admin {
 		// use the same code from Pro, if Pro enabled
 		if ( ! defined( 'AAP_VERSION') ) : ?>
 			<script>
-			if( localStorage.getItem( 'advads_frontend_element' )){
+			if ( localStorage.getItem( 'advads_frontend_element' )) {
 				var placement = localStorage.getItem( 'advads_frontend_picker' );
 				var id = 'advads-frontend-element-' + placement;
 				jQuery( '[id="' + id + '"]' ).find( '.advads-frontend-element' ).val( localStorage.getItem( 'advads_frontend_element' ) );
 
 				var action = localStorage.getItem( 'advads_frontend_action' );
-				if (typeof(action) !== 'undefined'){
+				if (typeof(action) !== 'undefined') {
 					var show_all_link = jQuery( 'a[data-placement="' + placement + '"]');
 					Advanced_Ads_Admin.toggle_placements_visibility( show_all_link );
 				}
@@ -572,7 +585,7 @@ class Advanced_Ads_Sticky_Admin {
 				localStorage.removeItem( 'advads_frontend_picker' );
 				localStorage.removeItem( 'advads_prev_url' );
 			}
-			jQuery('.advads-activate-frontend-picker').click(function( e ){
+			jQuery('.advads-activate-frontend-picker').click(function( e ) {
 				localStorage.setItem( 'advads_frontend_picker', jQuery( this ).data('placementid') );
 				localStorage.setItem( 'advads_frontend_action', jQuery( this ).data('action') );
 				localStorage.setItem( 'advads_prev_url', window.location );

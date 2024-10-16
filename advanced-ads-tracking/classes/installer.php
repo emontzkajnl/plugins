@@ -83,8 +83,8 @@ class Advanced_Ads_Tracking_Installer {
 		 */
 		$this->handler_url = trailingslashit( apply_filters( 'advanced-ads-tracking-ajax-dropin-url', content_url() ) ) . self::DEST_HANDLER;
 
-		// delete ajax handler if not needed. Keep it on multisite installations.
-		if ( $this->plugin->is_legacy_ajax() || ( $this->plugin->get_tracking_method() === 'ga' && ! is_multisite() ) ) {
+		// delete ajax handler if not needed. Keep it on multisite installations. Only try this in wp-admin.
+		if ( is_admin() && ( $this->plugin->is_legacy_ajax() || ( $this->plugin->get_tracking_method() === 'ga' && ! is_multisite() ) ) ) {
 			$this->uninstall();
 		}
 	}
@@ -252,7 +252,7 @@ class Advanced_Ads_Tracking_Installer {
 			return '';
 		}
 		$plugin = Advanced_Ads::get_instance();
-		$bots   = array();
+		$bots   = [];
 		if ( method_exists( $plugin, 'get_bots' ) ) {
 			$bots = $plugin->get_bots();
 		}
@@ -298,7 +298,7 @@ class Advanced_Ads_Tracking_Installer {
 			$host = "[$host]";
 		}
 
-		$vars = array(
+		$vars = [
 			'db_host'       => $host, // 1
 			'db_user'       => $this->db->dbuser, // 2
 			'db_password'   => $this->db->dbpassword, // 3
@@ -308,11 +308,11 @@ class Advanced_Ads_Tracking_Installer {
 			'table_prefix'  => $this->db->get_blog_prefix( 1 ), // 7
 			'debug_file'    => Advanced_Ads_Tracking_Debugger::get_debug_file_path(), // 8
 			'debug_enabled' => Advanced_Ads_Tracking_Debugger::debugging_enabled() ? 'true' : 'false', // 9
-			'debug_id'      => get_option( Advanced_Ads_Tracking_Debugger::DEBUG_OPT, array( 'id' => 0 ) )['id'], // 10
+			'debug_id'      => get_option( Advanced_Ads_Tracking_Debugger::DEBUG_OPT, [ 'id' => 0 ] )['id'], // 10
 			'debug_handler' => $this->get_debugger_file(), // 11
 			'bots'          => $this->get_bots(), // 12
 			'timezone'      => $this->get_time_zone(), // 13
-		);
+		];
 
 		return $vars;
 	}

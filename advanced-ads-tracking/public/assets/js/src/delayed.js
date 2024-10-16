@@ -7,8 +7,8 @@
 	jQuery( document ).on( targets, function ( ev ) {
 		var $target = jQuery( ev.target ),
 			ads     = {},
-			bid     = parseInt( $target.attr( 'data-advadstrackbid' ), 10 ),
-			id      = parseInt( $target.attr( 'data-advadstrackid' ), 10 ),
+			bid     = parseInt( $target.attr( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackbid' ) ), 10 ),
+			id      = parseInt( $target.attr( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackid' ) ), 10 ),
 			addAd   = function ( id, bid ) {
 				if ( typeof ads[bid] === 'undefined' ) {
 					ads[bid] = [];
@@ -18,21 +18,21 @@
 			};
 
 		if ( bid ) {
-			if ( ! $target.data( 'delayed' ) || ! $target.data( 'advadsimpression' ) ) {
+			if ( ! $target.data( 'delayed' ) || ! $target.data( AdvAdsTrackingUtils.getPrefixedAttribute( 'impression' ) ) ) {
 				return;
 			}
 			addAd( id, bid );
 		} else {
-			if ( ! $target.find( '[data-advadstrackbid]' ).length ) {
+			if ( ! $target.find( '[data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackbid' ) + ']' ).length ) {
 				return;
 			}
-			$target.find( '[data-advadstrackbid]' ).each( function () {
+			$target.find( '[data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackbid' ) + ']' ).each( function () {
 				var $this = jQuery( this );
-				if ( ! $this.data( 'delayed' ) || ! $this.data( 'advadsimpression' ) ) {
+				if ( ! $this.data( 'delayed' ) || ! $this.data( AdvAdsTrackingUtils.getPrefixedAttribute( 'impression' ) ) ) {
 					return;
 				}
-				bid = parseInt( $this.attr( 'data-advadstrackbid' ), 10 );
-				id  = parseInt( $this.attr( 'data-advadstrackid' ), 10 );
+				bid = parseInt( $this.attr( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackbid' ) ), 10 );
+				id  = parseInt( $this.attr( 'data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackid' ) ), 10 );
 				addAd( id, bid );
 			} );
 		}

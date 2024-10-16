@@ -53,7 +53,17 @@ $limiter->recalculate_sums();
 	</table>
 	<p class="description">
 		<?php esc_html_e( 'Set a limit if you want to expire the ad after a specific amount of impressions or clicks.', 'advanced-ads-tracking' ); ?>
+		<a href="https://wpadvancedads.com/limit-ad-impressions-or-clicks/?utm_source=advanced-ads?utm_medium=link&utm_campaign=ad-edit-ad-limits" class="advads-manual-link" target="_blank">
+			<?php esc_html_e( 'Manual', 'advanced-ads-tracking' ); ?>
+		</a>
 	</p>
+	<?php
+		$reset_stats_url = add_query_arg(array(
+			'page'           => 'advads-tracking-db-page',
+			'reset-stats-id' => $post->ID,
+		), admin_url('admin.php'));
+	?>
+	<p><a href="<?php echo esc_url($reset_stats_url); ?>" target="_blank"><?php esc_html_e( 'Reset stats', 'advanced-ads-tracking' ); ?></a></p>
 </div>
 <hr/>
 <?php
@@ -73,7 +83,7 @@ if ( $use_clicks && ! empty( $click_limit ) ) {
 	}
 }
 ?>
-<p class="description advads-message-warning">
+<p class="description advads-notice-inline advads-idea">
 	<?php
 	$click_limit_reached      = $limiter->is_click_limit_reached();
 	$impression_limit_reached = $limiter->is_impression_limit_reached();
@@ -103,7 +113,7 @@ if ( $use_clicks && ! empty( $click_limit ) ) {
 		} else {
 			echo wp_kses(
 				__( 'Set an expiry date in the <em>Publish</em> meta box to spread impressions over a period.', 'advanced-ads-tracking' ),
-				array( 'em' => array() )
+				[ 'em' => [] ]
 			);
 		}
 	} else {

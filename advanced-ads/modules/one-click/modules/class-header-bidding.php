@@ -9,7 +9,7 @@
 
 namespace AdvancedAds\Modules\OneClick;
 
-use AdvancedAds\Utilities\Str;
+use AdvancedAds\Framework\Utilities\Str;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
 
 defined( 'ABSPATH' ) || exit;
@@ -18,27 +18,6 @@ defined( 'ABSPATH' ) || exit;
  * Header bidding tags.
  */
 class Header_Bidding implements Integration_Interface {
-
-	/**
-	 * Check if has gpt
-	 *
-	 * @var bool
-	 */
-	private $has_gpt = false;
-
-	/**
-	 * Check if has pubguru tag
-	 *
-	 * @var bool
-	 */
-	private $has_pubguru = false;
-
-	/**
-	 * Check if has traffic cop atq
-	 *
-	 * @var bool
-	 */
-	private $has_traffic_cop = false;
 
 	/**
 	 * Hook into WordPress
@@ -71,20 +50,16 @@ class Header_Bidding implements Integration_Interface {
 	 */
 	public function remove_tags( $script ): string {
 
-		if ( Str::str_contains( '/gpt.js', $script ) ) {
-			$script        = '';
-			$this->has_gpt = true;
+		if ( Str::contains( '/gpt.js', $script ) ) {
+			$script = '';
 		}
 
-		if ( Str::str_contains( '//m2d.m2.ai/', $script ) || Str::str_contains( '//c.pubguru.net/', $script ) ) {
-			$script            = '';
-			$this->has_gpt     = true;
-			$this->has_pubguru = true;
+		if ( Str::contains( '//m2d.m2.ai/', $script ) || Str::contains( '//c.pubguru.net/', $script ) ) {
+			$script = '';
 		}
 
-		if ( Str::str_contains( 'window.pg.atq = window.pg.atq || [];', $script ) ) {
-			$script                = '';
-			$this->has_traffic_cop = true;
+		if ( Str::contains( 'window.pg.atq = window.pg.atq || [];', $script ) ) {
+			$script = '';
 		}
 
 		return $script;
@@ -98,26 +73,33 @@ class Header_Bidding implements Integration_Interface {
 	 * @return string
 	 */
 	private function add_script_tag( $page ): string {
-		$name = Helpers::get_config_file();
+		$name    = Helpers::get_config_file();
+		$at_body = Options::module( 'header_bidding_at_body' );
 
 		if ( $name ) {
-			$script = [ '<head>' ];
-
-			if ( $this->has_gpt ) {
-				$script[] = '<script src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" async></script>'; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
-				$script[] = '<script type="text/javascript">window.googletag=window.googletag||{};window.googletag.cmd=window.googletag.cmd||[];';
-				$script[] = 'window.googletag.cmd.push(function(){window.__onpageGptEmbed=(new Date()).getTime()})</script>';
+			$script = [];
+			if ( ! $at_body ) {
+				$script[] = '<head>';
 			}
 
-			if ( $this->has_pubguru ) {
-				$script[] = sprintf( '<script src="//c.pubguru.net/%s" async> </script>', $name ); // phpcs:ignore
-			}
+			$script[] = '<script src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" async></script>'; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+			$script[] = '<script type="text/javascript">window.googletag=window.googletag||{};window.googletag.cmd=window.googletag.cmd||[];';
+			$script[] = 'window.googletag.cmd.push(function(){window.__onpageGptEmbed=(new Date()).getTime()})</script>';
+			$script[] = sprintf( '<script src="//c.pubguru.net/%s" async> </script>', $name ); // phpcs:ignore
 
-			if ( Helpers::is_module_enabled( 'traffic_cop' ) && Helpers::has_traffic_cop() && $this->has_traffic_cop ) {
+			if ( Options::module( 'traffic_cop' ) && Helpers::has_traffic_cop() ) {
 				$script[] = '<script>window.pg = window.pg || {};window.pg.atq = window.pg.atq || [];</script>';
 			}
 
-			$page = str_replace( '<head>', join( "\n", $script ), $page );
+			if ( $at_body ) {
+				$page = $page . join( "\n", $script );
+			} else {
+				$page = str_replace(
+					'<head>',
+					join( "\n", $script ),
+					$page
+				);
+			}
 		}
 
 		return $page;

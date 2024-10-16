@@ -3187,3 +3187,62 @@
 .cff-fb-srcs-item-inf .sb-group-small-notice:hover {
 	z-index: 9999999999999999999;
 }
+
+
+/* Footer Socials */
+
+
+.sb-bottom-footer-social-ctn {
+	align-items: center;
+	color: #818589;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin-bottom: 50px;
+	margin-top: 80px
+}
+
+.sb-bottom-footer-description {
+	color: #646970;
+	display: flex;
+	gap: 5px;
+}
+
+.sb-bottom-footer-description svg {
+	fill: currentColor;
+	display: inline-block;
+	margin: 0 5px;
+	-webkit-transform: translateY(3px);
+	transform: translateY(3px)
+}
+
+.sb-bottom-footer-links {
+	-webkit-column-gap: 30px;
+	column-gap: 30px;
+	display: flex;
+	margin-bottom: 15px;
+	margin-top: 10px
+}
+
+.sb-bottom-footer-links a {
+	display: inline-block;
+	position: relative
+}
+
+.sb-bottom-footer-links a:after {
+	color: #818589;
+	content: "/";
+	position: absolute;
+	right: -15px
+}
+
+.sb-bottom-footer-links a:last-of-type:after {
+	content: ""
+}
+
+.sb-bottom-footer-sociallinks {
+	align-items: center;
+	-webkit-column-gap: 15px;
+	column-gap: 15px;
+	display: flex
+}

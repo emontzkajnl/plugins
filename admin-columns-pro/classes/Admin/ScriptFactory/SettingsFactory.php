@@ -93,6 +93,9 @@ class SettingsFactory implements ScriptFactory
             Group::ELEMENT => __('Default Elements', 'codepress-admin-columns'),
         ];
 
+        $table_views = $this->get_table_views($this->list_screen->get_key());
+        $presets = $this->get_templates($this->list_screen->get_key());
+
         foreach ($groups as $group_name => $group_label) {
             $group = [
                 'group_name'  => $group_name,
@@ -114,8 +117,8 @@ class SettingsFactory implements ScriptFactory
 
             $inline_vars['table_elements'][] = $group;
             $inline_vars['read_only'] = $this->list_screen->is_read_only();
-            $inline_vars['table_views'] = $this->get_table_views($this->list_screen->get_key());
-            $inline_vars['presets'] = $this->get_templates($this->list_screen->get_key());
+            $inline_vars['table_views'] = $table_views;
+            $inline_vars['presets'] = $presets;
             $inline_vars['list_screen_label'] = $this->list_screen->get_label();
             $inline_vars['confirm_delete'] = apply_filters('ac/delete_confirmation', true);
         }

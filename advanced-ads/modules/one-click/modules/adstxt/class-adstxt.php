@@ -11,6 +11,8 @@ namespace AdvancedAds\Modules\OneClick\AdsTxt;
 
 use AdvancedAds\Utilities\WordPress;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
+use AdvancedAds\Framework\Utilities\Params;
+use AdvancedAds\Framework\Utilities\Str;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,41 +29,8 @@ class AdsTxt implements Integration_Interface {
 	public function hooks(): void {
 		remove_action( 'advanced-ads-plugin-loaded', 'advanced_ads_ads_txt_init' );
 
-		add_action( 'init', [ $this, 'add_rewrite_rules' ] );
-		add_filter( 'query_vars', [ $this, 'add_query_vars' ] );
 		add_action( 'template_redirect', [ $this, 'handle_redirect' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'allowed_redirect_hosts' ] );
-
-		if ( is_admin() ) {
-			( new Detector() )->hooks();
-		}
-	}
-
-	/**
-	 * Add rewrite rules
-	 *
-	 * @return void
-	 */
-	public function add_rewrite_rules(): void {
-		global $wp_rewrite;
-
-		if ( ! $wp_rewrite->using_permalinks() ) {
-			return;
-		}
-
-		add_rewrite_rule( 'ads\.txt$', $wp_rewrite->index . '?adstxt=1', 'top' );
-	}
-
-	/**
-	 * Add query var
-	 *
-	 * @param array $vars Array to hold query variables.
-	 *
-	 * @return array
-	 */
-	public function add_query_vars( $vars ): array {
-		$vars[] = 'adstxt';
-		return $vars;
 	}
 
 	/**
@@ -70,11 +39,14 @@ class AdsTxt implements Integration_Interface {
 	 * @return void
 	 */
 	public function handle_redirect(): void {
-		if ( empty( get_query_var( 'adstxt' ) ) ) {
+		if (
+			'ads-txt' !== get_query_var( 'name' ) ||
+			Str::contains( Params::server( 'REQUEST_URI' ), 'ads.txt' )
+		) {
 			return;
 		}
 
-		$redirect = sprintf( 'https://adstxt.pubguru.net/%s/ads.txt', WordPress::get_site_domain() );
+		$redirect = sprintf( 'https://adstxt.pubguru.net/pg/%s/ads.txt', WordPress::get_site_domain() );
 		wp_safe_redirect( $redirect, 301 );
 		exit;
 	}

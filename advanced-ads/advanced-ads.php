@@ -3,7 +3,7 @@
  * Advanced Ads.
  *
  * @package   Advanced_Ads
- * @author    Advanced Ads GmbH <support@wpadvancedads.com>
+ * @author    Advanced Ads <support@wpadvancedads.com>
  * @license   GPL-2.0+
  * @link      https://wpadvancedads.com
  * @copyright since 2013 Thomas Maier, Advanced Ads GmbH
@@ -12,8 +12,8 @@
  * Plugin Name:       Advanced Ads
  * Plugin URI:        https://wpadvancedads.com
  * Description:       Manage and optimize your ads in WordPress
- * Version:           1.52.4
- * Author:            Advanced Ads GmbH
+ * Version:           1.54.1
+ * Author:            Advanced Ads
  * Author URI:        https://wpadvancedads.com
  * Text Domain:       advanced-ads
  * Domain Path:       /languages
@@ -33,7 +33,7 @@ if ( defined( 'ADVADS_FILE' ) ) {
 }
 
 define( 'ADVADS_FILE', __FILE__ );
-define( 'ADVADS_VERSION', '1.52.4' );
+define( 'ADVADS_VERSION', '1.54.1' );
 
 // Load the autoloader.
 require_once __DIR__ . '/includes/class-autoloader.php';

@@ -70,7 +70,7 @@ class Advanced_Ads_Tracking_Limiter {
 
 		// Set the pace or recalculate on ad insert update.
 		// do this with priority 20, i.e. after the ad (and expiration date) has been saved.
-		add_action( 'save_post_' . Advanced_Ads::POST_TYPE_SLUG, array( $this, 'update_ad_limit_on_save' ), 20, 3 );
+		add_action( 'save_post_' . Advanced_Ads::POST_TYPE_SLUG, [ $this, 'update_ad_limit_on_save' ], 20, 3 );
 	}
 
 	/**
@@ -82,12 +82,12 @@ class Advanced_Ads_Tracking_Limiter {
 	 */
 	public function update_ad_limit_on_save( $post_ID, $post, $update ) {
 		// get the ad start date.
-		$start = date_create( $post->post_date_gmt )->getTimestamp();
+		$start = $this->parse_start_date( $post );
 
 		// refresh options.
 		$this->options = get_post_meta( $this->id, Advanced_Ads_Ad::$options_meta_field, true );
 		if (
-			! in_array( $post->post_status, array( 'publish', 'future' ), true )
+			! in_array( $post->post_status, [ 'publish', 'future' ], true )
 			|| ( $this->get_expiration() && ( time() > $this->get_expiration() || $start > $this->get_expiration() ) )
 		) {
 			self::remove_events_for_ad( $post_ID );
@@ -121,7 +121,7 @@ class Advanced_Ads_Tracking_Limiter {
 		}
 
 		if ( empty( $this->get_expiration() ) ) {
-			$this->remove_events_for_ad( $post_ID );
+			self::remove_events_for_ad( $post_ID );
 		} else {
 			$this->add_events_for_ad( $post_ID );
 		}
@@ -151,8 +151,8 @@ class Advanced_Ads_Tracking_Limiter {
 					delete_post_meta( $row['post_id'], self::META_KEY );
 					continue;
 				}
-				$value['sums'] = array();
-				$value['pace'] = array();
+				$value['sums'] = [];
+				$value['pace'] = [];
 				unset( $value['start'] );
 				update_post_meta( $row['post_id'], self::META_KEY, $value );
 			}
@@ -162,7 +162,7 @@ class Advanced_Ads_Tracking_Limiter {
 
 		if ( (int) $ad_id > 0 ) {
 			$meta         = get_post_meta( $ad_id, self::META_KEY, true );
-			$meta['sums'] = array();
+			$meta['sums'] = [];
 			update_post_meta( $ad_id, self::META_KEY, $meta );
 			( new self( $ad_id ) )->recalculate_pace();
 		}
@@ -179,7 +179,7 @@ class Advanced_Ads_Tracking_Limiter {
 		}
 		$pace = get_post_meta( $this->id, self::META_KEY, true );
 		if ( empty( $pace ) ) {
-			$pace = array();
+			$pace = [];
 		}
 		if ( ! array_key_exists( 'start', $pace ) ) {
 			$this->set_pace( date_create( get_post( $this->id )->post_date_gmt )->getTimestamp() );
@@ -221,9 +221,9 @@ class Advanced_Ads_Tracking_Limiter {
 	 * @param int $ad_id The ad that expired.
 	 */
 	public static function remove_events_for_ad( $ad_id ) {
-		$next = wp_next_scheduled( self::PACE_CRON, array( $ad_id ) );
+		$next = wp_next_scheduled( self::PACE_CRON, [ $ad_id ] );
 		if ( $next ) {
-			wp_unschedule_event( $next, self::PACE_CRON, array( $ad_id ) );
+			wp_unschedule_event( $next, self::PACE_CRON, [ $ad_id ] );
 		}
 	}
 
@@ -239,18 +239,18 @@ class Advanced_Ads_Tracking_Limiter {
 			$start = $now;
 		}
 		$start = $start + ( HOUR_IN_SECONDS - $start % HOUR_IN_SECONDS );
-		$next  = wp_next_scheduled( self::PACE_CRON, array( $ad_id ) );
+		$next  = wp_next_scheduled( self::PACE_CRON, [ $ad_id ] );
 		if ( $next ) {
-			wp_unschedule_event( $next, self::PACE_CRON, array( $ad_id ) );
+			wp_unschedule_event( $next, self::PACE_CRON, [ $ad_id ] );
 		}
-		wp_schedule_event( $start, 'hourly', self::PACE_CRON, array( $ad_id ) );
+		wp_schedule_event( $start, 'hourly', self::PACE_CRON, [ $ad_id ] );
 	}
 
 	/**
 	 * Register callback functions for cron actions.
 	 */
 	public static function register_event_hooks() {
-		add_action( self::PACE_CRON, array( self::class, 'recalculate_pace' ) );
+		add_action( self::PACE_CRON, [ self::class, 'recalculate_pace' ] );
 	}
 
 	/**
@@ -261,10 +261,10 @@ class Advanced_Ads_Tracking_Limiter {
 			return;
 		}
 		$this->get_pace();
-		$count = array(
+		$count = [
 			'impressions' => 0,
 			'clicks'      => 0,
-		);
+		];
 		$this->maybe_add_current_hour();
 		foreach ( $this->pace['sums'] as $hour => $stats ) {
 			$timestamp = str_split( (string) $hour, 2 );
@@ -319,7 +319,7 @@ class Advanced_Ads_Tracking_Limiter {
 	 */
 	private function recalculate_pace() {
 		$this->recalculate_sums();
-		foreach ( array( 'impressions', 'clicks' ) as $metric ) {
+		foreach ( [ 'impressions', 'clicks' ] as $metric ) {
 			if ($this->get_expiration()) {
 				$this->pace['pace'][ $metric ] = $this->calculate_pace( time(), $this->pace['limit'][ $metric ] - $this->get_sums()[ $metric ] );
 			} else {
@@ -360,10 +360,10 @@ class Advanced_Ads_Tracking_Limiter {
 	public function get_remaining() {
 		$this->get_pace();
 		if ( empty( $this->pace ) || ! $this->has_limit() ) {
-			return array(
+			return [
 				'impressions' => 1,
 				'clicks'      => 1,
-			);
+			];
 		}
 
 		if ( ! empty( $this->pace['end'] ) ) {
@@ -374,10 +374,10 @@ class Advanced_Ads_Tracking_Limiter {
 		}
 
 		return array_filter(
-			array(
+			[
 				'impressions' => max( $this->pace['pace']['impressions'] - $sums['impressions'], 0 ),
 				'clicks'      => max( $this->pace['pace']['clicks'] - $sums['clicks'], 0 ),
-			)
+			]
 		);
 	}
 
@@ -511,10 +511,10 @@ class Advanced_Ads_Tracking_Limiter {
 	 */
 	private function maybe_add_current_hour() {
 		if ( ! array_key_exists( $this->get_timestamp(), $this->pace['sums'] ) ) {
-			$this->pace['sums'][ $this->get_timestamp() ] = array(
+			$this->pace['sums'][ $this->get_timestamp() ] = [
 				'impressions' => 0,
 				'clicks'      => 0,
-			);
+			];
 		}
 	}
 
@@ -546,7 +546,7 @@ class Advanced_Ads_Tracking_Limiter {
 		$clicks_budget      = $clicks_limit - $previous_sums['clicks'];
 
 		// Add to total if there are already stats for the current hour.
-		$sums = isset( $this->pace['sums'] ) ? $this->pace['sums'] : array();
+		$sums = isset( $this->pace['sums'] ) ? $this->pace['sums'] : [];
 		if ( array_key_exists( $this->get_timestamp(), $sums ) ) {
 			$impressions_budget += $sums[ $this->get_timestamp() ]['impressions'];
 			$clicks_budget      += $sums[ $this->get_timestamp() ]['clicks'];
@@ -555,19 +555,19 @@ class Advanced_Ads_Tracking_Limiter {
 		$impressions_budget = max( $impressions_budget, 0 );
 		$clicks_budget      = max( $clicks_budget, 0 );
 
-		$this->pace = array(
+		$this->pace = [
 			'start' => $start,
 			'end'   => $this->get_expiration(),
-			'limit' => array(
+			'limit' => [
 				'impressions' => $impressions_limit,
 				'clicks'      => $clicks_limit,
-			),
-			'pace'  => array(
+			],
+			'pace'  => [
 				'impressions' => $this->get_expiration() ? $this->calculate_pace( $start, $impressions_budget ) : $impressions_limit,
 				'clicks'      => $this->get_expiration() ? $this->calculate_pace( $start, $clicks_budget ) : $clicks_limit,
-			),
+			],
 			'sums'  => $sums,
-		);
+		];
 	}
 
 	/**
@@ -640,5 +640,25 @@ class Advanced_Ads_Tracking_Limiter {
 		}, 0 );
 
 		return $sum >= $this->pace['limit'][ $dimension ];
+	}
+
+	/**
+	 * If post_date_gmt is empty, try to get the gmt from the post_date.
+	 * If that is still empty, use the current time.
+	 *
+	 * @param WP_Post $post The saved post object of post_type advancde_ads.
+	 *
+	 * @return int
+	 */
+	private function parse_start_date( WP_Post $post ) {
+		$date_gmt = $post->post_date_gmt === '0000-00-00 00:00:00'
+			? get_gmt_from_date( $post->post_date )
+			: $post->post_date_gmt;
+
+		if ( $date_gmt === '0000-00-00 00:00:00' ) {
+			$date_gmt = current_time( 'mysql' );
+		}
+
+		return date_create( $date_gmt )->getTimestamp();
 	}
 }

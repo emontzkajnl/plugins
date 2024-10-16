@@ -49,6 +49,13 @@ class Advanced_Ads_Pro_Module_CFP
 		// get host name form server first before getting client side value
 		$host_name = !empty( $_SERVER['SERVER_NAME'] )? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
 
+		if ( empty( $host_name ) ) {
+			return [
+				'path'   => '/',
+				'domain' => '',
+			];
+		}
+
 		$expl_url = explode( '.', $site_url );
 
 		if ( 2 < count( $expl_url ) ) {

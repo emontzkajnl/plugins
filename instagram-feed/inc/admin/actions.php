@@ -1,4 +1,5 @@
 <?php
+use InstagramFeed\Admin\SBI_Callout;
 /**
  * Includes functions related to actions while in the admin area.
  *
@@ -104,6 +105,7 @@ function sb_menu_notice_bubble() {
 		return ' <span class="update-plugins sbi-error-alert sbi-notice-alert"><span>!</span></span>';
 	}
 
+	$notice = '';
 	$notifications = false;
 	if ( class_exists( '\SBI_Notifications' ) ) {
 		$sbi_notifications = new \SBI_Notifications();
@@ -114,19 +116,14 @@ function sb_menu_notice_bubble() {
 		}
 	}
 
-	global $sbi_notices;
-	$template_notice = $sbi_notices->get_notice('custom_feed_templates');
-	$sbi_statuses = get_option('sbi_statuses', array());
-
-	if ($template_notice && isset($sbi_statuses['custom_templates_notice'])) {
-		$notifications = $notifications ? $notifications + 1 : 1;
-	}
+	$callout = SBI_Callout::print_callout_ob_html('side-menu');
+	$print_callout = $callout !== false ? $callout : '';
 
 	if ( $notifications ) {
-		return ' <span class="sbi-notice-alert"><span>' . absint( $notifications ) . '</span></span>';
+		$notice = ' <span class="sbi-notice-alert"><span>' . absint( $notifications ) . '</span></span>';
 	}
 
-	return '';
+	return $notice . $print_callout;
 }
 
 function sbi_add_settings_link( $links ) {
@@ -176,6 +173,7 @@ function sb_instagram_admin_scripts() {
 		'plugin_install_activate_btn'     => esc_html__( 'Install and Activate', 'instagram-feed' ),
 		'plugin_install_activate_confirm' => esc_html__( 'needs to be installed and activated to import its forms. Would you like us to install and activate it for you?', 'instagram-feed' ),
 		'plugin_activate_btn'             => esc_html__( 'Activate', 'instagram-feed' ),
+		'oembed_connectionURL'            => sbi_get_oembed_connection_url(),
 	);
 	$strings = apply_filters( 'sbi_admin_strings', $strings );
 	wp_localize_script(
@@ -189,6 +187,22 @@ function sb_instagram_admin_scripts() {
 	wp_enqueue_script( 'wp-color-picker' );
 }
 add_action( 'admin_enqueue_scripts', 'sb_instagram_admin_scripts' );
+
+function sbi_get_oembed_connection_url()
+{
+	$admin_url_state = admin_url('admin.php?page=sbi-oembeds-manager');
+	$nonce           = wp_create_nonce('sbi_con');
+	// If the admin_url isn't returned correctly then use a fallback
+	if ($admin_url_state == '/wp-admin/admin.php?page=sbi-oembeds-manager') {
+		$admin_url_state = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	}
+
+	return array(
+		'connect' => SBI_OEMBED_CONNECT_URL,
+		'sbi_con' => $nonce,
+		'stateURL' => $admin_url_state
+	);
+}
 
 function sbi_formatted_error( $response ) {
 	if ( isset( $response['error'] ) ) {

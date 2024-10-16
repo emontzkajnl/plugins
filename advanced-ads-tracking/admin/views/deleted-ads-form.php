@@ -8,10 +8,10 @@ $log_file          = Advanced_Ads_Tracking_Debugger::get_debug_file_path();
 $delete_debug_link = admin_url( 'admin.php?page=advads-tracking-db-page&delete-debug-nonce=' . $_request['delete-debug-nonce'] );
 $redirect_script   = sprintf(
 	'<script type="text/javascript">document.location.href = "%s";</script>',
-	add_query_arg( array(
+	add_query_arg( [
 		'page'             => 'advads-tracking-db-page',
 		'deleted_log_file' => true,
-	), admin_url( 'admin.php' ) )
+	], admin_url( 'admin.php' ) )
 );
 
 if ( get_filesystem_method() === 'direct' ) {
@@ -24,7 +24,7 @@ if ( get_filesystem_method() === 'direct' ) {
 }
 
 $_POST['delete-debug-nonce'] = $_request['delete-debug-nonce'];
-$extra_fields                = array( 'delete-debug-nonce' );
+$extra_fields                = [ 'delete-debug-nonce' ];
 $method                      = '';
 
 echo '<style type="text/css">';

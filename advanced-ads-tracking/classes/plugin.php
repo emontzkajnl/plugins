@@ -32,9 +32,9 @@ class Advanced_Ads_Tracking_Plugin {
 	 *
 	 * @var        array
 	 */
-	private static $types_using_click_tracking = array( 'plain', 'dummy', 'content', 'image', 'adsense', 'gam' );
+	private static $types_using_click_tracking = [ 'plain', 'dummy', 'content', 'image', 'adsense', 'gam' ];
 
-	private $default_options = array(
+	private $default_options = [
 		'method'               => 'frontend',
 		'everything'           => 'true',
 		'linkbase'             => 'linkout',
@@ -48,7 +48,7 @@ class Advanced_Ads_Tracking_Plugin {
 		'email-sender-name'    => 'Advanced Ads',
 		'email-sender-address' => 'noreply@_',
 		'email-subject'        => 'Ads Statistics',
-	);
+	];
 
 	/**
 	 * Advanced_Ads_Tracking_Plugin constructor.
@@ -62,13 +62,13 @@ class Advanced_Ads_Tracking_Plugin {
 		// register plugin for auto updates
 		// -TODO this is true for any AJAX call
 		if ( is_admin() ) {
-			add_filter( 'advanced-ads-add-ons', array( $this, 'register_auto_updater' ), 10 );
-			add_action( 'wp_ajax_advads_track_i327', array( $this, 'db_repair_i327' ) );
-			add_action( 'admin_footer', array( $this, 'admin_footer' ) );
+			add_filter( 'advanced-ads-add-ons', [ $this, 'register_auto_updater' ], 10 );
+			add_action( 'wp_ajax_advads_track_i327', [ $this, 'db_repair_i327' ] );
+			add_action( 'admin_footer', [ $this, 'admin_footer' ] );
 		}
 
 		// check if UID is present when tracking with Google Analytics.
-		add_filter( 'advanced-ads-ad-health-notices', array( $this, 'add_missing_gauid_notice' ) );
+		add_filter( 'advanced-ads-ad-health-notices', [ $this, 'add_missing_gauid_notice' ] );
 		$this->check_missing_gauid();
 	}
 
@@ -95,7 +95,7 @@ class Advanced_Ads_Tracking_Plugin {
 	public function options() {
 		// don't initiate if main plugin not loaded
 		if ( ! class_exists( 'Advanced_Ads', false ) ) {
-			return array();
+			return [];
 		}
 
 		// return options if already loaded
@@ -103,7 +103,7 @@ class Advanced_Ads_Tracking_Plugin {
 			return $this->options;
 		}
 
-		$this->options = get_option( $this->options_slug, array() );
+		$this->options = get_option( $this->options_slug, [] );
 
 		// get "old" options
 		if ( empty( $this->options ) ) {
@@ -130,11 +130,11 @@ class Advanced_Ads_Tracking_Plugin {
 	 * @return array
 	 */
 	public function add_missing_gauid_notice( $notices ) {
-		$notices['tracking_missing_gauid'] = array(
+		$notices['tracking_missing_gauid'] = [
 			/* Translators: 1: opening a-tag with link to settings page 2: closing a-tag */
 			'text' => sprintf( __( 'You have selected to track ads with Google Analytics but not provided a tracking ID. Please add the Google Analytics UID %1$shere%2$s', 'advanced-ads-tracking' ), sprintf( '<a href="%s">', admin_url( 'admin.php?page=advanced-ads-settings#top#tracking' ) ), '</a>' ),
 			'type' => 'problem',
-		);
+		];
 
 		return $notices;
 	}
@@ -166,7 +166,7 @@ class Advanced_Ads_Tracking_Plugin {
 			$options = $this->options();
 			$method  = ( array_key_exists( 'method', $options ) && is_string( $options['method'] ) ) ? $options['method'] : '';
 		}
-		$valid_methods = array( 'frontend', 'ga', 'onrequest' );
+		$valid_methods = [ 'frontend', 'ga', 'onrequest' ];
 
 		if ( empty( $method ) || ! in_array( $method, $valid_methods, true ) ) {
 			$method = 'frontend';
@@ -203,7 +203,7 @@ class Advanced_Ads_Tracking_Plugin {
 	 */
 	public function update_options( array $options ) {
 		// don’t allow to clear options
-		if ( $options === array() ) {
+		if ( $options === [] ) {
 			return;
 		}
 
@@ -218,13 +218,13 @@ class Advanced_Ads_Tracking_Plugin {
 	 *
 	 * @return array
 	 */
-	public function register_auto_updater( array $plugins = array() ) {
-		$plugins['tracking'] = array(
+	public function register_auto_updater( array $plugins = [] ) {
+		$plugins['tracking'] = [
 			'name'         => AAT_PLUGIN_NAME,
 			'version'      => AAT_VERSION,
 			'path'         => AAT_BASE_PATH . 'tracking.php',
 			'options_slug' => $this->options_slug,
-		);
+		];
 
 		return $plugins;
 	}
@@ -241,8 +241,20 @@ class Advanced_Ads_Tracking_Plugin {
 
 		// TODO: write a better implementation; right now this check should be enough and has little performance impact compared to more generic approaches
 
+		$global_options = $this->options();
+		$disabled_roles = $global_options['disabled-roles'] ?? [];
+
+		// Disabled tracking for user role.
+		if ( ! empty( $disabled_roles ) ) {
+			foreach ( wp_get_current_user()->roles as $role ) {
+				if ( in_array( $role, $disabled_roles, true ) ) {
+					return false;
+				}
+			}
+		}
+
 		// don’t track Yieldscale ad type.
-		if ( isset( $ad->type ) && in_array( $ad->type, array( 'yieldscale' ), true ) ) {
+		if ( isset( $ad->type ) && in_array( $ad->type, [ 'yieldscale' ], true ) ) {
 			return false;
 		}
 		$options  = $ad->options();
@@ -251,7 +263,6 @@ class Advanced_Ads_Tracking_Plugin {
 		// check for default settings
 		if ( ! isset( $tracking ) || $tracking === 'default' ) {
 			// check global setting
-			$global_options = $this->options();
 			if ( ! empty( $global_options ) ) {
 				if ( ! isset( $global_options['everything'] ) ) {
 					return true;
@@ -306,9 +317,11 @@ class Advanced_Ads_Tracking_Plugin {
 			$impressions = $wpdb->prefix . Advanced_Ads_Tracking_Util::TABLE_BASENAME;
 			$clicks      = $wpdb->prefix . Advanced_Ads_Tracking_Util::TABLE_CLICKS_BASENAME;
 
-			$result  = $wpdb->query( "UPDATE ${impressions} SET `timestamp` = 1812523106 WHERE `timestamp` = 1812013106" );
-			$result2 = $wpdb->query( "UPDATE ${clicks} SET `timestamp` = 1812523106 WHERE `timestamp` = 1812013106" );
+			// phpcs:disable WordPress.DB.PreparedSQL -- we can't prepare the table names.
+			$result  = $wpdb->query( "UPDATE {$impressions} SET `timestamp` = 1812523106 WHERE `timestamp` = 1812013106" );
+			$result2 = $wpdb->query( "UPDATE {$clicks} SET `timestamp` = 1812523106 WHERE `timestamp` = 1812013106" );
 			echo $result . '//' . $result2;
+			// phpcs:enable
 
 			$options         = $this->options();
 			$options['i327'] = true;
@@ -350,5 +363,30 @@ class Advanced_Ads_Tracking_Plugin {
 		 * @param array default clickable types.
 		 */
 		return (array) apply_filters( 'advanced-ads-tracking-clickable-types', self::$types_using_click_tracking );
+	}
+
+	/**
+	 * Retrieves the default tracking method's name based on options.
+	 *
+	 * @return string The name of the default tracking method.
+	 */
+	public function get_default_track_method() {
+		// Fetch options using the options() method
+		$options = $this->options();
+
+		// Early bail!!
+		if ( ! isset( $options['everything'] ) ) {
+			return esc_html__( 'disabled', 'advanced-ads-tracking');
+		}
+
+		// tracking methods
+		$tracking_choices = [
+			'impressions' => esc_html__( 'impressions only', 'advanced-ads-tracking'),
+			'clicks' => esc_html__( 'clicks only', 'advanced-ads-tracking'),
+			'true' => esc_html__( 'impressions & clicks', 'advanced-ads-tracking')
+		];
+
+		// Check if the 'everything' key exists in options
+		return  $tracking_choices[$options['everything']] ?? esc_html__( 'disabled', 'advanced-ads-tracking');
 	}
 }

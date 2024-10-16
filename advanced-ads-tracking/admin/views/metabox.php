@@ -29,10 +29,21 @@ $the_ad = new Advanced_Ads_Ad( $post->ID );
 	<ul id="tracking-ads-box-notices" class="advads-metabox-notices">
 	<?php
 	foreach ( $warnings as $_warning ) {
-		$warning_class = isset( $_warning['class'] ) ? $_warning['class'] : '';
-		echo '<li class="' . $warning_class . '">';
-		echo $_warning['text'];
-		echo '</li>';
+		?>
+			<li <?php echo isset( $_warning['class'] ) ? 'class="' . esc_attr( $_warning['class'] ) . '"' : ''; ?>>
+		<?php
+		echo wp_kses(
+			$_warning['text'],
+			[
+				'a' => [
+					'href'   => [],
+					'target' => [],
+				],
+			]
+		);
+		?>
+			</li>
+		<?php
 	}
 endif;
 // hide options if Google Analytics tracking method is used
@@ -48,24 +59,24 @@ if ( $this->plugin->get_tracking_method() !== 'ga' ) :
 		$from = date_create( '14 days ago', Advanced_Ads_Tracking_Util::get_wp_timezone() );
 
 		$clicks_stats = $this->load_stats(
-			array(
-				'ad_id'   => array( $post->ID ),
+			[
+				'ad_id'   => [ $post->ID ],
 				'period'  => 'custom',
 				'groupby' => 'day',
 				'from'    => $from->format( 'm/d/Y' ),
 				'to'      => $to->format( 'm/d/Y' ),
-			),
+			],
 			$wpdb->prefix . 'advads_clicks'
 		);
 
 		$impressions_stats = $this->load_stats(
-			array(
-				'ad_id'   => array( $post->ID ),
+			[
+				'ad_id'   => [ $post->ID ],
 				'period'  => 'custom',
 				'groupby' => 'day',
 				'from'    => $from->format( 'm/d/Y' ),
 				'to'      => $to->format( 'm/d/Y' ),
-			),
+			],
 			$wpdb->prefix . 'advads_impressions'
 		);
 
@@ -73,10 +84,10 @@ if ( $this->plugin->get_tracking_method() !== 'ga' ) :
 		while ( $to >= $from ) {
 			$to_key = $to->format( 'Y-m-d' );
 			if ( ! array_key_exists( $to_key, $impressions_stats ) ) {
-				$impressions_stats[ $to_key ] = array( $post->ID => null );
+				$impressions_stats[ $to_key ] = [ $post->ID => null ];
 			}
 			if ( ! array_key_exists( $to_key, $clicks_stats ) ) {
-				$clicks_stats[ $to_key ] = array( $post->ID => null );
+				$clicks_stats[ $to_key ] = [ $post->ID => null ];
 			}
 			$to->modify( '-1 day' );
 		}
@@ -84,11 +95,11 @@ if ( $this->plugin->get_tracking_method() !== 'ga' ) :
 		ksort( $impressions_stats );
 		ksort( $clicks_stats );
 
-		$stats = array(
+		$stats = [
 			'ID'          => $post->ID,
 			'impressions' => $impressions_stats,
 			'clicks'      => $clicks_stats,
-		);
+		];
 
 		?>
 		<script type="text/javascript">

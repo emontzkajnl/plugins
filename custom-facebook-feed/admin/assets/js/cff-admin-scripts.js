@@ -985,7 +985,7 @@ jQuery(document).ready(function($) {
 	}
 
 	//Click event for other plugins in menu
-    $('.cff_get_sbr, .cff_get_sbi, .cff_get_cff, .cff_get_ctf, .cff_get_yt').parent().on('click', function(e){
+    $('.cff_get_sbr, .cff_get_sbi, .cff_get_cff, .cff_get_ctf, .cff_get_yt, .cff_get_tiktok').parent().on('click', function(e){
         e.preventDefault();
 
 		// remove the already opened modal
@@ -1006,6 +1006,8 @@ jQuery(document).ready(function($) {
             sb_get_plugin = 'youtube';
         } else if( $self.hasClass('cff_get_sbr') ){
             sb_get_plugin = 'reviews';
+        } else if( $self.hasClass('cff_get_tiktok') ){
+	        sb_get_plugin = 'tiktok';
         }
 
 		// send the ajax request to load plugin name and others data

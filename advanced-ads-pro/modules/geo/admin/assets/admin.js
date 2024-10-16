@@ -157,8 +157,15 @@ jQuery( $ => {
 			 $noDbWarning.remove();
 			 $downloadButton.remove();
 		 } )
-		 .fail( function ( jqXHR, errormessage, errorThrown ) {
-			 $uploadError.html( errormessage ).show();
+		 .fail( function ( jqXHR, errorMessage ) {
+			 let responseText;
+			 try {
+				 responseText = jQuery.parseJSON( jqXHR.responseText );
+			 } catch ( e ) {
+				 responseText = null;
+			 }
+			 errorMessage = responseText && responseText.data ? responseText.data : errorMessage;
+			 $uploadError.html( errorMessage ).show();
 			 $uploadSuccess.hide();
 			 $downloadButton.attr( 'disabled', false );
 		 } )

@@ -49,6 +49,8 @@ class CFF_Feed_Pro{
 
 	protected $one_post_found;
 
+	protected $max_api_calls;
+
 	public function __construct( $transient_name, $is_customizer = false ) {
 		$this->regular_feed_transient_name = $transient_name;
 

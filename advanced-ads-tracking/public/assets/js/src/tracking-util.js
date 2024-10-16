@@ -74,6 +74,30 @@ var AdvAdsTrackingUtils = {
 	},
 
 	/**
+	 * Add the frontend prefix to requested data-attributes.
+	 *
+	 * @param {string} name
+	 * @returns {string}
+	 */
+	getPrefixedAttribute: function ( name ) {
+		return '' + window.advadsTracking.frontendPrefix + name;
+	},
+
+	/**
+	 * Add the frontend prefix to requested attributes from dataset.
+	 * These need to be camelCased.
+	 *
+	 * @param {string} name
+	 * @returns {string}
+	 */
+	getPrefixedDataSetAttribute: function ( name ) {
+		return this.getPrefixedAttribute( name )
+				   .toLowerCase()
+				   .replace( 'data-', '' )
+				   .replace( /-([a-z]?)/g, ( m, g ) => g.toUpperCase() );
+	},
+
+	/**
 	 * Replacement for jQuery.extend.
 	 *
 	 * @return {object}
@@ -146,7 +170,7 @@ var AdvAdsTrackingUtils = {
 	/**
 	 * Check if the current blog uses GA tracking (setting or parallel) and UID is set.
 	 *
-	 * @param {string} bid
+	 * @param {number} bid
 	 * @return {boolean}
 	 */
 	blogUseGA: function ( bid ) {

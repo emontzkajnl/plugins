@@ -1,8 +1,10 @@
 <?php
 // phpcs:ignoreFile
 
-use AdvancedAds\Utilities\Conditional;
+use AdvancedAds\Importers\Api_Ads;
 use AdvancedAds\Utilities\WordPress;
+use AdvancedAds\Utilities\Conditional;
+use AdvancedAds\Framework\Utilities\Params;
 
 /**
  * Advanced Ads main admin class
@@ -105,6 +107,7 @@ class Advanced_Ads_Admin {
 
 		// update placements.
 		add_action( 'admin_init', [ 'Advanced_Ads_Placements', 'update_placements' ] );
+		add_action( 'admin_init', [ $this, 'api_import_rollback' ] );
 
 		// add Advanced Ads admin notices
 		// removes admin notices from other plugins
@@ -130,6 +133,7 @@ class Advanced_Ads_Admin {
 	public function wp_plugins_loaded_ajax() {
 		// needed here in order to work with Quick Edit option on ad list page.
 		Advanced_Ads_Admin_Ad_Type::get_instance();
+		new Advanced_Ads\Admin\Post_List();
 
 		add_action( 'wp_ajax_advads_load_rss_widget_content', [ 'Advanced_Ads_Admin_Meta_Boxes', 'dashboard_widget_function_output' ] );
 	}
@@ -480,5 +484,41 @@ class Advanced_Ads_Admin {
 			'</a>'
 		);
 		echo '</span>';
+	}
+
+	public function api_import_rollback() {
+		if ( 'advads_import_delete' !== Params::get( 'action' ) ) {
+			return;
+		}
+
+		check_admin_referer( 'advads_import_delete' );
+
+		$session_key = Params::get( 'session_key' );
+		$db_session  = get_option( 'advanced-ads-importer-history' );
+
+		if ( $session_key !== $db_session ) {
+			add_action( 'all_admin_notices', [ $this, 'import_error' ] );
+			return;
+		}
+
+		( new Api_Ads() )->rollback( $session_key);
+		delete_option( 'advanced-ads-importer-history' );
+		add_action( 'all_admin_notices', [ $this, 'import_success' ] );
+	}
+
+	public function import_error() {
+		?>
+		<div class="notice notice-error">
+			<p><strong>Error:</strong> Session key not matched.</p>
+		</div>
+		<?php
+	}
+
+	public function import_success() {
+		?>
+		<div class="notice notice-success">
+			<p><strong>Success:</strong> the rollback is completed.</p>
+		</div>
+		<?php
 	}
 }

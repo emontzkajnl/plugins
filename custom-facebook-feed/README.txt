@@ -3,8 +3,8 @@ Contributors: smashballoon, craig-at-smash-balloon, am, smub
 Tags: Facebook, Facebook feed, Facebook posts, Facebook account, Facebook page
 Requires at least: 4.1
 Requires PHP: 5.6
-Tested up to: 6.5
-Stable tag: 4.2.4
+Tested up to: 6.6
+Stable tag: 4.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -203,6 +203,10 @@ The most common reason for this is that an add-on or extension you have installe
 9. It's super easy to display your Facebook feed in any page or post
 
 == Changelog ==
+= 4.2.5 =
+* New: Added a menu item to easily install our new [TikTok Feeds](https://wordpress.org/plugins/feeds-for-tiktok/) plugin!
+* Fix: Fixed links in the submenu for other social feeds not working as expected.
+
 = 4.2.4 =
 * Important: Due to Meta (Facebook) changes, how our plugin supports Facebook oEmbeds has also changed. If you are using the oEmbed feature to display Facebook oEmbeds, you will need to reconnect your account. Visit the oEmbeds page within the Facebook Feeds settings page to do the reconnection before May 14, 2024.
 
@@ -219,7 +223,7 @@ The most common reason for this is that an add-on or extension you have installe
 
 = 4.2 =
 * New: Added an onboarding wizard for new users to easily get started with Facebook Feeds.
-* Fix : Fixed PHP 8.x warning (PHP Deprecated:  Calling static trait method)
+* Fix: Fixed PHP 8.x warning (PHP Deprecated:  Calling static trait method)
 
 = 4.1.9 =
 * New: Added a menu item to easily install our new [Reviews Feed](https://wordpress.org/plugins/reviews-feed/) plugin!

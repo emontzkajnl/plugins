@@ -7,12 +7,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:awesomemotive\/sb-common.git",
-                "reference": "f05f6d29291e30deaf915a085dadd954e796be48"
+                "reference": "d16b5b43f5f4b2be3d1164945ae14bb36b951441"
             },
             "dist": {
                 "type": "zip",
-                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/f05f6d29291e30deaf915a085dadd954e796be48",
-                "reference": "f05f6d29291e30deaf915a085dadd954e796be48",
+                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/d16b5b43f5f4b2be3d1164945ae14bb36b951441",
+                "reference": "d16b5b43f5f4b2be3d1164945ae14bb36b951441",
                 "shasum": ""
             },
             "require": {
@@ -22,7 +22,7 @@
                 "phpcompatibility\/php-compatibility": "^9.3",
                 "squizlabs\/php_codesniffer": "^3.7"
             },
-            "time": "2024-03-14T12:10:05+00:00",
+            "time": "2024-07-22T09:16:04+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -50,7 +50,7 @@
             ],
             "description": "WordPress plugin framework. Developed by SmashBalloon Team.",
             "support": {
-                "source": "https:\/\/github.com\/awesomemotive\/sb-common\/tree\/SMASH-2-usage-tracking-lib",
+                "source": "https:\/\/github.com\/awesomemotive\/sb-common\/tree\/master",
                 "issues": "https:\/\/github.com\/awesomemotive\/sb-common\/issues"
             },
             "install-path": "..\/smashballoon\/framework"

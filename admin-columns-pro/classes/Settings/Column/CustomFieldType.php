@@ -17,7 +17,7 @@ class CustomFieldType extends AC\Settings\Column\CustomFieldType
         switch ($this->get_field_type()) {
             case self::TYPE_SELECT:
                 $settings[] = new SelectOptions($this->column);
-                
+
                 break;
             case AC\Settings\Column\CustomFieldType::TYPE_POST :
                 $settings[] = new AC\Settings\Column\Post($this->column);
@@ -57,6 +57,9 @@ class CustomFieldType extends AC\Settings\Column\CustomFieldType
 
                 return $value;
             case AC\Settings\Column\CustomFieldType::TYPE_ARRAY :
+                if (is_string($value)) {
+                    $value = json_decode($value, true);
+                }
 
                 return $value;
             default :

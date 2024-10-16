@@ -1,7 +1,6 @@
 <?php
 // phpcs:ignoreFile
 
-use AdvancedAds\Assets_Registry;
 use AdvancedAds\Utilities\WordPress;
 
 /**
@@ -52,8 +51,8 @@ class Advanced_Ads_Frontend_Checks {
 		}
 
 		if( $this->has_adblocker_placements() ) {
-			if ( ! Assets_Registry::script_is('find-adblocker', 'enqueued') ) {
-				Assets_Registry::enqueue_script('find-adblocker');
+			if ( ! wp_advads()->registry->is_script('find-adblocker', 'enqueued') ) {
+				wp_advads()->registry->enqueue_script('find-adblocker');
 			}
 		}
 	}

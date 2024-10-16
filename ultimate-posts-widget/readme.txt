@@ -5,8 +5,8 @@ License: MIT
 License URI: http://opensource.org/licenses/MIT
 Tags: widget, recent posts, custom post types, sticky posts, featured image, post thumbnail, excerpts, category, custom fields, list pages, widget query, microformats, customizable widget,  categories widget, tags widget, excerpt, widget templates, post author, post date, custom query, ultimate posts, comments, orderby, comment count
 Requires at least: 3.5
-Tested up to: 6.4.3
-Stable tag: 2.3.1
+Tested up to: 6.6
+Stable tag: 2.3.2
 
 The ultimate widget for displaying posts, custom post types or sticky posts with an array of options.
 
@@ -126,6 +126,11 @@ This plugin uses the [timthumb library](http://www.binarymoon.co.uk/projects/tim
 5. Order options tab
 
 == Changelog ==
+
+= 2.3.2 =
+* Tested with WordPress 6.6
+* Minor performance improvements 
+* Improvements for PHP 8 utilization
 
 = 2.3.1 =
 * [NOTE] Adjusted sanitization for widget fields even further
@@ -348,9 +353,10 @@ This plugin uses the [timthumb library](http://www.binarymoon.co.uk/projects/tim
 
 == Upgrade Notice ==
 
-= 2.3.1 =
-* [NOTE] Adjusted sanitization for widget fields even further
-* [NOTE] Tested up with WordPress 6.4.3
+= 2.3.2 =
+* Tested with WordPress 6.6
+* Minor performance improvements 
+* Improvements for PHP 8 utilization
 
 == Installation ==
 

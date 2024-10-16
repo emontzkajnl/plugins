@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="cff-fb-extpp-btns cff-fb-fs">
-                    <a class="cff-fb-extpp-get-btn cff-btn-orange" :href="extensionsPopup[viewsActive.extensionsPopupElement].buyUrl" target="_blank" class="cff-fb-fs-link" v-html="viewsActive.extensionsPopupElement == 'socialwall' ? genericText.seeTheDemo : genericText.seeProDemo"></a>
+                    <a class="cff-fb-extpp-get-btn cff-btn-green cff-fb-fs-link" :href="extensionsPopup[viewsActive.extensionsPopupElement].buyUrl" target="_blank" v-html="genericText.getStarted"></a>
                 </div>
             </div>
         </div>

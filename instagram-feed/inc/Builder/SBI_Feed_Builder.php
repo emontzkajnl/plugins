@@ -6,6 +6,7 @@
  */
 namespace InstagramFeed\Builder;
 
+use InstagramFeed\Admin\SBI_Callout;
 use InstagramFeed\Builder\Tabs\SBI_Styling_Tab;
 use InstagramFeed\Builder\SBI_Feed_Saver;
 use InstagramFeed\Helpers\Util;

@@ -70,7 +70,7 @@ class Post_List {
 	public function ads_column_init( array $columns ): array {
 		$post_type_object = get_post_type_object( get_current_screen()->post_type );
 
-		if ( ! $post_type_object->public ) {
+		if ( ! wp_doing_ajax() && ! $post_type_object->public ) {
 			return $columns;
 		}
 

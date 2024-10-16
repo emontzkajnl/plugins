@@ -5,7 +5,7 @@
 		$smashballoon_info = CustomFacebookFeed\Builder\CFF_Feed_Builder::get_smashballoon_info();
 	?>
 	<div class="cff-stck-pop" v-if="stickyWidget">
-		<div class="cff-stck-el cff-stck-el-upgrd sb-btn-orange">
+		<div class="cff-stck-el cff-stck-el-upgrd cff-btn-green">
 			<div class="cff-stck-el-icon"><?php echo $icons[$smashballoon_info['upgrade']['icon']] ?></div>
 			<div class="cff-stck-el-txt sb-small-p sb-bold" style="color: #fff;"><?php echo $smashballoon_info['upgrade']['name']; ?></div>
             <div class="cff-chevron">

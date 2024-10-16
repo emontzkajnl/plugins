@@ -1,12 +1,10 @@
-function AdvAdsGATracker( blogId, UID ) {
-	this.name               = 'AdvAdsGATracker_' + blogId;
+function AdvAdsGATracker( blogId, propertyIds ) {
 	this.blogId             = blogId;
-	this.UID                = UID;
-	this.analyticsObject    = typeof gtag === 'function';
+	this.propertyIds        = typeof propertyIds === 'string' ? [propertyIds] : propertyIds;
 	this.normalTrackingDone = false;
 	this.clickTimer         = null;
 
-	var self = this;
+	const self = this;
 
 	this.getQueryString = function ( URL ) {
 		var anchorElement  = document.createElement( 'a' );
@@ -93,11 +91,10 @@ function AdvAdsGATracker( blogId, UID ) {
 				typeof advads_gatracking_allads[self.blogId][trackedAds[i]] !== 'undefined'
 				&& advads_gatracking_allads[self.blogId][trackedAds[i]]['impression']
 			) {
-				gtag( 'event', advadsGALocale.Impressions, {
+				self.sendEvent( window.advadsTrackingGAEvents.impression, {
 					'event_category':  'Advanced Ads',
 					'event_label':     '[' + trackedAds[i] + '] ' + advads_gatracking_allads[self.blogId][trackedAds[i]]['title'],
-					'non_interaction': true,
-					'send_to':         self.UID
+					'non_interaction': true
 				} );
 			}
 		}
@@ -113,13 +110,12 @@ function AdvAdsGATracker( blogId, UID ) {
 		var trackData = {
 			'event_category':  'Advanced Ads',
 			'event_label':     '[' + id + '] ' + advads_gatracking_allads[self.blogId][id]['title'],
-			'non_interaction': true,
-			'send_to':         self.UID
+			'non_interaction': true
 		};
 
 		// Send the data and stop workflow if it is not a linkout link
 		if ( ! ev && ! el ) {
-			gtag( 'event', advadsGALocale.Clicks, trackData );
+			self.sendEvent( window.advadsTrackingGAEvents.click, trackData );
 			return;
 		}
 
@@ -147,7 +143,7 @@ function AdvAdsGATracker( blogId, UID ) {
 		var newTab = !! el.getAttribute( 'target' );
 		if ( newTab ) {
 			// the url is opened in a new tab/window
-			gtag( 'event', advadsGALocale.Clicks, trackData );
+			self.sendEvent( window.advadsTrackingGAEvents.click, trackData );
 			// no server side tracking, change the link to the real target before the browser opens a new tab
 			if ( ! serverSide ) {
 				el.setAttribute( 'href', url );
@@ -170,33 +166,41 @@ function AdvAdsGATracker( blogId, UID ) {
 			}
 
 			trackData.event_callback = abortAndRedirect;
-			gtag( 'event', advadsGALocale.Clicks, trackData );
+			self.sendEvent( window.advadsTrackingGAEvents.click, trackData );
 		}
+	};
+
+	this.sendEvent = ( type, data ) => {
+		self.propertyIds.forEach( propertyId => {
+			data.send_to = propertyId;
+			gtag( 'event', type, structuredClone( data ) );
+		} );
 	};
 
 	// pseudo-constructor
 	( function () {
-		if ( ! self.analyticsObject ) {
+		if ( typeof gtag !== 'function' ) {
 			// No one has requested gtag.js at this point, require it.
 			var script   = document.createElement( 'script' );
-			script.src   = 'https://www.googletagmanager.com/gtag/js?id=' + UID;
+			script.src   = 'https://www.googletagmanager.com/gtag/js';
 			script.async = true;
 
 			document.body.appendChild( script );
 
-			window.dataLayer     = window.dataLayer || [];
-			window.gtag          = function () {
+			window.dataLayer = window.dataLayer || [];
+			window.gtag      = function () {
 				dataLayer.push( arguments );
 			};
-			self.analyticsObject = true;
 			gtag( 'js', new Date() );
 		}
 
-		var config           = {'send_page_view': false, 'transport_type': 'beacon'};
+		var config = {'send_page_view': false, 'transport_type': 'beacon'};
 		if ( window.advads_gatracking_anonym ) {
 			config.anonymize_ip = true;
 		}
-		gtag( 'config', UID, config );
+		self.propertyIds.forEach( id => {
+			gtag( 'config', id, config );
+		} );
 
 		document.addEventListener( 'advadsGADeferedTrack', function () {
 			self.trackImpressions( false );
@@ -211,8 +215,8 @@ function AdvAdsGATracker( blogId, UID ) {
 }
 
 document.addEventListener( 'DOMContentLoaded', function () {
-	for ( var bid in advads_tracking_methods ) {
-		var bid = parseInt( bid, 10 );
+	for ( let bid in advads_tracking_methods ) {
+		bid = parseInt( bid, 10 );
 		if ( isNaN( bid ) ) {
 			continue;
 		}

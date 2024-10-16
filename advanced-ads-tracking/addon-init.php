@@ -8,22 +8,26 @@ add_action( 'plugins_loaded', 'advanced_ads_tracking_init_plugin' );
 function advanced_ads_tracking_init_plugin() {
 	// Show admin notice if main plugin not active and return.
 	if ( ! class_exists( 'Advanced_Ads', false ) ) {
-		add_action( 'admin_notices', array( 'Advanced_Ads_Tracking_Admin', 'missing_plugin_notice' ) );
+		add_action( 'admin_notices', [ 'Advanced_Ads_Tracking_Admin', 'missing_plugin_notice' ] );
 
 		return;
 	}
 
 	$is_admin = is_admin();
-	$is_ajax  = wp_doing_ajax();
+	$is_ajax  = apply_filters( 'advanced_ads_tracking_is_ajax', wp_doing_ajax() );
 
 	if ( $is_ajax ) {
 		new Advanced_Ads_Tracking_Ajax();
 		// Hook into resetting stats for ad.
-		add_action( 'advanced-ads-pre-reset-stats', array( 'Advanced_Ads_Tracking_Limiter', 'reset_stats' ) );
+		add_action( 'advanced-ads-pre-reset-stats', [ 'Advanced_Ads_Tracking_Limiter', 'reset_stats' ] );
 	}
 
 	// instantiate the public class.
-	new Advanced_Ads_Tracking( $is_admin, $is_ajax );
+	$tracking = new Advanced_Ads_Tracking( $is_admin, $is_ajax );
+
+	if ( ! $is_admin ) {
+		new \AdvancedAdsTracking\Compatibility( $tracking );
+	}
 
 	// only admin, not ajax (which is always admin)
 	if ( $is_admin && ! $is_ajax ) {
@@ -64,13 +68,13 @@ function advanced_ads_tracking_init_plugin() {
 	}
 
 	// if this ad has expired, delete all associated limiter crons.
-	add_action( 'advanced-ads-ad-expired', array( 'Advanced_Ads_Tracking_Limiter', 'remove_events_for_ad' ) );
+	add_action( 'advanced-ads-ad-expired', [ 'Advanced_Ads_Tracking_Limiter', 'remove_events_for_ad' ] );
 
 	// register limiter cron hooks.
 	Advanced_Ads_Tracking_Limiter::register_event_hooks();
 
 	// Register AMP actions for the different plugins.
-	add_action( 'wp', array( new Advanced_Ads_Tracking_Amp(), 'register_actions' ) );
+	add_action( 'wp', [ new Advanced_Ads_Tracking_Amp(), 'register_actions' ] );
 
 	// check if debugging is enabled
 	Advanced_Ads_Tracking_Debugger::check_debugging_constant();

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 
 use AdvancedAds\Utilities\WordPress;
 
@@ -79,7 +79,7 @@ class Advanced_Ads_In_Content_Injector {
 			$defaults['itemLimit'] = 1000;
 		}
 
-		// handle tags that are empty by definition or could be empty ("custom" option)
+		// Handle tags that are empty by definition or could be empty ("custom" option).
 		if ( in_array( $tag_option, [ 'img', 'iframe', 'custom' ], true ) ) {
 			$defaults['allowEmpty'] = true;
 		}
@@ -115,11 +115,11 @@ class Advanced_Ads_In_Content_Injector {
 		 */
 		switch ( $tag_option ) {
 			case 'p':
-				// exclude paragraphs within blockquote tags
+				// Exclude paragraphs within blockquote tags.
 				$tag = 'p[not(parent::blockquote)]';
 				break;
 			case 'pwithoutimg':
-				// convert option name into correct path, exclude paragraphs within blockquote tags
+				// Convert option name into correct path, exclude paragraphs within blockquote tags.
 				$tag = 'p[not(descendant::img) and not(parent::blockquote)]';
 				break;
 			case 'img':
@@ -132,10 +132,10 @@ class Advanced_Ads_In_Content_Injector {
 				$shortcodes = "@class and (
 						contains(concat(' ', normalize-space(@class), ' '), ' gallery-size') or
 						contains(concat(' ', normalize-space(@class), ' '), ' wp-caption ') )";
-				$tag = "*[self::img or self::figure or self::div[$shortcodes]]
+				$tag        = "*[self::img or self::figure or self::div[$shortcodes]]
 					[not(ancestor::table or ancestor::figure or ancestor::div[$shortcodes])]";
 				break;
-			// any headline. By default h2, h3, and h4
+			// Any headline. By default h2, h3, and h4.
 			case 'headlines':
 				$headlines = apply_filters( 'advanced-ads-headlines-for-ad-injection', [ 'h2', 'h3', 'h4' ] );
 
@@ -144,7 +144,7 @@ class Advanced_Ads_In_Content_Injector {
 				}
 				$tag = '*[' . implode( ' or ', $headlines ) . ']'; // /html/body/*[self::h2 or self::h3 or self::h4]
 				break;
-			// any HTML element that makes sense in the content
+			// Any HTML element that makes sense in the content.
 			case 'anyelement':
 				$exclude = [
 					'html',
@@ -185,7 +185,7 @@ class Advanced_Ads_In_Content_Injector {
 				$tag     = '*[not(self::' . implode( ' or self::', $exclude ) . ')]';
 				break;
 			case 'custom':
-				// get the path for the "custom" tag choice, use p as a fallback to prevent it from showing any ads if users left it empty
+				// Get the path for the "custom" tag choice, use p as a fallback to prevent it from showing any ads if users left it empty.
 				$tag = ! empty( $placement_opts['xpath'] ) ? stripslashes( $placement_opts['xpath'] ) : 'p';
 				break;
 		}
@@ -193,8 +193,7 @@ class Advanced_Ads_In_Content_Injector {
 		// select positions.
 		$xpath = new DOMXPath( $dom );
 
-
-		if ( $options['itemLimit'] !== -1 ) {
+		if ( -1 !== $options['itemLimit'] ) {
 			$items = $xpath->query( '/html/body/' . $tag );
 
 			if ( $items->length < $options['itemLimit'] ) {
@@ -253,12 +252,12 @@ class Advanced_Ads_In_Content_Injector {
 						}
 					}
 
-					// make sure that the ad is injected outside the link
+					// Make sure that the ad is injected outside the link.
 					if ( 'img' === $tag_option && 'a' === $node->parentNode->tagName ) {
 						if ( $options['before'] ) {
 							$node->parentNode;
 						} else {
-							// go one level deeper if inserted after to not insert the ad into the link; probably after the paragraph
+							// Go one level deeper if inserted after to not insert the ad into the link; probably after the paragraph.
 							$node->parentNode->parentNode;
 						}
 					}
@@ -273,8 +272,8 @@ class Advanced_Ads_In_Content_Injector {
 				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar
 				$ad_content = self::filter_ad_content( $ad_content, $node->tagName, $options );
 
-				// convert HTML to XML!
-				$ad_dom = new DOMDocument( '1.0', $wp_charset );
+				// Convert HTML to XML!.
+				$ad_dom                     = new DOMDocument( '1.0', $wp_charset );
 				$libxml_use_internal_errors = libxml_use_internal_errors( true );
 				$ad_dom->loadHtml( '<!DOCTYPE html><html><meta http-equiv="Content-Type" content="text/html; charset=' . $wp_charset . '" /><body>' . $ad_content );
 
@@ -313,7 +312,7 @@ class Advanced_Ads_In_Content_Injector {
 								$ref_node->parentNode->insertBefore( $importedNode, $ref_node );
 							}
 						} else {
-							// append to body; -TODO using here that we only select direct children of the body tag.
+							// Append to body; -TODO using here that we only select direct children of the body tag.
 							foreach ( $ad_dom->getElementsByTagName( 'body' )->item( 0 )->childNodes as $importedNode ) {
 								$importedNode = $dom->importNode( $importedNode, true );
 								$node->parentNode->appendChild( $importedNode );
@@ -340,9 +339,11 @@ class Advanced_Ads_In_Content_Injector {
 			 * * could not inject one ad (as by use of `elseif` here)
 			 * * but there are enough elements on the site, but just in sub-containers
 			 */
-		} elseif ( WordPress::user_can( 'advanced_ads_manage_options' )
-				&& $options['itemLimit'] !== -1
-				&& empty( $plugin_options['content-injection-level-disabled'] ) ) {
+		} elseif (
+			WordPress::user_can( 'advanced_ads_manage_options' ) &&
+			-1 !== $options['itemLimit'] &&
+			empty( $plugin_options['content-injection-level-disabled'] )
+		) {
 
 			// Check if there are more elements without limitation.
 			$all_items = $xpath->query( '//' . $tag );
@@ -362,7 +363,6 @@ class Advanced_Ads_In_Content_Injector {
 		}
 
 		// phpcs:enable
-
 		return $content;
 	}
 
@@ -472,7 +472,8 @@ class Advanced_Ads_In_Content_Injector {
 
 		// Add tags before/after which ad placehoders were injected.
 		foreach ( $ads_for_placeholders as $ad_content ) {
-			$tag = $ad_content['tag'];
+			$alts = [];
+			$tag  = $ad_content['tag'];
 
 			switch ( $ad_content['position'] ) {
 				case 'before':
@@ -491,6 +492,7 @@ class Advanced_Ads_In_Content_Injector {
 					break;
 			}
 		}
+
 		$alts       = array_unique( $alts );
 		$tag_regexp = implode( '|', $alts );
 		// Add ad placeholder.
@@ -526,7 +528,7 @@ class Advanced_Ads_In_Content_Injector {
 						break;
 				}
 			} else {
-				$count ++;
+				++$count;
 			}
 		}
 
@@ -748,5 +750,4 @@ class Advanced_Ads_In_Content_Injector {
 
 		return '//*[' . implode( ' or ', $query ) . ']';
 	}
-
 }

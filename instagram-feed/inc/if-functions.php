@@ -1310,6 +1310,14 @@ function sb_instagram_custom_js() {
 	echo "\r\n";
 }
 add_action( 'wp_footer', 'sb_instagram_custom_js' );
+add_action( 'wp_footer', function() {
+	if (is_user_logged_in()) {
+		$current_user = wp_get_current_user();
+		if (user_can($current_user, 'administrator')) {
+			InstagramFeed\Admin\SBI_Callout::print_callout();
+		}
+	}
+});
 
 //Custom CSS
 add_action( 'wp_head', 'sb_instagram_custom_css' );
@@ -1656,6 +1664,7 @@ function sbi_defaults() {
 		'sb_instagram_preserve_settings'    => '',
 		'sb_instagram_ajax_theme'           => false,
 		'sb_instagram_disable_resize'       => false,
+		'image_format'                      => 'webp',
 		'sb_instagram_cache_time'           => 1,
 		'sb_instagram_cache_time_unit'      => 'hours',
 		'sbi_caching_type'                  => 'background',

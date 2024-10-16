@@ -1,8 +1,8 @@
 === Advanced Ads Pro ===
 Requires at least: WP 4.9
-Tested up to: 6.1
-Requires PHP: 7.2
-Stable tag: 2.26.1
+Tested up to: 6.6
+Requires PHP: 7.2.5
+Stable tag: 2.27.0
 
 Advanced Ads Pro is for those who want to perform magic on their ads.
 
@@ -80,19 +80,10 @@ You can use Advanced Ads along with any other ad management plugin and don’t n
 
 == Changelog ==
 
-= 2.26.1 (March 13, 2024) =
+= 2.27.0 (September 4, 2024) =
 
-- Improvement: update German, German (Austria), German (Switzerland) and German (formal) translations
-- Improvement: show Ad Health notice when ads are disabled for selected post type
+- Improvement: update third-party libraries to prevent deprecation messages in PHP 8.3
+- Improvement: add support for Youzify groups
+- Fix: resolve a PHP error when `$_SERVER['HTTP_HOST']` is not set
 
-= 2.26.0 (January 31, 2024) =
-
-- Improvement: update German and German (formal) translations
-- Improvement: display required modules for adblocker fallback item
-- Improvement: display required modules for Lazy Loading
-- Improvement: allow use of existing MaxMind database files via filters
-- Fix: allow "parent page" and "post meta" display conditions to work with AJAX Cache Busting
-- Fix: allow Gravity Forms shortcode to work with AJAX Cache Busting
-- Fix: avoid storing browser width when `ADVANCED_ADS_RESPONSIVE_DISABLE_BROWSER_WIDTH` is defined
-
-Build: 2024-05-db2eb022
+Build: 2024-10-ae22cfae

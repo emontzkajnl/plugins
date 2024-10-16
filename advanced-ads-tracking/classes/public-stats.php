@@ -24,10 +24,8 @@ class Advanced_Ads_Tracking_Public_Stats {
 	 * @param int $ad_id The ad id for which to generate public stats.
 	 */
 	public function __construct( $ad_id ) {
-		$this->ad = new Advanced_Ads_Ad( $ad_id );
-		$options  = $this->ad->options();
-
-		$this->ad_options = is_array( $options ) ? $options : array();
+		$this->ad         = new Advanced_Ads_Ad( $ad_id );
+		$this->ad_options = $this->ad->options();
 	}
 
 	/**
@@ -49,7 +47,7 @@ class Advanced_Ads_Tracking_Public_Stats {
 		$public_id         = $this->get_id();
 
 		return empty( get_option( 'permalink_structure' ) )
-			? add_query_arg( array( $public_stats_slug => $public_id ), site_url() )
+			? add_query_arg( [ $public_stats_slug => $public_id ], site_url() )
 			: site_url( '/' . $public_stats_slug . '/' . $public_id . '/' );
 	}
 
@@ -73,7 +71,7 @@ class Advanced_Ads_Tracking_Public_Stats {
 	 */
 	private function set_id() {
 		$this->ad_options['tracking']['public-id'] = wp_generate_password( 48, false );
-		Advanced_Ads_Ad::save_ad_options( $this->ad->id, $this->ad_options );
+		Advanced_Ads_Ad::save_ad_options( $this->ad->id, (array) $this->ad_options );
 
 		return $this->ad_options['tracking']['public-id'];
 	}

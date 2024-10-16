@@ -8,6 +8,7 @@ return [
     ACP\Column\Post\AuthorName::class,
     ACP\Column\Post\DatePublished::class,
     ACP\Column\Post\ID::class,
+    ACP\Column\Post\Modified::class,
     ACP\Column\Post\LastModifiedAuthor::class,
     ACP\Column\Post\Slug::class,
     ACP\Column\Post\Status::class,
@@ -16,6 +17,7 @@ return [
     Column\Product\ShippingClass::class,
     Column\Product\Sales::class,
     Column\Product\LowOnStock::class,
+    Column\Product\StockThreshold::class,
 
     Column\ProductVariation\Attribute::class,
     Column\ProductVariation\Description::class,

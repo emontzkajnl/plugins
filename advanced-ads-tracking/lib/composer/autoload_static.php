@@ -7,6 +7,7 @@ namespace AdvancedAdsTracking\Composer\Autoload;
 class ComposerStaticInit_advanced_ads_tracking
 {
     public static $classMap = array (
+        'AdvancedAdsTracking\\Compatibility' => __DIR__ . '/../..' . '/public/class-compatibility.php',
         'Advanced_Ads_Tracking' => __DIR__ . '/../..' . '/public/public.php',
         'Advanced_Ads_Tracking_Admin' => __DIR__ . '/../..' . '/admin/admin.php',
         'Advanced_Ads_Tracking_Ajax' => __DIR__ . '/../..' . '/classes/ajax.php',

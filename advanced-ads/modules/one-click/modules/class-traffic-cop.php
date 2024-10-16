@@ -9,7 +9,7 @@
 
 namespace AdvancedAds\Modules\OneClick;
 
-use AdvancedAds\Utilities\Str;
+use AdvancedAds\Framework\Utilities\Str;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
 
 defined( 'ABSPATH' ) || exit;
@@ -37,7 +37,7 @@ class Traffic_Cop implements Integration_Interface {
 	 */
 	public function modify_script_tag( $content ) {
 		// Early bail!!
-		if ( ! Str::str_contains( 'googletag.display', $content ) ) {
+		if ( ! Str::contains( 'googletag.display', $content ) ) {
 			return false;
 		}
 

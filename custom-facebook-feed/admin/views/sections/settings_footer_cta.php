@@ -45,8 +45,8 @@
     </div>
 </div>
 <div class="cff-cta-try-demo">
-    <a :href="footerUpgradeUrl" class="cff-btn-blue" target="_blank">
-        {{genericText.tryDemo}}
+    <a :href="footerUpgradeUrl" class="cff-btn-green" target="_blank">
+        {{genericText.getStarted}}
         <span>
             <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.8332 5L7.6582 6.175L11.4749 10L7.6582 13.825L8.8332 15L13.8332 10L8.8332 5Z" fill="white"/>

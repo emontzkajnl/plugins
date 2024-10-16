@@ -1,5 +1,51 @@
 == Changelog ==
 
+= 6.4.12 =
+Release Date: October 1st, 2024
+
+* [Fixed] WYSIWYG editing modal closes when adding a link in the editor
+* [Fixed] Leaving date time editing empty, will now clear the value
+* [Improved] Set default focus on value field for the Price editing modal
+* [Improved] Sticky Header improvements for multiline headers
+* [Improved] Added Modified Date column to Product Variation table
+* [Improved] Added Before and After setting to Author column
+* [Updated] Admin Columns Core to version 4.7.8
+
+= 6.4.11 =
+Release Date: August 26th, 2024
+
+* [Fixed] WooCommerce Order Meta: Enhanced filtering and editing capabilities for select options.
+* [Fixed] WooCommerce Variation Image: Improved filtering accuracy for the 'is set' condition, ensuring correct results.
+* [Fixed] WooCommerce Grouped By Column: Resolved display issue that affected the grouped by column view.
+* [Fixed] WooCommerce Order Count: Corrected sorting behavior for order counts.
+* [Fixed] Gravity Forms: Implemented fallback check for WP_Error handling.
+* [Added] Introduced export functionality for the Aspect Ratio column.
+* [Added] WooCommerce HPOS Order and Subscription Table: Added a new WooCommerce ID column.
+* [Added] WooCommerce Stock Threshold: New column introduced in the Product and Product Variation table.
+
+= 6.4.10 =
+Release Date: June 11th, 2024
+
+* [Fixed] Added Excel spreadsheet compatibility/escaping when exporting data to CSV. Reported Issue Reference: CVE-2019-17661
+* [Fixed] Use the correct date format storage for MetaBox dates
+* [Updated] Admin Columns Core to version 4.7.7
+
+= 6.4.9 =
+Release Date: June 7th, 2024
+
+* [Improved] Expanded year options in the date column dropdown for editing.
+* [Improved] Numeric values in Smart Filtering are now formatted.
+* [Improved] Custom Field with multiple values now supports JSON.
+* [Improved] Presets are now sorted correctly on the Tools page.
+* [Improved] User Registered date format is now customizable.
+* [Fixed] Daily license check reliability issues resolved.
+* [Fixed] Column header and Bulk Edit button mismatch issue when columns were reordered.
+* [Fixed] JetEngine Selectbox now correctly returns the label for '0' keyed options.
+* [Fixed] Product Taxonomy column filtering on the WooCommerce Order page now works correctly.
+* [Fixed] Adding a new Conditional Format now works when Smart Filtering is disabled.
+* [Fixed] Custom Field column with Post as Display value error resolved.
+* [Updated] Admin Columns Core to version 4.7.6
+
 = 6.4.8 =
 Release Date: May 3rd, 2024
 

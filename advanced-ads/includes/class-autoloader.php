@@ -50,6 +50,15 @@ class Autoloader {
 	}
 
 	/**
+	 * Get plugin directory.
+	 *
+	 * @return string
+	 */
+	public function get_directory(): string {
+		return dirname( ADVADS_FILE );
+	}
+
+	/**
 	 * Runs this initializer.
 	 *
 	 * @return void
@@ -62,7 +71,7 @@ class Autoloader {
 			return;
 		}
 
-		$this->autoloader = require_once $locate;
+		$this->autoloader = require $locate;
 		$this->register_wordpress();
 	}
 
@@ -74,18 +83,16 @@ class Autoloader {
 	 * @return bool|string
 	 */
 	private function locate() {
-		$directory   = dirname( ADVADS_FILE );
-		$packages    = $directory . '/packages/autoload.php';
-		$vendors     = $directory . '/vendor/autoload.php';
-		$is_debug    = 'local' === ( function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : $this->get_environment_type() );
-		$is_packages = is_readable( $packages );
-		$is_vendors  = is_readable( $vendors );
+		$directory = $this->get_directory();
+		$packages  = $directory . '/packages/autoload.php';
+		$vendors   = $directory . '/vendor/autoload.php';
+		$is_debug  = $this->is_debug() || 'local' === $this->get_environment_type();
 
-		if ( $is_packages && ( ! $is_debug || ! $is_vendors ) ) {
+		if ( is_readable( $packages ) && ( ! $is_debug || ! is_readable( $vendors ) ) ) {
 			return $packages;
 		}
 
-		if ( $is_vendors ) {
+		if ( is_readable( $vendors ) ) {
 			return $vendors;
 		}
 
@@ -134,6 +141,17 @@ class Autoloader {
 	 * @return string
 	 */
 	public function get_environment_type(): string {
+		return function_exists( 'wp_get_environment_type' )
+			? wp_get_environment_type()
+			: $this->get_environment_type_fallback();
+	}
+
+	/**
+	 * Retrieves the current environment type.
+	 *
+	 * @return string
+	 */
+	private function get_environment_type_fallback(): string {
 		static $current_env = '';
 
 		if ( ! defined( 'WP_RUN_CORE_TESTS' ) && $current_env ) {
@@ -182,5 +200,14 @@ class Autoloader {
 		}
 
 		return $current_env;
+	}
+
+	/**
+	 * Is WordPress debug mode enabled
+	 *
+	 * @return bool
+	 */
+	private function is_debug(): bool {
+		return defined( 'WP_DEBUG' ) && WP_DEBUG;
 	}
 }

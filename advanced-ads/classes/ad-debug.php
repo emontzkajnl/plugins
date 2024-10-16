@@ -246,7 +246,13 @@ class Advanced_Ads_Ad_Debug {
 
 			$content = '';
 			foreach ( $_condition as $_k => $_v ) {
-				$content .= esc_html( $_k ) . ': ' . esc_html( $_v ) . '<br>';
+				$content .= esc_html( $_k ) . ': ';
+				if ( is_array( $_v ) ) {
+					$content .= esc_html( implode( ', ', $_v ) );
+				} else {
+					$content .= esc_html( $_v );
+				}
+				$content .= '<br />';
 			}
 
 			printf( '<div style="margin-bottom: 20px; white-space: pre-wrap; font-family: monospace; width: 100%%; background: %s;">%s</div>',

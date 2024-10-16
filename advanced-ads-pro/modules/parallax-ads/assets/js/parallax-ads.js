@@ -1,15 +1,14 @@
-// phpcs:disable Generic.Formatting.MultipleStatementAlignment.NotSameWarning -- PHPCS can't handle es5 short functions.
-
+/* eslint-disable camelcase */
 /**
  * Placement definition.
  *
  * @typedef ParallaxPlacement
  * @type {Object.<string, Object>}
  *
- * @property {Boolean} enabled
- * @property {Object} height
- * @property {Number} height.value
- * @property {String} height.unit
+ * @property {boolean} enabled      - Whether the placement is enabled.
+ * @property {Object}  height       - Height of the parallax placement.
+ * @property {number}  height.value - Height value.
+ * @property {string}  height.unit  - Height unit.
  */
 
 /**
@@ -18,13 +17,13 @@
  * @typedef ParallaxOptions
  * @type {Object}
  *
- * @property {ParallaxPlacement[]} placements
- *
- * @property {Array} classes
- * @property {String} classes.prefix - Current frontend prefix.
- * @property {String} classes.container - Parallax container class prefix.
- * @property {String} classes.clip - Parallax clip div class.
- * @property {String} classes.inner - Parallax inner div class.
+ * * @property {ParallaxPlacement[]} placements        - Parallax placements.
+ *  *
+ *  * @property {Array}               classes           - Parallax classes.
+ *  * @property {string}              classes.prefix    - Current frontend prefix.
+ *  * @property {string}              classes.container - Parallax container class prefix.
+ *  * @property {string}              classes.clip      - Parallax clip div class.
+ *  * @property {string}              classes.inner     - Parallax inner div class.
  */
 
 ( () => {
@@ -104,11 +103,12 @@
 		const imgElement = placementInner.querySelector( 'img' );
 		if ( ! imageInstances[imgElement.src] ) {
 			imageInstances[imgElement.src] = {
+				// eslint-disable-next-line no-undef
 				image:    new Image(),
 				isLoaded: false
 			};
 		}
-		const containerRect  = placementContainer.getBoundingClientRect();
+		const containerRect = placementContainer.getBoundingClientRect();
 		const resizeCallback = ( img ) => {
 			if ( img.naturalHeight / img.naturalWidth > viewportHeight / placementContainer.clientWidth ) {
 				imgElement.style.objectFit = 'contain';
@@ -196,8 +196,20 @@
 	const fitImageOnScroll = () => calculate( ( placementContainer, placementInner ) => {
 		fitImage( placementContainer, placementInner, 'scroll' );
 	}, options.placements );
-	window.addEventListener( 'scroll', fitImageOnScroll, supportsPassive );
-	window.addEventListener( 'touchmove', fitImageOnScroll, supportsPassive );
+
+	let ticking = false;
+	const onScroll = () => {
+		if ( ! ticking ) {
+			window.requestAnimationFrame( () => {
+				fitImageOnScroll();
+				ticking = false;
+			} );
+			ticking = true;
+		}
+	};
+
+	window.addEventListener( 'scroll', onScroll, supportsPassive );
+	window.addEventListener( 'touchmove', onScroll, supportsPassive );
 
 	// add cache-busting event listeners.
 	if ( typeof advanced_ads_pro !== 'undefined' && typeof advanced_ads_pro.observers !== 'undefined' ) {

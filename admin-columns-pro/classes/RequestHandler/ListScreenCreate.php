@@ -20,7 +20,6 @@ class ListScreenCreate implements RequestHandler
 
     public const PARAM_ACTION = 'action';
     public const PARAM_CREATE_LIST = 'create-layout';
-    public const PARAM_DELETE_LIST = 'delete-layout';
 
     private $storage;
 

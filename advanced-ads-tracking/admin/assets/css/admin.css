@@ -35,4 +35,5 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
 #dateTableA,#dateTableB { width: 47%; float: left;}
 #adTableA,#adTableB { width: 47%; float: right;}
 #no-records { text-align:center; font-size: 2em;}
+.advads-stats-table__adlink { color: inherit; }
 @media screen and (orientation:portrait) {#advads-stats-graph .jqplot-y2axis{right:-15px !important;}}

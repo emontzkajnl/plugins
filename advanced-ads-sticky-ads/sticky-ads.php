@@ -6,7 +6,7 @@
  * Plugin Name:       Advanced Ads – Sticky Ads
  * Plugin URI:        http://wpadvancedads.com/add-ons/sticky-ads/
  * Description:       Advanced ad positioning.
- * Version:           1.8.4
+ * Version:           1.8.5
  * Author:            Advanced Ads GmbH
  * Author URI:        http://wpadvancedads.com
  * Text Domain:       advanced-ads-sticky
@@ -27,7 +27,7 @@ if ( ! class_exists( 'Sticky_Ads' ) ) {
 	define( 'AASADS_BASE_URL', plugin_dir_url( __FILE__ ) );
 	define( 'AASADS_SLUG', 'advanced-ads-sticky-ads' );
 
-	define( 'AASADS_VERSION', '1.8.4' );
+	define( 'AASADS_VERSION', '1.8.5' );
 	define( 'AASADS_PLUGIN_URL', 'https://wpadvancedads.com' );
 	define( 'AASADS_PLUGIN_NAME', 'Sticky Ads' );
 
@@ -45,3 +45,4 @@ if ( ! class_exists( 'Sticky_Ads' ) ) {
 	    new Advanced_Ads_Sticky_Admin();
 	}
 }
+

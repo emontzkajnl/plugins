@@ -2,13 +2,13 @@
 Contributors: vaakash
 Author URI: https://www.aakashweb.com/
 Plugin URI: https://www.aakashweb.com/wordpress-plugins/shortcoder/
-Tags: shortcode, html, javascript, shortcodes, snippets, posts, pages, widgets, insert, adsense, ads, code, elementor, WPBakery
+Tags: shortcode, html, javascript, code, snippets
 Donate link: https://www.paypal.me/vaakash/
 License: GPLv2 or later
 Requires PHP: 5.3
 Requires at least: 4.9.0
-Tested up to: 6.4.2
-Stable tag: 6.3.2
+Tested up to: 6.6.1
+Stable tag: 6.4
 
 Create custom "Shortcodes" easily for HTML, JavaScript, CSS code snippets and use the shortcodes within posts, pages & widgets
 
@@ -35,7 +35,8 @@ Shortcoder plugin allows to create a custom shortcodes for HTML, JavaScript, CSS
 * Globally disable the shortcode when not needed.
 * Disable shortcode on desktop, mobile devices.
 * A button in post editor to pick the shortcodes to insert.
-* Supports Gutenberg.
+* Execute blocks HTML in shortcode content.
+* Insert shortcodes in Gutenberg/block editor.
 
 ### 🎲 An example usage
 
@@ -129,6 +130,11 @@ Yes, this feature is available in the PRO version. You can upgrade to the [PRO v
 
 
 ## Changelog
+
+### 6.4
+* New: Option to set shortcode display name next to shortcode name.
+* New: Option to execute WordPress block HTML in shortcode content.
+* Fix: Shortcoder roles are registered when plugin is activated.
 
 ### 6.3.2
 * Fix: Verify permissions while closing Shortcoder changelog.

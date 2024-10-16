@@ -533,7 +533,17 @@ class SBI_New_User extends SBI_Notifications {
 	public function dismiss() {
 		global $current_user;
 		$user_id             = $current_user->ID;
-		$sbi_statuses_option = get_option( 'sbi_statuses', array() );
+		$sbi_statuses_option = get_option('sbi_statuses', array());
+
+		TODO: // Remove after 6.0
+		global $sbi_notices;
+		$discount_notice = $sbi_notices->get_notice('discount');
+		if ($discount_notice && !isset($sbi_statuses_option['preexisting_discount_notice_check'])) {
+			update_user_meta($user_id, 'sbi_ignore_new_user_sale_notice', 'always');
+			$sbi_notices->remove_notice( 'discount' );
+		}
+		$sbi_statuses_option['preexisting_discount_notice_check'] = true;
+		update_option('sbi_statuses', $sbi_statuses_option);
 
 		if ( isset( $_GET['sbi_ignore_rating_notice_nag'] ) ) {
 			$rating_ignore = false;
@@ -545,7 +555,6 @@ class SBI_New_User extends SBI_Notifications {
 				$sbi_statuses_option['rating_notice_dismissed'] = sbi_get_current_time();
 				update_option( 'sbi_statuses', $sbi_statuses_option, false );
 
-				global $sbi_notices;
 				$sbi_notices->remove_notice( 'review_step_2' );
 				$sbi_notices->remove_notice( 'review_step_2_all_pages' );
 			} elseif ( 'later' === $rating_ignore ) {
@@ -553,7 +562,6 @@ class SBI_New_User extends SBI_Notifications {
 				delete_option( 'sbi_review_consent' );
 				update_option( 'sbi_rating_notice', 'pending', false );
 
-				global $sbi_notices;
 				$sbi_notices->remove_notice( 'review_step_2' );
 				$sbi_notices->remove_notice( 'review_step_2_all_pages' );
 			}
@@ -574,7 +582,6 @@ class SBI_New_User extends SBI_Notifications {
 					update_user_meta( $user_id, 'sbi_ignore_bfcm_sale_notice', date( 'Y', sbi_get_current_time() ) );
 				}
 
-				global $sbi_notices;
 				$sbi_notices->remove_notice( 'discount' );
 			}
 		}
@@ -591,7 +598,6 @@ class SBI_New_User extends SBI_Notifications {
 			}
 			update_user_meta( $user_id, 'sbi_ignore_new_user_sale_notice', 'always' );
 
-			global $sbi_notices;
 			$sbi_notices->remove_notice( 'discount' );
 		}
 
@@ -607,7 +613,6 @@ class SBI_New_User extends SBI_Notifications {
 
 				update_user_meta( $user_id, 'sbi_ignore_new_user_sale_notice', 'always' );
 
-				global $sbi_notices;
 				$sbi_notices->remove_notice( 'review_step_1' );
 				$sbi_notices->remove_notice( 'review_step_1_all_pages' );
 				$sbi_notices->remove_notice( 'review_step_2' );
@@ -624,7 +629,6 @@ class SBI_New_User extends SBI_Notifications {
 
 				update_user_meta( $user_id, 'sbi_ignore_new_user_sale_notice', 'always' );
 
-				global $sbi_notices;
 				$sbi_notices->remove_notice( 'discount' );
 			}
 		}

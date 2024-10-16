@@ -509,7 +509,6 @@ class CFF_Utils{
 			$haystack = is_array($haystack) ? implode(" ", $haystack) : $haystack;
 		if (empty(stristr($haystack, $needle))) {
 			return false;
-			return strpos($haystack, stristr($haystack, $needle));
 		}
 		return strpos($haystack, stristr($haystack, $needle));
 	}

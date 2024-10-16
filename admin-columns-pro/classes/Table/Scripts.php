@@ -11,6 +11,7 @@ use AC\ListScreen;
 use AC\ListScreenRepository\Storage;
 use AC\Registerable;
 use ACP\Asset\Script\Table;
+use ACP\Settings\General\LayoutStyle;
 
 class Scripts implements Registerable
 {
@@ -23,16 +24,20 @@ class Scripts implements Registerable
 
     private $storage;
 
+    private $layout_style;
+
     public function __construct(
         Asset\Location\Absolute $location,
         ColumnSize\UserStorage $user_storage,
         ColumnSize\ListStorage $list_storage,
-        Storage $storage
+        Storage $storage,
+        LayoutStyle $layout_style
     ) {
         $this->location = $location;
         $this->user_storage = $user_storage;
         $this->list_storage = $list_storage;
         $this->storage = $storage;
+        $this->layout_style = $layout_style;
     }
 
     public function register(): void
@@ -53,7 +58,8 @@ class Scripts implements Registerable
                 $list_screen,
                 $this->user_storage,
                 $this->list_storage,
-                $this->storage
+                $this->storage,
+                $this->layout_style
             ),
         ];
 

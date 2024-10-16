@@ -67,6 +67,7 @@ mix.sass('assets/scss/app.scss', 'assets/css/app.css').tailwind();
 mix.js('assets/src/app.js', 'assets/js/app.js');
 mix.js('public/assets/js/advanced.js', 'public/assets/js/advanced.min.js');
 mix.js('public/assets/js/ready.js', 'public/assets/js/ready.min.js');
+mix.js('assets/src/admin/page-quick-edit.js', 'assets/js/admin/page-quick-edit.js');
 mix.js(
 	'public/assets/js/ready-queue.js',
 	'public/assets/js/ready-queue.min.js'

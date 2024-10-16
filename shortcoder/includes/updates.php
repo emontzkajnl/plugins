@@ -6,6 +6,8 @@ class Shortcoder_Updates{
 
     public static function init(){
 
+        add_action( 'activate_' . SC_BASE_NAME, array( __CLASS__, 'on_activate' ) );
+
         add_action( 'admin_init', array( __CLASS__, 'do_update' ) );
 
     }
@@ -208,6 +210,12 @@ class Shortcoder_Updates{
         }
 
         return $sc_flags[ 'version' ];
+
+    }
+
+    public static function on_activate(){
+
+        self::register_roles();
 
     }
 

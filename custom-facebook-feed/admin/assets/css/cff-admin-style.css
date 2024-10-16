@@ -32,7 +32,20 @@
 	color: #141B38!important;
 	border: 1px solid #D0D1D7!important;
 }
-
+/* green buttons */
+.cff-btn-green{
+	background-color: #1da867!important;
+	color: #fff!important;
+}
+.cff-btn-green:hover{
+	background: #20c276!important;
+	color: #fff!important;
+}
+.cff-btn-green:focus,
+.cff-btn-green:active{
+	background: #0ea15c!important;
+	color: #fff!important;
+}
 /* blue buttons */
 .cff-btn-blue{
 	background: #0068A0!important;
@@ -3578,8 +3591,9 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
   text-align: center;
   z-index: 26;
 }
-
-
+.cff-new-indicator.cff-notice-alert {
+	background-color: #1da867;
+}
 .cff-fb-popup-inside {
   left: 80px;
   width: 980px;

@@ -10,7 +10,7 @@
 	}
 
 	function getSpinnerCode() {
-		return '<img alt="" class="dbop-spinner" src="' + advadsTrackingDbopVars.adminImageUrl + 'spinner.gif" />';
+		return '<span class="spinner advads-spinner"></span>';
 	}
 
 	// export stats data
@@ -28,7 +28,7 @@
 			}
 		}
 		$( '#export-period-error' ).hide();
-		var url = ajaxurl + '?action=advads_tracking_export&period=' + period + '&nonce=' + advadsTrackingDbopVars.nonce;
+		var url = ajaxurl + '?action=advads_tracking_export&period=' + period + '&nonce=' + advadsTrackingDbopNonce;
 		if ( undefined !== to ) {
 			url += '&from=' + from + '&to=' + to;
 		}
@@ -41,7 +41,7 @@
 		var period = $( this ).find( '.advads-period' ).val();
 
 		var formData = {
-			nonce: advadsTrackingDbopVars.nonce,
+			nonce: advadsTrackingDbopNonce,
 			action: 'advads_tracking_remove',
 			period: period,
 		};
@@ -53,25 +53,25 @@
 			url: ajaxurl,
 			data: formData,
 			success: function ( resp, textStatus, XHR ) {
-				$( '.dbop-spinner' ).remove();
+				$( '.advads-spinner' ).remove();
 				if ( undefined !== resp.status && resp.status ) {
 					if ( undefined !== resp['alt-msg'] ) {
-						$( '#remove-error-notice' ).text( trackingDbopLocale.optimizeFailure );
+						$( '#remove-error-notice' ).text( trackingDbopLocale.optimizeFailure ).removeClass( 'hidden' );
 						enable();
 					} else {
-						$( '#remove-error-notice' ).empty();
+						$( '#remove-error-notice' ).empty().addClass( 'hidden' );
 						location.reload();
 					}
 				} else {
 					enable();
-					$( '#remove-error-notice' ).text( trackingDbopLocale.SQLFailure );
+					$( '#remove-error-notice' ).text( trackingDbopLocale.SQLFailure ).removeClass( 'hidden' );
 					if ( undefined !== resp.msg ) {
 						console.log( resp.msg );
 					}
 				}
 			},
 			error: function ( request, textStatus, err ) {
-				$( '.dbop-spinner' ).remove();
+				$( '.advads-spinner' ).remove();
 				enable();
 				console.log( request );
 				alert( trackingDbopLocale.serverFail );
@@ -86,7 +86,7 @@
 		disable();
 		wp.ajax.send( 'advads_tracking_debug_mode', {
 			data: {
-				nonce: advadsTrackingDbopVars.nonce,
+				nonce: advadsTrackingDbopNonce,
 				ad:    $( '#debug-mode-adID' ).val()
 			}
 		} )
@@ -97,7 +97,7 @@
 			  $( '.widefat' ).before( '<div class="error"><p>' + response.responseJSON.data.message + '</p></div>' );
 		  } )
 		  .always( function ( response ) {
-			  $( '.dbop-spinner' ).remove();
+			  $( '.advads-spinner' ).remove();
 			  enable();
 			  console.log( response );
 		  } );
@@ -107,14 +107,14 @@
 		ev.preventDefault();
 		var ad = $( '#reset-stats-adID' ).val();
 		if ( '' == ad ) {
-			$( '#reset-error-notice' ).text( trackingDbopLocale.resetNoAd );
+			$( '#reset-error-notice' ).text( trackingDbopLocale.resetNoAd ).removeClass( 'hidden' );
 		} else {
-			$( '#reset-error-notice' ).empty();
+			$( '#reset-error-notice' ).empty().addClass( 'hidden' );
 			var adName    = $( '#reset-stats-adID option:selected' ).text();
 			var reconfirm = confirm( trackingDbopLocale.resetConfirm + ' ' + adName );
 			if ( reconfirm ) {
 				var formData = {
-					nonce: advadsTrackingDbopVars.nonce,
+					nonce: advadsTrackingDbopNonce,
 					action: 'advads_tracking_reset',
 					ad: ad,
 				};
@@ -129,7 +129,7 @@
 						if (typeof resp.data !== 'undefined') {
 							resp = resp.data;
 						}
-						$( '.dbop-spinner' ).remove();
+						$( '.advads-spinner' ).remove();
 						if ( undefined !== resp.status && resp.status ) {
 							$errorNotice.empty();
 							if ( typeof resp.redirect !== 'undefined' ) {
@@ -147,7 +147,7 @@
 						}
 					},
 					error: function ( request ) {
-						$( '.dbop-spinner' ).remove();
+						$( '.advads-spinner' ).remove();
 						enable();
 						console.log( request );
 						alert( trackingDbopLocale.serverFail );
@@ -158,4 +158,19 @@
 		}
 	} );
 
+	$(document).ready(function () {
+        //check if reset-stats-id exists
+        const urlParams = new URLSearchParams(window.location.search);
+        const resetStatsId = urlParams.get("reset-stats-id");
+
+        if (
+            resetStatsId &&
+            $(`#reset-stats-adID option[value="${resetStatsId}"]`).length > 0
+        ) {
+            $("#reset-stats-adID").val(resetStatsId);
+            $("html, body").animate({
+                scrollTop: $("#reset-stats-adID").offset().top,
+            });
+        }
+    });
 })( jQuery );

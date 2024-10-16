@@ -211,6 +211,11 @@ jQuery(document).ready(function($) {
       }
     });
   });
+
+  $(document).on('click', '#oembed_api_change_reconnect .sbi-notice-dismiss', function (e) {
+    e.preventDefault();
+    $('#oembed_api_change_reconnect').remove();
+  });
 });
 
 

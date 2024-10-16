@@ -19,7 +19,7 @@
 
 	<label><input name="<?php echo esc_attr( $this->plugin->options_slug ); ?>[method]" type="radio" value="ga" <?php checked( 'ga', $method ); ?>/><?php esc_html_e( 'Google Analytics', 'advanced-ads-tracking' ); ?></label>
 	<p class="description"><?php esc_html_e( 'Track impressions and clicks in Google Analytics.', 'advanced-ads-tracking' ); ?>
-		<a href="<?php echo esc_url( ADVADS_URL ); ?>manual/ad-tracking-with-google-analytics/" target="_blank"><?php esc_html_e( 'Manual', 'advanced-ads-tracking' ); ?></a></p>
+		<a href="<?php echo esc_url( ADVADS_URL ); ?>manual/ad-tracking-with-google-analytics/?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-tracking-analytics" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-tracking' ); ?></a></p>
 <?php if ( $method !== 'ga' && isset( $options['ga-UID'] ) && ! $this->plugin->is_forced_analytics() ) : ?>
 	<input type="hidden" name="<?php echo esc_attr( $this->plugin->options_slug ); ?>[ga-UID]" value="<?php echo esc_attr( $options['ga-UID'] ); ?>"/>
 	<?php
@@ -31,27 +31,13 @@ endif;
 	</label>
 	<p class="description">
 		<?php esc_html_e( 'Track impressions when the ad is requested from the database.', 'advanced-ads-tracking' ); ?>
-		<?php
-		printf(
-			wp_kses(
-				// translators: %1$s is a starting a tag, %2$s the closing one.
-				__( 'Should only be used by experienced users after reading the %1$smanual%2$s.', 'advanced-ads-tracking' ),
-				array(
-					'a' => array(
-						'href'   => array(),
-						'target' => array(),
-					),
-				)
-			),
-			'<a href="' . esc_url( ADVADS_URL ) . 'manual/tracking-documentation#Tracking_Methods" target="_blank">',
-			'</a>'
-		);
-		?>
+		<?php esc_html_e( 'Should only be used by experienced users.', 'advanced-ads-tracking' ); ?>
+		<a href="<?php echo esc_url( ADVADS_URL ); ?>manual/tracking-documentation?utm_source=advanced-ads&utm_medium=link&utm_campaign=settings-tracking-methods#Tracking_Methods" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-tracking' ); ?></a>
 	</p>
 
 <?php if ( $is_amp_nossl ) : ?>
-	<p class="description advads-amp-warning advads-error-message <?php echo $is_amp_nossl ? 'advads-amp-nossl' : ''; ?>" data-method="<?php echo esc_attr( $method ); ?>">
-		<?php esc_html_e( 'Impression tracking is not working on AMP sites without ssl encryption.', 'advanced-ads-tracking' ); ?>
+	<p class="description advads-amp-warning advads-notice-inline advads-error advads-amp-nossl" data-method="<?php echo esc_attr( $method ); ?>">
+		<?php esc_html_e( 'Impression tracking is not working on AMP sites without SSL encryption.', 'advanced-ads-tracking' ); ?>
 	</p>
 <?php endif; ?>
 
@@ -59,7 +45,7 @@ endif;
 
 if ( $show_tcf_warning ) :
 	?>
-	<p class="description advads-error-message">
+	<p class="advads-notice-inline advads-error">
 		<?php echo esc_html( $tcf_warning ); ?>
 		<?php esc_html_e( 'Please choose either the Frontend or Google Analytics method.', 'advanced-ads-tracking' ); ?>
 	</p>
@@ -68,7 +54,7 @@ endif;
 
 if ( $missing_scripts_warning ) :
 	?>
-	<p class="description advads-error-message">
+	<p class="advads-notice-inline advads-error">
 		<?php esc_html_e( 'The advanced-ads-tracking-load-header-scripts filter is set to false which removes any tracking scripts in the frontend. Only the Database tracking method is working now.', 'advanced-ads-tracking' ); ?>
 	</p>
 	<?php

@@ -1045,7 +1045,7 @@ class CFF_Customize_Tab{
 				'layout'			=> 'half',
 				'reverse'			=> 'true',
 				'heading' 			=> __( 'Custom CTA', 'custom-facebook-feed' ),
-				'description' 		=> __( 'This toggles the custom CTA like  "Shop now" and "Contact"', 'custom-facebook-feed' ),
+				'description' 		=> __( 'This toggles the custom CTA like "Shop now" and "Contact"', 'custom-facebook-feed' ),
 				'stacked'			=> 'true',
 				'labelStrong'		=> 'true',
 				'options'			=> [
@@ -1066,7 +1066,7 @@ class CFF_Customize_Tab{
 				'layout'			=> 'half',
 				'reverse'			=> 'true',
 				'heading' 			=> __( 'Show Fans', 'custom-facebook-feed' ),
-				'description' 		=> __( 'Shows visitors which of their friends  follow this Facebook page', 'custom-facebook-feed' ),
+				'description' 		=> __( 'Shows visitors which of their friends follow this Facebook page', 'custom-facebook-feed' ),
 				'stacked'			=> 'true',
 				'labelStrong'		=> 'true',
 				'options'			=> [
@@ -1087,7 +1087,7 @@ class CFF_Customize_Tab{
 				'layout'			=> 'half',
 				'reverse'			=> 'true',
 				'heading' 			=> __( 'Display outside scrollable area', 'custom-facebook-feed' ),
-				'description' 		=> __( 'Make the Like Box fixed by moving it outside  the scrollable area', 'custom-facebook-feed' ),
+				'description' 		=> __( 'Make the Like Box fixed by moving it outside the scrollable area', 'custom-facebook-feed' ),
 				'stacked'			=> 'true',
 				'labelStrong'		=> 'true',
 				'options'			=> [
@@ -1539,7 +1539,7 @@ class CFF_Customize_Tab{
 					'id' 				=> 'post_styling_sharedlinks',
 					'separator'			=> 'none',
 					'heading' 			=> __( 'Shared Link Box', 'custom-facebook-feed' ),
-					'description' 		=> __( 'The link info box that\'s created when a  link is shared in a Facebook post', 'custom-facebook-feed' ),
+					'description' 		=> __( 'The link info box that\'s created when a link is shared in a Facebook post', 'custom-facebook-feed' ),
 					'controls'			=> CFF_Styling_Tab::post_styling_sharedlinks(),
 				]
 			],
@@ -1579,8 +1579,8 @@ class CFF_Customize_Tab{
 				'section' 	=> [
 					'id' 				=> 'post_styling_social',
 					'separator'			=> 'none',
-					'heading' 			=> __( 'Likes, Shares and  Comments Box', 'custom-facebook-feed' ),
-					'description' 		=> __( 'The comments box displayed at the bottom of each timeline post', 'custom-facebook-feed' ),
+					'heading' 			=> __( 'Likes, Shares and Comments Box', 'custom-facebook-feed' ),
+					'description' 		=> __( 'The comments box displayed at the bottom of each timeline post', 'custom-facebook-feed' ),
 					'controls'			=> CFF_Styling_Tab::post_styling_social(),
 				]
 			],

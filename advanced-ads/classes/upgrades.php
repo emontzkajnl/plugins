@@ -1,4 +1,6 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Installation\Capabilities;
 
 /**
  * Upgrade logic from older data to new one
@@ -14,9 +16,9 @@ class Advanced_Ads_Upgrades {
 
 		$internal_options = Advanced_Ads_Plugin::get_instance()->internal_options();
 
-		// the 'advanced_ads_edit_ads' capability was added to Entities::POST_TYPE_AD post type in this version
+		// 'advanced_ads_edit_ads' capability was added to Entities::POST_TYPE_AD post type in this version
 		if ( ! isset( $internal_options['version'] ) || version_compare( $internal_options['version'], '1.7.2', '<' ) ) {
-			Advanced_Ads_Plugin::get_instance()->create_capabilities();
+			Capabilities::get_instance()->create_capabilities();
 		}
 
 		// suppress version update?

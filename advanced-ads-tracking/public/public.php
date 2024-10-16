@@ -1,5 +1,7 @@
 <?php
 
+use AdvancedAds\Framework\Utilities\Params;
+
 /**
  * Class Advanced_Ads_Tracking
  */
@@ -58,28 +60,28 @@ class Advanced_Ads_Tracking {
 	 *
 	 * @var arr
 	 */
-	private $ad_targets = array();
+	private $ad_targets = [];
 
 	/**
 	 * Ad ids that should be tracked using JavaScript
 	 *
 	 * @var arr
 	 */
-	protected $ad_ids = array();
+	protected $ad_ids = [];
 
 	/**
 	 * Ads for which page query string should be transmitted.
 	 *
 	 * @var array
 	 */
-	protected $transmit_pageqs = array();
+	protected $transmit_pageqs = [];
 
 	/**
 	 * Holds placements for ads that have been loaded through AJAX.
 	 *
 	 * @var array
 	 */
-	private $cache_busting_placements = array();
+	private $cache_busting_placements = [];
 
 	/**
 	 * Global WordPress database class instance.
@@ -111,11 +113,14 @@ class Advanced_Ads_Tracking {
 
 		// anyone (even admin previews)
 		// wrap ad in tracking link
-		add_filter( 'advanced-ads-output-inside-wrapper', array( $this, 'add_tracking_link' ), 10, 2 );
+		add_filter( 'advanced-ads-output-inside-wrapper', [ $this, 'add_tracking_link' ], 10, 2 );
+		add_filter( 'advanced-ads-rest-ad-content', [ $this, 'add_tracking_link' ], 10, 2 );
 
-		add_filter( 'advanced-ads-can-display', array( $this, 'can_display' ), 10, 2 );
+		add_action( 'advanced-ads-rest-ad-request', [ $this, 'track_rest_impression' ] );
 
-		add_filter( 'advanced-ads-privacy-output-attributes', array( $this, 'privacy_output_attributes' ), 10, 2 );
+		add_filter( 'advanced-ads-can-display', [ $this, 'can_display' ], 10, 2 );
+
+		add_filter( 'advanced-ads-privacy-output-attributes', [ $this, 'privacy_output_attributes' ], 10, 2 );
 
 		// Load tracking method for AJAX requests.
 		if ( $this->is_ajax ) {
@@ -125,25 +130,29 @@ class Advanced_Ads_Tracking {
 		// Frontend request, not AJAX request.
 		if ( ! $this->is_admin ) {
 			// register two redirect methods, because the first might fail if other plugins also use it
-			add_action( 'plugins_loaded', array( $this, 'url_redirect' ), 1 );
-			add_action( 'wp_loaded', array( $this, 'url_redirect' ), 1 );
+			add_action( 'plugins_loaded', [ $this, 'url_redirect' ], 1 );
+			add_action( 'wp_loaded', [ $this, 'url_redirect' ], 1 );
 			// load functions based on tracking method settings (after the 'parse_query' hook)
-			add_action( 'wp', array( $this, 'load_tracking_method' ), 10 );
-			add_filter( 'advanced-ads-pro-passive-cb-for-ad', array( $this, 'add_passive_cb_for_ad' ), 10, 2 );
+			add_action( 'wp', [ $this, 'load_tracking_method' ], 10 );
+			add_filter( 'advanced-ads-pro-passive-cb-for-ad', [ $this, 'add_passive_cb_for_ad' ], 10, 2 );
+			// add click tracking/link cloaking to background placement.
+			add_filter( 'advanced-ads-pro-background-url', [ $this, 'filter_background_placement_url' ], 10, 2 );
+			add_filter( 'advanced-ads-pro-background-click-matches-script', [ $this, 'add_background_placement_script' ], 10, 2 );
 		}
 
 		$this->load_plugin_textdomain();
 
 		if ( ! defined( 'ADVANCED_ADS_TRACKING_NO_PUBLIC_STATS' ) ) {
-			add_action( 'wp_loaded', array( $this, 'is_public_stat' ) );
+			add_action( 'wp_loaded', [ $this, 'is_public_stat' ] );
 		}
 
 		// scheduled email hook
-		add_action( 'advanced_ads_daily_email', array( $this, 'daily_email' ) );
+		add_action( 'advanced_ads_daily_email', [ $this, 'daily_email' ] );
 
-		add_shortcode( AAT_IMP_SHORTCODE, array( $this, 'impression_shortcode' ) );
+		add_shortcode( AAT_IMP_SHORTCODE, [ $this, 'impression_shortcode' ] );
+		add_shortcode( 'the_ad_clicks', [ $this, 'click_shortcode' ] );
 
-		add_action( 'advanced_ads_daily_report', array( $this, 'individual_email_report' ) );
+		add_action( 'advanced_ads_daily_report', [ $this, 'individual_email_report' ] );
 	}
 
 	/**
@@ -161,10 +170,11 @@ class Advanced_Ads_Tracking {
 			return $wrapper;
 		}
 
+		$frontend_prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
 		// Add the ad id to the wrapper.
-		$wrapper['data-advadstrackid']  = $ad->id;
-		$wrapper['data-advadstrackbid'] = get_current_blog_id();
-		$wrapper['data-advadsredirect'] = (bool) $ad->options( 'tracking.cloaking' );
+		$wrapper[ 'data-' . $frontend_prefix . 'trackid' ]  = $ad->id;
+		$wrapper[ 'data-' . $frontend_prefix . 'trackbid' ] = get_current_blog_id();
+		$wrapper[ 'data-' . $frontend_prefix . 'redirect' ] = (bool) $ad->options( 'tracking.cloaking' ) && ! empty( $ad->options( 'url' ) );
 
 		// Add class to wrapper for click tracking, if ad is image or dummy only if it has a URL.
 		if (
@@ -177,20 +187,22 @@ class Advanced_Ads_Tracking {
 		$options = $ad->options();
 		if (
 			( ! isset( $options['placement_type'] ) || false === strpos( $options['placement_type'], 'sticky' ) || ! isset( $options['sticky']['trigger'] ) || 'timeout' !== $options['sticky']['trigger'] ) &&
-			( ! isset( $options['layer_placement'] ) || empty( $options['layer_placement']['trigger'] ) )
+			( ! isset( $options['layer_placement'] ) || empty( $options['layer_placement']['trigger'] ) ) &&
+			( empty( $options['placement_type'] ) || 'peepso_stream' !== $options['placement_type'] )
 		) {
-
-			// If not sticky, or sticky but no timeout, AND not layer ad or no trigger, abort
+			// If not sticky, or sticky but no timeout, AND not layer ad or no trigger, AND not PeepSo abort.
 			return $wrapper;
 		}
 
 		// add data attribute if this ad's impressions should be tracked.
 		if ( $this->plugin->check_ad_tracking_enabled( $ad ) ) {
-			$wrapper['data-advadsimpression'] = true;
+			$wrapper[ 'data-' . $frontend_prefix . 'impression' ] = true;
 		}
 
-		// Add delayed marker.
-		$wrapper['data-delayed'] = 1;
+		if ( empty( $options['placement_type'] ) || 'peepso_stream' !== $options['placement_type'] ) {
+			// Add delayed marker.
+			$wrapper['data-delayed'] = 1;
+		}
 
 		return $wrapper;
 	}
@@ -207,9 +219,9 @@ class Advanced_Ads_Tracking {
 	 *  Impression shortcode
 	 */
 	public function impression_shortcode( $atts ) {
-		$atts = shortcode_atts( array(
+		$atts = shortcode_atts( [
 			'id' => 0,
-		), $atts, AAT_IMP_SHORTCODE );
+		], $atts, AAT_IMP_SHORTCODE );
 		$ID   = absint( $atts['id'] );
 		if ( ! $ID ) {
 			return;
@@ -225,6 +237,30 @@ class Advanced_Ads_Tracking {
 		$output = ob_get_clean();
 
 		return $output;
+	}
+
+	/**
+	 * Display clicks of an ad in the frontend by using the [the_ad_clicks] shortcode
+	 *
+	 * @param array $atts shortcode attributes.
+	 *
+	 * @return string
+	 */
+	public function click_shortcode( array $atts ): string {
+		$atts  = shortcode_atts( [
+			'id' => 0,
+		], $atts, 'the_ad_clicks' );
+		$ad_id = absint( $atts['id'] );
+		if ( ! $ad_id ) {
+			return '';
+		}
+		$ad = get_post( $ad_id );
+		if ( ! $ad || $ad->post_type !== Advanced_Ads::POST_TYPE_SLUG ) {
+			return '';
+		}
+		ob_start();
+		echo (int) $this->util->get_sums_for_ad( $ad_id, true )['clicks'];
+		return ob_get_clean();
 	}
 
 	/**
@@ -245,9 +281,9 @@ class Advanced_Ads_Tracking {
 	 * @return int|false
 	 */
 	protected function ad_hash_to_id( $hash ) {
-		$all_ads = Advanced_Ads::get_ads( array(
-			'post_status' => array( 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ),
-		) );
+		$all_ads = Advanced_Ads::get_ads( [
+			'post_status' => [ 'publish', 'future', 'draft', 'pending', Advanced_Ads_Tracking_Util::get_expired_post_status() ],
+		] );
 		foreach ( $all_ads as $_ad ) {
 			$ad      = new Advanced_Ads_Ad( $_ad->ID );
 			$options = $ad->options();
@@ -359,7 +395,7 @@ class Advanced_Ads_Tracking {
 
 		// check if the current url has a number in it
 		if ( $permalink ) {
-			$matches = array();
+			$matches = [];
 			preg_match( '@/(\d+)\??@', $request_uri, $matches );
 
 			if ( isset( $matches[1] ) ) {
@@ -400,7 +436,7 @@ class Advanced_Ads_Tracking {
 		}
 		// Need a referrer because the click base url does not contain any information on the post where the ad was displayed and clicked
 		$referrer     = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : false;
-		$placeholders = array( '[POST_ID]', '[POST_SLUG]', '[CAT_SLUG]' );
+		$placeholders = [ '[POST_ID]', '[POST_SLUG]', '[CAT_SLUG]' ];
 		$placeholders = array_merge($placeholders, array_map('urlencode', $placeholders));
 
 		if ( $referrer && is_string( $referrer ) ) {
@@ -417,12 +453,12 @@ class Advanced_Ads_Tracking {
 
 			// hotfix for WPML – remove url_to_postid filter to get an unchanged url
 			global $sitepress;
-			remove_filter( 'url_to_postid', array( $sitepress, 'url_to_postid' ) );
+			remove_filter( 'url_to_postid', [ $sitepress, 'url_to_postid' ] );
 
 			$post_id = url_to_postid( $referrer );
 
 			// reassign WPML filter
-			add_filter( 'url_to_postid', array( $sitepress, 'url_to_postid' ) );
+			add_filter( 'url_to_postid', [ $sitepress, 'url_to_postid' ] );
 
 			$post = get_post( $post_id );
 
@@ -432,13 +468,13 @@ class Advanced_Ads_Tracking {
 				// The post ID was found by its URL.
 				$cats = get_the_category( $post->ID );
 
-				$cats_slugs = array();
+				$cats_slugs = [];
 				foreach ( $cats as $cat ) {
 					$cats_slugs[] = $cat->slug;
 				}
 
 				// $placeholders exist as escaped and unescaped elements.
-				$replacements = array( $post->ID, $post->post_name, implode( ',', $cats_slugs ) );
+				$replacements = [ $post->ID, $post->post_name, implode( ',', $cats_slugs ) ];
 				$replacements = array_merge( $replacements, $replacements );
 				$url          = str_replace( $placeholders, $replacements, $url );
 			} else {
@@ -452,7 +488,7 @@ class Advanced_Ads_Tracking {
 					parse_str( $expl_url[1], $parsed );
 
 					// remove placeholders that can’t be used on non-single posts
-					$query_arr = array();
+					$query_arr = [];
 					foreach ( $parsed as $key => $value ) {
 						if ( ! in_array( $value, $placeholders, true ) ) {
 							// if not related to the placeholder systems, add it to the final url
@@ -493,7 +529,7 @@ class Advanced_Ads_Tracking {
 		}
 
 		// replace [AD_ID] with the ad’s ID, if given
-		$url = str_replace( array('[AD_ID]', '%5BAD_ID%5D'), $ad_id, $url );
+		$url = str_replace( ['[AD_ID]', '%5BAD_ID%5D'], $ad_id, $url );
 
 		if ( $this->plugin->get_tracking_method() !== 'ga' && $this->plugin->check_ad_tracking_enabled( $ad, 'click' ) ) {
 			Advanced_Ads_Tracking_Util::get_instance()->track_click( $ad->id, $start_time );
@@ -535,35 +571,35 @@ class Advanced_Ads_Tracking {
 
 		if ( function_exists( 'advads_is_amp' ) && advads_is_amp() ) {
 			if ( $method === 'onrequest' ) {
-				add_action( 'advanced-ads-output', array( $this, 'track_on_output' ), 10, 3 );
+				add_action( 'advanced-ads-output', [ $this, 'track_on_output' ], 10, 3 );
 			}
 
 			return;
 		}
 
 		if ( (bool) apply_filters( 'advanced-ads-tracking-load-header-scripts', true ) ) {
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 11 );
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 11 );
 			// collect ad id, so that JavaScript can access it
-			add_action( 'advanced-ads-output', array( $this, 'collect_ad_id' ), 10, 3 );
-			add_filter( 'advanced-ads-output-wrapper-options', array( $this, 'add_wrapper' ), 20, 2 );
-			add_action( 'wp_footer', array( $this, 'output_ad_ids' ), PHP_INT_MAX - 1 );
+			add_action( 'advanced-ads-output', [ $this, 'collect_ad_id' ], 10, 3 );
+			add_filter( 'advanced-ads-output-wrapper-options', [ $this, 'add_wrapper' ], 20, 2 );
+			add_action( 'wp_footer', [ $this, 'output_ad_ids' ], PHP_INT_MAX - 1 );
 		}
 
 		// If this is an ajax call and tracking is frontend, track the ads on shutdown.
 		if ( $method === 'frontend' && $this->is_ajax ) {
-			add_filter( 'advanced-ads-cache-busting-item', array( $this, 'collect_cache_busting_placements' ), 10, 2 );
-			add_action( 'shutdown', array( $this, 'track_on_shutdown' ) );
+			add_filter( 'advanced-ads-cache-busting-item', [ $this, 'collect_cache_busting_placements' ], 10, 2 );
+			add_action( 'shutdown', [ $this, 'track_on_shutdown' ] );
 		}
 
 		// database tracking method selected.
 		if ( $method === 'onrequest' ) {
-			add_action( 'advanced-ads-output', array( $this, 'track_on_output' ), 10, 3 );
+			add_action( 'advanced-ads-output', [ $this, 'track_on_output' ], 10, 3 );
 		}
 
 		// Parallel analytics tracking && multi-site
 		if ( is_multisite() || $method === 'ga' || $this->plugin->is_forced_analytics() ) {
-			add_action( 'wp_head', array( $this, 'ga_wp_head' ) );
-			add_action( 'wp_footer', array( $this, 'ga_wp_footer' ), PHP_INT_MAX - 1 );
+			add_action( 'wp_head', [ $this, 'ga_wp_head' ] );
+			add_action( 'wp_footer', [ $this, 'ga_wp_footer' ], PHP_INT_MAX - 1 );
 		}
 	}
 
@@ -590,12 +626,12 @@ class Advanced_Ads_Tracking {
 		if ( ! empty( $this->ad_targets ) ) {
 			if ( is_singular() ) {
 				$post       = get_post();
-				$context    = array(
+				$context    = [
 					'postID'   => $post->ID,
 					'postSlug' => $post->post_name,
-				);
+				];
 				$categories = get_the_category( $post->ID );
-				$cats_slugs = array();
+				$cats_slugs = [];
 				foreach ( $categories as $cat ) {
 					$cats_slugs[] = $cat->slug;
 				}
@@ -648,7 +684,7 @@ class Advanced_Ads_Tracking {
 		$action = sanitize_text_field( $_REQUEST['action'] );
 
 		// sanitize all ads.
-		$current_ads = array_map( array( $this, 'sanitize_ad' ), $main_plugin_instance->current_ads );
+		$current_ads = array_map( [ $this, 'sanitize_ad' ], $main_plugin_instance->current_ads );
 		// remove everything that's not an ad, has empty content, shouldn't be tracked.
 		$current_ads = array_filter( $current_ads, function( $ad ) {
 			return $ad['type'] === 'ad' && ! empty( trim( $ad['output'] ) ) && $ad['tracking_enabled'];
@@ -660,7 +696,7 @@ class Advanced_Ads_Tracking {
 		}
 
 		// if we don't need to check for placements, track the found ads and return. We only need to check placements for ad selects form main plugin or Pro Ad Server module.
-		if ( ! in_array( $action, array( 'advads_ad_select', 'aa-server-select' ), true ) ) {
+		if ( ! in_array( $action, [ 'advads_ad_select', 'aa-server-select' ], true ) ) {
 			Advanced_Ads_Tracking_Util::get_instance()->track_impressions( $current_ads, $start_time );
 
 			return;
@@ -674,16 +710,16 @@ class Advanced_Ads_Tracking {
 			}, ARRAY_FILTER_USE_KEY );
 		} elseif ( $action === 'aa-server-select' ) {
 			// If this is an Ad Server request, but the placement is not, remove it.
-			$placements = array_filter( $placements, function( $placement ) {
-				return isset( $placement['options']['ad-server-slug'] );
+			$placements = array_filter( $placements, static function( $placement ) {
+				return $placement['type'] === 'server';
 			} );
 		}
 
 		// ad groups cache.
-		$ad_groups = array();
+		$ad_groups = [];
 
 		foreach ( $placements as $placement_id => $placement ) {
-			$grouped_ads    = array();
+			$grouped_ads    = [];
 			$ad_group_count = 1;
 			// if this is a group, get the group and see how many ads should be shown.
 			if ( strpos( $placement['item'], 'group' ) === 0 ) {
@@ -726,13 +762,13 @@ class Advanced_Ads_Tracking {
 	private function sanitize_ad( $ad ) {
 		return wp_parse_args(
 			$ad,
-			array(
+			[
 				'int'              => 0,
 				'type'             => '',
 				'placement_id'     => '',
 				'tracking_enabled' => false,
 				'output'           => '',
-			)
+			]
 		);
 	}
 
@@ -756,16 +792,16 @@ class Advanced_Ads_Tracking {
 	 */
 	private function get_ads_in_group( $group_id ) {
 		return Advanced_Ads::get_instance()->get_model()->get_ads(
-			array(
+			[
 				'fields'    => 'ids',
-				'tax_query' => array(
-					array(
+				'tax_query' => [
+					[
 						'taxonomy' => Advanced_Ads::AD_GROUP_TAXONOMY,
 						'field'    => 'term_id',
 						'terms'    => $group_id,
-					),
-				),
-			)
+					],
+				],
+			]
 		);
 	}
 
@@ -779,7 +815,7 @@ class Advanced_Ads_Tracking {
 			return;
 		}
 
-		$deps            = array();
+		$deps            = [];
 		$is_script_debug = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 		$is_ga_tracking  = $this->plugin->get_tracking_method() === 'ga' || is_multisite() || $this->plugin->is_forced_analytics();
 
@@ -787,12 +823,12 @@ class Advanced_Ads_Tracking {
 			$deps[] = 'advanced-ads-pro/cache_busting';
 
 			if ( $is_script_debug ) {
-				wp_enqueue_script( 'advadsTrackingPro', AAT_BASE_URL . 'public/assets/js/src/pro.js', array_merge( $deps, array( 'advadsTrackingScript', 'advadsClickTracking' ) ), AAT_VERSION, true );
+				wp_enqueue_script( 'advadsTrackingPro', AAT_BASE_URL . 'public/assets/js/src/pro.js', array_merge( $deps, [ 'advadsTrackingScript', 'advadsClickTracking' ] ), AAT_VERSION, true );
 			}
 		}
 
 		if ( $is_script_debug ) {
-			wp_register_script( 'advadsTrackingUtils', AAT_BASE_URL . 'public/assets/js/src/tracking-util.js', array(), AAT_VERSION, true );
+			wp_register_script( 'advadsTrackingUtils', AAT_BASE_URL . 'public/assets/js/src/tracking-util.js', [], AAT_VERSION, true );
 			$deps[] = 'advadsTrackingUtils';
 
 			// Google Analytics instances store and tracking script.
@@ -817,23 +853,36 @@ class Advanced_Ads_Tracking {
 		}
 
 		// pass ajax_action name to script
-		wp_localize_script( 'advadsTrackingScript', 'advadsTracking', array(
+		wp_localize_script( 'advadsTrackingScript', 'advadsTracking', [
 			'impressionActionName' => Advanced_Ads_Tracking_Ajax::TRACK_IMPRESSION,
 			'clickActionName'      => Advanced_Ads_Tracking_Ajax::TRACK_CLICK,
 			'targetClass'          => $this->frontend_prefix . 'target',
 			'blogId'               => get_current_blog_id(),
-		) );
+			'frontendPrefix'       => Advanced_Ads_Plugin::get_instance()->get_frontend_prefix(),
+		] );
 
 		if ( $is_ga_tracking ) {
-			wp_localize_script( 'advadsTrackingGAFront', 'advadsGALocale', array(
-				'Impressions' => __( 'Impressions', 'advanced-ads-tracking' ),
-				'Clicks'      => __( 'Clicks', 'advanced-ads-tracking' ),
-			) );
+			$impression_name = 'advanced_ads_impression';
+			$click_name      = 'advanced_ads_click';
+			wp_localize_script( 'advadsTrackingGAFront', 'advadsTrackingGAEvents', [
+				/**
+				 * Filters the Google Analytics 4 event name for ad impressions
+				 *
+				 * @param string $impression_name ad impression event name.
+				 */
+				'impression' => apply_filters( 'advanced-ads-tracking-ga-impression', $impression_name ),
+				/**
+				 * Filters the Google Analytics 4 event name for clicks
+				 *
+				 * @param string $click_name ad click event name.
+				 */
+				'click'      => apply_filters( 'advanced-ads-tracking-ga-click', $click_name ),
+			] );
 		}
 
 		// if delayed ads add-ons are available
 		if ( $this->plugin->has_delayed_ads() ) {
-			wp_enqueue_script( 'advadsTrackingDelayed', AAT_BASE_URL . 'public/assets/js' . ( $is_script_debug ? '/src/delayed.js' : '/dist/delayed.min.js' ), array_merge( $deps, array( 'jquery' ) ), AAT_VERSION, true );
+			wp_enqueue_script( 'advadsTrackingDelayed', AAT_BASE_URL . 'public/assets/js' . ( $is_script_debug ? '/src/delayed.js' : '/dist/delayed.min.js' ), array_merge( $deps, [ 'jquery' ] ), AAT_VERSION, true );
 		}
 	}
 
@@ -844,7 +893,7 @@ class Advanced_Ads_Tracking {
 	 * @param string          $output         Ad HTML output.
 	 * @param array           $output_options Output options for this ad.
 	 */
-	public function collect_ad_id( Advanced_Ads_Ad $ad, $output, $output_options = array() ) {
+	public function collect_ad_id( Advanced_Ads_Ad $ad, $output, $output_options = [] ) {
 		if (
 			empty( $output_options['global_output'] ) // do not track ad for passive cache-busting
 			|| empty( $output ) // do not track empty ads
@@ -859,14 +908,14 @@ class Advanced_Ads_Tracking {
 			$can_transmit_pageqs = apply_filters( 'advanced-ads-tracking-query-string', false, $ad->id );
 			if ( $can_transmit_pageqs ) {
 				if ( ! isset( $this->transmit_pageqs[ $blog_id ] ) ) {
-					$this->transmit_pageqs[ $blog_id ] = array();
+					$this->transmit_pageqs[ $blog_id ] = [];
 				}
 				$this->transmit_pageqs[ $blog_id ][ $ad->id ] = true;
 			}
 		}
 
 		if ( ! isset( $this->ad_ids[ $blog_id ] ) ) {
-			$this->ad_ids[ $blog_id ] = array();
+			$this->ad_ids[ $blog_id ] = [];
 		}
 		Advanced_Ads_Tracking_Util::get_instance()->collect_blog_data();
 		$this->ad_ids[ $blog_id ][] = $ad->id;
@@ -882,24 +931,24 @@ class Advanced_Ads_Tracking {
 		$utils = Advanced_Ads_Tracking_Util::get_instance();
 		$utils->collect_blog_data();
 		$blog_data = $utils->get_blog_data();
-		$variables = array(
-			'advads_tracking_' => array(
+		$variables = [
+			'advads_tracking_' => [
 				'ads'       => $this->ad_ids,
 				'urls'      => $blog_data['ajaxurls'],
 				'methods'   => $blog_data['methods'],
 				'parallel'  => $blog_data['parallelTracking'],
 				'linkbases' => $blog_data['linkbases'],
-			),
-		);
+			],
+		];
 
 		// add Google Analytics specific variables.
 		if ( is_multisite() || $this->plugin->get_tracking_method() === 'ga' || $this->plugin->is_forced_analytics() ) {
-			$variables['advads_gatracking_'] = array(
+			$variables['advads_gatracking_'] = [
 				'uids'           => $blog_data['gaUIDs'],
 				'allads'         => $blog_data['allads'],
 				'anonym'         => defined( 'ADVANCED_ADS_DISABLE_ANALYTICS_ANONYMIZE_IP' ) && ADVANCED_ADS_DISABLE_ANALYTICS_ANONYMIZE_IP,
 				'transmitpageqs' => $this->transmit_pageqs,
-			);
+			];
 		}
 
 		// transpose variables into string.
@@ -923,7 +972,7 @@ class Advanced_Ads_Tracking {
 	 *
 	 * @since 1.0.0
 	 */
-	public function track_on_output( Advanced_Ads_Ad $ad, $output, array $output_options = array() ) {
+	public function track_on_output( Advanced_Ads_Ad $ad, $output, array $output_options = [] ) {
 		$start_time = microtime( true );
 		if (
 			( ! isset( $output_options['global_output'] ) || ! $output_options['global_output'] ) // do not track ad for passive cache-busting
@@ -954,7 +1003,7 @@ class Advanced_Ads_Tracking {
 	 * @deprecated 1.2.0 use util class instead
 	 * @since      1.0.0
 	 */
-	public function track_impression( $args = array() ) {
+	public function track_impression( $args = [] ) {
 		$this->util->track_impression( $args );
 	}
 
@@ -964,7 +1013,7 @@ class Advanced_Ads_Tracking {
 	 * @since      1.1.0
 	 * @deprecated 1.2.0 use util class instead
 	 */
-	public function track_click( $args = array() ) {
+	public function track_click( $args = [] ) {
 		$this->util->track_click( $args );
 	}
 
@@ -983,7 +1032,7 @@ class Advanced_Ads_Tracking {
 		$amp_plain   = false;
 
 		// do not add link if click tracking is not supported by the ad type
-		if ( ! in_array( $ad_options['type'], Advanced_Ads_Tracking_Plugin::get_clickable_types(), true ) ) {
+		if ( ! in_array( $ad->type, Advanced_Ads_Tracking_Plugin::get_clickable_types(), true ) ) {
 			return $content;
 		}
 
@@ -1020,20 +1069,21 @@ class Advanced_Ads_Tracking {
 
 		$bid                                 = get_current_blog_id();
 		$this->ad_targets[ $bid ][ $ad->id ] = $url;
-		$attributes                          = array(
-			'data-bid' => $bid,
-			'href'     => $link,
-			'rel'      => array(),
-			'class'    => array(),
-			'target'   => Advanced_Ads_Tracking_Util::get_target( $ad, true ),
-		);
+		$attributes                          = [
+			'data-bid'        => $bid,
+			'data-no-instant' => true,
+			'href'            => $link,
+			'rel'             => [],
+			'class'           => [],
+			'target'          => Advanced_Ads_Tracking_Util::get_target( $ad, true ),
+		];
 
 		if ( $attributes['target'] !== '' ) {
 			$attributes['rel'][] = 'noopener';
 		}
 
 		// parse rel attribute.
-		foreach ( array( 'nofollow', 'sponsored' ) as $relationship ) {
+		foreach ( [ 'nofollow', 'sponsored' ] as $relationship ) {
 			$option = isset( $ad_options['tracking'][ $relationship ] ) ? $ad_options['tracking'][ $relationship ] : 'default';
 			if ( $option === 'default' ) {
 				$option = ! empty( $options[ $relationship ] );
@@ -1047,7 +1097,7 @@ class Advanced_Ads_Tracking {
 
 			// Add custom parameter to recognise amp origin.
 			if ( $amp_plain ) {
-				$attributes['href'] = add_query_arg( array( 'advads_amp' => '' ), $attributes['href'] );
+				$attributes['href'] = add_query_arg( [ 'advads_amp' => '' ], $attributes['href'] );
 			}
 
 			// return content if there aren't any link tags.
@@ -1067,6 +1117,7 @@ class Advanced_Ads_Tracking {
 				$attributes['href'] = esc_url( $url );
 			}
 			$attributes = array_filter( $attributes );
+			$attributes = $this->filter_link_attributes( $attributes, $ad );
 
 			foreach ( $links_to_replace[0] as $link_tag ) {
 				$link_attributes = $this->attributes_merge_recursive( $this->parse_link_attributes( $link_tag ), $attributes );
@@ -1092,7 +1143,7 @@ class Advanced_Ads_Tracking {
 		) {
 			$attributes['class'][] = 'notrack';
 		} else {
-			$placeholders = array( '[POST_ID]', '[POST_SLUG]', '[CAT_SLUG]', '[AD_ID]' );
+			$placeholders = [ '[POST_ID]', '[POST_SLUG]', '[CAT_SLUG]', '[AD_ID]' ];
 			$placeholders = array_merge($placeholders, array_map('urlencode', $placeholders));
 			// use str_replace to decide whether URL has placeholder.
 			str_replace($placeholders, '', $url, $count);
@@ -1108,6 +1159,19 @@ class Advanced_Ads_Tracking {
 			}
 		}
 
+		if( $ad->type === 'image' ) {
+			$id 		= $ad->output['image_id'] ?? '';
+			$alt      	= trim( esc_textarea( get_post_meta( $id, '_wp_attachment_image_alt', true ) ) );
+			$aria_label	= !empty( $alt ) ? $alt : wp_basename( get_the_title( $id ) );
+			$attributes['aria-label'][] = $aria_label;
+		}
+
+		if( $ad->type === 'dummy' ) {
+			$attributes['aria-label'][] = 'dummy';
+		}
+
+		$attributes = $this->filter_link_attributes( $attributes, $ad );
+
 		return sprintf( '<a %s>%s</a>', $this->create_attributes_string( array_filter( $attributes ) ), $content );
 	}
 
@@ -1120,7 +1184,7 @@ class Advanced_Ads_Tracking {
 	 */
 	private function parse_link_attributes( $input ) {
 		if ( ! extension_loaded( 'dom' ) ) {
-			return array();
+			return [];
 		}
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		$dom                   = new DOMDocument( '1.0', 'utf-8' );
@@ -1128,11 +1192,11 @@ class Advanced_Ads_Tracking {
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
 
-		$attributes = array();
+		$attributes = [];
 		/** @var DOMElement $link */
 		foreach ( $dom->getElementsByTagName( 'a' ) as $link ) {
 			foreach ( $link->attributes as $attribute ) {
-				$attributes[ $attribute->name ] = in_array( $attribute->name, array( 'class', 'rel' ), true ) ? explode( ' ', $attribute->value ) : $attribute->value;
+				$attributes[ $attribute->name ] = in_array( $attribute->name, [ 'class', 'rel' ], true ) ? explode( ' ', $attribute->value ) : $attribute->value;
 			}
 		}
 
@@ -1383,7 +1447,8 @@ class Advanced_Ads_Tracking {
 			$this->log_report_cron( $debug_string . ': frequency: ' . $frequency );
 			$this->log_report_cron( $debug_string . ': current time: ' . print_r( $now, true ) );
 
-			$subject = sprintf( __( 'Ad statistics for %s', 'advanced-ads-tracking' ), $period_name );
+			// translators: 1. statistics period 2. ad name
+			$subject = sprintf( __( 'Ad statistics for %1$s for %2$s', 'advanced-ads-tracking' ), $period_name, $item['title'] );
 			$result  = 'not sent';
 
 			// if the ad is expired, send one last report after expiration.
@@ -1397,34 +1462,34 @@ class Advanced_Ads_Tracking {
 				case 'monthly':
 					if ( $now->format( 'd' ) === '01' ) {
 						// if start of month
-						$result = $this->util->send_individual_ad_report( array(
+						$result = $this->util->send_individual_ad_report( [
 							'subject' => $subject,
 							'to'      => $recip,
 							'id'      => $ad_id,
 							'period'  => $period,
-						) );
+						] );
 					}
 					break;
 
 				case 'weekly':
 					if ( $now->format( 'w' ) === '1' ) {
 						// if monday
-						$result = $this->util->send_individual_ad_report( array(
+						$result = $this->util->send_individual_ad_report( [
 							'subject' => $subject,
 							'to'      => $recip,
 							'id'      => $ad_id,
 							'period'  => $period,
-						) );
+						] );
 					}
 					break;
 
 				default: // daily
-					$result = $this->util->send_individual_ad_report( array(
+					$result = $this->util->send_individual_ad_report( [
 						'subject' => $subject,
 						'to'      => $recip,
 						'id'      => $ad_id,
 						'period'  => $period,
-					) );
+					] );
 			}
 
 			$this->log_report_cron( $debug_string . ': send?: ' . print_r( $result, true ) );
@@ -1438,16 +1503,16 @@ class Advanced_Ads_Tracking {
 	 */
 	private function get_ad_reports_params() {
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- we can't add table names as placeholders.
-		$ad_ids = array_map( 'intval', $this->wpdb->get_col( "SELECT {$this->wpdb->posts}.ID FROM {$this->wpdb->posts} INNER JOIN {$this->wpdb->postmeta} ON {$this->wpdb->posts}.ID = {$this->wpdb->postmeta}.post_id WHERE {$this->wpdb->posts}.post_type = 'advanced_ads' AND {$this->wpdb->postmeta}.meta_value LIKE '%report-frequency%'" ) );
+		$ad_ids = array_map( function( $value ) { return (int) $value; }, $this->wpdb->get_col( "SELECT {$this->wpdb->posts}.ID FROM {$this->wpdb->posts} INNER JOIN {$this->wpdb->postmeta} ON {$this->wpdb->posts}.ID = {$this->wpdb->postmeta}.post_id WHERE {$this->wpdb->posts}.post_type = 'advanced_ads' AND {$this->wpdb->postmeta}.meta_value LIKE '%report-frequency%'" ) );
 
 		// The final result.
-		$params = array();
+		$params = [];
 
-		$period_names = array(
+		$period_names = [
 			'last30days'   => __( 'last 30 days', 'advanced-ads-tracking' ),
 			'lastmonth'    => __( 'the last month', 'advanced-ads-tracking' ),
 			'last12months' => __( 'last 12 months', 'advanced-ads-tracking' ),
-		);
+		];
 
 		foreach ( $ad_ids as $ad_id ) {
 			$the_ad = new Advanced_Ads_Ad( $ad_id );
@@ -1456,14 +1521,14 @@ class Advanced_Ads_Tracking {
 			}
 			$options = $the_ad->options();
 			if ( isset( $options['tracking']['report-frequency'] ) && $options['tracking']['report-frequency'] !== 'never' ) {
-				$params[ $the_ad->id ] = array(
+				$params[ $the_ad->id ] = [
 					'id'             => $the_ad->id,
 					'frequency'      => $options['tracking']['report-frequency'],
 					'period'         => $options['tracking']['report-period'],
 					'recip'          => $options['tracking']['report-recip'],
-					'title'          => get_the_title( $the_ad->id ),
+					'title'          => $the_ad->title,
 					'period-literal' => $period_names[ $options['tracking']['report-period'] ],
-				);
+				];
 			}
 		}
 
@@ -1510,15 +1575,103 @@ class Advanced_Ads_Tracking {
 		if ( empty( $ad_expiration ) ) {
 			return false;
 		}
-		$offset = array(
+		$offset = [
 			'daily'   => DAY_IN_SECONDS,
 			'weekly'  => WEEK_IN_SECONDS,
 			'monthly' => MONTH_IN_SECONDS,
-		);
+		];
 		if ( ! array_key_exists( $frequency, $offset ) ) {
 			return false;
 		}
 
 		return $now_timestamp > $ad_expiration + $offset[ $frequency ];
+	}
+
+	/**
+	 * Filter the ad link for the background placement.
+	 * If link cloaking is active and ad clicks should be tracked, build the tracking URL.
+	 *
+	 * @param string          $url The ad URL.
+	 * @param Advanced_Ads_Ad $ad  The current ad object.
+	 *
+	 * @return string
+	 */
+	public function filter_background_placement_url( $url, Advanced_Ads_Ad $ad ) {
+		if (
+			empty( $url )
+			|| ! $this->plugin->check_ad_tracking_enabled( $ad, 'click' )
+			|| ! $ad->options( 'tracking.cloaking' )
+		) {
+			return $url;
+		}
+
+		return self::build_click_tracking_url( $ad );
+	}
+
+	/**
+	 * Add JS to background placement to enable click tracking.
+	 *
+	 * @param string          $script Other script content, probably empty.
+	 * @param Advanced_Ads_Ad $ad     The current ad object.
+	 *
+	 * @return string
+	 */
+	public function add_background_placement_script( $script, Advanced_Ads_Ad $ad ) {
+		$frontend_prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
+		ob_start();
+		if ( $ad->options( 'tracking.cloaking' ) ) {
+			printf( 'e.target.setAttribute( "data-%sredirect", "1");', esc_attr( $frontend_prefix ) );
+		}
+
+		if ( $this->plugin->check_ad_tracking_enabled( $ad, 'click' ) ) {
+			printf(
+				'e.target.setAttribute( "data-%1$strackid", "%2$d");'
+				. 'e.target.setAttribute( "data-%1$strackbid", "%3$d");'
+				. 'AdvAdsClickTracker.ajaxSend( e.target );',
+				esc_attr( $frontend_prefix ),
+				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- integers in printf
+				$ad->id,
+				get_current_blog_id()
+			// phpcs:enable
+			);
+		}
+
+		return $script . preg_replace( '/\s+/', ' ', ob_get_clean() );
+	}
+
+	/**
+	 * Filter the tracking links attributes.
+	 * They are used in multiple places, therefore wrap them in a function.
+	 * Ensure the href is present so the `a` tag is valid.
+	 *
+	 * @param array           $attributes Generated HTML attributes.
+	 * @param Advanced_Ads_Ad $ad         The current ad object.
+	 *
+	 * @return array
+	 */
+	private function filter_link_attributes( array $attributes, Advanced_Ads_Ad $ad ) {
+		/**
+		 * Allow to filter the link attributes.
+		 *
+		 * @var array           $attributes The generated attributes. Attribute name is the key and the value as the value. If multiple values exist for a key, they're stored in an array of strings.
+		 * @var Advanced_Ads_Ad $ad         The current ad object.
+		 */
+		$attributes = (array) apply_filters( 'advanced-ads-tracking-link-attributes', $attributes, $ad );
+		if ( ! array_key_exists( 'href', $attributes ) ) {
+			$attributes['href'] = '';
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Track impressions for array of ad_ids with the current timestamp.
+	 *
+	 * @param Advanced_Ads_Ad $ad The ad to track.
+	 *
+	 * @return void
+	 */
+	public function track_rest_impression( $ad ) {
+		Advanced_Ads_Tracking_Util::get_instance()->track_impressions( [ $ad->id ], time() );
 	}
 }

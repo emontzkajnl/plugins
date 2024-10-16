@@ -61,9 +61,18 @@
 					}
 
 					for ( var i in event.ad_ids[bid] ) {
-						var el = document.querySelector( '[data-advadstrackid="' + event.ad_ids[bid][i] + '"][data-advadstrackbid="' + bid + '"]' );
-						if ( el !== null && typeof advads_items !== 'undefined' && typeof advads_items.showed !== 'undefined' && advads_items.showed.indexOf( el.id ) > - 1 ) {
-							// this is a trigger-able ad. will be tracked on display if using frontend or ga method.
+						var el = document.querySelector( '[data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackid' ) + '="' + event.ad_ids[bid][i] + '"][data-' + AdvAdsTrackingUtils.getPrefixedAttribute( 'trackbid' ) + '="' + bid + '"]' );
+
+						// this is a trigger-able ad. will be tracked on display if using frontend or ga method.
+						if (
+							el !== null
+							&& typeof advads_items !== 'undefined'
+							&& typeof advads_items.showed !== 'undefined'
+							&& (
+								advads_items.showed.indexOf( el.id ) > - 1
+								&& typeof el.dataset.delayed !== 'undefined'
+							)
+						) {
 							continue;
 						}
 

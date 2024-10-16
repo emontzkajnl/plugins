@@ -9,7 +9,6 @@
 
 namespace AdvancedAds\Modules\OneClick\Admin;
 
-use AdvancedAds\Assets_Registry;
 use AdvancedAds\Utilities\Conditional;
 use AdvancedAds\Modules\OneClick\Helpers;
 use AdvancedAds\Modules\OneClick\Options;
@@ -43,8 +42,8 @@ class Admin implements Integration_Interface {
 			return;
 		}
 
-		Assets_Registry::enqueue_style( 'app' );
-		Assets_Registry::enqueue_script( 'app' );
+		wp_advads()->registry->enqueue_style( 'app' );
+		wp_advads()->registry->enqueue_script( 'app' );
 	}
 
 	/**
@@ -62,23 +61,25 @@ class Admin implements Integration_Interface {
 			'desc'  => __( 'Enables MonetizeMore users to link their settings with the PubGuru insights & analytics dashboard.', 'advanced-ads' ),
 			'order' => 1000,
 			'link'  => '#',
+			'icon'  => ADVADS_BASE_URL . 'assets/img/add-ons/aa-addons-icons-m2pg.svg',
 		];
 
 		$addons['monetizemore-connect'] = $defaults + [
-			'class'      => 'js-m2-show-consent',
-			'link_title' => __( 'Connect now', 'advanced-ads' ),
+			'class'        => 'js-pubguru-connect',
+			'link_title'   => __( 'Connect now', 'advanced-ads' ),
+			'link_icon'    => 'dashicons-plus',
+			'link_primary' => true,
 		];
 
 		$addons['monetizemore-disconnect'] = $defaults + [
 			'class'      => 'js-pubguru-disconnect',
 			'link_title' => __( 'Disconnect now', 'advanced-ads' ),
+			'link_icon'  => 'dashicons-dismiss',
 		];
 
-		if ( $is_connected ) {
-			$addons['monetizemore-connect']['class'] .= ' hidden';
-		} else {
-			$addons['monetizemore-disconnect']['class'] .= ' hidden';
-		}
+		$key = $is_connected ? 'monetizemore-connect' : 'monetizemore-disconnect';
+
+		$addons[ $key ]['class'] .= ' hidden';
 
 		return $addons;
 	}
@@ -110,6 +111,7 @@ class Admin implements Integration_Interface {
 			</div>
 			</div>
 		</div>
+		<div id="pubguru-notices"></div>
 
 		<?php
 	}

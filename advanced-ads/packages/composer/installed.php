@@ -3,7 +3,7 @@
         'name' => 'webgilde/advanced-ads',
         'pretty_version' => '1.42.1',
         'version' => '1.42.1.0',
-        'reference' => NULL,
+        'reference' => null,
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'advanced-ads/framework' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '95e385daf3e3f11125711f43c5f7c437e00b075d',
+            'reference' => '9ceddbff73a7f588e29ab0172314b9a9a349546c',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../advanced-ads/framework',
             'aliases' => array(
@@ -33,7 +33,7 @@
         'webgilde/advanced-ads' => array(
             'pretty_version' => '1.42.1',
             'version' => '1.42.1.0',
-            'reference' => NULL,
+            'reference' => null,
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
