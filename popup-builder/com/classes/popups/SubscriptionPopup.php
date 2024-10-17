@@ -438,7 +438,7 @@ class SubscriptionPopup extends SGPopup
 
 	private function getSubscriptionValidationScripts($validateObj)
 	{		
-		wp_register_script( 'sgpb-subscriptionpopup-js-footer', '', array("jquery"), '', true );
+		wp_register_script( 'sgpb-subscriptionpopup-js-footer', '', array("jquery"), SGPB_POPUP_VERSION, true );
 		wp_enqueue_script( 'sgpb-subscriptionpopup-js-footer'  );
 		wp_add_inline_script( 'sgpb-subscriptionpopup-js-footer', $validateObj);
 		return '';		
@@ -636,7 +636,8 @@ class SubscriptionPopup extends SGPopup
 	public static function getSubscribersCount()
 	{
 		global $wpdb;
-		$count = $wpdb->get_var('SELECT COUNT(*) FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$count = $wpdb->get_var("SELECT COUNT(*) FROM $subscribersTableName");
 
 		return (int)$count;
 	}
@@ -673,8 +674,8 @@ class SubscriptionPopup extends SGPopup
 	{
 		$subsDateList = array();
 		global $wpdb;
-		
-		$subscriptionPopups = $wpdb->get_results( $wpdb->prepare('SELECT id, cDate FROM %i', $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME), ARRAY_A);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$subscriptionPopups = $wpdb->get_results( "SELECT id, cDate FROM $subscribersTableName", ARRAY_A);
 
 		foreach ($subscriptionPopups as $subscriptionForm) {
 			$id = $subscriptionForm['id'];

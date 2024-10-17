@@ -35,4 +35,8 @@ use sgpb\AdminHelper;
     #wpbody-content > div.wrap > a {
         display: none !important;
     }
+	.notice_sgpb
+	{
+		 display: block !important;
+	}
 </style>

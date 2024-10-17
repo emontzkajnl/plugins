@@ -1770,16 +1770,16 @@ abstract class SGPopup
 	{
 		global $wpdb;
 		// 7, 12, 13 => exclude close, subscription success, contact success events
-		$stmt = $wpdb->prepare('SELECT COUNT(*) FROM '.$wpdb->prefix.'sgpb_analytics WHERE target_id = %d AND event_id NOT IN (7, 12, 13)', $popupId);
-		$popupAnalyticsData = $wpdb->get_var($stmt);
+		$tableName_sgpb_analytics = $wpdb->prefix.'sgpb_analytics';
+		$popupAnalyticsData = $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM $tableName_sgpb_analytics WHERE target_id = %d AND event_id NOT IN (7, 12, 13)", $popupId) );
 		return $popupAnalyticsData;
 	}
 
 	public static function deleteAnalyticsDataByPopupId($popupId)
 	{
 		global $wpdb;
-		$prepareSql = $wpdb->prepare('DELETE FROM '.$wpdb->prefix.'sgpb_analytics WHERE target_id = %d AND  event_id NOT IN (7, 12, 13) LIMIT 100', $popupId);
-		$wpdb->query($prepareSql);
+		$tableName_sgpb_analytics = $wpdb->prefix.'sgpb_analytics';
+		$wpdb->query( $wpdb->prepare("DELETE FROM $tableName_sgpb_analytics WHERE target_id = %d AND  event_id NOT IN (7, 12, 13) LIMIT 100", $popupId) );
 	}
 
 	public static function getActivePopupsQueryString()

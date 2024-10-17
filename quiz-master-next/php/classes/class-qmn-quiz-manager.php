@@ -533,7 +533,7 @@ class QMNQuizManager {
 				$return_display = do_shortcode( '[qsm_result id="' . $result_id . '"]' );
 				$return_display = str_replace( '%FB_RESULT_ID%', $result_unique_id, $return_display );
 			} else {
-				$return_display = 'Result id is wrong!';
+				$return_display = esc_html__( 'Result id is wrong!', 'quiz-master-next' );
 			}
 			$return_display .= ob_get_clean();
 		} else {
@@ -597,7 +597,7 @@ class QMNQuizManager {
 			$correct_answer_text = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $correct_answer_text, "quiz_quick_result_correct_answer_text-{$qmn_array_for_variables['quiz_id']}" );
 			$wrong_answer_text = sanitize_text_field( $qmn_quiz_options->quick_result_wrong_answer_text );
 			$wrong_answer_text = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $wrong_answer_text, "quiz_quick_result_wrong_answer_text-{$qmn_array_for_variables['quiz_id']}" );
-			$quiz_processing_message = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $qmn_quiz_options->quiz_processing_message, "quiz_quiz_processing_message-{$qmn_array_for_variables['quiz_id']}" );
+			$quiz_processing_message = isset( $qmn_quiz_options->quiz_processing_message ) ? $mlwQuizMasterNext->pluginHelper->qsm_language_support( $qmn_quiz_options->quiz_processing_message, "quiz_quiz_processing_message-{$qmn_array_for_variables['quiz_id']}" ) : '';
 			$quiz_limit_choice = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $qmn_quiz_options->quiz_limit_choice, "quiz_quiz_limit_choice-{$qmn_array_for_variables['quiz_id']}" );
 			$qmn_json_data = array(
 				'quiz_id'                            => $qmn_array_for_variables['quiz_id'],
@@ -626,6 +626,7 @@ class QMNQuizManager {
 			);
 
 			$return_display = apply_filters( 'qmn_begin_shortcode', $return_display, $qmn_quiz_options, $qmn_array_for_variables, $shortcode_args );
+			$qmn_quiz_options = apply_filters( 'qsm_quiz_options_before', $qmn_quiz_options, $qmn_array_for_variables, $shortcode_args );
 
 			// Checks if we should be showing quiz or results page.
 			if ( $qmn_allowed_visit && ! isset( $_POST['complete_quiz'] ) && ! empty( $qmn_quiz_options->quiz_name ) ) {
@@ -657,7 +658,7 @@ class QMNQuizManager {
 				$encryption[ $question['question_id'] ]['correct_info_text'] = isset( $question['question_answer_info'] ) ? html_entity_decode( $question['question_answer_info'] ) : '';
 				$encryption[ $question['question_id'] ]['correct_info_text'] = $mlwQuizMasterNext->pluginHelper->qsm_language_support( $encryption[ $question['question_id'] ]['correct_info_text'], "correctanswerinfo-{$question['question_id']}" );
 			}
-			if ( ( isset($qmn_json_data['end_quiz_if_wrong']) && 0 < $qmn_json_data['end_quiz_if_wrong'] ) || ( ! empty( $qmn_json_data['enable_quick_result_mc'] ) && 1 == $qmn_json_data['enable_quick_result_mc'] ) || ( ! empty( $qmn_json_data['ajax_show_correct'] ) && 1 == $qmn_json_data['ajax_show_correct'] ) ) {
+			if ( ( isset($qmn_json_data['end_quiz_if_wrong']) && 0 < $qmn_json_data['end_quiz_if_wrong'] ) || ( ! empty( $qmn_json_data['enable_quick_result_mc'] ) && 1 == $qmn_json_data['enable_quick_result_mc'] ) || ( ! empty( $qmn_json_data['enable_quick_correct_answer_info'] ) && 0 != $qmn_json_data['enable_quick_correct_answer_info'] ) || ( ! empty( $qmn_json_data['ajax_show_correct'] ) && 1 == $qmn_json_data['ajax_show_correct'] ) ) {
 				$quiz_id = $qmn_json_data['quiz_id'];
 				$qsm_inline_encrypt_js = '
 				if (encryptionKey === undefined) {
@@ -742,7 +743,7 @@ class QMNQuizManager {
 					'result_id'              => $id,
 				);
 				$data          = QSM_Results_Pages::generate_pages( $response_data );
-				echo wp_kses_post( htmlspecialchars_decode( $data['display'] ) );
+				return $data['display'];
 			} else {
 				esc_html_e( 'Invalid result id!', 'quiz-master-next' );
 			}
@@ -928,14 +929,6 @@ class QMNQuizManager {
 					$question_ids = apply_filters( 'qsm_load_questions_ids', $question_ids, $quiz_id, $quiz_options );
 					$question_ids = QMNPluginHelper::qsm_shuffle_assoc( $question_ids );
 					$question_sql = implode( ',', $question_ids );
-					?>
-					<script>
-						const d = new Date();
-						d.setTime(d.getTime() + (365*24*60*60*1000));
-						let expires = "expires="+ d.toUTCString();
-						document.cookie = "question_ids_<?php echo esc_attr( $quiz_id ); ?> = <?php echo esc_attr( $question_sql ) ?>; "+expires+"; path=/";
-					</script>
-					<?php
 				}
 				$order_by_sql = 'ORDER BY FIELD(question_id,'. esc_sql( $question_sql ) .')';
 			}
@@ -978,6 +971,27 @@ class QMNQuizManager {
 			}
 			$questions = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mlw_questions WHERE quiz_id=%d AND deleted=0 %1s %2s %3s", $quiz_id, $question_sql, $order_by_sql, $limit_sql ) );
 
+		}
+		if (
+			in_array( intval( $quiz_options->randomness_order ), [ 1, 2 ], true) &&
+			! empty($questions) &&
+			is_array($questions) &&
+			! isset($_COOKIE[ 'question_ids_' . $quiz_id ])
+		) {
+			$question_ids = array();
+			foreach ( $questions as $question ) {
+				$question_ids[] = $question->question_id;
+			}
+
+			$question_sql = implode(',', array_unique($question_ids)); // Prevent duplicates
+			?>
+			<script>
+				const d = new Date();
+				d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000)); // Set cookie for 1 year
+				let expires = "expires=" + d.toUTCString();
+				document.cookie = "question_ids_<?php echo esc_js($quiz_id); ?>=" + "<?php echo esc_js($question_sql); ?>" + "; " + expires + "; path=/";
+			</script>
+			<?php
 		}
 		return apply_filters( 'qsm_load_questions_filter', $questions, $quiz_id, $quiz_options );
 	}
@@ -1870,9 +1884,9 @@ class QMNQuizManager {
 	 *
 	 * @return boolean results added or not
 	 */
-	private function add_quiz_results( $data ) {
+	public function add_quiz_results( $data ) {
 		global $wpdb;
-		if ( empty( $wpdb ) || empty( $data['qmn_array_for_variables'] ) || empty( $data['results_array'] ) || empty( $data['unique_id'] ) || empty( $data['http_referer'] ) || ! isset( $data['form_type'] ) ) {
+		if ( empty( $wpdb ) || empty( $data['qmn_array_for_variables'] ) || empty( $data['results_array'] ) || empty( $data['unique_id'] ) || ! isset( $data['http_referer'] ) || ! isset( $data['form_type'] ) ) {
 			return false;
 		}
 
@@ -1883,6 +1897,9 @@ class QMNQuizManager {
 		$wpdb->suppress_errors();
 
 		try {
+			if ( empty( $data['page_name'] ) ) {
+				$data['page_name'] = url_to_postid( $data['http_referer'] ) ? get_the_title( url_to_postid( $data['http_referer'] ) ) : '';
+			}
 			$res = $wpdb->insert(
 				$table_name,
 				array(
@@ -1902,11 +1919,11 @@ class QMNQuizManager {
 					'time_taken'      => $data['qmn_array_for_variables']['time_taken'],
 					'time_taken_real' => gmdate( 'Y-m-d H:i:s', strtotime( $data['qmn_array_for_variables']['time_taken'] ) ),
 					'quiz_results'    => maybe_serialize( $data['results_array'] ),
-					'deleted'         => 0,
+					'deleted'         => ( isset( $data['deleted'] ) && 1 === intval( $data['deleted'] ) ) ? 1 : 0,
 					'unique_id'       => $data['unique_id'],
 					'form_type'       => $data['form_type'],
 					'page_url'        => $data['http_referer'],
-					'page_name'       => url_to_postid( $data['http_referer'] ) ? get_the_title( url_to_postid( $data['http_referer'] ) ) : '',
+					'page_name'       => sanitize_text_field( $data['page_name'] ),
 				),
 				array(
 					'%d',
@@ -2129,7 +2146,7 @@ class QMNQuizManager {
 			if ( 1 == $qmn_quiz_options->enable_retake_quiz_button ) {
 				$result_display .= '<form method="POST">';
 				$result_display .= '<input type="hidden" value="' . $qmn_array_for_variables['quiz_id'] . '" name="qsm_retake_quiz_id" />';
-				$result_display .= '<input type="submit" value="' . $mlwQuizMasterNext->pluginHelper->qsm_language_support( apply_filters( 'qsm_retake_quiz_text', $qmn_quiz_options->retake_quiz_button_text ), "quiz_retake_quiz_button_text-{$qmn_quiz_options->quiz_id}" ) . '" name="qsm_retake_button" class="qsm-btn qsm_retake_button qmn_btn" id="qsm_retake_button" />';
+				$result_display .= '<input type="submit" value="' . esc_attr( $mlwQuizMasterNext->pluginHelper->qsm_language_support( apply_filters( 'qsm_retake_quiz_text', $qmn_quiz_options->retake_quiz_button_text ), "quiz_retake_quiz_button_text-{$qmn_quiz_options->quiz_id}" ) ) . '" name="qsm_retake_button" class="qsm-btn qsm_retake_button qmn_btn" id="qsm_retake_button" />';
 				$result_display .= '</form>';
 			}
 
@@ -2400,8 +2417,8 @@ class QMNQuizManager {
 						$results_array = apply_filters( 'qmn_results_array', $results_array, $question );
 						// If question was graded correctly.
 						if ( ! isset( $results_array['null_review'] ) ) {
-							$points_earned += (float)$results_array['points'];
-							$answer_points += (float)$results_array['points'];
+							$points_earned += isset($results_array['points']) ? (float)$results_array['points'] : 0;
+							$answer_points += isset($results_array['points']) ? (float)$results_array['points'] : 0;
 							// If the user's answer was correct.
 							if ( isset( $results_array['correct'] ) && ( 'correct' == $results_array['correct'] ) ) {
 								$total_correct += 1;
@@ -2549,7 +2566,7 @@ class QMNQuizManager {
 		$question_required = ( 0 === maybe_unserialize( $question['question_settings'] )['required'] );
 		$multi_response    = ( '4' === $question_type || '10' === $question_type || '14' === $question_type );
 
-		return self::qsm_max_min_points_conditions( $max_value_array, $min_value_array, $question_required, $multi_response );
+		return self::qsm_max_min_points_conditions( $max_value_array, $min_value_array, $question_required, $multi_response, $question );
 
 	}
 	/**
@@ -2562,7 +2579,7 @@ class QMNQuizManager {
 	 * @param  array $multi_response
 	 * @return string $max_min_result
 	 */
-	public static function qsm_max_min_points_conditions( $max_value_array, $min_value_array, $question_required, $multi_response ) {
+	public static function qsm_max_min_points_conditions( $max_value_array, $min_value_array, $question_required, $multi_response, $question ) {
 		$max_min_result = array(
 			'max_point' => 0,
 			'min_point' => 0,
@@ -2610,7 +2627,7 @@ class QMNQuizManager {
 			$max_min_result['max_point'] = max( $max_value_array );
 			$max_min_result['min_point'] = min( $min_value_array );
 		}
-		return $max_min_result;
+		return apply_filters( 'qsm_max_min_points_conditions_result', $max_min_result, $question_required, $question );
 	}
 
 	/**
@@ -3082,7 +3099,7 @@ function qmn_total_user_tries_check( $display, $qmn_quiz_options, $qmn_array_for
 		} else {
 			$mlw_qmn_user_try_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}mlw_results WHERE user_ip=%s AND deleted=0 AND quiz_id=%d", $qmn_array_for_variables['user_ip'], $qmn_array_for_variables['quiz_id'] ) );
 		}
-
+		$mlw_qmn_user_try_count = apply_filters( 'qsm_total_user_tries_check_before', $mlw_qmn_user_try_count, $qmn_quiz_options, $qmn_array_for_variables );
 		// If user has already reached the limit for this quiz
 		if ( $mlw_qmn_user_try_count >= $qmn_quiz_options->total_user_tries ) {
 
@@ -3137,10 +3154,10 @@ function qmn_pagination_check( $display, $qmn_quiz_options, $qmn_array_for_varia
 			'amount'                 => $qmn_quiz_options->pagination,
 			'section_comments'       => $qmn_quiz_options->comment_section,
 			'total_questions'        => $total_questions,
-			'previous_text'          => $mlwQuizMasterNext->pluginHelper->qsm_language_support( $qmn_quiz_options->previous_button_text, "quiz_previous_button_text-{$qmn_quiz_options->quiz_id}" ),
-			'next_text'              => $mlwQuizMasterNext->pluginHelper->qsm_language_support( $qmn_quiz_options->next_button_text, "quiz_next_button_text-{$qmn_quiz_options->quiz_id}" ),
-			'start_quiz_survey_text' => $mlwQuizMasterNext->pluginHelper->qsm_language_support( $quiz_btn_display_text, "quiz_start_quiz_text-{$qmn_quiz_options->quiz_id}" ),
-			'submit_quiz_text'       => $mlwQuizMasterNext->pluginHelper->qsm_language_support($qmn_quiz_options->submit_button_text, "quiz_submit_button_text-{$qmn_quiz_options->quiz_id}" ),
+			'previous_text'          => esc_html( $mlwQuizMasterNext->pluginHelper->qsm_language_support( $qmn_quiz_options->previous_button_text, "quiz_previous_button_text-{$qmn_quiz_options->quiz_id}" ) ),
+			'next_text'              => esc_html( $mlwQuizMasterNext->pluginHelper->qsm_language_support( $qmn_quiz_options->next_button_text, "quiz_next_button_text-{$qmn_quiz_options->quiz_id}" ) ),
+			'start_quiz_survey_text' => esc_html( $mlwQuizMasterNext->pluginHelper->qsm_language_support( $quiz_btn_display_text, "quiz_start_quiz_text-{$qmn_quiz_options->quiz_id}" ) ),
+			'submit_quiz_text'       => esc_html( $mlwQuizMasterNext->pluginHelper->qsm_language_support($qmn_quiz_options->submit_button_text, "quiz_submit_button_text-{$qmn_quiz_options->quiz_id}" ) ),
 		);
 	}
 	return $display;

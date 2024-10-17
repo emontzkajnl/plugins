@@ -72,7 +72,7 @@ if (!empty($extensions['noActive'])) : ?>
 	<?php endif; ?>
 </div>
 <?php
-	wp_register_script( 'sgpb-popup-types-js-footer', '', array("jquery"), '', true );
+	wp_register_script( 'sgpb-popup-types-js-footer', '', array("jquery"), SGPB_POPUP_VERSION, true );
 	wp_enqueue_script( 'sgpb-popup-types-js-footer'  );
 	wp_add_inline_script( 'sgpb-popup-types-js-footer', "jQuery(document).ready(function() {
 	    jQuery('.sgpb-box').on('click', function () {

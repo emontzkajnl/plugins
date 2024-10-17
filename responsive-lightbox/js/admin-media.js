@@ -192,15 +192,15 @@
 
 				// valid remote library view?
 				if ( view !== null && 'model' in view && view.model.id === 'rl-remote-library' ) {
-					var contentState = this.state(),
-						contentSelection = contentState.get( 'selection' );
+					var contentState = this.state();
+					var contentSelection = contentState.get( 'selection' );
 
 					// clear selection
 					contentSelection.reset();
 
-					var toolbar = this.toolbar.get(),
-						controller = this,
-						spinner = view.toolbar.get( 'spinner' );
+					var toolbar = this.toolbar.get();
+					var controller = this;
+					var spinner = view.toolbar.get( 'spinner' );
 
 					// display spinner
 					spinner.$el.css( 'marginLeft', '6px' );
@@ -218,18 +218,18 @@
 						text: gutenberg_active ? rlRemoteLibraryMedia.uploadAndSelect : rlRemoteLibraryMedia.uploadAndInsert,
 						requires: { selection: true },
 						click: function() {
-							var state = controller.state(),
-								selection = state.get( 'selection' ),
-								image = selection.single(),
-								content = controller.content.get(),
-								attachment = content.attachments.$el.find( 'li[data-id="' + image.attributes.id + '"] .thumbnail' ),
-								attachment_image = attachment.find( '.centered' );
+							var state = controller.state();
+							var selection = state.get( 'selection' );
+							var image = selection.single();
+							var content = controller.content.get();
+							var attachment = content.attachments.$el.find( 'li[data-id="' + image.attributes.id + '"] .thumbnail' );
+							var attachment_image = attachment.find( '.centered' );
 
 							attachment_image.css( { opacity: 0.1, transition: 'opacity 500ms' } );
 							attachment_image.after( '<div class="media-progress-bar"><div style="width: 20%"></div></div>' );
 
-							var progress = attachment.find( '.media-progress-bar div' ),
-								transition = progress.css( 'transition' );
+							var progress = attachment.find( '.media-progress-bar div' );
+							var transition = progress.css( 'transition' );
 
 							progress.css( 'transition', 'width 10s' ).animate( { width: "100%" }, 0 );
 

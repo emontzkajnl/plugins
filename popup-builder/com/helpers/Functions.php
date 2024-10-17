@@ -186,12 +186,11 @@ class Functions
 	{
 		global $wpdb;
 		$dbName = $wpdb->dbname;	
-		$engine = 'InnoDB';
-		$engineCheckSql = "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s";
-		$result = $wpdb->get_results( $wpdb->prepare( $engineCheckSql , $dbName), ARRAY_A);
+		$engine = 'InnoDB';		
+		$result = $wpdb->get_results( $wpdb->prepare( "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s" , $dbName), ARRAY_A);
 		if (!empty($result)) {
-			$engineCheckSql = "SHOW TABLE STATUS WHERE Name = '".$wpdb->prefix."users' AND Engine = %s";
-			$result = $wpdb->get_results( $wpdb->prepare( $engineCheckSql, 'MyISAM' ), ARRAY_A);
+			$usersTableName = $wpdb->prefix."users";			
+			$result = $wpdb->get_results( $wpdb->prepare( "SHOW TABLE STATUS WHERE Name = '$usersTableName' AND Engine = %s", 'MyISAM' ), ARRAY_A);
 			if (isset($result[0]['Engine']) && $result[0]['Engine'] == 'MyISAM') {
 				$engine = 'MyISAM';
 			}

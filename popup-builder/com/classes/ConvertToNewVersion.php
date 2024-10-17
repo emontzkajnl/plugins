@@ -129,8 +129,9 @@ class ConvertToNewVersion
 	public function convertSubscribers()
 	{
 		global $wpdb;
-		$subscribersSql = 'SELECT `id`, `firstName`, `lastName`, `email`, `subscriptionType`, `status` from '.$wpdb->prefix.'sg_subscribers';
-		$subscribers = $wpdb->get_results( $wpdb->prepare( $subscribersSql ), ARRAY_A);
+		$oldsubscribersTableName = $wpdb->prefix.'sg_subscribers';
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$subscribers = $wpdb->get_results( $wpdb->prepare( "SELECT `id`, `firstName`, `lastName`, `email`, `subscriptionType`, `status` from $oldsubscribersTableName" ), ARRAY_A);
 
 		if (empty($subscribers)) {
 			return false;
@@ -138,10 +139,8 @@ class ConvertToNewVersion
 
 		foreach ($subscribers as $subscriber) {
 			$subscriber['subscriptionType'] = $this->getPostByTitle($subscriber['subscriptionType']);
-
 			$date = gmdate('Y-m-d');
-			$sql = $wpdb->prepare('INSERT INTO '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' (`firstName`, `lastName`, `email`, `cDate`, `subscriptionType`, `unsubscribed`) VALUES (%s, %s, %s, %s, %d, %d) ', $subscriber['firstName'], $subscriber['lastName'], $subscriber['email'], $date, $subscriber['subscriptionType'], 0);
-			$wpdb->query($sql);
+			$wpdb->query( $wpdb->prepare("INSERT INTO $subscribersTableName (`firstName`, `lastName`, `email`, `cDate`, `subscriptionType`, `unsubscribed`) VALUES (%s, %s, %s, %s, %d, %d) ", $subscriber['firstName'], $subscriber['lastName'], $subscriber['email'], $date, $subscriber['subscriptionType'], 0) );
 		}
 	}
 
@@ -221,9 +220,8 @@ class ConvertToNewVersion
 	private function getAllSavedPopups()
 	{
 		global $wpdb;
-
-		$query = 'SELECT `id`, `type`, `title`, `options` from '.$wpdb->prefix.'sg_popup ORDER BY id';
-		$popups = $wpdb->get_results( $wpdb->prepare( $query ), ARRAY_A);
+		$oldsg_popupsTableName = $wpdb->prefix.'sg_popup';
+		$popups = $wpdb->get_results( $wpdb->prepare("SELECT `id`, `type`, `title`, `options` from $oldsg_popupsTableName ORDER BY id" ), ARRAY_A);
 
 		return $popups;
 	}
@@ -516,10 +514,8 @@ class ConvertToNewVersion
 		}
 		$popupId = $popup->getId();
 		global $wpdb;
-
-		$addonsOptionSqlString = 'SELECT options FROM '.$wpdb->prefix.'sg_popup_addons_connection WHERE popupId = %d and extensionType = "option"';
-		$addonsSql = $wpdb->prepare($addonsOptionSqlString, $popupId);
-		$results = $wpdb->get_results($addonsSql, ARRAY_A);
+		$sg_popup_addons_connectionTableName = $wpdb->prefix.'sg_popup_addons_connection';		
+		$results = $wpdb->get_results($wpdb->prepare( "SELECT options FROM $sg_popup_addons_connectionTableName WHERE popupId = %d and extensionType = 'option'", $popupId) , ARRAY_A);
 
 		if (empty($results)) {
 			return false;
@@ -727,24 +723,24 @@ class ConvertToNewVersion
 
 		switch ($type) {
 			case 'image':
-				$query = $wpdb->prepare('SELECT `url` FROM '.$wpdb->prefix.'sg_image_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_image_popup = $wpdb->prefix.'sg_image_popup'; 
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `url` FROM $sg_image_popup WHERE id = %d", $arr['id']) , ARRAY_A);
 
 				if (!empty($result['url'])) {
 					$options['image-url'] = $result['url'];
 				}
 				break;
 			case 'html':
-				$query = $wpdb->prepare('SELECT `content` FROM '.$wpdb->prefix.'sg_html_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_html_popup = $wpdb->prefix.'sg_html_popup'; 				
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content` FROM $sg_html_popup WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);
 				}
 				break;
 			case 'fblike':
-				$query = $wpdb->prepare('SELECT `content`, `options` FROM '.$wpdb->prefix.'sg_fblike_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_fblike_popup = $wpdb->prefix.'sg_fblike_popup'; 				
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content`, `options` FROM $sg_fblike_popup WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);
@@ -757,23 +753,23 @@ class ConvertToNewVersion
 				}
 				break;
 			case 'shortcode':
-				$query = $wpdb->prepare('SELECT `url` FROM '.$wpdb->prefix.'sg_shortCode_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_shortCode_popup = $wpdb->prefix.'sg_shortCode_popup'; 
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `url` FROM $sg_shortCode_popup WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['url'])) {
 					$this->setContent($result['url']);
 				}
 				break;
 			case 'iframe':
-				$query = $wpdb->prepare('SELECT `url` FROM '.$wpdb->prefix.'sg_iframe_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_iframe_popup = $wpdb->prefix.'sg_iframe_popup'; 
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `url` FROM $sg_iframe_popup WHERE id = %d", $arr['id']), ARRAY_A);
 				if (!empty($result['url'])) {
 					$options['iframe-url'] =  $result['url'];
 				}
 				break;
 			case 'video':
-				$query = $wpdb->prepare('SELECT `url`, `options` FROM '.$wpdb->prefix.'sg_video_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_video_popup = $wpdb->prefix.'sg_video_popup'; 
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `url`, `options` FROM $sg_video_popup WHERE id = %d", $arr['id']), ARRAY_A);
 				if (!empty($result['url'])) {
 					$options['video-url'] =  $result['url'];
 				}
@@ -786,8 +782,8 @@ class ConvertToNewVersion
 				}
 				break;
 			case 'ageRestriction':
-				$query = $wpdb->prepare('SELECT `content`, `yesButton` as `yesButtonLabel`, `noButton` as `noButtonLabel`, `url` as `restrictionUrl` FROM '.$wpdb->prefix.'sg_age_restriction_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_age_restriction_popup = $wpdb->prefix.'sg_age_restriction_popup'; 
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content`, `yesButton` as `yesButtonLabel`, `noButton` as `noButtonLabel`, `url` as `restrictionUrl` FROM $sg_age_restriction_popup WHERE id = %d", $arr['id']), ARRAY_A);
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);
 				}
@@ -797,8 +793,8 @@ class ConvertToNewVersion
 				}
 				break;
 			case 'social':
-				$query = $wpdb->prepare('SELECT `socialContent`, `buttons`, `socialOptions` FROM '.$wpdb->prefix.'sg_social_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_social_popup = $wpdb->prefix.'sg_social_popup'; 				
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `socialContent`, `buttons`, `socialOptions` FROM $sg_social_popup WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['socialContent'])) {
 					$this->setContent($result['socialContent']);
@@ -812,8 +808,8 @@ class ConvertToNewVersion
 				$this->setCustomOptions($socialAllOptions);
 				break;
 			case 'subscription':
-				$query = $wpdb->prepare('SELECT `content`, `options` FROM '.$wpdb->prefix.'sg_subscription_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_subscription_popup = $wpdb->prefix.'sg_subscription_popup';
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content`, `options` FROM $sg_subscription_popup WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);
@@ -827,8 +823,8 @@ class ConvertToNewVersion
 				}
 				break;
 			case 'countdown':
-				$query = $wpdb->prepare('SELECT `content`, `options` FROM '.$wpdb->prefix.'sg_countdown_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_countdown_popup = $wpdb->prefix.'sg_countdown_popup';				
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content`, `options` FROM $sg_countdown_popup WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);
@@ -841,8 +837,8 @@ class ConvertToNewVersion
 				}
 				break;
 			case 'contactForm':
-				$query = $wpdb->prepare('SELECT `content`, `options` FROM '.$wpdb->prefix.'sg_contact_form_popup WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_contact_form_popup = $wpdb->prefix.'sg_contact_form_popup';
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content`, `options` FROM $sg_contact_form_popup WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);
@@ -855,8 +851,8 @@ class ConvertToNewVersion
 				}
 				break;
 			case 'mailchimp':
-				$query = $wpdb->prepare('SELECT `content`, `options` FROM '.$wpdb->prefix.'sg_popup_mailchimp WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_popup_mailchimp = $wpdb->prefix.'sg_popup_mailchimp';
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content`, `options` FROM $sg_popup_mailchimp WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);
@@ -870,8 +866,8 @@ class ConvertToNewVersion
 				}
 				break;
 			case 'aweber':
-				$query = $wpdb->prepare('SELECT `content`, `options` FROM '.$wpdb->prefix.'sg_popup_aweber WHERE id = %d', $arr['id']);
-				$result = $wpdb->get_row($query, ARRAY_A);
+				$sg_popup_aweber = $wpdb->prefix.'sg_popup_aweber';
+				$result = $wpdb->get_row( $wpdb->prepare("SELECT `content`, `options` FROM $sg_popup_aweber WHERE id = %d", $arr['id']), ARRAY_A);
 
 				if (!empty($result['content'])) {
 					$this->setContent($result['content']);

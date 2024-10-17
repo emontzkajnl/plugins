@@ -15,9 +15,24 @@ $enableDebugMode = '';
 if (get_option('sgpb-enable-debug-mode')) {
 	$enableDebugMode = 'checked';
 }
+$disableCustomJs = '';
+if (get_option('sgpb-disable-custom-js')) {
+	$disableCustomJs = 'checked';
+}
 
 $systemInfo = AdminHelper::getSystemInfoText();
 $userSavedRoles = get_option('sgpb-user-roles');
+
+if( isset( $_GET['hide_warning'] ) && $_GET['hide_warning'] == true )
+{
+	update_option('sgpb-hide_disable-custom-js-warning', 1);
+	echo '<style>.notice_sgpb.sgpb_dsiable_notice{ display: none !important;}</style>';
+}
+if( isset( $_GET['hide_injection'] ) && $_GET['hide_injection'] == true )
+{
+	update_option('sgpb-hide_disable-injection-warning', 1);
+	echo '<style>.notice_sgpb.sgpb_injecttion_notice{ display: none !important;}</style>';
+}
 ?>
 
 <div class="sgpb sgpb-wrapper">
@@ -31,6 +46,16 @@ $userSavedRoles = get_option('sgpb-user-roles');
 					<div class="sgpb-onOffSwitch">
 						<input type="checkbox" name="sgpb-enable-debug-mode" class="sgpb-onOffSwitch-checkbox" id="sgpb-enable-debug-mode" <?php echo esc_attr($enableDebugMode); ?>>
 						<label class="sgpb-onOffSwitch__label" for="sgpb-enable-debug-mode">
+							<span class="sgpb-onOffSwitch-inner"></span>
+							<span class="sgpb-onOffSwitch-switch"></span>
+						</label>
+					</div>
+				</div>
+				<div class="formItem">
+					<p class="subFormItem__title sgpb-flex-220"><?php esc_html_e('Disable CUSTOM JS feature', 'popup-builder')?>:</p>
+					<div class="sgpb-onOffSwitch">
+						<input type="checkbox" name="sgpb-disable-custom-js" class="sgpb-onOffSwitch-checkbox" id="sgpb-disable-custom-js" <?php echo esc_attr($disableCustomJs); ?>>
+						<label class="sgpb-onOffSwitch__label" for="sgpb-disable-custom-js">
 							<span class="sgpb-onOffSwitch-inner"></span>
 							<span class="sgpb-onOffSwitch-switch"></span>
 						</label>

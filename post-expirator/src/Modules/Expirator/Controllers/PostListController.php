@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
@@ -13,7 +14,7 @@ use PublishPress\Future\Core\HooksAbstract as CoreHooksAbstract;
 use PublishPress\Future\Framework\InitializableInterface;
 use PublishPress\Future\Modules\Expirator\HooksAbstract as ExpiratorHooks;
 use PublishPress\Future\Modules\Expirator\Models\PostTypesModel;
-use PublishPress\Future\Modules\Expirator\Schemas\ActionArgsSchema;
+use PublishPress\Future\Framework\Database\Interfaces\DBTableSchemaInterface;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -25,11 +26,17 @@ class PostListController implements InitializableInterface
     private $hooks;
 
     /**
+     * @var DBTableSchemaInterface
+     */
+    private $actionArgsSchema;
+
+    /**
      * @param HookableInterface $hooksFacade
      */
-    public function __construct(HookableInterface $hooksFacade)
+    public function __construct(HookableInterface $hooksFacade, DBTableSchemaInterface $actionArgsSchema)
     {
         $this->hooks = $hooksFacade;
+        $this->actionArgsSchema = $actionArgsSchema;
     }
 
     public function initialize()
@@ -57,12 +64,14 @@ class PostListController implements InitializableInterface
         $defaults = $settingsFacade->getPostTypeDefaults($postType);
 
         // If settings are not configured, show the metabox by default only for posts and pages
-        if ((! isset($defaults['activeMetaBox']) && in_array($postType, array(
+        if (
+            (! isset($defaults['activeMetaBox']) && in_array($postType, array(
                     'post',
                     'page'
                 ), true)) || (is_array(
                     $defaults
-                ) && in_array((string)$defaults['activeMetaBox'], ['active', '1']))) {
+                ) && in_array((string)$defaults['activeMetaBox'], ['active', '1']))
+        ) {
             $columns['expirationdate'] = __('Future Action', 'post-expirator');
         }
 
@@ -93,11 +102,16 @@ class PostListController implements InitializableInterface
         $container = Container::getInstance();
         $settings = $container->get(ServicesAbstract::SETTINGS);
 
+        ob_start();
         PostExpirator_Display::getInstance()->render_template('expire-column', [
             'id' => $post->ID,
             'postType' => $post->post_type,
             'columnStyle' => $settings->getColumnStyle(),
         ]);
+        $output = ob_get_clean();
+
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo $this->hooks->applyFilters(ExpiratorHooks::FILTER_POSTS_FUTURE_ACTION_COLUMN_OUTPUT, $output);
     }
 
     public function manageSortableColumns()
@@ -127,14 +141,16 @@ class PostListController implements InitializableInterface
         if ('expirationdate' === $query->get('orderby')) {
             $order = strtoupper($query->get('order'));
 
-            if (! in_array($order, [
+            if (
+                ! in_array($order, [
                 'ASC',
                 'DESC'
-            ], true)) {
+                ], true)
+            ) {
                 $order = 'ASC';
             }
 
-            $orderby = ActionArgsSchema::getTableName() . '.scheduled_date ' . $order;
+            $orderby = $this->actionArgsSchema->getTableName() . '.scheduled_date ' . $order;
         }
 
         return $orderby;
@@ -153,7 +169,7 @@ class PostListController implements InitializableInterface
             return $join;
         }
 
-        $actionArgsSchemaTableName = ActionArgsSchema::getTableName();
+        $actionArgsSchemaTableName = $this->actionArgsSchema->getTableName();
 
         if ('expirationdate' === $query->get('orderby')) {
             $join .= " LEFT JOIN {$actionArgsSchemaTableName} ON {$actionArgsSchemaTableName}.post_id = {$wpdb->posts}.ID AND {$actionArgsSchemaTableName}.enabled = '1'";

@@ -91,11 +91,12 @@ class WOOSL_CodeAutoUpdate
 		}
 
 		$response = json_decode($responseBody)[0];
-		if (empty($response)) {
-			return [];
+		
+		if (is_object($response) && !empty($response)) {
+			$response = $this->postprocess_response($response);
+			return $response;
 		}
-
-		return $this->postprocess_response($response->message);
+		return [];
 	}
 
 	private function getVersionInfo()
@@ -121,7 +122,7 @@ class WOOSL_CodeAutoUpdate
 		$update_cache = is_object( $update_cache ) ? $update_cache : new \stdClass();
 		if (empty($update_cache->response) || empty($update_cache->response[$this->name])) {
 			$version_info = $this->getVersionInfo();
-			if (!is_object($version_info)) {
+			if (!is_object($version_info) || !isset($version_info->version) || !isset($version_info->new_version)) {
 				return;
 			}
 
@@ -152,6 +153,10 @@ class WOOSL_CodeAutoUpdate
 		}
 
 		$version_info = $this->getVersionInfo();
+		if( !isset($version_info->version) || !isset($version_info->new_version))
+		{
+			return $checked_data;
+		}
 		if (version_compare($this->version, $version_info->new_version, '<')) {
 			$checked_data->last_checked          = current_time('timestamp');
 			$checked_data->checked[$this->name]  = $this->version;
@@ -214,9 +219,14 @@ class WOOSL_CodeAutoUpdate
 	{
 		//include slug and plugin data
 		$response->slug   = $this->slug;
-		$response->plugin = $this->plugin;
-		$response->new_version = $response->version;
-
+		$response->plugin = $this->plugin;		
+		//if sections are being set
+		if (isset($response->version)) {
+			$response->new_version = $response->version;
+		}	
+		else
+			$response->new_version = $this->version;
+		
 		//if sections are being set
 		if (isset($response->sections)) {
 			$response->sections = (array)$response->sections;

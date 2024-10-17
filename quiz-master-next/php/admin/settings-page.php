@@ -598,8 +598,9 @@ class QMNGlobalSettingsPage {
 				<!-- when tab buttons are clicked we jump back to the same page but with a new parameter that represents the clicked tab. accordingly we make it active -->
 				<a href="?page=qmn_global_settings&tab=qmn_global_settings" class="nav-tab <?php echo empty( $_GET['tab'] ) || 'qmn_global_settings' === $_GET['tab'] ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Main Settings', 'quiz-master-next' ); ?></a>
 				<a href="?page=qmn_global_settings&tab=quiz-default-options" class="nav-tab <?php echo ! empty( $_GET['tab'] ) && 'quiz-default-options' === $_GET['tab'] ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Quiz Default Options', 'quiz-master-next' ); ?></a>
+				<?php do_action( 'qsm_global_settings_page_add_tab_after' ); ?>
 			</h2>
-
+			<?php do_action( 'qsm_global_settings_page_added_tab_content' ); ?>
 			<?php if ( empty( $_GET['tab'] ) || 'qmn_global_settings' === $_GET['tab'] || 'quiz-default-options' === $_GET['tab'] ) { ?>
 
 				<form action="options.php" method="POST" class="qsm_global_settings">
@@ -763,7 +764,7 @@ class QMNGlobalSettingsPage {
 		?>
 		<fieldset class="buttonset buttonset-hide" data-hide="1" id="form-type">
 			<label class="qsm-option-label" for="qsm-form-type-0">
-				<input type="radio" id="qsm-form-type-0" name="qsm-quiz-settings[form_type]" checked="checked" value="0" <?php checked( $qsm_form_type, 0 ); ?>>
+				<input type="radio" id="qsm-form-type-0" name="qsm-quiz-settings[form_type]" value="0" <?php checked( $qsm_form_type, 0 ); ?>>
 				<?php esc_html_e( 'Quiz', 'quiz-master-next' ); ?>
 			</label>
 			<label class="qsm-option-label" for="qsm-form-type-1">
@@ -1057,7 +1058,7 @@ class QMNGlobalSettingsPage {
 		global $globalQuizsetting;
 		$qsm_total_user_tries = ( isset( $globalQuizsetting['total_user_tries'] ) && '' !== $globalQuizsetting['total_user_tries'] ? $globalQuizsetting['total_user_tries'] : 0 );
 		$qsm_limit_total_entries = ( isset( $globalQuizsetting['limit_total_entries'] ) && '' !== $globalQuizsetting['limit_total_entries'] ? $globalQuizsetting['limit_total_entries'] : 0 );
-		$qsm_enable_retake_quiz_button = ( isset( $globalQuizsetting['enable_retake_quiz_button'] ) && '' !== $globalQuizsetting['enable_retake_quiz_button'] ? $globalQuizsetting['enable_retake_quiz_button'] : '0' );
+		$qsm_enable_retake_quiz_button = ( isset( $globalQuizsetting['enable_retake_quiz_button'] ) && '' !== $globalQuizsetting['enable_retake_quiz_button'] ? $globalQuizsetting['enable_retake_quiz_button'] : 0 );
 		?>
 		<fieldset class="buttonset buttonset-hide">
 			<input class="small-text" id="qsm-global-setting-total-user-tries" type="number" placeholder="Set Limit" step="1" min="0" name="qsm-quiz-settings[total_user_tries]" value="<?php echo esc_attr( $qsm_total_user_tries ); ?>">
@@ -1070,8 +1071,9 @@ class QMNGlobalSettingsPage {
 			<label class="qsm-opt-desc" for="qsm-global-setting-total-limit-entries"><?php esc_html_e( 'Set the limit to 0 or leave it blank to remove the limit on entries.', 'quiz-master-next'); ?></label>
 		</fieldset>
 		<fieldset class="buttonset buttonset-hide">
+			<input type="hidden" name="qsm-quiz-settings[enable_retake_quiz_button]"  value="0">
 			<label class="qsm-option-label" for="qsm-enable-retake-quiz-button">
-				<input type="checkbox" id="qsm-enable-retake-quiz-button" name="qsm-quiz-settings[enable_retake_quiz_button]" checked="checked" value="1" <?php checked( $qsm_enable_retake_quiz_button, 1 ); ?>>
+				<input type="checkbox" id="qsm-enable-retake-quiz-button" name="qsm-quiz-settings[enable_retake_quiz_button]" value="1" <?php checked( $qsm_enable_retake_quiz_button, 1 ); ?>>
 				<?php esc_html_e( 'Allow users to retake the quiz', 'quiz-master-next'); ?>
 			</label>
 		</fieldset>
@@ -1089,7 +1091,9 @@ class QMNGlobalSettingsPage {
 		$qsm_send_email = ( isset( $globalQuizsetting['send_email'] ) && '' !== $globalQuizsetting['send_email'] ? $globalQuizsetting['send_email'] : '' );
 		?>
 		<fieldset class="buttonset buttonset-hide">
+			<input type="hidden" name="qsm-quiz-settings[store_responses]"  value="0">
 			<label for="store_responses">
+				<input type="hidden" name="qsm-quiz-settings[store_responses]" value="0">
 				<input type="checkbox" id="store_responses" name="qsm-quiz-settings[store_responses]"  value="1" <?php checked( $qsm_store_responses, 1 ); ?>>
 				<?php esc_html_e('Store results permanently in database', 'quiz-master-next'); ?>
 			</label>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
@@ -9,6 +10,7 @@ use PublishPress\Future\Core\HookableInterface;
 use PublishPress\Future\Core\HooksAbstract as CoreHooksAbstract;
 use PublishPress\Future\Framework\InitializableInterface;
 use PublishPress\Future\Modules\Expirator\HooksAbstract;
+use PublishPress\Future\Modules\Expirator\Models\ExpirablePostModel;
 use PublishPress\Future\Modules\Expirator\Tables\ScheduledActionsTable as ScheduledActionsTable;
 
 defined('ABSPATH') or die('Direct access not allowed.');
@@ -76,6 +78,13 @@ class ScheduledActionsController implements InitializableInterface
             CoreHooksAbstract::ACTION_ADMIN_ENQUEUE_SCRIPTS,
             [$this, 'enqueueScripts']
         );
+
+        $this->hooks->addFilter(
+            HooksAbstract::FILTER_ACTION_SCHEDULER_ADMIN_NOTICE,
+            [$this, 'filterActionSchedulerAdminNotice'],
+            10,
+            3
+        );
     }
 
     public function onAdminMenu()
@@ -106,7 +115,7 @@ class ScheduledActionsController implements InitializableInterface
             'publishpress-future-scheduled-actions',
             [$this, 'renderScheduledActionsTemplate']
         );
-        add_action( 'load-' . $hook_suffix , [$this, 'processAdminUi']);
+        add_action('load-' . $hook_suffix, [$this, 'processAdminUi']);
     }
 
     public function renderScheduledActionsTemplate()
@@ -173,19 +182,19 @@ class ScheduledActionsController implements InitializableInterface
         $screenSettings .= '<legend>' . esc_html__('Log format', 'post-expirator') . '</legend>';
         $screenSettings .= '<label for="' . $screen->id . '_log_format_list">';
         $screenSettings .= '<input type="radio" id="' . $screen->id . '_log_format_list" name="publishpressfuture_actions_log_format" value="list" ' . checked(
-                $userLogFormat,
-                'list',
-                false
-            ) . '>';
+            $userLogFormat,
+            'list',
+            false
+        ) . '>';
         $screenSettings .= esc_html__('List', 'post-expirator');
         $screenSettings .= '</label>';
         $screenSettings .= '&nbsp;';
         $screenSettings .= '<label for="' . $screen->id . '_log_format_popup">';
         $screenSettings .= '<input type="radio" id="' . $screen->id . '_log_format_popup" name="publishpressfuture_actions_log_format" value="popup" ' . checked(
-                $userLogFormat,
-                'popup',
-                false
-            ) . '>';
+            $userLogFormat,
+            'popup',
+            false
+        ) . '>';
         $screenSettings .= esc_html__('Popup', 'post-expirator');
         $screenSettings .= '</label>';
 
@@ -196,10 +205,12 @@ class ScheduledActionsController implements InitializableInterface
 
     public function filterSetScreenOption($status)
     {
-        if (! isset($_POST['publishpressfuture_actions_log_format_nonce']) || ! wp_verify_nonce(
+        if (
+            ! isset($_POST['publishpressfuture_actions_log_format_nonce']) || ! wp_verify_nonce(
                 sanitize_key($_POST['publishpressfuture_actions_log_format_nonce']),
                 'publishpressfuture_actions_log_format'
-            )) {
+            )
+        ) {
             return $status;
         }
 
@@ -216,7 +227,7 @@ class ScheduledActionsController implements InitializableInterface
         return $status;
     }
 
-    function enqueueScripts($screenId)
+    public function enqueueScripts($screenId)
     {
         if ('future_page_publishpress-future-scheduled-actions' === $screenId) {
             wp_enqueue_style(
@@ -233,5 +244,31 @@ class ScheduledActionsController implements InitializableInterface
                 POSTEXPIRATOR_VERSION
             );
         }
+    }
+
+    public function filterActionSchedulerAdminNotice($html, $action, $notification)
+    {
+        if ($action->get_group() !== 'publishpress-future') {
+            return $html;
+        }
+
+        if ($action->get_hook() === 'publishpressfuture_run_workflow') {
+            $args = $action->get_args();
+
+            if (isset($args['postId']) && isset($args['workflow']) && 'expire' === $args['workflow']) {
+
+                $transientName = 'post-expirator-notice-' . (int) $args['postId'];
+                $noticeMessage = get_transient($transientName);
+                delete_transient($transientName);
+
+                // translators: %s is the action description
+                $html = sprintf(
+                    __('Successfully executed action: %s', 'post-expirator'),
+                    $noticeMessage
+                );
+            }
+        }
+
+        return $html;
     }
 }

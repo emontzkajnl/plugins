@@ -12,6 +12,18 @@ if ( ! defined( 'ABSPATH' ) )
  */
 class Responsive_Lightbox_Remote_Library_Flickr extends Responsive_Lightbox_Remote_Library_API {
 
+	protected $allowed_hosts = [ 'staticflickr.com' ];
+	protected $allowed_formats = [
+		'bmp'	=> 'image/bmp',
+		'gif'	=> 'image/gif',
+		'jpe'	=> 'image/jpeg',
+		'jpeg'	=> 'image/jpeg',
+		'jpg'	=> 'image/jpeg',
+		'png'	=> 'image/png',
+		'tif'	=> 'image/tiff',
+		'tiff'	=> 'image/tiff'
+	];
+
 	/**
 	 * Class constructor.
 	 *
@@ -258,7 +270,7 @@ class Responsive_Lightbox_Remote_Library_Flickr extends Responsive_Lightbox_Remo
 			'thumbnail_height'		=> (int) $small[2],
 			'thumbnail_orientation'	=> (int) $small[2] > (int) $small[1] ? 'portrait' : 'landscape',
 			'media_provider'		=> 'flickr',
-			'filename'				=> basename( sanitize_file_name( $large[0] ) ),
+			'filename'				=> sanitize_file_name( basename( $large[0] ) ),
 			'dimensions'			=> (int) $large[1] . ' x ' . (int) $large[2],
 			'type'					=> 'image'
 		];

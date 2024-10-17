@@ -104,7 +104,7 @@ class SGPBFeedback
 					<div class="row">
 						<div class="col-md-12">
 							<h4 class="sgpb-feedback-descritpion">
-								<?php esc_html_e('If you have a moment, please share why you are deactivating <b>Popup Builder</b>', 'popup-builder')?>:
+								<?php esc_html_e('If you have a moment, please share why you are deactivating ', 'popup-builder')?><b><?php esc_html_e('Popup Builder', 'popup-builder')?></b>:
 							</h4>
 							<p class="sgpb-feedback-error-message sg-hide-element"><?php esc_html_e('Please, select an option.', 'popup-builder')?></p>
 						</div>

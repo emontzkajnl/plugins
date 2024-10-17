@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
@@ -19,9 +20,9 @@ defined('ABSPATH') or die('Direct access not allowed.');
 
 class ExpirablePostModel extends PostModel
 {
-    const FLAG_METADATA_HASH = '_pp_future_metadata_hash';
+    public const FLAG_METADATA_HASH = '_pp_future_metadata_hash';
 
-    const LEGACY_FLAG_METADATA_HASH = 'pp_future_metadata_hash';
+    public const LEGACY_FLAG_METADATA_HASH = 'pp_future_metadata_hash';
 
     /**
      * @var \PublishPress\Future\Framework\WordPress\Facade\OptionsFacade
@@ -460,14 +461,15 @@ class ExpirablePostModel extends PostModel
         $expirationLog = $expirationAction->getNotificationText() . ' ';
 
         if (! $this->expirationEmailIsEnabled()) {
-            $expirationLog .= __('Email is disabled', 'post-expirator');
+            $expirationLog .= __('Email is disabled.', 'post-expirator');
         } else {
             $emailSent = $this->sendEmail($expirationAction);
             $expirationLog .= $emailSent
-                ? __('Email sent', 'post-expirator') : __('Email not sent', 'post-expirator');
+                ? __('Email sent.', 'post-expirator') : __('Email not sent.', 'post-expirator');
         }
 
         $this->logOnAction($expirationLog);
+        $this->registerNoticeMessage($postId, $expirationLog);
 
         $this->hooks->doAction(HooksAbstract::ACTION_POST_EXPIRED, $postId, $expirationLog);
 
@@ -615,7 +617,7 @@ class ExpirablePostModel extends PostModel
         $emailBody = sprintf(
             // translators: %1$s: post title placeholder, %2$s: notification text, %3$s: action date placeholder, %4$s: post link placeholder
             __(
-                 '%1$s. %2$s on %3$s. The post link is %4$s',
+                '%1$s. %2$s on %3$s. The post link is %4$s',
                 'post-expirator'
             ),
             '##POSTTITLE##',
@@ -928,5 +930,10 @@ class ExpirablePostModel extends PostModel
     private function removeLegacyMetadataHash()
     {
         $this->deleteMeta(self::LEGACY_FLAG_METADATA_HASH);
+    }
+
+    private function registerNoticeMessage($postId, $message)
+    {
+        set_transient('post-expirator-notice-' . $postId, $message, MINUTE_IN_SECONDS);
     }
 }

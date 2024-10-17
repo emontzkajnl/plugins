@@ -613,6 +613,7 @@ function qsm_generate_question_option( $key, $single_option ) {
 					break;
 
 				default:
+				do_action( 'qsm_generate_question_option_after', $key, $single_option );
 				// Do nothing
 			}
 			?>
@@ -1314,13 +1315,16 @@ function qsm_get_market_themes() {
  * @since 7.3.5
  */
 function qsm_sanitize_rec_array( $array, $textarea = false ) {
-	foreach ( (array) $array as $key => $value ) {
-		if ( is_array( $value ) ) {
-			$array[ $key ] = qsm_sanitize_rec_array( $value );
-		} else {
+	if ( ! is_array( $array ) ) {
+        return $textarea ? sanitize_textarea_field( $value ) : sanitize_text_field( $value );
+    }
+    foreach ( $array as $key => $value ) {
+        if ( is_array( $value ) ) {
+            $array[ $key ] = qsm_sanitize_rec_array( $value, $textarea );
+        } else {
 			$array[ $key ] = $textarea ? sanitize_textarea_field( $value ) : sanitize_text_field( $value );
-		}
-	}
+        }
+    }
 	return $array;
 }
 
@@ -1434,6 +1438,11 @@ function qsm_quiz_theme_settings( $type, $label, $name, $value, $default_value, 
 	<tr valign="top">
 		<th scope="row" class="qsm-opt-tr">
 			<label for="form_type"><?php echo esc_attr( $label ); ?></label>
+			<?php if ( isset( $options['helper_text'] ) && '' !== $options['helper_text'] ) { ?>
+				<span class="dashicons dashicons-editor-help qsm-tooltips-icon">
+					<span class="qsm-tooltips"><?php esc_html( $options['helper_text'] ); ?></span>
+				</span>
+			<?php } ?>
 		</th>
 		<td align ="right">
 			<?php

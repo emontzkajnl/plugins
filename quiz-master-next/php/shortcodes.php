@@ -127,13 +127,13 @@ add_action( 'wp_enqueue_scripts', 'qsm_load_main_scripts' );
  * @global obj $wp_query
  */
 function qsm_generate_fb_header_metadata() {
+	global $mlwQuizMasterNext, $wpdb, $wp_query;
 	if ( isset( $_GET['result_id'] ) && '' !== $_GET['result_id'] ) {
 		$settings        = (array) get_option( 'qmn-settings' );
 		$facebook_app_id = '594986844960937';
 		if ( isset( $settings['facebook_app_id'] ) ) {
 			$facebook_app_id = esc_js( $settings['facebook_app_id'] );
 		}
-		global $mlwQuizMasterNext, $wpdb, $wp_query;
 		$result_id    = sanitize_text_field( wp_unslash( $_GET['result_id'] ) );
 		$results_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}mlw_results WHERE unique_id = %s", $result_id ) );
 		if ( $results_data ) {
@@ -183,24 +183,23 @@ function qsm_generate_fb_header_metadata() {
 			$sharing              = $mlwQuizMasterNext->pluginHelper->get_section_setting( 'quiz_text', 'facebook_sharing_text', '' );
 			$sharing              = apply_filters( 'mlw_qmn_template_variable_results_page', $sharing, $results_array );
 			$default_fb_image     = QSM_PLUGIN_URL . 'assets/icon-200x200.png';
-			$get_fb_sharing_image = $mlwQuizMasterNext->pluginHelper->get_section_setting( 'quiz_options', 'result_page_fb_image', '' );
-			if ( empty( $get_fb_sharing_image ) ) {
-				$get_fb_sharing_image = $mlwQuizMasterNext->pluginHelper->get_section_setting( 'quiz_text', 'result_page_fb_image', '' );
-			}
-			if ( '' !== $get_fb_sharing_image && filter_var( $get_fb_sharing_image, FILTER_VALIDATE_URL ) ) {
-				$default_fb_image = $get_fb_sharing_image;
+			$fb_sharing_image_quiz_options = $mlwQuizMasterNext->pluginHelper->get_section_setting( 'quiz_options', 'result_page_fb_image', '' );
+			$fb_sharing_image_quiz_text = $mlwQuizMasterNext->pluginHelper->get_section_setting( 'quiz_text', 'result_page_fb_image', '' );
+			$get_fb_sharing_image = ! empty($fb_sharing_image_quiz_options) ? $fb_sharing_image_quiz_options : $fb_sharing_image_quiz_text;
+			if ( ! empty($get_fb_sharing_image) && filter_var($get_fb_sharing_image, FILTER_VALIDATE_URL) ) {
+				$default_fb_image = esc_url($get_fb_sharing_image);
 			}
 			$post     = $wp_query->get_queried_object();
 			$pagename = $post->post_title;
 			$result_id = sanitize_text_field( wp_unslash( $_GET['result_id'] ) );
 			?>
-<meta property="og:url" content="<?php echo esc_url( $sharing_page_id ) . '?result_id=' . esc_attr( $result_id ); ?>" />
-<meta property="og:type" content="article" />
-<meta property="og:title" content="<?php echo esc_attr( $pagename ); ?>" />
-<meta property="og:description" content="<?php echo esc_attr( $sharing ); ?>" />
-<meta property="og:image" content="<?php echo esc_url( $default_fb_image ); ?>" />
-<meta property="fb:app_id" content="<?php echo esc_attr( $facebook_app_id ); ?>" />
-<?php
+			<meta property="og:url" content="<?php echo esc_url( $sharing_page_id ) . '?result_id=' . esc_attr( $result_id ); ?>" />
+			<meta property="og:type" content="article" />
+			<meta property="og:title" content="<?php echo esc_attr( $pagename ); ?>" />
+			<meta property="og:description" content="<?php echo esc_attr( $sharing ); ?>" />
+			<meta property="og:image" content="<?php echo esc_url( $default_fb_image ); ?>" />
+			<meta property="fb:app_id" content="<?php echo esc_attr( $facebook_app_id ); ?>" />
+			<?php
 		}
 	}
 }

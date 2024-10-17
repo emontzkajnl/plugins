@@ -58,7 +58,7 @@ function rsssl_get_system_status() {
 		$output .= "* Use alternative method to fix mixed content\n";
 	}
 	if ( rsssl_get_option( 'dismiss_all_notices' ) ) {
-		$output .= "* Dismiss all Really Simple SSL notices\n";
+		$output .= "* Dismiss all Really Simple Security notices\n";
 	}
 	$output .= "\n";
 
@@ -75,9 +75,9 @@ function rsssl_get_system_status() {
 	}
 
 	if ( rsssl_is_networkwide_active() ) {
-		$output .= "Really Simple SSL network wide activated\n";
+		$output .= "Really Simple Security network wide activated\n";
 	} elseif ( is_multisite() ) {
-		$output .= "Really Simple SSL per site activated\n";
+		$output .= "Really Simple Security per site activated\n";
 	}
 
 	$output  .= '<br>' . '<b>' . 'SSL Configuration' . '</b>';
@@ -109,7 +109,7 @@ function rsssl_get_system_status() {
 		$output .= 'not able to fix wpconfig siteurl/homeurl.<br>';
 	}
 
-	if ( ! is_writable( RSSSL()->admin->find_wp_config_path() ) ) {
+	if ( ! is_writable( rsssl_find_wp_config_path() ) ) {
 		$output .= 'wp-config.php not writable<br>';
 	}
 	$output .= 'Detected SSL setup: ' . RSSSL()->admin->ssl_type . '<br>';
@@ -150,7 +150,7 @@ function rsssl_get_system_status() {
 		$output .= 'Mixed content fixer not enabled<br>';
 	}
 	if ( ! RSSSL()->admin->htaccess_contains_redirect_rules() ) {
-		$output .= '.htaccess does not contain default Really Simple SSL redirect.<br>';
+		$output .= '.htaccess does not contain default Really Simple Security redirect.<br>';
 	}
 
 	$output .= "\nConstants\n";

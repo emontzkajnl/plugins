@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
@@ -12,9 +13,10 @@ use PublishPress\Future\Core\DI\ServicesAbstract;
 use PublishPress\Future\Core\HookableInterface;
 use PublishPress\Future\Core\HooksAbstract as CoreHooksAbstract;
 use PublishPress\Future\Framework\InitializableInterface;
-use PublishPress\Future\Modules\Expirator\ExpirationActions\ChangePostStatus;
 use PublishPress\Future\Modules\Expirator\ExpirationActionsAbstract;
 use PublishPress\Future\Modules\Expirator\HooksAbstract as ExpiratorHooks;
+use PublishPress\Future\Modules\Expirator\HooksAbstract;
+use PublishPress\Future\Modules\Expirator\Models\CurrentUserModel;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -26,15 +28,27 @@ class QuickEditController implements InitializableInterface
     private $hooks;
 
     /**
+     * @var CurrentUserModel
+     */
+    private $currentUserModel;
+
+    /**
      * @param HookableInterface $hooksFacade
      */
-    public function __construct(HookableInterface $hooksFacade)
-    {
+    public function __construct(
+        HookableInterface $hooksFacade,
+        \Closure $currentUserModelFactory
+    ) {
         $this->hooks = $hooksFacade;
+        $this->currentUserModel = $currentUserModelFactory();
     }
 
     public function initialize()
     {
+        if (! $this->currentUserModel->userCanExpirePosts()) {
+            return;
+        }
+
         $this->hooks->addAction(
             CoreHooksAbstract::ACTION_QUICK_EDIT_CUSTOM_BOX,
             [$this, 'registerQuickEditCustomBox'],
@@ -55,12 +69,11 @@ class QuickEditController implements InitializableInterface
 
     public function registerQuickEditCustomBox($columnName, $postType)
     {
-        $facade = PostExpirator_Facade::getInstance();
+        if ($columnName !== 'expirationdate') {
+            return;
+        }
 
-        if (
-            ($columnName !== 'expirationdate')
-            || (! $facade->current_user_can_expire_posts())
-        ) {
+        if (! $this->isEnabledForPostType($postType)) {
             return;
         }
 
@@ -166,8 +179,40 @@ class QuickEditController implements InitializableInterface
         $this->hooks->doAction(ExpiratorHooks::ACTION_UNSCHEDULE_POST_EXPIRATION, $postId);
     }
 
+    private function isEnabledForPostType($postType)
+    {
+        $container = Container::getInstance();
+        $settingsFacade = $container->get(ServicesAbstract::SETTINGS);
+        $actionsModel = $container->get(ServicesAbstract::EXPIRATION_ACTIONS_MODEL);
+
+        $postTypeDefaultConfig = $settingsFacade->getPostTypeDefaults($postType);
+
+        if (! in_array((string)$postTypeDefaultConfig['activeMetaBox'], ['active', '1', true])) {
+            return false;
+        }
+
+        $hideMetabox = (bool)$this->hooks->applyFilters(HooksAbstract::FILTER_HIDE_METABOX, false, $postType);
+        if ($hideMetabox) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function enqueueScripts()
     {
+        $currentScreen = get_current_screen();
+
+        if ($currentScreen->base !== 'edit') {
+            return;
+        }
+
+        $postType = $currentScreen->post_type;
+
+        if (! $this->isEnabledForPostType($postType)) {
+            return;
+        }
+
         wp_enqueue_script("wp-components");
         wp_enqueue_script("wp-plugins");
         wp_enqueue_script("wp-element");
@@ -175,29 +220,24 @@ class QuickEditController implements InitializableInterface
 
         wp_enqueue_script(
             'postexpirator-quick-edit',
-             POSTEXPIRATOR_BASEURL . '/assets/js/quick-edit.js',
-             ['wp-i18n', 'wp-components', 'wp-url', 'wp-data', 'wp-api-fetch', 'wp-element', 'inline-edit-post', 'wp-html-entities', 'wp-plugins'],
-             POSTEXPIRATOR_VERSION,
-             true
+            POSTEXPIRATOR_BASEURL . '/assets/js/quick-edit.js',
+            ['wp-i18n', 'wp-components', 'wp-url', 'wp-data', 'wp-api-fetch', 'wp-element', 'inline-edit-post', 'wp-html-entities', 'wp-plugins'],
+            POSTEXPIRATOR_VERSION,
+            true
         );
 
         wp_enqueue_style('wp-components');
 
-        $currentScreen = get_current_screen();
         $container = Container::getInstance();
         $settingsFacade = $container->get(ServicesAbstract::SETTINGS);
         $actionsModel = $container->get(ServicesAbstract::EXPIRATION_ACTIONS_MODEL);
-        $postType = $currentScreen->post_type;
-
-        $postTypeDefaultConfig = $settingsFacade->getPostTypeDefaults($postType);
-
-
         $defaultDataModelFactory = $container->get(ServicesAbstract::POST_TYPE_DEFAULT_DATA_MODEL_FACTORY);
-        $defaultDataModel = $defaultDataModelFactory->create($postType);
-
         $debug = $container->get(ServicesAbstract::DEBUG);
 
-        $taxonomyPluralName= '';
+        $postTypeDefaultConfig = $settingsFacade->getPostTypeDefaults($postType);
+        $defaultDataModel = $defaultDataModelFactory->create($postType);
+
+        $taxonomyPluralName = '';
         if (! empty($postTypeDefaultConfig['taxonomy'])) {
             $taxonomy = get_taxonomy($postTypeDefaultConfig['taxonomy']);
 
@@ -234,6 +274,7 @@ class QuickEditController implements InitializableInterface
                 'postType' => $currentScreen->post_type,
                 'isNewPost' => false,
                 'nonce' => $nonce,
+                'hideCalendarByDefault' => $settingsFacade->getHideCalendarByDefault(),
                 'strings' => [
                     'category' => __('Categories', 'post-expirator'),
                     'panelTitle' => __('PublishPress Future', 'post-expirator'),

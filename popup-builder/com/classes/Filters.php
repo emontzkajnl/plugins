@@ -233,7 +233,13 @@ class Filters
 
 	public function popupContentLoadToPage($content, $popupId)
 	{
+		//Ted-fix : we stopped the render custom js code into front-end page to fix HACKER attack
 		$customScripts = AdminHelper::renderCustomScripts($popupId);
+		//Get DISABLE custom JS setting
+		if( AdminHelper::getOption('sgpb-disable-custom-js') )
+		{
+			$customScripts =  ''; //AdminHelper::renderCustomScripts($popupId);
+		}		
 		$content .= $customScripts;
 
 		return $content;
@@ -329,7 +335,7 @@ class Filters
 		if ($hasInactiveExtensions && $inactive == 'inactive') {
 			$licenseSectionUrl = menu_page_url(SGPB_POPUP_LICENSE, false);
 			/* translators: license Section Url. */
-			$partOfContent = '<br><br>'.printf( wp_kses_post(__('<a href="%s">Follow the link</a> to finalize the activation.', 'popup-builder')) ,esc_url( $licenseSectionUrl ) );
+			$partOfContent = '<br><br><a href="'.esc_url($licenseSectionUrl).'">'.__('Follow the link', 'popup-builder').'</a> '.__('to finalize the activation.', 'popup-builder');
 			$message = '<b>'.__('Thank you for choosing our plugin!', 'popup-builder').'</b>';
 			$message .= '<br>';
 			$message .= '<br>';
@@ -871,7 +877,7 @@ class Filters
 		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'sgbp-bootstrap.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
 		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'select2.min.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
 		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'popupAdminStyles.css', 'dep' => array(), 'ver' => SGPB_POPUP_VERSION, 'inFooter' => false);
-		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'newDesignFromBuild.css', 'dep' => array(), 'ver' => rand(1, 10000), 'inFooter' => false);
+		$cssFiles[] = array('folderUrl' => SG_POPUP_CSS_URL, 'filename' => 'newDesignFromBuild.css', 'dep' => array(), 'ver' => wp_rand(1, 10000), 'inFooter' => false);
 
 		return $cssFiles;
 	}

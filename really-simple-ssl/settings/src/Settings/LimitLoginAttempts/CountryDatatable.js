@@ -1,4 +1,4 @@
-import {useEffect, useState, useCallback} from 'react';
+import {useEffect, useState, useCallback} from '@wordpress/element';
 import DataTable, {createTheme} from "react-data-table-component";
 import CountryDataTableStore from "./CountryDataTableStore";
 import EventLogDataTableStore from "../EventLog/EventLogDataTableStore";
@@ -37,14 +37,11 @@ const CountryDatatable = (props) => {
     const {setSelectedSubMenuItem} = useMenu();
 
     const {
-        DynamicDataTable,
         fetchDynamicData,
     } = EventLogDataTableStore();
 
     const {
-        selectedFilter,
         setSelectedFilter,
-        activeGroupId,
         getCurrentFilter,
         setProcessingFilter,
     } = FilterData();
@@ -175,16 +172,19 @@ const CountryDatatable = (props) => {
         if (Array.isArray(code)) {
             const ids = code.map(item => item.id);
             const regions = code.map(item => item.iso2_code);
+            let no_error = true;
             regions.forEach((code) => {
                 resetRegions(code, dataActions).then(
                     (response) => {
-                        if (response.success) {
-                            showSavedSettingsNotice(response.message);
-                        } else {
+                        if (!response.success) {
                             showSavedSettingsNotice(response.message, 'error');
+                            no_error = false;
                         }
                     });
             });
+            if(no_error) {
+                showSavedSettingsNotice(__('Selected regions are now allowed', 'really-simple-ssl'));
+            }
             setRowsSelected([]);
         } else {
             await resetRegions(code, dataActions);
@@ -418,7 +418,6 @@ const CountryDatatable = (props) => {
                     </div>
                 </div>
             )}
-            <div style={{ height: `${tableHeight}px`, position: 'relative' }}>
             <DataTable
                 columns={columns}
                 data={Object.values(data)}
@@ -449,7 +448,6 @@ const CountryDatatable = (props) => {
                 theme="really-simple-plugins"
                 customStyles={customStyles}
             />
-            </div>
             {!enabled && (
                 <div className="rsssl-locked">
                     <div className="rsssl-locked-overlay"><span

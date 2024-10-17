@@ -67,7 +67,7 @@ $defaultConditionsGeoTargeting = $defaultData['freeConditionsGeoTargeting'];
 		</div>
 	</div>
 	<?php
-	wp_register_script( 'sgpb-conditions-views-js-footer', '', array("jquery"), '', true );
+	wp_register_script( 'sgpb-conditions-views-js-footer', '', array("jquery"), SGPB_POPUP_VERSION, true );
 	wp_enqueue_script( 'sgpb-conditions-views-js-footer'  );
 	wp_add_inline_script( 'sgpb-conditions-views-js-footer', "jQuery('.sgpb-pro-conditions-pro-url-show-js').click(function() {
 		jQuery(this).next('.sgpb-pro-conditions-list').show();

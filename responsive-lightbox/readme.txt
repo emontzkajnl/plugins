@@ -1,10 +1,10 @@
 === Responsive Lightbox & Gallery ===
 Contributors: dfactory
 Donate link: http://www.dfactory.co/
-Tags: gallery, galleries, image, images, responsive, lightbox, photo, photography, masonry, video, builder
+Tags: gallery, galleries, lightbox, image, images
 Requires at least: 5.0
-Tested up to: 6.4.3
-Stable tag: 2.4.7
+Tested up to: 6.6.1
+Stable tag: 2.4.8
 Requires PHP: 5.4
 License: MIT License
 License URI: http://opensource.org/licenses/MIT
@@ -139,6 +139,13 @@ Responsive Lightbox and Gallery plugin comes with many styles and effects alread
 2. screenshot-2.jpg
 
 == Changelog ==
+
+= 2.4.8 =
+* Fix: Flushing rewrite rules
+* Fix: Uploading remote library images
+* Fix: Potential XSS vulnerability related to Magnific Popup
+* Fix: Potential XSS vulnerability related to Featherlight lightbox
+* Tweak: Updated Magnific Popup to 1.2.0
 
 = 2.4.7 =
 * Fix: Unauthorized access to private rl_gallery shortcodes
@@ -532,5 +539,5 @@ Initial release
 
 == Upgrade Notice ==
 
-= 2.4.7 =
-* Fix: Unauthorized access to private rl_gallery shortcodes
+= 2.4.8 =
+Multiple fixes - Flushing rewrite rules, Uploading remote library images, Potential XSS vulnerability related to Magnific Popup, Potential XSS vulnerability related to Featherlight lightbox

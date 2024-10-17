@@ -42,7 +42,7 @@ function rsssl_menu() {
 							'helpLink' => 'instructions/about-our-general-settings',
 							'premium'  => true,
 							'premium_title' => __( 'Captcha', 'really-simple-ssl' ),
-							'intro'      => __( "Really Simple SSL can trigger a Captcha to limit access to your site or the login form.", 'really-simple-ssl' ),
+							'intro'      => __( "Really Simple Security can trigger a Captcha to limit access to your site or the login form.", 'really-simple-ssl' ),
 							'premium_text' => __( 'Protect your website against brute-force attacks with a captcha. Choose between Google reCAPTCHA or hCaptcha.', 'really-simple-ssl' ),
 						],
 						[
@@ -54,7 +54,7 @@ function rsssl_menu() {
 							'premium_text'  => __("Elevate your security with our Premium Support! Our expert team ensures simple, hassle-free assistance whenever you need it.", 'really-simple-ssl'),
 							'premium_title' => __('Why Premium Support?', 'really-simple-ssl'),
 							'helpLink'      => 'instructions/debugging',
-							'helpLink_text' => __('Debugging with Really Simple SSL', "really-simple-ssl"),
+							'helpLink_text' => __('Debugging with Really Simple Security', "really-simple-ssl"),
 						],
 					],
 				],
@@ -88,7 +88,7 @@ function rsssl_menu() {
 							'title' => __( 'Mixed Content Scan', 'really-simple-ssl' ),
 							'premium' => true,
 							'premium_title' => __( "Mixed Content Scan", 'really-simple-ssl' ),
-							'premium_text' => __( "The extensive mixed content scan will list all current and future issues and provide a fix, or instructions to fix manually.", 'really-simple-ssl' ),
+							'premium_text' => __( "The extensive mixed content scan will list all issues and provide a fix, or instructions to fix manually.", 'really-simple-ssl' ),
 							'helpLink' => rsssl_link('mixedcontent', 'instructions'),
 						],
 					],
@@ -101,7 +101,7 @@ function rsssl_menu() {
 						[
 							'id' => 'recommended_security_headers',
 							'group_id' => 'recommended_security_headers',
-							'title'    => __( 'Recommended Security Headers', 'really-simple-ssl' ),
+							'title'    => __( 'Essential Security Headers', 'really-simple-ssl' ),
 							'networkwide_required' => true,
 							'premium_title'         => __( "The Essentials", 'really-simple-ssl' ),
 							'premium'              => true,
@@ -266,6 +266,36 @@ function rsssl_menu() {
 								],
 							],
 						],
+						[
+							'id' => 'hardening-file-change',
+							'group_id' => 'hardening-file-change',
+							'title' => __( 'File Change Detection', 'really-simple-ssl' ),
+							'premium' => true,
+							'groups' => [
+								[
+									'id' => 'hardening-file-change-main',
+									'group_id' => 'hardening-file-change-main',
+									'premium' => true,
+									'premium_text' =>__( 'Keep your site secure by monitoring unexpected file changes.', 'really-simple-ssl' ),
+									'upgrade' => 'https://really-simple-ssl.com/pro/?mtm_campaign=hardening&mtm_source=free&mtm_content=upgrade',
+									'helpLink' => 'https://really-simple-ssl.com/instructions/about-file-change-detection?mtm_campaign=instructions&mtm_source=free',
+									'title' => __( 'File Change Detection', 'really-simple-ssl' ),
+									'intro' => __( "File Change Detection generates a snapshot of every .php and .js file. On a daily basis, each file is then compared to this snapshot.", 'really-simple-ssl' )
+									           . ' ' .__( "You will receive an email warning if changes are detected.", 'really-simple-ssl' )
+									           . ' ' .__( "If unexpected file changes have occurred, this could be an indication that your site is compromised.", 'really-simple-ssl' )
+									           . ' ' .__( "The snapshots will be updated after WordPress, plugins or themes are activated or updated.", 'really-simple-ssl' ),
+								],
+								[
+									'id' => 'hardening-file-change-datatable',
+									'group_id' => 'hardening-file-change-datatable',
+									'helpLink' => 'https://really-simple-ssl.com/instructions/about-file-change-detection',
+									'title' => __( 'Detected File Changes', 'really-simple-ssl' ),
+									'intro' => __( 'The daily scan will report any detected file changes in the table below.', 'really-simple-ssl' )
+									.' '.__( 'If you recognize the detected changes, you can add the files to the exclude list, or ignore them just once.', 'really-simple-ssl' )
+									.' '.__( 'You can reset the report and generate a new snapshot, for example if you made changes via FTP.', 'really-simple-ssl' ),
+								],
+							],
+						],
 					],
 				],
 				[
@@ -277,41 +307,57 @@ function rsssl_menu() {
 						[
 							'id'                   => 'two-fa',
 							'networkwide_required' => true,
-							'premium'              => true,
-							'premium_text'         => __( 'Get two-factor authentication with Really Simple SSL Pro', 'really-simple-ssl' ),
+							'premium'              => false,
+							'premium_text'         => __( 'Get two-factor authentication with Really Simple Security Pro', 'really-simple-ssl' ),
 							'helpLink'             => 'instructions/about-login-protection',
-							'title'                =>  __('Two-step verification', 'really-simple-ssl'),
+							'title'                =>  __('Two-Factor Authentication', 'really-simple-ssl'),
 							'groups'  => [
 								[
 									'id'       => 'two_fa_general',
 									'group_id' => 'two_fa_general',
-									'premium'              => true,
+									'premium'              => false,
 									'premium_text'         => __( "Start login protection by adding an additional layer during authentication. This will leave authentication less dependent on just a single password. Want to force strong passwords? Check out Password Security.", 'really-simple-ssl' ),
 									'helpLink'      => 'instructions/about-login-protection',
-									'title'    => __( 'Two-step verification', 'really-simple-ssl' ),
-									'intro'    => __( 'Enhancing the authentication process and optimizing user management makes Login Protection a foundational element in securing your website.', 'really-simple-ssl' ),
+									'title'    => __( 'Two-Factor Authentication', 'really-simple-ssl' ),
+									'intro'    => __( 'Two-Factor authentication allows users to login using a second authentication method, other than their e-mail address and password. It is one of the most powerful ways to prevent account theft.', 'really-simple-ssl' ),
 								],
 								[
 									'id'            => 'two_fa_email',
 									'group_id'      => 'two_fa_email',
-									'premium'       => true,
-									'premium_text'  => __( "Send an email code during login. You can force user roles to use two-step verification, or leave the choose with your users, if so desired.", 'really-simple-ssl' ),
-									'helpLink'      => 'instructions/about-login-protection',
-									'title'         => __( 'Email', 'really-simple-ssl' ),
-									'intro'         => __( 'Two-step verification will enhance the authentication process by adding an additional layer. Selected users will be required to enter their correct credentials first, and then they must provide a one-time code sent to their email as an extra step.', 'really-simple-ssl' ),
+									'premium'       => false,
+									'premium_text'  => __( 'Send an email code during login. You can force user roles to use two-factor authentication, or leave the choose with your users, if so desired.', 'really-simple-ssl' ),
+									'upgrade'              => 'https://really-simple-ssl.com/pro/?mtm_campaign=2fa&mtm_source=free&mtm_content=upgrade',
+									'helpLink' => 'https://really-simple-ssl.com/instructions/two-factor-authentication',
+									'title'         => __( 'Email Verification', 'really-simple-ssl' ),
+									'intro'         => __( 'Email Verification sends a verification code to the user’s email address. This method provides protection against leaked or weak passwords, though it is less secure than other 2FA methods. If a user’s email inbox is compromised, one could still get access to the user account. It is not recommended to allow Email Verification for administrators.', 'really-simple-ssl' ),
+								],
+								[
+									'id'       => 'two_fa_totp',
+									'group_id' => 'two_fa_totp',
+									'premium'              => true,
+									'premium_text'         => __( 'Get Login Protection with Really Simple Security Pro', 'really-simple-ssl' ),
+									'helpLink' => 'https://really-simple-ssl.com/instructions/two-factor-authentication',
+                                    'upgrade'              => 'https://really-simple-ssl.com/pro/?mtm_campaign=2fa&mtm_source=free&mtm_content=upgrade',
+									'title'    => __( 'Authenticator App (TOTP)', 'really-simple-ssl' ),
+									'intro'    => __( 'TOTP requires users to authenticate using a third-party app such as Google Authenticator.', 'really-simple-ssl' ),
 								],
 								[
 									'id'            => 'two_fa_users',
 									'group_id'      => 'two_fa_users',
-									'premium'       => true,
-									'premium_text'  => __( "Here you control the users that are automatically, and temporarily blocked. You can also add or remove users manually. We recommend blocking ‘admin’ as username as a start.", 'really-simple-ssl' ),
-									'helpLink'      => 'instructions/about-login-protection',
+									'premium'       => false,
+									'premium_text'  => __( 'Here you control the users that are automatically, and temporarily blocked. You can also add or remove users manually. We recommend blocking ‘admin’ as username as a start.', 'really-simple-ssl' ),
+									'helpLink' => 'https://really-simple-ssl.com/instructions/two-factor-authentication',
+									'upgrade'              => 'https://really-simple-ssl.com/pro/?mtm_campaign=2fa&mtm_source=free&mtm_content=upgrade',
 									'title'         => __( 'Users', 'really-simple-ssl' ),
-									'intro'         => __( 'Here you can see which users have enabled two-step login, or change the status per user.', 'really-simple-ssl' ),
+									'intro'         => __( 'Here you can see which users have configured Two-Factor Authentication. The reset button will trigger the 2FA onboarding for the selected user(s) again and allow the configured grace period.', 'really-simple-ssl' ),
 									'groupFilter'  => [
 										'default' => 'active',
 										'id'      => 'two_fa_user_filter',
 										'options' => [
+											[
+												'id'   => 'all',
+												'title' => __('All', 'really-simple-ssl'),
+											],
 											[
 												'id'    => 'active',
 												'title' => __('Active', 'really-simple-ssl'),
@@ -332,8 +378,8 @@ function rsssl_menu() {
 						[
 							'id'                   => 'password_security',
 							'networkwide_required' => true,
-							'title'                => __('Password security','really-simple-ssl'),
-							'helpLink'             => 'instructions/password-security',
+							'title'                => __('Password Security','really-simple-ssl'),
+							'helpLink'             => 'https://really-simple-ssl.com/instructions/password-security/?mtm_campaign=instructions&mtm_source=free',
 							'groups'               => [
 								[
 									'id'           => 'password_security_passwords',
@@ -501,46 +547,48 @@ function rsssl_menu() {
 
 				],
 				[
-					'id' => 'access_control',
-					'title' => __( 'Access Control', 'really-simple-ssl' ),
+					'id' => 'firewall',
+					'title' => __( 'Firewall', 'really-simple-ssl' ),
 					'featured'   => false,
+					'premium'    => true,
 					'new'        => true,
 					'menu_items' => [
 						[
-							'id'      => 'geo_block_list',
-							'title'   => __( 'Region restrictions', 'really-simple-ssl' ),
+							'id'      => 'rules',
+							'title'   => __( 'Rules', 'really-simple-ssl' ),
 							'premium' => true,
 							'groups'  => [
 								[
-									'id'            => 'geo_block_list_general',
-									'group_id'      => 'geo_block_list_general',
+									'id'            => 'firewall_list_general',
+									'group_id'      => 'firewall_list_general',
 									'helpLink'      => 'instructions/about-region-restrictions',
 									'premium'       => true,
-									'premium_title' => __( 'Region restrictions', 'really-simple-ssl' ),
+									'premium_title' => __( 'Firewall Rules', 'really-simple-ssl' ),
 									'premium_text'  => __( 'Restrict access from specific countries or continents. You can also allow only specific countries.', 'really-simple-ssl' ),
-									'title'         => __( 'Region restrictions', 'really-simple-ssl' ),
-									'intro'         => __( 'Block visitors from specific countries, or continents. You can also allow only specific countries.',
+									'upgrade'       => 'https://really-simple-ssl.com/pro/?mtm_campaign=lla&mtm_source=free&mtm_content=upgrade',
+									'title'         => __( 'Firewall', 'really-simple-ssl' ),
+									'intro'         => __( 'The lightweight Firewall can be used to lockout malicious traffic from your site. You can configure generic rules below, or block specific IP addresses by adding them to the Blocklist.',
 										'really-simple-ssl' ),
 								],
 								[
-									'id'                   => 'geo_block_list_listing',
-									'group_id'             => 'geo_block_list_white_listing',
-									'networkwide_required' => true,
-									'premium'              => true,
-									'premium_text'         => __( 'This feature allows you to block visitors from your website based on country', 'really-simple-ssl' ),
-									'title'                => __( 'Trusted IP addresses', 'really-simple-ssl' ),
-									'premium_title'        => __( 'Trusted IP addresses', 'really-simple-ssl' ),
-									'intro' 			  => __( 'Here you can add IP addresses that should never be blocked by region restrictions. We will automatically add the IP address of the administrator that enabled Region Restrictions.', 'really-simple-ssl' ),
+									'id' => '404_blocking',
+									'group_id' => '404_blocking',
+									'premium' => true,
+									'title' => __( '404 Blocking', 'really-simple-ssl' ),
+									'premium_title' => __( '404 Blocking', 'really-simple-ssl' ),
+									'premium_text' => __( 'Crawlers might scan your site looking for possible exploits. One way to detect this is the fact that they trigger more 404 (not found) errors than legitimate visitors would. Below you can set the threshold and lockout duration for 404 blocking.', 'really-simple-ssl' ),
+									'intro' => __( 'Crawlers might scan your site looking for possible exploits. One way to detect this is the fact that they trigger more 404 (not found) errors than legitimate visitors would. Below you can set the threshold and lockout duration for 404 blocking.', 'really-simple-ssl' ),
 								],
 								[
-									'id'                   => 'geo_block_list_listing',
-									'group_id'             => 'geo_block_list_listing',
+									'id'                   => 'firewall_list_listing',
+									'group_id'             => 'firewall_list_listing',
 									'networkwide_required' => true,
 									'premium'              => true,
-									'premium_text'         => __( 'This feature allows you to block visitors from your website based on country', 'really-simple-ssl' ),
+									'premium_text'         => __( 'This feature allows you to block visitors from your website based on country',
+										'really-simple-ssl' ),
 									'title'                => __( 'Regions', 'really-simple-ssl' ),
 									'premium_title'        => __( 'Regions', 'really-simple-ssl' ),
-									'intro' 			  => __( 'Restrict access to your site based on user location. By default, all regions are allowed. You can also block countries from a continent.',
+									'intro' 			  => __( 'Restrict access to your site based on user location. By default, all regions are allowed. You can also block entire continents.',
 										'really-simple-ssl' ),
 									'groupFilter'          => [
 										'default' => 'countries',
@@ -563,6 +611,90 @@ function rsssl_menu() {
 								],
 							]
 						],
+						[
+							'id'      => 'firewall_blocklists',
+							'title'   => __( 'Blocklists', 'really-simple-ssl' ),
+							'premium' => true,
+							'groups' => [
+								[
+									'id'                   => 'firewall_white_list_listing',
+									'group_id'             => 'firewall_white_list_listing',
+									'networkwide_required' => true,
+									'premium'              => true,
+									'premium_text'         => __( 'This feature allows you to block visitors from your website based on country',
+										'really-simple-ssl' ),
+									'upgrade'              => 'https://really-simple-ssl.com/pro/?mtm_campaign=cops&mtm_source=free&mtm_content=upgrade',
+									'title'                => __( 'Trusted IP addresses', 'really-simple-ssl' ),
+									'premium_title'        => __( 'Trusted IP addresses', 'really-simple-ssl' ),
+									'intro' 			  => __( 'Here you can add IP addresses that should never be blocked by the Firewall. We will automatically add the IP address of the administrator that enabled the Firewall.',
+										'really-simple-ssl' ),
+								],
+								[
+									'id'                   => 'firewall_block_list_listing',
+									'group_id'             => 'firewall_block_list_listing',
+									'networkwide_required' => true,
+									'premium'              => true,
+									'premium_text'         => __( 'This feature allows you to block visitors from your website based on country',
+										'really-simple-ssl' ),
+									'upgrade'              => 'https://really-simple-ssl.com/pro/?mtm_campaign=cops&mtm_source=free&mtm_content=upgrade',
+									'title'                => __( 'IP Blocklist', 'really-simple-ssl' ),
+									'premium_title'        => __( 'IP Blocklist', 'really-simple-ssl' ),
+									'intro' 			  => __( 'This list shows all individually blocked IP addresses. On top the top-right you can filter between permanent blocks and temporary blocks. By default, blocks are only temporary, as attackers and bots will frequently alter between IP addresses. However, you can manually configure permanent blocks.',
+										'really-simple-ssl' ),
+									'groupFilter'          => [
+										'default' => 'all',
+										'id'      => 'rsssl-group-filter-geo_block_list',
+										'options' => [
+											[
+												'id'    => 'all',
+												'title' => __( 'All', 'really-simple-ssl' ),
+											],
+											[
+												'id'    => 'temp',
+												'title' => __( 'Temporary', 'really-simple-ssl' ),
+											],
+											[
+												'id'    => 'permanent',
+												'title' => __( 'Permanent', 'really-simple-ssl' ),
+											],
+										],
+									],
+								],
+							]
+						],
+						[
+							'id' => 'firewall_logs',
+							'title' => __( 'Logs', 'really-simple-ssl' ),
+							'premium' => true,
+							'groups' => [
+								[
+									'id'                   => 'firewall_logs_content',
+									'group_id'             => 'firewall_logs_content',
+									'premium'              => true,
+									'premium_text'         => __( 'This feature allows you to block visitors from your website based on country',
+										'really-simple-ssl' ),
+									'upgrade'              => 'https://really-simple-ssl.com/pro/?mtm_campaign=cops&mtm_source=free&mtm_content=upgrade',
+									'title'                => __( 'Event Logs', 'really-simple-ssl' ),
+									'premium_title'        => __( 'Event Logs', 'really-simple-ssl' ),
+									'intro' 			  => __( 'The Event Log shows all relevant events related to the Firewall and IP lockouts. You can filter the log using the dropdown on the top-right to only show warnings.',
+										'really-simple-ssl' ),
+									'groupFilter'          => [
+										'default' => 'all',
+										'id'      => 'rsssl-group-filter-firewall_logs_content',
+										'options' => [
+											[
+												'id'    => 'all',
+												'title' => __( 'All', 'really-simple-ssl' ),
+											],
+											[
+												'id'    => 'warning',
+												'title' => __( 'Warnings', 'really-simple-ssl' ),
+											],
+										],
+									],
+								],
+							]
+						]
 					]
 				],
 			],
@@ -673,18 +805,26 @@ function rsssl_get_url_ref(){
 	return $param_ids[ $id ] ?? false;
 }
 
-function rsssl_link($slug = 'pro', $mtm_campaign = 'notification', $mtm_src='free' ): string {
-	$mtm_src = sanitize_title($mtm_src);
-	$mtm_campaign = sanitize_title($mtm_campaign);
-	$ref = rsssl_get_url_ref();
+function rsssl_link( $slug = 'pro', $mtm_campaign = 'notification', $mtm_src = 'free', $discount = '' ): string {
+	$mtm_src      = sanitize_title( $mtm_src );
+	$mtm_campaign = sanitize_title( $mtm_campaign );
+	$ref          = rsssl_get_url_ref();
 	//remove slash at start of $slug, if existing, and add at the end.
-	$slug = trailingslashit( ltrim($slug, '/') );
+	$slug = trailingslashit( ltrim( $slug, '/' ) );
 
 	$multisite = is_multisite() ? 'mtm_kwd=multisite&' : '';
-	$url = "https://really-simple-ssl.com/$slug?{$multisite}mtm_campaign=$mtm_campaign&mtm_source=$mtm_src&mtm_content=upgrade";
+	$url       = "https://really-simple-ssl.com/$slug?{$multisite}mtm_campaign=$mtm_campaign&mtm_source=$mtm_src&mtm_content=upgrade";
+
 	if ( (int) $ref > 0 ) {
-		$url = add_query_arg( 'ref', $ref, $url);
+		$url = add_query_arg( 'ref', $ref, $url );
 	}
+
+	// Add discount code separately if provided
+	if ( ! empty( $discount ) ) {
+		$url = add_query_arg( 'discount', $discount, $url );
+	}
+
 	return $url;
 }
+
 

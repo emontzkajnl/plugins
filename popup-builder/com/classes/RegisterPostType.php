@@ -40,6 +40,7 @@ class RegisterPostType
 		SgpbDataConfig::init();
 
 		return true;
+
 	}
 
 	public function setPopupTypeObj($popupTypeObj)
@@ -251,7 +252,11 @@ class RegisterPostType
 
 	public function sgpbPopupTypeMainViewMetaboxes($metaboxes)
 	{
+		
 		$popupTypeObj = $this->getPopupTypeObj();
+		
+		
+		
 		$optionsView = $popupTypeObj->getPopupTypeMainView();
 		$typeView = array();
 

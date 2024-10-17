@@ -2622,7 +2622,10 @@ SgpbEventListener.prototype.sgpbClick = function(listenerObj, eventData)
 				jQuery(this).attr('data-popup-id', popupId);
 			}
 			var currentTarget = jQuery(this);
-			currentTarget.bind('click touchstart', function(e) {
+			currentTarget.bind('swipe', function(e) {
+				return false;
+			});
+			currentTarget.bind('click', function(e) {
 				if (clickCount > 1) {
 					return true;
 				}

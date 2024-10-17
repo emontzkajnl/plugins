@@ -464,14 +464,18 @@ class QSM_Install {
 			'label'           => __( 'Progress Controls', 'quiz-master-next' ),
 			'fields'          => array(
 				'progress_bar'                     => array(
-					'type'    => 'checkbox',
+					'type'    => 'radio',
 					'options' => array(
 						array(
-							'label' => __( 'Show progress bar', 'quiz-master-next' ),
+							'label' => __( "Disable", 'quiz-master-next' ),
+							'value' => 0,
+						),
+						array(
+							'label' => __( "Progress bar based on number of pages", 'quiz-master-next' ),
 							'value' => 1,
 						),
 					),
-					'default' => 1,
+					'default' => 0,
 				),
 				'enable_quick_result_mc'           => array(
 					'type'    => 'checkbox',
@@ -485,7 +489,7 @@ class QSM_Install {
 				),
 				'enable_quick_correct_answer_info' => array(
 					'type'        => 'radio',
-					'prefix_text' => __( "Display the correct answer information in real-time", 'quiz-master-next' ),
+					'prefix_text' => '<b>' . __( "Display the correct answer information in real-time", 'quiz-master-next' ) . '</b>',
 					'options'     => array(
 						array(
 							'label' => __( "Display only if the answer is correct", 'quiz-master-next' ),
@@ -725,16 +729,16 @@ class QSM_Install {
 		// Registers loggedin_user_contact setting
 		$field_array = array(
 			'id'         => 'loggedin_user_contact',
-			'label'      => __( 'Show contact form to logged in users', 'quiz-master-next' ),
+			'label'      => __( 'Hide contact form to logged in users', 'quiz-master-next' ),
 			'type'       => 'radio',
 			'options'    => array(
 				array(
 					'label' => __( 'Yes', 'quiz-master-next' ),
-					'value' => 0,
+					'value' => 1,
 				),
 				array(
 					'label' => __( 'No', 'quiz-master-next' ),
-					'value' => 1,
+					'value' => 0,
 				),
 			),
 			'default'    => 0,

@@ -10,6 +10,18 @@ if ( ! defined( 'ABSPATH' ) )
  */
 abstract class Responsive_Lightbox_Remote_Library_API {
 
+	protected $allowed_hosts = [];
+	protected $allowed_formats = [
+		'bmp'	=> 'image/bmp',
+		'gif'	=> 'image/gif',
+		'jpe'	=> 'image/jpeg',
+		'jpeg'	=> 'image/jpeg',
+		'jpg'	=> 'image/jpeg',
+		'png'	=> 'image/png',
+		'tif'	=> 'image/tiff',
+		'tiff'	=> 'image/tiff',
+		'webp'	=> 'image/webp'
+	];
 	protected $rl;
 	protected $slug;
 	protected $name;
@@ -203,5 +215,23 @@ abstract class Responsive_Lightbox_Remote_Library_API {
 			$user_text = sprintf( __( 'via <a href="%s" target="_blank">%s</a>', 'responsive-lightbox' ), esc_url( $user_link ), esc_html( $user_name ) );
 
 		return trim( $source_text . ' ' . $user_text );
+	}
+
+	/**
+	 * Get allowed formats.
+	 *
+	 * @return array
+	 */
+	public function get_allowed_formats() {
+		return $this->allowed_formats;
+	}
+
+	/**
+	 * Get allowed hosts.
+	 *
+	 * @return array
+	 */
+	public function get_allowed_hosts() {
+		return $this->allowed_hosts;
 	}
 }

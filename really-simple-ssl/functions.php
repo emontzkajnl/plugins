@@ -5,10 +5,10 @@ defined( 'ABSPATH' ) or die();
  */
 
 /**
- * Get a Really Simple SSL option by name
+ * Get a Really Simple Security option by name
  *
- * @param string $name
- * @param mixed  $default_value
+ * @param string $name The name of the option to retrieve.
+ * @param mixed  $default_value The default value to return if the option does not exist.
  *
  * @return mixed
  */
@@ -75,7 +75,7 @@ function rsssl_is_networkwide_active() {
 function rsssl_get_legacy_option( $options, string $name ): array {
 	$old_options = is_multisite() ? get_site_option( 'rlrsssl_network_options' ) : get_option( 'rlrsssl_options' );
 	$options     = [];
-	
+
 	if ( $old_options ) {
 		if ( 'ssl_enabled' === $name && isset( $old_options['ssl_enabled'] ) ) {
 			$options['ssl_enabled'] = $old_options['ssl_enabled'];
@@ -99,7 +99,7 @@ function rsssl_get_legacy_option( $options, string $name ): array {
 function rsssl_check_if_email_essential_feature() {
 	$essential_features = array(
 		'limit_login_attempts' => rsssl_get_option( 'enable_limited_login_attempts' ) == 1,//phpcs:ignore
-		'two_fa_enabled'       => rsssl_get_option( 'two_fa_enabled' ) == 1,//phpcs:ignore
+		'login_protection_enabled'       => rsssl_get_option( 'login_protection_enabled' ) == 1,//phpcs:ignore
 	);
 
 	// Check if the current feature is in the essential features array
@@ -169,4 +169,80 @@ function rsssl_load_template( string $template, array $vars = array(), string $p
 
 	// Include the template file.
 	include $template_file;
+}
+
+/**
+ * @return string
+ *
+ * Get wp-config.php path
+ */
+if ( ! function_exists('rsssl_wpconfig_path' ) ) {
+	function rsssl_wpconfig_path(): string {
+		$location_of_wp_config = ABSPATH;
+		if ( ! file_exists( ABSPATH . 'wp-config.php' ) && file_exists( dirname( ABSPATH ) . '/wp-config.php' ) ) {
+			$location_of_wp_config = dirname( ABSPATH );
+		}
+		$location_of_wp_config = trailingslashit( $location_of_wp_config );
+		$wpconfig_path         = $location_of_wp_config . 'wp-config.php';
+		if ( file_exists( $wpconfig_path ) ) {
+			return $wpconfig_path;
+		}
+
+		return '';
+	}
+}
+/**
+ * @return void
+ *
+ * Set encryption keys
+ */
+if ( ! function_exists('rsssl_set_encryption_key')) {
+	function rsssl_set_encryption_key(): void {
+
+		// Return if key has been set
+		if ( get_site_option( 'rsssl_encryption_keys_set' ) ) {
+			return;
+		}
+
+		$wp_config_path = rsssl_wpconfig_path();
+
+		// Check if we already have a key defined
+		if ( defined( 'RSSSL_KEY' ) ) {
+			return;
+		}
+
+		$key           = get_site_option( 'rsssl_main_key' );
+		$new_generated = false;
+
+		// If we don't have a key, generate one
+		if ( ! $key ) {
+			$new_generated = true;
+			$key           = wp_generate_password( 64, false );
+		}
+
+		if ( is_writable( $wp_config_path ) ) {
+			// Add the key to the wp-config file
+			$rule         = "//Begin Really Simple Security key\n";
+			$rule         .= "define('RSSSL_KEY', '" . $key . "');\n";
+			$rule         .= "//END Really Simple Security key\n";
+			$insert_after = '<?php';
+
+			$contents = file_get_contents( $wp_config_path );
+			$pos      = strpos( $contents, $insert_after );
+			if ( false !== $pos && strpos( $contents, 'RSSSL_KEY' ) === false ) {
+				$contents = substr_replace( $contents, $rule, $pos + 1 + strlen( $insert_after ), 0 );
+				file_put_contents( $wp_config_path, $contents );
+			}
+
+			// If the wp-config was just set to writable, we can delete the key from the database now.
+			delete_site_option( 'rsssl_main_key' );
+		} elseif ( $new_generated ) {
+			// If we can't write to the wp-config file, store the key in the database
+			// When wp-config is set to writable, auto upgrade to constant
+			update_site_option( 'rsssl_main_key', $key, false );
+		}
+
+		update_site_option( 'rsssl_encryption_keys_set', true );
+	}
+	rsssl_set_encryption_key();
 }

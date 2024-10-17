@@ -176,7 +176,6 @@ function qsm_generate_featured_addons() {
 								<p><?php echo wp_kses_post( $bundles_arr['desc'] ); ?></p>
 								<a href="<?php echo esc_url( $bundle_link ); ?>" target="_blank" class="custom-addon-getnow button button-primary addon-bundle-btn qsm-bundles-dynamic-<?php echo esc_attr( $count ); ?>" rel="noopener">
 									<?php esc_html_e( 'Get now', 'quiz-master-next' ); ?>
-									$<?php echo esc_html( array_values( $bundles_arr['price'] )[0] ); ?>
 									<span class="dashicons dashicons-arrow-right-alt2"></span>
 								</a>
 							</div>
@@ -212,7 +211,7 @@ function qsm_display_optin_page() {
 	?>
 <div class="wrap about-wrap">
 
-	<h1><?php esc_html_e( 'Get Your Free Addon!', 'quiz-master-next' ); ?></h1>
+	<h1><?php esc_html_e( 'Get Your Free Extension!', 'quiz-master-next' ); ?></h1>
 
 	<div class="about-text">
 		<?php esc_html_e( 'Wanna get more out of Quiz and Survey Master, but not yet ready to spend the cash? Get one free addon today!', 'quiz-master-next' ); ?>

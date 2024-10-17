@@ -140,6 +140,7 @@ class QSM_Results_Pages {
 						 * DO NOT RETURN TRUE IF IT PASSES THE CONDITION!!!
 						 * The value may have been set to false when failing a previous condition.
 						 */
+						$response_data['result_page_index'] = $index;
 						$show = apply_filters( 'qsm_results_page_condition_check', $show, $condition, $response_data );
 						if ( ! $show ) {
 							break;
@@ -188,7 +189,7 @@ class QSM_Results_Pages {
 		</div><?php
 		return array(
 			'display'  => do_shortcode( ob_get_clean() ),
-			'redirect' => $redirect,
+			'redirect' => htmlspecialchars_decode( $redirect, ENT_QUOTES),
 		);
 	}
 
@@ -266,7 +267,7 @@ class QSM_Results_Pages {
 
 				// If the page used the older version of the redirect, add it.
 				if ( ! empty( $page['redirect_url'] ) ) {
-					$new_page['redirect'] = $page['redirect_url'];
+					$new_page['redirect'] = esc_url( $page['redirect_url'] );
 				}
 
 				// Checks to see if the page is not the older version's default page.
@@ -347,6 +348,8 @@ class QSM_Results_Pages {
 			// jQuery AJAX will send a string version of false.
 			if ( 'false' === $pages[ $i ]['redirect'] ) {
 				$pages[ $i ]['redirect'] = false;
+			} else {
+				$pages[ $i ]['redirect'] = esc_url( $pages[ $i ]['redirect'] );
 			}
 
 			/**

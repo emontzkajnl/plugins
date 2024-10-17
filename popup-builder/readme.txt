@@ -6,9 +6,9 @@ Plugin URI: https://popup-builder.com
 Donate link: https://popup-builder.com
 Tags: popup, pop up, wordpress popup, popup maker, exit popup, popup builder, wordpress popup plugin
 Requires at least: 4.2
-Tested up to: 6.4
+Tested up to: 6.6.1
 Requires PHP: 5.3.3
-Stable tag: 4.3.2
+Stable tag: 4.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,6 +145,16 @@ Go to the Popup Builder settings and set your desired options.
 14. Registration popup
 
 == Changelog ==
+= Version 4.3.4
+* Fix the issue of Popup activates when scrolling on smartphone.
+* Fix the vulnerable to Sensitive Information Exposure.
+* New feature: Display warning about Injection Code.
+* Fix the conflict with Ninja Form and WP Forms plugins.
+
+= Version 4.3.3
+* Fix Undefined constant "SECURE_AUTH_COOKIE".
+* Fix Code Injection.
+* Fix Vulnerability issue.
 
 = Version 4.3.2 =
 * Fix ulnerabilities issue of Missing Authorization and Nonce Exposure.

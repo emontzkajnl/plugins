@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
@@ -15,6 +16,7 @@ use PublishPress\Future\Framework\InitializableInterface;
 use PublishPress\Future\Modules\Expirator\ExpirationActionsAbstract;
 use PublishPress\Future\Modules\Expirator\HooksAbstract;
 use PublishPress\Future\Modules\Expirator\Models\ExpirablePostModel;
+use PublishPress\Future\Modules\Expirator\Models\CurrentUserModel;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -36,9 +38,9 @@ class BulkEditController implements InitializableInterface
     private $sanitization;
 
     /**
-     * @var \Closure
+     * @var CurrentUserModel
      */
-    private $currentUserModelFactory;
+    private $currentUserModel;
 
     /**
      * @var \PublishPress\Future\Framework\WordPress\Facade\RequestFacade
@@ -62,12 +64,16 @@ class BulkEditController implements InitializableInterface
         $this->hooks = $hooksFacade;
         $this->expirablePostModelFactory = $expirablePostModelFactory;
         $this->sanitization = $sanitization;
-        $this->currentUserModelFactory = $currentUserModelFactory;
+        $this->currentUserModel = $currentUserModelFactory();
         $this->request = $request;
     }
 
     public function initialize()
     {
+        if (! $this->currentUserModel->userCanExpirePosts()) {
+            return;
+        }
+
         $this->hooks->addAction(
             CoreHooksAbstract::ACTION_BULK_EDIT_CUSTOM_BOX,
             [$this, 'registerBulkEditCustomBox'],
@@ -95,10 +101,10 @@ class BulkEditController implements InitializableInterface
 
         wp_enqueue_script(
             'postexpirator-bulk-edit',
-             POSTEXPIRATOR_BASEURL . '/assets/js/bulk-edit.js',
-             ['wp-i18n', 'wp-components', 'wp-url', 'wp-data', 'wp-api-fetch', 'wp-element', 'inline-edit-post', 'wp-html-entities', 'wp-plugins'],
-             POSTEXPIRATOR_VERSION,
-             true
+            POSTEXPIRATOR_BASEURL . '/assets/js/bulk-edit.js',
+            ['wp-i18n', 'wp-components', 'wp-url', 'wp-data', 'wp-api-fetch', 'wp-element', 'inline-edit-post', 'wp-html-entities', 'wp-plugins'],
+            POSTEXPIRATOR_VERSION,
+            true
         );
 
         wp_enqueue_style('wp-components');
@@ -154,6 +160,7 @@ class BulkEditController implements InitializableInterface
                 'postType' => $currentScreen->post_type,
                 'isNewPost' => false,
                 'nonce' => $nonce,
+                'hideCalendarByDefault' => $settingsFacade->getHideCalendarByDefault(),
                 'strings' => [
                     'category' => __('Categories', 'post-expirator'),
                     'panelTitle' => __('PublishPress Future', 'post-expirator'),
@@ -206,8 +213,7 @@ class BulkEditController implements InitializableInterface
         if (
             ($columnName !== 'expirationdate')
             || (! $facade->current_user_can_expire_posts())
-        )
-        {
+        ) {
             return;
         }
 
@@ -253,10 +259,7 @@ class BulkEditController implements InitializableInterface
             return;
         }
 
-        $currentUserModelFactory = $this->currentUserModelFactory;
-        $currentUserModel = $currentUserModelFactory();
-
-        if (! $currentUserModel->userCanExpirePosts()) {
+        if (! $this->currentUserModel->userCanExpirePosts()) {
             return;
         }
 

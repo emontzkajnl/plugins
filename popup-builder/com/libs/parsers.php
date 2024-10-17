@@ -65,7 +65,8 @@ class WXR_Parser_SimpleXML {
 		if ( function_exists( 'libxml_disable_entity_loader' ) ) {
 			$old_value = libxml_disable_entity_loader( true );
 		}
-		$success = $dom->loadXML( file_get_contents( $file ) );
+		
+		$success = $dom->loadXML( file_get_contents( $file ) );// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( ! is_null( $old_value ) ) {
 			libxml_disable_entity_loader( $old_value );
 		}
@@ -307,8 +308,8 @@ class WXR_Parser_XML {
 		xml_set_object( $xml, $this );
 		xml_set_character_data_handler( $xml, 'cdata' );
 		xml_set_element_handler( $xml, 'tag_open', 'tag_close' );
-
-		if ( ! xml_parse( $xml, file_get_contents( $file ), true ) ) {
+		
+		if ( ! xml_parse( $xml, file_get_contents( $file ), true ) ) {  // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			$current_line = xml_get_current_line_number( $xml );
 			$current_column = xml_get_current_column_number( $xml );
 			$error_code = xml_get_error_code( $xml );
@@ -700,7 +701,7 @@ class WXR_Parser_Regex {
 	function fopen( $filename, $mode = 'r' ) {
 		if ( $this->has_gzip )
 			return gzopen( $filename, $mode );
-		return fopen( $filename, $mode );
+		return fopen( $filename, $mode );// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 	}
 
 	function feof( $fp ) {
@@ -718,6 +719,6 @@ class WXR_Parser_Regex {
 	function fclose( $fp ) {
 		if ( $this->has_gzip )
 			return gzclose( $fp );
-		return fclose( $fp );
+		return fclose( $fp );// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
 }

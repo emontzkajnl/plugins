@@ -12,6 +12,13 @@ if ( ! defined( 'ABSPATH' ) )
  */
 class Responsive_Lightbox_Remote_Library_Unsplash extends Responsive_Lightbox_Remote_Library_API {
 
+	protected $allowed_hosts = [ 'unsplash.com' ];
+	protected $allowed_formats = [
+		'jpe'	=> 'image/jpeg',
+		'jpeg'	=> 'image/jpeg',
+		'jpg'	=> 'image/jpeg'
+	];
+
 	/**
 	 * Class constructor.
 	 *
@@ -212,7 +219,7 @@ class Responsive_Lightbox_Remote_Library_Unsplash extends Responsive_Lightbox_Re
 			'thumbnail_height'		=> $thumbnail_height,
 			'thumbnail_orientation'	=> $thumbnail_height > $thumbnail_width ? 'portrait' : 'landscape',
 			'media_provider'		=> 'unsplash',
-			'filename'				=> basename( sanitize_file_name( $result['urls']['raw'] ) ),
+			'filename'				=> sanitize_file_name( basename( $result['urls']['raw'] ) ),
 			'dimensions'			=> $width . ' x ' . $height,
 			'type'					=> 'image'
 		];

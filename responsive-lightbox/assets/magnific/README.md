@@ -1,7 +1,10 @@
+**Important note** This jQuery plugin is deprecated, only critical or security bug fixes will be released in future. Use native `<dialog>` element if you need a basic dialog/modal/popup, or my <a href="https://photoswipe.com">PhotoSwipe</a> library if you need an advanced image gallery. Feel free to email me if you need assistance.
+
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg)](https://savelife.in.ua/en/)
+
 # Magnific Popup Repository
 
 [![Build Status](https://travis-ci.org/dimsemenov/Magnific-Popup.png)](https://travis-ci.org/dimsemenov/Magnific-Popup) 
-[![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/thing/1310305/Magnific-Popup-by-dimsemenov)
 
 Fast, light and responsive lightbox plugin, for jQuery and Zepto.js.
 

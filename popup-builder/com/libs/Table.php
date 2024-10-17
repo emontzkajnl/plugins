@@ -96,13 +96,11 @@ class SGPBTable extends SGPBListTable
 		
 		$table = $this->tablename;
 		
-		$columns_name_placeholders = implode( ', ', array_fill( 0, count( $this->columns ), '%i' ) );		
-		  
-		$query = $wpdb->prepare( "SELECT $table.$columns_name_placeholders FROM `$table`", str_replace( $table.'.', '', $this->columns ) );		
+		$columns_name_placeholders = implode( ', ', array_fill( 0, count( $this->columns ), '%i' ) );	
 		
-		$this->customizeQuery($query);		
+		$query = $wpdb->prepare( "SELECT $table.$columns_name_placeholders FROM `$table`", str_replace( $table.'.', '', $this->columns ) );
 		
-		$totalItems = count( $wpdb->get_results( $query ) ); //return the total number of affected rows
+		$totalItems = count( $wpdb->get_results( $wpdb->prepare( "SELECT $table.$columns_name_placeholders FROM `$table`", str_replace( $table.'.', '', $this->columns ) ) ) ); //return the total number of affected rows
 		
 		if ($this->previewPopup) {
 			$totalItems -= 1;
@@ -145,6 +143,7 @@ class SGPBTable extends SGPBListTable
 		$hidden = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array($columns, $hidden, $sortable);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No applicable variables for this query.
 		$items = $wpdb->get_results( $query, ARRAY_N);
 		/*Remove popup data when its class does not exist.*/
 		$this->customizeRowsData($items);

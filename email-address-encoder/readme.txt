@@ -1,19 +1,16 @@
 === Email Address Encoder ===
 Contributors: tillkruess
 Donate link: https://github.com/sponsors/tillkruss
-Tags: antispam, anti spam, spam, email, e-mail, mail, spider, crawler, harvester, robots, spambot, block, obfuscate, obfuscation, encode, encoder, encoding, encrypt, encryption, protect, protection
+Tags: spam, protection, crawler, block, encryption
 Requires at least: 2.0
-Tested up to: 6.4
+Tested up to: 6.6
 Requires PHP: 5.3
-Stable tag: 1.0.23
+Stable tag: 1.0.24
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 A lightweight plugin that protects email addresses from email-harvesting robots, by encoding them into decimal and hexadecimal entities.
 
-- add "encoding" gutenberg block
-- Show premium upgrade page inside wordpress?
-- Dashboard widget with scanner results?
 
 == Description ==
 
@@ -74,6 +71,11 @@ You can use the "Page Scanner" found under _Settings -> Email Encoder_ to see wh
 4. [Premium] Phone number protection using polymorphous ROT47/CSS
 
 == Changelog ==
+
+= 1.0.24 =
+
+* Added `class` attribute to `[encode]` shortcode
+* Prevent CSRF to flush page caches
 
 = 1.0.23 =
 

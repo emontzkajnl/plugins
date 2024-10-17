@@ -2,7 +2,7 @@
 /*
 Plugin Name: Responsive Lightbox & Gallery
 Description: Responsive Lightbox & Gallery allows users to create galleries and view larger versions of images, galleries and videos in a lightbox (overlay) effect optimized for mobile devices.
-Version: 2.4.7
+Version: 2.4.8
 Author: dFactory
 Author URI: http://www.dfactory.co/
 Plugin URI: http://www.dfactory.co/products/responsive-lightbox/
@@ -44,7 +44,7 @@ include_once( RESPONSIVE_LIGHTBOX_PATH . 'includes' . DIRECTORY_SEPARATOR . 'fun
  * Responsive Lightbox class.
  *
  * @class Responsive_Lightbox
- * @version	2.4.7
+ * @version	2.4.8
  */
 class Responsive_Lightbox {
 
@@ -305,7 +305,7 @@ class Responsive_Lightbox {
 			'origin_left'		=> true,
 			'origin_top'		=> true
 		],
-		'version' => '2.4.7',
+		'version' => '2.4.8',
 		'activation_date' => ''
 	];
 	public $options = [];
@@ -2049,17 +2049,13 @@ class Responsive_Lightbox {
 				break;
 
 			case 'featherlight':
-				wp_register_script( 'responsive-lightbox-featherlight', plugins_url( 'assets/featherlight/featherlight' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_script( 'responsive-lightbox-featherlight', plugins_url( 'assets/featherlight/featherlight' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.7.14', $this->options['settings']['loading_place'] === 'footer' );
 
-				wp_register_style(
-					'responsive-lightbox-featherlight', plugins_url( 'assets/featherlight/featherlight' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version']
-				);
+				wp_register_style( 'responsive-lightbox-featherlight', plugins_url( 'assets/featherlight/featherlight' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.7.14' );
 
-				wp_register_script( 'responsive-lightbox-featherlight-gallery', plugins_url( 'assets/featherlight/featherlight.gallery' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_script( 'responsive-lightbox-featherlight-gallery', plugins_url( 'assets/featherlight/featherlight.gallery' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.7.14', $this->options['settings']['loading_place'] === 'footer' );
 
-				wp_register_style(
-					'responsive-lightbox-featherlight-gallery', plugins_url( 'assets/featherlight/featherlight.gallery' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version']
-				);
+				wp_register_style( 'responsive-lightbox-featherlight-gallery', plugins_url( 'assets/featherlight/featherlight.gallery' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.7.14' );
 
 				$scripts[] = 'responsive-lightbox-featherlight';
 				$styles[] = 'responsive-lightbox-featherlight';
@@ -2080,9 +2076,9 @@ class Responsive_Lightbox {
 				break;
 
 			case 'magnific':
-				wp_register_script( 'responsive-lightbox-magnific', plugins_url( 'assets/magnific/jquery.magnific-popup' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_script( 'responsive-lightbox-magnific', plugins_url( 'assets/magnific/jquery.magnific-popup' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.2.0', $this->options['settings']['loading_place'] === 'footer' );
 
-				wp_register_style( 'responsive-lightbox-magnific', plugins_url( 'assets/magnific/magnific-popup' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version'] );
+				wp_register_style( 'responsive-lightbox-magnific', plugins_url( 'assets/magnific/magnific-popup' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.2.0' );
 
 				$scripts[] = 'responsive-lightbox-magnific';
 				$styles[] = 'responsive-lightbox-magnific';

@@ -341,8 +341,8 @@ class Ajax
 		$subscribersId = array_map('sanitize_text_field', $_POST['subscribersId']);
 
 		foreach($subscribersId as $subscriberId) {
-			$prepareSql = $wpdb->prepare('DELETE FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE id = %d', $subscriberId);
-			$wpdb->query($prepareSql);
+			$table_sgpb_subscribers = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+			$wpdb->query( $wpdb->prepare("DELETE FROM $table_sgpb_subscribers WHERE id = %d", $subscriberId) );
 		}
 	}
 
@@ -369,18 +369,16 @@ class Ajax
 		array_walk_recursive($subscriptionPopupsId, function(&$item){
 			$item = sanitize_text_field($item);
 		});
-
-		foreach($subscriptionPopupsId as $subscriptionPopupId) {
-			$selectSql = $wpdb->prepare('SELECT id FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE email = %s AND subscriptionType = %d', $email, $subscriptionPopupId);
-			$res = $wpdb->get_row($selectSql, ARRAY_A);
+		$table_sgpb_subscribers = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		foreach($subscriptionPopupsId as $subscriptionPopupId) {			
+			
+			$res = $wpdb->get_row( $wpdb->prepare("SELECT id FROM $table_sgpb_subscribers WHERE email = %s AND subscriptionType = %d", $email, $subscriptionPopupId), ARRAY_A);
 			// add new subscriber
 			if(empty($res)) {
-				$sql = $wpdb->prepare('INSERT INTO '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' (firstName, lastName, email, cDate, subscriptionType) VALUES (%s, %s, %s, %s, %d) ', $firstName, $lastName, $email, $date, $subscriptionPopupId);
-				$res = $wpdb->query($sql);
+				$res = $wpdb->query( $wpdb->prepare("INSERT INTO $table_sgpb_subscribers (firstName, lastName, email, cDate, subscriptionType) VALUES (%s, %s, %s, %s, %d) ", $firstName, $lastName, $email, $date, $subscriptionPopupId) );
 			} // edit existing
 			else {
-				$sql = $wpdb->prepare('UPDATE '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' SET firstName = %s, lastName = %s, email = %s, cDate = %s, subscriptionType = %d, unsubscribered = 0 WHERE id = %d', $firstName, $lastName, $email, $date, $subscriptionPopupId, $res['id']);
-				$wpdb->query($sql);
+				$wpdb->query( $wpdb->prepare("UPDATE $table_sgpb_subscribers SET firstName = %s, lastName = %s, email = %s, cDate = %s, subscriptionType = %d, unsubscribered = 0 WHERE id = %d", $firstName, $lastName, $email, $date, $subscriptionPopupId, $res['id']) );
 				$res = 1;
 			}
 
@@ -459,24 +457,32 @@ class Ajax
 
 		// -1 it's mean saved from Subscription Plus
 		if($subscriptionPlusContent != -1) {
-			foreach($csvFileArray as $csvData) {
-				global $wpdb;
-				$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
-				$sql = $wpdb->prepare('SELECT submittedData FROM '.$subscribersTableName);
+			global $wpdb;
+			$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;				
+			foreach($csvFileArray as $csvData) {				
+				$result_check = $wpdb->query( $wpdb->prepare("SELECT submittedData FROM $subscribersTableName") );
 				if(!empty($mapping['date'])) {
 					$date = $csvData[$mapping['date']];
 					$date = gmdate('Y-m-d', strtotime($date));
 				}
-				if($sql) {
-					$sql = $wpdb->prepare('INSERT INTO '.$subscribersTableName.' (firstName, lastName, email, cDate, subscriptionType, status, unsubscribed) VALUES (%s, %s, %s, %s, %d, %d, %d) ', $csvData[$mapping['firstName']], $csvData[$mapping['lastName']], $csvData[$mapping['email']], $date, $formId, 0, 0);
+				if(!$result_check) {
+					$wpdb->query( $wpdb->prepare("INSERT INTO $subscribersTableName (firstName, lastName, email, cDate, subscriptionType, status, unsubscribed) VALUES (%s, %s, %s, %s, %d, %d, %d) ", $csvData[$mapping['firstName']], $csvData[$mapping['lastName']], $csvData[$mapping['email']], $date, $formId, 0, 0) );
 				} else {
-					$sql = $wpdb->prepare('INSERT INTO '.$subscribersTableName.' (firstName, lastName, email, cDate, subscriptionType, status, unsubscribed, submittedData) VALUES (%s, %s, %s, %s, %d, %d, %d, %s) ', $csvData[$mapping['firstName']], $csvData[$mapping['lastName']], $csvData[$mapping['email']], $csvData[$mapping['date']], $formId, 0, 0, '');
-				}
-
-				$wpdb->query($sql);
+					$wpdb->query( $wpdb->prepare("INSERT INTO $subscribersTableName (firstName, lastName, email, cDate, subscriptionType, status, unsubscribed, submittedData) VALUES (%s, %s, %s, %s, %d, %d, %d, %s) ", $csvData[$mapping['firstName']], $csvData[$mapping['lastName']], $csvData[$mapping['email']], $csvData[$mapping['date']], $formId, 0, 0, '') );
+				}				
 			}
 		}
-
+		//Fix the vulnerable to Sensitive Information Exposure
+		// Get the attachment ID from the URL.
+		$csv_attachment_id = attachment_url_to_postid( $fileURL );
+		// Check if an attachment ID was found.
+		if ($csv_attachment_id) {
+			// Check if the attachment exists.
+			if (get_post_type($csv_attachment_id) === 'attachment') {
+				// Delete the attachment and the file.
+				wp_delete_attachment($csv_attachment_id, true);	
+			}
+		}
 		echo esc_html(SGPB_AJAX_STATUS_TRUE);
 		wp_die();
 	}
@@ -512,9 +518,8 @@ class Ajax
 			AdminHelper::sendTestNewsletter($newsletterData);
 		}
 		$subscriptionFormId = (int)$newsletterData['subscriptionFormId'];
-
-		$updateStatusQuery = $wpdb->prepare('UPDATE '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' SET status = 0 WHERE subscriptionType = %d', $subscriptionFormId);
-		$wpdb->query($updateStatusQuery);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;		
+		$wpdb->query( $wpdb->prepare("UPDATE $subscribersTableName SET status = 0 WHERE subscriptionType = %d", $subscriptionFormId) );
 		$newsletterData['blogname'] = get_bloginfo('name');
 		$newsletterData['username'] = wp_get_current_user()->user_login;
 		update_option('SGPB_NEWSLETTER_DATA', $newsletterData);
@@ -632,17 +637,13 @@ class Ajax
 		$lastName = sanitize_text_field($formData['sgpb-subs-last-name']);
 
 		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
-
-		$getSubscriberQuery = $wpdb->prepare('SELECT id FROM '.$subscribersTableName.' WHERE email = %s AND subscriptionType = %d', $email, $popupPostId);
-		$list = $wpdb->get_row($getSubscriberQuery, ARRAY_A);
+		$list = $wpdb->get_row( $wpdb->prepare("SELECT id FROM $subscribersTableName WHERE email = %s AND subscriptionType = %d", $email, $popupPostId), ARRAY_A);
 
 		// When subscriber does not exist we insert to subscribers table otherwise we update user info
 		if(empty($list['id'])) {
-			$sql = $wpdb->prepare('INSERT INTO '.$subscribersTableName.' (firstName, lastName, email, cDate, subscriptionType) VALUES (%s, %s, %s, %s, %d) ', $firstName, $lastName, $email, $date, $popupPostId);
-			$res = $wpdb->query($sql);
+			$res = $wpdb->query( $wpdb->prepare("INSERT INTO $subscribersTableName (firstName, lastName, email, cDate, subscriptionType) VALUES (%s, %s, %s, %s, %d) ", $firstName, $lastName, $email, $date, $popupPostId) );
 		} else {
-			$sql = $wpdb->prepare('UPDATE '.$subscribersTableName.' SET firstName = %s, lastName = %s, email = %s, cDate = %s, subscriptionType = %d WHERE id = %d', $firstName, $lastName, $email, $date, $popupPostId, $list['id']);
-			$wpdb->query($sql);
+			$wpdb->query( $wpdb->prepare("UPDATE $subscribersTableName SET firstName = %s, lastName = %s, email = %s, cDate = %s, subscriptionType = %d WHERE id = %d", $firstName, $lastName, $email, $date, $popupPostId, $list['id']) );
 			$res = 1;
 		}
 		if($res) {
@@ -695,8 +696,7 @@ class Ajax
 		}
 		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
 
-		$getSubscriberCountQuery = $wpdb->prepare('SELECT COUNT(id) as countIds FROM '.$subscribersTableName.' WHERE subscriptionType = %d', $popupPostId);
-		$count = $wpdb->get_row($getSubscriberCountQuery, ARRAY_A);
+		$count = $wpdb->get_row( $wpdb->prepare("SELECT COUNT(id) as countIds FROM $subscribersTableName WHERE subscriptionType = %d", $popupPostId), ARRAY_A);
 
 		$popupOptions = $popup->getOptions();
 		$adminUserName = 'admin';

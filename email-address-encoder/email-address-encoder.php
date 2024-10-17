@@ -3,7 +3,7 @@
 Plugin Name: Email Address Encoder
 Plugin URI: https://encoder.till.im/
 Description: A lightweight plugin that protects email addresses from email-harvesting robots by encoding them into decimal and hexadecimal entities.
-Version: 1.0.23
+Version: 1.0.24
 Author: Till Krüss
 Author URI: https://till.im/
 Text Domain: email-address-encoder
@@ -97,21 +97,31 @@ function eae_register_shortcode() {
 function eae_shortcode( $attributes, $content = '' ) {
     $atts = shortcode_atts( array(
         'link' => null,
+        'class' => null,
     ), $attributes, 'encode' );
 
     // override encoding function with the 'eae_method' filter
     $method = apply_filters( 'eae_method', 'eae_encode_str' );
 
-    if ( ! empty( $atts[ 'link' ] ) && true ) {
+    if ( ! empty( $atts[ 'link' ] ) ) {
         $link = esc_url( $atts[ 'link' ], null, 'shortcode' );
 
         if ( $link === '' ) {
             return $method( $content );
         }
 
+        if ( empty( $atts[ 'class' ] ) ) {
+            return sprintf(
+                '<a href="%s">%s</a>',
+                $method( $link ),
+                $method( $content )
+            );
+        }
+
         return sprintf(
-            '<a href="%s">%s</a>',
+            '<a href="%s" class="%s">%s</a>',
             $method( $link ),
+            esc_attr( $atts[ 'class' ] ),
             $method( $content )
         );
     }

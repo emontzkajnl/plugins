@@ -714,6 +714,17 @@
 				break;
 
 			case 'featherlight':
+				delete $.featherlight.contentFilters.jquery;
+
+				$.extend( $.featherlight.contentFilters, {
+					html: {
+						regex: /[^]/, // it will also handle jquery and any unspecified content type
+						process: function( html ) {
+							return $( '<div>', { text: html } );
+						}
+					}
+				} );
+
 				var selectors = [];
 				var lastImage = '';
 
@@ -738,6 +749,7 @@
 
 					// set defaults
 					$.extend( $.featherlight.defaults, {
+						contentFilters: ['image', 'html', 'ajax', 'iframe', 'text'],
 						openSpeed: parseInt( args.openSpeed ),
 						closeSpeed: parseInt( args.closeSpeed ),
 						closeOnClick: args.closeOnClick,
@@ -831,6 +843,8 @@
 							fixedBgPos = false;
 
 						subselector.magnificPopup( {
+							allowHTMLInStatusIndicator: false,
+							allowHTMLInTemplate: true,
 							type: media_type === 'gallery' ? 'image' : ( media_type === 'video' ? 'iframe' : media_type ),
 							disableOn: args.disableOn,
 							midClick: args.midClick,
@@ -851,9 +865,19 @@
 
 									if ( ! title )
 										title = '';
+									else {
+										title = title.replace( /[^]/g, function( c ) {
+											return '&#' + c.charCodeAt( 0 ) + ';';
+										} );
+									}
 
 									if ( ! caption )
 										caption = '';
+									else {
+										caption = caption.replace( /[^]/g, function( c ) {
+											return '&#' + c.charCodeAt( 0 ) + ';';
+										} );
+									}
 
 									return title + '<small>' + caption + '</small>';
 								}
@@ -870,6 +894,14 @@
 								imageLoadComplete: function() {
 									// trigger image view
 									rl_view_image( script, this.currItem.src );
+								},
+								elementParse: function( item ) {
+									if ( item.src.trim().includes( '<' ) ) {
+										if ( item.type === 'inline' )
+											item.src = '<div>HTML is disallowed.</div>';
+										else if ( item.type === 'iframe' || item.type === 'ajax' )
+											item.src = '';
+									}
 								}
 							}
 						} );

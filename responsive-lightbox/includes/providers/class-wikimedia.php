@@ -12,6 +12,18 @@ if ( ! defined( 'ABSPATH' ) )
  */
 class Responsive_Lightbox_Remote_Library_Wikimedia extends Responsive_Lightbox_Remote_Library_API {
 
+	protected $allowed_hosts = [ 'wikimedia.org' ];
+	protected $allowed_formats = [
+		'gif'	=> 'image/gif',
+		'jpe'	=> 'image/jpeg',
+		'jpeg'	=> 'image/jpeg',
+		'jpg'	=> 'image/jpeg',
+		'png'	=> 'image/png',
+		'tif'	=> 'image/tiff',
+		'tiff'	=> 'image/tiff',
+		'webp'	=> 'image/webp'
+	];
+
 	/**
 	 * Class constructor.
 	 *

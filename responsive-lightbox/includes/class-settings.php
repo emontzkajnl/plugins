@@ -27,10 +27,10 @@ class Responsive_Lightbox_Settings {
 		Responsive_Lightbox()->settings = $this;
 
 		// actions
+		add_action( 'after_setup_theme', [ $this, 'load_defaults' ] );
+		add_action( 'admin_init', [ $this, 'init_builder' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'admin_menu_options' ] );
-		add_action( 'after_setup_theme', [ $this, 'load_defaults' ] );
-		add_action( 'init', [ $this, 'init_builder' ] );
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Responsive_Lightbox_Settings {
 		}
 
 		// flush rewrite rules if needed
-		if ( isset( $_GET['flush_rules'] ) )
+		if ( current_user_can( apply_filters( 'rl_lightbox_settings_capability', $rl->options['capabilities']['active'] ? 'edit_lightbox_settings' : 'manage_options' ) ) && isset( $_POST['flush_rules'] ) && isset( $_POST['option_page'], $_POST['action'], $_POST['responsive_lightbox_builder'], $_POST['_wpnonce'] ) && $_POST['option_page'] === 'responsive_lightbox_builder' && $_POST['action'] === 'update' && ( isset( $_POST['save_rl_builder'] ) || isset( $_POST['reset_rl_builder'] ) ) && check_admin_referer( 'responsive_lightbox_builder-options', '_wpnonce' ) !== false )
 			flush_rewrite_rules();
 	}
 
@@ -1962,7 +1962,7 @@ class Responsive_Lightbox_Settings {
 
 			if ( $tab_key === 'builder' )
 				echo '
-					<input type="hidden" name="_wp_http_referer" value="'. esc_attr( wp_unslash( add_query_arg( 'flush_rules', 1, $_SERVER['REQUEST_URI'] ) ) ) . '" />';
+					<input type="hidden" name="flush_rules" value="1" />';
 		}
 
 		if ( ! empty( $this->tabs[$tab_key]['submit'] ) || ! empty( $this->tabs[$tab_key]['reset'] ) ) {

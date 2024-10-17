@@ -29,7 +29,7 @@ $metaboxes = apply_filters('sgpbAdditionalMetaboxes', array());
 	<?php }; ?>
 </div>
 <?php
-	wp_register_script( 'sgpb-allmetaboxesview-js-footer', '', array("jquery"), '', true );
+	wp_register_script( 'sgpb-allmetaboxesview-js-footer', '', array("jquery"), SGPB_POPUP_VERSION, true );
 	wp_enqueue_script( 'sgpb-allmetaboxesview-js-footer'  );
 	wp_add_inline_script( 'sgpb-allmetaboxesview-js-footer', "let hash = window.location.hash.replace(/^#/,'');
 	if (hash) {

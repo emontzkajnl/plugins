@@ -3,6 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+use sgpb\AdminHelper;
 $popupId = !empty($_GET['post']) ? (int)sanitize_text_field($_GET['post']) : 0;
 $editorModeJs = htmlentities('text/javascript');
 $editorModeCss = htmlentities('text/css');
@@ -33,16 +34,64 @@ $savedData = get_post_meta($popupId , 'sg_popup_scripts', true);
 			?>
 
 			<?php foreach ($jsDefaultData['helperText'] as $key => $value) {?>
-					<div class="formItem"><span class="formItem__title"><?php echo wp_kses($value, 'post'); ?></span>
-						<textarea   class="wp-editor-area formItem__textarea sgpb-margin-top-20"
-									data-attr-event="<?php echo esc_attr($key); ?>"
+					<div class="formItem">
+						<span class="formItem__title"><?php echo wp_kses($value, 'post'); ?></span>
+						<?php						
+						if (!empty($savedData['js']['sgpb-'.$key])) {
+							if( AdminHelper::sgpbScanCustomJsStr( $savedData['js']['sgpb-'.$key] ) == true )
+							{
+								?>
+								<span class="notice notice-warning">We have detected this snippet that is insecure and may compromise the security of your site. Please remove it and save your Popup data again.</span>
+								<?php
+							}	
+						}
+						?>						
+						<textarea class="wp-editor-area formItem__textarea sgpb-margin-top-20"
+									data-attr-event="<?php echo esc_attr($key);?>"
 									placeholder=" #... type your code"
 									mode="<?php echo esc_attr($editorModeJs); ?>"
 									name="sgpb-<?php echo esc_attr($key); ?>"><?php
 									if (!empty($savedData['js']['sgpb-'.$key])) {
 										echo esc_html($savedData['js']['sgpb-'.$key]);
-										}
-									?></textarea>
+									}									
+									?>
+						</textarea>	
+						<?php 
+						//Ted-fix : we stopped the render custom js code into front-end page to fix HACKER attack
+						
+						/* 	
+						if( AdminHelper::getOption('sgpb-disable-custom-js') )
+						{
+							?>
+							<span class="notice notice-warning">We disabled this option for this version to remove hacker's attack code.</span>
+							<textarea   class="wp-editor-area formItem__textarea sgpb-margin-top-20"
+										data-attr-event="<?php echo esc_attr($key);?>"
+										placeholder=" #... type your code"
+										mode="<?php echo esc_attr($editorModeJs); ?>"
+										name="sgpb-<?php echo esc_attr($key); ?>" readonly><?php
+										if (!empty($savedData['js']['sgpb-'.$key])) {
+											echo esc_html($savedData['js']['sgpb-'.$key]);
+										}									
+										?>
+							</textarea>	
+							<?php
+						}
+						else
+						{
+							?>
+							<textarea   class="wp-editor-area formItem__textarea sgpb-margin-top-20"
+										data-attr-event="<?php echo esc_attr($key);?>"
+										placeholder=" #... type your code"
+										mode="<?php echo esc_attr($editorModeJs); ?>"
+										name="sgpb-<?php echo esc_attr($key); ?>"><?php
+										if (!empty($savedData['js']['sgpb-'.$key])) {
+											echo esc_html($savedData['js']['sgpb-'.$key]);
+										}									
+										?>
+							</textarea>	
+							<?php
+						} */
+						?>
 					</div>
 			<?php } ?>
 		</div>

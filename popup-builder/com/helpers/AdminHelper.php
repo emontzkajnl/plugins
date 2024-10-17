@@ -1,5 +1,6 @@
 <?php
 namespace sgpb;
+use \WP_Query;
 use \DateTime;
 use \DateTimeZone;
 use \SgpbDataConfig;
@@ -324,9 +325,8 @@ class AdminHelper
 	public static function deleteSubscriptionPopupSubscribers($popupId)
 	{
 		global $wpdb;
-
-		$prepareSql = $wpdb->prepare('DELETE FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE subscriptionType = %s', $popupId);
-		$wpdb->query($prepareSql);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$wpdb->query( $wpdb->prepare("DELETE FROM $subscribersTableName WHERE subscriptionType = %s", $popupId) );
 	}
 
 	public static function subscribersRelatedQuery($query = '', $additionalColumn = '')
@@ -380,7 +380,8 @@ class AdminHelper
 		}
 		if ($searchQuery != '') {
 			$query .= " WHERE $searchQuery";
-		}		
+		}
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No applicable variables for this query.
 		return $wpdb->prepare( $query, $array_mapping_search );
 	}
 
@@ -880,9 +881,8 @@ class AdminHelper
 		if (isset($params['popup'])) {
 			$popup = $params['popup'];
 		}
-
-		$prepareSql = $wpdb->prepare('SELECT id FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE email = %s && subscriptionType = %s', $email, $popup);
-		$res = $wpdb->get_row($prepareSql, ARRAY_A);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$res = $wpdb->get_row( $wpdb->prepare("SELECT id FROM $subscribersTableName WHERE email = %s && subscriptionType = %s", $email, $popup), ARRAY_A);
 		if (!isset($res['id'])) {
 			$noSubscriber = false;
 		}
@@ -924,9 +924,8 @@ class AdminHelper
 		}
 		// send email to admin about user unsubscription
 		self::sendEmailAboutUnsubscribe($params);
-
-		$prepareSql = $wpdb->prepare('UPDATE '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' SET unsubscribed = 1 WHERE id = %s ', $params['subscriberId']);
-		$wpdb->query($prepareSql);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$wpdb->query( $wpdb->prepare("UPDATE $subscribersTableName SET unsubscribed = 1 WHERE id = %s ", $params['subscriberId']) );
 		/* translators: Home page URL */
 		printf( '<span>%1$s <a href="%2$s">click here</a> %3$s</span>' , 
 			wp_kses_post(__('You have successfully unsubscribed.', 'popup-builder') ), 
@@ -961,9 +960,8 @@ class AdminHelper
 	public static function addUnsubscribeColumn()
 	{
 		global $wpdb;
-
-		$sql = 'ALTER TABLE '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' ADD COLUMN unsubscribed INT NOT NULL DEFAULT 0 ';
-		$wpdb->query($sql);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$wpdb->query( "ALTER TABLE $subscribersTableName ADD COLUMN unsubscribed INT NOT NULL DEFAULT 0 " );
 	}
 
 	public static function isPluginActive($key)
@@ -1144,8 +1142,7 @@ class AdminHelper
 	{
 		global $wpdb;
 
-		$query = $wpdb->prepare('SELECT table_name, create_time FROM information_schema.tables WHERE table_schema=%s AND table_name=%s', DB_NAME, $wpdb->prefix.'sgpb_subscribers');
-		$results = $wpdb->get_results($query, ARRAY_A);
+		$results = $wpdb->get_results( $wpdb->prepare('SELECT table_name, create_time FROM information_schema.tables WHERE table_schema=%s AND table_name=%s', DB_NAME, $wpdb->prefix.'sgpb_subscribers'), ARRAY_A);
 		if (empty($results)) {
 			return 0;
 		}
@@ -1400,12 +1397,10 @@ class AdminHelper
 	{
 		global $wpdb;
 		$subscriber = array();
-
-		$prepareSql = $wpdb->prepare('SELECT * FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE email = %s AND subscriptionType = %d ', $subscriberEmail, $list);
-		$subscriber = $wpdb->get_row($prepareSql, ARRAY_A);
-		if (!$list) {
-			$prepareSql = $wpdb->prepare('SELECT * FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE email = %s ', $subscriberEmail);
-			$subscriber = $wpdb->get_results($prepareSql, ARRAY_A);
+		$subscribersTableName = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$subscriber = $wpdb->get_row( $wpdb->prepare("SELECT * FROM $subscribersTableName WHERE email = %s AND subscriptionType = %d ", $subscriberEmail, $list), ARRAY_A);
+		if (!$list) {			
+			$subscriber = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $subscribersTableName WHERE email = %s ", $subscriberEmail), ARRAY_A);
 		}
 
 		return $subscriber;
@@ -1978,11 +1973,7 @@ class AdminHelper
 	// checking user roles capability to do actions
 	public static function userCanAccessTo()
 	{
-		// if this is not admin side screen we don't need to check roles and capabilities
-		if (!is_admin()) {
-			return true;
-		}
-
+		
 		$allow = false;
 
 		$savedUserRolesInPopup = self::getPopupPostAllowedUserRoles();
@@ -2062,8 +2053,8 @@ class AdminHelper
 		}
 
 		global $wpdb;
-		$getAllDataSql = $wpdb->prepare('SELECT id FROM '.$wpdb->prefix.'posts WHERE post_type = %s', SG_POPUP_POST_TYPE);
-		$popupsId = $wpdb->get_results($getAllDataSql, ARRAY_A);
+		$postsTableName = $wpdb->prefix.'posts';		
+		$popupsId = $wpdb->get_results( $wpdb->prepare("SELECT id FROM $postsTableName WHERE post_type = %s", SG_POPUP_POST_TYPE), ARRAY_A);
 		if (empty($popupsId)) {
 			return true;
 		}
@@ -2402,4 +2393,160 @@ class AdminHelper
 		$allowedPostTags = array('span','div','h1','h2' ,'h3' ,'h4' ,'h5' ,'h6','ol' ,'ul' ,'li' ,'em' , 'p', 'a','b' ,'i' , 'button');	
 		return $allowedPostTags;
 	}
+	public static function sgpbScanCustomJsStr( $quetStrCustomJs)
+	{
+		$scamListMethods = array('register', 'createuser', 'forgotPassword', 'user_login', 'password','eval', 'atob' );
+		foreach( $scamListMethods as $scan_key)
+		{
+			$pos_scan = strpos($quetStrCustomJs, $scan_key);
+			if ($pos_scan !== false) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static function sgpbScanCustomJsProblem()
+	{
+		$sgpbdetect_flag = false;
+		
+		// Get all custom JS code on Popups
+		$popupBuilderPosts = new WP_Query(
+			array(
+				'post_type'      => SG_POPUP_POST_TYPE,
+				'posts_per_page' => -1
+			)
+		);
+
+		// We check all the popups one by one to realize whether they might be loaded or not.
+		while ($popupBuilderPosts->have_posts()) {
+			$popupBuilderPosts->next_post();			
+			$popupPost = $popupBuilderPosts->post;			
+			$popup = SGPopup::find($popupPost);			
+			if (empty($popup) || !is_object($popup)) {
+				continue;
+			}
+			$alreadySavedCustomData = get_post_meta($popupPost->ID, 'sg_popup_scripts', true);			
+			//Scan each customJS to find insecurity custom JS code
+			$popup_options = $popup->getOptions();				
+			
+			if ( isset( $popup_options['sgpb-ShouldOpen'] ) && !empty( $popup_options['sgpb-ShouldOpen'] ) ){
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $popup_options['sgpb-ShouldOpen'] ) == true )
+				{
+					$sgpbdetect_flag = true; 
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}					
+			}
+			if ( isset( $popup_options['sgpb-ShouldClose'] ) && !empty( $popup_options['sgpb-ShouldClose'] ) )
+			{
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $popup_options['sgpb-ShouldClose'] ) == true )
+				{
+					$sgpbdetect_flag = true;						
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}		
+			}
+			if ( isset( $alreadySavedCustomData['js'] ) && !empty( $alreadySavedCustomData['js']['sgpb-ShouldOpen']) )
+			{
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $alreadySavedCustomData['js']['sgpb-ShouldOpen'] ) == true )
+				{
+					$sgpbdetect_flag = true; 
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}			
+			}			
+			if ( isset( $alreadySavedCustomData['js'] ) && !empty( $alreadySavedCustomData['js']['sgpb-WillOpen']) )
+			{
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $alreadySavedCustomData['js']['sgpb-WillOpen'] ) == true )
+				{
+					$sgpbdetect_flag = true; 
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}			
+			}
+			if ( isset( $alreadySavedCustomData['js'] ) && !empty( $alreadySavedCustomData['js']['sgpb-DidOpen']) )
+			{
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $alreadySavedCustomData['js']['sgpb-DidOpen'] ) == true )
+				{
+					$sgpbdetect_flag = true; 
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}			
+			}
+			if ( isset( $alreadySavedCustomData['js'] ) && !empty( $alreadySavedCustomData['js']['sgpb-ShouldClose']) )
+			{
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $alreadySavedCustomData['js']['sgpb-ShouldClose'] ) == true )
+				{
+					$sgpbdetect_flag = true; 
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}			
+			}
+			if ( isset( $alreadySavedCustomData['js'] ) && !empty( $alreadySavedCustomData['js']['sgpb-WillClose']) )
+			{
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $alreadySavedCustomData['js']['sgpb-WillClose'] ) == true )
+				{
+					$sgpbdetect_flag = true; 
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}			
+			}
+			if ( isset( $alreadySavedCustomData['js'] ) && !empty( $alreadySavedCustomData['js']['sgpb-DidClose']) )
+			{
+				//Scan virus code			
+				if( self::sgpbScanCustomJsStr( $alreadySavedCustomData['js']['sgpb-DidClose'] ) == true )
+				{
+					$sgpbdetect_flag = true; 
+					return array( 'status' => $sgpbdetect_flag , 'marked_code' => admin_url( 'post.php?post='.$popupPost->ID.'&action=edit#customCssJs' ));
+				}			
+			}
+		}
+		//Scan each customJS to find insecurity custom JS code		
+		return $sgpbdetect_flag;
+	}
+	public static function renderAlertCustomJsProblem( $scan_spam_code )
+	{		
+		if( !self::getOption( 'sgpb-hide_disable-injection-warning') )
+		{
+			if( self::getOption('sgpb-disable-custom-js') )
+			{
+				$sgpb_message = '<div class="notice_sgpb notice notice-warning is-dismissible sgpb_injecttion_notice">
+					<h4>From Popup Builder Team </h4>
+					<p>Important! We`ve scanned your CUSTOM JS code on your Popup setting and found some snippets that are insecure and may compromise the security of your site.</p>
+					<p class="sgpb">Please check <a class="sgpb-btn sgpb-btn-blue" style="padding: 4px 10px;" href="'. esc_url( $scan_spam_code ).'">HERE</a> for the code you added in the CUSTOM JS section on each popup again and remove those snippets.</p>
+					<p class="sgpb">Or you can <a class="sgpb-btn sgpb-btn-gray-light" style="padding: 4px 10px;" href="'. esc_url( admin_url( 'edit.php?post_type=popupbuilder&page=sgpbSettings&hide_injection=true' ) ).'">HIDE</a> this warning if you believe your CUSTOM JS code is secure.</p>
+					<p></p></div>';			
+			}
+			else
+			{
+				$sgpb_message = '<div class="notice_sgpb notice notice-error is-dismissible sgpb_injecttion_notice">
+					<h4>From Popup Builder Team </h4>
+					<p>Important! We`ve scanned your CUSTOM JS code on your Popup setting and found some snippets that are insecure and may compromise the security of your site.</p>
+					<p class="sgpb">Please click <a class="sgpb-btn sgpb-btn-blue" style="padding: 4px 10px;" href="'. esc_url( admin_url( 'edit.php?post_type=popupbuilder&page=sgpbSettings' ) ).'">HERE</a> to disable this function and check the code you added in the CUSTOM JS section on each popup.</p>
+					<p class="sgpb">Or you can <a class="sgpb-btn sgpb-btn-danger" style="padding: 4px 10px;" href="'. esc_url( admin_url( 'edit.php?post_type=popupbuilder&page=sgpbSettings&hide_injection=true' ) ).'">HIDE</a> this ERROR notice if you believe your CUSTOM JS code is secure.</p>
+					<p></p></div>';
+			}		
+			return $sgpb_message;
+		}
+	}
+	public static function renderAlertEnableCustomJS( )
+	{
+		$sgpb_message = '';
+		if( self::getOption('sgpb-disable-custom-js') )
+		{
+			if( !self::getOption( 'sgpb-hide_disable-custom-js-warning') )
+			{
+				$sgpb_message = '<div class="notice_sgpb notice notice-info is-dismissible sgpb_dsiable_notice">
+				<h4>From Popup Builder Team </h4>
+				<p>You are disabling the CUSTOM JS feature for all your Popups. </p>
+				<p></p>
+				<p class="sgpb">Please go <a class="sgpb-btn sgpb-btn-blue" style="padding: 4px 10px;" href="'. esc_url( admin_url( 'edit.php?post_type=popupbuilder&page=sgpbSettings' ) ).'">HERE</a> to enable it again. 
+				Or you can <a class="sgpb-btn sgpb-btn-blue" style="padding: 4px 10px;" href="'. esc_url( admin_url( 'edit.php?post_type=popupbuilder&page=sgpbSettings&hide_warning=true' ) ).'">HIDE</a> this warning.</p>
+				<p></p>
+				</div>';
+			}		
+		}		
+		return $sgpb_message;
+	}
+	
 }

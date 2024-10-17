@@ -5,9 +5,9 @@ Author URI: https://publishpress.com
 Tags: unpublish posts, update posts, schedule changes, automatic changes, workflows
 Requires at least: 6.1
 Requires PHP: 7.2.5
-Tested up to: 6.5
+Tested up to: 6.6
 License: GPLv2 or later
-Stable tag: 3.4.1
+Stable tag: 3.4.4
 
 PublishPress Future can make scheduled changes to your content. You can unpublish posts, move posts to a new status, update the categories, and more.
 
@@ -26,7 +26,7 @@ Here's an overview of what you can do with PublishPress Future:
 
 > <strong>Upgrade to PublishPress Future Pro</strong><br />
 > This plugin is the free version of the PublishPress Future plugin. The Pro version comes with all the features you need to schedule changes to your WordPress content. <a href="https://publishpress.com/future"  title="PublishPress Future Pro">Click here to purchase the best plugin for scheduling WordPress content updates!</a>
- 
+
 ## Options for Future Actions on Posts
 
 With PublishPress Future, you can configure actions that will happen automatically to your content. Here are the changes you can choose for your posts:
@@ -173,6 +173,57 @@ Yes, the PublishPress Future plugin allows you to schedule automatic changes to 
 
 The full changelog can be found on [GitHub](https://github.com/publishpress/PublishPress-Future/blob/main/CHANGELOG.md).
 
+## [3.4.4] - 21 Aug, 2024
+
+### Fixed
+
+- Improve notice message when scheduled action runs after pressing "run" (PR #896).
+- Fixed support for the Event Espresso plugin (PR #900).
+- Fixed React warning about createRoot being deprecated.
+- Fixed empty fieldset displayed when the bos is disabled for the post type (Issue #792).
+- Update language files.
+
+### Changed
+
+- Add tabs for post types in the post types settings page (PR #895).
+
+### Added
+
+- Added computed date preview to the general settings page (PR #897).
+- Added option to hide the calendar by default in the future action panel (PR #899).
+- Added new filter `publishpressfuture_posts_future_action_column_output` to the Future Action column.
+
+## [3.4.3] - 06 Aug, 2024
+
+### Changed
+
+- Remove icon from the Future metabox in the block editor, #821
+
+### Fixed
+
+- Update translation files
+- Only load the quick-edit script if in the post list screen
+- Fix quick edit action box to use the filter to hide action box when deactivated for the post type, #884
+- Fixed the database schema check to also check the debug log table, #887
+- Fixed the database schema check to check the table indexes, #887
+
+## [3.4.2] - 15 Jul, 2024
+
+### Added
+
+- Add the current date and time to date preview in the date/time offset setting field, #840
+
+### Fixed
+
+- Optimized the date/time offset validation requests in the Post Types settings, #840
+- Fix error message in the date/time offset setting field, #841
+- Fix user capabilities check in the block editor, #727
+- Update ES, FR, and IT translations, #859
+
+### Changed
+
+- Change the text in the promo screen for the Actions Workflow feature, #867
+
 ## [3.4.1] - 02 Jul, 2024
 
 ### Added
@@ -245,30 +296,3 @@ The full changelog can be found on [GitHub](https://github.com/publishpress/Publ
 - Redirects to the settings page after activating the plugin, #764
 - Fix access to the View Debug settings tab when debug is disabled
 - Fix the position of the "Upgrade to Pro" and "Settings" menu items in the admin bar
-
-## [3.3.1] - 19 Mar, 2024
-
-### Added
-
-- Add validation for the date and time offset in the settings page, #683
-- Add form validation to the settings panel
-- Add form validation to the metabox panel
-- Add a date preview to the date/time offset setting field
-
-### Changed
-
-- The actions to move posts to another status where grouped in a single action, with a dropdown to select the status, #668
-- The actions "draft", "private" and "trash" are deprecated in favor of "change-status", #668
-- The metadata hash key has now a prefix "_" marking it as a private key, #695
-- Improved the name of some actions
-- Change the label of the field to select terms when "Replace all terms" is selected, #664
-
-### Fixed
-
-- Make it impossible to choose dates in the past, #443
-- Enter key submits quick-edit panel when selecting a taxonomy term, #586
-- The name of the taxonomy in the actions field is now updated in the settings panel when the taxonomy is changed, #676
-- Possible to add an action using an empty category setting, #587
-- Fix language files for ES, IT, FR, #685
-- Fix inconsistent text in the filter for "Pending" actions, #673
-- Improve the message when no actions are found: "No Future Actions", #666

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022. PublishPress, All rights reserved.
  */
@@ -11,6 +12,7 @@ use PublishPress\Future\Core\DI\ServicesAbstract;
 use PublishPress\Future\Core\HookableInterface;
 use PublishPress\Future\Framework\InitializableInterface;
 use PublishPress\Future\Modules\Expirator\HooksAbstract;
+use PublishPress\Future\Modules\Expirator\Models\CurrentUserModel;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -22,15 +24,27 @@ class BlockEditorController implements InitializableInterface
     private $hooks;
 
     /**
+     * @var CurrentUserModel
+     */
+    private $currentUserModel;
+
+    /**
      * @param HookableInterface $hooksFacade
      */
-    public function __construct(HookableInterface $hooksFacade)
-    {
+    public function __construct(
+        HookableInterface $hooksFacade,
+        \Closure $currentUserModelFactory
+    ) {
         $this->hooks = $hooksFacade;
+        $this->currentUserModel = $currentUserModelFactory();
     }
 
     public function initialize()
     {
+        if (! $this->currentUserModel->userCanExpirePosts()) {
+            return;
+        }
+
         $this->hooks->addAction(
             'enqueue_block_editor_assets',
             [$this, 'enqueueBlockEditorAssets']
@@ -110,6 +124,7 @@ class BlockEditorController implements InitializableInterface
                     'isDebugEnabled' => $container->get(ServicesAbstract::DEBUG)->isEnabled(),
                     'taxonomyName' => $taxonomyPluralName,
                     'taxonomyTerms' => $taxonomyTerms,
+                    'hideCalendarByDefault' => $settingsFacade->getHideCalendarByDefault(),
                     'strings' => [
                         'category' => __('Categories', 'post-expirator'),
                         'panelTitle' => __('PublishPress Future', 'post-expirator'),

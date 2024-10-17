@@ -31,7 +31,7 @@ import getAnchor from "../utils/getAnchor";
 import useMenu from "../Menu/MenuData";
 import UserDatatable from "./LimitLoginAttempts/UserDatatable";
 import CountryDatatable from "./LimitLoginAttempts/CountryDatatable";
-// import DynamicDataTable from "./DynamicDataTable/DynamicDataTable";
+import BlockListDatatable from "./GeoBlockList/BlockListDatatable";
 import TwoFaDataTable from "./TwoFA/TwoFaDataTable";
 import EventLogDataTable from "./EventLog/EventLogDataTable";
 import DOMPurify from "dompurify";
@@ -40,6 +40,9 @@ import GeoDatatable from "./GeoBlockList/GeoDatatable";
 import WhiteListDatatable from "./GeoBlockList/WhiteListDatatable";
 import Captcha from "./Captcha/Captcha";
 import CaptchaKey from "./Captcha/CaptchaKey";
+import FileChangeDetection from "./FileChangeDetection/FileChangeDetection";
+import TwoFaEnabledDropDown from "./TwoFA/TwoFaEnabledDropDown";
+
 const Field = (props) => {
     const scrollAnchor = useRef(null);
     const { updateField, setChangedField, highLightField, setHighLightField , getFieldValue} = useFields();
@@ -244,10 +247,28 @@ const Field = (props) => {
             <div className={highLightClass} ref={scrollAnchor} style={{position: 'relative'}}>
                 <CaptchaKey field={field} fields={props.fields} label={labelWrap(field)} />
             </div>
-            )
+        )
     }
 
-    if (field.type==='text' ) {
+    if ( field.type==='number' ){
+        return (
+            <div className={highLightClass} ref={scrollAnchor} style={{ position: 'relative'}}>
+                <NumberControl
+                    required={ field.required }
+                    placeholder={ field.placeholder }
+                    className="number_full"
+                    disabled={ disabled }
+                    help={ field.comment }
+                    label={labelWrap(field)}
+                    onChange={ ( fieldValue ) => onChangeHandler(fieldValue) }
+                    value= { fieldValue }
+                />
+            </div>
+        );
+    }
+
+
+    if (field.type==='text' ){
         return (
             <div className={highLightClass} ref={scrollAnchor} style={{position: 'relative'}}>
                 <TextControl
@@ -433,10 +454,10 @@ const Field = (props) => {
     if (field.type === 'two_fa_roles') {
         return (
             <div className={highLightClass} ref={scrollAnchor}>
-                <label htmlFor="rsssl-two-fa-dropdown-{field.id}">
+                <label htmlFor={`rsssl-two-fa-dropdown-${field.id}`}>
                     {labelWrap(field)}
                 </label>
-                <TwoFaRolesDropDown field={props.field}
+                <TwoFaRolesDropDown field={props.field} forcedRoledId={props.field.forced_roles_id} optionalRolesId={props.field.optional_roles_id}
                 />
             </div>
         );
@@ -462,16 +483,6 @@ const Field = (props) => {
             </div>
         )
     }
-    // if (field.type === 'dynamic-datatable') {
-    //     return (
-    //         <div className={highLightClass} ref={scrollAnchor}>
-    //             <DynamicDataTable
-    //                 field={props.field}
-    //                 action={props.field.action}
-    //             />
-    //         </div>
-    //     )
-    // }
 
     if (field.type === 'ip-address-datatable') {
         return (
@@ -490,6 +501,16 @@ const Field = (props) => {
                 <UserDatatable
                     field={props.field}
                     action={props.field.action}
+                />
+            </div>
+        )
+    }
+
+    if (field.type === 'file-change-detection') {
+        return (
+            <div className={highLightClass} ref={scrollAnchor}>
+                <FileChangeDetection
+                    field={props.field}
                 />
             </div>
         )
@@ -528,6 +549,17 @@ const Field = (props) => {
         )
     }
 
+    if (field.type === 'blocklist-datatable') {
+        return (
+            <div className={highLightClass} ref={scrollAnchor}>
+                <BlockListDatatable
+                    field={props.field}
+                    action={props.field.action}
+                />
+            </div>
+        )
+    }
+
     if (field.type === 'roles_dropdown') {
         return (
             <div className={highLightClass} ref={scrollAnchor}>
@@ -535,6 +567,18 @@ const Field = (props) => {
                     {labelWrap(field)}
                 </label>
                 <RolesDropDown field={props.field}
+                />
+            </div>
+        );
+    }
+
+    if (field.type === 'roles_enabled_dropdown') {
+        return (
+            <div className={highLightClass} ref={scrollAnchor}>
+                <label htmlFor="rsssl-roles-dropdown-{field.id}">
+                    {labelWrap(field)}
+                </label>
+                <TwoFaEnabledDropDown field={props.field}
                 />
             </div>
         );

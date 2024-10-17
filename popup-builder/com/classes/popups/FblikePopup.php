@@ -89,7 +89,9 @@ class FblikePopup extends SGPopup
 		<div id="sg-facebook-like">
 			<div id="fb-root"></div>
 			<?php echo wp_kses_post($buttonConfig); ?>
-			<?php echo $scripts; ?>
+			<?php 
+				echo $scripts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+			?>
 		</div>
 		<?php
 		$content = ob_get_contents();

@@ -72,6 +72,20 @@ class ScriptsLoader
 
 		$popupOptions = array_merge($popupOptions, $extraOptions);
 		$popupOptions['sgpbConditions'] = apply_filters('sgpbRenderCondtions',  $popupCondition);
+		
+		//Ted-fix : we stopped the render custom js code into front-end page to fix HACKER attack
+		//Get DISABLE custom JS setting
+		if( AdminHelper::getOption('sgpb-disable-custom-js') )
+		{
+			unset($popupOptions['sgpb-ShouldOpen']);
+			unset($popupOptions['sgpb-WillOpen']);		
+			unset($popupOptions['sgpb-DidOpen']); 
+			unset($popupOptions['sgpb-ShouldClose']); 
+			unset($popupOptions['sgpb-DidClose']); 
+			unset($popupOptions['sgpb-WillClose']); 
+		}		
+		//Ted-fix : we stopped the render custom js code into front-end page to fix HACKER attack
+		
 		// JSON_UNESCAPED_UNICODE does not exist since 5.4.0
 		if (PHP_VERSION < '5.4.0'){
 			$popupOptions = wp_json_encode($popupOptions);
@@ -176,7 +190,8 @@ class ScriptsLoader
 							</div>
 						  </div>';
 					$footerPopupContent .= $extraContent;
-					echo wp_kses($footerPopupContent, AdminHelper::allowed_html_tags()); 					
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+					echo $footerPopupContent;				
 				});
 			}
 		}
@@ -210,7 +225,8 @@ class ScriptsLoader
 							</div>
 						  </div>';
 
-				echo wp_kses($footerPopupContent, AdminHelper::allowed_html_tags());
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+				echo $footerPopupContent;	
 			});
 		}
 		$this->includeScripts();

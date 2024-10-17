@@ -8,7 +8,7 @@ $SGPB_DEBUG_POPUP_BUILDER_DETAILS = wp_json_encode($SGPB_DEBUG_POPUP_BUILDER_DET
 echo wp_kses('<script>var SGPB_DEBUG_POPUP_BUILDER_DETAILS = '.$SGPB_DEBUG_POPUP_BUILDER_DETAILS.';</script>', \sgpb\AdminHelper::allowed_html_tags());
 ?>
 <?php
-	wp_register_script( 'sgpb-debugReport-js-footer', '', array("jquery"), '', true );
+	wp_register_script( 'sgpb-debugReport-js-footer', '', array("jquery"), SGPB_POPUP_VERSION, true );
 	wp_enqueue_script( 'sgpb-debugReport-js-footer'  );
 	wp_add_inline_script( 'sgpb-debugReport-js-footer', "function debugModeInit()
 	{

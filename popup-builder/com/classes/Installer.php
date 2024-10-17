@@ -12,10 +12,8 @@ class Installer
 		}
 
 		foreach ($tables as $table) {
-			$createTable = 'CREATE TABLE IF NOT EXISTS ';
-			$createTable .= $wpdb->prefix.$blogId;
-			$createTable .= $table;
-			$wpdb->query($createTable);
+			$pbsgTableName = $wpdb->prefix.$blogId.$table;			
+			$wpdb->query( $wpdb->prepare( "CREATE TABLE IF NOT EXISTS $pbsgTableName") );
 		}
 
 		return true;
@@ -142,6 +140,7 @@ class Installer
 		delete_option('sgpbExtensionsInfo');
 		delete_option('sgpb-enable-debug-mode');
 		delete_option('sgpb-disable-analytics-general');
+		delete_option('sgpb-disable-disable-custom-js');
 
 		// Trigger popup data delete action
 		do_action('sgpbDeletePopupData');
@@ -184,14 +183,8 @@ class Installer
 	public static function deleteCustomTerms($taxonomy)
 	{
 		global $wpdb;
-
-		$customTermsQuery = 'SELECT t.name, t.term_id
-			FROM '.$wpdb->terms . ' AS t
-			INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt
-			ON t.term_id = tt.term_id
-			WHERE tt.taxonomy =  %s';
-
-		$terms = $wpdb->get_results( $wpdb->prepare( $customTermsQuery , esc_sql($taxonomy) ) );
+		
+		$terms = $wpdb->get_results( $wpdb->prepare( "SELECT t.name, t.term_id	FROM $wpdb->terms AS t	INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id	WHERE tt.taxonomy =  %s" , esc_sql($taxonomy) ) );
 
 		$terms = apply_filters('sgpbDeleteTerms', $terms);
 
@@ -248,10 +241,8 @@ class Installer
 		global $wpdb;
 
 		foreach ($allTableNames as $tableName) {
-			$deleteTable = $wpdb->prefix.$blogId.$tableName;
-			$deleteTableSql = 'DROP TABLE '.$deleteTable;
-
-			$wpdb->query($deleteTableSql);
+			$deleteTable = $wpdb->prefix.$blogId.$tableName;			
+			$wpdb->query( "DROP TABLE $deleteTable" );
 		}
 
 		return true;

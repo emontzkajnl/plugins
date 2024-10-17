@@ -1325,7 +1325,7 @@ class SGPBListTable {
 				'base' => $this->screen->base,
 			)
 		);
-		wp_register_script( 'sgpb-listtable-js-footer', '', array("jquery"), '', true );
+		wp_register_script( 'sgpb-listtable-js-footer', '', array("jquery"), SGPB_POPUP_VERSION, true );
 		wp_enqueue_script( 'sgpb-listtable-js-footer'  );
 		wp_add_inline_script( 'sgpb-listtable-js-footer', printf( "list_args = %s;", wp_json_encode( $args ) ));		
 	}

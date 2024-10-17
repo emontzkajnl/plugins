@@ -70,13 +70,15 @@ class Actions
 		add_filter('get_user_option_screen_layout_'.SG_POPUP_POST_TYPE, array($this, 'screenLayoutSetOneColumn'));
 		
 		add_filter( 'upload_mimes', array($this, 'popupbuilder_allow_csv_mime_types') );
-		
+		add_action( 'plugins_loaded' , array($this, 'popupbuilder_contrucst') ); 
+	}
+	public function popupbuilder_contrucst()
+	{
 		new SGPBFeedback();
 		new SGPBReports();
 		new SGPBMenu();
 		new Ajax();
 	}
-	
 	public function popupbuilder_allow_csv_mime_types( $mimes ) {
 		$mimes['csv'] = 'text/csv';
 		unset( $mimes['exe'] );
@@ -87,7 +89,7 @@ class Actions
 	{
 		$currentPostType = AdminHelper::getCurrentPostType();
 		if(!empty($currentPostType) && ($currentPostType == SG_POPUP_POST_TYPE || $currentPostType == SG_POPUP_AUTORESPONDER_POST_TYPE || $currentPostType == SG_POPUP_TEMPLATE_POST_TYPE)) {
-			wp_register_script( 'sgpb-actions-js-footer', '', array("jquery"), '', true );
+			wp_register_script( 'sgpb-actions-js-footer', '', array("jquery"), SGPB_POPUP_VERSION, true );
 			wp_enqueue_script( 'sgpb-actions-js-footer'  );
 			wp_add_inline_script( 'sgpb-actions-js-footer', "jQuery(document).ready(function ($) {
 					const myForm = $('.post-type-popupbuilder #posts-filter, .post-type-sgpbtemplate #posts-filter, .post-type-sgpbtemplate #posts-filter');
@@ -417,6 +419,7 @@ class Actions
 
 	public function pluginNotices()
 	{
+		
 		if (function_exists('get_current_screen')) {
 			$screen = get_current_screen();
 			$screenId = $screen->id;
@@ -429,24 +432,33 @@ class Actions
 		$updated = get_option('sgpb_extensions_updated');
 
 		$content = '';
-
+		$scan_spam_code = AdminHelper::sgpbScanCustomJsProblem();
+		if( $scan_spam_code !== false )
+		{			
+			$content.= AdminHelper::renderAlertCustomJsProblem( $scan_spam_code['marked_code'] );
+		}
+		else
+		{			
+			if (get_option('sgpb-disable-custom-js')) {
+				$content.= AdminHelper::renderAlertEnableCustomJS();					
+			}			
+		}	
+		
 		// if popup builder has the old version
 		if (!get_option('SGPB_POPUP_VERSION')) {
-			return $content;
+			echo wp_kses( $content, AdminHelper::allowed_html_tags() );		
+			return true; 
 		}
-
 		$alertProblem = get_option('sgpb_alert_problems');
 		// for old users show alert about problems
 		if (!$alertProblem) {
 			echo wp_kses(AdminHelper::renderAlertProblem(), AdminHelper::allowed_html_tags());
 		}
-
 		// Don't show the banner if there's not any extension of Popup Builder or if the user has clicked "don't show"
 		if (empty($extensions) || $updated) {
 			return $content;
 		}
-
-		ob_start();
+		ob_start();		
 		?>
 		<div id="welcome-panel" class="update-nag sgpb-extensions-notices">
 			<div class="welcome-panel-content">
@@ -454,8 +466,7 @@ class Actions
 			</div>
 		</div>
 		<?php
-		$content = ob_get_clean();
-
+		$content .= ob_get_clean();
 		echo wp_kses($content, AdminHelper::allowed_html_tags());
 		return true;
 	}
@@ -765,15 +776,14 @@ class Actions
 			wp_clear_scheduled_hook('sgpb_send_newsletter');
 			return false;
 		}
-
-		$selectionQuery = 'SELECT id FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE';
-		$selectionQuery = apply_filters('sgpbUserSelectionQuery', $selectionQuery);
-		$sql = $wpdb->prepare($selectionQuery .' and subscriptionType = %d limit 1', $subscriptionFormId);
-
-		$result = $wpdb->get_row($sql, ARRAY_A);//db call ok
+		$table_subscription = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$selectionQuery = "SELECT id FROM $table_subscription WHERE";
+		$selectionQuery = apply_filters('sgpbUserSelectionQuery', $selectionQuery);	
+		
+		$result = $wpdb->get_row( $wpdb->prepare("$selectionQuery and subscriptionType = %d limit 1", $subscriptionFormId), ARRAY_A);//db call ok
 		$currentStateEmailId = (int)$result['id'];
-		$getTotalSql = $wpdb->prepare('SELECT count(*) FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE unsubscribed = 0 and subscriptionType = %d', $subscriptionFormId);
-		$totalSubscribers = $wpdb->get_var($getTotalSql);
+		$table_subscription = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$totalSubscribers = $wpdb->get_var( $wpdb->prepare("SELECT count(*) FROM $table_subscription WHERE unsubscribed = 0 and subscriptionType = %d", $subscriptionFormId) );
 
 		// $currentStateEmailId == 0 when all emails status = 1
 		if ($currentStateEmailId == 0) {
@@ -800,8 +810,7 @@ class Actions
 
 		$getAllDataSql = 'SELECT id, firstName, lastName, email FROM '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' WHERE';
 		$getAllDataSql = apply_filters('sgpbUserSelectionQuery', $getAllDataSql);
-		$getAllDataSql = $wpdb->prepare($getAllDataSql .' and id >= %d and subscriptionType = %s limit %d', $currentStateEmailId, $subscriptionFormId, $emailsInFlow);
-		$subscribers = $wpdb->get_results($getAllDataSql, ARRAY_A);
+		$subscribers = $wpdb->get_results( $wpdb->prepare( "$getAllDataSql and id >= %d and subscriptionType = %s limit %d", $currentStateEmailId, $subscriptionFormId, $emailsInFlow), ARRAY_A);
 
 		$subscribers = apply_filters('sgpNewsletterSendingSubscribers', $subscribers);
 
@@ -844,9 +853,8 @@ class Actions
 			$emailMessageCustom = apply_filters('sgpNewsletterSendingMessage', $emailMessageCustom);
 			$mailStatus = wp_mail($subscriber['email'], $mailSubject, $emailMessageCustom, $headers);
 			if (!$mailStatus) {
-				$errorLogSql = $wpdb->prepare('INSERT INTO '. $wpdb->prefix .SGPB_SUBSCRIBERS_ERROR_TABLE_NAME.' (`popupType`, `email`, `date`) VALUES (%s, %s, %s)', $subscriptionFormId, $subscriber['email'], gmdate('Y-m-d H:i'));
-				$wpdb->query($errorLogSql);
-				continue;
+				$table_sgpb_subscription_error_log = $wpdb->prefix.SGPB_SUBSCRIBERS_ERROR_TABLE_NAME;
+				$wpdb->query( $wpdb->prepare("INSERT INTO $table_sgpb_subscription_error_log (`popupType`, `email`, `date`) VALUES (%s, %s, %s)", $subscriptionFormId, $subscriber['email'], gmdate('Y-m-d H:i')) );continue;
 			}
 
 			$successCount = get_option('SGPB_NEWSLETTER_'.$subscriptionFormId);
@@ -858,8 +866,8 @@ class Actions
 			}
 		}
 		// Update the status of all the sent mails
-		$updateStatusQuery = $wpdb->prepare('UPDATE '.$wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME.' SET status = 1 where id >= %d and subscriptionType = %d limit %d', $currentStateEmailId, $subscriptionFormId, $emailsInFlow);
-		$wpdb->query($updateStatusQuery);
+		$table_sgpb_subscription = $wpdb->prefix.SGPB_SUBSCRIBERS_TABLE_NAME;
+		$wpdb->query( $wpdb->prepare("UPDATE $table_sgpb_subscription SET status = 1 where id >= %d and subscriptionType = %d limit %d", $currentStateEmailId, $subscriptionFormId, $emailsInFlow) );
 	}
 
 	private function unsubscribe($params = array())
@@ -1497,6 +1505,7 @@ class Actions
 			}
 		}
 		$content .= "\n";
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- No applicable variables for this query.
 		$subscribers = $wpdb->get_results($query, ARRAY_A);
 
 		$subscribers = apply_filters('sgpbSubscribersCsv', $subscribers);
@@ -1562,6 +1571,9 @@ class Actions
 		if (isset($_POST['sgpb-enable-debug-mode'])) {
 			$enableDebugMode = 1;
 		}
+		if (isset($_POST['sgpb-disable-custom-js'])) {
+			$disableCustomJs = 1;
+		}
 		if (isset($_POST['sgpb-disable-analytics-general'])) {
 			$disableAnalytics = 1;
 		}
@@ -1576,6 +1588,7 @@ class Actions
 		update_option('sgpb-dont-delete-data', $deleteData);
 		update_option('sgpb-enable-debug-mode', $enableDebugMode);
 		update_option('sgpb-disable-analytics-general', $disableAnalytics);
+		update_option('sgpb-disable-custom-js', $disableCustomJs);
 
 		AdminHelper::filterUserCapabilitiesForTheUserRoles('save');
 
