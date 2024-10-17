@@ -45,7 +45,7 @@ class WPSEO_Premium_Metabox implements WPSEO_WordPress_Integration {
 	public function __construct(
 		Prominent_Words_Helper $prominent_words_helper,
 		Current_Page_Helper $current_page_helper,
-		WPSEO_Metabox_Link_Suggestions $link_suggestions = null
+		?WPSEO_Metabox_Link_Suggestions $link_suggestions = null
 	) {
 		if ( $link_suggestions === null ) {
 			$link_suggestions = new WPSEO_Metabox_Link_Suggestions();
@@ -123,6 +123,7 @@ class WPSEO_Premium_Metabox implements WPSEO_WordPress_Integration {
 
 	/**
 	 * Send data to assets by using wp_localize_script.
+	 * Also localizes the Table of Contents heading title to the wp-seo-premium-blocks asset.
 	 *
 	 * @return void
 	 */
@@ -131,25 +132,35 @@ class WPSEO_Premium_Metabox implements WPSEO_WordPress_Integration {
 		$content_analysis = new WPSEO_Metabox_Analysis_Readability();
 		$assets_manager   = new WPSEO_Admin_Asset_Manager();
 
+		/**
+		 * Filters the parameter to disable Table of Content block.
+		 *
+		 * Note: Used to prevent auto-generation of HTML anchors for headings when TOC block is registered.
+		 *
+		 * @since 21.5
+		 *
+		 * @param bool $disable_table_of_content The value of the `autoload` parameter. Default: false.
+		 *
+		 * @return bool The filtered value of the `disable_table_of_content` parameter.
+		 */
+		$disable_table_of_content = apply_filters( 'Yoast\WP\SEO\disable_table_of_content_block', false );
+
 		$data = [
-			'restApi'                         => $this->get_rest_api_config(),
-			'seoAnalysisEnabled'              => $analysis_seo->is_enabled(),
-			'contentAnalysisEnabled'          => $content_analysis->is_enabled(),
-			'licensedURL'                     => WPSEO_Utils::get_home_url(),
-			'settingsPageUrl'                 => admin_url( 'admin.php?page=wpseo_page_settings#/site-features#card-wpseo-enable_link_suggestions' ),
-			'integrationsTabURL'              => admin_url( 'admin.php?page=wpseo_integrations' ),
-			'commonsScriptUrl'                => \plugins_url(
-				'assets/js/dist/commons-premium-' . $assets_manager->flatten_version( WPSEO_PREMIUM_VERSION ) . WPSEO_CSSJS_SUFFIX . '.js',
-				WPSEO_PREMIUM_FILE
-			),
-			'premiumAssessmentsScriptUrl'     => \plugins_url(
+			'restApi'                     => $this->get_rest_api_config(),
+			'seoAnalysisEnabled'          => $analysis_seo->is_enabled(),
+			'contentAnalysisEnabled'      => $content_analysis->is_enabled(),
+			'licensedURL'                 => WPSEO_Utils::get_home_url(),
+			'settingsPageUrl'             => admin_url( 'admin.php?page=wpseo_page_settings#/site-features#card-wpseo-enable_link_suggestions' ),
+			'integrationsTabURL'          => admin_url( 'admin.php?page=wpseo_integrations' ),
+			'premiumAssessmentsScriptUrl' => plugins_url(
 				'assets/js/dist/register-premium-assessments-' . $assets_manager->flatten_version( WPSEO_PREMIUM_VERSION ) . WPSEO_CSSJS_SUFFIX . '.js',
 				WPSEO_PREMIUM_FILE
 			),
+			'pluginUrl'                   => plugins_url( '', WPSEO_PREMIUM_FILE ),
 		];
 
-		if ( \defined( 'YOAST_SEO_TEXT_FORMALITY' ) && YOAST_SEO_TEXT_FORMALITY === true ) {
-			$data['textFormalityScriptUrl'] = \plugins_url(
+		if ( defined( 'YOAST_SEO_TEXT_FORMALITY' ) && YOAST_SEO_TEXT_FORMALITY === true ) {
+			$data['textFormalityScriptUrl'] = plugins_url(
 				'assets/js/dist/register-text-formality-' . $assets_manager->flatten_version( WPSEO_PREMIUM_VERSION ) . WPSEO_CSSJS_SUFFIX . '.js',
 				WPSEO_PREMIUM_FILE
 			);
@@ -168,6 +179,17 @@ class WPSEO_Premium_Metabox implements WPSEO_WordPress_Integration {
 
 		// Use an extra level in the array to preserve booleans. WordPress sanitizes scalar values in the first level of the array.
 		wp_localize_script( 'yoast-seo-premium-metabox', 'wpseoPremiumMetaboxData', [ 'data' => $data ] );
+
+		// Localize the title of the Table of Contents block: the translation needs to be based on the site language instead of the user language.
+		wp_localize_script(
+			'wp-seo-premium-blocks',
+			'wpseoTOCData',
+			[
+				'data' => [
+					'disableTableOfContents' => $disable_table_of_content,
+				],
+			]
+		);
 	}
 
 	/**
@@ -183,9 +205,8 @@ class WPSEO_Premium_Metabox implements WPSEO_WordPress_Integration {
 		$prominent_words_support      = new WPSEO_Premium_Prominent_Words_Support();
 		$is_prominent_words_available = $prominent_words_support->is_post_type_supported( $post->post_type );
 
-		$site_locale = \get_locale();
+		$site_locale = get_locale();
 		$language    = WPSEO_Language_Utils::get_language( $site_locale );
-
 
 		return [
 			'currentObjectId'                 => $this->get_post_ID(),
@@ -224,7 +245,7 @@ class WPSEO_Premium_Metabox implements WPSEO_WordPress_Integration {
 		$prominent_words_support      = new WPSEO_Premium_Prominent_Words_Support();
 		$is_prominent_words_available = $prominent_words_support->is_taxonomy_supported( $term->taxonomy );
 
-		$site_locale = \get_locale();
+		$site_locale = get_locale();
 		$language    = WPSEO_Language_Utils::get_language( $site_locale );
 
 		return [

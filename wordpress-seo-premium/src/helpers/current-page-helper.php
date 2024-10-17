@@ -38,7 +38,7 @@ class Current_Page_Helper {
 	 * Retrieves the current post id.
 	 * Returns 0 if no post id is found.
 	 *
-	 * @return integer The post id.
+	 * @return int The post id.
 	 */
 	public function get_current_post_id() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are not processing form information, We are casting to an integer.
@@ -61,6 +61,12 @@ class Current_Page_Helper {
 			return \sanitize_text_field( \wp_unslash( $_GET['post_type'] ) );
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reason: should be done outside the helper function.
+		if ( isset( $_POST['post_type'] ) && \is_string( $_POST['post_type'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reason: should be done outside the helper function.
+			return \sanitize_text_field( \wp_unslash( $_POST['post_type'] ) );
+		}
+
 		$post_id = $this->get_current_post_id();
 
 		if ( $post_id ) {
@@ -76,7 +82,6 @@ class Current_Page_Helper {
 	 * @return string The taxonomy.
 	 */
 	public function get_current_taxonomy() {
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- doing a strict in_array check should be sufficient.
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || ! \in_array( $_SERVER['REQUEST_METHOD'], [ 'GET', 'POST' ], true ) ) {
 			return '';
 		}
