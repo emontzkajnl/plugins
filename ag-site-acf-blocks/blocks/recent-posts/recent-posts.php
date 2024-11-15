@@ -16,10 +16,11 @@ $args = array(
     'post_status'           => 'publish',
 );
 $recent_query = new WP_Query($args);
+$title = get_field('override_title') ? get_field('override_title') : 'Most Recent';
 // echo 'max pages is '.$recent_query->max_num_pages;
 if ($recent_query->have_posts()): ?>
     <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-    <?php echo '<h2 class="section-heading">Most Recent</h2>';
+    <?php echo '<h2 class="section-heading">'.$title.'</h2>';
     echo '<div class="jci-recent-container">';
     while ($recent_query->have_posts()):
         $recent_query->the_post(); 

@@ -1,0 +1,10 @@
+{
+    "name":     "acf/thf-event-filter",
+    "title":    "THF Event Search and Filter Pro",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "thf-event-filter.php"
+    }
+}

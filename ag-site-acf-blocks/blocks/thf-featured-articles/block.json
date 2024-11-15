@@ -1,0 +1,10 @@
+{
+    "name":     "acf/thf-featured-articles",
+    "title":    "THF Featured Articles",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "thf-featured-articles.php"
+    }
+}
