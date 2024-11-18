@@ -8,21 +8,39 @@ $className = 'ncff-newsletter ';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 } 
-$text = get_field('newsletter_text', 'options');
+
 $link = get_field('newsletter_link', 'options');
+$magazine_title = get_field('magazine_title', 'options', false, false);
+$form = get_field('form_id', 'options');
+$newsletter_title = get_field('newsletter_title', 'options');
+$text = get_field('newsletter_text', 'options');
+$magazine = get_posts(array('numberposts' => 1, 'post_type' => 'magazine')); // ID, post_content, post_title
+$mag_id = $magazine[0]->ID;
+// echo 'id '.$magazine[0]->ID;
+// print_r($magazine);
+
+
+// gravity form id
+
+// read and connect title wysiwyg
+// newsletter description
+// connect title
+
+
 ?>
 
 <div class="container"> 
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <div class="ncff-newsletter__text-area">
-    <h3 class="h2 read-connect">Read<span class="ampersand">&</span>Connect </h3>
-    <?php echo '<a href="'.get_the_permalink($link).'">'.get_the_post_thumbnail( $link, 'full').'</a>';
-    echo '<div class="ncff-newsletter__text" >'.$text.'</div>'; ?> 
+    <!-- <h3 class="h2 read-connect">Read<span class="ampersand">&</span>Connect </h3> -->
+    <h3 class="h2 read-connect"><?php echo $magazine_title; ?></h3>
+    <?php echo '<a href="'.get_the_permalink($mag_id).'">'.get_the_post_thumbnail( $mag_id, array(205,280)).'</a>';
+    echo '<div class="ncff-newsletter__text" >'.$magazine[0]->post_content.'</div>'; ?> 
 </div>
 <div class="ncff-newsletter__form-area">
-<p class="ncff-newsletter__description">Get the latest news, recipes, articles and more, right to your inbox.</p>
-<?php gravity_form( 5, false, false, false, '', false ); ?>
-<p style="margin-bottom: .5em">Connect with us</p>
+<p class="ncff-newsletter__description"><?php echo $text; ?></p>
+<?php gravity_form( $form, false, false, false, '', false ); ?>
+<p style="margin-bottom: .5em"><?php echo $newsletter_title; ?></p>
 <ul class="newsletter-social">
     <?php
     $facebook = get_field('facebook', 'options');
