@@ -107,6 +107,7 @@ function my_acf_init_block_types() {
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mih-recipes/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/thf-featured-articles/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/thf-event-filter/block.json');
+        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/thf-contests/block.json');
         wp_register_script('podcast-block',plugin_dir_path(__FILE__) . '/blocks/ilfb-podcast-player/podcast-style.js',array(), null, true);
     }
 } 

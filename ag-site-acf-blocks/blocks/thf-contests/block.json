@@ -1,0 +1,10 @@
+{
+    "name":     "acf/thf-contests",
+    "title":    "THF Contests and Giveaways",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "thf-contests.php"
+    }
+}
