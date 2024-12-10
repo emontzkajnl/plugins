@@ -1,3 +1,10 @@
+= 1.8.13 =
+* Fix defaults in settings
+
+= 1.8.12 =
+* Add Steam follow button
+* Add Twitch follow button
+
 = 1.8.11 =
 * Update AddToAny core script loading
 * Add changelog.txt to the plugin directory

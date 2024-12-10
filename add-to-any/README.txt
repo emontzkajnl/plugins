@@ -1,10 +1,11 @@
 === AddToAny Share Buttons ===
 Contributors: micropat, addtoany
 Tags: share, social, share buttons, share icons, social media
+License: GPLv2 or later
 Requires at least: 4.5
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 1.8.11
+Stable tag: 1.8.13
 
 Share buttons for WordPress including the AddToAny button, Facebook, Mastodon, WhatsApp, Pinterest, Reddit, Threads, many more, and follow icons too.
 
@@ -63,7 +64,7 @@ AddToAny is the home of universal sharing, and the AddToAny plugin is the most p
 = Wide Support =
 
 * Over 10 years of development
-* Over 16 million downloads
+* Over 17 million downloads
 * Translated into dozens of languages
 * Ongoing support from the community
 
@@ -115,7 +116,7 @@ Feel free to <a href="https://wordpress.org/support/plugin/add-to-any">post here
 
 Something on your own device/browser/connection is likely filtering out major social buttons.
 
-Try another web browser, device, and/or Internet connection to see if the buttons appear. Tools like browserling.com or browserstack.com will give you an idea of what other people are seeing. The usual cause for this uncommon issue is 3rd party browser add-on software that blocks ads and optionally filters out major social buttons. Some security apps and Internet connections have an option to filter social buttons. Usually a social filter option is disabled by default, but if you find that some software is inappropriately filtering AddToAny buttons, <a href="https://www.addtoany.com/contact/">let AddToAny know</a>.
+Try another web browser, device, and/or Internet connection to see if the buttons appear. Tools like browserling.com will give you an idea of what other people are seeing. The usual cause for this uncommon issue is 3rd party browser add-on software that blocks ads and optionally filters out major social buttons. Some security apps and Internet connections have an option to filter social buttons. Usually a social filter option is disabled by default, but if you find that some software is inappropriately filtering AddToAny buttons, <a href="https://www.addtoany.com/contact/">let AddToAny know</a>.
 
 = What is the shortcode for sharing? =
 
@@ -334,8 +335,7 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 
 == Changelog ==
 
-= 1.8.11 =
-* Update AddToAny core script loading
-* Add changelog.txt to the plugin directory
+= 1.8.13 =
+* Fix defaults in settings
 
 See `changelog.txt` in the plugin's directory for the full changelog.
