@@ -346,7 +346,7 @@ class AdminHelper
 		$query .= ' LEFT JOIN '.$postsTablename.' ON '.$postsTablename.'.ID='.$subscribersTablename.'.subscriptionType';
 		
 		if (isset($_GET['sgpb-subscription-popup-id']) && !empty($_GET['sgpb-subscription-popup-id'])) {
-			$filterCriteria = sanitize_text_field($_GET['sgpb-subscription-popup-id']);
+			$filterCriteria = sanitize_text_field( wp_unslash( $_GET['sgpb-subscription-popup-id'] ) );
 			if ($filterCriteria != 'all') {
 				$searchQuery .= " AND (subscriptionType = %s)";
 				$array_mapping_search[] = esc_sql((int)$filterCriteria);
@@ -356,7 +356,7 @@ class AdminHelper
 			$searchQuery .= ' AND ';
 		}
 		if (isset($_GET['s']) && !empty($_GET['s'])) {
-			$searchCriteria = sanitize_text_field($_GET['s']);
+			$searchCriteria = sanitize_text_field( wp_unslash( $_GET['s'] ) );
 			$lastPartOfTheQuery = substr($searchQuery, -5);
 			if (strpos($lastPartOfTheQuery, 'AND') <= 0) {
 				$searchQuery .= ' AND ';
@@ -369,7 +369,7 @@ class AdminHelper
 			$array_mapping_search[] = $searchCriteria;
 		}
 		if (isset($_GET['sgpb-subscribers-date']) && !empty($_GET['sgpb-subscribers-date'])) {
-			$filterCriteriaDate = sanitize_text_field($_GET['sgpb-subscribers-date']);
+			$filterCriteriaDate = sanitize_text_field( wp_unslash( $_GET['sgpb-subscribers-date'] ) );
 			if ($filterCriteriaDate != 'all') {
 				if ($searchQuery != '') {
 					$searchQuery .= ' AND ';
@@ -806,13 +806,13 @@ class AdminHelper
 	{
 		$type = '';
 		if (!empty($_GET['sgpb_type'])) {
-			$type  = sanitize_text_field($_GET['sgpb_type']);
+			$type  = sanitize_text_field( wp_unslash( $_GET['sgpb_type'] ) );
 		}
 
 		$currentPostType = self::getCurrentPostType();
 
 		if ($currentPostType == SG_POPUP_POST_TYPE && !empty($_GET['post'])) {
-			$popupObj = SGPopup::find(sanitize_text_field($_GET['post']));
+			$popupObj = SGPopup::find(sanitize_text_field( wp_unslash( $_GET['post'] ) ) );
 			if (is_object($popupObj)) {
 				$type = $popupObj->getType();
 			}
@@ -837,7 +837,7 @@ class AdminHelper
 		}
 
 		if (empty($currentPostType) && !empty($_GET['post'])) {
-			$currentPostType = get_post_type(sanitize_text_field($_GET['post']));
+			$currentPostType = get_post_type(sanitize_text_field( wp_unslash( $_GET['post'] ) ) );
 		}
 
 		return $currentPostType;
@@ -989,7 +989,7 @@ class AdminHelper
 		$content .= '<a class="btn btn-info" target="_blank" href="https://wordpress.org/support/plugin/popup-builder"><span class="dashicons sgpb-dashicons-admin-plugins sgpb-info-text-white"></span>'.__('Support Forum', 'popup-builder').'</a>';
 		$content .= '<a class="btn btn-info" target="_blank" href="'.SG_POPUP_STORE_URL.'"><span class="dashicons sgpb-dashicons-editor-help sgpb-info-text-white"></span>'.__('LIVE chat', 'popup-builder').'</a>';
 		$content .= '<a class="btn btn-info" target="_blank" href="mailto:support@popup-builder.com?subject=Hello"><span class="dashicons sgpb-dashicons-email-alt sgpb-info-text-white"></span>'.__('Email', 'popup-builder').'</a></div>';
-		$content .= '<div class="sgpb-support-notification-dont-show">'.__('Bored of this?').'<a class="sgpb-dont-show-again-support-notification" href="javascript:void(0)">'.__(' Press here ').'</a>'.__('and we will not show it again!').'</div>';
+		$content .= '<div class="sgpb-support-notification-dont-show">'.__('Bored of this?', 'popup-builder').'<a class="sgpb-dont-show-again-support-notification" href="javascript:void(0)">'.__(' Press here ', 'popup-builder').'</a>'.__('and we will not show it again!', 'popup-builder').'</div>';
 
 		return $content;
 	}
@@ -1723,6 +1723,7 @@ class AdminHelper
 		array_shift($registered);
 
 		$systemInfoContent .= "\n".'-- Popup Builder License Data'."\n\n";
+		$systemInfoContent .= 'Token to Import/Export:      '.(get_option('sgpb-secret-code') ? get_option('sgpb-secret-code') : 'nul')."\n";
 		if (!empty($registered)) {
 			foreach ($registered as $singleExntensionData) {
 			    if (empty($singleExntensionData['options'])) {
@@ -1731,7 +1732,7 @@ class AdminHelper
 
 				$key = $singleExntensionData['options']['licence']['key'];
 				$name = $singleExntensionData['options']['licence']['itemName'];
-				$licenseKey = __('No license');
+				$licenseKey = __('No license', 'popup-builder');
 				if (!empty($key)) {
 					$licenseKey = self::getOption('sgpb-license-key-'.$key);
 				}
@@ -1806,7 +1807,7 @@ class AdminHelper
 		$systemInfoContent .= "\n".'-- Webserver Configuration'."\n\n";
 		$systemInfoContent .= 'PHP Version:              '.PHP_VERSION."\n";
 		$systemInfoContent .= 'MySQL Version:            '.$wpdb->db_version()."\n";		
-		$serverinfo = isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field($_SERVER['SERVER_SOFTWARE']) : '';
+		$serverinfo = isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '';
 		$systemInfoContent .= 'Webserver Info:           '.$serverinfo."\n";
 		// PHP configs... now we're getting to the important stuff
 		$systemInfoContent .= "\n".'-- PHP Configuration'."\n\n";
@@ -1876,12 +1877,12 @@ class AdminHelper
 		else if (strpos(DB_HOST, '.sysfix.eu') !== false) {
 			return 'SysFix.eu Power Hosting';
 		}
-		else if (isset($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], 'Flywheel') !== false) {
+		else if (isset($_SERVER['SERVER_NAME']) && strpos( sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) ), 'Flywheel') !== false) {
 			return 'Flywheel';
 		}
 		else {
 			// Adding a general fallback for data gathering
-			$servername = isset($_SERVER['SERVER_NAME']) ? sanitize_text_field($_SERVER['SERVER_NAME']) : '';
+			$servername = isset($_SERVER['SERVER_NAME']) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) ) : '';
 			return 'DBH: '.DB_HOST.', SRV: '.$servername;
 		}
 	}
@@ -2139,8 +2140,8 @@ class AdminHelper
 	{
 		$imageId = attachment_url_to_postid($imageUrl);
 		$altText = get_post_meta($imageId, '_wp_attachment_image_alt', true);
-
-		return $altText;
+		
+		return esc_attr( $altText );
 	}
 
 	public static function hasBlocks($content)
@@ -2548,5 +2549,21 @@ class AdminHelper
 		}		
 		return $sgpb_message;
 	}
-	
+	public static function decrypt_data( $encrypted_data ) 
+	{
+		if( !AdminHelper::getOption('sgpb-disable-enctyption-data') )
+		{
+			$secret_key = get_option('sgpb-secret-code') ? get_option('sgpb-secret-code') : rtrim( base64_encode( get_option('admin_email')) , '=' ); 
+
+			// Combine the IV and encrypted data (IV is needed for decryption)
+			$sgpb_mahoa_secret_key = base64_encode($secret_key);
+
+			// Extract the IV and encrypted data
+			$sgpb_encrypted_data = str_replace( $sgpb_mahoa_secret_key, "", $encrypted_data );
+			
+			// Decrypt the data
+			return json_decode( base64_decode( $sgpb_encrypted_data ) ) ;
+		}
+		return $encrypted_data;
+	}	
 }

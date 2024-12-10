@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Google Analytics for WordPress by MonsterInsights 9.1.1\n"
+"Project-Id-Version: Google Analytics for WordPress by MonsterInsights 9.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/google-analytics-for-wordpress-working-dir\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-24T16:45:00+00:00\n"
+"POT-Creation-Date: 2024-11-12T15:28:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: google-analytics-for-wordpress\n"
@@ -19,8 +19,8 @@ msgctxt "google-analytics-for-wordpress"
 msgid " and add a new one."
 msgstr ""
 
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:258
 #: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:259
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:260
 msgctxt "google-analytics-for-wordpress"
 msgid " visitors"
 msgstr ""
@@ -45,7 +45,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "& Many More!"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:265
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:264
 msgctxt "google-analytics-for-wordpress"
 msgid "#1"
 msgstr ""
@@ -55,13 +55,13 @@ msgctxt "google-analytics-for-wordpress"
 msgid "% of Categories"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:141
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:134
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:33
 msgctxt "google-analytics-for-wordpress"
 msgid "% of Exits"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:165
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:158
 #: src/blocks/site-insights/edit/components/Table.js:67
 msgctxt "google-analytics-for-wordpress"
 msgid "% of Interest"
@@ -98,17 +98,17 @@ msgctxt "google-analytics-for-wordpress"
 msgid "% of Visits"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:449
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:455
 msgctxt "google-analytics-for-wordpress"
 msgid "%1$s&#37 of your visitors were %2$s"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:456
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:462
 msgctxt "google-analytics-for-wordpress"
 msgid "%1$s&#37 of your visitors were between the ages of %2$s"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:549
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:560
 msgctxt "google-analytics-for-wordpress"
 msgid "%1$s&#37 of your visitors were on a %2$s device."
 msgstr ""
@@ -123,12 +123,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "%1$sBonus:%2$s Upgrade today and save %3$s50%% on a Pro License!%4$s (auto-applied at checkout)"
 msgstr ""
 
-#: src/modules/reports/components/ReportsDatePicker.vue:174
+#: src/modules/reports/components/ReportsDatePicker.vue:178
 msgctxt "google-analytics-for-wordpress"
 msgid "%1$sComparison:%2$s %3$s To %4$s"
 msgstr ""
 
-#: src/modules/reports/components/ReportsDatePicker.vue:184
+#: src/modules/reports/components/ReportsDatePicker.vue:197
 msgctxt "google-analytics-for-wordpress"
 msgid "%1$sCustom dates:%2$s %3$s - %4$s"
 msgstr ""
@@ -269,15 +269,20 @@ msgctxt "google-analytics-for-wordpress"
 msgid "%s Category"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:431
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:437
 msgctxt "google-analytics-for-wordpress"
 msgid "%s Visitors"
 msgstr ""
 
 #: src/modules/reports/components/monsterinsights-ReportsNavigation.vue:83
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:356
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:353
 msgctxt "google-analytics-for-wordpress"
 msgid "%s Year in Review"
+msgstr ""
+
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:367
+msgctxt "google-analytics-for-wordpress"
+msgid "© MonsterInsights, %s MonsterInsights, LLC"
 msgstr ""
 
 #: src/modules/site-notes/components/overview-report/list.vue:131
@@ -507,12 +512,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "A session is the browsing session of a single user to your site."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:363
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:359
 msgctxt "google-analytics-for-wordpress"
 msgid "A Tip for %s"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:365
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:361
 msgctxt "google-analytics-for-wordpress"
 msgid "A Tip For %s"
 msgstr ""
@@ -554,8 +559,8 @@ msgstr ""
 #: src/modules/addons/components/AddonPageBlock.vue:163
 #: src/modules/addons/components/monsterinsights-AddonBlock.vue:155
 #: src/modules/growth-tools/components/GrowthPluginButton.vue:38
-#: src/modules/widget/components/WidgetFooter.vue:37
-#: src/modules/widget/components/WidgetFooter.vue:52
+#: src/modules/widget/components/WidgetFooter.vue:38
+#: src/modules/widget/components/WidgetFooter.vue:53
 msgctxt "google-analytics-for-wordpress"
 msgid "Activate"
 msgstr ""
@@ -838,7 +843,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "After you install MonsterInsights, you’ll need to connect your WordPress site with your Google Analytics account. MonsterInsights makes the process easy, with no coding required."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:180
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:171
 #: src/blocks/site-insights/edit/components/BarChart.js:34
 msgctxt "google-analytics-for-wordpress"
 msgid "Age"
@@ -977,8 +982,9 @@ msgid "AMP Support"
 msgstr ""
 
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerceCoupons.vue:53
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:114
 #: src/modules/reports/components/reports/monsterinsights-ReportDimensions.vue:42
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:191
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:182
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementPages.vue:52
 #: src/modules/reports/components/reports/monsterinsights-ReportForms.vue:84
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:132
@@ -1029,7 +1035,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Apply"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:319
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:317
 msgctxt "google-analytics-for-wordpress"
 msgid "April"
 msgstr ""
@@ -1065,12 +1071,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "At least 0 item required."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:255
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:254
 msgctxt "google-analytics-for-wordpress"
 msgid "Audience"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:323
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:321
 msgctxt "google-analytics-for-wordpress"
 msgid "August"
 msgstr ""
@@ -1191,7 +1197,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Available in PRO version"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:273
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:272
 msgctxt "google-analytics-for-wordpress"
 msgid "Average Age"
 msgstr ""
@@ -1201,7 +1207,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Average Order Value"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:185
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:176
 #: src/blocks/site-insights/edit/components/RadialBar.js:28
 #: src/blocks/site-insights/edit/components/Scorecard.js:135
 msgctxt "google-analytics-for-wordpress"
@@ -1221,7 +1227,7 @@ msgid "Avg. % Watched"
 msgstr ""
 
 #: src/modules/frontend/components/monsterinsights-FrontendStatsGeneral.vue:34
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:132
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:125
 #: src/modules/widget/components/reports/WidgetReportLandingPages.vue:32
 msgctxt "google-analytics-for-wordpress"
 msgid "Avg. Duration"
@@ -1266,7 +1272,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Back to Inbox"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:254
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:253
 msgctxt "google-analytics-for-wordpress"
 msgid "Back to Overview Report"
 msgstr ""
@@ -1299,14 +1305,14 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Basic Widget"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:369
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:365
 msgctxt "google-analytics-for-wordpress"
 msgid "Become a WordPress expert in %s. Join our amazing communities and take your website to the next level."
 msgstr ""
 
 #: src/modules/popular-posts/components/PopularPostsInline.vue:120
 #: src/modules/popular-posts/components/PopularPostsWidget.vue:113
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:274
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:273
 msgctxt "google-analytics-for-wordpress"
 msgid "Behavior"
 msgstr ""
@@ -1346,13 +1352,15 @@ msgid "Bounce"
 msgstr ""
 
 #: src/modules/ai-insights/components/addon/chat/ChatStart.vue:59
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:213
 msgctxt "google-analytics-for-wordpress"
 msgid "Bounce rate"
 msgstr ""
 
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:250
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:274
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:133
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:109
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:126
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementPages.vue:48
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:348
 #: src/modules/reports/components/traffic/ReportTrafficSocial.vue:110
@@ -1496,7 +1504,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Cart Funnel"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:164
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:157
 #: src/modules/site-notes/components/tabs/tabsNavigation-Lite.vue:29
 #: src/blocks/site-insights/edit/components/Table.js:67
 msgctxt "google-analytics-for-wordpress"
@@ -1543,7 +1551,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Change Media"
 msgstr ""
 
-#: src/modules/reports/components/ReportTable.vue:312
+#: src/modules/reports/components/ReportTable.vue:353
 #: src/modules/reports/components/ReportTableBox.vue:211
 msgctxt "google-analytics-for-wordpress"
 msgid "Change%"
@@ -1683,7 +1691,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Choose your badge style."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:299
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:298
 msgctxt "google-analytics-for-wordpress"
 msgid "Chris Christoff"
 msgstr ""
@@ -1723,9 +1731,9 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Click to manually wipe the cache right now."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:160
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:153
 #: src/modules/reports/components/reports/monsterinsights-ReportSearchConsole.vue:63
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:284
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:283
 #: src/modules/widget/components/reports/WidgetReportDownloadLinks.vue:31
 msgctxt "google-analytics-for-wordpress"
 msgid "Clicks"
@@ -1739,6 +1747,7 @@ msgstr ""
 
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerce.vue:257
 #: src/modules/reports/components/ecommerce/ReportEcommerceFunnel.vue:144
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:101
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:372
 #: src/modules/reports/components/traffic/CommonSessionChart.vue:99
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:120
@@ -1822,7 +1831,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Compliant"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:256
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:255
 msgctxt "google-analytics-for-wordpress"
 msgid "Congrats"
 msgstr ""
@@ -1839,7 +1848,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Congrats! All-in-One SEO Installed."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:257
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:256
 msgctxt "google-analytics-for-wordpress"
 msgid "Congrats! This year your website had "
 msgstr ""
@@ -2012,11 +2021,6 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Copy to Pretty Links"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:371
-msgctxt "google-analytics-for-wordpress"
-msgid "Copyright MonsterInsights, %s MonsterInsights, LLC"
-msgstr ""
-
 #: src/modules/reports/components/reports/monsterinsights-ReportRealTime.vue:220
 #: src/modules/reports/components/reports/monsterinsights-ReportRealTime.vue:227
 #: src/modules/reports/components/reports/monsterinsights-ReportRealTime.vue:236
@@ -2025,10 +2029,18 @@ msgid "Count"
 msgstr ""
 
 #: src/modules/reports/components/ecommerce/ReportEcommerceFunnel.vue:150
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:106
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:198
 #: src/modules/reports/components/reports/monsterinsights-ReportRealTime.vue:226
 #: src/modules/reports/components/reports/monsterinsights-ReportRealTime.vue:235
 msgctxt "google-analytics-for-wordpress"
 msgid "Country"
+msgstr ""
+
+#: src/modules/reports/components/ReportNavigationData.vue:81
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:93
+msgctxt "google-analytics-for-wordpress"
+msgid "Country Report"
 msgstr ""
 
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerceCoupons.vue:43
@@ -2037,7 +2049,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Coupon Name"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:102
+#: src/modules/reports/components/ReportNavigationData.vue:109
 msgctxt "google-analytics-for-wordpress"
 msgid "Coupons"
 msgstr ""
@@ -2152,7 +2164,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Custom Campaign Parameters"
 msgstr ""
 
-#: src/modules/reports/components/ReportsDatePicker.vue:187
+#: src/modules/reports/components/ReportsDatePicker.vue:200
 msgctxt "google-analytics-for-wordpress"
 msgid "Custom Date Range"
 msgstr ""
@@ -2291,7 +2303,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Deauthenticating"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:327
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:325
 msgctxt "google-analytics-for-wordpress"
 msgid "December"
 msgstr ""
@@ -2318,7 +2330,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Deleting Exception"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:264
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:263
 #: src/modules/settings/components/tabs/monsterinsights-SettingsTabEngagement.vue:79
 msgctxt "google-analytics-for-wordpress"
 msgid "Demographics"
@@ -2346,7 +2358,7 @@ msgstr ""
 
 #: src/modules/reports/components/reports-year-in-review/ReportYearInReviewDeviceUsage.vue:39
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:245
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:555
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:566
 #: src/modules/widget/components/reports/monsterinsights-WidgetReportDevices.vue:47
 msgctxt "google-analytics-for-wordpress"
 msgid "Desktop"
@@ -2374,7 +2386,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Device Breakdown"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:279
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:278
 msgctxt "google-analytics-for-wordpress"
 msgid "Device Type"
 msgstr ""
@@ -2384,22 +2396,22 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Did the login/registration step of the checkout put users off?"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:301
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:300
 msgctxt "google-analytics-for-wordpress"
-msgid "Did you know over 10 million websites use our plugins?"
+msgid "Did you know over 25 million websites use our plugins?"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:280
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:279
 msgctxt "google-analytics-for-wordpress"
 msgid "Did you know that using internal links can give you huge SEO gains? Get the scoop on internal links and how to build them in our guide."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:291
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:290
 msgctxt "google-analytics-for-wordpress"
 msgid "Did you know you might have direct traffic that's getting counted wrong by Google Analytics? Learn how to track it correctly in our direct traffic guide."
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:120
+#: src/modules/reports/components/ReportNavigationData.vue:127
 msgctxt "google-analytics-for-wordpress"
 msgid "Dimensions"
 msgstr ""
@@ -2596,11 +2608,6 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Each dimension needs to have an id set."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:517
-msgctxt "google-analytics-for-wordpress"
-msgid "Each visitor spent an average of <strong>%1$s minutes</strong> on your website in <strong>%2$s</strong>."
-msgstr ""
-
 #: src/modules/seo/components/aioseo.vue:186
 msgctxt "google-analytics-for-wordpress"
 msgid "Easily add title tags, meta descriptions, keywords, and everything else you need for proper on-page SEO optimization."
@@ -2642,7 +2649,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Easy Digital Downloads"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:92
+#: src/modules/reports/components/ReportNavigationData.vue:99
 #: src/modules/reports/components/reports/monsterinsights-ReportEcommerceCoupons-Lite.vue:25
 #: src/modules/settings/components/tabs/monsterinsights-SettingsTabsNavigation.vue:95
 msgctxt "google-analytics-for-wordpress"
@@ -2660,7 +2667,6 @@ msgctxt "google-analytics-for-wordpress"
 msgid "eCommerce Coupons Report"
 msgstr ""
 
-#: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerceFunnel-Lite.vue:26
 #: src/modules/reports/components/ecommerce/ReportEcommerceFunnel.vue:136
 msgctxt "google-analytics-for-wordpress"
 msgid "eCommerce Funnel"
@@ -2867,6 +2873,8 @@ msgstr ""
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerceCoupons.vue:45
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:251
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:278
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:108
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:208
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementPages.vue:46
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementPages.vue:93
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:124
@@ -2921,7 +2929,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Enhanced Link Attribution is enabled the moment you set up MonsterInsights"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:296
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:295
 msgctxt "google-analytics-for-wordpress"
 msgid "Enjoying MonsterInsights?"
 msgstr ""
@@ -3028,7 +3036,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Exception Alerts"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:155
+#: src/modules/reports/components/ReportNavigationData.vue:162
 msgctxt "google-analytics-for-wordpress"
 msgid "Exceptions"
 msgstr ""
@@ -3065,7 +3073,7 @@ msgid "Exit Setup"
 msgstr ""
 
 #: src/modules/frontend/components/monsterinsights-FrontendStatsPageInsights.vue:33
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:139
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:132
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:31
 #: src/plugins/metabox/components/page-insights-Lite.js:27
 #: src/plugins/metabox/components/page-insights-tab-content.js:16
@@ -3125,7 +3133,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Extensions of Files to Track as Downloads"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:303
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:302
 msgctxt "google-analytics-for-wordpress"
 msgid "Facebook Group"
 msgstr ""
@@ -3155,7 +3163,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "FEATURES"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:317
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:315
 msgctxt "google-analytics-for-wordpress"
 msgid "February"
 msgstr ""
@@ -3165,7 +3173,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Feedback submitted will include your analytics data & insights provided so we can improve. Thank you!"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:269
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:268
 msgctxt "google-analytics-for-wordpress"
 msgid "Female"
 msgstr ""
@@ -3185,7 +3193,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "File imported"
 msgstr ""
 
-#: src/modules/reports/components/ReportTable.vue:147
+#: src/modules/reports/components/ReportTable.vue:187
 msgctxt "google-analytics-for-wordpress"
 msgid "Filter"
 msgstr ""
@@ -3225,12 +3233,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "First Page"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:311
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:309
 msgctxt "google-analytics-for-wordpress"
 msgid "Follow MonsterInsights on social media to stay up to date with latest updates, trends, and tutorials on how to make the most out of analytics."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:309
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:308
 msgctxt "google-analytics-for-wordpress"
 msgid "Follow Us!"
 msgstr ""
@@ -3266,7 +3274,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Form Tracking"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:127
+#: src/modules/reports/components/ReportNavigationData.vue:134
 #: src/modules/reports/components/reports/monsterinsights-ReportForms.vue:71
 msgctxt "google-analytics-for-wordpress"
 msgid "Forms"
@@ -3303,7 +3311,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "FTP Username"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:109
+#: src/modules/reports/components/ReportNavigationData.vue:116
 msgctxt "google-analytics-for-wordpress"
 msgid "Funnel"
 msgstr ""
@@ -3323,8 +3331,8 @@ msgctxt "google-analytics-for-wordpress"
 msgid "GDPR Guide"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:182
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:268
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:173
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:267
 #: src/blocks/site-insights/edit/components/Table.js:102
 msgctxt "google-analytics-for-wordpress"
 msgid "Gender"
@@ -3597,7 +3605,7 @@ msgstr ""
 
 #: src/modules/about/components/monsterinsights-AboutTabLiteVsPro.vue:125
 #: src/modules/settings/components/tabs/monsterinsights-SettingsTabPublisher.vue:80
-#: src/plugins/monsterinsights-Headline-Analyzer/index.js:24
+#: src/plugins/monsterinsights-Headline-Analyzer/index.js:25
 msgctxt "google-analytics-for-wordpress"
 msgid "Headline Analyzer"
 msgstr ""
@@ -3649,14 +3657,9 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Here are the features that make MonsterInsights the most powerful and user-friendly WordPress analytics plugin in the market."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:373
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:369
 msgctxt "google-analytics-for-wordpress"
 msgid "Here's to an amazing %s!"
-msgstr ""
-
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:310
-msgctxt "google-analytics-for-wordpress"
-msgid "Hey! 👋 <br />Your Year in Review Report  is only showing statistics after July 1, 2023 due to the Google Analytics 3 sunset!"
 msgstr ""
 
 #: src/modules/settings/components/tabs/monsterinsights-SettingsTabAdvanced.vue:120
@@ -3677,7 +3680,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Hide dashboard widget"
 msgstr ""
 
-#: src/modules/reports/components/ReportsDatePicker.vue:190
+#: src/modules/reports/components/ReportsDatePicker.vue:203
 msgctxt "google-analytics-for-wordpress"
 msgid "Hide Details"
 msgstr ""
@@ -3703,7 +3706,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "How many visits did I get last week?"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:281
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:280
 msgctxt "google-analytics-for-wordpress"
 msgid "How to Add WordPress Internal Links to Improve Your SEO"
 msgstr ""
@@ -3908,8 +3911,8 @@ msgstr ""
 #: src/modules/addons/components/AddonButton.vue:54
 #: src/modules/addons/components/monsterinsights-AddonBlock.vue:133
 #: src/modules/growth-tools/components/GrowthPluginButton.vue:42
-#: src/modules/widget/components/WidgetFooter.vue:31
-#: src/modules/widget/components/WidgetFooter.vue:47
+#: src/modules/widget/components/WidgetFooter.vue:32
+#: src/modules/widget/components/WidgetFooter.vue:48
 msgctxt "google-analytics-for-wordpress"
 msgid "Install"
 msgstr ""
@@ -4116,7 +4119,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Interaction to Next Paint looks at the time it takes for the next paint after the user interacts with the page."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:162
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:155
 msgctxt "google-analytics-for-wordpress"
 msgid "Interests"
 msgstr ""
@@ -4151,12 +4154,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Jack Brown"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:316
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:314
 msgctxt "google-analytics-for-wordpress"
 msgid "January"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:358
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:355
 msgctxt "google-analytics-for-wordpress"
 msgid "January 1, %1$s - December 31, %2$s"
 msgstr ""
@@ -4172,12 +4175,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Join 2,000,000+ Professionals who use AIOSEO to Improve Their Website Search Rankings."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:305
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:304
 msgctxt "google-analytics-for-wordpress"
 msgid "Join Now...It’s Free!"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:302
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:301
 msgctxt "google-analytics-for-wordpress"
 msgid "Join our Communities!"
 msgstr ""
@@ -4187,17 +4190,17 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Join Our Community"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:304
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:303
 msgctxt "google-analytics-for-wordpress"
 msgid "Join our team of WordPress experts and other motivated website owners in the WPBeginner Engage Facebook Group."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:322
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:320
 msgctxt "google-analytics-for-wordpress"
 msgid "July"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:321
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:319
 msgctxt "google-analytics-for-wordpress"
 msgid "June"
 msgstr ""
@@ -4217,7 +4220,7 @@ msgstr ""
 #: src/modules/popular-posts/components/input/PopularPostsThemePreview.vue:73
 #: src/modules/popular-posts/components/input/PopularPostsWidgetThemeCustomize.vue:186
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview-Lite.vue:50
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:152
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:145
 msgctxt "google-analytics-for-wordpress"
 msgid "Label"
 msgstr ""
@@ -4405,7 +4408,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Learn more about one-click eCommerce tracking"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:297
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:296
 msgctxt "google-analytics-for-wordpress"
 msgid "Leave a five star review!"
 msgstr ""
@@ -4415,7 +4418,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Left"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:267
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:266
 msgctxt "google-analytics-for-wordpress"
 msgid "Let’s get to know your visitors a little better, shall we?"
 msgstr ""
@@ -4459,7 +4462,7 @@ msgid "Limited Support"
 msgstr ""
 
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview-Lite.vue:51
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:153
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:146
 msgctxt "google-analytics-for-wordpress"
 msgid "Link"
 msgstr ""
@@ -4469,16 +4472,16 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Link Attribution"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:159
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:152
 #: src/modules/widget/components/reports/WidgetReportDownloadLinks.vue:30
 msgctxt "google-analytics-for-wordpress"
 msgid "Link Label"
 msgstr ""
 
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview-Lite.vue:45
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:146
-#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:33
-#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:30
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:139
+#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:28
+#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:26
 msgctxt "google-analytics-for-wordpress"
 msgid "Links"
 msgstr ""
@@ -4550,7 +4553,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Make your website more compliant with privacy regulations like GDPR, CCPA, and PECR."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:271
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:270
 msgctxt "google-analytics-for-wordpress"
 msgid "Male"
 msgstr ""
@@ -4580,12 +4583,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Manually enter your GA4 Measurement ID"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:318
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:316
 msgctxt "google-analytics-for-wordpress"
 msgid "March"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:320
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:318
 msgctxt "google-analytics-for-wordpress"
 msgid "May"
 msgstr ""
@@ -4597,7 +4600,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Measurement Protocol API Secret"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:148
+#: src/modules/reports/components/ReportNavigationData.vue:155
 #: src/modules/site-notes/components/list.vue:290
 msgctxt "google-analytics-for-wordpress"
 msgid "Media"
@@ -4642,7 +4645,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Minor only %1$s- Get bugfixes and security updates, but not major features.%2$s"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:278
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:277
 msgctxt "google-analytics-for-wordpress"
 msgid "minutes"
 msgstr ""
@@ -4655,7 +4658,7 @@ msgstr ""
 
 #: src/modules/reports/components/reports-year-in-review/ReportYearInReviewDeviceUsage.vue:38
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:247
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:565
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:576
 #: src/modules/widget/components/reports/monsterinsights-WidgetReportDevices.vue:49
 msgctxt "google-analytics-for-wordpress"
 msgid "Mobile"
@@ -4813,7 +4816,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "More Information & Examples"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:545
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:556
 msgctxt "google-analytics-for-wordpress"
 msgid "Most of your visitors viewed your website from their <strong>%s</strong> device."
 msgstr ""
@@ -4928,8 +4931,8 @@ msgctxt "google-analytics-for-wordpress"
 msgid "No addons found."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:150
-#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:30
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:143
+#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:25
 msgctxt "google-analytics-for-wordpress"
 msgid "No affiliate link clicks detected for this time period."
 msgstr ""
@@ -4971,7 +4974,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "No data currently for the Pages report"
 msgstr ""
 
-#: src/modules/reports/components/ReportTable.vue:98
+#: src/modules/reports/components/ReportTable.vue:134
 msgctxt "google-analytics-for-wordpress"
 msgid "No data currently for the report"
 msgstr ""
@@ -5006,24 +5009,24 @@ msgctxt "google-analytics-for-wordpress"
 msgid "No data for this time period."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:157
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:150
 #: src/modules/widget/components/reports/WidgetReportDownloadLinks.vue:27
 msgctxt "google-analytics-for-wordpress"
 msgid "No download link clicks detected for this time period."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:136
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:129
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:27
 msgctxt "google-analytics-for-wordpress"
 msgid "No exit pages tracked during this time period."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:167
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:160
 msgctxt "google-analytics-for-wordpress"
 msgid "No interest groups detected for this time period."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:128
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:121
 #: src/modules/widget/components/reports/WidgetReportLandingPages.vue:27
 msgctxt "google-analytics-for-wordpress"
 msgid "No landing pages tracked during this time period."
@@ -5044,8 +5047,8 @@ msgctxt "google-analytics-for-wordpress"
 msgid "No options available"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:144
-#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:27
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:137
+#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:23
 msgctxt "google-analytics-for-wordpress"
 msgid "No outbound link clicks detected for this time period."
 msgstr ""
@@ -5153,7 +5156,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Notifications"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:326
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:324
 msgctxt "google-analytics-for-wordpress"
 msgid "November"
 msgstr ""
@@ -5173,7 +5176,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Number of Posts"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:325
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:323
 msgctxt "google-analytics-for-wordpress"
 msgid "October"
 msgstr ""
@@ -5283,7 +5286,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Oops! There was an error processing request. Please try again later."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:290
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:289
 msgctxt "google-analytics-for-wordpress"
 msgid "Opportunity"
 msgstr ""
@@ -5386,10 +5389,10 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Overall Score"
 msgstr ""
 
+#: src/modules/reports/components/ReportNavigationData.vue:102
 #: src/modules/reports/components/ReportNavigationData.vue:18
 #: src/modules/reports/components/ReportNavigationData.vue:67
 #: src/modules/reports/components/ReportNavigationData.vue:8
-#: src/modules/reports/components/ReportNavigationData.vue:95
 msgctxt "google-analytics-for-wordpress"
 msgid "Overview"
 msgstr ""
@@ -5430,8 +5433,8 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Page Load Time"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:130
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:138
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:123
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:131
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:30
 #: src/modules/widget/components/reports/WidgetReportLandingPages.vue:30
 msgctxt "google-analytics-for-wordpress"
@@ -5439,7 +5442,7 @@ msgid "Page Titles"
 msgstr ""
 
 #: src/modules/frontend/components/monsterinsights-FrontendStatsPageInsights.vue:29
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:140
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:133
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementPages.vue:45
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementPages.vue:88
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:32
@@ -5478,9 +5481,10 @@ msgstr ""
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerce.vue:203
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:248
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:266
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:97
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:344
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:276
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:288
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:275
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:287
 #: src/modules/reports/components/traffic/CommonSessionChart.vue:93
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:103
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficLandindPages.vue:103
@@ -5622,7 +5626,7 @@ msgid "Please select at least one post to display."
 msgstr ""
 
 #: src/modules/reports/components/reports/monsterinsights-ReportDimensions.vue:41
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:190
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:181
 #: src/modules/reports/components/reports/monsterinsights-ReportForms.vue:83
 msgctxt "google-analytics-for-wordpress"
 msgid "Please set up custom dimension \"%s\" for this report to work."
@@ -5802,7 +5806,7 @@ msgid "Provide Feedback"
 msgstr ""
 
 #: src/modules/settings/components/tabs/monsterinsights-SettingsTabsNavigation.vue:96
-#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:27
+#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:23
 msgctxt "google-analytics-for-wordpress"
 msgid "Publisher"
 msgstr ""
@@ -5828,12 +5832,12 @@ msgid "Publisher, eCommerce, Search Console, Custom Dimensions, Forms and Real-T
 msgstr ""
 
 #: src/modules/reports/components/ReportNavigationData.vue:64
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:125
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:118
 msgctxt "google-analytics-for-wordpress"
 msgid "Publishers"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:126
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:119
 msgctxt "google-analytics-for-wordpress"
 msgid "Publishers Report"
 msgstr ""
@@ -5849,6 +5853,8 @@ msgid "Purchase"
 msgstr ""
 
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerceCoupons.vue:47
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:110
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:222
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:126
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:236
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficLandindPages.vue:127
@@ -5927,7 +5933,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Real Time Report"
 msgstr ""
 
-#: src/modules/widget/components/settings/monsterinsights-WidgetSettingsInterval.vue:19
+#: src/modules/widget/components/settings/monsterinsights-WidgetSettingsInterval.vue:20
 msgctxt "google-analytics-for-wordpress"
 msgid "Real-Time"
 msgstr ""
@@ -5948,7 +5954,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Real-time Stats"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:134
+#: src/modules/reports/components/ReportNavigationData.vue:141
 msgctxt "google-analytics-for-wordpress"
 msgid "Realtime "
 msgstr ""
@@ -5973,7 +5979,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Recommended For You"
 msgstr ""
 
-#: src/modules/widget/components/WidgetFooter.vue:65
+#: src/modules/widget/components/WidgetFooter.vue:66
 msgctxt "google-analytics-for-wordpress"
 msgid "Recommended Plugin:"
 msgstr ""
@@ -6218,12 +6224,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "SCA & 3D Secure Payments ensures your customer’s payment information stays private and secure."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:184
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:175
 msgctxt "google-analytics-for-wordpress"
 msgid "Scroll"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:187
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:178
 msgctxt "google-analytics-for-wordpress"
 msgid "Scroll Depth events are triggered at 25%%, 50%%, 75%% and 100%% scrolling. The number above represents the average scroll depth from your visitors in the selected interval for all your website's pages. %1$sYou can read more about how to read this number in our %2$sknowledge base%3$s.%4$s"
 msgstr ""
@@ -6263,7 +6269,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Search by post title"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:85
+#: src/modules/reports/components/ReportNavigationData.vue:92
 #: src/modules/reports/components/reports/monsterinsights-ReportSearchConsole.vue:71
 #: src/modules/wizard-onboarding/components/steps/MigrationStepUpsell.vue:50
 msgctxt "google-analytics-for-wordpress"
@@ -6339,7 +6345,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "See How"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:361
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:357
 msgctxt "google-analytics-for-wordpress"
 msgid "See how your website performed this year and find tips along the way to help grow even more in %s!"
 msgstr ""
@@ -6349,7 +6355,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "See Quick Links"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:106
+#: src/modules/reports/components/ReportNavigationData.vue:113
 msgctxt "google-analytics-for-wordpress"
 msgid "See the coupons and discounts being used on your website."
 msgstr ""
@@ -6359,14 +6365,19 @@ msgctxt "google-analytics-for-wordpress"
 msgid "See the first page visitors land when visiting your website."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:405
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:403
 msgctxt "google-analytics-for-wordpress"
-msgid "See the top Traffic Sources and Top Pages for the Month of %s in the Overview Report to replicate your success."
+msgid "See the top %sTraffic Sources%s and %sTop Pages%s for the Month of %s in the Overview Report to replicate your success."
 msgstr ""
 
 #: src/modules/userfeedback/userfeedback.vue:135
 msgctxt "google-analytics-for-wordpress"
 msgid "See What Your Website Visitors Are %1$sReally%2$s Thinking!"
+msgstr ""
+
+#: src/modules/reports/components/ReportNavigationData.vue:85
+msgctxt "google-analytics-for-wordpress"
+msgid "See which countries your visitors come from."
 msgstr ""
 
 #: src/modules/reports/components/traffic/ReportTrafficSocial.vue:68
@@ -6488,7 +6499,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "SEO user roles allow you to manage access to important SEO features without handing over control of your website."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:324
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:322
 msgctxt "google-analytics-for-wordpress"
 msgid "September"
 msgstr ""
@@ -6514,6 +6525,9 @@ msgstr ""
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerceCoupons.vue:44
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:249
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:270
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:107
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:203
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:94
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:341
 #: src/modules/reports/components/traffic/CommonSessionChart.vue:90
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:100
@@ -6554,7 +6568,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Sessions to Purchase"
 msgstr ""
 
-#: src/modules/reports/components/ReportsDatePicker.vue:187
+#: src/modules/reports/components/ReportsDatePicker.vue:200
 msgctxt "google-analytics-for-wordpress"
 msgid "Set Custom Date Range"
 msgstr ""
@@ -6653,13 +6667,13 @@ msgstr ""
 #: src/modules/reports/components/monsterinsights-ReportsPagination.vue:32
 #: src/modules/reports/components/reports-year-in-review/ReportYearInReviewBrowserUsage.vue:58
 #: src/modules/reports/components/reports-year-in-review/ReportYearInReviewListBox.vue:45
-#: src/modules/reports/components/ReportTable.vue:146
+#: src/modules/reports/components/ReportTable.vue:186
 #: src/modules/reports/components/ReportTableBox.vue:103
 msgctxt "google-analytics-for-wordpress"
 msgid "Show"
 msgstr ""
 
-#: src/modules/reports/components/ReportsDatePicker.vue:190
+#: src/modules/reports/components/ReportsDatePicker.vue:203
 msgctxt "google-analytics-for-wordpress"
 msgid "Show Details"
 msgstr ""
@@ -6716,6 +6730,7 @@ msgstr ""
 
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerce.vue:256
 #: src/modules/reports/components/ecommerce/ReportEcommerceFunnel.vue:143
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:100
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:339
 #: src/modules/reports/components/traffic/CommonSessionChart.vue:98
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:119
@@ -6737,7 +6752,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Site Notes Important Events"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:141
+#: src/modules/reports/components/ReportNavigationData.vue:148
 #: src/modules/reports/components/reports/monsterinsights-SiteSpeed-Lite.vue:23
 #: src/modules/reports/components/reports/monsterinsights-SiteSpeed.vue:88
 msgctxt "google-analytics-for-wordpress"
@@ -6814,7 +6829,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Smash Balloon - Instagram"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:283
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:282
 msgctxt "google-analytics-for-wordpress"
 msgid "So, where did all of these visitors come from?"
 msgstr ""
@@ -6978,7 +6993,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Step 6 - Learn More About Google Analytics"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:253
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:252
 msgctxt "google-analytics-for-wordpress"
 msgid "Still Calculating..."
 msgstr ""
@@ -7024,14 +7039,14 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Switch to AIOSEO"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:298
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:297
 msgctxt "google-analytics-for-wordpress"
 msgid "Syed Balkhi"
 msgstr ""
 
 #: src/modules/reports/components/reports-year-in-review/ReportYearInReviewDeviceUsage.vue:40
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:246
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:560
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:571
 #: src/modules/widget/components/reports/monsterinsights-WidgetReportDevices.vue:48
 msgctxt "google-analytics-for-wordpress"
 msgid "Tablet"
@@ -7079,7 +7094,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Thank you for choosing MonsterInsights - The Most Powerful WordPress Analytics Plugin"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:294
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:293
 msgctxt "google-analytics-for-wordpress"
 msgid "Thank you for using MonsterInsights!"
 msgstr ""
@@ -7305,7 +7320,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "The value entered does not match the required format"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:289
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:288
 msgctxt "google-analytics-for-wordpress"
 msgid "The websites that link back to your website"
 msgstr ""
@@ -7430,7 +7445,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "This feature requires MonsterInsights Pro"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:183
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:174
 msgctxt "google-analytics-for-wordpress"
 msgid "This graph shows the gender breakdown of your website visitors."
 msgstr ""
@@ -7463,7 +7478,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "This graph shows what percent of your user sessions come from new versus repeat visitors."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:181
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:172
 msgctxt "google-analytics-for-wordpress"
 msgid "This graph shows what percent of your users are in a particular age group."
 msgstr ""
@@ -7491,13 +7506,13 @@ msgctxt "google-analytics-for-wordpress"
 msgid "This list shows how many days from first visit it took users to purchase products from your site."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:179
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:170
 #: src/modules/widget/components/reports/WidgetReportDownloadLinks.vue:28
 msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the download links your visitors clicked the most."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:168
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:161
 msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the interest groups your visitors belong to."
 msgstr ""
@@ -7518,8 +7533,8 @@ msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the top 50 search terms people type into Google to find and click through to your website."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:178
-#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:31
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:169
+#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:26
 msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the top affiliate links your visitors clicked the most."
 msgstr ""
@@ -7539,19 +7554,19 @@ msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the top countries visitors are visiting within the last 30 minutes. "
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:177
-#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:28
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:168
+#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:24
 msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the top links clicked on your website that go to another website."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:176
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:167
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:28
 msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the top pages users exit your website from."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:175
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:166
 #: src/modules/widget/components/reports/WidgetReportLandingPages.vue:28
 msgctxt "google-analytics-for-wordpress"
 msgid "This list shows the top pages users first land on when visiting your website."
@@ -7616,7 +7631,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Time on Page"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:277
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:276
 msgctxt "google-analytics-for-wordpress"
 msgid "Time Spent on Site"
 msgstr ""
@@ -7700,8 +7715,8 @@ msgid "Top 50 Google Search Terms"
 msgstr ""
 
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview-Lite.vue:48
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:149
-#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:29
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:142
+#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:24
 msgctxt "google-analytics-for-wordpress"
 msgid "Top Affiliate Links"
 msgstr ""
@@ -7728,13 +7743,13 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Top days"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:156
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:149
 #: src/modules/widget/components/reports/WidgetReportDownloadLinks.vue:26
 msgctxt "google-analytics-for-wordpress"
 msgid "Top Download Links"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:135
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:128
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:25
 msgctxt "google-analytics-for-wordpress"
 msgid "Top Exit Pages"
@@ -7745,7 +7760,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Top hours"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:127
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:120
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficLandindPages.vue:121
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficLandindPages.vue:99
 #: src/modules/widget/components/reports/WidgetReportLandingPages.vue:25
@@ -7754,8 +7769,8 @@ msgid "Top Landing Pages"
 msgstr ""
 
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview-Lite.vue:43
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:143
-#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:26
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:136
+#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:22
 msgctxt "google-analytics-for-wordpress"
 msgid "Top Outbound Links"
 msgstr ""
@@ -7809,10 +7824,10 @@ msgstr ""
 
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview-Lite.vue:46
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview-Lite.vue:52
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:140
 #: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:147
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:154
-#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:34
-#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:31
+#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:29
+#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:27
 msgctxt "google-analytics-for-wordpress"
 msgid "Total Clicks"
 msgstr ""
@@ -7840,7 +7855,7 @@ msgid "Total Revenue"
 msgstr ""
 
 #: src/modules/reports/components/reports-overview/ReportSiteSummary.vue:255
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:262
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:261
 msgctxt "google-analytics-for-wordpress"
 msgid "Total Sessions"
 msgstr ""
@@ -7855,7 +7870,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Total Users"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:261
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:260
 msgctxt "google-analytics-for-wordpress"
 msgid "Total Visitors"
 msgstr ""
@@ -7953,7 +7968,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Try it out today, for free."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:367
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:363
 msgctxt "google-analytics-for-wordpress"
 msgid "Try our other popular WordPress plugins to grow your website in %s."
 msgstr ""
@@ -7994,6 +8009,7 @@ msgid "Undo"
 msgstr ""
 
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerce.vue:205
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:99
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:346
 #: src/modules/reports/components/reports/monsterinsights-ReportRealTime-Lite.vue:61
 #: src/modules/reports/components/reports/monsterinsights-ReportRealTime.vue:206
@@ -8009,6 +8025,7 @@ msgid "Unique %s Pageviews"
 msgstr ""
 
 #: src/modules/reports/components/ecommerce/monsterinsights-ReportEcommerce.vue:202
+#: src/modules/reports/components/reports/monsterinsights-ReportCountries.vue:96
 #: src/modules/reports/components/reports/monsterinsights-ReportOverview.vue:343
 #: src/modules/reports/components/traffic/CommonSessionChart.vue:92
 #: src/modules/reports/components/traffic/monsterinsights-ReportTrafficCampaign.vue:102
@@ -8021,7 +8038,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Unique %s Sessions"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:272
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:271
 msgctxt "google-analytics-for-wordpress"
 msgid "Unknown"
 msgstr ""
@@ -8095,7 +8112,7 @@ msgid "Upgrade Now"
 msgstr ""
 
 #: src/modules/reports/components/reports-overview/monsterinsights-ReportOverviewUpsell-Lite.vue:31
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:313
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:311
 #: src/modules/settings/components/SettingsLiteUpsellLarge.vue:42
 #: src/modules/settings/components/tabs/monsterinsights-SettingsTabEcommerce-Lite.vue:56
 #: src/modules/site-notes/components/category-Lite.vue:30
@@ -8115,7 +8132,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Upgrade to MonsterInsights Pro and unlock all the awesome features."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:312
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:310
 msgctxt "google-analytics-for-wordpress"
 msgid "Upgrade to MonsterInsights Pro to Unlock Additional Actionable Insights"
 msgstr ""
@@ -8414,18 +8431,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "View %s Report"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:173
-#: src/modules/widget/components/reports/WidgetReportAffiliateLinks.vue:28
-msgctxt "google-analytics-for-wordpress"
-msgid "View All Affiliate Links Report"
-msgstr ""
-
 #: src/modules/site-notes/components/Integration-Lite.vue:29
 msgctxt "google-analytics-for-wordpress"
 msgid "View all Agency features"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:174
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:165
 #: src/modules/widget/components/reports/WidgetReportDownloadLinks.vue:25
 msgctxt "google-analytics-for-wordpress"
 msgid "View All Download Links Report"
@@ -8435,12 +8446,6 @@ msgstr ""
 #: src/modules/wizard-onboarding/components/steps/OnboardingStepRecommendedAddons.vue:57
 msgctxt "google-analytics-for-wordpress"
 msgid "View all MonsterInsights addons"
-msgstr ""
-
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:172
-#: src/modules/widget/components/reports/WidgetReportOutboundLinks.vue:25
-msgctxt "google-analytics-for-wordpress"
-msgid "View All Outbound Links Report"
 msgstr ""
 
 #: src/modules/popular-posts/components/PopularPostsProductsUpsell.vue:27
@@ -8499,7 +8504,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "View Full Forms Report"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:169
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:162
 msgctxt "google-analytics-for-wordpress"
 msgid "View Full Interests Report"
 msgstr ""
@@ -8515,13 +8520,13 @@ msgctxt "google-analytics-for-wordpress"
 msgid "View Full Queries Report"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:171
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:164
 #: src/modules/widget/components/reports/WidgetReportExitPages.vue:26
 msgctxt "google-analytics-for-wordpress"
 msgid "View Full Top Exit Pages Report"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:170
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:163
 #: src/modules/widget/components/reports/WidgetReportLandingPages.vue:26
 msgctxt "google-analytics-for-wordpress"
 msgid "View Full Top Landing Pages Report"
@@ -8602,7 +8607,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Visit Website"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:308
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:307
 msgctxt "google-analytics-for-wordpress"
 msgid "Visit WPBeginner"
 msgstr ""
@@ -8612,19 +8617,19 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Visit your Overview Report"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:263
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:262
 msgctxt "google-analytics-for-wordpress"
 msgid "Visitors by Month"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:131
+#: src/modules/reports/components/reports/monsterinsights-ReportEngagementOverview.vue:124
 #: src/modules/widget/components/reports/WidgetReportLandingPages.vue:31
 #: src/modules/widget/components/reports/WidgetReportTopConversions.vue:32
 msgctxt "google-analytics-for-wordpress"
 msgid "Visits"
 msgstr ""
 
-#: src/modules/reports/components/ReportNavigationData.vue:113
+#: src/modules/reports/components/ReportNavigationData.vue:120
 msgctxt "google-analytics-for-wordpress"
 msgid "Visually measure how customers convert in your store."
 msgstr ""
@@ -8699,7 +8704,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "We will recommend the optimal settings for MonsterInsights based on your choice."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:295
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:294
 msgctxt "google-analytics-for-wordpress"
 msgid "We’re grateful for your continued support. If there’s anything we can do to help you grow your business, please don’t hesitate to contact our team."
 msgstr ""
@@ -8776,12 +8781,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "What do you think about this feature?"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:292
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:291
 msgctxt "google-analytics-for-wordpress"
 msgid "What is Direct Traffic in Google Analytics? (GA4 Updates)"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:286
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:285
 msgctxt "google-analytics-for-wordpress"
 msgid "What keywords visitors searched for to find your site"
 msgstr ""
@@ -8874,7 +8879,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "With MonsterInsights Pro, you can easily measure individual affiliate performance inside Google Analytics, no coding needed. Track clicks, revenue, and more."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:270
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:269
 msgctxt "google-analytics-for-wordpress"
 msgid "Women"
 msgstr ""
@@ -8894,7 +8899,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "WordPress Admin Area Reports"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:306
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:305
 msgctxt "google-analytics-for-wordpress"
 msgid "WordPress Tutorials by WPBeginner"
 msgstr ""
@@ -8924,7 +8929,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "WP Simple Pay"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:307
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:306
 msgctxt "google-analytics-for-wordpress"
 msgid "WPBeginner is the largest free WordPress resource site for beginners and non-techy users."
 msgstr ""
@@ -8950,12 +8955,12 @@ msgctxt "google-analytics-for-wordpress"
 msgid "WPForms, Ninja Forms, Contact Form 7, Gravity Forms and any other WordPress form plugin"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:300
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:299
 msgctxt "google-analytics-for-wordpress"
 msgid "Write Review"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:376
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:371
 msgctxt "google-analytics-for-wordpress"
 msgid "Year In Review %s!"
 msgstr ""
@@ -9030,7 +9035,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "You can re-enable the MonsterInsights widget at any time using the \"Screen Options\" menu on the top right of this page"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:258
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:257
 msgctxt "google-analytics-for-wordpress"
 msgid "You had "
 msgstr ""
@@ -9086,7 +9091,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "You Successfully Unlocked the most powerful Analytics plugin"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:266
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:265
 msgctxt "google-analytics-for-wordpress"
 msgid "You Top 5 Countries"
 msgstr ""
@@ -9108,17 +9113,17 @@ msgctxt "google-analytics-for-wordpress"
 msgid "You've disconnected your site from MonsterInsights. Your site is no longer being tracked by Google Analytics and you won't see reports anymore."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:354
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:351
 msgctxt "google-analytics-for-wordpress"
 msgid "Your %s Analytics Report"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:352
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:349
 msgctxt "google-analytics-for-wordpress"
 msgid "Your %s Year in Review is still calculating. Please check back later to see how your website performed last year."
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:424
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:430
 msgctxt "google-analytics-for-wordpress"
 msgid "Your <strong>%1$s</strong> visitors came from <strong>%2$s</strong> different countries."
 msgstr ""
@@ -9163,17 +9168,17 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Your site is connected to MonsterInsights!"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:285
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:284
 msgctxt "google-analytics-for-wordpress"
 msgid "Your Top 5 Keywords"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:275
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:274
 msgctxt "google-analytics-for-wordpress"
 msgid "Your Top 5 Pages"
 msgstr ""
 
-#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:287
+#: src/modules/reports/components/reports/monsterinsights-YearInReview-Lite.vue:286
 msgctxt "google-analytics-for-wordpress"
 msgid "Your Top 5 Referrals"
 msgstr ""
@@ -9794,6 +9799,11 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Show Page Insights"
 msgstr ""
 
+#: src/blocks/site-insights/index.js:22
+msgctxt "google-analytics-for-wordpress"
+msgid "Site Insights"
+msgstr ""
+
 #: src/hooks/components/EnviraPromo.js:123
 msgctxt "google-analytics-for-wordpress"
 msgid "Success! Save your work and then reload this page to start using Envira Gallery."
@@ -9823,7 +9833,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "This Block requires WooCommerce."
 msgstr ""
 
-#: src/plugins/monsterinsights-Headline-Analyzer/index.js:30
+#: src/plugins/monsterinsights-Headline-Analyzer/index.js:31
 msgctxt "google-analytics-for-wordpress"
 msgid "This headline analyzer is part of MonsterInsights to help you increase your traffic. See your %1swebsite traffic reports%2s."
 msgstr ""
@@ -9935,7 +9945,7 @@ msgctxt "google-analytics-for-wordpress"
 msgid "Word Count"
 msgstr ""
 
-#: src/plugins/monsterinsights-Headline-Analyzer/index.js:25
+#: src/plugins/monsterinsights-Headline-Analyzer/index.js:26
 msgctxt "google-analytics-for-wordpress"
 msgid "Write your post title to see the analyzer data. This Headline Analyzer tool enables you to write irresistible SEO headlines that drive traffic, shares, and rank better in search results."
 msgstr ""
@@ -9997,9 +10007,8 @@ msgstr ""
 
 #. Author of the plugin
 #: googleanalytics.php
-#: includes/admin/admin.php:43
-#: includes/admin/admin.php:46
-#: includes/admin/admin.php:58
+#: includes/admin/admin.php:55
+#: includes/admin/admin.php:66
 #: includes/admin/eea-compliance.php:208
 #: includes/admin/wp-site-health.php:35
 #: includes/emails/class-emails.php:255
@@ -10083,138 +10092,132 @@ msgstr ""
 msgid "NEW"
 msgstr ""
 
-#: includes/admin/admin.php:43
-#: includes/admin/admin.php:49
-#: includes/admin/admin.php:61
-#: includes/admin/admin.php:225
-#: includes/admin/admin.php:228
-#: includes/admin/admin.php:269
+#: includes/admin/admin.php:55
+#: includes/admin/admin.php:69
+#: includes/admin/admin.php:238
+#: includes/admin/admin.php:241
+#: includes/admin/admin.php:282
 msgid "Insights"
 msgstr ""
 
-#: includes/admin/admin.php:46
 #: includes/admin/admin.php:58
-#: includes/admin/admin.php:376
-msgid "Settings"
-msgstr ""
-
-#: includes/admin/admin.php:49
-msgid "General:"
-msgstr ""
-
-#: includes/admin/admin.php:52
 msgid "Setup Checklist"
 msgstr ""
 
-#: includes/admin/admin.php:55
-#: includes/admin/admin.php:61
-#: includes/admin/admin.php:273
+#: includes/admin/admin.php:62
+#: includes/admin/admin.php:69
+#: includes/admin/admin.php:286
 msgid "General Reports:"
 msgstr ""
 
-#: includes/admin/admin.php:55
-#: includes/admin/admin.php:273
+#: includes/admin/admin.php:62
+#: includes/admin/admin.php:286
 msgid "Reports"
 msgstr ""
 
-#: includes/admin/admin.php:79
+#: includes/admin/admin.php:66
+#: includes/admin/admin.php:389
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/admin.php:86
 msgid "Site Notes:"
 msgstr ""
 
-#: includes/admin/admin.php:79
+#: includes/admin/admin.php:86
 msgid "Site Notes"
 msgstr ""
 
 #. translators: Icon
-#: includes/admin/admin.php:83
+#: includes/admin/admin.php:92
 msgid "AI Insights:"
 msgstr ""
 
 #. translators: Icon
-#: includes/admin/admin.php:83
+#: includes/admin/admin.php:92
 msgid "%s AI Insights"
 msgstr ""
 
-#. translators: Placeholder adds an svg icon
-#: includes/admin/admin.php:90
+#. translators: Placeholder adds a svg icon
+#: includes/admin/admin.php:100
 msgid "Conversations AI:"
 msgstr ""
 
-#. translators: Placeholder adds an svg icon
-#: includes/admin/admin.php:90
+#. translators: Placeholder adds a svg icon
+#: includes/admin/admin.php:100
 msgid "%s Conversations AI"
 msgstr ""
 
-#: includes/admin/admin.php:94
+#: includes/admin/admin.php:104
 msgid "Popular Posts:"
 msgstr ""
 
-#: includes/admin/admin.php:94
+#: includes/admin/admin.php:104
 msgid "Popular Posts"
 msgstr ""
 
-#: includes/admin/admin.php:97
+#: includes/admin/admin.php:109
 msgid "User Journey:"
 msgstr ""
 
-#: includes/admin/admin.php:97
+#: includes/admin/admin.php:109
 msgid "User Journey"
 msgstr ""
 
-#: includes/admin/admin.php:105
-#: includes/admin/admin.php:281
+#: includes/admin/admin.php:118
+#: includes/admin/admin.php:294
 msgid "SEO"
 msgstr ""
 
-#: includes/admin/admin.php:108
+#: includes/admin/admin.php:121
 msgid "Tools:"
 msgstr ""
 
-#: includes/admin/admin.php:108
+#: includes/admin/admin.php:121
 msgid "Tools"
 msgstr ""
 
-#: includes/admin/admin.php:113
-#: includes/admin/admin.php:284
+#: includes/admin/admin.php:126
+#: includes/admin/admin.php:297
 msgid "Addons:"
 msgstr ""
 
-#: includes/admin/admin.php:113
-#: includes/admin/admin.php:284
+#: includes/admin/admin.php:126
+#: includes/admin/admin.php:297
 msgid "Addons"
 msgstr ""
 
-#: includes/admin/admin.php:118
+#: includes/admin/admin.php:131
 msgid "UserFeedback:"
 msgstr ""
 
-#: includes/admin/admin.php:119
+#: includes/admin/admin.php:132
 msgid "UserFeedback"
 msgstr ""
 
-#: includes/admin/admin.php:125
-#: includes/admin/admin.php:289
+#: includes/admin/admin.php:138
+#: includes/admin/admin.php:302
 msgid "About Us:"
 msgstr ""
 
-#: includes/admin/admin.php:125
-#: includes/admin/admin.php:289
+#: includes/admin/admin.php:138
+#: includes/admin/admin.php:302
 msgid "About Us"
 msgstr ""
 
-#: includes/admin/admin.php:132
+#: includes/admin/admin.php:145
 msgid "Growth Tools:"
 msgstr ""
 
-#: includes/admin/admin.php:132
+#: includes/admin/admin.php:145
 msgid "Growth Tools"
 msgstr ""
 
-#: includes/admin/admin.php:136
+#: includes/admin/admin.php:149
 msgid "Upgrade to Pro:"
 msgstr ""
 
-#: includes/admin/admin.php:136
+#: includes/admin/admin.php:149
 #: includes/admin/notifications/notification-upgrade-to-pro-high-traffic.php:41
 #: includes/admin/notifications/notification-upgrade-to-pro.php:33
 #: lite/includes/emails/templates/body-summaries.php:384
@@ -10222,66 +10225,66 @@ msgstr ""
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: includes/admin/admin.php:143
+#: includes/admin/admin.php:156
 msgid "Payments:"
 msgstr ""
 
-#: includes/admin/admin.php:144
+#: includes/admin/admin.php:157
 msgid "Payments"
 msgstr ""
 
-#: includes/admin/admin.php:160
+#: includes/admin/admin.php:173
 msgid "Earth Day"
 msgstr ""
 
-#: includes/admin/admin.php:168
+#: includes/admin/admin.php:181
 msgid "Cinco De Mayo!"
 msgstr ""
 
-#: includes/admin/admin.php:176
+#: includes/admin/admin.php:189
 msgid "Upgrade to GA4"
 msgstr ""
 
-#: includes/admin/admin.php:184
+#: includes/admin/admin.php:197
 msgid "Summer Sale"
 msgstr ""
 
-#: includes/admin/admin.php:192
+#: includes/admin/admin.php:205
 msgid "Fortune Cookie Day"
 msgstr ""
 
-#: includes/admin/admin.php:200
+#: includes/admin/admin.php:213
 msgid "Halloween Sale"
 msgstr ""
 
-#: includes/admin/admin.php:269
-#: includes/admin/admin.php:271
+#: includes/admin/admin.php:282
+#: includes/admin/admin.php:284
 msgid "Network Settings:"
 msgstr ""
 
-#: includes/admin/admin.php:271
-#: includes/admin/admin.php:374
+#: includes/admin/admin.php:284
+#: includes/admin/admin.php:387
 msgid "Network Settings"
 msgstr ""
 
-#: includes/admin/admin.php:281
+#: includes/admin/admin.php:294
 msgid "SEO:"
 msgstr ""
 
-#: includes/admin/admin.php:361
+#: includes/admin/admin.php:374
 msgid "MonsterInsights Knowledge Base"
 msgstr ""
 
-#: includes/admin/admin.php:361
+#: includes/admin/admin.php:374
 msgid "Documentation"
 msgstr ""
 
-#: includes/admin/admin.php:366
-#: includes/admin/admin.php:369
+#: includes/admin/admin.php:379
+#: includes/admin/admin.php:382
 msgid "Support"
 msgstr ""
 
-#: includes/admin/admin.php:383
+#: includes/admin/admin.php:396
 #: includes/admin/notifications/notification-upgrade-eu-traffic.php:86
 #: includes/admin/notifications/notification-upgrade-for-custom-dimensions.php:31
 #: includes/admin/notifications/notification-upgrade-for-email-summaries.php:36
@@ -10292,35 +10295,35 @@ msgid "Get MonsterInsights Pro"
 msgstr ""
 
 #. Translators: Placeholders add a link to the wordpress.org repository.
-#: includes/admin/admin.php:456
+#: includes/admin/admin.php:469
 msgid "Please rate %1$sMonsterInsights%2$s on %3$s %4$sWordPress.org%5$s to help us spread the word. Thank you from the MonsterInsights team!"
 msgstr ""
 
-#: includes/admin/admin.php:487
+#: includes/admin/admin.php:500
 msgid "Urgent: Your Website is Not Tracking Any Google Analytics Data!"
 msgstr ""
 
-#: includes/admin/admin.php:488
+#: includes/admin/admin.php:501
 msgid "Google Analytics 3 (UA) and support was sunset on July 1, 2023. Your website is currently NOT tracking any analytics. </br>Create or connect a new Google Analytics 4 property immediately to start tracking."
 msgstr ""
 
-#: includes/admin/admin.php:498
+#: includes/admin/admin.php:511
 msgid "Learn How to Create a GA4 Property"
 msgstr ""
 
-#: includes/admin/admin.php:501
+#: includes/admin/admin.php:514
 msgid "Connect a Property"
 msgstr ""
 
-#: includes/admin/admin.php:515
+#: includes/admin/admin.php:528
 msgid "Please Setup Website Analytics to See Audience Insights"
 msgstr ""
 
-#: includes/admin/admin.php:516
+#: includes/admin/admin.php:529
 msgid "Please Connect Your Website to MonsterInsights"
 msgstr ""
 
-#: includes/admin/admin.php:518
+#: includes/admin/admin.php:531
 #: includes/admin/common.php:646
 #: includes/admin/common.php:672
 #: includes/admin/common.php:704
@@ -10333,104 +10336,104 @@ msgstr ""
 msgid "Learn More"
 msgstr ""
 
-#: includes/admin/admin.php:520
+#: includes/admin/admin.php:533
 msgid "MonsterInsights, the #1 WordPress Analytics Plugin, helps you easily connect your website to Google Analytics, so that you can see how people find and use your website. Over 3 million website owners use MonsterInsights to see the stats that matter and grow their business."
 msgstr ""
 
 #. Translators: Adds a link to retrieve the license.
-#: includes/admin/admin.php:531
+#: includes/admin/admin.php:544
 msgid "Warning: No valid license key has been entered for MonsterInsights. You are currently not getting updates, and are not able to view reports. %1$sPlease click here to enter your license key and begin receiving updates and reports.%2$s"
 msgstr ""
 
 #. Translators: Adds a link to the license renewal.
-#: includes/admin/admin.php:543
+#: includes/admin/admin.php:556
 msgid "Your license key for MonsterInsights has expired. %1$sPlease click here to renew your license key.%2$s"
 msgstr ""
 
-#: includes/admin/admin.php:545
+#: includes/admin/admin.php:558
 msgid "Your license key for MonsterInsights has been disabled. Please use a different key."
 msgstr ""
 
-#: includes/admin/admin.php:547
-#: includes/admin/api-auth.php:299
+#: includes/admin/admin.php:560
+#: includes/admin/api-auth.php:305
 msgid "Your license key for MonsterInsights is invalid. The key no longer exists or the user associated with the key has been deleted. Please use a different key."
 msgstr ""
 
 #. Translators: Adds a link to renew license.
-#: includes/admin/admin.php:552
+#: includes/admin/admin.php:565
 msgid "Your network license key for MonsterInsights has expired. %1$sPlease click here to renew your license key.%2$s"
 msgstr ""
 
-#: includes/admin/admin.php:554
+#: includes/admin/admin.php:567
 msgid "Your network license key for MonsterInsights has been disabled. Please use a different key."
 msgstr ""
 
-#: includes/admin/admin.php:556
+#: includes/admin/admin.php:569
 msgid "Your network license key for MonsterInsights is invalid. The key no longer exists or the user associated with the key has been deleted. Please use a different key."
 msgstr ""
 
 #. Translators: Placeholders add the PHP version, a link to the MonsterInsights blog and a line break.
-#: includes/admin/admin.php:578
+#: includes/admin/admin.php:591
 msgid "Your site is running an outdated, insecure version of PHP (%1$s), which could be putting your site at risk for being hacked.%4$sWordPress stopped supporting your PHP version in April, 2019.%4$sUpdating PHP only takes a few minutes and will make your website significantly faster and more secure.%4$s%2$sLearn more about updating PHP%3$s"
 msgstr ""
 
 #. Translators: Placeholders add the PHP version, a link to the MonsterInsights blog and a line break.
-#: includes/admin/admin.php:581
+#: includes/admin/admin.php:594
 msgid "Your site is running an outdated, insecure version of PHP (%1$s), which could be putting your site at risk for being hacked.%4$sWordPress stopped supporting your PHP version in November, 2019.%4$sUpdating PHP only takes a few minutes and will make your website significantly faster and more secure.%4$s%2$sLearn more about updating PHP%3$s"
 msgstr ""
 
 #. Translators: Placeholders add the PHP version, a link to the MonsterInsights blog and a line break.
-#: includes/admin/admin.php:584
+#: includes/admin/admin.php:597
 msgid "Your site is running an outdated, insecure version of PHP (%1$s), which could be putting your site at risk for being hacked.%4$sWordPress is working towards discontinuing support for your PHP version.%4$sUpdating PHP only takes a few minutes and will make your website significantly faster and more secure.%4$s%2$sLearn more about updating PHP%3$s"
 msgstr ""
 
 #. Translators: Placeholders add links to the settings panel.
-#: includes/admin/admin.php:662
+#: includes/admin/admin.php:675
 msgid "Important: You are currently using manual GA4 Measurement ID output. We highly recommend %1$sauthenticating with MonsterInsights%2$s so that you can access our new reporting area and take advantage of new MonsterInsights features."
 msgstr ""
 
 #. Translators: Placeholders add links to the settings panel.
-#: includes/admin/admin.php:667
+#: includes/admin/admin.php:680
 msgid "Click %1$shere%2$s to reauthenticate to be able to access reports. For more information why this is required, see our %3$sblog post%4$s."
 msgstr ""
 
 #. Translators: Placeholders add a link to the MonsterInsights website.
-#: includes/admin/admin.php:714
-#: includes/admin/admin.php:764
+#: includes/admin/admin.php:727
+#: includes/admin/admin.php:777
 msgid "%1$sGet MonsterInsights Pro%2$s"
 msgstr ""
 
-#: includes/admin/admin.php:721
+#: includes/admin/admin.php:734
 msgid "Save <span>50%</span> Off MonsterInsights Pro"
 msgstr ""
 
-#: includes/admin/admin.php:731
+#: includes/admin/admin.php:744
 msgid "Add eCommerce Analytics to your WooCommerce Store"
 msgstr ""
 
-#: includes/admin/admin.php:732
+#: includes/admin/admin.php:745
 msgid "Unlock all of our advanced eCommerce features specifically designed to help your store make more money.."
 msgstr ""
 
-#: includes/admin/admin.php:733
+#: includes/admin/admin.php:746
 msgid "MonsterInsights Pro users instantly gain access to valuable insights such as average order value, conversion rates, as well as marketing performance with UTM tracking."
 msgstr ""
 
-#: includes/admin/admin.php:734
+#: includes/admin/admin.php:747
 msgid "And by upgrading, Pro users also get enhanced tracking for Forms, User Journeys, PPC Pixels, Custom UserID tracking, SEO Reports, and much more."
 msgstr ""
 
-#: includes/admin/admin.php:735
+#: includes/admin/admin.php:748
 msgid "Start making better data-driven decisions today!"
 msgstr ""
 
 #. Translators: Adds a link to the settings panel.
-#: includes/admin/admin.php:780
+#: includes/admin/admin.php:793
 msgid "Warning: MonsterInsights found cross-domain settings in the custom code field and converted them to the new settings structure.  %1$sPlease click here to review and remove the code no longer needed.%2$s"
 msgstr ""
 
 #. translators: Placeholders add a link to an article.
-#: includes/admin/admin.php:857
+#: includes/admin/admin.php:870
 msgid "Your Measurement Protocol API Secret is currently left blank. To see more advanced analytics please enter a Measurement API Secret. %1$sLearn how to find your API Secret%2$s."
 msgstr ""
 
@@ -10463,57 +10466,65 @@ msgstr ""
 msgid "Oops! There has been an error authenticating. Please try again in a few minutes. If the problem persists, please %1$scontact our support%2$s team."
 msgstr ""
 
-#: includes/admin/api-auth.php:284
+#: includes/admin/api-auth.php:290
 msgid "You don't have the correct WordPress user permissions to re-authenticate into MonsterInsights. Please check with your site administrator that your role is included in the MonsterInsights permissions settings. %1$sClick here for more information%2$s."
 msgstr ""
 
-#: includes/admin/api-auth.php:307
-#: includes/admin/api-auth.php:317
+#: includes/admin/api-auth.php:313
+#: includes/admin/api-auth.php:323
 msgid "Oops! There was a problem while re-authenticating. Please try to complete the MonsterInsights %1$ssetup wizard%2$s again. If the problem persists, please %3$scontact our support%4$s team."
 msgstr ""
 
-#: includes/admin/api-auth.php:437
+#: includes/admin/api-auth.php:449
 msgid "You don't have the correct user permissions to verify the MonsterInsights license you are trying to use. Please check with your site administrator that your role is included in the MonsterInsights permissions settings. %1$sClick here for more information%2$s."
 msgstr ""
 
-#: includes/admin/api-auth.php:452
-#: includes/admin/api-auth.php:460
+#: includes/admin/api-auth.php:464
 #: includes/admin/api-auth.php:472
+#: includes/admin/api-auth.php:484
 msgid "Please enter a valid license within the MonsterInsights settings panel. You can check your license by logging into your MonsterInsights account by %1$sclicking here%2$s."
 msgstr ""
 
-#: includes/admin/api-auth.php:482
+#: includes/admin/api-auth.php:494
 msgid "Successfully verified."
 msgstr ""
 
-#: includes/admin/api-auth.php:486
-#: includes/admin/api-auth.php:500
+#: includes/admin/api-auth.php:498
+#: includes/admin/api-auth.php:512
 msgid "Oops! There has been an error while trying to verify your license. Please try again or contact our support team by %1$sclicking here%2$s."
 msgstr ""
 
-#: includes/admin/api-auth.php:537
+#: includes/admin/api-auth.php:549
 msgid "You don't have the correct WordPress user permissions to deauthenticate into MonsterInsights. Please check with your site administrator that your role is included in the MonsterInsights permissions settings. %1$sClick here for more information%2$s."
 msgstr ""
 
-#: includes/admin/api-auth.php:552
-#: includes/admin/api-auth.php:562
+#: includes/admin/api-auth.php:564
+#: includes/admin/api-auth.php:574
 msgid "Could not disconnect as you are not currently authenticated properly. Please try to authenticate again with our MonsterInsights %1$ssetup wizard%2$s.  If you are still having problems, please %3$scontact our support%4$s team."
 msgstr ""
 
-#: includes/admin/api-auth.php:576
+#: includes/admin/api-auth.php:588
 msgid "Could not disconnect your account, as you are not currently authenticated properly. Please try to authenticate again with our %1$sMonsterInsights setup wizard%2$s.  If you are still having problems, please %3$scontact our support%4$s team."
 msgstr ""
 
-#: includes/admin/api-auth.php:590
+#: includes/admin/api-auth.php:602
 msgid "Successfully deauthenticated."
 msgstr ""
 
-#: includes/admin/api-auth.php:593
+#: includes/admin/api-auth.php:605
 msgid "Successfully force deauthenticated."
 msgstr ""
 
-#: includes/admin/api-auth.php:597
+#: includes/admin/api-auth.php:609
 msgid "Oops! There has been an error while trying to deauthenticate. Please try again. If the issue persists, please %1$scontact our support%2$s team."
+msgstr ""
+
+#: includes/admin/api-auth.php:824
+msgid "Website & Google Analytics Timezone Mismatch"
+msgstr ""
+
+#: includes/admin/api-auth.php:827
+msgid "We detected your Google Analytics property is set to a different timezone than your website. This may slightly impact your stats, especially when comparing day over day performance. You may want to adjust your website's time zone %1$shere%2$s."
 msgstr ""
 
 #. Translators: Placeholders are for links to fix the issue.
@@ -10562,7 +10573,7 @@ msgid "To update, we recommend following this %1$sstep by step guide for updatin
 msgstr ""
 
 #: includes/admin/common.php:699
-msgid "View 2023 Year in Review report!"
+msgid "View 2024 Year in Review report!"
 msgstr ""
 
 #: includes/admin/common.php:700
@@ -11024,187 +11035,187 @@ msgstr ""
 msgid "I already did"
 msgstr ""
 
-#: includes/admin/routes.php:332
+#: includes/admin/routes.php:335
 msgid "The best WordPress eCommerce plugin for selling digital downloads. Start selling eBooks, software, music, digital art, and more within minutes. Accept payments, manage subscriptions, advanced access control, and more."
 msgstr ""
 
-#: includes/admin/routes.php:366
-#: includes/admin/routes.php:711
+#: includes/admin/routes.php:369
+#: includes/admin/routes.php:714
 msgid "Top-rated WordPress donation and fundraising plugin. Over 10,000+ non-profit organizations and website owners use Charitable to create fundraising campaigns and raise more money online."
 msgstr ""
 
-#: includes/admin/routes.php:378
-#: includes/admin/routes.php:722
+#: includes/admin/routes.php:381
+#: includes/admin/routes.php:725
 msgid "Future proof your WordPress customizations with the most popular code snippet management plugin for WordPress. Trusted by over 1,500,000+ websites for easily adding code to WordPress right from the admin area."
 msgstr ""
 
-#: includes/admin/routes.php:390
-#: includes/admin/routes.php:733
+#: includes/admin/routes.php:393
+#: includes/admin/routes.php:736
 msgid "Leading WordPress backup & site migration plugin. Over 1,500,000+ smart website owners use Duplicator to make reliable and secure WordPress backups to protect their websites. It also makes website migration really easy."
 msgstr ""
 
-#: includes/admin/routes.php:439
+#: includes/admin/routes.php:442
 msgid "The #1 affiliate management plugin for WordPress. Easily create an affiliate program for your eCommerce store or membership site within minutes and start growing your sales with the power of referral marketing."
 msgstr ""
 
-#: includes/admin/routes.php:452
+#: includes/admin/routes.php:455
 msgid "The #1 Stripe payments plugin for WordPress. Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required."
 msgstr ""
 
-#: includes/admin/routes.php:464
-#: includes/admin/routes.php:700
+#: includes/admin/routes.php:467
+#: includes/admin/routes.php:703
 msgid "A simple & powerful event calendar plugin for WordPress that comes with all the event management features including payments, scheduling, timezones, ticketing, recurring events, and more."
 msgstr ""
 
-#: includes/admin/routes.php:476
+#: includes/admin/routes.php:479
 msgid "The best drag & drop WordPress form builder. Easily create beautiful contact forms, surveys, payment forms, and more with our 1000+ form templates. Trusted by over 6 million websites as the best forms plugin."
 msgstr ""
 
-#: includes/admin/routes.php:488
+#: includes/admin/routes.php:491
 msgid "Ask visitors questions about how they use your website or what features can make you more money."
 msgstr ""
 
-#: includes/admin/routes.php:500
+#: includes/admin/routes.php:503
 msgid "The original WordPress SEO plugin and toolkit that improves your website’s search rankings. Comes with all the SEO features like Local SEO, WooCommerce SEO, sitemaps, SEO optimizer, schema, and more."
 msgstr ""
 
-#: includes/admin/routes.php:512
+#: includes/admin/routes.php:515
 msgid "Stripe Payment Gateway for WooCommerce is an integrated solution that lets you accept payments on your online store for web and mobile."
 msgstr ""
 
-#: includes/admin/routes.php:527
+#: includes/admin/routes.php:530
 msgid "Instantly get more subscribers, leads, and sales with the #1 conversion optimization toolkit. Create high converting popups, announcement bars, spin a wheel, and more with smart targeting and personalization."
 msgstr ""
 
-#: includes/admin/routes.php:538
+#: includes/admin/routes.php:541
 msgid "Improve your WordPress email deliverability and make sure that your website emails reach user’s inbox with the #1 SMTP plugin for WordPress. Over 3 million websites use it to fix WordPress email issues."
 msgstr ""
 
-#: includes/admin/routes.php:548
+#: includes/admin/routes.php:551
 msgid "The fastest drag & drop landing page builder for WordPress. Create custom landing pages without writing code, connect them with your CRM, collect subscribers, and grow your audience. Trusted by 1 million sites."
 msgstr ""
 
-#: includes/admin/routes.php:559
+#: includes/admin/routes.php:562
 msgid "Turn your website visitors into brand ambassadors! Easily grow your email list, website traffic, and social media followers with the most powerful giveaways & contests plugin for WordPress."
 msgstr ""
 
-#: includes/admin/routes.php:570
+#: includes/admin/routes.php:573
 msgid "Boost your sales and conversions by up to 15% with real-time social proof notifications. TrustPulse helps you show live user activity and purchases to help convince other users to purchase."
 msgstr ""
 
-#: includes/admin/routes.php:583
-#: includes/admin/routes.php:689
+#: includes/admin/routes.php:586
+#: includes/admin/routes.php:692
 msgid "The most advanced WordPress search plugin. Customize your WordPress search algorithm, reorder search results, track search metrics, and everything you need to leverage search to grow your business."
 msgstr ""
 
-#: includes/admin/routes.php:595
+#: includes/admin/routes.php:598
 msgid "Easily display Instagram content on your WordPress site without writing any code. Comes with multiple templates, ability to show content from multiple accounts, hashtags, and more. Trusted by 1 million websites."
 msgstr ""
 
-#: includes/admin/routes.php:609
+#: includes/admin/routes.php:612
 msgid "Easily display Facebook content on your WordPress site without writing any code. Comes with multiple templates, ability to embed albums, group content, reviews, live videos, comments, and reactions."
 msgstr ""
 
-#: includes/admin/routes.php:623
+#: includes/admin/routes.php:626
 msgid "Easily display YouTube videos on your WordPress site without writing any code. Comes with multiple layouts, ability to embed live streams, video filtering, ability to combine multiple channel videos, and more."
 msgstr ""
 
-#: includes/admin/routes.php:638
+#: includes/admin/routes.php:641
 msgid "Easily display Twitter content in WordPress without writing any code. Comes with multiple layouts, ability to combine multiple Twitter feeds, Twitter card support, tweet moderation, and more."
 msgstr ""
 
-#: includes/admin/routes.php:653
+#: includes/admin/routes.php:656
 msgid "Connect with your visitors after they leave your website with the leading web push notification software. Over 10,000+ businesses worldwide use PushEngage to send 15 billion notifications each month."
 msgstr ""
 
-#: includes/admin/routes.php:664
+#: includes/admin/routes.php:667
 msgid "Automate everything with the #1 no-code Automation tool for WordPress."
 msgstr ""
 
-#: includes/admin/routes.php:678
+#: includes/admin/routes.php:681
 msgid "Pretty Links helps you shrink, beautify, track, manage and share any URL on or off of your WordPress website. Create links that look how you want using your own domain name!"
 msgstr ""
 
-#: includes/admin/routes.php:744
+#: includes/admin/routes.php:747
 msgid "Start accepting one-time and recurring payments on your WordPress site without setting up a shopping cart. No code required."
 msgstr ""
 
-#: includes/admin/routes.php:756
+#: includes/admin/routes.php:759
 msgid "Advanced Coupons for WooCommerce (Free Version) gives WooCommerce store owners extra coupon features so they can market their stores better."
 msgstr ""
 
-#: includes/admin/routes.php:769
+#: includes/admin/routes.php:772
 msgid "See what your analytics software isn’t telling you with powerful UserFeedback surveys."
 msgstr ""
 
-#: includes/admin/routes.php:886
+#: includes/admin/routes.php:889
 msgid "Oops! Please enter a valid Google Analytics 4 Measurement ID. %1$sLearn how to find your Measurement ID%2$s."
 msgstr ""
 
-#: includes/admin/routes.php:962
+#: includes/admin/routes.php:965
 msgid "Please upload a valid .json file"
 msgstr ""
 
-#: includes/admin/routes.php:970
+#: includes/admin/routes.php:973
 msgid "Please select a valid file to upload."
 msgstr ""
 
-#: includes/admin/routes.php:1020
+#: includes/admin/routes.php:1023
 msgid "Oops! You don not have permissions to view MonsterInsights reporting. Please check with your site administrator that your role is included in the MonsterInsights permissions settings. %1$sClick here for more information%2$s."
 msgstr ""
 
-#: includes/admin/routes.php:1039
+#: includes/admin/routes.php:1042
 msgid "Oops! You cannot view MonsterInsights reports because you are not licensed. Please try again in a few minutes. If the issue continues, please %1$scontact our support%2$s team."
 msgstr ""
 
-#: includes/admin/routes.php:1045
-#: includes/admin/routes.php:1454
+#: includes/admin/routes.php:1048
+#: includes/admin/routes.php:1457
 msgid "Add your license"
 msgstr ""
 
-#: includes/admin/routes.php:1054
+#: includes/admin/routes.php:1057
 msgid "Oops! We had a problem due to a license key error. Please try again in a few minutes. If the problem persists, please %1$scontact our support%2$s team."
 msgstr ""
 
-#: includes/admin/routes.php:1074
+#: includes/admin/routes.php:1077
 msgid "You need to authenticate into MonsterInsights before viewing reports. Please run our %1$ssetup wizard%2$s."
 msgstr ""
 
-#: includes/admin/routes.php:1086
+#: includes/admin/routes.php:1089
 msgid "Oops! We ran into a problem displaying this report. Please %1$scontact our support%2$s team if this issue persists."
 msgstr ""
 
-#: includes/admin/routes.php:1151
-#: includes/admin/routes.php:1495
-#: includes/admin/routes.php:1549
+#: includes/admin/routes.php:1154
+#: includes/admin/routes.php:1498
+#: includes/admin/routes.php:1552
 msgid "Oops! We encountered an error while generating your reports. Please wait a few minutes and try again. If the issue persists, please %1$scontact our support%2$s team."
 msgstr ""
 
-#: includes/admin/routes.php:1166
+#: includes/admin/routes.php:1169
 msgid "Oops! You are not allowed to install plugins. Please contact your website administrator for further assistance."
 msgstr ""
 
-#: includes/admin/routes.php:1174
+#: includes/admin/routes.php:1177
 msgid "Missing plugin name."
 msgstr ""
 
-#: includes/admin/routes.php:1335
+#: includes/admin/routes.php:1338
 msgid "Homepage"
 msgstr ""
 
-#: includes/admin/routes.php:1425
+#: includes/admin/routes.php:1428
 msgid "Oops! You don not have permissions to view or access Popular Posts. Please check with your site administrator that your role is included in the MonsterInsights permissions settings. %1$sClick here for more information%2$s."
 msgstr ""
 
-#: includes/admin/routes.php:1448
+#: includes/admin/routes.php:1451
 msgid "Oops! We could not find a valid license key for MonsterInsights. Please %1$senter a valid license key%2$s to view this report."
 msgstr ""
 
-#: includes/admin/routes.php:1463
+#: includes/admin/routes.php:1466
 msgid "Oops! We could not find a valid license key. Please enter a valid license key to view this report. You can find your license by logging into your %1$sMonsterInsights account%2$s."
 msgstr ""
 
-#: includes/admin/routes.php:1483
+#: includes/admin/routes.php:1486
 msgid "You need to authenticate into MonsterInsights before viewing reports. Please complete the setup by going through our %1$ssetup wizard%2$s."
 msgstr ""
 
@@ -11220,56 +11231,77 @@ msgstr ""
 msgid "There was an error grabbing data from SharedCount, please check the API Key"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:243
+#: includes/admin/site-notes/Controller.php:112
+#: includes/admin/site-notes/Controller.php:156
+msgid "You don't have permission to view notes."
+msgstr ""
+
+#: includes/admin/site-notes/Controller.php:186
+msgid "You don't have permission to view notes categories."
+msgstr ""
+
+#: includes/admin/site-notes/Controller.php:231
+#: includes/admin/site-notes/Controller.php:348
+#: includes/admin/site-notes/Controller.php:386
+#: includes/admin/site-notes/Controller.php:424
+#: includes/admin/site-notes/Controller.php:462
+msgid "You don't have permission to update notes."
+msgstr ""
+
+#: includes/admin/site-notes/Controller.php:281
+msgid "You don't have permission to update categories."
+msgstr ""
+
+#: includes/admin/site-notes/Controller.php:292
 msgid "Please add a category name"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:252
+#: includes/admin/site-notes/Controller.php:301
 msgid "You can't exceed the 200 characters length for each site note."
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:300
+#: includes/admin/site-notes/Controller.php:359
 msgid "Please choose a site note to trash!"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:327
+#: includes/admin/site-notes/Controller.php:397
 msgid "Please choose a site note(s) to restore!"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:354
+#: includes/admin/site-notes/Controller.php:435
 msgid "Please choose a site note(s) to delete!"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:381
+#: includes/admin/site-notes/Controller.php:473
 msgid "Please choose a category to delete!"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:429
+#: includes/admin/site-notes/Controller.php:520
 msgid "Date"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:430
+#: includes/admin/site-notes/Controller.php:521
 msgid "Site Note"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:431
-#: includes/admin/site-notes/Controller.php:686
+#: includes/admin/site-notes/Controller.php:522
+#: includes/admin/site-notes/Controller.php:768
 msgid "Category"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:432
+#: includes/admin/site-notes/Controller.php:523
 msgid "Important"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:433
+#: includes/admin/site-notes/Controller.php:524
 msgid "Media"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:442
+#: includes/admin/site-notes/Controller.php:533
 msgid "NA"
 msgstr ""
 
-#: includes/admin/site-notes/Controller.php:675
+#: includes/admin/site-notes/Controller.php:757
 msgid "Add a Site Note"
 msgstr ""
 
@@ -15147,15 +15179,15 @@ msgstr ""
 msgid "Hide Page Insights"
 msgstr ""
 
-#: lite/includes/admin/onboarding-wizard.php:163
+#: lite/includes/admin/onboarding-wizard.php:166
 msgid "MonsterInsights &rsaquo; Onboarding Wizard"
 msgstr ""
 
-#: lite/includes/admin/onboarding-wizard.php:178
+#: lite/includes/admin/onboarding-wizard.php:181
 msgid "Return to Dashboard"
 msgstr ""
 
-#: lite/includes/admin/onboarding-wizard.php:244
+#: lite/includes/admin/onboarding-wizard.php:247
 msgid "Oops! You are not allowed to install plugins. Please contact your site administrator for assistance."
 msgstr ""
 

@@ -3,14 +3,15 @@ namespace sgpb;
 use \WP_Query;
 use \SgpbPopupConfig;
 use \SgpbDataConfig;
-
+use \SGPBConfigDataHelper;
 
 class Actions
 {
 	public $customPostTypeObj;
 	public $insideShortcodes;
 	public $mediaButton = false;
-
+	private $excludePopupsQueryString = '';
+	
 	public function __construct()
 	{
 		$this->init();
@@ -70,7 +71,10 @@ class Actions
 		add_filter('get_user_option_screen_layout_'.SG_POPUP_POST_TYPE, array($this, 'screenLayoutSetOneColumn'));
 		
 		add_filter( 'upload_mimes', array($this, 'popupbuilder_allow_csv_mime_types') );
-		add_action( 'plugins_loaded' , array($this, 'popupbuilder_contrucst') ); 
+		add_action( 'plugins_loaded' , array($this, 'popupbuilder_contrucst') ); 		
+		
+		add_filter('wp_count_posts', array($this ,'sgpbExcludePopupsToShowCounter'), 10, 3);
+		add_action( 'wp_trash_post',  array($this, 'sgpb_backupPopupOptionsBeforeTrash') );
 	}
 	public function popupbuilder_contrucst()
 	{
@@ -125,7 +129,7 @@ class Actions
 
 	public function removeUnneededMetaboxesFromPopups()
 	{
-		if (isset($_GET['post_type']) && sanitize_text_field($_GET['post_type']) == SG_POPUP_POST_TYPE) {
+		if (isset($_GET['post_type']) && sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) == SG_POPUP_POST_TYPE) {
 			$exlcudeTrPopupTypes = array(
 				'image',
 				'video',
@@ -307,8 +311,12 @@ class Actions
 
 	public function wpInit()
 	{
+		SgpbPopupConfig::addDefine('SGPB_SUBSCRIPTION_ERROR_MESSAGE', __('There was an error while trying to send your request. Please try again', 'popup-builder').'.');
+		SgpbPopupConfig::addDefine('SGPB_SUBSCRIPTION_VALIDATION_MESSAGE', __('This field is required', 'popup-builder').'.');
+		SgpbPopupConfig::addDefine('SGPB_SUBSCRIPTION_EMAIL_MESSAGE', __('Please enter a valid email address', 'popup-builder').'.');
+		
 		if (isset($_GET['sgpb_type'])) {
-			$_GET['sgpb_type'] = sanitize_text_field($_GET['sgpb_type']);
+			$_GET['sgpb_type'] = sanitize_text_field( wp_unslash( $_GET['sgpb_type'] ) );
 			$fields = array(
 				'image',
 				'html',
@@ -403,7 +411,7 @@ class Actions
 
 	public function preGetPosts($query)
 	{
-		if (!is_admin() || !isset($_GET['post_type']) || sanitize_text_field($_GET['post_type']) != SG_POPUP_POST_TYPE) {
+		if (!is_admin() || !isset($_GET['post_type']) || sanitize_text_field(wp_unslash($_GET['post_type'])) != SG_POPUP_POST_TYPE) {
 			return false;
 		}
 
@@ -912,7 +920,7 @@ class Actions
 
 		$adminUrl = admin_url();
 
-		if (isset($_GET['page']) && sanitize_text_field($_GET['page']) == 'PopupBuilder') {
+		if (isset($_GET['page']) && sanitize_text_field(wp_unslash( $_GET['page'])) == 'PopupBuilder') {
 			echo '<span>';
 					printf(
 						/* translators: Link to edit Popup item, location. */
@@ -921,7 +929,7 @@ class Actions
 							/* translators: admin Url, Popup Post type. */
 							'<a href="%1$sedit.php?post_type=%2$s">click here</a>',
 								esc_url($adminUrl),
-								esc_html__( 'popupbuilder', 'text-domain' )
+								esc_html__( 'popupbuilder', 'popup-builder' )
 						)
 					);
 					echo '</span>';
@@ -937,8 +945,8 @@ class Actions
 		if (isset($_POST['sgpb-is-preview']) && $_POST['sgpb-is-preview'] == 1 && isset($_POST['post_ID'])) {			
 		
 			/* Validate nonce */			
-			$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( $_POST['_wpnonce'] ) : '';			
-			$postId = sanitize_text_field($_POST['post_ID']);			
+			$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';			
+			$postId = sanitize_text_field( wp_unslash( $_POST['post_ID'] ) );			
 
 			if ( empty( $nonce ) || !wp_verify_nonce( $nonce, 'update-post_'.$postId ) ) { 		
 				return;
@@ -979,13 +987,13 @@ class Actions
 		}
 		$args = array();
 		if (isset($_GET['sgpbUnsubscribe'])) {
-			$args['token'] = sanitize_text_field($_GET['sgpbUnsubscribe']);
+			$args['token'] = sanitize_text_field( wp_unslash ( $_GET['sgpbUnsubscribe'] ) );
 		}
 		if (isset($_GET['email'])) {
-			$args['email'] = sanitize_email($_GET['email']);
+			$args['email'] = sanitize_email( wp_unslash( $_GET['email'] ) );
 		}
 		if (isset($_GET['popup'])) {
-			$args['popup'] = sanitize_text_field($_GET['popup']);
+			$args['popup'] = sanitize_text_field( wp_unslash( $_GET['popup'] ) );
 		}
 
 		return $args;
@@ -1026,7 +1034,7 @@ class Actions
 			return;
 		}
 		/* Validate nonce */			
-		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( $_POST['_wpnonce'] ) : '';		
+		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';		
 		if ( empty( $nonce ) || !wp_verify_nonce( $nonce, 'update-post_'.$postId ) ) { 		
 			return;
 		}
@@ -1147,58 +1155,61 @@ class Actions
 		if (empty($popup) && $post_type == SG_POPUP_POST_TYPE) {
 			return false;
 		}
+		if(get_post_status( $postId ) !== 'trash') {
+			if ($column == 'shortcode') {				
+				$shortcodeInput = '<input type="text" onfocus="this.select();" readonly value="[sg_popup id='.esc_attr($postId).']" class="large-text code">';
+				echo wp_kses($shortcodeInput, AdminHelper::allowed_html_tags());
+			}	
+			else if ($column == 'counter') {
+				$count = $popup->getPopupOpeningCountById($postId);
+				$counter =  '<div ><span>'.$count.'</span>'.'<input onclick="SGPBBackend.resetCount('.esc_attr($postId).', true);" type="button" name="" class="sgpb-btn sgpb-btn-dark-outline" value="'.__('reset', 'popup-builder').'"></div>';
+				echo wp_kses($counter, AdminHelper::allowed_html_tags());
+			}
+			else if ($column == 'onOff') {
+				$popupPostStatus = get_post_status($postId);
+				if ($popupPostStatus == 'publish' || $popupPostStatus == 'draft'|| $popupPostStatus == 'private') {
+					$isActive = $popup->getOptionValue('sgpb-is-active', true);
+				}
+				$checked = isset($isActive) && $isActive ? 'checked' : '';
+				$switcher = '<label class="sgpb-switch">
+	                    <input class="sg-switch-checkbox sgpb-popup-status-js" value="1" data-switch-id="'.esc_attr($postId).'" type="checkbox" '.esc_attr($checked).'>
+	                    <div class="sgpb-slider sgpb-round"></div>
+	                </label>';
+				echo wp_kses($switcher, AdminHelper::allowed_html_tags());
+			}
+			else if ($column == 'sgpbIsRandomEnabled') {
+				$showValues = apply_filters('sgpbAddRandomTableColumnValues', $postId);
+				echo wp_kses($showValues, AdminHelper::allowed_html_tags());
+			}
+			else if ($column == 'options') {
+				$cloneUrl = AdminHelper::popupGetClonePostLink($postId);
+				$actionButtons = '<div class="icon icon_blue">
+									<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconEdit.png" title="Edit" alt="Edit" class="icon_edit" onclick="location.href=\''.get_edit_post_link($postId).'\'">
+								</div>';
+				$actionButtons .= '<div class="icon icon_blue">
+									<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconClone.png"  title="Clone" alt="Clone" class="icon_clone" onclick="location.href=\''.esc_url($cloneUrl).'\'">
+								</div>';
+				$actionButtons .= '<div class="icon icon_pink">
+									<img src="'.SG_POPUP_PUBLIC_URL.'icons/recycle-bin.svg" title="Remove" alt="Remove" class="icon_remove" onclick="location.href=\''.get_delete_post_link($postId).'\'">
+								</div>';
 
-		if ($column == 'shortcode') {
-			$shortcodeInput = '<input type="text" onfocus="this.select();" readonly value="[sg_popup id='.esc_attr($postId).']" class="large-text code">';
-			echo wp_kses($shortcodeInput, AdminHelper::allowed_html_tags());
+				echo wp_kses($actionButtons, AdminHelper::allowed_html_tags());
+			}
+			else if ($column == 'className') {
+				$className = '<input type="text" onfocus="this.select();" readonly value="sg-popup-id-'.esc_attr($postId).'" class="large-text code">';
+				echo wp_kses($className, AdminHelper::allowed_html_tags());
+			}
+			
 		}
-		if ($column == 'className') {
-			$className = '<input type="text" onfocus="this.select();" readonly value="sg-popup-id-'.esc_attr($postId).'" class="large-text code">';
-			echo wp_kses($className, AdminHelper::allowed_html_tags());
-		}
-		else if ($column == 'counter') {
-			$count = $popup->getPopupOpeningCountById($postId);
-			$counter =  '<div ><span>'.$count.'</span>'.'<input onclick="SGPBBackend.resetCount('.esc_attr($postId).', true);" type="button" name="" class="sgpb-btn sgpb-btn-dark-outline" value="'.__('reset', 'popup-builder').'"></div>';
-			echo wp_kses($counter, AdminHelper::allowed_html_tags());
-		}
-		else if ($column == 'type') {
+		if ($column == 'type') {
 			global $SGPB_POPUP_TYPES;
 			$type = $popup->getType();
 			if (isset($SGPB_POPUP_TYPES['typeLabels'][$type])) {
 				$type = $SGPB_POPUP_TYPES['typeLabels'][$type];
 			}
-			echo esc_html($type);
-		}
-		else if ($column == 'onOff') {
-			$popupPostStatus = get_post_status($postId);
-			if ($popupPostStatus == 'publish' || $popupPostStatus == 'draft'|| $popupPostStatus == 'private') {
-				$isActive = $popup->getOptionValue('sgpb-is-active', true);
-			}
-			$checked = isset($isActive) && $isActive ? 'checked' : '';
-			$switcher = '<label class="sgpb-switch">
-                    <input class="sg-switch-checkbox sgpb-popup-status-js" value="1" data-switch-id="'.esc_attr($postId).'" type="checkbox" '.esc_attr($checked).'>
-                    <div class="sgpb-slider sgpb-round"></div>
-                </label>';
-			echo wp_kses($switcher, AdminHelper::allowed_html_tags());
-		}
-		else if ($column == 'sgpbIsRandomEnabled') {
-			$showValues = apply_filters('sgpbAddRandomTableColumnValues', $postId);
-			echo wp_kses($showValues, AdminHelper::allowed_html_tags());
-		}
-		else if ($column == 'options') {
-			$cloneUrl = AdminHelper::popupGetClonePostLink($postId);
-			$actionButtons = '<div class="icon icon_blue">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconEdit.png" title="Edit" alt="Edit" class="icon_edit" onclick="location.href=\''.get_edit_post_link($postId).'\'">
-							</div>';
-			$actionButtons .= '<div class="icon icon_blue">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/iconClone.png"  title="Clone" alt="Clone" class="icon_clone" onclick="location.href=\''.esc_url($cloneUrl).'\'">
-							</div>';
-			$actionButtons .= '<div class="icon icon_pink">
-								<img src="'.SG_POPUP_PUBLIC_URL.'icons/recycle-bin.svg" title="Remove" alt="Remove" class="icon_remove" onclick="location.href=\''.get_delete_post_link($postId).'\'">
-							</div>';
-
-			echo wp_kses($actionButtons, AdminHelper::allowed_html_tags());
-		}
+			echo esc_html($type);			
+		}		
+		
 	}
 
 	/*
@@ -1208,26 +1219,35 @@ class Actions
 	public function popupSaveAsNew($status = '')
 	{
 		/**
-		 * We only allow administrator to do this action
-		*/ 			
-		if ( ! current_user_can( 'manage_options' ) ) {
-			
-			wp_die(esc_html__('You do not have permission to clone the popup!', 'popup-builder'));
+		 * We only allow administrator or roles allowed in setting to do this action
+		*/ 		
+
+		$allowToAction = AdminHelper::userCanAccessTo();
+
+		if( !$allowToAction )
+		{
+			/**
+			 * We only allow administrator or roles allowed in setting to do this action
+			*/ 			
+			if ( ! current_user_can( 'manage_options' ) ) {
+				
+				wp_die(esc_html__('You do not have permission to clone the popup!', 'popup-builder'));
+			}
 		}
 		
 		/* Validate nonce */			
-		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( $_REQUEST['_wpnonce'] ) : '';			
-		$postId = (int) sanitize_text_field($_REQUEST['post']);			
+		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';			
+		$postId = isset($_REQUEST['post']) ? (int) sanitize_text_field( wp_unslash( $_REQUEST['post'] ) ) : 0;			
 
 		if ( empty( $nonce ) || !wp_verify_nonce( $nonce, 'duplicate-post_'.$postId ) ) { 		
 			wp_die(esc_html__('You do not have permission to clone the popup!', 'popup-builder'));
 		}
 		
-		if (!(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && 'popupSaveAsNew' == sanitize_text_field($_REQUEST['action'])))) {
+		if (!(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && 'popupSaveAsNew' == sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) ) ) ) {
 			wp_die(esc_html__('No post to duplicate has been supplied!', 'popup-builder'));
 		}
 		// Get the original post
-		$id = (isset($_GET['post']) ? sanitize_text_field($_GET['post']) : sanitize_text_field($_POST['post']));
+		$id = ( isset($_GET['post']) ? sanitize_text_field( wp_unslash( $_GET['post'] ) ) : sanitize_text_field( wp_unslash( $_POST['post'] ) ) );
 
 		check_admin_referer('duplicate-post_'.$id);
 
@@ -1283,10 +1303,10 @@ class Actions
 			$title = $post->post_title;
 			if ($title == '') {
 				// empty title
-				$title = __('(no title) (clone)');
+				$title = __('(no title) (clone)', 'popup-builder');
 			}
-			else {
-				$title .= ' '.__('(clone)');
+			else {				
+				$title .= ' ' . __('(clone)', 'popup-builder');
 			}
 
 			if ('publish' == $newPostStatus || 'future' == $newPostStatus) {
@@ -1471,18 +1491,33 @@ class Actions
 	private function subscriberFields() {
 		return  array('id', 'firstName', 'lastName', 'email', 'cDate', 'subscriptionType');
 	}
+	private function encrypt_data($data, $secret_key) {
+
+		if( !AdminHelper::getOption('sgpb-disable-enctyption-data') )
+		{
+			// Combine the IV and encrypted data (IV is needed for decryption)
+			$sgpb_mahoa_secret_key = base64_encode($secret_key);		
+			$sgpb_mahoa_data = base64_encode( wp_json_encode( $data ) );
+			
+			// Combine the IV and encrypted data (IV is needed for decryption) Return result 
+			$sgpb_encripted = $sgpb_mahoa_secret_key.$sgpb_mahoa_data;
+			return $sgpb_encripted;
+		}
+		return $data;
+	}
 	public function getSubscribersCsvFile()
 	{
 		global $wpdb;
 		$allowToAction = AdminHelper::userCanAccessTo();
 		if (!$allowToAction) {
+
 			wp_redirect(get_home_url());
 			exit();
 		}
 		$fields = $this->subscriberFields();
 		$query = AdminHelper::subscribersRelatedQuery();
 		if (isset($_GET['orderby']) && !empty($_GET['orderby'])) {
-			$orderBy = sanitize_text_field($_GET['orderby']);
+			$orderBy = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
 			if (!in_array($orderBy, $fields)){
 				wp_redirect(get_home_url());
 				exit();
@@ -1493,7 +1528,7 @@ class Actions
 					wp_redirect(get_home_url());
 					exit();
 				}
-				$query .= ' ORDER BY '.$orderBy.' '.sanitize_text_field($_GET['order']);
+				$query .= ' ORDER BY '.$orderBy.' '.sanitize_text_field( wp_unslash( $_GET['order'] ) );
 			}
 		}
 		$content = '';
@@ -1521,7 +1556,12 @@ class Actions
 		}
 
 		$content = apply_filters('sgpbSubscribersContent', $content);
-
+		
+		//Encrypt sensitive data before saving it to the CSV.
+		// This should be a strong secret key
+		$secret_key = get_option('sgpb-secret-code') ? get_option('sgpb-secret-code') : rtrim( base64_encode( get_option('admin_email')) , '=' ); 
+		$content = $this->encrypt_data($content, $secret_key);
+		
 		header('Pragma: public');
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -1555,7 +1595,7 @@ class Actions
 	public function saveSettings()
 	{
 		$allowToAction = AdminHelper::userCanAccessTo();
-		$nonce = isset($_POST['sgpb_saveSettings_nonce']) ? sanitize_text_field($_POST['sgpb_saveSettings_nonce']): '';
+		$nonce = isset($_POST['sgpb_saveSettings_nonce']) ? sanitize_text_field( wp_unslash( $_POST['sgpb_saveSettings_nonce'] ) ) : '';
 		if (!$allowToAction || !wp_verify_nonce($nonce, 'sgpbSaveSettings')) {
 			wp_redirect(get_home_url());
 			exit();
@@ -1564,7 +1604,9 @@ class Actions
 		$deleteData = 0;
 		$enableDebugMode = 0;
 		$disableAnalytics = 0;
-
+		$disableCustomJs = 0;
+		$disableEnctyptionData = 0;
+		$secret_keycode = '';
 		if (isset($_POST['sgpb-dont-delete-data'])) {
 			$deleteData = 1;
 		}
@@ -1574,22 +1616,30 @@ class Actions
 		if (isset($_POST['sgpb-disable-custom-js'])) {
 			$disableCustomJs = 1;
 		}
+		if (isset($_POST['sgpb-disable-enctyption-data'])) {
+			$disableEnctyptionData = 1;
+		}
 		if (isset($_POST['sgpb-disable-analytics-general'])) {
 			$disableAnalytics = 1;
 		}
 		if (!empty($_POST['sgpb-user-roles'])){
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$userRoles = $_POST['sgpb-user-roles'];
+			$userRoles = wp_unslash( $_POST['sgpb-user-roles'] );
 			array_walk_recursive($userRoles, function(&$item){
 				$item = sanitize_text_field($item);
 			});
 			update_option('sgpb-user-roles', $userRoles);
 		}
+
+		if (!empty($_POST['sgpb-secret-code'])){
+			$secret_keycode = sanitize_text_field( wp_unslash( $_POST['sgpb-secret-code'] ) );
+		}
 		update_option('sgpb-dont-delete-data', $deleteData);
 		update_option('sgpb-enable-debug-mode', $enableDebugMode);
 		update_option('sgpb-disable-analytics-general', $disableAnalytics);
 		update_option('sgpb-disable-custom-js', $disableCustomJs);
-
+		update_option('sgpb-disable-enctyption-data', $disableEnctyptionData);
+		update_option('sgpb-secret-code', $secret_keycode);
 		AdminHelper::filterUserCapabilitiesForTheUserRoles('save');
 
 		wp_redirect(admin_url().'edit.php?post_type='.SG_POPUP_POST_TYPE.'&page='.SG_POPUP_SETTINGS_PAGE);
@@ -1610,4 +1660,75 @@ class Actions
 			}
 		}
 	}
+	
+	/**
+	 * Modifies the popup counts by excluding specific popups as defined in the exclusion list.
+	 *
+	 * This function adjusts the popup counts by subtracting inactive popups identified
+	 * in the excludePopupsQueryString. Primarily intended to filter out specific popups from the counts.
+	 *
+	 * @param object $counts The original counts of popups.
+	 * @param string $type The type of post, expected to match SG_POPUP_POST_TYPE.
+	 * @param mixed $perm Permissions or other data for filtering (unused in this function).
+	 * @return object Modified counts with specified popups excluded.
+	 */
+	public function sgpbExcludePopupsToShowCounter( $counts, $type, $perm )
+	{
+		if( $type == SG_POPUP_POST_TYPE)
+		{
+			// Retrieve excluded popups from query string
+			$excludePopupsQueryString = SGPopup::$num_excluded_popups;
+			$excludePopups = [];	
+			// Populate the excludePopups array with counts from query string			
+			if( isset( $excludePopupsQueryString ) && count( $excludePopupsQueryString ) > 0 )
+			{
+				foreach( $excludePopupsQueryString as $sgpb_popup_key => $sgpb_popup_value)
+				{
+					if( isset( $excludePopups[$sgpb_popup_value] ) )
+					{
+						$excludePopups[$sgpb_popup_value] += 1;
+					}
+					else
+					{
+						$excludePopups[$sgpb_popup_value] = 1;
+					}	
+				}
+			}
+			 // Adjust original counts based on excludePopups	
+			foreach($counts as $key => $value) {
+			 
+			  	if( isset( $excludePopups[$key] ) )
+			  	{
+			  		if( $key == 'trash')			  			
+			  			$counts->$key = (int)$counts->$key - $excludePopups[$key];	
+			  	}
+			}
+		}
+			
+		return $counts;		
+	}
+	/**
+	 * Back up the popup options for a given post or multiple posts before they are moved to the trash.
+	 *
+	 * This function checks if multiple posts are being trashed. If so, it iterates over each post ID,
+	 * retrieves the associated popup options using the `SGPopup::getPopupOptionsById` method, 
+	 * and updates the post meta for each post with the key 'sg_popup_options_preview'. 
+	 * If only a single post ID is provided, it performs the same backup operation for that post.
+	 *
+	 * @param int|string $sgpb_post_id The ID of the post whose popup options should be backed up.
+	 *                                  Can be a single post ID or an empty string for batch processing.
+	 */
+	public function sgpb_backupPopupOptionsBeforeTrash( $sgpb_post_id = '' ) {
+	    // Verify if is trashing multiple posts
+	    if ( isset( $_GET['post'] ) && is_array( $_GET['post'] ) ) {
+	        foreach ( $_GET['post'] as $sgpb_post_id ) {
+	            $popupOptionsData = SGPopup::getPopupOptionsById( $sgpb_post_id, '');
+				update_post_meta($sgpb_post_id, 'sg_popup_options_preview', $popupOptionsData);
+	        }
+	    } else {
+	        $popupOptionsData = SGPopup::getPopupOptionsById( $sgpb_post_id, '');
+			update_post_meta($sgpb_post_id, 'sg_popup_options_preview', $popupOptionsData);
+	    }
+	}
+
 }

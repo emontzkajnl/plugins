@@ -117,7 +117,7 @@ class MonsterInsights_Gtag_Events {
 				'inbound_paths'       => $inbound_paths, /* Let's get the internal paths to track */
 				'home_url'            => home_url(), /* Let's get the url to compare for external/internal use */
 				'hash_tracking'       => $hash_tracking, /* Should hash track */
-				'v4_id'               => monsterinsights_get_v4_id(), /* V4 ID used for tracking */
+				'v4_id'               => monsterinsights_get_v4_id_to_output(), /* V4 ID used for tracking */
 			)
 		);
 	}
