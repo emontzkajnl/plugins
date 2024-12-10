@@ -18,6 +18,7 @@ namespace RSSSL\Security\WordPress\Two_Fa;
 //require_once __DIR__ . '/interface-rsssl-provider-interface.php';
 require_once rsssl_path . 'mailer/class-mail.php';
 
+use RSSSL\Security\WordPress\Two_Fa\Rsssl_Two_Factor_Settings;
 use rsssl_mailer;
 use Exception;
 use WP_User;
@@ -220,7 +221,7 @@ class Rsssl_Two_Factor_Email extends Rsssl_Two_Factor_Provider implements Rsssl_
 		// Ensure the token can be used only once.
 		$this->delete_token( $user_id );
 
-		update_user_meta( $user_id, 'rsssl_two_fa_status', 'active' );
+		update_user_meta( $user_id, 'rsssl_two_fa_status_email', 'active' );
 
 		return true;
 	}
@@ -244,11 +245,10 @@ class Rsssl_Two_Factor_Email extends Rsssl_Two_Factor_Provider implements Rsssl_
 	 * @return void
 	 * @since 0.1-dev
 	 */
-	public function generate_and_email_token( WP_User $user ): void {
+	public function generate_and_email_token( WP_User $user, $profile = false ): void {
 		$token = $this->generate_token( $user->ID );
 
-		$skip_two_fa_url = Rsssl_Two_Factor_Settings::rsssl_one_time_login_url( $user->ID );
-
+        $skip_two_fa_url = Rsssl_Two_Factor_Settings::rsssl_one_time_login_url( $user->ID, false, $profile );
 		// Add skip button to email content.
 		$skip_button_html = sprintf(
 			'<a href="%s" class="button" style="padding: 10px 30px; background: #2A7ABF; border-color: #2A7ABF; color: #fff; text-decoration: none; text-shadow: none; display: inline-block; margin-top: 15px; font-size: 0.8125rem; font-weight: 300; transition: all .3s ease; min-height: 10px;">' . __( 'Continue', 'really-simple-ssl' ) . '</a>',
@@ -277,11 +277,20 @@ class Rsssl_Two_Factor_Email extends Rsssl_Two_Factor_Provider implements Rsssl_
 			$skip_button_html
 		);
 
-		$message = sprintf(
-			__( "Below you will find your login code for %1\$s. It's valid for 15 minutes. %2\$s", 'really-simple-ssl' ),
-			site_url(),
-			$token_html
-		);
+        if($profile) {
+            $message = sprintf(
+                __( "Below you'll find the email activation code for %1\$s. It's valid for 15 minutes. %2\$s", 'really-simple-ssl' ),
+                site_url(),
+                $token_html
+            );
+        } else {
+            $message = sprintf(
+                __( "Below you will find your login code for %1\$s. It's valid for 15 minutes. %2\$s", 'really-simple-ssl' ),
+                site_url(),
+                $token_html
+            );
+        }
+
 
 		/**
 		 * Filter the token email subject.
@@ -308,7 +317,7 @@ class Rsssl_Two_Factor_Email extends Rsssl_Two_Factor_Provider implements Rsssl_
 		$mailer->subject = $subject;
 		$mailer->branded = false;
 		/* translators: %s is replaced with the site url */
-		$mailer->sent_by_text      = sprintf( __( 'Notification by %s', 'really-simple-ssl' ), site_url() );
+		$mailer->sent_by_text      = "<b>" . sprintf( __( 'Notification by %s', 'really-simple-ssl' ), site_url() ) . "</b>";
 		$mailer->template_filename = apply_filters( 'rsssl_email_template', rsssl_path . '/mailer/templates/email-unbranded.html' );
 		$mailer->to                = $user->user_email;
 		$mailer->title             = __( 'Hi', 'really-simple-ssl' ) . ' ' . $user->display_name . ',';
@@ -355,7 +364,7 @@ class Rsssl_Two_Factor_Email extends Rsssl_Two_Factor_Provider implements Rsssl_
 			}, 200);
 		</script>
 		<?php
-		$provider = get_user_meta( $user->ID, 'rsssl_two_fa_status', true );
+		$provider = get_user_meta( $user->ID, 'rsssl_two_fa_status_email', true );
 
 		foreach ( $user->roles as $role ) {
 			// Never show the skip link if a role is a forced role.
@@ -498,7 +507,7 @@ class Rsssl_Two_Factor_Email extends Rsssl_Two_Factor_Provider implements Rsssl_
 	 * @return void
 	 */
 	public static function set_user_status( int $user_id, string $status ): void {
-		update_user_meta( $user_id, 'rsssl_two_fa_status', $status );
+		update_user_meta( $user_id, 'rsssl_two_fa_status_email', $status );
 	}
 
 
@@ -576,7 +585,11 @@ class Rsssl_Two_Factor_Email extends Rsssl_Two_Factor_Provider implements Rsssl_
 	}
 
     public static function is_configured( WP_User $user ): bool {
-        $status = get_user_meta( $user->ID, 'rsssl_two_fa_status', true );
+        $status = get_user_meta( $user->ID, 'rsssl_two_fa_status_email', true );
         return 'active' === $status;
     }
+
+	public static function get_status( WP_User $user ): string {
+		return Rsssl_Two_Factor_Settings::get_user_status( 'email', $user->ID );
+	}
 }

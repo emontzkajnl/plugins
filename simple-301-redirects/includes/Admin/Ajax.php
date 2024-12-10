@@ -71,7 +71,7 @@ class Ajax {
     {
         check_ajax_referer('simple301redirects', 'security');
         if( ! current_user_can( 'manage_options' ) ) wp_die();
-        wp_send_json_success(get_option('301_redirects'));
+        wp_send_json_success(get_option('301_redirects', []));
         wp_die();
     }
 
@@ -81,7 +81,7 @@ class Ajax {
         if( ! current_user_can( 'manage_options' ) ) wp_die();
         $key = (isset($_POST['key']) ? sanitize_text_field($_POST['key']) : '');
         $value = (isset($_POST['value']) ? sanitize_text_field($_POST['value']) : '');
-        $links = get_option('301_redirects');
+        $links = get_option('301_redirects', []);
 		if(!empty($key) && !isset($links[$key])){
 			$links[$key] = $value;
 			update_option('301_redirects', $links);
@@ -96,9 +96,9 @@ class Ajax {
         $key = (isset($_POST['key']) ? sanitize_text_field($_POST['key']) : '');
         $oldKey = (isset($_POST['oldKey']) ? sanitize_text_field($_POST['oldKey']) : '');
         $value = (isset($_POST['value']) ? sanitize_text_field($_POST['value']) : '');
-        $links = get_option('301_redirects');
+        $links = get_option('301_redirects', []);
 		if(isset($links[$oldKey])){
-			if(isset($oldKey) && $oldKey != $param['key']){
+			if(isset($oldKey) && $oldKey != $key){
 				unset($links[$oldKey]);
 			}
 			$links[$key] = $value;

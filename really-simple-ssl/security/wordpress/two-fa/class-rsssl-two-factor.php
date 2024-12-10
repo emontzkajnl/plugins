@@ -13,11 +13,11 @@
 namespace RSSSL\Security\WordPress\Two_Fa;
 
 use Exception;
-use RSSSL\Security\WordPress\Two_Fa\Rsssl_Two_Factor_Compat;
 use RSSSL\Security\WordPress\Two_Fa\Traits\Rsssl_Email_Trait;
 use WP_Error;
 use WP_Session_Tokens;
 use WP_User;
+use rsssl_mailer;
 
 $rsssl_two_factor_compat = new Rsssl_Two_Factor_Compat();
 
@@ -98,9 +98,25 @@ class Rsssl_Two_Factor
      */
     public static function add_hooks(object $compat): void
     {
-        if (defined('RSSSL_DISABLE_2FA')) {
-            return;
-        }
+	    if ( ( defined( 'RSSSL_DISABLE_2FA' ) && RSSSL_DISABLE_2FA ) || ( defined( 'RSSSL_SAFE_MODE' ) && RSSSL_SAFE_MODE ) ) {
+		    if ( rsssl_admin_logged_in() ) {
+			    ( new Rsssl_Two_Factor_Admin() );
+		    }
+
+		    ( new Rsssl_Two_Factor_On_Board_Api() );
+		    if ( is_user_logged_in() ) {
+			    ( new Rsssl_Two_Factor_Profile_Settings() );
+		    }
+
+		    return;
+	    }
+
+        /**
+         * Runs the fix for the reset error in 9.1.1
+         */
+	    if (filter_var(get_option('rsssl_reset_fix', false), FILTER_VALIDATE_BOOLEAN)) {
+		    RSSSL_Two_Factor_Reset_Factory::reset_fix();
+	    }
 
 //		add_action( 'login_enqueue_scripts', array( __CLASS__, 'twofa_scripts' ) );
         add_action('init', array(Rsssl_Provider_Loader::class, 'get_providers'));
@@ -132,26 +148,133 @@ class Rsssl_Two_Factor
          */
         add_action('set_auth_cookie', array(__CLASS__, 'rsssl_collect_auth_cookie_tokens'));
         add_action('set_logged_in_cookie', array(__CLASS__, 'rsssl_collect_auth_cookie_tokens'));
-
         if (isset($_GET['rsssl_one_time_login']) && isset($_GET['_wpnonce'])) {
             $nonce = sanitize_text_field(wp_unslash($_GET['_wpnonce']));
+
             if (wp_verify_nonce($nonce)) {
                 add_action('init', array(__CLASS__, 'maybe_skip_auth'));
             }
+	        self::maybe_skip_auth();
         }
 
         add_action('init', array(__CLASS__, 'rsssl_collect_auth_cookie_tokens'));
 
         // Run only after the core wp_authenticate_username_password() check.
         add_filter('authenticate', array(__CLASS__, 'rsssl_filter_authenticate'));
-
-        // Run as late as possible to prevent other plugins from unintentionally bypassing.
+//
+//        // Run as late as possible to prevent other plugins from unintentionally bypassing.
         add_filter('authenticate', array(__CLASS__, 'rsssl_filter_authenticate_block_cookies'), PHP_INT_MAX);
         add_action('admin_init', array(__CLASS__, 'rsssl_enable_dummy_method_for_debug'));
         add_filter('rsssl_two_factor_providers', array(__CLASS__, 'enable_dummy_method_for_debug'));
+	    add_action( 'rsssl_daily_cron', array( __CLASS__, 'maybe_send_reminder_email' ) );
 
         $compat->init();
     }
+
+	/**
+	 * @return void
+	 *
+	 * Send a reminder e-mail if Two FA has not been configured within 3 days.
+	 */
+	public static function maybe_send_reminder_email() {
+		$roles = rsssl_get_option('two_fa_forced_roles');
+		// If no roles are set, we'll get all users
+		if ( empty( $roles ) ) {
+			// No users with 'open' status
+			return;
+		} else {
+			$args = array(
+				'role__in' => $roles,
+			);
+		}
+
+		$users = get_users( $args );
+
+		// Get users where meta_key rsssl_two_fa_status_totp or rsssl_two_fa_status_email does not exist or is not set to 'active'
+		$users_in_grace_period_without_two_fa = array();
+		foreach ( $users as $user ) {
+			$statusses = Rsssl_Two_Fa_Status::get_user_two_fa_status( $user );
+			$methods   = Rsssl_Provider_Loader::METHODS;
+            // if the status active is in the array, we don't need to send a reminder.
+            if ( in_array('active', $statusses, true) ) {
+                continue;
+            }
+
+            $users_in_grace_period_without_two_fa[] = $user;
+		}
+
+		foreach ( $users_in_grace_period_without_two_fa as $user ) {
+
+			$user_id         = $user->ID;
+			$two_fa_reminder_sent = get_user_meta( $user_id, 'rsssl_two_fa_reminder_sent', true );
+
+			if ( $two_fa_reminder_sent ) {
+				continue;
+			}
+			// Get grace period for user
+			$remaining_grace_period = Rsssl_Two_Factor_Settings::is_user_in_grace_period( $user );
+			$grace_period_setting   = rsssl_get_option( 'two_fa_grace_period' );
+
+			// If grace period setting is 1 day, and remaining grace period greater than 3, continue to next user
+			if ( $grace_period_setting == 1 || $remaining_grace_period > 3 ) {
+				continue;
+			}
+
+			if ( ! class_exists( 'rsssl_mailer' ) ) {
+				require_once rsssl_path . 'mailer/class-mail.php';
+			}
+
+			$subject = __( "Important security notice", "really-simple-ssl" );
+
+			$login_url = wp_login_url();
+			// Check if a custom login URL is set in Really Simple SSL
+			if ( function_exists( 'rsssl_get_option' ) && rsssl_get_option( 'change_login_url_enabled' ) !== false && ! empty( rsssl_get_option( 'change_login_url' ) ) ) {
+				$login_url = trailingslashit( site_url() ) . rsssl_get_option( 'change_login_url' );
+			}
+
+			$login_link = sprintf('<a href="%s">%s</a>', esc_url($login_url), __('Please login', 'really-simple-ssl'));
+
+			$message = sprintf(
+			/* translators:
+			1: Site URL.
+			*/
+				__("You are receiving this email because you have an account registered at %s.", "really-simple-ssl"),
+				site_url(),
+			);
+
+            $message .= "<br><br>";
+
+			$message .= sprintf(
+			/* translators:
+			1: Login link with the text "Please login".
+			2: Opening <strong> tag to emphasize the "within three days" text.
+			3: Closing </strong> tag for "within three days".
+			4: Opening <strong> tag to emphasize "you will be unable to login".
+			5 Closing </strong> tag for "you will be unable to login".
+			*/
+
+                __("The site's security policy requires you to configure Two-Factor Authentication to protect against account theft. %1\$s and configure Two-Factor authentication %2\$swithin three days%3\$s. If you haven't performed the configuration by then, %4\$syou will be unable to login%5\$s.", "really-simple-ssl"),
+				$login_link,
+				'<strong>',
+				'</strong>',
+				'<strong>',
+				'</strong>'
+			);
+
+			$mailer                    = new rsssl_mailer();
+			$mailer->subject           = $subject;
+			$mailer->branded           = false;
+			$mailer->sent_by_text      = "<b>".sprintf( __( 'Notification by %s', 'really-simple-ssl' ), site_url() )."</b>";
+			$mailer->template_filename = apply_filters( 'rsssl_email_template', rsssl_path . '/mailer/templates/email-unbranded.html' );
+			$mailer->to                = $user->user_email;
+			$mailer->title             = sprintf( __( "Hi %s %s", "really-simple-ssl" ), trim( $user->first_name ), trim( $user->last_name ) ) . ',';
+			$mailer->message           = $message;
+			$mailer->send_mail();
+
+			// Update meta to set reminder e-mail send, add check in beginning of function.
+			update_user_meta( $user_id, 'rsssl_two_fa_reminder_sent', true );
+		}
+	}
 
     /**
      * Upgrade the two-factor login configuration.
@@ -189,7 +312,7 @@ class Rsssl_Two_Factor
             }
 
             // fetching the users that have active 2FA enabled.
-            $users = get_users(array('meta_key' => 'rsssl_two_fa_status', 'meta_value' => 'active'));
+            $users = get_users(array('meta_key' => 'rsssl_two_fa_status_email', 'meta_value' => 'active'));
             foreach ($users as $user) {
                 // We set the user status to active.
                 Rsssl_Two_Factor_Email::set_user_status($user->ID, 'active');
@@ -234,11 +357,18 @@ class Rsssl_Two_Factor
                 // Delete the transient to invalidate the token.
                 delete_transient('skip_two_fa_token_' . $user_id);
 
-                $provider = get_user_meta($user->ID, 'rsssl_two_fa_status', true);
+                $provider = get_user_meta($user->ID, 'rsssl_two_fa_status_email', true);
 
                 // Only allow skipping for users which have 2FA value open.
                 if (isset($_GET['rsssl_two_fa_disable']) && 'open' === $provider) {
-                    update_user_meta($user_id, 'rsssl_two_fa_status', 'disabled');
+                    update_user_meta($user_id, 'rsssl_two_fa_status_email', 'disabled');
+                }
+
+                if ('open' === Rsssl_Two_Factor_Settings::get_user_status('email', $user_id)) {
+                    update_user_meta($user_id, 'rsssl_two_fa_status', 'active');
+                    update_user_meta($user_id, 'rsssl_two_fa_status_email', 'active');
+                    update_user_meta($user_id, 'rsssl_two_fa_status_totp', 'disabled');
+	                delete_user_meta( $user_id, '_rsssl_factor_email_token' );
                 }
 
                 wp_set_auth_cookie($user_id);
@@ -484,7 +614,7 @@ class Rsssl_Two_Factor
             // If the provider specified isn't enabled, just grab the first one that is based on the Weight.
             $best_valued_provider = self::WEIGHT[0];
 
-            if (isset($available_providers[$best_valued_provider])) {
+            if (isset($available_providers[$best_valued_provider]) && $best_valued_provider::is_enabled($user)) {
                 $provider = $best_valued_provider;
             } else {
                 $provider = key($available_providers);
@@ -518,20 +648,29 @@ class Rsssl_Two_Factor
         $enabled_providers_meta = Rsssl_Provider_Loader::get_user_enabled_providers($user);
         // Initialize as empty arrays if they are empty.
         $two_fa_forced_roles = rsssl_get_option('two_fa_forced_roles');
-        $two_fa_optional_roles = rsssl_get_option('two_fa_optional_roles');
-        if (empty($two_fa_forced_roles)) {
-            $two_fa_forced_roles = array();
-        }
-        if (empty($two_fa_optional_roles)) {
-            $two_fa_optional_roles = array();
-        }
+        $two_fa_optional_roles = rsssl_get_option('two_fa_enabled_roles_email');
+        $two_fa_optional_roles_totp = rsssl_get_option('two_fa_enabled_roles_totp');
 
-        if ('active' === $enabled_providers_meta) {
-            return true;
-        }
+        //ensure an array for all.
+        if (!is_array($two_fa_forced_roles)) $two_fa_forced_roles = [];
+        if (!is_array($two_fa_optional_roles)) $two_fa_optional_roles = [];
+        if (!is_array($two_fa_optional_roles_totp)) $two_fa_optional_roles_totp = [];
+        $two_fa_optional_roles = array_unique(array_merge($two_fa_optional_roles, $two_fa_optional_roles_totp));
 
-        if ('open' === $enabled_providers_meta) {
-            return true;
+        foreach ($enabled_providers_meta as $enabled_provider) {
+            $status = $enabled_provider::get_status($user);
+            if ('disabled' === $status) {
+                if (is_object($provider) && get_class($provider) === $enabled_provider) {
+                    $provider = [];
+                }
+            }
+	        if ('active' === $status ) {
+		        return true;
+	        }
+
+	        if ('open' === $status) {
+		        return true;
+	        }
         }
 
         foreach ($user->roles as $role) {
@@ -584,14 +723,7 @@ class Rsssl_Two_Factor
                 // Destroy the current session for the user.
                 self::destroy_current_session_for_user($user);
                 wp_clear_auth_cookie();
-                // Create a new nonce for this.
-                $nonce = wp_create_nonce('rsssl_expired');
-                wp_safe_redirect(wp_login_url() . '?errors=expired&nonce=' . $nonce);
-
-                // We also display the error message.
-                $errors = new WP_Error();
-                $errors->add('expired', __('Your 2FA grace period expired. Please contact your site administrator to regain access and to configure 2FA.', 'really-simple-ssl'));
-                // Continue with the login.
+                self::display_expired_onboarding_error($user);
                 exit;
             case 'totp':
             case 'email':
@@ -782,7 +914,7 @@ class Rsssl_Two_Factor
 
         $user_name = sanitize_user(wp_unslash($_POST['log']));
         $attempted_user = get_user_by('login', $user_name);
-        if (!$attempted_user && str_contains($user_name, '@')) {
+        if ( $user_name && ! $attempted_user && strpos( $user_name, '@') !== false ) {
             $attempted_user = get_user_by('email', $user_name);
         }
 
@@ -1305,7 +1437,7 @@ class Rsssl_Two_Factor
                         $user->user_login,
                         new WP_Error(
                             'rsssl_two_factor_invalid',
-                            __('Invalid verification code.', 'really-simple-ssl-pro')));//phpcs:ignore
+                            __('Invalid verification code.', 'really-simple-ssl')));//phpcs:ignore
 
                     // Store the last time a failed login occurred.
                     update_user_meta($user->ID, self::RSSSL_USER_RATE_LIMIT_KEY, time());
@@ -1332,7 +1464,7 @@ class Rsssl_Two_Factor
                         $user,
                         $login_nonce['rsssl_key'],
                         isset($_REQUEST['redirect_to']) ? sanitize_text_field(wp_unslash($_REQUEST['redirect_to'])) : '',
-                        esc_html__('Invalid verification code.', 'really-simple-ssl-pro'),
+                        esc_html__('Invalid verification code.', 'really-simple-ssl'),
                         $provider
                     );
                     exit;
@@ -1342,7 +1474,7 @@ class Rsssl_Two_Factor
                 // Create a WP_Error object.
                 $error = new WP_Error();
                 // Add an error message to the object.
-                $error->add('rsssl_two_factor_invalid_provider', __('Invalid two-factor authentication provider.', 'really-simple-ssl-pro'));
+                $error->add('rsssl_two_factor_invalid_provider', __('Invalid two-factor authentication provider.', 'really-simple-ssl'));
                 // Trigger the 'rsssl_wp_login_failed' action.
                 do_action('rsssl_wp_login_failed', $user->user_login, $error);//phpcs:ignore
                 // Redirect the user to the login page and clear all $_POST data.
@@ -1554,6 +1686,16 @@ class Rsssl_Two_Factor
         if (!$onboarding_complete) {
             self::onboarding_user_html($user);
         }
+    }
+
+    private static function display_expired_onboarding_error(): void {
+	    rsssl_load_template(
+		    'expired.php',
+		    array(
+			    'message' => esc_html__('Your 2FA grace period expired. Please contact your site administrator to regain access and to configure 2FA.', 'really-simple-ssl'),
+                ),
+		    rsssl_path . 'assets/templates/two_fa/'
+	    );
     }
 
     /**

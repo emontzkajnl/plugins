@@ -78,6 +78,11 @@ class Rsssl_Request_Parameters {
     public $token;
 
     /**
+     * @var bool
+     */
+    public $profile;
+
+    /**
 	 * Constructor for the class.
 	 *
 	 * @param WP_REST_Request $request The WordPress REST request object.
@@ -90,13 +95,14 @@ class Rsssl_Request_Parameters {
 		$this->nonce       = $request->get_header( 'X-WP-Nonce' );
 		$this->user        = get_user_by( 'id', $this->user_id );
 		$this->provider    = $request->get_param( 'provider' );
-		$this->redirect_to = $request->get_param( 'redirect_to' );
+		$this->redirect_to = $request->get_param( 'redirect_to' )?? admin_url();
 		if ( 'totp' === $this->provider ) {
 			$this->code = wp_unslash( $request->get_param( 'two-factor-totp-authcode' ) );
 			$this->key  = wp_unslash( $request->get_param( 'key' ) );
 		}
         if ('email' === $this->provider) {
             $this->token = wp_unslash($request->get_param('token'));
+            $this->profile = wp_unslash($request->get_param('profile')?? false);
         }
 	}
 }
