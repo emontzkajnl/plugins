@@ -47,7 +47,7 @@ class RowActions implements HideElement
             case $this->list_screen instanceof Taxonomy :
                 add_filter($this->list_screen->get_taxonomy() . "_row_actions", '__return_empty_array', 10000);
 
-                return;
+                break;
             case $this->list_screen instanceof ListScreen\Comment :
                 add_filter('comment_row_actions', '__return_empty_array', 10000);
 

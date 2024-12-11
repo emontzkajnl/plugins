@@ -39,6 +39,21 @@ document.addEventListener('advanced_ads_privacy', function (event) {
 	});
 });
 
+// Close an ad if it contains a GAM ad that did not fill the space.
+document.addEventListener( 'aagam_empty_slot', function ( ev ) {
+	const div = document.getElementById( ev.detail );
+	if ( ! div ) {
+		return;
+	}
+
+	const wrapper = div.closest( '.' + document.body.classList.value.split( 'aa-prefix-' )[1].split( ' ' )[0] + 'sticky' );
+
+	if ( ! wrapper ) {
+		return;
+	}
+	advads.close( '#' + wrapper.id );
+} );
+
 jQuery( document ).ready(function($) {
 	var resize_timeout = null, $el, previous_width = $( window ).width();
 
