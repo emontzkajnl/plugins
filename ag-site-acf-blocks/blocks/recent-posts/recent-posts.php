@@ -18,7 +18,8 @@ $args = array(
 $recent_query = new WP_Query($args);
 $title = get_field('override_title') ? get_field('override_title') : 'Most Recent';
 // echo 'max pages is '.$recent_query->max_num_pages;
-if ($recent_query->have_posts()): ?>
+if ($recent_query->have_posts()): 
+    $count = 1; ?>
     <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
     <?php echo '<h2 class="section-heading">'.$title.'</h2>';
     echo '<div class="jci-recent-container">';
@@ -27,7 +28,13 @@ if ($recent_query->have_posts()): ?>
         $ID = get_the_ID(); 
         $cat = get_the_category($ID); 
         $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE ); 
-        $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;?>
+        $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name; 
+        if ($count == 3 && function_exists('the_ad_placement')) {
+            echo '<div style="text-align: center;">'; 
+                the_ad_placement('in-content');
+                echo '</div>';
+        } 
+         ?>
         <div class="jci-recent__item">
             <div class="jci-recent__img-container">
                 <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
@@ -39,7 +46,8 @@ if ($recent_query->have_posts()): ?>
             </div>
         </div> <!-- container -->
         
-    <?php endwhile;
+    <?php $count++; 
+    endwhile;
     echo '</div>'; // jci-recent-container
     $max_pages = $recent_query->max_num_pages;
     if ($max_pages > 1) {
