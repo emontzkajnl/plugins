@@ -18,7 +18,7 @@ $directory_query = new WP_Query($args);
 
 if ($directory_query->have_posts()): ?>
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
-<h2 class="section-heading">Farm Directories and Maps</h2>
+<h2 class="section-heading">Farm Directories & Maps</h2>
 <div class="row">
     <?php while ($directory_query->have_posts()):
     $directory_query->the_post(); 

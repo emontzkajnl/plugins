@@ -43,7 +43,7 @@ if ($recipe_query->have_posts()):
     if ($max_pages > 1) { 
         ?>
         <div style="text-align: center;">
-        <button data-max="<?php echo $max_pages; ?>" id="load-more-mih-recipes">Load More</button>
+        <button data-max="<?php echo $max_pages; ?>" id="load-more-mih-recipes">More Recipes</button>
     </div>
     <?php }
     echo '</div'; // container
