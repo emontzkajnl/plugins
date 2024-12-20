@@ -20,6 +20,7 @@ $magPost = $magPost[0];
 $facebook = get_field('facebook', 'options');
 $twitter = get_field('twitter', 'options');
 $pinterest = get_field('pinterest', 'options');
+$connect_text = get_field('connect_with_us_text', 'options');
 ?>
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>" style="margin-bottom: 80px;">
     <div class="container">
@@ -38,7 +39,7 @@ $pinterest = get_field('pinterest', 'options');
         </div>
         <div class="jcims__social-container">
         <h3 class="handwritten">connect with us</h3>
-        <p class="jcims__connect-text">Connect with the food you eat, the Indiana farmers who grow it and a lifestyle that is uniquely Hoosier!</p>
+        <p class="jcims__connect-text"><?php echo $connect_text; ?></p>
         <ul class="mih-social-icons">
                     <?php
                         echo $facebook ? '<li class="facebook"><a href="'.esc_url($facebook).'" target="_blank"><svg style="max-width: 25px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"/></svg></a></li>' : '';
