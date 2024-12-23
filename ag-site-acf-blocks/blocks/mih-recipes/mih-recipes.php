@@ -3,8 +3,8 @@
  *MIH Farm Directories and Maps Block
  */
 
-$id = 'mih-recipes' . $block['id'];
-$className = 'mih-directories ';
+$id = 'mih-recipes-' . $block['id'];
+$className = 'mih-recipes ';
 if( !empty($block['className']) ) {
     $className .= ' ' . $block['className'];
 } 
@@ -32,9 +32,8 @@ if ($recipe_query->have_posts()):
         <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
         </div>
         <div class="mih-directories__text-container">
-            <div class="mih-directories__title">
-                <h3><a href="<?php echo get_the_permalink(); ?> " class="unstyle-link"><?php echo get_the_title(); ?></a></h3>
-            </div>
+                <h3 class="mih-directories__title"><a href="<?php echo get_the_permalink(); ?> " class="unstyle-link"><?php echo get_the_title(); ?></a></h3>
+          
         </div>
     </div>
     </div>
