@@ -28,7 +28,7 @@ if ($recipe_query->have_posts()):
     $ID = get_the_ID(); ?>
     <div class="col-12 l-col-3 m-col-6">
     <div class="mih-directories__panel">
-        <div class="mih-directories__img-container">
+        <div class="mih-directories__img-container object-fit-image">
         <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
         </div>
         <div class="mih-directories__text-container">
