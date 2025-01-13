@@ -20,7 +20,7 @@ $formId = get_field('form_id');
 </div>
 <div class="thf-event-filter__event-share">
     <h3>Have an event to share with us?</h3>
-    <p><a href="<?php echo site_url( ); ?>/events">Submit an Event ></a></p>
+    <p><a href="<?php echo site_url( ); ?>/events">Submit an Event</a></p>
 </div>
 
 </div>
