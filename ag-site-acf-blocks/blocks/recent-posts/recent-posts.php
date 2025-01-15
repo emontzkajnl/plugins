@@ -16,7 +16,7 @@ $args = array(
     'post_status'           => 'publish',
 );
 $recent_query = new WP_Query($args);
-$title = get_field('override_title') ? get_field('override_title') : 'Most Recent';
+$title = get_field('override_title') ? get_field('override_title', false, false) : 'Most Recent';
 // echo 'max pages is '.$recent_query->max_num_pages;
 if ($recent_query->have_posts()): 
     $count = 1; ?>
