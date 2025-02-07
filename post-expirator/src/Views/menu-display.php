@@ -10,6 +10,8 @@ use PublishPress\Future\Core\DI\ServicesAbstract;
 $container = Container::getInstance();
 $hooks = $container->get(ServicesAbstract::HOOKS);
 $settingsFacade = $container->get(ServicesAbstract::SETTINGS);
+$dateTimeFacade = $container->get(ServicesAbstract::DATETIME);
+
 // phpcs:disable WordPress.NamingConventions.ValidVariableName.InterpolatedVariableNotSnakeCase
 // phpcs:disable WordPress.PHP.StrictComparisons.LooseComparison
 
@@ -26,6 +28,8 @@ $metaboxCheckboxLabel = $settingsFacade->getMetaboxCheckboxLabel();
 $timeFormat = $settingsFacade->getTimeFormatForDatePicker();
 $columnStyle = $settingsFacade->getColumnStyle();
 
+$shortcodeWrapper = $settingsFacade->getShortcodeWrapper();
+$shortcodeWrapperClass = $settingsFacade->getShortcodeWrapperClass();
 ?>
 <div class="pp-columns-wrapper<?php echo $showSideBar ? ' pp-enable-sidebar' : ''; ?>">
     <div class="pp-column-left">
@@ -47,21 +51,28 @@ $columnStyle = $settingsFacade->getColumnStyle();
                             name="expired-default-date-format"
                             id="expired-default-date-format"
                             value="<?php echo esc_attr($expirationdateDefaultDateFormat); ?>"
+                            placeholder="<?php echo esc_attr($dateTimeFacade->getDefaultDateFormat()); ?>"
                             size="25"
                         /> <span class="description">(
                             <?php
-                            echo esc_html(PostExpirator_Util::get_wp_date($expirationdateDefaultDateFormat, time())); ?>
+                            echo esc_html(
+                                $dateTimeFacade->getWpDate(
+                                    $expirationdateDefaultDateFormat,
+                                    time(),
+                                    $dateTimeFacade->getDefaultDateFormat()
+                                )
+                            ); ?>
                         )</span>
                         <p class="description">
                             <?php
-                            echo sprintf(
-                                // translators: %s is a link to the PHP date function documentation
-                                esc_html__(
-                                    'The default format to use when displaying the action date within a post using the shortcode or within the footer.  For information on valid formatting options, see: %s.',
-                                    'post-expirator'
-                                ),
-                                '<a href="https://www.php.net/manual/en/function.date.php" target="_blank">' . esc_html__('PHP Date Function', 'post-expirator') . '</a>'
-                            ); ?>
+                                                        echo sprintf(
+                                                            // translators: %s is a link to the PHP date function documentation
+                                                            esc_html__(
+                                                                'The default format to use when displaying the action date within a post using the shortcode or within the footer.  For information on valid formatting options, see: %s.',
+                                                                'post-expirator'
+                                                            ),
+                                                            '<a href="https://www.php.net/manual/en/function.date.php" target="_blank">' . esc_html__('PHP Date Function', 'post-expirator') . '</a>'
+                                                        ); ?>
                         </p>
                     </td>
                 </tr>
@@ -69,7 +80,7 @@ $columnStyle = $settingsFacade->getColumnStyle();
                     <th scope="row">
                         <label for="expired-default-time-format">
                             <?php
-                            esc_html_e('Time Format', 'post-expirator'); ?>
+                                                        esc_html_e('Time Format', 'post-expirator'); ?>
                         </label>
                     </th>
                     <td>
@@ -79,20 +90,27 @@ $columnStyle = $settingsFacade->getColumnStyle();
                             id="expired-default-time-format"
                             value="<?php echo esc_attr($expirationdateDefaultTimeFormat); ?>"
                             size="25"
+                            placeholder="<?php echo esc_attr($dateTimeFacade->getDefaultTimeFormat()); ?>"
                         /> <span class="description">(
                             <?php
-                            echo esc_html(PostExpirator_Util::get_wp_date($expirationdateDefaultTimeFormat, time())); ?>
+                                                        echo esc_html(
+                                                            $dateTimeFacade->getWpDate(
+                                                                $expirationdateDefaultTimeFormat,
+                                                                time(),
+                                                                $dateTimeFacade->getDefaultTimeFormat()
+                                                            )
+                                                        ); ?>
                         )</span>
                         <p class="description">
                             <?php
-                            echo sprintf(
-                                // translators: %s is a link to the PHP date function documentation
-                                esc_html__(
-                                    'The default format to use when displaying the action time within a post using the shortcode or within the footer.  For information on valid formatting options, see: %s.',
-                                    'post-expirator'
-                                ),
-                                '<a href="https://www.php.net/manual/en/function.date.php" target="_blank">' . esc_html__('PHP Date Function', 'post-expirator') . '</a>'
-                            ); ?>
+                                                        echo sprintf(
+                                                            // translators: %s is a link to the PHP date function documentation
+                                                            esc_html__(
+                                                                'The default format to use when displaying the action time within a post using the shortcode or within the footer.  For information on valid formatting options, see: %s.',
+                                                                'post-expirator'
+                                                            ),
+                                                            '<a href="https://www.php.net/manual/en/function.date.php" target="_blank">' . esc_html__('PHP Date Function', 'post-expirator') . '</a>'
+                                                        ); ?>
                         </p>
                     </td>
                 </tr>
@@ -108,7 +126,7 @@ $columnStyle = $settingsFacade->getColumnStyle();
                     <th scope="row">
                         <label for="expirationdate-metabox-title">
                             <?php
-                            esc_html_e('Metabox Title', 'post-expirator'); ?>
+                                                        esc_html_e('Metabox Title', 'post-expirator'); ?>
                         </label>
                     </th>
                     <td>
@@ -122,7 +140,7 @@ $columnStyle = $settingsFacade->getColumnStyle();
                         />
                         <p class="description">
                             <?php
-                            esc_html_e('The title of the metabox that will be displayed in the post edit screen.', 'post-expirator'); ?>
+                                                        esc_html_e('The title of the metabox that will be displayed in the post edit screen.', 'post-expirator'); ?>
                         </p>
                     </td>
                 </tr>
@@ -131,7 +149,7 @@ $columnStyle = $settingsFacade->getColumnStyle();
                     <th scope="row">
                         <label for="expirationdate-metabox-checkbox-label">
                             <?php
-                            esc_html_e('Checkbox Field Label', 'post-expirator'); ?>
+                                                        esc_html_e('Checkbox Field Label', 'post-expirator'); ?>
                         </label>
                     </th>
                     <td>
@@ -165,12 +183,12 @@ $columnStyle = $settingsFacade->getColumnStyle();
                             <input type="radio" name="future-action-column-style"
                                 id="future-action-column-style-verbose"
                                 value="verbose" <?php
-                                                echo $columnStyle === 'verbose' ? 'checked' : ''; ?> />
+                                                                            echo $columnStyle === 'verbose' ? 'checked' : ''; ?> />
                             <label for="future-action-column-style-verbose">
                                 <?php esc_html_e('Detailed', 'post-expirator'); ?>
                             </label>
                             <p class="description offset">
-                                <?php esc_html_e('Displays all information in the Future Action column.', 'post-expirator'); ?>
+                                <?php esc_html_e('Displays all information in the Future Action column on the "Posts" screen.', 'post-expirator'); ?>
                             </p>
                         </div>
 
@@ -178,11 +196,11 @@ $columnStyle = $settingsFacade->getColumnStyle();
                             <input type="radio" name="future-action-column-style"
                                 id="future-action-column-style-simple"
                                 value="simple" <?php
-                                                echo $columnStyle === 'simple' ? 'checked' : ''; ?> />
+                                                                            echo $columnStyle === 'simple' ? 'checked' : ''; ?> />
                             <label for="future-action-column-style-simple"><?php
-                                                                            esc_html_e('Simplified', 'post-expirator'); ?></label>
+                                                                                                        esc_html_e('Simplified', 'post-expirator'); ?></label>
                             <p class="description offset">
-                                <?php esc_html_e('Displays only the icon and date/time.', 'post-expirator'); ?>
+                                <?php esc_html_e('Displays only the icon and date/time in the Future Action column on the "Posts" screen.', 'post-expirator'); ?>
                             </p>
                         </div>
                     </td>
@@ -193,6 +211,11 @@ $columnStyle = $settingsFacade->getColumnStyle();
 
             <h3><?php
                 esc_html_e('Future Actions Editor', 'post-expirator'); ?></h3>
+
+            <p class="description">
+                <?php esc_html_e('This controls the time format used to select dates for Future Actions.', 'post-expirator'); ?>
+            </p>
+
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row">
@@ -309,9 +332,18 @@ $columnStyle = $settingsFacade->getColumnStyle();
                             <li>
                                 <p class="description">
                                     ACTIONFULL ->
-                                    <?php echo esc_html(date_i18n(
-                                        "$expirationdateDefaultDateFormat $expirationdateDefaultTimeFormat"
-                                    )); ?>
+                                    <?php
+                                    if (empty($expirationdateDefaultDateFormat)) {
+                                        $expirationdateDefaultDateFormat = $dateTimeFacade->getDefaultDateFormat();
+                                    }
+
+if (empty($expirationdateDefaultTimeFormat)) {
+    $expirationdateDefaultTimeFormat = $dateTimeFacade->getDefaultTimeFormat();
+}
+
+echo esc_html(date_i18n(
+    "$expirationdateDefaultDateFormat $expirationdateDefaultTimeFormat"
+)); ?>
                                 </p>
                             </li>
                             <li>
@@ -360,39 +392,123 @@ $columnStyle = $settingsFacade->getColumnStyle();
 
             <h3><?php
                 esc_html_e('Shortcode', 'post-expirator'); ?></h3>
-            <p><?php
-                // translators: %s is the shortcode code wrapped in code tags
-                echo sprintf(esc_html__('Valid %s attributes:', 'post-expirator'), '<code>[futureaction]</code>'); ?></p>
-            <ul class="pe-list">
-                <li>
-                    <p><?php
-                        echo sprintf(
-                            // translators: %1$s and %2$s are code tags that wrap the shortcode attribute names
-                            esc_html__(
-                                '%1$stype%2$s - valid options are %1$sfull%2$s (default), %1$sdate%2$s, %1$stime%2$s',
+
+            <p class="description">
+                <?php
+                echo sprintf(
+                    // translators: %s is a code tag that wraps the shortcode
+                    esc_html__('Use the %s[futureaction]%s shortcode to show when the future action will occur. You can add this shortcode anywhere in your post content.', 'post-expirator'),
+                    '<code>',
+                    '</code>'
+                ); ?>
+            </p>
+
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">
+                        <label for="shortcode-wrapper">
+                            <?php esc_html_e('Shortcode Wrapper', 'post-expirator'); ?>
+                        </label>
+                    </th>
+                    <td>
+                        <?php
+                        $wrapperOptions = [
+                            '' => '— None —',
+                            'p' => '&lt;p&gt;',
+                            'div' => '&lt;div&gt;',
+                            'span' => '&lt;span&gt;',
+                        ];
+?>
+                        <div class="pp-settings-field-row">
+                            <select name="shortcode-wrapper" id="shortcode-wrapper">
+                                <?php foreach ($wrapperOptions as $value => $label) : ?>
+                                    <option value="<?php echo esc_attr($value); ?>" <?php echo $value === $shortcodeWrapper ? 'selected' : ''; ?>><?php echo esc_html($label); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <p class="description">
+                            <?php esc_html_e(
+                                'The shortcode output will be wrapped in the selected HTML tag, allowing you to control its structure and styling.',
                                 'post-expirator'
-                            ),
-                            '<code>',
-                            '</code>'
-                        ); ?></p>
-                </li>
-                <li>
-                    <p><?php
-                        echo sprintf(
-                            // translators: %s is a code tag that wraps the shortcode attribute dateformat
-                            esc_html__('%s - format set here will override the value set on the settings page', 'post-expirator'),
-                            '<code>dateformat</code>'
-                        ); ?></p>
-                </li>
-                <li>
-                    <p><?php
-                        echo sprintf(
-                            // translators: %s is a code tag that wraps the shortcode attribute timeformat
-                            esc_html__('%s - format set here will override the value set on the settings page', 'post-expirator'),
-                            '<code>timeformat</code>'
-                        ); ?></p>
-                </li>
-            </ul>
+                            ); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr valign="top" id="shortcode-wrapper-class-row" style="display: none;">
+                    <th scope="row">
+                        <label for="shortcode-wrapper-class">
+                            <?php esc_html_e('Wrapper Class', 'post-expirator'); ?>
+                        </label>
+                    </th>
+                    <td>
+                        <input type="text" name="shortcode-wrapper-class" id="shortcode-wrapper-class" value="<?php echo esc_attr($shortcodeWrapperClass); ?>" size="25" />
+                        <p class="description">
+                            <?php esc_html_e('Add a CSS class to the wrapper element for custom styling.', 'post-expirator'); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">
+                        <label>
+                            <?php esc_html_e('Attributes', 'post-expirator'); ?>
+                        </label>
+                    </th>
+                    <td>
+                        <p><?php
+                            // translators: %s is the shortcode code wrapped in code tags
+                                echo sprintf(esc_html__('The following attributes are available for the %s shortcode:', 'post-expirator'), '<code>[futureaction]</code>'); ?>
+                        </p>
+                        <ul class="pe-list">
+                            <li>
+                                <p><?php
+                                        echo sprintf(
+                                            // translators: %s is a code tag that wraps the shortcode attribute name
+                                            esc_html__('%s - Available options:', 'post-expirator'),
+                                            '<code>type</code>'
+                                        );
+echo '<ul>';
+echo '<li>' . sprintf(
+    // translators: %s is a code tag that wraps the shortcode attribute value
+    esc_html__('%s - Displays complete date/time.  Default value.', 'post-expirator'),
+    '<code>full</code>'
+);
+echo '</li>';
+echo '<li>' . sprintf(
+    // translators: %s is a code tag that wraps the shortcode attribute value
+    esc_html__('%s - Displays date only', 'post-expirator'),
+    '<code>date</code>'
+);
+echo '</li>';
+echo '<li>' . sprintf(
+    // translators: %s is a code tag that wraps the shortcode attribute value
+    esc_html__('%s - Displays time only', 'post-expirator'),
+    '<code>time</code>'
+);
+echo '</li>';
+echo '</ul>';
+?>
+                                </p>
+                            </li>
+                            <li>
+                                <p><?php
+    echo sprintf(
+        // translators: %s is a code tag that wraps the shortcode attribute dateformat
+        esc_html__('%s - Format set here will override the value set on the settings page', 'post-expirator'),
+        '<code>dateformat</code>'
+    ); ?></p>
+                            </li>
+                            <li>
+                                <p><?php
+        echo sprintf(
+            // translators: %s is a code tag that wraps the shortcode attribute timeformat
+            esc_html__('%s - Format set here will override the value set on the settings page', 'post-expirator'),
+            '<code>timeformat</code>'
+        ); ?></p>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
 
             <p class="submit">
                 <input
@@ -409,7 +525,24 @@ $columnStyle = $settingsFacade->getColumnStyle();
     if ($showSideBar) {
         include __DIR__ . '/ad-banner-right-sidebar.php';
     }
-    ?>
+?>
 </div>
+<script>
+    jQuery(document).ready(function($) {
+        function handleStatusWrapperClassRow() {
+            if ($('#shortcode-wrapper').val() === '') {
+                $('#shortcode-wrapper-class-row').hide();
+            } else {
+                $('#shortcode-wrapper-class-row').show();
+            }
+        }
+
+        $('#shortcode-wrapper').on('change', function() {
+            handleStatusWrapperClassRow();
+        });
+
+        handleStatusWrapperClassRow();
+    });
+</script>
 <?php
 // phpcs:enable

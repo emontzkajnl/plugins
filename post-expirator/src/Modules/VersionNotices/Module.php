@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, Ramble Ventures
+ * Copyright (c) 2025, Ramble Ventures
  */
 
 namespace PublishPress\Future\Modules\VersionNotices;
@@ -14,7 +14,7 @@ use PublishPress\WordpressVersionNotices\Module\TopNotice\Module as VersionNotic
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
-class Module implements ModuleInterface
+final class Module implements ModuleInterface
 {
     /**
      * @var Paths

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, Ramble Ventures
+ * Copyright (c) 2025, Ramble Ventures
  */
 
 namespace PublishPress\Future\Modules\Expirator;
@@ -126,9 +126,9 @@ abstract class HooksAbstract
 
     public const FILTER_ACTION_SCHEDULER_ADMIN_NOTICE = 'action_scheduler_admin_notice_html';
 
-    public const FILTER_POSTS_FUTURE_ACTION_COLUMN_OUTPUT = 'publishpressfuture_posts_future_action_column_output';
-
     public const FILTER_EXPIRATION_DATA_AS_ARRAY = 'publishpressfuture_expiration_data_as_array';
+
+    public const FILTER_DISPLAY_BULK_ACTION_SYNC = 'publishpressfuture_display_bulk_action_sync';
 
     public static function getActionLegacyMultisiteDelete($blogId)
     {

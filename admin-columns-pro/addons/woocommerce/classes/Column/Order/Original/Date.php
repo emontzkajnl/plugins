@@ -6,7 +6,8 @@ use AC;
 use ACA\WC;
 use ACP;
 
-class Date extends AC\Column implements ACP\Search\Searchable, ACP\Filtering\FilterableDateSetting
+class Date extends AC\Column implements ACP\Search\Searchable, ACP\Filtering\FilterableDateSetting,
+                                        ACP\Export\Exportable
 {
 
     use WC\Column\Order\FilterableDateTrait;
@@ -25,6 +26,11 @@ class Date extends AC\Column implements ACP\Search\Searchable, ACP\Filtering\Fil
     public function search()
     {
         return new WC\Search\Order\Date\CreatedDate();
+    }
+
+    public function export()
+    {
+        return new WC\Export\Order\Date();
     }
 
 }

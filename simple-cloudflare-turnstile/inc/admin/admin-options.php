@@ -59,7 +59,7 @@ function cfturnstile_admin_test() {
 				}
 			}
 			if ($success != true) {
-				echo '<div style="margin-left: 15px;">';
+				echo '<div style="margin-left: 0px;">';
 				echo cfturnstile_field_show('', '', 'admin-test', 'admin-test');
 				echo '</div><div style="margin-bottom: -20px;"></div>';
 				echo '<button type="submit" style="margin-top: 10px; padding: 7px 10px; background: #1c781c; color: #fff; font-size: 15px; font-weight: bold; border: 1px solid #176017; border-radius: 4px; cursor: pointer;">
@@ -523,23 +523,6 @@ function cfturnstile_settings_page() {
 							<td><input type="checkbox" name="cfturnstile_woo_reset" <?php if (get_option('cfturnstile_woo_reset')) { ?>checked<?php } ?>></td>
 						</tr>
 
-						<?php
-						$checkout_page_id = get_option('woocommerce_checkout_page_id');
-						$checkout_page_content = get_post_field('post_content', $checkout_page_id);
-						if (strpos($checkout_page_content, 'wp:woocommerce/checkout') !== false) {
-						?>
-
-						<tr valign="top">
-							<th scope="row">
-								<?php echo esc_html__('WooCommerce Checkout', 'simple-cloudflare-turnstile'); ?>
-							</th>
-							<td>
-							<i style="font-size: 12px; color: red;"><?php echo esc_html__("Currently not compatible with the new 'block-based' checkout.", 'simple-cloudflare-turnstile'); ?></i>
-							</td>
-						</tr>
-
-						<?php } else { ?>
-
 						<tr valign="top">
 							<th scope="row">
 								<?php echo esc_html__('WooCommerce Checkout', 'simple-cloudflare-turnstile'); ?>
@@ -573,8 +556,6 @@ function cfturnstile_settings_page() {
 								</select>
 							</td>
 						</tr>
-
-						<?php } ?>
 
 						<tr valign="top" style="border-bottom: 1px solid #f3f3f3;">
 							<th scope="row">
@@ -939,6 +920,31 @@ function cfturnstile_settings_page() {
 			<?php
 			} else {
 				array_push($not_installed, '<a href="https://wordpress.org/plugins/fluentform/" target="_blank">' . esc_html__('Fluent Forms', 'simple-cloudflare-turnstile') . '</a>');
+			}
+			?>
+
+			<?php // Jetpack Forms
+			if (cft_is_plugin_active('jetpack/jetpack.php')) { ?>
+				<button type="button" class="sct-accordion"><?php echo esc_html__('Jetpack Forms', 'simple-cloudflare-turnstile'); ?></button>
+				<div class="sct-panel">
+
+					<table class="form-table" style="margin-top: -15px; margin-bottom: -10px;">
+
+						<tr valign="top">
+							<th scope="row">
+								<?php echo esc_html__('Enable on all Jetpack Forms', 'simple-cloudflare-turnstile'); ?>
+							</th>
+							<td><input type="checkbox" name="cfturnstile_jetpack" <?php if (get_option('cfturnstile_jetpack')) { ?>checked<?php } ?>></td>
+						</tr>
+
+					</table>
+
+					<?php echo esc_html__('When enabled, Turnstile will be added after the submit button, on ALL your forms created with Jetpack Forms.', 'simple-cloudflare-turnstile'); ?>
+				</div>
+
+			<?php
+			} else {
+				array_push($not_installed, '<a href="https://wordpress.org/plugins/jetpack/" target="_blank">' . esc_html__('Jetpack Forms', 'simple-cloudflare-turnstile') . '</a>');
 			}
 			?>
 

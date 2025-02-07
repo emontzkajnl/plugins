@@ -57,19 +57,24 @@ class AvgOrderInterval extends AC\Column implements Formattable
         $start_date = new DateTime();
         $start_date->modify('-' . $this->get_period_in_days() . 'days');
 
-        $sql = "SELECT COUNT(*) as count
+        $sql = $wpdb->prepare(
+            "SELECT COUNT(*) as count
             FROM {$wpdb->prefix}wc_orders as o
             JOIN {$wpdb->prefix}wc_order_product_lookup as op
-                ON o.id = op.order_id AND op.product_id = ${post_id}
+                ON o.id = op.order_id AND op.product_id = %d
             WHERE 
                 o.date_created_gmt >= {$start_date->format('Y-m-d')}
                 AND o.type = 'shop_order'
                 AND o.status = 'wc-completed'
-            ";
+            ",
+            $post_id
+        );
 
         $count = $wpdb->get_var($sql);
 
-        return $count ? (int)$count : 0;
+        return $count
+            ? (int)$count
+            : 0;
     }
 
     private function get_period_in_days()

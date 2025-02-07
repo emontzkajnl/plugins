@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, Ramble Ventures
+ * Copyright (c) 2025, Ramble Ventures
  */
 
 namespace PublishPress\Future\Modules\Backup;
@@ -15,7 +15,7 @@ use PublishPress\Future\Modules\Settings\SettingsFacade;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
-class Module implements ModuleInterface
+final class Module implements ModuleInterface
 {
     private HookableInterface $hooks;
 

@@ -154,7 +154,7 @@ class Filters
 
         foreach ($filters as $column_name => $value) {
             try {
-                $binding = $this->create_bindings_by_column($column_name, $value);
+                $binding = $this->create_bindings_by_column((string)$column_name, $value);
             } catch (Exception $e) {
                 $this->display_notice($column_name, $e->getMessage());
                 continue;

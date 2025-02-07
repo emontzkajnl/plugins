@@ -4,7 +4,7 @@ Tags: quiz, survey, test, exam, online assessment
 Requires at least: 4.9
 Tested up to: 6.7
 Requires PHP: 5.4
-Stable tag: 9.2.2
+Stable tag: 9.2.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -222,6 +222,17 @@ As a WordPress quiz maker, QSM is designed to be compatible with most other plug
 18. Database
 
 == Changelog ==
+= 9.2.4 ( December 30, 2024 ) =
+* Bug: Resolved issue with %TOTAL_QUESTIONS% variable
+* Bug: Resolved issue with %MAXIMUM_POINTS% variable
+
+= 9.2.3 ( December 13, 2024 ) =
+* Bug: Resolved issue where contact form not showing at quiz end
+* Bug: Resolved quiz timer issue for single-page quizzes
+* Bug: Fixed PHP warning related to the CONTACT_X variable
+* Enhancement: Enhanced the Captcha question type canvas for RTL websites
+* Enhancement: Refined user role permissions for improved access control
+
 = 9.2.2 ( November 06, 2024 ) =
 * Bug: Fixed issue with text displaying before quiz options
 * Bug: Resolved issue with left/right arrow keys in the quiz input box

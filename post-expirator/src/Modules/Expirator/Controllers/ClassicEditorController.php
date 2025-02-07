@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, Ramble Ventures
+ * Copyright (c) 2025, Ramble Ventures
  */
 
 namespace PublishPress\Future\Modules\Expirator\Controllers;
@@ -340,7 +340,7 @@ class ClassicEditorController implements InitializableInterface
 
             wp_enqueue_style(
                 'publishpress-future-classic-editor',
-                POSTEXPIRATOR_BASEURL . 'assets/css/edit.css',
+                Plugin::getAssetUrl('css/edit.css'),
                 ['wp-components'],
                 PUBLISHPRESS_FUTURE_VERSION
             );

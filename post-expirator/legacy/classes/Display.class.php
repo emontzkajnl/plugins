@@ -178,6 +178,8 @@ class PostExpirator_Display
                 $this->settingsFacade->setTimeFormatForDatePicker(sanitize_key($_POST['future-action-time-format']));
                 $this->settingsFacade->setMetaboxTitle(sanitize_text_field($_POST['expirationdate-metabox-title']));
                 $this->settingsFacade->setMetaboxCheckboxLabel(sanitize_text_field($_POST['expirationdate-metabox-checkbox-label']));
+                $this->settingsFacade->setShortcodeWrapper(sanitize_text_field($_POST['shortcode-wrapper']));
+                $this->settingsFacade->setShortcodeWrapperClass(sanitize_text_field($_POST['shortcode-wrapper-class']));
                 // phpcs:enable
             }
         }
@@ -326,9 +328,6 @@ class PostExpirator_Display
                 }
 
                 $this->settingsFacade->setAllowUserRoles($_POST['allow-user-roles']);
-                $this->settingsFacade->setWorkflowScreenshotStatus(
-                    isset($_POST['workflow-screenshot']) && $_POST['workflow-screenshot'] == '1'
-                );
 
                 echo "<div id='message' class='updated fade'><p>";
                 esc_html_e('Saved Options!', 'post-expirator');
@@ -359,12 +358,22 @@ class PostExpirator_Display
                 exit;
             }
 
-            $emailList = explode(',', trim(sanitize_text_field($_POST['expired-email-notification-list'])));
+            $expiredEmailNotificationList = explode(',', sanitize_text_field($_POST['expired-email-notification-list']));
+            $pastDueActionsNotificationList = explode(',', sanitize_text_field($_POST['past-due-actions-notification-list']));
+
+            $expiredEmailNotificationList = array_map('trim', $expiredEmailNotificationList);
+            $expiredEmailNotificationList = array_filter($expiredEmailNotificationList, 'is_email');
+
+            $pastDueActionsNotificationList = array_map('trim', $pastDueActionsNotificationList);
+            $pastDueActionsNotificationList = array_filter($pastDueActionsNotificationList, 'is_email');
+
 
             // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotValidated
             $this->settingsFacade->setSendEmailNotification((bool)$_POST['expired-email-notification']);
             $this->settingsFacade->setSendEmailNotificationToAdmins((bool)$_POST['expired-email-notification-admins']);
-            $this->settingsFacade->setEmailNotificationAddressesList($emailList);
+            $this->settingsFacade->setEmailNotificationAddressesList($expiredEmailNotificationList);
+            $this->settingsFacade->setPastDueActionsNotificationStatus((bool)$_POST['past-due-actions-notification']);
+            $this->settingsFacade->setPastDueActionsNotificationAddressesList($pastDueActionsNotificationList);
             // phpcs:enable
 
             echo "<div id='message' class='updated fade'><p>";
@@ -491,7 +500,7 @@ class PostExpirator_Display
                         '<strong>PublishPress Future</strong>',
                         '<span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span><span class="dashicons dashicons-star-filled"></span>'
                     );
-                    ?>
+        ?>
                 </a>
             </div>
 
@@ -502,25 +511,25 @@ class PostExpirator_Display
                     <li>
                         <a href="https://publishpress.com/future/" target="_blank" rel="noopener noreferrer"
                            title="<?php
-                            esc_attr_e('About PublishPress Future', 'post-expirator'); ?>">
+                esc_attr_e('About PublishPress Future', 'post-expirator'); ?>">
                             <?php
-                            esc_html_e('About', 'post-expirator'); ?>
+                esc_html_e('About', 'post-expirator'); ?>
                         </a>
                     </li>
                     <li>
                         <a href="https://publishpress.com/knowledge-base/future-introduction/" target="_blank"
                            rel="noopener noreferrer" title="<?php
-                            esc_attr_e('Future Documentation', 'post-expirator'); ?>">
+                esc_attr_e('Future Documentation', 'post-expirator'); ?>">
                             <?php
-                            esc_html_e('Documentation', 'post-expirator'); ?>
+                esc_html_e('Documentation', 'post-expirator'); ?>
                         </a>
                     </li>
                     <li>
                         <a href="https://publishpress.com/publishpress-support/" target="_blank" rel="noopener noreferrer"
                            title="<?php
-                            esc_attr_e('Contact the PublishPress team', 'post-expirator'); ?>">
+                esc_attr_e('Contact the PublishPress team', 'post-expirator'); ?>">
                             <?php
-                            esc_html_e('Contact', 'post-expirator'); ?>
+                esc_html_e('Contact', 'post-expirator'); ?>
                         </a>
                     </li>
                 </ul>
@@ -529,7 +538,7 @@ class PostExpirator_Display
             <div class="pp-pressshack-logo">
                 <a href="https://publishpress.com" target="_blank" rel="noopener noreferrer">
                     <img src="<?php
-                    echo esc_url(plugins_url('../assets/images/publishpress-logo.png', dirname(__FILE__))) ?>"/>
+        echo esc_url(plugins_url('../assets/images/publishpress-logo.png', dirname(__FILE__))) ?>"/>
                 </a>
             </div>
         </footer>

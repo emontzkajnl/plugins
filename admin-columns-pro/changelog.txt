@@ -1,5 +1,17 @@
 == Changelog ==
 
+= 6.4.14 =
+Release Date: January 7th, 2025
+
+* [Added] New WooCommerce Product column: GTIN, UPC, EAN, or ISBN
+* [Improved] Recursive value export for Gravity Forms List field
+* [Improved] Export values without HTML for default WooCommerce HPOS tables
+* [Fixed] Export for Media Orientation column does now export the correct value
+* [Fixed] Column resize did not work when the Extended view was selected in the Screen Options
+* [Fixed] PHP warning for deprecated function in Average Order Interval column
+* [Updated] Admin Columns Core to version 4.7.10
+* [Fixed] Prevent conflicting classnames for generated column names
+
 = 6.4.13 =
 Release Date: November 5th, 2024
 

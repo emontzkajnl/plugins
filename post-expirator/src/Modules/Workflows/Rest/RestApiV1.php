@@ -8,6 +8,7 @@ use WP_REST_Server;
 use PublishPress\Future\Modules\Workflows\Interfaces\RestApiManagerInterface;
 use PublishPress\Future\Modules\Workflows\Models\PostModel;
 use PublishPress\Future\Modules\Workflows\Models\WorkflowModel;
+use PublishPress\Future\Modules\Workflows\Models\WorkflowsModel;
 
 class RestApiV1 implements RestApiManagerInterface
 {
@@ -47,6 +48,27 @@ class RestApiV1 implements RestApiManagerInterface
                     'id' => [
                         'description' => __('The ID of the workflow', 'post-expirator'),
                         'type' => 'integer',
+                        'required' => true
+                    ]
+                ],
+                'show_in_index' => false,
+                'show_in_rest' => true,
+            ]
+        );
+
+        // Get the workflows with manual trigger
+        // @since 4.3.0
+        register_rest_route(
+            self::BASE_PATH,
+            '/workflows/with-manual-trigger/(?P<postType>[a-zA-Z0-9_-]+)',
+            [
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => [$this, 'getWorkflowsWithManualTrigger'],
+                'permission_callback' => [$this, 'getWorkflowsWithManualTriggerPermissions'],
+                'args' => [
+                    'postType' => [
+                        'description' => __('The post type', 'post-expirator'),
+                        'type' => 'string',
                         'required' => true
                     ]
                 ],
@@ -224,10 +246,6 @@ class RestApiV1 implements RestApiManagerInterface
             $workflowModel->setStatus($request['status']);
         }
 
-        if (isset($request['screenshot']) && $this->settingsFacade->getWorkflowScreenshotStatus()) {
-            $workflowModel->setScreenshotFromBase64($request['screenshot']);
-        }
-
         if (isset($request['debugRayShowQueries'])) {
             $workflowModel->setDebugRayShowQueries($request['debugRayShowQueries']);
         }
@@ -284,30 +302,50 @@ class RestApiV1 implements RestApiManagerInterface
             'hide_empty' => false,
         ]);
 
-        $terms = array_map(function ($term) {
-            return [
+        if (is_array($terms) && ! empty($terms)) {
+            $terms = array_map(function ($term) {
+                return [
                 'id' => $term->term_id,
                 'name' => $term->name,
-                'slug' => $term->slug,
-            ];
-        }, $terms);
+                    'slug' => $term->slug,
+                ];
+            }, $terms);
+        } else {
+            $terms = [];
+        }
 
         return rest_ensure_response($terms);
     }
 
     public function getPostWorkflowSettings($request)
     {
-        $postId = (int) $request['post'];
+        $postIds = explode(',', $request['post']);
+        $postIds = array_map('intval', $postIds);
 
         $postModel = new PostModel();
-        $postModel->load($postId);
 
-        $workflowsWithManualTrigger = $postModel->getValidWorkflowsWithManualTrigger($postId);
-        $manuallyEnabledWorkflows = $postModel->getManuallyEnabledWorkflows();
+        foreach ($postIds as $postId) {
+            $postModel->load($postId);
+
+            $workflowsWithManualTrigger = $postModel->getValidWorkflowsWithManualTrigger($postId);
+            $manuallyEnabledWorkflows = $postModel->getManuallyEnabledWorkflows();
+        }
 
         return rest_ensure_response([
             'workflowsWithManualTrigger' => $workflowsWithManualTrigger,
             'manuallyEnabledWorkflows' => $manuallyEnabledWorkflows,
+        ]);
+    }
+
+    public function getWorkflowsWithManualTrigger($request)
+    {
+        $postType = sanitize_text_field($request['postType']);
+
+        $workflowsModel = new WorkflowsModel();
+        $workflows = $workflowsModel->getPublishedWorkflowsWithManualTrigger($postType);
+
+        return rest_ensure_response([
+            'workflowsWithManualTrigger' => $workflows,
         ]);
     }
 
@@ -337,6 +375,11 @@ class RestApiV1 implements RestApiManagerInterface
     }
 
     public function getPostWorkflowSettingsPermissions($request)
+    {
+        return current_user_can(self::PERMISSION_READ);
+    }
+
+    public function getWorkflowsWithManualTriggerPermissions($request)
     {
         return current_user_can(self::PERMISSION_READ);
     }

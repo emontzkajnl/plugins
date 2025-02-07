@@ -319,6 +319,7 @@
 
 .rsssl-vulnerabilities-measures-overview {
   .allowRowEvents {
+    overflow: visible !important;
     .wp-core-ui select {
       max-width: 100%;
     }
@@ -423,3 +424,8 @@
     width: 200px;
   }
 }
+
+//For the shields
+ .rsssl-content_security_policy_source_directives:has(.rsssl-shield-overlay) {
+   min-height: 250px;
+ }

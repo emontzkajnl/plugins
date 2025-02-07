@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, Ramble Ventures
+ * Copyright (c) 2025, Ramble Ventures
  */
 
 namespace PublishPress\Future\Modules\Expirator\Models;
@@ -940,7 +940,8 @@ class ExpirablePostModel extends PostModel
         return $hash;
     }
 
-    public function getExtraData($key = null) {
+    public function getExtraData($key = null)
+    {
         $args = $this->actionArgsModel->getArgs();
 
         if (is_null($key)) {

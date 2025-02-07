@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, Ramble Ventures
+ * Copyright (c) 2025, Ramble Ventures
  */
 
 namespace PublishPress\Future\Modules\Settings;
@@ -396,12 +396,14 @@ class SettingsFacade
 
     public function getMetaboxTitle(): ?string
     {
-        return $this->options->getOption(self::OPTION_METABOX_TITLE, null);
+        $option = $this->options->getOption(self::OPTION_METABOX_TITLE, null);
+        return empty($option) ? null : $option;
     }
 
     public function getMetaboxCheckboxLabel(): ?string
     {
-        return $this->options->getOption(self::OPTION_METABOX_CHECKBOX_LABEL, null);
+        $option = $this->options->getOption(self::OPTION_METABOX_CHECKBOX_LABEL, null);
+        return empty($option) ? null : $option;
     }
 
     public function setMetaboxTitle(string $value): void
@@ -487,8 +489,7 @@ class SettingsFacade
 
         $pluginFacade = PostExpirator_Facade::getInstance();
 
-        foreach ($userRoles as $userRoleName => $userRoleLabel)
-        {
+        foreach ($userRoles as $userRoleName => $userRoleLabel) {
             if ($pluginFacade->user_role_can_expire_posts($userRoleName)) {
                 $allowedUserRoles[] = $userRoleName;
             }
@@ -519,14 +520,24 @@ class SettingsFacade
         }
     }
 
-    public function getWorkflowScreenshotStatus(): bool
+    public function getShortcodeWrapper(): string
     {
-        return (bool)$this->options->getOption('workflowScreenshot', false);
+        return $this->options->getOption('shortcodeWrapper', '');
     }
 
-    public function setWorkflowScreenshotStatus(bool $value): void
+    public function setShortcodeWrapper(string $value): void
     {
-        $this->options->updateOption('workflowScreenshot', $value);
+        $this->options->updateOption('shortcodeWrapper', sanitize_text_field($value));
+    }
+
+    public function getShortcodeWrapperClass(): string
+    {
+        return $this->options->getOption('shortcodeWrapperClass', '');
+    }
+
+    public function setShortcodeWrapperClass(string $value): void
+    {
+        $this->options->updateOption('shortcodeWrapperClass', sanitize_text_field($value));
     }
 
     public function getGeneralSettings(): array
@@ -535,7 +546,6 @@ class SettingsFacade
             'defaultDateTimeOffset' => $this->getGeneralDateTimeOffset(),
             'hideCalendarByDefault' => $this->getHideCalendarByDefault(),
             'allowUserRoles' => $this->getAllowUserRoles(),
-            'workflowScreenshot' => $this->getWorkflowScreenshotStatus(),
         ];
 
         $settings = $this->hooks->applyFilters(HooksAbstract::FILTER_SETTINGS_GENERAL, $settings);
@@ -548,7 +558,6 @@ class SettingsFacade
         $this->setGeneralDateTimeOffset($settings['defaultDateTimeOffset'] ?? '');
         $this->setHideCalendarByDefault($settings['hideCalendarByDefault'] ?? false);
         $this->setAllowUserRoles($settings['allowUserRoles'] ?? []);
-        $this->setWorkflowScreenshotStatus($settings['workflowScreenshot'] ?? false);
 
         do_action(HooksAbstract::ACTION_SETTINGS_SET_GENERAL, $settings);
     }
@@ -587,6 +596,8 @@ class SettingsFacade
             'showInPostFooter' => $this->getShowInPostFooter(),
             'footerContents' => $this->getFooterContents(),
             'footerStyle' => $this->getFooterStyle(),
+            'shortcodeWrapper' => $this->getShortcodeWrapper(),
+            'shortcodeWrapperClass' => $this->getShortcodeWrapperClass(),
         ];
 
         $settings = $this->hooks->applyFilters(HooksAbstract::FILTER_SETTINGS_DISPLAY, $settings);
@@ -605,6 +616,8 @@ class SettingsFacade
         $this->setShowInPostFooter($settings['showInPostFooter'] ?? false);
         $this->setFooterContents($settings['footerContents'] ?? '');
         $this->setFooterStyle($settings['footerStyle'] ?? '');
+        $this->setShortcodeWrapper($settings['shortcodeWrapper'] ?? '');
+        $this->setShortcodeWrapperClass($settings['shortcodeWrapperClass'] ?? '');
 
         do_action(HooksAbstract::ACTION_SETTINGS_SET_DISPLAY, $settings);
     }
@@ -633,5 +646,27 @@ class SettingsFacade
         $this->setSettingPreserveData($settings['preserveDataDeactivating'] ?? false);
 
         do_action(HooksAbstract::ACTION_SETTINGS_SET_ADVANCED, $settings);
+    }
+
+    public function getPastDueActionsNotificationStatus(): bool
+    {
+        return (bool)$this->options->getOption('pastDueActionsNotification', true);
+    }
+
+    public function setPastDueActionsNotificationStatus(bool $value): void
+    {
+        $this->options->updateOption('pastDueActionsNotification', $value);
+    }
+
+    public function setPastDueActionsNotificationAddressesList(array $value): void
+    {
+        $value = array_filter($value, 'is_email');
+
+        $this->options->updateOption('pastDueActionsNotificationList', implode(',', $value));
+    }
+
+    public function getPastDueActionsNotificationAddressesList(): array
+    {
+        return explode(',', $this->options->getOption('pastDueActionsNotificationList', ''));
     }
 }

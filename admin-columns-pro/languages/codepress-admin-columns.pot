@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Admin Columns Pro
+# Copyright (C) 2025 Admin Columns Pro
 # This file is distributed under the same license as the Admin Columns Pro package.
 msgid ""
 msgstr ""
@@ -8,7 +8,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: Admin Columns <info@admincolumns.com>\n"
 "Last-Translator: Codepress <info@codepress.nl\n"
-"POT-Creation-Date: 2024-11-05 08:26+0000\n"
+"POT-Creation-Date: 2025-01-07 12:17+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -665,21 +665,21 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: admin-columns-pro/classes/Column/Media/Orientation.php:17
+#: admin-columns-pro/classes/Column/Media/Orientation.php:18
 msgid "Orientation"
 msgstr ""
 
-#: admin-columns-pro/classes/Column/Media/Orientation.php:31
+#: admin-columns-pro/classes/Column/Media/Orientation.php:32
 msgctxt "image orientation"
 msgid "Square"
 msgstr ""
 
-#: admin-columns-pro/classes/Column/Media/Orientation.php:35
+#: admin-columns-pro/classes/Column/Media/Orientation.php:36
 msgctxt "image orientation"
 msgid "Landscape"
 msgstr ""
 
-#: admin-columns-pro/classes/Column/Media/Orientation.php:36
+#: admin-columns-pro/classes/Column/Media/Orientation.php:37
 msgctxt "image orientation"
 msgid "Portrait"
 msgstr ""

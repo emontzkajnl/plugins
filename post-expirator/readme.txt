@@ -7,7 +7,7 @@ Requires at least: 6.7
 Requires PHP: 7.4
 Tested up to: 6.7
 License: GPLv2 or later
-Stable tag: 4.2.0
+Stable tag: 4.3.3
 
 PublishPress Future can make scheduled changes to your content. You can unpublish posts, move posts to a new status, update the categories, and more.
 
@@ -173,6 +173,147 @@ Yes, the PublishPress Future plugin allows you to schedule automatic changes to 
 
 The full changelog can be found on [GitHub](https://github.com/publishpress/PublishPress-Future/blob/main/CHANGELOG.md).
 
+## [4.3.3] - 03 Feb, 2025
+
+### Fixed
+
+- Fix the overdue actions check in the Scheduled Actions list screen (Issue #1155).
+- Update translations (Issue #1156).
+
+## [4.3.2] - 30 Jan, 2025
+
+### Fixed
+
+- Fix typo in the `WorkflowEngine` class.
+- Fix reference to deprecated classes and interfaces.
+- Fix translation of shortcode settings in the Display settings page.
+
+## [4.3.1] - 30 Jan, 2025
+
+### Added
+
+- Add new option to the Schedule workflow step to select the behavior when a duplicate scheduled action is found (Issue #956).
+- Add daily check and notification for past-due actions, with settings to enable/disable and customize the email addresses (Issue #229).
+- Add check for overdue actions in the Scheduled Actions list screen (Issue #232).
+- Add new validation rule to check if the expression is valid in the workflow editor (Issue #742).
+- Add new validation rule to check if the value of a field has invalid variable references (Issue #969).
+
+### Changed
+
+- Change the workflow step custom label to be a step description and still display the original step label (Issue #1114).
+- Changed text and description of fields in the Settings page (Issues #1097, #1103, #1104, #1105).
+- Changed the field description in the Post Query step (Issue #1100).
+- Changed the label of the "Schedule" workflow step to "Schedule delay" (Issue #1122).
+- Changed the label of the "On Cron Schedule" trigger to "On schedule" (Issue #1122).
+- Changed the label of the "Conditional split" workflow step to "Conditional" (Issue #1117).
+- Changed the color of the "False" branch in the "Conditional" workflow step to a slightly darker color.
+- Changed the "Not" field in the "Conditional" workflow step to only be displayed when there are rules (Issue #1118).
+- Changed the description of the "Conditional" workflow step conditions modal (Issue #1118).
+- Changed the validation rule message of the "Stick" and "Unstick" workflow steps (Issue #1101).
+- Changed the message in the Scheduled Actions list screen when a scheduled action is missing its original Schedule step (Issue #971).
+- Removed the "Single variable mode" from the text in the expression builder (Issue #1118).
+- Automatically select post-related settings and defaults in workflow steps that interact with posts (Issue #969).
+- Removed the screenshot feature from the workflow editor (Issue #1135).
+- Changed the label and description of some workflow steps for making it more intuitive (Issue #1101).
+- Changed the default duplicate handling on workflow stepsto "Replace existing task" (Issue #956).
+- Step "Ray - Debug" renamed to "Send to Ray" (Issue #1143).
+- Step "Debug Log" renamed to "Append to debug log" (Issue #1143).
+- Step "Conditional" renamed to "Conditional Delay".
+- Changed the default step's slug to reflect the new step name and classes.
+- Changed the Schedule Delay step settings to be more intuitive.
+- Changed some text in the workflow editor to be more user friendly.
+
+### Fixed
+
+- Fix SQL syntax error in MariaDB lower than 11.6 when deleting orphan scheduled steps (Issue #1087).
+- Update translations (Issue #1113).
+- Fix extra line (empty value character) on some post in the future action column (Issue #1106).
+- Fix error when the step being executed is not found (Issue #1123).
+- Fix the space on right margin of the workflow editor nodes.
+- Fix queries in the `ScheduledActionsModel` to use the group ID.
+- Fix infinite loop detection in post related triggers when fired by a bulk edit action (Issue #943).
+- Fix space on the outputs of the workflow steps in the Scheduled Actions list screen.
+- Fix performance issue when validating the workflow editor nodes (Issue #1137).
+- Fix the constructor of some workflow triggers (Issue 1141).
+- Fix the error related to wrong arguments passed to sprintf on nl_NL language (Issue #1138).
+- Fix the JS error when the expression builder is opened with an expression containing only numbers (Issue #1142).
+- Fix specific text stripping tags from translated string.
+
+### Developers
+
+- Refactor the method `deleteExpiredScheduledSteps` in the class `ScheduledActionsModel` renaming it to `deleteExpiredDoneActions`.
+- Add new method `getExpiredPendingActions` to the class `ScheduledActionsModel`.
+- Deprecated the method `isInfinityLoopDetected` in the trait `InfiniteLoopPreventer` and use the method `isInfiniteLoopDetected` instead.
+- Add new argument `$uniqueId` to the method `isInfiniteLoopDetected` in the trait `InfiniteLoopPreventer` (Issue #943).
+- Remove the methods `convertLegacyScreenshots`, `setScreenshotFromBase64`, `setScreenshotFromFile` and `getScreenshotUrl` from the class `WorkflowModel` (Issue #1135).
+- Remove the methods `convertLegacyScreenshots`, `setScreenshotFromBase64`, `setScreenshotFromFile` and `getScreenshotUrl` from the interface `WorkflowModelInterface` (Issue #1135).
+- Remove the methods `getWorkflowScreenshotStatus`, and `setWorkflowScreenshotStatus` from the class `SettingsFacade` (Issue #1135).
+- Refactored step types and step runners moving files to new folder structure (Issue #1143).
+- Refactored most of the code renaming "Node" to "Step", "NodeRunner" to "StepRunner", and so on (Issue #1148).
+
+## [4.3.0] - 08 Jan, 2025
+
+### Added
+
+- Add new variables selector and an expression builder (Issue #976).
+- Add support to metadata in the variables resolvers and post type variables (Issue #1069, #939).
+- Add the site ID to the site data type schema.
+- Add the post author property to the post data type schema in the workflow editor (Issue #947).
+- Add the post slug property to the post data type schema in the workflow editor.
+- Add new trigger: Post is Published - PRO (Issue #944).
+- Add new trigger: Post Status Changes - PRO (Issue #945).
+- Add new trigger: Post is Scheduled - PRO (Issue #946).
+- Add new trigger: Post Meta Changed - PRO (Issue #1059).
+- Add new action: Post Meta Add - PRO (Issue #732).
+- Add new action: Post Meta Delete - PRO (Issue #732).
+- Add new action: Post Meta Update - PRO (Issue #732).
+- Add the option to change manually enabled workflows in the bulk edit screen (Issue #942).
+- Add the "Save as current status" shortcut to the workflow editor (CTRL/CMD + S) (Issue #1084).
+- Add new display settings to customize the shortcode output (Issue #203).
+- Add new step setting field to customize the step label in the workflow editor (Issue #1090).
+- Add Future Action data support in the workflow editor, allowing to reference future actions in expressions (Issue #948).
+
+### Changed
+
+- Replace text fields and input/variables selectors on step settings with the new expression builder (Issue #976).
+- Changed the border of selected steps to dashed line.
+- Moved the panel "Step Data Flow" to the developer mode.
+- Removed the arrow indicator from the workflow title and added a new Status column to the workflows list screen (Issue #970).
+- Post's variable resolver now also accept a property without `post_` prefix.
+- User's variable resolver now also accept a property without `user_` prefix.
+- Changed the options in the "Debug Data" field to be more intuitive allowing a custom data expression to be selected.
+- The conditional step now uses the new expression builder.
+- Improved the UI in the conditional step settings.
+- Added field descriptions to the post query step settings panel (Issue #1081).
+- Only display the bulk edit option "Update Future Action from Post Metadata" if feature is enabled (Issue #622).
+- Updated language files.
+- Remove focus from the toolbar Delete button when workflow step is selected (Issue #1083).
+- Improved the text in the variables selector modal.
+
+### Fixed
+
+- Fix error when the date or time format is empty in the settings page (Issue #212).
+- Fix empty title and label in the future action panel when custom title and label are not set (Issue #1075).
+- Fix the width of the checkbox in the future action panel (#1076).
+- Fix the permalink in the Post Updated trigger for the post before variable.
+- Fix the variable names in the "Add extra terms to post" step (Issue #1079).
+- Fix the validation message for the recipient field in the Send Email step (Issue #1078).
+- Fix the date format in the shortcode.
+- Fix loading a workflow that doesn't have a specific step type (Issue #883).
+- Fix the first save of a workflow to transit from auto-saved to draft (Issue #1086).
+- Fix warning about deprecated jQuery click() method in the workflow editor.
+- Fix the auto-layout algorithm to avoid overlapping edges and correctly dimension each node and spacing between nodes (Issue #1102).
+- Fix the warning about deprecated method `next` in the class `ActionScheduler_Schedule` (Issue #1107).
+
+### Developers
+
+- Deprecated the method `get_wp_date` in the class `PostExpirator_Util` and use the method `getWpDate` from the class `PublishPress\Future\Framework\WordPress\Facade\DateTimeFacade instead.
+- Deprecated the method `wp_timezone_string` in the class `PostExpirator_Util` and use the method `getTimezoneString` from the class `PublishPress\Future\Framework\System\DateTimeHandler` instead.
+- Deprecated the method `get_timezone_offset` in the class `PostExpirator_Util`.
+- Deprecated the method `sanitize_array_of_integers` in the class `PostExpirator_Util`.
+- Add new param $metaValue to the method `deleteMeta` in the class `PublishPress\Future\Framework\WordPress\Models\PostModel`.
+- Remove the `steps` property from the workflow data type schema.
+
 ## [4.2.0] - 09 Dec, 2024
 
 ### Added
@@ -305,66 +446,3 @@ The full changelog can be found on [GitHub](https://github.com/publishpress/Publ
 ### Fixed
 
 - Fix error when the filter `the_title` is called without an ID, #984
-
-## [4.0.1] - 21 Oct, 2024
-
-### Fixed
-
-- Fix the database schema check for version 4.0.0 on fresh installations, (Issue #928).
-
-## [4.0.0] - 21 Oct, 2024
-
-### Added
-
-- Add the Workflows feature, with the workflow editor and the workflow engine.
-
-### Changes
-
-- The list of scheduled actions now displays the repetition count/date limits (Issue #928).
-- Update language files.
-- Updated the UI in the advanced settings page.
-- Move some advanced settings to the "Display" tab (Issue #952)
-- Add title to the future action panel for UI consistency (Issue #965)
-- Renamed the PublishPress Future metabox to Future Actions for UI consistency (Issue #965)
-
-### Fixed
-
-- Update post model to update post date when setting post status to publish.
-- Prevent error when the current_post->ID is empty for unknown reasons, usually related to 3rd party plugins.
-
-### Developers
-
-- Interface `PublishPress\Future\Core\HookableInterface`: Add new method `removeFilter` to remove a hooked filter.
-- Interface `PublishPress\Future\Core\HookableInterface`: Add new method `removeAction` to remove a hooked action.
-- Class `PublishPress\Future\Framework\WordPress\Facade\HooksFacade`: Add new method `removeFilter` to remove a hooked filter.
-- Class `PublishPress\Future\Framework\WordPress\Facade\HooksFacade`: Add new method `removeAction` to remove a hooked action.
-- New method to publish posts using the class PublishPress\Future\Framework\WordPress\Models\PostModel.
-- Add new filter 'publishpressfuture_migrations' to filter the list of migrations that will be executed.
-- Call the action 'publishpressfuture_fix_db_schema' when a DB fix is executed from the settings page.
-- Call the action 'publishpressfuture_upgrade_plugin' when the plugin is upgraded.
-- Change the data type from void to int for the method 'PublishPress\Future\Modules\Expirator\Interfaces\CronInterfac::scheduleRecurringAction'.
-- Change the data type from void to int for the method 'PublishPress\Future\Modules\Expirator\Interfaces\CronInterfac::scheduleAsyncAction'.
-- Add new filter 'publishpressfuture_schema_is_healthy' to check if the DB schema is healthy.
-- The method 'PublishPress\Future\Modules\Workflows\Models\WorkflowModel::getStepFromRoutineTreeRecursively' now always returns an array.
-- Add new filter 'action_scheduler_list_table_column_recurrence' to filter the recurrence column in the scheduled actions list.
-- Add new method 'getNodeById' to the class 'PublishPress\Future\Modules\Workflows\Models\WorkflowModel'.
-
-## [3.4.4] - 21 Aug, 2024
-
-### Fixed
-
-- Improve notice message when scheduled action runs after pressing "run" (PR #896).
-- Fixed support for the Event Espresso plugin (PR #900).
-- Fixed React warning about createRoot being deprecated.
-- Fixed empty fieldset displayed when the bos is disabled for the post type (Issue #792).
-- Update language files.
-
-### Changed
-
-- Add tabs for post types in the post types settings page (PR #895).
-
-### Added
-
-- Added computed date preview to the general settings page (PR #897).
-- Added option to hide the calendar by default in the future action panel (PR #899).
-- Added new filter `publishpressfuture_posts_future_action_column_output` to the Future Action column.

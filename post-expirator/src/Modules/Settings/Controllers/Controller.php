@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2024, Ramble Ventures
+ * Copyright (c) 2025, Ramble Ventures
  */
 
 namespace PublishPress\Future\Modules\Settings\Controllers;
@@ -163,25 +163,25 @@ class Controller implements InitializableInterface
 
             wp_enqueue_style(
                 'pe-footer',
-                POSTEXPIRATOR_BASEURL . 'assets/css/footer.css',
+                Plugin::getAssetUrl('css/footer.css'),
                 false,
                 PUBLISHPRESS_FUTURE_VERSION
             );
             wp_enqueue_style(
                 'pe-settings',
-                POSTEXPIRATOR_BASEURL . 'assets/css/settings.css',
+                Plugin::getAssetUrl('css/settings.css'),
                 ['pe-footer'],
                 PUBLISHPRESS_FUTURE_VERSION
             );
             wp_enqueue_style(
                 'pe-jquery-ui',
-                POSTEXPIRATOR_BASEURL . 'assets/css/lib/jquery-ui/jquery-ui.min.css',
+                Plugin::getAssetUrl('css/lib/jquery-ui/jquery-ui.min.css'),
                 ['pe-settings'],
                 PUBLISHPRESS_FUTURE_VERSION
             );
             wp_enqueue_style(
                 'pp-wordpress-banners-style',
-                POSTEXPIRATOR_BASEURL . 'assets/vendor/wordpress-banners/css/style.css',
+                Plugin::getAssetUrl('vendor/wordpress-banners/css/style.css'),
                 false,
                 PUBLISHPRESS_FUTURE_VERSION
             );
@@ -561,11 +561,11 @@ class Controller implements InitializableInterface
 
     public function saveTabAdvanced()
     {
-         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
-         $experimentalFeaturesStatus = isset($_POST['future-experimental-features'])
-         // phpcs:ignore WordPress.Security.NonceVerification.Missing
-         ? (int) $_POST['future-experimental-features']
-         : 0;
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
+        $experimentalFeaturesStatus = isset($_POST['future-experimental-features'])
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        ? (int) $_POST['future-experimental-features']
+        : 0;
         $this->settings->setExperimentalFeaturesStatus($experimentalFeaturesStatus);
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing

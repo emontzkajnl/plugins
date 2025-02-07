@@ -4,8 +4,9 @@ namespace ACP\Column\Media;
 
 use AC;
 use ACP\ConditionalFormat;
+use ACP\Export;
 
-class Orientation extends AC\Column\Media\Meta
+class Orientation extends AC\Column\Media\Meta implements Export\Exportable
 {
 
     use ConditionalFormat\ConditionalFormatTrait;
@@ -34,6 +35,11 @@ class Orientation extends AC\Column\Media\Meta
         return $width > $height
             ? _x('Landscape', 'image orientation', 'codepress-admin-columns')
             : _x('Portrait', 'image orientation', 'codepress-admin-columns');
+    }
+
+    public function export()
+    {
+        return new Export\Model\Value($this);
     }
 
 }

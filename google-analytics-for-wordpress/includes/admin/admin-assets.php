@@ -32,8 +32,8 @@ class MonsterInsights_Admin_Assets {
 	 */
 	public function __construct() {
 		global $wp_version;
-		// This filter will only run if WP version is greather than 5.7.0.
-		if ( version_compare( $wp_version, '5.7', '>=' ) ) {
+		// This filter will only run if WP version is greater than 6.4.0.
+		if ( version_compare( $wp_version, '6.4', '>=' ) ) {
 			add_filter( 'wp_script_attributes', array( $this, 'set_scripts_as_type_module' ), 99999 );
 		} else {
 			// Use script_loader_tag if WordPress version is lower than 5.7.0.

@@ -14,6 +14,7 @@ return [
     Column\Product\Downloads::class,
     Column\Product\Featured::class,
     Column\Product\Gallery::class,
+    Column\Product\GlobalUniqueId::class,
     Column\Product\GroupedProducts::class,
     Column\Product\LowOnStock::class,
     Column\Product\MenuOrder::class,

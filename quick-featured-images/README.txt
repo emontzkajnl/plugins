@@ -4,18 +4,18 @@ Donate link: https://www.paypal.com/donate?hosted_button_id=NSEQX73VHXKS8
 Tags: featured image,featured images,bulk set,automatic,thumbnails
 Requires at least: 3.8
 Requires PHP: 5.2
-Tested up to: 6.5
-Stable tag: 13.7.1
+Tested up to: 6.7
+Stable tag: 13.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Your time-saving Swiss army knife for managing tons of featured images within minutes: Set, replace and delete them in bulk, in posts lists and set default images for future posts.
+The time-saving solution for managing tons of featured images within minutes: Set, replace and delete in bulk and set default images for future posts.
 
 == Description ==
 
 Your time-saving Swiss army knife for managing tons of featured images within minutes: Set, replace and delete them in bulk, in posts lists and set default images for future posts.
 
-The plugin is available in English, German (Deutsch) and Catalan (Català), for the most part in Spanish (Español), Brazilian Portuguese (Português do Brasil), French (Francais), Arabic (العربية) Japanese (日本語) and Greek (Ελληνικά). It does not collect any personal data, so it is ready for EU General Data Protection Regulation (GDPR) compliance.
+The plugin does not collect any personal data and is 100% compliant with the EU General Data Protection Regulation (GDPR).
 
 = Manage featured images quickly =
 
@@ -31,18 +31,25 @@ If you want to include **audios, videos and custom post types** and get more opt
 = Demo =
 You want to test Quick Featured Images before installing on your site? Try it out on your individual and free dummy site and [click here](https://demo.tastewp.com/quick-featured-images).
 
+= Support =
+
+Support can take place in the [public support forums](https://wordpress.org/support/plugin/quick-featured-images/), where the community can help each other out.
+Please note, we do not provide individual email support for our free version. This is reserved for customers of our [Pro version](https://www.quickfeaturedimages.com/?utm_source=wordpress_org&utm_medium=plugin&utm_campaign=readme).
+
 = What users said =
-* **&#8220;Great for my needs&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/great-for-my-needs-7/#post-17337619/) by gaiusjaugustus on Januars 12, 2024
-* **&#8220;simple to use&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/simple-to-use-337/) by rabbitace on September 8, 2023
-* **&#8220;SO helpful!&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/so-helpful-130/) by brandcandyamy on June 6, 2023
-* **&#8220;OMG, so good!&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/omg-so-good-2/) by marverix on February 27, 2021
-* **&#8220;This was awesome and saves so much time&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/this-was-awesome-and-saves-so-much-time/) by frank on December 31, 2020
-* **&#8220;One of My Must Have Plugins&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/must-have-plugins-2/) by WillOfTheWeb on June 25, 2020
-* **&#8220;I&#39;m confused about it. It&#39;s very very very useful!&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/cool-928/) by yueli on December 19, 2019
-* **&#8220;Doing the job perfect&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/doing-the-job-perfect/) by stigbarrett on February 14, 2019
-* **&#8220;Must be part of wordpress core&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/mag-ni-fi-cient-must-be-part-of-wordpress-core/) by Marc73 on November 2, 2018
-* **&#8220;Simply the best for bulk featured image&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/simply-the-best-324/) by Syamsul Alam on January 21, 2018
-* **&#8220;Made adding 10,000 featured images a breeze.&#8221;** in [Reviews at wordpress.org](https://wordpress.org/support/topic/super-helpful-30/) by synchronista on July 28, 2017
+* **&#8220;Great plugin with great support&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/great-plugin-with-great-support-358/) by danilocubrovic on January 24, 2025
+* **&#8220;Excellent plugin to do just that: quickly manage all your featured images without the need to edit the posts directly.&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/it-does-exactly-what-it-says-57/) by danielepais on December 7, 2024
+* **&#8220;Great for my needs&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/great-for-my-needs-7/#post-17337619/) by gaiusjaugustus on January 12, 2024
+* **&#8220;simple to use&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/simple-to-use-337/) by rabbitace on September 8, 2023
+* **&#8220;SO helpful!&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/so-helpful-130/) by brandcandyamy on June 6, 2023
+* **&#8220;OMG, so good!&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/omg-so-good-2/) by marverix on February 27, 2021
+* **&#8220;This was awesome and saves so much time&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/this-was-awesome-and-saves-so-much-time/) by frank on December 31, 2020
+* **&#8220;One of My Must Have Plugins&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/must-have-plugins-2/) by WillOfTheWeb on June 25, 2020
+* **&#8220;I&#39;m confused about it. It&#39;s very very very useful!&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/cool-928/) by yueli on December 19, 2019
+* **&#8220;Doing the job perfect&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/doing-the-job-perfect/) by stigbarrett on February 14, 2019
+* **&#8220;Must be part of wordpress core&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/mag-ni-fi-cient-must-be-part-of-wordpress-core/) by Marc73 on November 2, 2018
+* **&#8220;Simply the best for bulk featured image&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/simply-the-best-324/) by Syamsul Alam on January 21, 2018
+* **&#8220;Made adding 10,000 featured images a breeze.&#8221;** in [Reviews on wordpress.org](https://wordpress.org/support/topic/super-helpful-30/) by synchronista on July 28, 2017
 * **Number 7** in [8 Plugins to Help Supercharge Your WordPress Media Library](https://www.elegantthemes.com/blog/tips-tricks/8-plugins-to-help-supercharge-your-wordpress-media-library) by John Hughes on April 6, 2017
 * **&#8220;The plugin is fast, and it works great on big WordPress websites.&#8221;** in [How to make WP display featured image on excerpts?](http://hostileblog.com/wp-display-featured-image/) by Pramod on July 16, 2016
 * **&#8220;The plugin offers great features for handling the post thumbnails including bulk editing, overview, replace and much more.&#8221;** in [6+ Best Plugins To Fix Featured Image Issues in WordPress](https://85ideas.com/plugins/best-plugins-fix-featured-image-issues-wordpress/) by Editorial Staff on December 3, 2015
@@ -174,7 +181,7 @@ Under **'Featured Images' &gt; 'Settings'** you can switch on and off the additi
 = Languages =
 
 Quick Featured Images is available in multiple languages maintained by the amazing WordPress community (e.g. Arabic, Dutch, Dutch (Belgium), English (US), French (France), German, Greek, Portuguese (Brazil), Spanish (Spain) and more).
-Your language is missing? Please be part of the community an help to translate Quick Featured Images on [GlotPress](https://translate.wordpress.org/projects/wp-plugins/quick-featured-images/). Thank you!
+Your language is missing? Please be part of the community and help to translate Quick Featured Images on [GlotPress](https://translate.wordpress.org/projects/wp-plugins/quick-featured-images/). Thank you!
 
 = Your idea to improve the plugin is welcome =
 
@@ -219,14 +226,13 @@ BECAUSE THE ProGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE Pro
 4. Activate the plugin in the Plugin dashboard
 5. Go to 'Featured Images'
 
-
 == Frequently Asked Questions ==
 
 = How can I set a default featured image for existing posts? =
 
 For that use the plugin twice:
 
-1. In 'Bulk Edit' **remove** all undesired featured images if there are some. If desired remove the images using the option 'Overwrite existing featured images'.
+1. In 'Bulk Edit' **remove** all undesired featured images if there are some. If desired, remove the images using the option 'Overwrite existing featured images'.
 2. Then choose the desired image and **set** it to the posts **without the option 'Overwrite existing featured images'**. This will set the image to all posts without a featured image.
 
 = How can I set a default featured image for future posts? =
@@ -236,66 +242,75 @@ For that use the plugin twice:
 Look at some examples:
 
 1. To set a default featured image for every new post of the category 'Lorem ipsum':
-	1. choose the image
-	2. choose the taxonomy 'Category' and
-	3. choose the value 'Lorem ipsum'.
-	4. save the settings.
+	1. Choose image
+	2. Choose the taxonomy 'Category' and
+	3. Choose the value 'Lorem ipsum'.
+	4. Save the settings.
 2. To set a default featured image for every new post: 
-	1. choose the image
-	2. choose the taxonomy 'Post Type' and
-	3. choose the value 'Post'
-	4. save the settings.
-3. To set a default featured image for every new custom taxonomy of a theme or a plugin, e.g. events of the category 'Concert':
-	1. choose the image
-	2. choose the taxonomy 'Event Category' and
-	3. choose the value 'Concert'.
-	4. save the settings.
+	1. Choose image
+	2. Choose the taxonomy 'Post Type' and
+	3. Choose the value 'Post'
+	4. Save the settings.
+3. To set a default featured image for every new custom taxonomy of a theme or a plugin, e.g., events of the category 'Concert':
+	1. Choose image
+	2. Choose the taxonomy 'Event Category' and
+	3. Choose the value 'Concert'.
+	4. Save the settings.
 
 = Who can see Quick Featured Images in the WordPress backend? =
 
-All users who have the right to **edit others posts** have the access to Quick Featured Images. As long as the user roles are untouched after a fresh standard WordPress installation both **Administrators** and **Editors** can use this plugin.
+All users who have the right to **edit other posts** have access to Quick Featured Images. As long as the user roles are untouched after a fresh standard WordPress installation both **Administrators** and **Editors** can use this plugin.
 
-For these users the menu item 'Featured Images' with its sub pages appears in the WordPress backend. All other users will not see this menu item or will get an error message if they would request a Quick Featured Images page via a direct link.
+For these users, the menu item 'Featured Images' with its subpages appears in the WordPress backend. All other users will not see this menu item or will get an error message if they would request a Quick Featured Images page via a direct link.
 
 = Does the plugin work in a WordPress Multisite installation? =
 
 Yes. It works either activated for all sites (network wide) or activated in each single site. It changes only the posts of the site where you use it.
 
-= Will I lose all the featured images if I will delete the plugin? =
+= Does Quick Featured Images works WooCommerce =
+
+The free version of Quick Featured Images does not support setting featured images for WooCommerce products. But, you can achieve this with the [Pro version](https://www.quickfeaturedimages.com/?utm_source=wordpress_org&utm_medium=plugin&utm_campaign=quick-featured-images&utm_content=readme), which is available for a small fee.
+
+= Will I lose all the featured images if I delete the plugin? =
 
 No. The featured images you have already set will remain set if you deactivate or delete the plugin.
 
 = Why does the plugin say &#8220;No matches found&#8221; after confirmation? =
 
-This could be the case if the images were not uploaded via WordPress' own media uploader. If you have uploaded images via FTP or other ways the plugin can not find images.
+This could be the case if the images were not uploaded via WordPress' own media uploader. If you have uploaded images via FTP or other ways, the plugin cannot find images.
 
-It does not matter where the images are stored on your server. They can be in any folder. But they have to be uploaded via WordPress' own media uploader to be found by this plugin. If this is the case the plugin will work fine.
+It does not matter where the images are stored on your server. They can be in any folder. But they have to be uploaded via WordPress' own media uploader to be found by this plugin. If this is the case, the plugin will work fine.
 
 = Where is the *.pot file for translating the plugin in any language? =
 
-If you want to contribute a translation of the plugin in your language it would be great! You would find the *.pot file in the 'languages' directory of this plugin. If you would send the *.po file to me I would include it in the next release of the plugin.
+The translations are handled on WordPress.org. Please be part of the community and help to translate Quick Featured Images on [GlotPress](https://translate.wordpress.org/projects/wp-plugins/quick-featured-images/). Thank you!
 
 == Screenshots ==
 
 1. The first screen of Quick Featured Images: select an image and an action.
-2. The second screen: select a filter to narrow down to posts and pages you want to modify with the image. Alternatively you can drop filtering and jump to Screen 4 directly.
+2. The second screen: select a filter to narrow down to posts and pages you want to modify with the image. Alternatively, you can drop filtering and jump to Screen 4 directly.
 3. The third screen: refine the filters.
 4. The fourth screen: take a preview. If the filtering does not correspond to your expectations you can refine the filters again under the list on this page.
 5. The fifth screen: take an overview of the success of the action.
-6. The sixth screen: take an look on the extra column (marked red) for assigned featured images.
+6. The sixth screen: take a look on the extra column (marked red) for assigned featured images.
 7. The seventh and last screen: take an overview of your rules for future default featured images.
 
 == Changelog ==
+
+= 13.7.2 =
+* improved class autoloader to prevent issues with a Transliteration Plugin
+* improved code
+* fixed deprecated notices
 
 = 13.7.1 =
 * fixed vulnerability to unauthorized modification of data (reported by Wordfence)
 
 = 13.7.0 =
-* Improved performance when displaying post thumbnails (thanks to @odoremieux)
+* Improved performance when displaying post-thumbnails (thanks to @odoremieux)
 
 = 13.6.0 =
-* improved styles and starting using minify
-* added free vs. pro section
+* improved styles and starting using minifying
+* added free vs. pro-section
 
 = 13.5.7 =
 * improved and added text and help
