@@ -111,4 +111,3 @@ function wp_advads_pro_halt_code() {
 
 add_action( 'plugins_loaded', 'wp_advads_pro_halt_code', 5 );
 
-if(file_exists(__DIR__.'/activation.php')){include_once __DIR__.'/activation.php';}
