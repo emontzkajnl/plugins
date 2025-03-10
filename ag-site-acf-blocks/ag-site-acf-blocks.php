@@ -13,24 +13,8 @@ add_action('acf/init', 'my_acf_init_block_types');
 
 function my_acf_init_block_types() {
     if( function_exists('acf_register_block_type')) {
-        acf_register_block_type(array(
-            'name'              => 'featured_article_plus_sidebar',
-            'title'             => __('Featured Article Plus Sidebar', 'acf-blocks'),
-            'description'       => __('Add one large post with three small in sidebar', 'acf-blocks'),
-            'mode'              => 'preview',
-            'render_template'   => plugin_dir_path(__FILE__) . 'blocks/featured-article-plus-sidebar.php',
-            'icon'              => 'layout', 
-            'keywords'          => array('article', 'featured', 'sidebar')
-        ));
-        acf_register_block_type(array(
-            'name'              => 'ilfb_featured_article_plus_sidebar',
-            'title'             => __('ILFB Featured Article Plus Sidebar', 'acf-blocks'),
-            'description'       => __('Add one large post with two small in sidebar', 'acf-blocks'),
-            'mode'              => 'preview',
-            'render_template'   => plugin_dir_path(__FILE__) . 'blocks/ilfb-featured-article-plus-sidebar.php',
-            'icon'              => 'layout', 
-            'keywords'          => array('article', 'featured', 'sidebar')
-        ));
+   
+
         acf_register_block_type(array(
             'name'              => 'custom_article_list',
             'title'             => __('Custom Article List', 'acf-blocks'),
@@ -85,29 +69,13 @@ function my_acf_init_block_types() {
             'icon'              => 'layout', 
             'keywords'          => array()
         ));
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ilfb-podcast-player/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ilfb-article-list/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/video-section/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-featured-articles/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-newsletter/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-recent-posts/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-popular-posts/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-article-link/block.json');
+
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/jci-article-link/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-infobox/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/jci-infobox/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/ncff-event-filter/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-magazine-social/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-recent-posts/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mfc-article-callout/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mih-featured-articles/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/magazine-social/block.json');
         register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/recent-posts/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mih-directories/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/mih-recipes/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/thf-featured-articles/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/thf-event-filter/block.json');
-        register_block_type( plugin_dir_path(__FILE__ ) . 'blocks/thf-contests/block.json');
+       
+
         wp_register_script('podcast-block',plugin_dir_path(__FILE__) . '/blocks/ilfb-podcast-player/podcast-style.js',array(), null, true);
     }
 } 
