@@ -207,7 +207,7 @@ class rsssl_onboarding {
 			[
 				"id"       => 'plugins',
 				"title"    => __( "We think you will like this", "really-simple-ssl" ),
-				"subtitle" => __( "Really Simple Plugins is also the author of the below privacy-focused plugins, including consent management, legal documents and analytics!", "really-simple-ssl" ),
+				"subtitle" => __( "Really Simple Plugins is also the author of the below privacy-focused plugins including consent management and legal documents!", "really-simple-ssl" ),
 				"items"    => $this->plugins(),
 				"button"   => __( "Install", "really-simple-ssl" ),
 			],
@@ -303,12 +303,6 @@ class rsssl_onboarding {
 	public function plugins(): array {
 		$items = [];
 		$plugins_to_install = [
-			[
-				"slug" => "burst-statistics",
-				'constant_premium' => 'burst_pro',
-				"title" => "Burst Statistics",
-				"description" => __("Privacy-friendly analytics tool.", "really-simple-ssl"),
-			],
 			[
 				"slug" => "complianz-gdpr",
 				'constant_premium' => 'cmplz_premium',
@@ -476,12 +470,6 @@ class rsssl_onboarding {
 				"options" => [ 'change_debug_log_location', 'disable_http_methods' ],
 				"activated" => true,
 			],
-//			[
-//				"title" => __("File Change Detection", "really-simple-ssl"),
-//				"id" => "file_change_detection",
-//				"options" => ['file_change_detection'],
-//				"activated" => true,
-//			],
 			[
 				"title" => __("Strong Password policy", "really-simple-ssl"),
 				"id" => "password_security",
@@ -530,7 +518,7 @@ class rsssl_onboarding {
 		return true;
 	}
 
-	private function get_hardening_fields(): array {
+	public function get_hardening_fields(): array {
 		$fields = rsssl_fields(false);
 		//get all fields that are recommended
 		$recommended = array_filter($fields, function($field){

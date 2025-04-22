@@ -151,15 +151,35 @@ abstract class ServicesAbstract
 
     public const WORKFLOW_ENGINE = 'future.free/workflows/engine';
 
+    /**
+     * @deprecated 4.4.1 Use WORKFLOW_VARIABLES_HANDLER_FACTORY instead.
+     */
     public const WORKFLOW_VARIABLES_HANDLER = 'future.free/workflows/variables-handler';
+
+    public const WORKFLOW_VARIABLES_HANDLER_FACTORY = 'future.free/workflows/variables-handler-factory';
 
     public const NODE_RUNNER_MAPPER = 'future.free/workflows/node-runner-mapper';
 
+    /**
+     * @deprecated 4.4.1 User GENERAL_STEP_PROCESSOR_FACTORY instead.
+     */
     public const GENERAL_STEP_PROCESSOR = 'future.free/workflows/general-step-processor';
 
+    public const GENERAL_STEP_PROCESSOR_FACTORY = 'future.free/workflows/general-step-processor-factory';
+
+    /**
+     * @deprecated 4.4.1 User POST_STEP_PROCESSOR_FACTORY instead.
+     */
     public const POST_STEP_PROCESSOR = 'future.free/workflows/post-step-processor';
 
+    public const POST_STEP_PROCESSOR_FACTORY = 'future.free/workflows/port-step-processor-factory';
+
+    /**
+     * @deprecated 4.4.1 User CRON_STEP_PROCESSOR_FACTORY instead.
+     */
     public const CRON_STEP_PROCESSOR = 'future.free/workflows/cron-step-processor';
+
+    public const CRON_STEP_PROCESSOR_FACTORY = 'future.free/workflows/cron-step-processor-factory';
 
     /**
      * @deprecated 4.3.1 Use STEP_RUNNER_FACTORY instead.
@@ -183,11 +203,25 @@ abstract class ServicesAbstract
 
     public const STEP_RUNNER_FACTORY = 'future.free/workflows/step-runner-factory';
 
-    public const INPUT_VALIDATOR_POST_QUERY = 'future.free/workflows/input-validator-post-query';
+    public const INPUT_VALIDATOR_POST_QUERY_FACTORY = 'future.free/workflows/input-validator-post-query-factory';
 
     public const DB_TABLE_WORKFLOW_SCHEDULED_STEPS_SCHEMA = 'future.free/workflows/db-table-workflow-scheduled-steps-schema';
 
     public const DATE_TIME_HANDLER = 'future.free/datetime-handler';
 
     public const CACHE_POSTS_WITH_FUTURE_ACTION = 'future.free/cache-posts-with-future-action';
+
+    public const JSON_LOGIC_ENGINE_FACTORY = 'future.free/json-logic-engine-factory';
+
+    public const EXECUTION_CONTEXT_PROCESSOR_REGISTRY = 'future.free/execution-context-processor-registry';
+
+    public const EXECUTION_CONTEXT_PROCESSOR_INITIALIZER = 'future.free/execution-context-processor-initializer';
+
+    public const EXECUTION_CONTEXT_DATE_PROCESSOR = 'future.free/execution-context-date-processor';
+
+    public const POST_CACHE = 'future.free/post-cache';
+
+    public const WORKFLOW_EXECUTION_SAFEGUARD = 'future.free/workflow-execution-safeguard';
+
+    public const EXECUTION_CONTEXT_REGISTRY = 'future.free/execution-context-registry';
 }

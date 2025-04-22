@@ -119,6 +119,11 @@ class UnstickPost implements StepTypeInterface
         ];
     }
 
+    public function getStepScopedVariablesSchema(): array
+    {
+        return [];
+    }
+
     public function getOutputSchema(): array
     {
         return [
@@ -142,13 +147,11 @@ class UnstickPost implements StepTypeInterface
             "target" => [
                 [
                     "id" => "input",
-                    "left" => "50%",
                 ]
             ],
             "source" => [
                 [
                     "id" => "output",
-                    "left" => "50%",
                     "label" => __("Next", "post-expirator"),
                 ]
             ]

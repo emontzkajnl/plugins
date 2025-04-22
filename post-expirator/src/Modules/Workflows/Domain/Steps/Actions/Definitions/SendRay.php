@@ -34,7 +34,7 @@ class SendRay implements StepTypeInterface
 
     public function getDescription(): string
     {
-        return __("This step transmits the flow's data to Ray (by Spatie).", "post-expirator");
+        return __("This step transmits the workflow's data to Ray (by Spatie).", "post-expirator");
     }
 
     public function getIcon(): string
@@ -113,6 +113,11 @@ class SendRay implements StepTypeInterface
         ];
     }
 
+    public function getStepScopedVariablesSchema(): array
+    {
+        return [];
+    }
+
     public function getOutputSchema(): array
     {
         return [
@@ -136,13 +141,11 @@ class SendRay implements StepTypeInterface
             "target" => [
                 [
                     "id" => "input",
-                    "left" => "50%",
                 ]
             ],
             "source" => [
                 [
                     "id" => "output",
-                    "left" => "50%",
                     "label" => __("Next", "post-expirator"),
                 ]
             ]

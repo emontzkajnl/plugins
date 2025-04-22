@@ -496,7 +496,6 @@ class QMNQuizManager {
 			),
 			$atts
 		);
-
 		// Quiz ID.
 		$quiz            = intval( $shortcode_args['quiz'] );
 		$question_amount = intval( $shortcode_args['question_amount'] );
@@ -610,6 +609,7 @@ class QMNQuizManager {
 				'skip_validation_time_expire'        => $qmn_quiz_options->skip_validation_time_expire,
 				'timer_limit_val'                    => $qmn_quiz_options->timer_limit,
 				'disable_scroll_next_previous_click' => $qmn_quiz_options->disable_scroll_next_previous_click,
+				'disable_scroll_on_result'           => $qmn_quiz_options->disable_scroll_on_result,
 				'disable_first_page'                 => $qmn_quiz_options->disable_first_page,
 				'enable_result_after_timer_end'      => isset( $qmn_quiz_options->enable_result_after_timer_end ) ? $qmn_quiz_options->enable_result_after_timer_end : '',
 				'enable_quick_result_mc'             => isset( $qmn_quiz_options->enable_quick_result_mc ) ? $qmn_quiz_options->enable_quick_result_mc : '',
@@ -791,7 +791,7 @@ class QMNQuizManager {
 		if ( 1 == $quiz_options->randomness_order || 2 == $quiz_options->randomness_order ) {
 			$order_by_sql = 'ORDER BY rand()';
 			$categories   = isset( $quiz_options->randon_category ) ? $quiz_options->randon_category : '';
-			if ( $categories ) {
+			if ( $categories && ! empty( $quiz_options->question_per_category ) ) {
 				$exploded_arr = explode( ',', $quiz_options->randon_category );
 				if ( ! $multiple_category_system ) {
 					$cat_str   = "'" . implode( "', '", $exploded_arr ) . "'";
@@ -995,6 +995,13 @@ class QMNQuizManager {
 			</script>
 			<?php
 		}
+		$questions = array_filter(
+			$questions,
+			function ( $question ) {
+				$question_settings = maybe_unserialize( $question->question_settings );
+				return ! isset( $question_settings['isPublished'] ) || 0 !== intval( $question_settings['isPublished'] );
+			}
+		);
 		return apply_filters( 'qsm_load_questions_filter', $questions, $quiz_id, $quiz_options );
 	}
 
@@ -1122,29 +1129,21 @@ class QMNQuizManager {
 		$randomness_class = 0 === intval( $options->randomness_order ) ? '' : 'random';
 		?><div class='qsm-quiz-container qsm-quiz-container-<?php echo esc_attr($quiz_data['quiz_id']); ?> qmn_quiz_container mlw_qmn_quiz <?php echo esc_attr( $auto_pagination_class ); ?> quiz_theme_<?php echo esc_attr( $saved_quiz_theme . ' ' . $randomness_class ); ?> '>
 		<?php
-			// Get quiz post based on quiz id
-			$args      = array(
-				'posts_per_page' => 1,
-				'post_type'      => 'qsm_quiz',
-				'meta_query'     => array(
-					array(
-						'key'     => 'quiz_id',
-						'value'   => $quiz_data['quiz_id'],
-						'compare' => '=',
-					),
-				),
-			);
-			$the_query = new WP_Query( $args );
+			if ( 'default' == $saved_quiz_theme ) {
+				$featured_image       = get_option( "quiz_featured_image_$options->quiz_id" );
+				$qsm_global_settings   = (array) get_option( 'qmn-settings' );
+				$qsm_preloader_setting = isset( $qsm_global_settings['enable_preloader'] ) ? $qsm_global_settings['enable_preloader'] : '';
 
-			// The Loop
-			if ( $the_query->have_posts() ) {
-				while ( $the_query->have_posts() ) {
-					$the_query->the_post();
-					echo get_the_post_thumbnail( get_the_ID(), 'full' );
+				if ( isset( $qsm_preloader_setting ) && $qsm_preloader_setting > 0 && ! empty( $featured_image ) ) {
+					echo '<link rel="preload" href="' . esc_url( $featured_image ) . '" as="image">';
 				}
-				/* Restore original Post Data */
-				wp_reset_postdata();
-			}
+
+				if ( "" != $featured_image ) {
+					?>
+					<img class="qsm-quiz-default-feature-image" src="<?php echo esc_url( $featured_image ); ?>" alt="<?php esc_attr_e( 'Featured Image', 'quiz-master-next' ); ?>" />
+				<?php }
+				?>
+			<?php }
 			echo apply_filters( 'qsm_display_before_form', '', $options, $quiz_data );
 			$quiz_form_action = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 			?>
@@ -1744,6 +1743,61 @@ class QMNQuizManager {
 	}
 
 	/**
+	 * Validate Contact Fields
+	 *
+	 * Validates the contact fields in the request
+	 *
+	 * @since  10.0.3
+	 * @param  array $contact_form The contact form fields
+	 * @param  array $request      The request data
+	 * @return bool               Whether the contact fields are valid
+	 */
+	public function qsm_validate_contact_fields( $contact_form, $request ) {
+		$errors = [];
+		foreach ( $contact_form as $index => $field ) {
+			if ( 'true' === $field['enable'] ) {
+				$contact_key = "contact_field_" . $index;
+				$value = isset( $request[ $contact_key ] ) ? trim( $request[ $contact_key ] ) : '';
+
+				if ( 'true' === $field['required'] && empty( $value ) ) {
+					$errors[] = __( "Enter ", 'quiz-master-next' ) . $field['label'];
+				}
+
+				if ( ! empty( $field['minlength'] ) && strlen( $value ) < (int) $field['minlength'] ) {
+					$errors[] = $field['label'] . __( " must be at least ", 'quiz-master-next' ) . $field['minlength'] . __( " characters long.", 'quiz-master-next' );
+				}
+
+				if ( ! empty( $field['maxlength'] ) && strlen( $value ) > (int) $field['maxlength'] ) {
+					$errors[] = $field['label'] . __( " must be no more than ", 'quiz-master-next' ) . $field['maxlength'] . __( " characters long.", 'quiz-master-next' );
+				}
+
+				if ( 'email' === $field['type'] && ! empty( $value ) ) {
+					if ( ! filter_var( $value, FILTER_VALIDATE_EMAIL ) ) {
+						$errors[] = __( "Email must be a valid e-mail.", 'quiz-master-next' );
+					} else {
+						$email_domain = substr( strrchr( $value, "@" ), 1 );
+
+						if ( ! empty( $field['allowdomains'] ) ) {
+							$allowed_domains = array_map( 'trim', explode( ',', $field['allowdomains'] ) );
+							if ( ! in_array( $email_domain, $allowed_domains, true ) ) {
+								$errors[] = __( "Email must be from an allowed domain (", 'quiz-master-next' ) . $field['allowdomains'] . ").";
+							}
+						}
+
+						if ( ! empty( $field['blockdomains'] ) ) {
+							$blocked_domains = array_map( 'trim', explode( ',', $field['blockdomains'] ) );
+							if ( in_array( $email_domain, $blocked_domains, true ) ) {
+								$errors[] = __( "Email cannot be from a blocked domain (", 'quiz-master-next' ) . $field['blockdomains'] . ").";
+							}
+						}
+					}
+				}
+			}
+		}
+		return empty( $errors ) ? 1 : "<strong>" . __( 'There was an error with your submission:', 'quiz-master-next' ) . "</strong><ul style='left: -20px; position: relative;'><li>" . implode( "</li><li>", $errors ) . "</li></ul>";
+	}
+
+	/**
 	 * Calls the results page from ajax
 	 *
 	 * @since  4.6.0
@@ -1812,6 +1866,19 @@ class QMNQuizManager {
 		$dateStr    = $qsm_option['quiz_options']['scheduled_time_end'];
 		$timezone   = isset( $_POST['currentuserTimeZone'] ) ? sanitize_text_field( wp_unslash( $_POST['currentuserTimeZone'] ) ) : '';
 		$dtUtcDate  = strtotime( $dateStr . ' ' . $timezone );
+		$missing_contact_fields = $this->qsm_validate_contact_fields( $qsm_option['contact_form'], $_REQUEST );
+		if ( 1 !== $missing_contact_fields ) {
+			echo wp_json_encode(
+				array(
+					'display'       => '<div class="qsm-result-page-warning">' . wp_kses_post( $missing_contact_fields ) . '</div>',
+					'redirect'      => false,
+					'result_status' => array(
+						'save_response' => false,
+					),
+				)
+			);
+			wp_die();
+		}
 
 		if ( isset($qsm_option['quiz_options']['not_allow_after_expired_time']) && '1' === $qsm_option['quiz_options']['not_allow_after_expired_time'] && isset( $_POST['currentuserTime'] ) && sanitize_text_field( wp_unslash( $_POST['currentuserTime'] ) ) > $dtUtcDate && ! empty($dateStr) ) {
 			echo wp_json_encode(
@@ -2678,11 +2745,13 @@ class QMNQuizManager {
 				$qmn_social_media_text = array(
 					'twitter'  => $qmn_quiz_options->social_media_text,
 					'facebook' => $qmn_quiz_options->social_media_text,
+					'linkedin' => $qmn_quiz_options->social_media_text,
 				);
 			}
 			$qmn_social_media_text['twitter']  = apply_filters( 'mlw_qmn_template_variable_results_page', $qmn_social_media_text['twitter'], $qmn_array_for_variables );
 			$qmn_social_media_text['facebook'] = apply_filters( 'mlw_qmn_template_variable_results_page', $qmn_social_media_text['facebook'], $qmn_array_for_variables );
-			$social_display                   .= "<br /><a class=\"mlw_qmn_quiz_link\" onclick=\"qmnSocialShare('facebook', '" . esc_js( $qmn_social_media_text['facebook'] ) . "', '" . esc_js( $qmn_quiz_options->quiz_name ) . "', '" . esc_js( $facebook_app_id ) . "');\">Facebook</a><a class=\"mlw_qmn_quiz_link\" onclick=\"qmnSocialShare('twitter', '" . esc_js( $qmn_social_media_text['twitter'] ) . "', '" . esc_js( $qmn_quiz_options->quiz_name ) . "');\">Twitter</a><br />";
+			$qmn_social_media_text['linkedin'] = apply_filters( 'mlw_qmn_template_variable_results_page', $qmn_social_media_text['linkedin'], $qmn_array_for_variables );
+			$social_display                   .= "<br /><a class=\"mlw_qmn_quiz_link\" onclick=\"qmnSocialShare('facebook', '" . esc_js( $qmn_social_media_text['facebook'] ) . "', '" . esc_js( $qmn_quiz_options->quiz_name ) . "', '" . esc_js( $facebook_app_id ) . "');\">Facebook</a><a class=\"mlw_qmn_quiz_link\" onclick=\"qmnSocialShare('twitter', '" . esc_js( $qmn_social_media_text['twitter'] ) . "', '" . esc_js( $qmn_quiz_options->quiz_name ) . "');\">Twitter</a><a class=\"mlw_qmn_quiz_link\" onclick=\"qmnSocialShare('linkedin', '" . esc_js( $qmn_social_media_text['linkedin'] ) . "', '" . esc_js( $qmn_quiz_options->quiz_name ) . "');\">Linkedin</a><br />";
 		}
 		return apply_filters( 'qmn_returned_social_buttons', $social_display, $qmn_quiz_options, $qmn_array_for_variables );
 	}

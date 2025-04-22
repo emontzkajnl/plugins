@@ -4,9 +4,9 @@ Donate link: https://www.paypal.me/reallysimplessl
 Tags: security, ssl, 2fa, vulnerabilities, two factor
 Requires at least: 5.9
 License: GPL2
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 9.2.0
+Stable tag: 9.3.3
 
 Easily improve site security with WordPress Hardening, Two-Factor Authentication (2FA), Login Protection, Vulnerability Detection and SSL certificate.
 
@@ -151,6 +151,29 @@ The plugin checks your certificate before enabling, but if, for example, you mig
 If you can't deactivate, do not just remove the plugin folder to uninstall! Follow these [instructions](https://really-simple-ssl.com/knowledge-base/uninstall-websitebackend-not-accessible/) instead.
 
 == Changelog ==
+= 9.3.3 =
+* April 2nd, 2025
+* Improvement: Added multiple WP-CLI commands to better align with recent plugin features
+* Improvement: Added support for custom/multiple roles in Two Factor Authentication
+
+= 9.3.2.1 =
+* March 20th, 2025
+* Fix: Properly handle unknown plugins in upgrade requests, preventing unintended behavior.
+
+= 9.3.2 =
+* March 5th, 2025
+* Improvement: Added filters to customize Let's Encrypt Wizard behavior
+* Fix: Removed default checkbox behavior from configuration settings.
+* Fix: Handle multiple tooltip reasons for disabled select fields
+
+= 9.3.1 =
+* February 12th, 2025
+* Improvement: Not able to use email needed functions when email is not yet verified.
+* Fix: All instruction links are now correct.
+* Fix: Undefined array key "m" when showing vulnerability details.
+* Fix: Prevent errors when downgrading to free.
+* Fix: Compatibility between 2FA and JetPack “Log in using WordPress.com account” setting
+
 = 9.2.0 =
 * January 20th, 2025
 * Fix: Added nonce check to certificate re-check button.

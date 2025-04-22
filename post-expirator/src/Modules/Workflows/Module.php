@@ -134,6 +134,8 @@ final class Module implements InitializableInterface
         $this->options = $options;
         $this->email = $email;
 
+        $this->registerHooks();
+
         /*
          * We initialize the engine in the constructor because it requires
          * the init hook has not been fired yet. The initialize method runs in the init hook.
@@ -210,5 +212,30 @@ final class Module implements InitializableInterface
         }
 
         $this->workflowEngine->start();
+    }
+
+    private function registerHooks()
+    {
+        $this->hooks->addFilter(
+            HooksAbstract::FILTER_WORKFLOW_ROUTE_VARIABLE,
+            [$this, 'filterWorkflowRouteVariable'],
+            10,
+            2
+        );
+    }
+
+    public function filterWorkflowRouteVariable($variableName, $dataSource)
+    {
+        // The execution_id variable is deprecated.
+        if ($variableName === 'global.execution_id') {
+            return 'global.workflow.execution_id';
+        }
+
+        // The run_id variable is deprecated.
+        if ($variableName === 'global.run_id') {
+            return 'global.workflow.execution_id';
+        }
+
+        return $variableName;
     }
 }

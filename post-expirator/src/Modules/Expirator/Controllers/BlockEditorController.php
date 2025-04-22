@@ -14,6 +14,7 @@ use PublishPress\Future\Core\Plugin;
 use PublishPress\Future\Framework\InitializableInterface;
 use PublishPress\Future\Modules\Expirator\HooksAbstract;
 use PublishPress\Future\Modules\Expirator\Models\CurrentUserModel;
+use Throwable;
 
 defined('ABSPATH') or die('Direct access not allowed.');
 
@@ -109,7 +110,14 @@ class BlockEditorController implements InitializableInterface
             $taxonomyPluralName = '';
             if (! empty($postTypeDefaultConfig['taxonomy'])) {
                 $taxonomy = get_taxonomy($postTypeDefaultConfig['taxonomy']);
-                $taxonomyPluralName = $taxonomy->label;
+
+                if (is_object($taxonomy)) {
+                    $taxonomyPluralName = $taxonomy->label;
+                }
+            }
+
+            if (empty($taxonomyPluralName)) {
+                $taxonomyPluralName = __('Taxonomy', 'post-expirator');
             }
 
             $taxonomyTerms = [];
@@ -120,7 +128,23 @@ class BlockEditorController implements InitializableInterface
                 ]);
             }
 
-            $defaultExpirationDate = $defaultDataModel->getActionDateParts($post->ID);
+            try {
+                $defaultExpirationDate = $defaultDataModel->getActionDateParts($post->ID);
+            } catch (Throwable $e) {
+                $now = time();
+                $gmDate = gmdate('Y-m-d H:i:s', $now);
+                $calculatedDate = $now;
+
+                $defaultExpirationDate = [
+                    'year' => date('Y', $now),
+                    'month' => date('m', $now),
+                    'day' => date('d', $now),
+                    'hour' => date('H', $now),
+                    'minute' => date('i', $now),
+                    'ts' => $calculatedDate,
+                    'iso' => $gmDate
+                ];
+            }
 
             $metaboxTitle = $settingsFacade->getMetaboxTitle() ?? __('Future Actions', 'post-expirator');
             $metaboxCheckboxLabel = $settingsFacade->getMetaboxCheckboxLabel() ?? __('Enable Future Action', 'post-expirator');

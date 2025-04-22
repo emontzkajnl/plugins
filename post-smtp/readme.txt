@@ -1,10 +1,10 @@
-=== Post SMTP - WordPress SMTP Plugin with Email Logs and Mobile App for Failure Notifications - Gmail SMTP, Office 365, Brevo, Mailgun, Amazon SES and more ===
+=== Post SMTP - WP SMTP Plugin with Email Logs and Mobile App for Failure Notifications - Gmail SMTP, Office 365, Brevo, Mailgun, Amazon SES and more ===
 Plugin URI: https://postmansmtp.com/
 Contributors: wpexpertsio
 Tags: smtp, gmail smtp, email,  email logs, office 365
 Requires at least: 5.6.0
-Tested up to: 6.7
-Stable tag: 3.0.2
+Tested up to: 6.8
+Stable tag: 3.1.4
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -280,6 +280,28 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 Important: If you are using version 2.8.7 or lower of our plugin, please update to the latest version as soon as possible. This update contains an urgent security fix that prevents potential vulnerabilities and attacks. We apologize for any inconvenience this may cause you and we appreciate your cooperation. Thank you for using our plugin.
 
 == Changelog ==
+
+= 3.1.4 - Apr 08, 2025 =
+* FIX - To column in email logs was empty in some cases.
+
+= 3.1.3 - Mar 03, 2025 =
+* Enhancement: Email logs security enhancement.
+
+= 3.1.2 - Feb 24, 2025 =
+* Enhancement: Email logs security enhancement.
+
+= 3.1.1 - Feb 11, 2025 =
+* Fix: Raw HTML was sent when resending emails from the log section.
+* Fix: AJAX error with some Form plugins.
+
+= 3.1.0 - Feb 10, 2025 =
+* New: Added SendGrid EU support.
+* Optimization: Improved email reporting.
+* Fix: Translation warning was appearing in some cases.
+* Fix: Security enhancement.
+* Fix: Prevent From Name was not working, if Prevent From Email was not enabled.
+* Fix: Send Test was not appearing in Log Only mode.
+
 = 3.0.2 - Jan 27, 2025 =
 * Updated: Feedback SDK to the latest version.
 

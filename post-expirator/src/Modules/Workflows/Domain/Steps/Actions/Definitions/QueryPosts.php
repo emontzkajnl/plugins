@@ -80,9 +80,6 @@ class QueryPosts implements StepTypeInterface
                             "postId" => [],
                             "postStatus" => [],
                         ],
-                        "settings" => [
-                            "isPostTypeRequired" => true,
-                        ],
                     ],
                 ]
             ]
@@ -102,26 +99,18 @@ class QueryPosts implements StepTypeInterface
                     ]
                 ],
             ],
-            "settings" => [
-                "rules" => [
-                    [
-                        "rule" => "required",
-                        "field" => "postQuery.postType",
-                        "label" => __("Post Type", "post-expirator"),
-                    ],
-                    [
-                        "rule" => "dataType",
-                        "field" => "postQuery.postId",
-                        "type" => "integerList",
-                        "label" => __("Post ID", "post-expirator"),
-                    ],
-                    [
-                        "rule" => "validVariable",
-                        "field" => "postQuery.postId",
-                        "fieldLabel" => __("Post ID", "post-expirator"),
-                        "dataType" => "post",
-                    ],
-                ],
+        ];
+    }
+
+    public function getStepScopedVariablesSchema(): array
+    {
+        return [
+            [
+                "name" => "posts",
+                "type" => "array",
+                "itemsType" => "integer",
+                "label" => __("Array of queried post IDs", "post-expirator"),
+                "description" => __("The posts found following the criteria of the query.", "post-expirator"),
             ],
         ];
     }
@@ -156,13 +145,11 @@ class QueryPosts implements StepTypeInterface
             "target" => [
                 [
                     "id" => "input",
-                    "left" => "50%",
                 ]
             ],
             "source" => [
                 [
                     "id" => "output",
-                    "left" => "50%",
                     "label" => __("Next", "post-expirator"),
                 ]
             ]

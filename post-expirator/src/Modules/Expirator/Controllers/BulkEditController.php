@@ -153,6 +153,10 @@ class BulkEditController implements InitializableInterface
             }
         }
 
+        if (empty($taxonomyPluralName)) {
+            $taxonomyPluralName = __('Taxonomy', 'post-expirator');
+        }
+
         $taxonomyTerms = [];
         if (! empty($postTypeDefaultConfig['taxonomy'])) {
             $taxonomyTerms = get_terms([
@@ -161,7 +165,24 @@ class BulkEditController implements InitializableInterface
             ]);
         }
 
-        $defaultExpirationDate = $defaultDataModel->getActionDateParts();
+        try {
+            $defaultExpirationDate = $defaultDataModel->getActionDateParts();
+        } catch (Throwable $e) {
+            $now = time();
+            $gmDate = gmdate('Y-m-d H:i:s', $now);
+            $calculatedDate = $now;
+
+            $defaultExpirationDate = [
+                'year' => date('Y', $now),
+                'month' => date('m', $now),
+                'day' => date('d', $now),
+                'hour' => date('H', $now),
+                'minute' => date('i', $now),
+                'ts' => $calculatedDate,
+                'iso' => $gmDate
+            ];
+        }
+
         $nonce = wp_create_nonce('__future_action');
 
         $metaboxTitle = $settingsFacade->getMetaboxTitle() ?? __('Future Actions', 'post-expirator');

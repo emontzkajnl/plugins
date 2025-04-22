@@ -81,7 +81,7 @@ function qsm_results_overview_tab() {
 	}
 }
 
-add_action( 'plugins_loaded', 'qsm_results_overview_tab' );
+add_action( 'init', 'qsm_results_overview_tab' );
 
 /**
  * Generates HTML For Overview Tab
@@ -89,6 +89,22 @@ add_action( 'plugins_loaded', 'qsm_results_overview_tab' );
  * @since 5.0.0
  * @return void
  */
+function qsm_delete_results_attachments( $rows_before_update ) {
+    // Loop through each row in the results
+    foreach ( $rows_before_update as $row ) {
+        // Unserialize the quiz results
+        $mlw_qmn_results_array = maybe_unserialize( $row->quiz_results );
+        // Ensure the results array exists and has the expected structure
+		foreach ( $mlw_qmn_results_array[1] as $key => $value ) {
+			// Check if the question type is 11 and user answer is not empty
+			if ( 11 == $value['question_type'] && ! empty( $value['user_answer'] ) && isset( $value['user_answer']['file_id'] ) ) {
+				$attachment_id = $value['user_answer']['file_id'];
+				// Delete the attachment
+				wp_delete_attachment( $attachment_id, true );
+			}
+		}
+    }
+}
 function qsm_results_overview_tab_content() {
 
 	global $wpdb;
@@ -102,6 +118,13 @@ function qsm_results_overview_tab_content() {
 		do_action( 'qsm_before_delete_result', $mlw_delete_results_id );
 		// Updates table to mark results as deleted.
 		$results                 = $wpdb->update( $wpdb->prefix . 'mlw_results', array( 'deleted' => 1 ), array( 'result_id' => $mlw_delete_results_id ), array( '%d' ), array( '%d' ) );
+		// Get the row before the update
+		$row_before_update = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}mlw_results WHERE result_id = %d",
+				$mlw_delete_results_id
+			)
+		);
 
 		if ( false === $results ) {
 			$error = $wpdb->last_error;
@@ -112,6 +135,7 @@ function qsm_results_overview_tab_content() {
 			$mlwQuizMasterNext->alertManager->newAlert( sprintf( __( 'There was an error when deleting this result. Error from WordPress: %s', 'quiz-master-next' ), $error ), 'error' );
 			$mlwQuizMasterNext->log_manager->add( 'Error deleting result', "Tried {$wpdb->last_query} but got $error.", 0, 'error' );
 		} else {
+			qsm_delete_results_attachments($row_before_update);
 			$mlwQuizMasterNext->alertManager->newAlert( __( 'Your results has been deleted successfully.', 'quiz-master-next' ), 'success' );
 			$mlwQuizMasterNext->audit_manager->new_audit( "Results Has Been Deleted From:", $mlw_delete_results_name, "" );
 		}
@@ -123,6 +147,12 @@ function qsm_results_overview_tab_content() {
 		// Ensure the POST variable is an array
 		if ( isset( $_POST["delete_results"] ) && is_array( $_POST["delete_results"] ) ) {
 			$delete_results = array_map( 'sanitize_text_field', wp_unslash( $_POST["delete_results"] ) );
+			$table_name = $wpdb->prefix . 'mlw_results';
+			$query = $wpdb->prepare(
+				"SELECT * FROM $table_name WHERE result_id IN (" . implode(',', array_fill(0, count($delete_results), '%d')) . ")",
+				$delete_results
+			);
+			$row_before_update = $wpdb->get_results($query);
 
 			// Cycle through the POST array which should be an array of the result ids of the results the user wishes to delete
 			foreach ( $delete_results as $result ) {
@@ -139,7 +169,7 @@ function qsm_results_overview_tab_content() {
 					);
 				}
 			}
-
+			qsm_delete_results_attachments($row_before_update);
 			$mlwQuizMasterNext->audit_manager->new_audit( "Results Have Been Bulk Deleted", "", "" );
 		}
 	}
@@ -188,8 +218,8 @@ function qsm_results_overview_tab_content() {
 		}
 	}
 
-	if ( isset( $_GET['qsm_results_page'] ) ) {
-		$result_page     = intval( $_GET['qsm_results_page'] ) + 1;
+	if ( isset( $_GET['qsm_results_page'] ) || isset( $_GET['goto'] ) ) {
+		$result_page     = isset( $_GET['qsm_results_page'] ) ? intval( $_GET['qsm_results_page'] ) + 1 : intval( $_GET['goto'] ) - 1;
 		$result_begin    = $table_limit * $result_page;
 	} else {
 		$result_page     = 0;
@@ -206,21 +236,19 @@ function qsm_results_overview_tab_content() {
 	?>
 	<div class="tablenav top">
 		<div class="alignleft actions bulkactions">
-			<a id="result_bulkaction" href="javascript: void(0);" onclick="if ( confirm( 'Are you sure?' ) ) { document.bulk_delete_form.submit(); }" class="button action">Bulk Delete</a>&nbsp;&nbsp;&nbsp;
-			<a href="javascript: void(0);" onclick="if ( confirm( 'Are you sure?' ) ) { document.getElementById( 'bulk_permanent_delete' ).value = '1'; document.bulk_delete_form.submit(); }" class="button action">Bulk Permanent Delete</a>
+			<select id="qsm_bulk_action_select" class="postform">
+				<option value=""><?php esc_html_e( 'Bulk Actions', 'quiz-master-next' ); ?></option>
+				<option value="bulk_delete"><?php esc_html_e( 'Bulk Delete', 'quiz-master-next' ); ?></option>
+				<option value="bulk_permanent_delete"><?php esc_html_e( 'Bulk Permanent Delete', 'quiz-master-next' ); ?></option>
+			</select>
+				<button type="button" id="qsm_apply_bulk_action" class="button action"><?php esc_html_e( 'Apply', 'quiz-master-next' ); ?></button>
 		</div>
 		<div class="tablenav-pages">
-			<span class="displaying-num">
-				<?php
-				/* translators: %s: Result Count */
-				echo esc_html( sprintf( _n( '%s result', '%s results', $qsm_results_count, 'quiz-master-next' ), number_format_i18n( $qsm_results_count ) ) );
-				?>
-			</span>
 			<span class="pagination-links">
 				<?php
-				$mlw_qmn_previous_page   = 0;
-				$mlw_current_page        = $result_page + 1;
-				$mlw_total_pages         = ceil( $qsm_results_count / $table_limit );
+				$mlw_qmn_previous_page = 0;
+				$mlw_current_page = $result_page + 1;
+				$mlw_total_pages = ceil( $qsm_results_count / $table_limit );
 
 				$url_query_string = '';
 				if ( isset( $_GET['quiz_id'] ) && ! empty( $_GET['quiz_id'] ) ) {
@@ -239,29 +267,37 @@ function qsm_results_overview_tab_content() {
 					$mlw_qmn_previous_page = $result_page - 2;
 					?>
 					<a class="prev-page button" href="<?php echo esc_url_raw( "?page=mlw_quiz_results&qsm_results_page=$mlw_qmn_previous_page$url_query_string" ); ?>"><</a>
-					<span class="paging-input"><?php echo esc_html( $mlw_current_page ); ?> of <?php echo esc_html( $mlw_total_pages ); ?></span>
 					<?php
-					if ( $results_left > $table_limit ) {
-						?>
-						<a class="next-page button" href="<?php echo esc_url_raw( "?page=mlw_quiz_results&qsm_results_page=$result_page$url_query_string" ); ?>">></a>
-						<?php
-					}
-				} elseif ( 0 === intval( $result_page ) ) {
-					if ( $results_left > $table_limit ) {
-						?>
-						<span class="paging-input"><?php echo esc_html( $mlw_current_page ); ?> of <?php echo esc_html( $mlw_total_pages ); ?></span>
-						<a class="next-page button" href="<?php echo esc_url_raw( "?page=mlw_quiz_results&qsm_results_page=$result_page$url_query_string" ); ?>">></a>
-						<?php
-					}
-				} elseif ( $results_left < $table_limit ) {
-					$mlw_qmn_previous_page = $result_page - 2;
+				} elseif ( 0 == $result_page ) {
 					?>
-					<a class="prev-page button" href="<?php echo esc_url_raw( "?page=mlw_quiz_results&qsm_results_page=$mlw_qmn_previous_page$url_query_string" ); ?>"><< /a>
-						<span class="paging-input"><?php echo esc_html( $mlw_current_page ); ?> of <?php echo esc_html( $mlw_total_pages ); ?></span>
-						<a class="next-page button" href="<?php echo esc_url_raw( "?page=mlw_quiz_results&qsm_results_page=$result_page$url_query_string" ); ?>">></a>
+					<a class="prev-page button disable" href=""><</a>
+					<?php
+				}
+				?>
+				<span class="paging-input">
+					<form action="" method="GET">
 						<?php
-					}
+						$query_params = $_GET;
+						unset($query_params['qsm_results_page']);
+						foreach ( $query_params as $key => $value ) {
+							echo '<input type="hidden" name="' . esc_attr($key) . '" value="' . esc_attr($value) . '">';
+						}
+						?>
+						<input type="text" class="qsm-admin-result-page-number" name="goto" value="<?php echo esc_attr($mlw_current_page); ?>">
+					</form>&nbsp;
+					<span class="total-entries"> of <?php echo esc_html($mlw_total_pages); ?></span>
+				</span>
+				<?php
+				if ( $results_left > $table_limit ) {
 					?>
+					<a class="next-page button" href="<?php echo esc_url_raw( "?page=mlw_quiz_results&qsm_results_page=$result_page$url_query_string" ); ?>">></a>
+					<?php
+				} elseif ( $results_left <= $table_limit ) {
+					?>
+					<a class="next-page button disable" href="">></a>
+					<?php
+				}
+				?>
 			</span>
 			<br class="clear">
 		</div>
@@ -276,9 +312,7 @@ function qsm_results_overview_tab_content() {
 			$qmn_order_by        = ( isset( $_GET['qmn_order_by'] ) && ! empty( $_GET['qmn_order_by'] ) ) ? sanitize_text_field( wp_unslash( $_GET['qmn_order_by'] ) ) : 'default';
 			?>
 			<input type="hidden" name="page" value="mlw_quiz_results">
-			<p class="search-box">
-				<label for="qsm_search_phrase"><?php esc_html_e( 'Search Results', 'quiz-master-next' ); ?></label>
-				<input type="search" id="qsm_search_phrase" name="qsm_search_phrase" value="<?php echo esc_attr( $qsm_search_phrase ); ?>">
+			<p class="search-box" style="margin: 0;">
 				<label for="qmn_order_by"><?php esc_html_e( 'Order By', 'quiz-master-next' ); ?></label>
 				<select id="qmn_order_by" name="qmn_order_by">
 					<option value="default" <?php selected( $qmn_order_by, 'default' ); ?>><?php esc_html_e( 'Default (Time)', 'quiz-master-next' ); ?></option>
@@ -287,12 +321,14 @@ function qsm_results_overview_tab_content() {
 					<option value="point_score" <?php selected( $qmn_order_by, 'point_score' ); ?>><?php esc_html_e( 'Points', 'quiz-master-next' ); ?></option>
 					<option value="correct_score" <?php selected( $qmn_order_by, 'correct_score' ); ?>><?php esc_html_e( 'Correct Percent', 'quiz-master-next' ); ?></option>
 				</select>
+				<label for="qsm_search_phrase"><?php esc_html_e( 'Search Results', 'quiz-master-next' ); ?></label>
+				<input type="search" id="qsm_search_phrase" name="qsm_search_phrase" value="<?php echo esc_attr( $qsm_search_phrase ); ?>">
 				<button class="button"><?php esc_html_e( 'Search Results', 'quiz-master-next' ); ?></button>
 			</p>
 		</form>
-	</div>
+		</div>
 	<?php
-//process screen options
+	//process screen options
 	$user_id             = get_current_user_id();
 	if ( isset( $_POST["results-screen_option_nonce"] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST["results-screen_option_nonce"] ) ), 'results_screen_option' ) ) {
 		$results_screen_option['page_url']   = isset( $_POST['page_url'] ) ? sanitize_text_field( wp_unslash( $_POST['page_url'] ) ) : "0";
@@ -505,7 +541,7 @@ function qsm_results_overview_tab_content() {
 		<table class="widefat" aria-label="<?php esc_html_e( 'Results Table', 'quiz-master-next' ); ?>">
 			<thead>
 				<tr>
-					<th><input type="checkbox" id="qmn_check_all" /></th>
+					<th style="text-align: center;"><input type="checkbox" id="qmn_check_all" /></th>
 					<th><?php esc_html_e( 'Quiz Name', 'quiz-master-next' ); ?></th>
 					<?php
 					foreach ( $values as $k => $v ) {
@@ -523,7 +559,9 @@ function qsm_results_overview_tab_content() {
 					for ( $x = 0; $x < $co; $x++ ) {
 						?>
 						<tr>
-							<td><input type="checkbox" class="qmn_delete_checkbox" name="delete_results[]" value="<?php echo esc_attr( $quiz_infos[ $x ]->result_id ); ?>" /></td>
+							<td style="text-align: center;">
+								<input type="checkbox" class="qmn_delete_checkbox" name="delete_results[]" value="<?php echo esc_attr( $quiz_infos[ $x ]->result_id ); ?>" />
+							</td>
 							<td class="<?php echo apply_filters( 'qsm_results_quiz_name_class', '', $quiz_infos[ $x ]->result_id ); ?>">
 								<span style="font-size: 16px;"><?php echo esc_html( $quiz_infos[ $x ]->quiz_name ); ?></span>
 								<div class="row-actions">
@@ -557,14 +595,27 @@ function qsm_results_overview_tab_content() {
 		</table>
 	</form>
 
-	<div id="delete_dialog" title="Delete Results?" style="display:none;">
-		<h3><b><?php esc_html_e( 'Are you sure you want to delete these results?', 'quiz-master-next' ); ?></b></h3>
-		<form action='' method='post'>
-			<?php wp_nonce_field( 'delete_results', 'delete_results_nonce' ); ?>
-			<input type='hidden' id='result_id' name='result_id' value='' />
-			<input type='hidden' id='delete_quiz_name' name='delete_quiz_name' value='' />
-			<p class='submit'><input type='submit' class='button-primary' value='<?php esc_html_e( 'Delete Results', 'quiz-master-next' ); ?>' /></p>
-		</form>
+	<div class="qsm-popup qsm-popup-slide qsm-standard-popup " id="qsm-delete-result-page-popup" aria-hidden="false"  style="display:none">
+		<div class="qsm-popup__overlay" tabindex="-1" data-micromodal-close>
+			<div class="qsm-popup__container" role="dialog" aria-modal="true">
+				<form action='' method='post'>
+					<header class="qsm-popup__header qsm-delete-result-page-popup-header">
+						<div class="qsm-popup__title qsm-upgrade-box-title" id="modal-2-title"></div>
+						<a class="qsm-popup__close qsm-popup-upgrade-close" aria-label="Close modal" data-micromodal-close></a>
+					</header>
+					<main class="qsm-popup__content" id="modal-2-content">
+						<div class="qsm-result-page-delete-message"><?php esc_html_e( 'Are you sure you want to delete these results?', 'quiz-master-next' ); ?></div>
+							<?php wp_nonce_field( 'delete_results', 'delete_results_nonce' ); ?>
+							<input type='hidden' id='result_id' name='result_id' value='' />
+							<input type='hidden' id='delete_quiz_name' name='delete_quiz_name' value='' />
+					</main>
+					<footer class="qsm-popup__footer">
+						<button class="qsm-popup__btn" data-micromodal-close aria-label="Close this dialog window"><?php esc_html_e( 'Cancel', 'quiz-master-next' ); ?></button>
+						<button type="submit" class="qsm-popup__btn qsm-delete-result-popup-btn"><span class="dashicons dashicons-warning"></span><?php esc_html_e( 'Delete Result', 'quiz-master-next' ); ?></button>
+					</footer>
+				</form>
+			</div>
+		</div>
 	</div>
 
 	<!-- Popup for screen options -->
@@ -624,14 +675,19 @@ function qsm_results_overview_tab_content() {
 	if ( ! class_exists( 'QSM_Proctoring_Quiz' ) ) {
 		$qsm_pop_up_arguments = array(
 			"id"           => 'modal-proctor-quiz',
-			"title"        => __('Quiz Proctor', 'quiz-master-next'),
-			"description"  => __('Enhance exam fairness using Quiz Proctor: Capture images, monitor tab shifts, and prevent cheating by restricting copy/paste within the quiz. Ensure focus and equity with full-screen mode.', 'quiz-master-next'),
+			"title"        => __('Secure Your Quizzes with Proctoring', 'quiz-master-next'),
+			"description"  => __('Monitor and prevent cheating with the Quiz Proctor Addon.', 'quiz-master-next'),
 			"chart_image"  => plugins_url('', dirname(__FILE__)) . '/images/proctor_quiz_chart.png',
 			"information"  => __('QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today OR you can buy Quiz Proctor Addon separately.', 'quiz-master-next'),
 			"buy_btn_text" => __('Buy Quiz Proctor Addon', 'quiz-master-next'),
 			"doc_link"     => qsm_get_plugin_link( 'docs/add-ons/quiz-proctor/', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
 			"upgrade_link" => qsm_get_plugin_link( 'pricing', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
 			"addon_link"   => qsm_get_plugin_link( 'downloads/quiz-proctor', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
+			"list_items"   => array(
+				__("Detect tab switching & enforce full-screen mode", "quiz-master-next"),
+				__("Capture test-taker images during the quiz", "quiz-master-next"),
+				__("Ensure fair and secure assessments", "quiz-master-next"),
+			),
 		);
 		qsm_admin_upgrade_popup($qsm_pop_up_arguments);
 	}
@@ -640,8 +696,8 @@ function qsm_results_overview_tab_content() {
 function qsm_export_results_tabs_content() {
 	$args = array(
 		"id"           => 'export-results',
-		"title"        => __( 'Export Results', 'quiz-master-next' ),
-		"description"  => __( 'As the quiz creator, you will want to export your quiz results in order to keep track of responses and provide an accurate record of who has completed the quiz. The Export Results addon provides an intuitive and flexible interface for exporting just the right results.', 'quiz-master-next' ),
+		"title"        => __( 'Effortlessly Export Quiz Data', 'quiz-master-next' ),
+		"description"  => __( 'Manage quiz results with the Export Results Addon.', 'quiz-master-next' ),
 		"chart_image"  => plugins_url( '', dirname( __FILE__ ) ) . '/images/export_results.png',
 		"warning"      => __( 'Export Results Addon required', 'quiz-master-next' ),
 		"information"  => __( 'QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today. OR you can buy Export Results Addon separately.', 'quiz-master-next' ),
@@ -649,14 +705,19 @@ function qsm_export_results_tabs_content() {
 		"doc_link"     => qsm_get_plugin_link( 'docs/add-ons/export-results', 'result_page', 'export_results', 'result-exportresults-upsell_read_documentation', 'qsm_plugin_upsell' ),
 		"upgrade_link" => qsm_get_plugin_link( 'pricing', 'result_page', 'export_results', 'result-exportresults-upsell_upgrade', 'qsm_plugin_upsell' ),
 		"addon_link"   => qsm_get_plugin_link( 'downloads/export-results', 'result_page', 'export_results', 'result-exportresults-upsell_buy_addon', 'qsm_plugin_upsell' ),
+		"list_items"   => array(
+			__("Export responses to CSV for analysis", "quiz-master-next"),
+			__("Allow participants to download results as PDFs", "quiz-master-next"),
+			__("Simplify reporting & record-keeping", "quiz-master-next"),
+		),
 	);
-	qsm_admin_upgrade_content( $args, 'page' );
+	qsm_admin_upgrade_popup( $args, 'page' );
 }
 function qsm_reporting_analysis_tabs_content() {
 	$args = array(
 		"id"           => 'reporting-analysis',
-		"title"        => __( 'Reporting & Analysis', 'quiz-master-next' ),
-		"description"  => __( 'Transform your quiz/survey results into numbers with QSM Reporting & Analysis! Implement simple & advanced data analysis techniques to measure questions effectiveness and show the user results in the form of Pie Charts. Reporting & Analysis addon by QSM will make your life easier as a question designer by using a variety of charts and graphs and exporting the results in bulk.', 'quiz-master-next' ),
+		"title"        => __( 'Gain Powerful Insights with In-Depth Reports', 'quiz-master-next' ),
+		"description"  => __( 'Analyze performance trends with the Reporting & Analysis Addon.', 'quiz-master-next' ),
 		"chart_image"  => plugins_url( '', dirname( __FILE__ ) ) . '/images/report_analysis_chart.png',
 		"warning"      => __( 'Reporting & Analysis Addon required', 'quiz-master-next' ),
 		"information"  => __( 'QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today. OR you can buy Reporting & Analysis Addon separately.', 'quiz-master-next' ),
@@ -664,15 +725,20 @@ function qsm_reporting_analysis_tabs_content() {
 		"doc_link"     => qsm_get_plugin_link( 'docs/add-ons/reporting-analysis', 'result_page', 'result_analysis', 'result-reportanalysis-upsell_read_documentation', 'qsm_plugin_upsell' ),
 		"upgrade_link" => qsm_get_plugin_link( 'pricing', 'result_page', 'result_analysis', 'result-reportanalysis-upsell_upgrade', 'qsm_plugin_upsell' ),
 		"addon_link"   => qsm_get_plugin_link( 'downloads/results-analysis', 'result_page', 'result_analysis', 'result-reportanalysis-ups_buy_addon', 'qsm_plugin_upsell' ),
+		"list_items"   => array(
+			__("Track quiz performance over time", "quiz-master-next"),
+			__("Customize reports for deeper insights", "quiz-master-next"),
+			__("Optimize quiz results with data-driven decisions", "quiz-master-next"),
+		),
 	);
-	qsm_admin_upgrade_content( $args, 'page' );
+	qsm_admin_upgrade_popup( $args, 'page' );
 }
 
 function qsm_proctor_quiz_tabs_content() {
 	$args = array(
 		"id"           => 'proctoring-quiz',
-		"title"        => __( 'Quiz Proctor', 'quiz-master-next' ),
-		"description"  => __( 'Enhance exam fairness using Quiz Proctor: Capture images, monitor tab shifts, and prevent cheating by restricting copy/paste within the quiz. Ensure focus and equity with full-screen mode.', 'quiz-master-next' ),
+		"title"        => __('Secure Your Quizzes with Proctoring', 'quiz-master-next'),
+		"description"  => __('Monitor and prevent cheating with the Quiz Proctor Addon.', 'quiz-master-next'),
 		"chart_image"  => plugins_url( '', dirname( __FILE__ ) ) . '/images/proctor_quiz_chart.png',
 		"warning"      => __( 'Missing Feature - Quiz Proctor Add-on required', 'quiz-master-next' ),
 		"information"  => __( 'QSM Addon Bundle is the best way to get all our add-ons at a discount. Upgrade to save 95% today. OR you can buy Proctoring Quiz Addon separately.', 'quiz-master-next' ),
@@ -680,6 +746,11 @@ function qsm_proctor_quiz_tabs_content() {
 		"doc_link"     => qsm_get_plugin_link( 'docs/add-ons/quiz-proctor', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
 		"upgrade_link" => qsm_get_plugin_link( 'pricing', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
 		"addon_link"   => qsm_get_plugin_link( 'downloads/quiz-proctor', 'quiz-documentation', 'plugin', 'quiz-proctor', 'qsm_plugin_upsell' ),
+		"list_items"   => array(
+			__("Detect tab switching & enforce full-screen mode", "quiz-master-next"),
+			__("Capture test-taker images during the quiz", "quiz-master-next"),
+			__("Ensure fair and secure assessments", "quiz-master-next"),
+		),
 	);
-	qsm_admin_upgrade_content( $args, 'page' );
+	qsm_admin_upgrade_popup( $args, 'page' );
 }

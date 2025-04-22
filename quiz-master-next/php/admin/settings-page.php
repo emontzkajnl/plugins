@@ -75,6 +75,7 @@ class QMNGlobalSettingsPage {
 		add_settings_field( 'enable-qsm-log', __( 'Enable QSM log', 'quiz-master-next' ), array( $this, 'enable_qsm_log' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'ip-collection', __( 'Disable collecting and storing IP addresses?', 'quiz-master-next' ), array( $this, 'ip_collection_field' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'cpt-search', __( 'Disable Quiz Posts From Being Searched?', 'quiz-master-next' ), array( $this, 'cpt_search_field' ), 'qmn_global_settings', 'qmn-global-section' );
+		add_settings_field( 'enable-preloader', __( 'Enable preloader', 'quiz-master-next' ), array( $this, 'qsm_enable_preloader' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'cpt-archive', __( 'Quiz Archive Settings', 'quiz-master-next' ), array( $this, 'cpt_archive_field' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'duplicate-quiz-with-theme', __( 'Duplicate Quiz Controls', 'quiz-master-next' ), array( $this, 'qsm_duplicate_quiz_with_theme' ), 'qmn_global_settings', 'qmn-global-section' );
 		add_settings_field( 'detele-qsm-data', __( 'Delete all the data related to QSM on deletion?', 'quiz-master-next' ), array( $this, 'qsm_delete_data' ), 'qmn_global_settings', 'qmn-global-section' );
@@ -188,6 +189,7 @@ class QMNGlobalSettingsPage {
 			'enable_deselect_option'                 => 0,
 			'disable_description_on_result'          => 0,
 			'disable_scroll_next_previous_click'     => 0,
+			'disable_scroll_on_result'               => 0,
 			'disable_first_page'                     => 0,
 			'disable_mathjax'                        => 0,
 			'quiz_animation'                         => '',
@@ -199,6 +201,7 @@ class QMNGlobalSettingsPage {
 			'preferred_date_format'                  => 'F j, Y',
 			'default_answers'                        => 1,
 			'correct_answer_logic'                   => 0,
+			'enable-preloader'                       => 0,
 		);
 	}
 
@@ -396,9 +399,9 @@ class QMNGlobalSettingsPage {
 			$checked = " checked='checked'";
 		}
 
-		echo '<label class="switch">';
+		echo '<label class="qsm-checkbox-switch">';
 			echo '<input type="checkbox" name="qmn-settings[cpt_search]" id="qmn-settings[cpt_search]" value="1"' . esc_attr( $checked ) . ' />';
-		echo '<span class="slider round"></span></label>';
+		echo '<span class="qsm-switch-slider round"></span></label>';
 	}
 
 	/**
@@ -461,9 +464,9 @@ class QMNGlobalSettingsPage {
 			$checked = " checked='checked'";
 		}
 
-		echo '<label class="switch">';
+		echo '<label class="qsm-checkbox-switch">';
 			echo '<input type="checkbox" name="qmn-settings[delete_qsm_data]" id="qmn-settings[delete_qsm_data]" value="1"' . esc_attr( $checked ) . '/>';
-		echo '<span class="slider round"></span></label>';
+		echo '<span class="qsm-switch-slider round"></span></label>';
 	}
 
 	/**
@@ -538,8 +541,8 @@ class QMNGlobalSettingsPage {
 			$checked = " checked='checked'";
 		}
 
-		echo '<label class="switch">';
-			echo '<input type="checkbox" name="qmn-settings[tracking_allowed]" id="qmn-settings[tracking_allowed]" value="2"' . esc_attr( $checked ) . '/><span class="slider round"></span>';
+		echo '<label class="qsm-checkbox-switch">';
+			echo '<input type="checkbox" name="qmn-settings[tracking_allowed]" id="qmn-settings[tracking_allowed]" value="2"' . esc_attr( $checked ) . '/><span class="qsm-switch-slider round"></span>';
 		echo '</label>';
 		echo "<span class='global-sub-text' for='qmn-settings[tracking_allowed]'>" . esc_html__( "Allow Quiz And Survey Master to anonymously track this plugin's usage and help us make this plugin better.", 'quiz-master-next' ) . '</span>';
 	}
@@ -554,8 +557,8 @@ class QMNGlobalSettingsPage {
 		$settings         = (array) get_option( 'qmn-settings' );
 		$enable_qsm_log = ! empty( $settings['enable_qsm_log'] ) ? esc_attr( $settings['enable_qsm_log'] ) : 0;
 		?>
-		<label class="switch">
-			<input type="checkbox" name="qmn-settings[enable_qsm_log]" id="qmn-settings[enable_qsm_log]" value="1"' <?php checked( $enable_qsm_log, 1, true ); ?>/><span class="slider round"></span>
+		<label class="qsm-checkbox-switch">
+			<input type="checkbox" name="qmn-settings[enable_qsm_log]" id="qmn-settings[enable_qsm_log]" value="1"' <?php checked( $enable_qsm_log, 1, true ); ?>/><span class="qsm-switch-slider round"></span>
 		</label>
 		<span class='global-sub-text' for='qmn-settings[enable_qsm_log]'><?php esc_html_e( "Enable this option to generate QSM error logs", 'quiz-master-next' );?></span>
 		<?php
@@ -577,10 +580,32 @@ class QMNGlobalSettingsPage {
 		if ( '1' == $ip_collection ) {
 			$checked = " checked='checked'";
 		}
-		echo '<label class="switch">';
+		echo '<label class="qsm-checkbox-switch">';
 		echo '<input type="checkbox" name="qmn-settings[ip_collection]" id="qmn-settings[ip_collection]" value="1"' . esc_attr( $checked ) . '/>';
-		echo '<span class="slider round"></span></label>';
+		echo '<span class="qsm-switch-slider round"></span></label>';
 		echo "<span class='global-sub-text' for='qmn-settings[ip_collection]'>" . esc_html__( 'You must not restrict number of quiz attempts when this option is enabled.', 'quiz-master-next' ) . '</span>';
+	}
+
+		/**
+	 * Generates Setting Field For Preloader
+	 *
+	 * @since 5.3.0
+	 * @return void
+	 */
+	public function qsm_enable_preloader() {
+		$settings      = (array) get_option( 'qmn-settings' );
+		$enable_preloader = '0';
+		if ( isset( $settings['enable_preloader'] ) ) {
+			$enable_preloader = esc_attr( $settings['enable_preloader'] );
+		}
+		$checked = '';
+		if ( '1' == $enable_preloader ) {
+			$checked = " checked='checked'";
+		}
+		echo '<label class="qsm-checkbox-switch">';
+		echo '<input type="checkbox" name="qmn-settings[enable_preloader]" id="qmn-settings[enable_preloader]" value="1"' . esc_attr( $checked ) . '/>';
+		echo '<span class="qsm-switch-slider round"></span></label>';
+		echo "<span class='global-sub-text' for='qmn-settings[enable_preloader]'>" . esc_html__( 'Enable this option to preload featured images in the quiz', 'quiz-master-next' ) . '</span>';
 	}
 
 	/**
@@ -1193,6 +1218,7 @@ class QMNGlobalSettingsPage {
 		$qsm_hide_correct_answer = ( isset( $globalQuizsetting['hide_correct_answer'] ) && '' !== $globalQuizsetting['hide_correct_answer'] ? $globalQuizsetting['hide_correct_answer'] : 0 );
 		$qsm_show_question_featured_image_in_result = ( isset( $globalQuizsetting['show_question_featured_image_in_result'] ) && '' !== $globalQuizsetting['show_question_featured_image_in_result'] ? $globalQuizsetting['show_question_featured_image_in_result'] : 0 );
 		$qsm_disable_description_on_result = ( isset( $globalQuizsetting['disable_description_on_result'] ) && '' !== $globalQuizsetting['disable_description_on_result'] ? $globalQuizsetting['disable_description_on_result'] : '0' );
+		$qsm_disable_scroll_on_result = ( isset( $globalQuizsetting['disable_scroll_on_result'] ) && '' !== $globalQuizsetting['disable_scroll_on_result'] ? $globalQuizsetting['disable_scroll_on_result'] : '0' );
 		?>
 		<fieldset class="buttonset buttonset-hide" data-hide="1">
 			<label class="qsm-option-label" for="qsm-show-optin">
@@ -1222,6 +1248,12 @@ class QMNGlobalSettingsPage {
 			<label class="qsm-option-label" for="qsm-disable-description-on-result">
 				<input type="checkbox" id="qsm-disable-description-on-result" name="qsm-quiz-settings[disable_description_on_result]" <?php checked( $qsm_disable_description_on_result, 1 ); ?> value="1">
 				<?php esc_html_e('Disable description on quiz result page', 'quiz-master-next'); ?>
+			</label>
+		</fieldset>
+		<fieldset class="buttonset buttonset-hide" data-hide="1">
+			<label class="qsm-option-label" for="qsm-disable-scroll-on-result">
+				<input type="checkbox" id="qsm-disable-scroll-on-result" name="qsm-quiz-settings[disable_scroll_on_result]" <?php checked( $qsm_disable_scroll_on_result, 1 ); ?> value="1">
+				<?php esc_html_e('Disable scrolling while submitting quizzes and displaying results', 'quiz-master-next'); ?>
 			</label>
 		</fieldset>
 		<?php

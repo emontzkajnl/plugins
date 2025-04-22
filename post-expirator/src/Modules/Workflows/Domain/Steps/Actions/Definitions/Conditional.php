@@ -104,6 +104,11 @@ class Conditional implements StepTypeInterface
         ];
     }
 
+    public function getStepScopedVariablesSchema(): array
+    {
+        return [];
+    }
+
     public function getOutputSchema(): array
     {
         return [
@@ -117,7 +122,8 @@ class Conditional implements StepTypeInterface
                 "name" => "branch",
                 "type" => "string",
                 "label" => __("Branch", "post-expirator"),
-                "description" => __("The current branch on this step: 'true' or 'false'.", "post-expirator"),
+                "description" => __("Shows which path was taken: 'true' if conditions were met, or 'false' if they weren't.", "post-expirator"),
+                "priority" => 20,
             ],
         ];
     }
@@ -133,18 +139,15 @@ class Conditional implements StepTypeInterface
             "target" => [
                 [
                     "id" => "input",
-                    "left" => "50%",
                 ]
             ],
             "source" => [
                 [
                     "id" => "true",
-                    "left" => "25%",
                     "label" => __("True", "post-expirator"),
                 ],
                 [
                     "id" => "false",
-                    "left" => "75%",
                     "label" => __("False", "post-expirator"),
                 ]
             ]

@@ -2,21 +2,20 @@
 Contributors: quizsurvey,expresstech
 Tags: quiz, survey, test, exam, online assessment
 Requires at least: 4.9
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 5.4
-Stable tag: 9.2.4
+Stable tag: 10.1.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Create quizzes, surveys, and tests easily on WordPress with this versatile plugin. Perfect for engaging any audience and gathering valuable insights!
-
 == Description ==
 
 **Quiz and Survey Master** is the easiest quiz and survey maker plugin for creating quizzes, surveys, and forms on your WordPress website. Create everything from fun trivia quizzes to in-depth customer satisfaction assessments, using a user-friendly **drag-and-drop quiz maker** interface. Go beyond basic questions with multimedia support for richer content, analyze results to gain valuable insights, and even integrate with email marketing services to capture leads. Quiz & Survey Master is a **powerful WordPress plugin** to increase user engagement, gather valuable data, and build a stronger connection with your audience.
 
 **Try Demo ➡️ [Get a personal sandbox demo with QSM](https://instawp.io/plugins/quiz-master-next?utm_source=wp.org&utm_medium=wp_org_description&utm_campaign=wp_org_to_qsm)**
 
-https://youtu.be/DyiCCNnDpHk?si=7nda3koRTGw7BW_J
+https://youtu.be/G5w8F6XRgio
 
 ### CREATE UNLIMITED QUIZZES AND QUESTIONS
 
@@ -222,6 +221,41 @@ As a WordPress quiz maker, QSM is designed to be compatible with most other plug
 18. Database
 
 == Changelog ==
+= 10.1.1 ( April 21, 2025 ) =
+* Enhancement: Added option to preload quiz and question feature images
+* Fix: Improved keyboard navigation for quizzes
+* Fix: Compatibility with WordPress 6.8
+
+= 10.1.0 ( April 10, 2025 ) =
+* Feature: Implemented server-side validation for contact form fields
+* Feature: Added option to use responses in other questions
+* Enhancement: Refined the user interface to align with the WordPress 2024 Dark Theme
+
+= 10.0.3 ( March 17, 2025 ) =
+* Feature: Added an option to remove orphaned questions and results
+* Feature: Added an option to navigate to any result page
+* Bug: Resolved an issue with custom CSS
+* Enhancement: Updated the display logic for the result page template
+
+= 10.0.2 ( March 02, 2025 ) =
+* Hotfix: Fixed issue while creating new post/page
+* Enhancement: Improved question saving option in QSM block
+
+= 10.0.1 ( March 01, 2025 ) =
+* Hotfix: Resolved JS warning while saving email template
+
+= 10.0.0 ( Fabuary 28, 2025 ) =
+* Feature: Added options to import and create email and result templates
+* Feature: Enabled saving questions as drafts
+* Feature: Added the ability to link a question across multiple quizzes
+* Feature: Added an option to share quizzes on LinkedIn
+* Feature: Added a setting to prevent duplicate emails when multiple logic conditions are met
+* Feature: Added an option to disable scrolling while submitting a quiz
+* Bug: Fixed an issue with inline drop-down question types
+* Enhancement: Improved question search feature in question bank
+* Enhancement: Improved UI across Quiz, Text, Option, and Email, Result pages
+* Enhancement: Enhanced the UI for Dashboard and other related pages
+
 = 9.2.4 ( December 30, 2024 ) =
 * Bug: Resolved issue with %TOTAL_QUESTIONS% variable
 * Bug: Resolved issue with %MAXIMUM_POINTS% variable

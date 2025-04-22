@@ -14,7 +14,7 @@ function qmn_settings_text_tab() {
 	$mlwQuizMasterNext->pluginHelper->register_quiz_settings_tabs( __( 'Text', 'quiz-master-next' ), 'mlw_options_text_tab_content', 'text' );
 }
 
-add_action( "plugins_loaded", 'qmn_settings_text_tab', 5 );
+add_action( "init", 'qmn_settings_text_tab', 5 );
 
 /**
  * Adds the Text tab content to the tab.
@@ -103,7 +103,7 @@ function mlw_options_text_tab_content() {
 										</div>
 										<div class="save-text-changes">
 											<?php wp_nonce_field( 'qsm_save_text_message_nonce', 'qsm_save_text_message_nonce' ); ?>
-											<button id="qsm_save_text_message" class="button button-primary"><?php esc_html_e( 'Save Text Message', 'quiz-master-next' ); ?></button>
+											<button id="qsm_save_text_message" class="button button-primary qsm-common-button-styles"><?php esc_html_e( 'Save Text Message', 'quiz-master-next' ); ?></button>
 											<span class="spinner" ></span>
 										</div>
 									</div>
@@ -157,7 +157,7 @@ function mlw_options_text_tab_content() {
 										</div>
 										<div class="save-text-changes">
 											<?php wp_nonce_field( 'qsm_save_text_message_nonce', 'qsm_save_text_message_nonce' ); ?>
-											<button id="qsm_save_text_message_variable" class="button button-primary">
+											<button id="qsm_save_text_message_variable" class="button button-primary qsm-common-button-styles">
 												<?php esc_html_e( 'Save Text Message', 'quiz-master-next' ); ?></button>
 											<span class="spinner" ></span>
 										</div>

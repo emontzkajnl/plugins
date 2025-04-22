@@ -121,18 +121,18 @@ class ScheduledActionsController implements InitializableInterface
                 __('Future', 'post-expirator'),
                 'manage_options',
                 'publishpress-future',
-                [\PostExpirator_Display::getInstance(), 'settings_tabs'],
+                [\PostExpirator_Display::getInstance(), 'future_actions_tabs'],
                 'dashicons-clock',
                 74
             );
 
             add_submenu_page(
                 'publishpress-future',
-                __('Action Settings', 'post-expirator'),
-                __('Action Settings', 'post-expirator'),
+                __('Future Actions', 'post-expirator'),
+                __('Future Actions', 'post-expirator'),
                 'manage_options',
                 'publishpress-future',
-                [\PostExpirator_Display::getInstance(), 'settings_tabs']
+                [\PostExpirator_Display::getInstance(), 'future_actions_tabs']
             );
 
             $hook_suffix = add_submenu_page(
@@ -296,37 +296,21 @@ class ScheduledActionsController implements InitializableInterface
 
         $hook = $action->get_hook();
 
-        if ($hook === WorkflowsHooksAbstract::ACTION_WORKFLOW_SAVED) {
+        if ($hook === HooksAbstract::ACTION_RUN_WORKFLOW) {
             $args = $action->get_args();
-
             if (isset($args['postId']) && isset($args['workflow']) && 'expire' === $args['workflow']) {
-                $transientName = 'post-expirator-notice-' . (int) $args['postId'];
-                $noticeMessage = get_transient($transientName);
-                delete_transient($transientName);
+                $postId = (int)$args['postId'];
+                $post = get_post($postId);
+                $postTitle = $post ? html_entity_decode(get_the_title($post)) : __('Unknown post', 'post-expirator');
 
-                // translators: %s is the action description
                 $html = sprintf(
-                    __('Successfully executed action: %s', 'post-expirator'),
-                    $noticeMessage
+                    __('Executed action for: %s (ID: %d)', 'post-expirator'),
+                    $postTitle,
+                    $postId
                 );
+            } else {
+                $html = __('Executed scheduled action', 'post-expirator');
             }
-        }
-
-        if ($hook === WorkflowsHooksAbstract::ACTION_ASYNC_EXECUTE_STEP) {
-            $html = __('Executed workflow scheduled step', 'post-expirator');
-        }
-
-        if ($hook === WorkflowsHooksAbstract::ACTION_CLEANUP_FINISHED_SCHEDULED_STEPS) {
-            $days = $this->settingsFacade->getScheduledWorkflowStepsCleanupRetention();
-
-            $html = sprintf(
-                __('Cleaned up completed scheduled steps older than %d days', 'post-expirator'),
-                $days
-            );
-        }
-
-        if ($hook === WorkflowsHooksAbstract::ACTION_CLEANUP_ORPHAN_WORKFLOW_ARGS) {
-            $html = __('Cleaned up orphan workflow scheduled step arguments', 'post-expirator');
         }
 
         return $html;
@@ -334,6 +318,7 @@ class ScheduledActionsController implements InitializableInterface
 
     public function onFilterAdminTitle($adminTitle, $title)
     {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No need for nonce verification when just comparing page
         if (isset($_GET['page']) && $_GET['page'] === 'publishpress-future-scheduled-actions') {
             return str_replace($title, __('Scheduled Actions', 'post-expirator'), $adminTitle);
         }

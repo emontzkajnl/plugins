@@ -2,7 +2,7 @@
 /*
 Plugin Name: Responsive Lightbox & Gallery
 Description: Responsive Lightbox & Gallery allows users to create galleries and view larger versions of images, galleries and videos in a lightbox (overlay) effect optimized for mobile devices.
-Version: 2.4.9
+Version: 2.5.1
 Author: dFactory
 Author URI: http://www.dfactory.co/
 Plugin URI: http://www.dfactory.co/products/responsive-lightbox/
@@ -12,7 +12,7 @@ Text Domain: responsive-lightbox
 Domain Path: /languages
 
 Responsive Lightbox & Gallery
-Copyright (C) 2013-2024, Digital Factory - info@digitalfactory.pl
+Copyright (C) 2013-2025, Digital Factory - info@digitalfactory.pl
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -44,7 +44,7 @@ include_once( RESPONSIVE_LIGHTBOX_PATH . 'includes' . DIRECTORY_SEPARATOR . 'fun
  * Responsive Lightbox class.
  *
  * @class Responsive_Lightbox
- * @version	2.4.9
+ * @version	2.5.1
  */
 class Responsive_Lightbox {
 
@@ -245,28 +245,20 @@ class Responsive_Lightbox {
 			'row_height'		=> 150
 		],
 		'basicslider_gallery' => [
-			'adaptive_height'		=> true,
-			'loop'					=> false,
-			'captions'				=> 'overlay',
-			'init_single'			=> true,
-			'responsive'			=> true,
-			'preload'				=> 'visible',
-			'pager'					=> true,
-			'controls'				=> true,
-			'hide_on_end'			=> true,
-			'slide_margin'			=> 0,
-			'transition'			=> 'fade',
-			'kenburns_zoom'			=> 120,
-			'speed'					=> 800,
-			'easing'				=> 'swing',
-			'continuous'			=> true,
-			'use_css'				=> true,
-			'slideshow'				=> true,
-			'slideshow_direction'	=> 'next',
-			'slideshow_hover'		=> true,
-			'slideshow_hover_delay'	=> 100,
-			'slideshow_delay'		=> 500,
-			'slideshow_pause'		=> 3000
+			'slider_type'			=> 'slide',
+			'height'				=> 0,
+			'width'					=> 0,
+			'speed'					=> 400,
+			'gap'					=> 20, // px
+			'arrows_navigation'		=> true,
+			'dots_navigation'		=> true,
+			'drag'					=> true,
+			'autoplay'				=> false,
+			'interval'				=> 3000,
+			'wheel'					=> false,
+			'slides_per_page'		=> 1,
+			'slides_per_move'		=> 1,
+			'slides_start'			=> 0
 		],
 		'basicmasonry_gallery' => [
 			'columns_lg'		=> 4,
@@ -278,7 +270,7 @@ class Responsive_Lightbox {
 			'origin_left'		=> true,
 			'origin_top'		=> true
 		],
-		'version' => '2.4.8',
+		'version' => '2.5.1',
 		'activation_date' => ''
 	];
 	public $options = [];
@@ -373,6 +365,7 @@ class Responsive_Lightbox {
 		add_action( 'plugins_loaded', [ $this, 'plugins_loaded_init' ] );
 		add_action( 'in_admin_header', [ $this, 'display_breadcrumbs' ] );
 		add_action( 'after_setup_theme', [ $this, 'init_remote_libraries' ], 11 );
+		add_action( 'init', [ $this, 'load_textdomain' ] );
 		add_action( 'init', [ $this, 'init_galleries' ] );
 		add_action( 'init', [ $this, 'init_folders' ] );
 		add_action( 'init', [ $this, 'init_gutenberg' ] );
@@ -636,20 +629,52 @@ class Responsive_Lightbox {
 	}
 
 	/**
-	 * Early plugin initialization.
+	 * Load textdomain.
 	 *
 	 * @return void
 	 */
-	public function plugins_loaded_init() {
+	public function load_textdomain() {
 		// load textdomain
 		load_plugin_textdomain( 'responsive-lightbox', false, dirname( RESPONSIVE_LIGHTBOX_BASENAME ) . '/languages' );
 
-		// set gallery types
+		// update gallery types translations
 		$this->gallery_types = [
 			'default'		=> __( 'Default', 'responsive-lightbox' ),
 			'basicgrid'		=> __( 'Basic Grid', 'responsive-lightbox' ),
 			'basicslider'	=> __( 'Basic Slider', 'responsive-lightbox' ),
 			'basicmasonry'	=> __( 'Basic Masonry', 'responsive-lightbox' )
+		];
+
+		// update capabilities translations
+		$this->capabilities = [
+			'publish_galleries'				=> __( 'Publish Galleries', 'responsive-lightbox' ),
+			'edit_galleries'				=> __( 'Edit Galleries', 'responsive-lightbox' ),
+			'edit_published_galleries'		=> __( 'Edit Published Galleries', 'responsive-lightbox' ),
+			'edit_others_galleries'			=> __( 'Edit Others Galleries', 'responsive-lightbox' ),
+			'edit_private_galleries'		=> __( 'Edit Private Galleries', 'responsive-lightbox' ),
+			'delete_galleries'				=> __( 'Delete Galleries', 'responsive-lightbox' ),
+			'delete_published_galleries'	=> __( 'Delete Published Galleries', 'responsive-lightbox' ),
+			'delete_others_galleries'		=> __( 'Delete Others Galleries', 'responsive-lightbox' ),
+			'delete_private_galleries'		=> __( 'Delete Private Galleries', 'responsive-lightbox' ),
+			'read_private_galleries'		=> __( 'Read Private Galleries', 'responsive-lightbox' ),
+			'manage_gallery_categories'		=> __( 'Manage Gallery Categories', 'responsive-lightbox' ),
+			'manage_gallery_tags'			=> __( 'Manage Gallery Tags', 'responsive-lightbox' ),
+			'edit_lightbox_settings'		=> __( 'Manage Settings', 'responsive-lightbox' )
+		];
+	}
+
+	/**
+	 * Early plugin initialization.
+	 *
+	 * @return void
+	 */
+	public function plugins_loaded_init() {
+		// set gallery types
+		$this->gallery_types = [
+			'default'		=> '',
+			'basicgrid'		=> '',
+			'basicslider'	=> '',
+			'basicmasonry'	=> ''
 		];
 
 		// only for backend
@@ -697,19 +722,19 @@ class Responsive_Lightbox {
 
 			// set capabilities with labels
 			$this->capabilities = [
-				'publish_galleries'				=> __( 'Publish Galleries', 'responsive-lightbox' ),
-				'edit_galleries'				=> __( 'Edit Galleries', 'responsive-lightbox' ),
-				'edit_published_galleries'		=> __( 'Edit Published Galleries', 'responsive-lightbox' ),
-				'edit_others_galleries'			=> __( 'Edit Others Galleries', 'responsive-lightbox' ),
-				'edit_private_galleries'		=> __( 'Edit Private Galleries', 'responsive-lightbox' ),
-				'delete_galleries'				=> __( 'Delete Galleries', 'responsive-lightbox' ),
-				'delete_published_galleries'	=> __( 'Delete Published Galleries', 'responsive-lightbox' ),
-				'delete_others_galleries'		=> __( 'Delete Others Galleries', 'responsive-lightbox' ),
-				'delete_private_galleries'		=> __( 'Delete Private Galleries', 'responsive-lightbox' ),
-				'read_private_galleries'		=> __( 'Read Private Galleries', 'responsive-lightbox' ),
-				'manage_gallery_categories'		=> __( 'Manage Gallery Categories', 'responsive-lightbox' ),
-				'manage_gallery_tags'			=> __( 'Manage Gallery Tags', 'responsive-lightbox' ),
-				'edit_lightbox_settings'		=> __( 'Manage Settings', 'responsive-lightbox' )
+				'publish_galleries'				=> '',
+				'edit_galleries'				=> '',
+				'edit_published_galleries'		=> '',
+				'edit_others_galleries'			=> '',
+				'edit_private_galleries'		=> '',
+				'delete_galleries'				=> '',
+				'delete_published_galleries'	=> '',
+				'delete_others_galleries'		=> '',
+				'delete_private_galleries'		=> '',
+				'read_private_galleries'		=> '',
+				'manage_gallery_categories'		=> '',
+				'manage_gallery_tags'			=> '',
+				'edit_lightbox_settings'		=> ''
 			];
 
 			// 2.3.0 update
@@ -1634,8 +1659,7 @@ class Responsive_Lightbox {
 		} elseif ( in_array( $page, [ 'post.php', 'post-new.php' ], true ) && get_post_type() === 'rl_gallery' || ( $page === 'edit.php' && $typenow === 'rl_gallery' ) ) {
 			wp_enqueue_media();
 
-			wp_enqueue_script( 'responsive-lightbox-admin-select2', RESPONSIVE_LIGHTBOX_URL . '/assets/select2/select2.full' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', [ 'jquery' ], $this->defaults['version'] );
-
+			wp_enqueue_script( 'responsive-lightbox-admin-select2', RESPONSIVE_LIGHTBOX_URL . '/assets/select2/select2.full' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', [ 'jquery' ], '4.1.0' );
 			wp_enqueue_script( 'responsive-lightbox-admin-galleries', RESPONSIVE_LIGHTBOX_URL . '/js/admin-galleries.js', [ 'jquery', 'underscore', 'wp-color-picker', 'jquery-ui-sortable' ], $this->defaults['version'] );
 
 			// get fields
@@ -1670,18 +1694,14 @@ class Responsive_Lightbox {
 			wp_add_inline_script( 'responsive-lightbox-admin-galleries', 'var rlArgsGalleries = ' . wp_json_encode( $script_data ) . ";\n", 'before' );
 
 			wp_enqueue_style( 'wp-color-picker' );
-
 			wp_enqueue_style( 'responsive-lightbox-admin', RESPONSIVE_LIGHTBOX_URL . '/css/admin.css', [], $this->defaults['version'] );
-
-			wp_enqueue_style( 'responsive-lightbox-admin-select2', RESPONSIVE_LIGHTBOX_URL . '/assets/select2/select2' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', [], $this->defaults['version'] );
-
+			wp_enqueue_style( 'responsive-lightbox-admin-select2', RESPONSIVE_LIGHTBOX_URL . '/assets/select2/select2' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', [], '4.1.0' );
 			wp_enqueue_style( 'responsive-lightbox-admin-galleries', RESPONSIVE_LIGHTBOX_URL . '/css/admin-galleries.css', [], $this->defaults['version'] );
 		// plugins?
 		} elseif ( $page === 'plugins.php' ) {
 			add_thickbox();
 
 			wp_enqueue_script( 'responsive-lightbox-admin-plugins', RESPONSIVE_LIGHTBOX_URL . '/js/admin-plugins.js', [ 'jquery' ], $this->defaults['version'] );
-
 			wp_enqueue_style( 'responsive-lightbox-admin-plugins', RESPONSIVE_LIGHTBOX_URL . '/css/admin-plugins.css', [], $this->defaults['version'] );
 
 			// prepare script data
@@ -1831,16 +1851,16 @@ class Responsive_Lightbox {
 			]
 		);
 
+		if ( $this->current_script !== $args['script'] )
+			$this->set_lightbox_script( $args['script'] );
+
 		$scripts = [];
 		$styles = [];
 
 		switch ( $args['script'] ) {
 			case 'prettyphoto':
-				wp_register_script( 'responsive-lightbox-prettyphoto', plugins_url( 'assets/prettyphoto/jquery.prettyPhoto' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
-
-				wp_register_style(
-					'responsive-lightbox-prettyphoto', plugins_url( 'assets/prettyphoto/prettyPhoto' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version']
-				);
+				wp_register_script( 'responsive-lightbox-prettyphoto', plugins_url( 'assets/prettyphoto/jquery.prettyPhoto' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '3.1.6', $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_style( 'responsive-lightbox-prettyphoto', plugins_url( 'assets/prettyphoto/prettyPhoto' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '3.1.6' );
 
 				$scripts[] = 'responsive-lightbox-prettyphoto';
 				$styles[] = 'responsive-lightbox-prettyphoto';
@@ -1874,11 +1894,8 @@ class Responsive_Lightbox {
 				break;
 
 			case 'swipebox':
-				wp_register_script( 'responsive-lightbox-swipebox', plugins_url( 'assets/swipebox/jquery.swipebox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
-
-				wp_register_style(
-					'responsive-lightbox-swipebox', plugins_url( 'assets/swipebox/swipebox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version']
-				);
+				wp_register_script( 'responsive-lightbox-swipebox', plugins_url( 'assets/swipebox/jquery.swipebox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.5.2', $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_style( 'responsive-lightbox-swipebox', plugins_url( 'assets/swipebox/swipebox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.5.2' );
 
 				$scripts[] = 'responsive-lightbox-swipebox';
 				$styles[] = 'responsive-lightbox-swipebox';
@@ -1899,15 +1916,9 @@ class Responsive_Lightbox {
 				break;
 
 			case 'nivo':
-				wp_register_script( 'responsive-lightbox-nivo', plugins_url( 'assets/nivo/nivo-lightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer', $this->defaults['version'] );
-
-				wp_register_style(
-					'responsive-lightbox-nivo', plugins_url( 'assets/nivo/nivo-lightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version']
-				);
-
-				wp_register_style(
-					'responsive-lightbox-nivo-default', plugins_url( 'assets/nivo/themes/default/default.css', __FILE__ ), [], $this->defaults['version']
-				);
+				wp_register_script( 'responsive-lightbox-nivo', plugins_url( 'assets/nivo/nivo-lightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.3.1', $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_style( 'responsive-lightbox-nivo', plugins_url( 'assets/nivo/nivo-lightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.3.1' );
+				wp_register_style( 'responsive-lightbox-nivo-default', plugins_url( 'assets/nivo/themes/default/default.css', __FILE__ ), [], '1.3.1' );
 
 				$scripts[] = 'responsive-lightbox-nivo';
 				$styles[] = 'responsive-lightbox-nivo';
@@ -1925,11 +1936,8 @@ class Responsive_Lightbox {
 				break;
 
 			case 'imagelightbox':
-				wp_register_script( 'responsive-lightbox-imagelightbox', plugins_url( 'assets/imagelightbox/imagelightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
-
-				wp_register_style(
-					'responsive-lightbox-imagelightbox', plugins_url( 'assets/imagelightbox/imagelightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version']
-				);
+				wp_register_script( 'responsive-lightbox-imagelightbox', plugins_url( 'assets/imagelightbox/imagelightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.0.0', $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_style( 'responsive-lightbox-imagelightbox', plugins_url( 'assets/imagelightbox/imagelightbox' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.0.0' );
 
 				$scripts[] = 'responsive-lightbox-imagelightbox';
 				$styles[] = 'responsive-lightbox-imagelightbox';
@@ -1950,15 +1958,12 @@ class Responsive_Lightbox {
 			case 'tosrus':
 				// swipe support, enqueue Hammer.js on mobile devices only
 				if ( wp_is_mobile() ) {
-					wp_register_script( 'responsive-lightbox-hammer-js', plugins_url( 'assets/tosrus/hammer' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
+					wp_register_script( 'responsive-lightbox-hammer-js', plugins_url( 'assets/tosrus/hammer' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [], '2.0.8', $this->options['settings']['loading_place'] === 'footer' );
 					$scripts[] = 'responsive-lightbox-hammer-js';
 				}
 
-				wp_register_script( 'responsive-lightbox-tosrus', plugins_url( 'assets/tosrus/jquery.tosrus' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
-
-				wp_register_style(
-					'responsive-lightbox-tosrus', plugins_url( 'assets/tosrus/jquery.tosrus' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], $this->defaults['version']
-				);
+				wp_register_script( 'responsive-lightbox-tosrus', plugins_url( 'assets/tosrus/jquery.tosrus' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '2.5.0', $this->options['settings']['loading_place'] === 'footer' );
+				wp_register_style( 'responsive-lightbox-tosrus', plugins_url( 'assets/tosrus/jquery.tosrus' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '2.5.0' );
 
 				$scripts[] = 'responsive-lightbox-tosrus';
 				$styles[] = 'responsive-lightbox-tosrus';
@@ -1981,11 +1986,8 @@ class Responsive_Lightbox {
 
 			case 'featherlight':
 				wp_register_script( 'responsive-lightbox-featherlight', plugins_url( 'assets/featherlight/featherlight' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.7.14', $this->options['settings']['loading_place'] === 'footer' );
-
-				wp_register_style( 'responsive-lightbox-featherlight', plugins_url( 'assets/featherlight/featherlight' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.7.14' );
-
 				wp_register_script( 'responsive-lightbox-featherlight-gallery', plugins_url( 'assets/featherlight/featherlight.gallery' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.7.14', $this->options['settings']['loading_place'] === 'footer' );
-
+				wp_register_style( 'responsive-lightbox-featherlight', plugins_url( 'assets/featherlight/featherlight' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.7.14' );
 				wp_register_style( 'responsive-lightbox-featherlight-gallery', plugins_url( 'assets/featherlight/featherlight.gallery' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.7.14' );
 
 				$scripts[] = 'responsive-lightbox-featherlight';
@@ -2008,7 +2010,6 @@ class Responsive_Lightbox {
 
 			case 'magnific':
 				wp_register_script( 'responsive-lightbox-magnific', plugins_url( 'assets/magnific/jquery.magnific-popup' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', __FILE__ ), [ 'jquery' ], '1.2.0', $this->options['settings']['loading_place'] === 'footer' );
-
 				wp_register_style( 'responsive-lightbox-magnific', plugins_url( 'assets/magnific/magnific-popup' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.css', __FILE__ ), [], '1.2.0' );
 
 				$scripts[] = 'responsive-lightbox-magnific';
@@ -2061,9 +2062,7 @@ class Responsive_Lightbox {
 		}
 
 		if ( ! empty( $args['script'] ) && ! empty( $args['selector'] ) && apply_filters( 'rl_lightbox_conditional_loading', $contitional_scripts ) != false ) {
-			wp_register_script( 'responsive-lightbox-infinite-scroll', RESPONSIVE_LIGHTBOX_URL . '/assets/infinitescroll/infinite-scroll.pkgd' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', [ 'jquery' ] );
-			wp_register_script( 'responsive-lightbox-images-loaded', RESPONSIVE_LIGHTBOX_URL . '/assets/imagesloaded/imagesloaded.pkgd' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', [ 'jquery' ] );
-			wp_register_script( 'responsive-lightbox-masonry', RESPONSIVE_LIGHTBOX_URL . '/assets/masonry/masonry.pkgd' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', [ 'jquery' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
+			wp_register_script( 'responsive-lightbox-infinite-scroll', RESPONSIVE_LIGHTBOX_URL . '/assets/infinitescroll/infinite-scroll.pkgd' . ( ! ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '' ) . '.js', [ 'jquery' ], '4.0.1' );
 
 			wp_register_script( 'responsive-lightbox', plugins_url( 'js/front.js', __FILE__ ), [ 'jquery', 'underscore', 'responsive-lightbox-infinite-scroll' ], $this->defaults['version'], $this->options['settings']['loading_place'] === 'footer' );
 

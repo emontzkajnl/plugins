@@ -75,6 +75,11 @@ class OnInit implements StepTypeInterface
         ];
     }
 
+    public function getStepScopedVariablesSchema(): array
+    {
+        return [];
+    }
+
     public function getOutputSchema(): array
     {
         return [];
@@ -92,7 +97,6 @@ class OnInit implements StepTypeInterface
             "source" => [
                 [
                     "id" => "output",
-                    "left" => "50%",
                     "label" => __("Next", "post-expirator"),
                 ]
             ]

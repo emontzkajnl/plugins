@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => '4.3.3',
-        'version' => '4.3.3.0',
-        'reference' => '4e1e51f0b4a22de36570c506cdfa24f3e69c1d4f',
+        'pretty_version' => '4.5.0',
+        'version' => '4.5.0.0',
+        'reference' => 'e294d310f5865a6af628fbc144986217ce3285bb',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,11 +11,20 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => '4.3.3',
-            'version' => '4.3.3.0',
-            'reference' => '4e1e51f0b4a22de36570c506cdfa24f3e69c1d4f',
+            'pretty_version' => '4.5.0',
+            'version' => '4.5.0.0',
+            'reference' => 'e294d310f5865a6af628fbc144986217ce3285bb',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'jwadhams/json-logic-php' => array(
+            'pretty_version' => '1.5.1',
+            'version' => '1.5.1.0',
+            'reference' => '060aab5ad36ae1fdd74d3006131b197ca777fa48',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../jwadhams/json-logic-php',
             'aliases' => array(),
             'dev_requirement' => false,
         ),

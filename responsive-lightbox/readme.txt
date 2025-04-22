@@ -3,9 +3,9 @@ Contributors: dfactory
 Donate link: http://www.dfactory.co/
 Tags: gallery, galleries, lightbox, image, images
 Requires at least: 5.0
-Tested up to: 6.6.2
-Stable tag: 2.4.9
-Requires PHP: 5.4
+Tested up to: 6.8
+Stable tag: 2.5.1
+Requires PHP: 5.6
 License: MIT License
 License URI: http://opensource.org/licenses/MIT
 
@@ -139,6 +139,17 @@ Responsive Lightbox and Gallery plugin comes with many styles and effects alread
 2. screenshot-2.jpg
 
 == Changelog ==
+
+= 2.5.1 =
+* Fix: Loading textdomain warning
+* Fix: XSS vulnerability related to prettyPhoto
+* Tweak: Updated enqueuing versions of scripts and style
+
+= 2.5.0 =
+* New: Switch to new Basic slider script
+* New: Added caption font size option in galleries
+* New: Added caption padding option in galleries
+* Tweak: Set versions for scripts/styles of assets
 
 = 2.4.9 =
 * Fix: Potential XSS vulnerability related to Featherlight lightbox
@@ -542,5 +553,5 @@ Initial release
 
 == Upgrade Notice ==
 
-= 2.4.9 =
-Fixed potential XSS vulnerability related to Featherlight and Fancybox lighboxes
+= 2.5.1 =
+Fix loading textdomain warning and XSS vulnerability related to prettyPhoto
