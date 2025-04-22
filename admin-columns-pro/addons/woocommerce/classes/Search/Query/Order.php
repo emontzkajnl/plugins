@@ -11,13 +11,17 @@ final class Order extends Query
 
     public function register(): void
     {
-        add_filter('woocommerce_orders_table_query_clauses', [$this, 'parse_sql_clauses']);
+        add_filter('woocommerce_orders_table_query_clauses', [$this, 'parse_sql_clauses'], 10, 3);
         add_filter('woocommerce_order_list_table_prepare_items_query_args', [$this, 'parse_order_meta_query'], 9);
         add_filter('woocommerce_order_list_table_prepare_items_query_args', [$this, 'parse_order_arguments']);
     }
 
-    public function parse_sql_clauses(array $clauses): array
+    public function parse_sql_clauses(array $clauses, $query, $args): array
     {
+        if ( ! OrderQueryController::is_main_query($args)) {
+            return $clauses;
+        }
+
         foreach ($this->bindings as $binding) {
             if ($binding->get_join()) {
                 $clauses['join'] .= "\n" . $binding->get_join();

@@ -6,7 +6,6 @@ use AC;
 use AC\Registerable;
 use AC\Services;
 use ACP\Service\IntegrationStatus;
-use MB_Comment_Meta_Box;
 
 class MetaBox implements Registerable
 {
@@ -20,11 +19,25 @@ class MetaBox implements Registerable
 
     public function register(): void
     {
-        if ( ! class_exists('RWMB_Loader', false)) {
+        if ( ! $this->is_metabox_active()) {
             return;
         }
 
         $this->create_services()->register();
+    }
+
+    private function is_metabox_active(): bool
+    {
+        if (class_exists('RWMB_Loader', false)) {
+            return true;
+        }
+
+        // All in One loader needs MetaBox to be disabled, all logic is loaded in the `admin_init` hook
+        if (class_exists('MBAIO\Loader', false)) {
+            return true;
+        }
+
+        return false;
     }
 
     private function create_services(): Services

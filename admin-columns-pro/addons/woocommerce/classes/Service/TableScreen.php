@@ -8,12 +8,15 @@ use AC\Registerable;
 use ACA\WC\Asset\Script\Table;
 use ACA\WC\ListScreen;
 use ACA\WC\Settings\HideOnScreen\FilterOrderCustomer;
+use ACA\WC\Settings\HideOnScreen\FilterOrderDate;
+use ACA\WC\Settings\HideOnScreen\FilterOrderSubType;
 use ACA\WC\Settings\HideOnScreen\FilterProductCategory;
 use ACA\WC\Settings\HideOnScreen\FilterProductStockStatus;
 use ACA\WC\Settings\HideOnScreen\FilterProductType;
 use ACA\WC\Settings\HideOnScreen\FilterSubscriptionCustomer;
 use ACA\WC\Settings\HideOnScreen\FilterSubscriptionPayment;
 use ACA\WC\Settings\HideOnScreen\FilterSubscriptionProduct;
+use ACA\WC\TableScreen\HideOrderFilter;
 use ACA\WC\TableScreen\HideProductFilter;
 use ACA\WC\TableScreen\HideSubscriptionsFilter;
 use ACP\ListScreen\Taxonomy;
@@ -70,11 +73,19 @@ final class TableScreen implements Registerable
             new HideProductFilter($list_screen, new FilterProductType(), 'product_type'),
             new HideProductFilter($list_screen, new FilterProductCategory(), 'product_category'),
             new HideProductFilter($list_screen, new FilterProductStockStatus(), 'stock_status'),
+
+            new HideOrderFilter($list_screen, new FilterOrderDate()),
+            new HideOrderFilter($list_screen, new FilterOrderSubType()),
+            new HideOrderFilter($list_screen, new FilterOrderCustomer()),
         ];
 
         if ($list_screen instanceof ListScreen\Subscriptions) {
             $services[] = new HideSubscriptionsFilter($list_screen, new FilterSubscriptionProduct());
             $services[] = new HideSubscriptionsFilter($list_screen, new FilterSubscriptionPayment());
+            $services[] = new HideSubscriptionsFilter($list_screen, new FilterSubscriptionCustomer());
+        }
+
+        if ($list_screen instanceof ListScreen\Order) {
             $services[] = new HideSubscriptionsFilter($list_screen, new FilterSubscriptionCustomer());
         }
 

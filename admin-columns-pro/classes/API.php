@@ -111,6 +111,10 @@ class API
 
         $request->set_body($body);
 
+        // Set headers
+        $request->set_header('X-AC-Version', ACP_VERSION);
+        $request->set_header('X-AC-Command', $body['command'] ?? '');
+
         $data = wp_remote_post($this->get_request_url(), $request->get_args());
 
         $response = new Response();

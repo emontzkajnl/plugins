@@ -4,10 +4,13 @@ namespace ACA\WC;
 
 use AC;
 use AC\Registerable;
+use ACA\WC\ListScreen\Order;
 use ACA\WC\ListScreen\Product;
 use ACA\WC\ListScreen\ShopOrder;
 use ACA\WC\ListScreen\Subscriptions;
 use ACA\WC\Settings\HideOnScreen\FilterOrderCustomer;
+use ACA\WC\Settings\HideOnScreen\FilterOrderDate;
+use ACA\WC\Settings\HideOnScreen\FilterOrderSubType;
 use ACA\WC\Settings\HideOnScreen\FilterProductCategory;
 use ACA\WC\Settings\HideOnScreen\FilterProductStockStatus;
 use ACA\WC\Settings\HideOnScreen\FilterProductType;
@@ -45,6 +48,12 @@ class Admin implements Registerable
         switch (true) {
             case $list_screen instanceof ShopOrder :
                 $collection->add(new FilterOrderCustomer(), new Group(Group::ELEMENT), 34);
+
+                break;
+            case $list_screen instanceof Order :
+                $collection->add(new FilterOrderDate(), new Group(Group::ELEMENT), 32);
+                $collection->add(new FilterOrderSubType(), new Group(Group::ELEMENT), 32);
+                $collection->add(new FilterOrderCustomer(), new Group(Group::ELEMENT), 32);
 
                 break;
             case $list_screen instanceof Product :

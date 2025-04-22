@@ -7,7 +7,8 @@ use ACA\WC;
 use ACP;
 
 class PaymentMethod extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable,
-                                                 ACP\ConditionalFormat\Formattable, ACP\Sorting\Sortable
+                                                 ACP\ConditionalFormat\Formattable, ACP\Sorting\Sortable,
+                                                 ACP\Editing\Editable
 {
 
     use ACP\ConditionalFormat\ConditionalFormatTrait;
@@ -40,6 +41,11 @@ class PaymentMethod extends AC\Column implements ACP\Search\Searchable, ACP\Expo
     public function export()
     {
         return new ACP\Export\Model\Value($this);
+    }
+
+    public function editing()
+    {
+        return new WC\Editing\Order\PaymentMethod();
     }
 
 }

@@ -218,11 +218,11 @@ class License implements Asset\Enqueueables, Renderable, RenderableHead
     {
         $account_url = new Url\UtmTags(new Url\Site(Url\Site::PAGE_ACCOUNT_SUBSCRIPTIONS), 'license-activation');
 
-        $license_key = $this->license_key_repository->find();
+        $token = $this->activation_token_factory->create();
 
-        if ($license_key) {
-            $account_url->with_arg('subscription_key', $license_key->get_token())
-                        ->with_arg('site_url', $this->site_url->get_url());
+        if ($token) {
+            $account_url = $account_url->with_arg($token->get_type(), $token->get_token())
+                                       ->with_arg('site_url', $this->site_url->get_url());
         }
 
         $activation_token = $this->activation_token_factory->create();
@@ -243,6 +243,8 @@ class License implements Asset\Enqueueables, Renderable, RenderableHead
                            $activation &&
                            $activation->is_active() &&
                            $permissions->has_updates_permission();
+
+        $license_key = $this->license_key_repository->find();
 
         $license_info = new View([
             'nonce_field'                     => (new ACP\Nonce\LicenseNonce())->create_field(),

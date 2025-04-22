@@ -37,6 +37,10 @@ class ColumnFactory
         }
 
         switch ($settings['type']) {
+            case FieldType::TYPE_MESSAGE:
+            case FieldType::TYPE_TAB:
+                return null;
+                
             case FieldType::TYPE_GROUP:
                 return (new GroupColumnFactory($this))->create($settings);
 
@@ -77,7 +81,7 @@ class ColumnFactory
                 return $this->create_column(new Unsupported(), $settings);
         }
     }
-    
+
     private function create_column(Column $column, array $settings)
     {
         $column = apply_filters('acp/acf/column', $column, $settings['type'], $settings);

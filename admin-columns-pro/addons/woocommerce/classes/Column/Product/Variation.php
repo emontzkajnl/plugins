@@ -65,6 +65,7 @@ class Variation extends AC\Column
             $items[] = [
                 'name'       => $name,
                 'sku'        => $variation->get_sku(),
+                'price'      => $variation->get_price_html(),
                 'attributes' => implode(
                     '&nbsp;&nbsp;-&nbsp;&nbsp;',
                     $this->get_attributes($id, $variation->get_attributes())

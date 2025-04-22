@@ -11,6 +11,7 @@ use AC\Registerable;
 use AC\Services;
 use AC\Vendor\DI;
 use AC\Vendor\DI\ContainerBuilder;
+use ACA\WC\Search\Query\OrderQueryController;
 use ACA\WC\Service\TableScreen;
 use ACA\WC\Service\TableTemplates;
 use ACP;
@@ -145,6 +146,7 @@ final class WooCommerce implements Registerable
             Service\TableScreen::class,
             View::class,
             TemplateFiles::class,
+            OrderQueryController::class,
         ];
 
         if ($container->get('use.hpos')) {

@@ -132,7 +132,7 @@ class Export extends AC\Admin\Table
 
         return sprintf(
             '<div data-segments="%s" data-label="%s"></div>',
-            esc_attr(json_encode($data)),
+            htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8'),
             esc_attr($label)
         );
     }

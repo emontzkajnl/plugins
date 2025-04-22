@@ -7,16 +7,19 @@ use AC\Request;
 use AC\RequestAjaxHandler;
 use ACP\Access\ActivationUpdater;
 use ACP\ActivationTokenFactory;
+use ACP\Transient\TimeTransientFactory;
 
 class SubscriptionUpdate implements RequestAjaxHandler
 {
 
-    private $token_factory;
+    private ActivationTokenFactory $token_factory;
 
-    private $activation_updater;
+    private ActivationUpdater $activation_updater;
 
-    public function __construct(ActivationTokenFactory $token_factory, ActivationUpdater $activation_updater)
-    {
+    public function __construct(
+        ActivationTokenFactory $token_factory,
+        ActivationUpdater $activation_updater
+    ) {
         $this->token_factory = $token_factory;
         $this->activation_updater = $activation_updater;
     }
@@ -34,6 +37,14 @@ class SubscriptionUpdate implements RequestAjaxHandler
         if ( ! $activation_token) {
             wp_send_json_error();
         }
+
+        $transient = TimeTransientFactory::create_license_check_daily();
+
+        if ( ! $transient->is_expired()) {
+            return;
+        }
+
+        $transient->save();
 
         $api_response = $this->activation_updater->update($activation_token);
 

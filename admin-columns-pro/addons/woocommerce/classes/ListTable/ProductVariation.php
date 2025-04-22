@@ -91,8 +91,9 @@ class ProductVariation extends WC_Admin_List_Table
 
     public function woocommerce_scripts()
     {
-        wp_enqueue_style('select2');
-        wp_enqueue_script('select2');
+        // Select 2
+        wp_enqueue_script('ac-select2');
+        wp_enqueue_style('ac-select2');
 
         wp_enqueue_style('jquery-ui-style');
         wp_enqueue_style('woocommerce_admin_styles');

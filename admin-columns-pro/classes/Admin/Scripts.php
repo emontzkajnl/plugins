@@ -7,8 +7,9 @@ use AC\Asset\Enqueueable;
 use AC\Entity\Plugin;
 use AC\Registerable;
 use ACP\Access\PermissionsStorage;
+use ACP\ActivationTokenFactory;
 use ACP\Asset\Script;
-use ACP\Transient\LicenseCheckTransient;
+use ACP\Transient\TimeTransientFactory;
 
 class Scripts implements Registerable
 {
@@ -19,14 +20,18 @@ class Scripts implements Registerable
 
     private $plugin;
 
+    private ActivationTokenFactory $token_factory;
+
     public function __construct(
         Asset\Location\Absolute $location,
         PermissionsStorage $permission_storage,
-        Plugin $plugin
+        Plugin $plugin,
+        ActivationTokenFactory $token_factory
     ) {
         $this->location = $location;
         $this->permission_storage = $permission_storage;
         $this->plugin = $plugin;
+        $this->token_factory = $token_factory;
     }
 
     public function register(): void
@@ -51,16 +56,20 @@ class Scripts implements Registerable
 
     public function register_daily_license_check(): void
     {
-        $transient = new LicenseCheckTransient($this->plugin->is_network_active());
+        $activation_token = $this->token_factory->create();
 
-        if ( ! $transient->is_expired()) {
+        if ( ! $activation_token) {
+            return;
+        }
+
+        $cache = TimeTransientFactory::create_license_check_daily();
+
+        if ( ! $cache->is_expired()) {
             return;
         }
 
         $script = new Script\LicenseCheck($this->location->with_suffix('assets/core/js/license-check.js'));
         $script->enqueue();
-
-        $transient->save((int)DAY_IN_SECONDS);
     }
 
     private function enqueue(Enqueueable $assets)

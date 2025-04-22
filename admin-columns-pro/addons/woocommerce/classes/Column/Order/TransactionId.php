@@ -7,7 +7,8 @@ use ACA\WC;
 use ACP;
 
 class TransactionId extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable,
-                                                 ACP\ConditionalFormat\Formattable, ACP\Sorting\Sortable
+                                                 ACP\ConditionalFormat\Formattable, ACP\Sorting\Sortable,
+                                                 ACP\Editing\Editable
 {
 
     use ACP\ConditionalFormat\ConditionalFormatTrait;
@@ -43,6 +44,14 @@ class TransactionId extends AC\Column implements ACP\Search\Searchable, ACP\Expo
     public function sorting()
     {
         return new WC\Sorting\Order\OrderData('transaction_id');
+    }
+
+    public function editing()
+    {
+        return new ACP\Editing\Service\Basic(
+            new ACP\Editing\View\Text(),
+            new WC\Editing\Storage\Order\TransactionId()
+        );
     }
 
 }

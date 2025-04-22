@@ -7,7 +7,7 @@ use AC\Services;
 
 class Polylang implements Registerable
 {
-
+    
     public function register(): void
     {
         if ( ! defined('POLYLANG_VERSION')) {

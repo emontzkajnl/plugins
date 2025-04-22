@@ -18,6 +18,7 @@ return [
     Column\Product\Sales::class,
     Column\Product\LowOnStock::class,
     Column\Product\StockThreshold::class,
+    Column\Product\GlobalUniqueId::class,
 
     Column\ProductVariation\Attribute::class,
     Column\ProductVariation\Description::class,

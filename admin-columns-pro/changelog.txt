@@ -1,5 +1,36 @@
 == Changelog ==
 
+= 6.4.17 =
+Release Date: March 19th, 2025
+
+* [Fixed] Resolved an issue where exporting list screen settings with a saved filter containing quotes caused an error.
+* [Improved] The Value modal in the Images column now has a more compact display.
+* [Improved] Numbers in the filter widget are now only formatted when they contain five or more digits, improving readability.
+* [Improved] Product Count sorting in the HPOS Order Table now utilizes the product lookup table in the database.
+* [Improved] Added an option to hide the default WooCommerce Order filters
+* [Updated] Admin Columns Core to version 4.7.13
+
+= 6.4.16 =
+Release Date: March 12th, 2025
+
+* [Fixed] Corruption issues affecting certain languages in the core.
+* [Fixed] Resolved a fatal error that occurred when a template folder was defined but contained no templates.
+* [Improved] MetaBox integration now loads even when the AllInOne plugin is active without the core.
+* [Updated] Admin Columns Core to version 4.7.12
+
+= 6.4.15 =
+Release Date: March 3rd, 2025
+
+* [Fixed] Export for Discount columns (Orders) did not work
+* [Fixed] Post Link Editing was not working correctly
+* [Fixed] Fixed query arguments for the Search query in Product Taxonomy (Orders)
+* [Added] Editing support for Order TransactionID and Payment method
+* [Added] Added GTIN, IPC, EAN, and ISBN columns
+* [Improved] Polylang now returns correct columns for quick edit
+* [Improved] Show price for Variation value modal
+* [Improved] License checks now update renewed licenses automatically
+* [Updated] Admin Columns Core to version 4.7.11
+
 = 6.4.14 =
 Release Date: January 7th, 2025
 

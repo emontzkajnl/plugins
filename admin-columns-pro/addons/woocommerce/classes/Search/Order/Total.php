@@ -17,7 +17,9 @@ class Total extends ACP\Search\Comparison
             new Operators([
                 Operators::EQ,
                 Operators::LT,
+                Operators::LTE,
                 Operators::GT,
+                Operators::GTE,
                 Operators::BETWEEN,
             ]),
             Value::DECIMAL

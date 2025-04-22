@@ -8,7 +8,7 @@ use ACP;
 use ACP\ConditionalFormat\FormattableConfig;
 
 class Discount extends AC\Column implements ACP\ConditionalFormat\Formattable, ACP\Search\Searchable,
-                                            ACP\Sorting\Sortable
+                                            ACP\Sorting\Sortable, ACP\Export\Exportable
 {
 
     public function __construct()
@@ -44,4 +44,8 @@ class Discount extends AC\Column implements ACP\ConditionalFormat\Formattable, A
         return new ACP\Search\Comparison\Meta\Decimal('_cart_discount');
     }
 
+    public function export()
+    {
+        return new ACP\Export\Model\StrippedValue($this);
+    }
 }

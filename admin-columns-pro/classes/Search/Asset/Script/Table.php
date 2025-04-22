@@ -2,12 +2,14 @@
 
 namespace ACP\Search\Asset\Script;
 
+use AC\Admin\Tooltip;
 use AC\Asset\Location;
 use AC\Asset\Script;
 use AC\Capabilities;
 use AC\Helper\Select\Option;
 use AC\ListScreen;
 use AC\Request;
+use AC\View;
 use ACP\Search\Comparison\RemoteValues;
 use ACP\Search\Comparison\SearchableValues;
 use ACP\Search\Comparison\Values;
@@ -134,6 +136,21 @@ final class Table extends Script
                 'instructions'    => __('Instructions', 'codepress-admin-columns'),
             ],
         ]);
+
+        add_action('ac/table/admin_footer', [$this, 'render_tooltip_saved_filters']);
+    }
+
+    public function render_tooltip_saved_filters(): void
+    {
+        $content = (new View())->set_template('table/tooltip-saved-filters')->render();
+
+        $tooltip = new Tooltip('filtered_segments', [
+            'content'    => $content,
+            'link_label' => __('Instructions', 'codepress-admin-columns'),
+            'title'      => __('Instructions', 'codepress-admin-columns'),
+        ]);
+
+        echo $tooltip->get_instructions();
     }
 
 }

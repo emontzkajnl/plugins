@@ -61,7 +61,7 @@ final class Export implements RequestHandler
 
             /* @var Entity\Segment $segment */
             foreach ($list_screen->get_preference(ListScreenPreferences::SHARED_SEGMENTS) as $segment) {
-                if (in_array((string)$segment->get_key(), $data->segments, true)) {
+                if (is_array($data->segments) && in_array((string)$segment->get_key(), $data->segments, true)) {
                     $segments[] = $segment;
                 }
             }

@@ -60,7 +60,7 @@ class Images extends AC\Column
                 'title'     => strip_tags(get_the_title($id)) ?: $id,
                 'edit_link' => get_edit_post_link($id),
                 'id'        => $id,
-                'class'     => '-w-large',
+                'class'     => '-image-container',
             ],
             ac_helper()->html->rounded($total_size)
         );
