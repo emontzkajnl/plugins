@@ -1,0 +1,9 @@
+{
+    "name":     "acf/fff-newsletter",
+    "title":    "Newsletter",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "fff-newsletter.php"
+    }
+}

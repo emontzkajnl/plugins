@@ -1,0 +1,10 @@
+{
+    "name":     "acf/fff-popular-posts",
+    "title":    "Popular Posts",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "fff-popular-posts.php"
+    }
+}

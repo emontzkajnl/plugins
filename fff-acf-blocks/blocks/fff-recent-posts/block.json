@@ -1,0 +1,10 @@
+{
+    "name":     "acf/fff-recent-posts",
+    "title":    "FFF Recent Posts",
+    "category": "livability",
+    "icon":     "layout",
+    "acf":      {
+        "mode":     "preview",
+        "renderTemplate":   "fff-recent-posts.php"
+    }
+}
