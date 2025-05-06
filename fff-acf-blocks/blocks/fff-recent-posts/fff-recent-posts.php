@@ -29,6 +29,7 @@ if ($recent_query->have_posts()):
         $cat = get_the_category($ID); 
         $primary_cat = get_post_meta($ID,'_yoast_wpseo_primary_category', TRUE ); 
         $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name; 
+        $cat_link = $primary_cat ? get_category_link($primary_cat) : get_category_link($cat[0]->term_id); 
         if ($count == 3 && function_exists('the_ad_placement')) {
             echo '<div style="text-align: center;">'; 
                 the_ad_placement('in-content');
@@ -40,7 +41,7 @@ if ($recent_query->have_posts()):
                 <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail($ID, 'full').'</a>'; ?>
             </div>
             <div class="fff-recent__text-container">
-            <p class="fff-category"><?php echo $cat_name; ?></p>
+            <p class="fff-category"><?php echo '<a class="unstyle-link" href="'.$cat_link.'">'.$cat_name.'</a>'; ?></p>
             <h2 class="fff-recent__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
             </div>
         </div> <!-- container -->
