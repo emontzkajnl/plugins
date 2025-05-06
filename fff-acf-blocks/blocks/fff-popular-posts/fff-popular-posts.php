@@ -34,12 +34,12 @@ $pop_query = new WP_Query($args); ?>
         $cat_link = $primary_cat ? get_category_link( $primary_cat) : get_category_link( $cat[0]->term_id );
         ?>
         <div class="col-12 m-col-4 s-col-6">
-        <div class="fff-popular__container  nc-panel">
+        <div class="fff-popular__container">
             <div class="fff-popular__img-container">
                 <?php echo '<a href="'.get_the_permalink().'">'.get_the_post_thumbnail( ).'</a>'; ?>
             </div>
             <div class="fff-popular__text-container">
-            <p class="fff-category"><?php echo '<a href="'.$cat_link.'">'.$cat_name.'</a>'; ?></p>
+            <p class="fff-category"><?php echo '<a class="unstyle-link" href="'.$cat_link.'">'.$cat_name.'</a>'; ?></p>
             <h3 class="fff-popular__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>
             </div>
             </div> <!-- container -->
