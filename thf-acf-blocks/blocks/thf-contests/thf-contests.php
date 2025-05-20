@@ -21,7 +21,7 @@ $contest_query = new WP_Query($args); ?>
 <?php 
 if ($contest_query->have_posts(  )): ?>
 
-<h2 class="section-heading">Contests<span class="ampersand">&</span>Giveaways</h2>
+<h2 class="section-heading">Contests <span class="ampersand">&</span>Giveaways</h2>
 <div class="thf-contests__container">
     <?php while ($contest_query->have_posts(  )): $contest_query->the_post(); 
     $ID = get_the_ID(); ?>
