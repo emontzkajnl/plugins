@@ -36,7 +36,7 @@ $mag_id = $magazine[0]->ID;
     <!-- <h3 class="h2 read-connect">Read<span class="ampersand">&</span>Connect </h3> -->
     <h3 class="h2 read-connect"><?php echo $magazine_title; ?></h3>
     <?php echo '<a href="'.get_the_permalink($mag_id).'">'.get_the_post_thumbnail( $mag_id, array(205,280)).'</a>';
-    echo '<div class="fff-newsletter__text" >'.$magazine[0]->post_content.'</div>'; ?> 
+    echo '<div class="fff-newsletter__text" >'.$magazine[0]->post_content.'<a class="btn" href="'.get_the_permalink($mag_id).'">Read More</a></div>'; ?> 
 </div>
 <div class="fff-newsletter__form-area">
     <h3 class="h2">Connect with Us</h3>
