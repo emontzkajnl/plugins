@@ -39,7 +39,7 @@ $mag_id = $magazine[0]->ID;
     echo '<div class="fff-newsletter__text" >'.$magazine[0]->post_content.'<br /><a class="btn" href="'.get_the_permalink($mag_id).'">Read More</a></div>'; ?> 
 </div>
 <div class="fff-newsletter__form-area">
-    <h3 class="h2">Connect with Us</h3>
+    <h3 class="h2">Connect With Us</h3>
 <p class="fff-newsletter__description"><?php echo $text; ?></p>
 <p style="margin-bottom: .5em"><?php echo $newsletter_title; ?></p>
 <ul class="newsletter-social">
