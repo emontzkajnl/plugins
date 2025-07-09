@@ -99,6 +99,7 @@ class BlockEditorController implements InitializableInterface
                     'inline-edit-post',
                     'wp-html-entities',
                     'wp-plugins',
+                    'publishpress-i18n',
                 ],
                 PUBLISHPRESS_FUTURE_VERSION,
                 true
@@ -149,6 +150,8 @@ class BlockEditorController implements InitializableInterface
             $metaboxTitle = $settingsFacade->getMetaboxTitle() ?? __('Future Actions', 'post-expirator');
             $metaboxCheckboxLabel = $settingsFacade->getMetaboxCheckboxLabel() ?? __('Enable Future Action', 'post-expirator');
 
+            $hiddenFields = (array) $this->hooks->applyFilters(HooksAbstract::FILTER_HIDDEN_METABOX_FIELDS, [], $post->post_type);
+
             wp_localize_script(
                 'postexpirator-block-editor',
                 'publishpressFutureBlockEditorConfig',
@@ -165,6 +168,7 @@ class BlockEditorController implements InitializableInterface
                     'taxonomyName' => $taxonomyPluralName,
                     'taxonomyTerms' => $taxonomyTerms,
                     'hideCalendarByDefault' => $settingsFacade->getHideCalendarByDefault(),
+                    'hiddenFields' => $hiddenFields,
                     'strings' => [
                         'category' => __('Categories', 'post-expirator'),
                         'panelTitle' => $metaboxTitle,

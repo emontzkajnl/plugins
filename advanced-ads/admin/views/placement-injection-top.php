@@ -1,46 +1,50 @@
-<?php // phpcs:ignoreFile
+<?php
 /**
  * Render placements after publishing an ad.
  *
- * @var array $placements array with placements.
+ * @package AdvancedAds
+ *
+ * @var Ad    $ad         Ad instance.
+ * @var array $placements Placements array.
  */
 
 // show quick injection options.
 // check if the ad code contains the AdSense verification and Auto ads code.
-$is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type && strpos( $ad->content, 'enable_page_level_ads' ) ) || preg_match( '/script[^>]+data-ad-client=/', $ad->content ); ?>
+$is_page_level_ad_in_code_field = $ad->is_type( 'plain' ) && strpos( $ad->get_content(), 'enable_page_level_ads' ) || preg_match( '/script[^>]+data-ad-client=/', $ad->get_content() ); // phpcs:ignore
+?>
 <div id="advads-ad-injection-box" class="advads-ad-metabox postbox">
 <span class="advads-loader" style="display: none;"></span>
 	<div id="advads-ad-injection-message-placement-created" class="hidden">
 	<p><?php esc_html_e( 'Congratulations! Your ad is now visible in the frontend.', 'advanced-ads' ); ?></p>
-	<?php if (empty( $ad->conditions ) && ! empty( $latest_post ) ): ?>
+	<?php if ( empty( $ad->get_display_conditions() ) && ! empty( $latest_post ) ) : ?>
 		<a class="button button-primary" target="_blank" href="<?php echo esc_url( get_permalink( $latest_post['ID'] ) ); ?>"><?php esc_html_e( 'Take a look at your ad', 'advanced-ads' ); ?></a>
 	<?php endif; ?>
-	<p>
-	<?php
-	printf(
-		wp_kses(
-		// translators: %s is a URL.
-			__( 'Ad not showing up? Take a look <a href="%s" target="_blank">here</a>', 'advanced-ads' ),
-			[
-				'a' => [
-					'href'   => [],
-					'target' => [],
-				],
-			]
-		),
-		'https://wpadvancedads.com/manual/ads-not-showing-up/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-not-visible'
-	);
-	?>
+	<p class="hide-server-placement">
+		<?php
+		printf(
+			wp_kses(
+				/* translators: %s is a URL. */
+				__( 'Ad not showing up? Take a look <a href="%s" target="_blank">here</a>', 'advanced-ads' ),
+				[
+					'a' => [
+						'href'   => [],
+						'target' => [],
+					],
+				]
+			),
+			'https://wpadvancedads.com/manual/ads-not-showing-up/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-ad-not-visible'
+		);
+		?>
 	</p>
-	<p>
-	<?php
-	printf(
-		// translators: %1$s is the opening link tag, %2$s is closing link tag.
-		__( 'Adjust the placement options? Take a look  %1$shere.%2$s', 'advanced-ads' ),
-		'<a href="' . esc_url( admin_url( 'admin.php?page=advanced-ads-placements#single-placement-' ) ) . '" target="_blank">',
-		'</a>'
-	);
-	?>
+	<p class="hide-server-placement">
+		<?php
+		printf(
+			/* translators: %1$s is the opening link tag, %2$s is closing link tag. */
+			esc_html__( 'Adjust the placement options? Take a look  %1$shere.%2$s', 'advanced-ads' ),
+			'<a href="' . esc_url( admin_url( 'admin.php?page=advanced-ads-placements#single-placement-' ) ) . '" target="_blank">',
+			'</a>'
+		);
+		?>
 	</p>
 	</div>
 	<div id="advads-ad-injection-box-placements">
@@ -54,7 +58,7 @@ $is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type 
 								<?php
 								sprintf(
 									wp_kses(
-										// translators: %s is a URL.
+										/* translators: %s is a URL. */
 										__( 'The AdSense verification and Auto ads code is already activated in the <a href="%s">AdSense settings</a>.', 'advanced-ads' ),
 										[
 											'a' => [
@@ -73,6 +77,7 @@ $is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type 
 			<p><?php esc_attr_e( 'Click on the button below to add the Auto ads code to the header of your site.', 'advanced-ads' ); ?></p>
 			<div class="advads-ad-injection-box-button-wrap"><button type="button" class="advads-ad-injection-button button-primary" data-placement-type="header" style="background-image: url(
 							<?php
+								// phpcs:ignore
 								echo ADVADS_BASE_URL . 'admin/assets/img/placements/header.png';
 							?>
 							)">
@@ -127,62 +132,60 @@ $is_page_level_ad_in_code_field = ( isset( $ad->type ) && 'plain' === $ad->type 
 			endif;
 
 			?>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=advanced-ads-placements' ) ); ?>"><div class="advads-ad-injection-box-button-wrap"><button type="button" class="advads-ad-injection-button button-primary" style="background-image: url(<?php echo esc_url( ADVADS_BASE_URL ) . 'admin/assets/img/placements/more.png'; ?>)"><?php esc_html_e( 'see all…', 'advanced-ads' ); ?></button></div></a>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=advanced-ads-placements' ) ); ?>">
+				<div class="advads-ad-injection-box-button-wrap">
+					<button type="button" class="advads-ad-injection-button button-primary" style="background-image: url(<?php echo esc_url( ADVADS_BASE_URL ) . 'admin/assets/img/placements/more.png'; ?>)">
+							<?php esc_html_e( 'see all…', 'advanced-ads' ); ?>
+					</button>
+				</div>
+			</a>
 							<?php
-
 							ob_start();
-							foreach ( $placements as $_placement_slug => $_placement ) :
-								if ( ! isset( $_placement['type'] ) || ! isset( $_placement['name'] ) ) {
+							foreach ( $placements as $placement_id => $placement ) :
+								// Early bail!!
+								if ( empty( $placement->get_type() ) || empty( $placement->get_title() ) ) {
 									continue;
 								}
-								if ( ! isset( $placement_types[ $_placement['type'] ] ) ) {
-									$_placement['type'] = 'default';
-								}
-
-								$placement_img = '';
-								if ( isset( $placement_types[ $_placement['type'] ]['image'] ) ) {
-									$placement_img = 'style="background-image: url(' . $placement_types[ $_placement['type'] ]['image'] . ');"';
-								}
 								?>
-
 				<div class="advads-ad-injection-box-button-wrap">
 								<?php
 								printf(
-									'<button type="button" class="advads-ad-injection-button button-primary" data-placement-slug="%s" %s title="%s">%s</button>',
-									esc_attr( $_placement_slug ),
-									// phpcs:ignore
-									$placement_img,
-									esc_html( $_placement['name'] ),
-									esc_html( $placement_types[ $_placement['type'] ]['title'] )
+									'<button type="button" class="advads-ad-injection-button button-primary" data-placement-id="%1$s" data-placement-type="%2$s" %3$s title="%4$s">%5$s</button>',
+									esc_attr( $placement_id ),
+									esc_attr( $placement->get_type() ),
+									'style="background-image: url(' . $placement->get_type_object()->get_image() . ');"', // phpcs:ignore
+									esc_html( $placement->get_title() ),
+									esc_html( $placement->get_type_object()->get_title() )
 								);
-								echo esc_html( $_placement['name'] );
+								echo esc_html( $placement->get_title() );
 								?>
-				</div>
+							</div>
 								<?php
-			endforeach;
+							endforeach;
+
 							$existing_p_output = ob_get_clean();
 							if ( $existing_p_output ) :
 								?>
-				<div class="clear"></div>
-				<p><?php esc_html_e( 'Existing placement', 'advanced-ads' ); ?></p>
+								<div class="clear"></div>
+								<p><?php esc_html_e( 'Existing placement', 'advanced-ads' ); ?></p>
 								<?php
-								// phpcs:ignore
-								echo $existing_p_output;
-								?>
-							<?php endif; ?>
+							// phpcs:ignore
+							echo $existing_p_output;
+						endif;
+							?>
 
 			<div class="clear"></div>
 			<p>
 							<?php
 							printf(
-							// translators: %s is some HTML.
+							/* translators: %s is some HTML. */
 							__( 'Or use the shortcode %s to insert the ad into the content manually.', 'advanced-ads' ), // phpcs:ignore
 								'<input id="advads-ad-injection-shortcode" onclick="this.select();" value="[the_ad id=\'' . absint( $post->ID ) . '\']"/>'
 							);
 							?>
 							<?php
 							printf(
-								// translators: %s is a URL.
+								/* translators: %s is a URL. */
 								__( 'Learn more about your choices to display an ad in the <a href="%s" target="_blank">manual</a>.', 'advanced-ads' ), // phpcs:ignore
 								'https://wpadvancedads.com/manual/display-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=edit-created'
 							);

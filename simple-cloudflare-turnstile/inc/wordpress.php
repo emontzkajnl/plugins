@@ -67,8 +67,10 @@ if(get_option('cfturnstile_login')) {
 		if (!session_id()) { session_start(); }
 
 		// Check if already validated
-		if(isset($_SESSION['cfturnstile_login_checked']) && wp_verify_nonce( sanitize_text_field($_SESSION['cfturnstile_login_checked']), 'cfturnstile_login_check' )) {
+		if(isset($user->ID) && isset($_SESSION['cfturnstile_login_checked']) && wp_verify_nonce( sanitize_text_field($_SESSION['cfturnstile_login_checked']), 'cfturnstile_login_check' )) {
 			return $user;
+		} else {
+			unset($_SESSION['cfturnstile_login_checked']);
 		}
 
 		// Check Turnstile
@@ -78,8 +80,10 @@ if(get_option('cfturnstile_login')) {
 			$user = new WP_Error( 'cfturnstile_error', cfturnstile_failed_message() );
 			do_action('cfturnstile_wp_login_failed');
 		} else {
-			$nonce = wp_create_nonce( 'cfturnstile_login_check' );
-			$_SESSION['cfturnstile_login_checked'] = $nonce;
+			if (isset($user->ID)) {
+				$nonce = wp_create_nonce( 'cfturnstile_login_check' );
+				$_SESSION['cfturnstile_login_checked'] = $nonce;
+			}
 		}
 		
 		return $user;
@@ -90,6 +94,14 @@ if(get_option('cfturnstile_login')) {
 	function cfturnstile_wp_login_clear($user_login, $user) {
 		if(isset($_SESSION['cfturnstile_login_checked'])) { unset($_SESSION['cfturnstile_login_checked']); }
 	}
+	/* Hook into wp_login_form() to add the Turnstile field */
+	function cfturnstile_wp_login_form_field($args) {
+		ob_start();
+		cfturnstile_field_show('#wp-submit', 'turnstileWPCallback', 'wordpress-login', '-' . wp_rand());
+		$field = ob_get_clean();
+		return $field;
+	}
+	add_filter('login_form_middle', 'cfturnstile_wp_login_form_field', 10, 1);
 }
 
 /* 
@@ -192,7 +204,7 @@ if(get_option('cfturnstile_comment') && !cft_is_plugin_active('wpdiscuz/class.Wp
 			$script = '<script type="text/javascript">document.addEventListener("DOMContentLoaded", function() { document.body.addEventListener("click", function(event) { if (event.target.matches(".comment-reply-link, #cancel-comment-reply-link")) { turnstile.reset(".comment-form .cf-turnstile"); } }); });</script>';
 			// If ajax comments are enabled, we need to re-render the turnstile after the comment is submitted
 			if(cft_is_plugin_active('wpdiscuz/class.WpdiscuzCore.php') || cft_is_plugin_active('wp-ajaxify-comments/wp-ajaxify-comments.php') || get_option('cfturnstile_ajax_comments')) {
-				$script .= '<script type="text/javascript">jQuery(document).ajaxComplete(function() { setTimeout(function() { turnstile.render("#cf-turnstile-c-'.$unique_id.'"); }, 1000); });</script>';
+				$script .= '<script type="text/javascript">jQuery(document).ajaxComplete(function() { setTimeout(function() { turnstile.remove("#cf-turnstile-c-'.$unique_id.'");turnstile.render("#cf-turnstile-c-'.$unique_id.'"); }, 1000); });</script>';
 			}
 			// Return button
 			return $submit_before . $submit_button . $submit_after . $script;

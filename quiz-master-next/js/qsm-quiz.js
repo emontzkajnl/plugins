@@ -920,7 +920,7 @@ function qmnFormSubmit(quiz_form_id, $this) {
 	fd.append("qsm_unique_key", jQuery('#qsm_unique_key_' + quiz_id ).val() );
 	fd.append("currentuserTime", Math.round(new Date().getTime() / 1000));
 	fd.append("currentuserTimeZone", Intl.DateTimeFormat().resolvedOptions().timeZone);
-
+	jQuery(document).trigger('qsm_after_form_data_process', [quiz_form_id, fd]);
 	qsmEndTimeTakenTimer(quiz_id);
 
 	if (qmn_quiz_data[quiz_id].hasOwnProperty('timer_limit')) {
@@ -1095,6 +1095,7 @@ function qmnValidatePage(quiz_form_id) {
 
 // Show start quiz button if first page is visible
 function check_if_show_start_quiz_button(container, total_pages, page_number) {
+	let quiz_id = container.find('.qmn_quiz_id').val();
 	if(container.find('.quiz_begin').is(':visible')){
 		container.find(".mlw_custom_start").show();
 		container.find(".mlw_custom_next").hide();
@@ -1912,6 +1913,19 @@ jQuery(document).ready(function () {
         }
         document.getElementById('mlw_code_captcha').value = mlw_code;
 	}
+	window.onbeforeunload =  function (e) {
+		let startButton = jQuery('.qsm-quiz-container .qsm-submit-btn');
+		let quiz_id = jQuery('.qsm-quiz-container .qmn_quiz_id').val();
+		let flag = false;
+		if( startButton.length ){
+			flag = true;
+		}
+		if( flag && qmn_quiz_data[quiz_id].prevent_reload == 1 ){
+			return true;
+		}else{
+			return null;
+		}
+	}
 });
 
 var quizType = 'default';
@@ -2175,4 +2189,5 @@ jQuery(document).on('qsm_after_select_answer', (event, quizID, question_id, valu
             replacePlaceholders(container);
         });
     }
+
 });

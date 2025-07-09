@@ -271,7 +271,8 @@ function gtm4wp_woocommerce_process_pages() {
 					if ( !productdata ) {
 						return true;
 					}
-		
+
+					let product_qty = 0;
 					const product_qty_input = document.querySelectorAll( 'input[name=quantity\\[' + productdata.internal_id + '\\]]' );
 					if ( product_qty_input.length > 0 ) {
 						product_qty = (product_qty_input[0] && product_qty_input[0].value) || 1;
@@ -513,6 +514,7 @@ function gtm4wp_woocommerce_process_pages() {
 
 		current_product_detail_data.price = gtm4wp_make_sure_is_float( current_product_detail_data.price );
 
+		current_product_detail_data.item_group_id = current_product_detail_data.id;
 		current_product_detail_data.id = product_variation.variation_id;
 		current_product_detail_data.item_id = product_variation.variation_id;
 		current_product_detail_data.sku = product_variation.sku;
@@ -526,8 +528,10 @@ function gtm4wp_woocommerce_process_pages() {
 		for( let attrib_key in product_variation.attributes ) {
 			product_variation_attribute_values.push( product_variation.attributes[ attrib_key ] );
 		}
-		current_product_detail_data.variant = product_variation_attribute_values.join(',');
+		current_product_detail_data.item_variant = product_variation_attribute_values.join(',');
 		gtm4wp_last_selected_product_variation = current_product_detail_data;
+
+		delete current_product_detail_data.internal_id;
 
 		// fire ga4 version
 		gtm4wp_push_ecommerce( 'view_item', [ current_product_detail_data ], {

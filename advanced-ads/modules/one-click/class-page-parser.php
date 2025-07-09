@@ -45,8 +45,10 @@ class Page_Parser implements Integration_Interface {
 
 	/**
 	 * Hook into WordPress.
+	 *
+	 * @return void
 	 */
-	public function hooks() {
+	public function hooks(): void {
 		add_action( 'template_redirect', [ $this, 'start_buffer' ], -9999 );
 		add_action( 'wp_footer', [ $this, 'flush_page' ], 9999 );
 	}
