@@ -6,7 +6,7 @@ use AC\Column;
 use ACP;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class TaxonomyParent extends ACP\Column\Taxonomy\ParentTerm
 {

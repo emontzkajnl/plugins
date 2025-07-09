@@ -42,7 +42,7 @@ class Venue extends Meta
             return $this->get_empty_char();
         }
 
-        return $this->get_formatted_value($value);
+        return $this->get_formatted_value($value) ?: $this->get_empty_char();
     }
 
     public function register_settings()

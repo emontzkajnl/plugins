@@ -3,7 +3,7 @@
 namespace ACP\Sorting\Model;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class Disabled
 {

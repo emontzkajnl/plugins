@@ -5,6 +5,7 @@ namespace ACA\WC\Export\Strategy;
 use AC;
 use AC\ListTable;
 use ACA\WC\ListTable\Orders;
+use ACA\WC\Search\Query\OrderQueryController;
 use ACP\Export\Strategy;
 use Automattic;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableQuery;
@@ -33,11 +34,15 @@ class Order extends Strategy
     {
         ob_start();
         add_filter('woocommerce_order_list_table_prepare_items_query_args', [$this, 'catch_posts'], 1000);
-        add_filter('woocommerce_orders_table_query_clauses', [$this, 'alter_clauses'], 100, 2);
+        add_filter('woocommerce_orders_table_query_clauses', [$this, 'alter_clauses'], 100, 3);
     }
 
-    public function alter_clauses($clauses, OrdersTableQuery $query): array
+    public function alter_clauses($clauses, OrdersTableQuery $query, array $args): array
     {
+        if ( ! OrderQueryController::is_main_query($args)) {
+            return $clauses;
+        }
+
         $ids = $this->get_requested_ids();
 
         if ($ids) {

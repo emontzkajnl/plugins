@@ -6,12 +6,14 @@ use AC\Column;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
-class Response extends Search\Comparison\Comment\Post {
+class Response extends Search\Comparison\Comment\Post
+{
 
-	public function __construct( Column $column ) {
-		parent::__construct();
-	}
+    public function __construct(Column $column)
+    {
+        parent::__construct();
+    }
 
 }

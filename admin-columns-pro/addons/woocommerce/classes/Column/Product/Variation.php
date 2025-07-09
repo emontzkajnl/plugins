@@ -39,6 +39,8 @@ class Variation extends AC\Column
             [
                 'title'     => strip_tags(get_the_title($id)) ?: $id,
                 'edit_link' => get_edit_post_link($id),
+                'view_link' => add_query_arg(['post_type' => 'product_variation', 'post_parent' => $id],
+                    admin_url('edit.php')),
                 'id'        => $id,
                 'class'     => '-w-large -nopadding',
             ]

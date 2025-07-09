@@ -6,7 +6,7 @@ use AC;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class CommentCount extends Search\Comparison\Post\CommentCount
 {

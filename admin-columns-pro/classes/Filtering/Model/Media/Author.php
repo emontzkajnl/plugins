@@ -5,7 +5,7 @@ namespace ACP\Filtering\Model\Media;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class Author extends Search\Comparison\Post\Author
 {

@@ -6,7 +6,7 @@ use AC\Column;
 use ACP\Search\Comparison\Comment\Url;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class AuthorUrl extends Url
 {

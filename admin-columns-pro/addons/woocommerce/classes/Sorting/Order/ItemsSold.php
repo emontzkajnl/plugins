@@ -21,13 +21,11 @@ class ItemsSold implements QueryBindings
 
         $alias = $bindings->get_unique_alias('acsort');
 
-        $subQuery = $wpdb->prepare(
-            "
+        $subQuery = "
             SELECT order_id, SUM(product_qty) AS total_product_count
             FROM {$wpdb->prefix}wc_order_product_lookup
             GROUP BY order_id
-        "
-        );
+        ";
 
         $bindings->join(
             "LEFT JOIN ($subQuery) AS $alias ON $alias.order_id = {$wpdb->prefix}wc_orders.id"

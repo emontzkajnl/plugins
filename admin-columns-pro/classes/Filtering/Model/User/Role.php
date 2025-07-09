@@ -6,7 +6,7 @@ use AC\Column\Meta;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class Role extends Search\Comparison\User\Role
 {

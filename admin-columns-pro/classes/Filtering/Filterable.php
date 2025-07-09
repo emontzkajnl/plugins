@@ -5,7 +5,7 @@ namespace ACP\Filtering;
 use ACP\Search\Comparison;
 
 /**
- * @depecated NEWVERSION
+ * @depecated 6.4
  */
 interface Filterable
 {

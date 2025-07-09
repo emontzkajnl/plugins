@@ -6,11 +6,13 @@ use AC\Column;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
-class MimeType extends Search\Comparison\Media\MimeType {
+class MimeType extends Search\Comparison\Media\MimeType
+{
 
-	public function __construct( Column $column ) {
-		parent::__construct();
-	}
+    public function __construct(Column $column)
+    {
+        parent::__construct();
+    }
 }

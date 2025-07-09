@@ -1,5 +1,30 @@
 == Changelog ==
 
+= 6.4.20 =
+Release Date: June 17th, 2025
+
+* [Updated] Admin Columns Core to version 4.7.16
+* [Fixed] Cache optimization
+
+= 6.4.19 =
+Release Date: June 16th, 2025
+
+* [Improved] JetEngine Select, Radio, and Checkboxes now have support for manual bulk options
+* [Updated] Admin Columns Core to version 4.7.15
+* [Fixed] Better null check for options to prevent PHP 8.3 issues
+* [Improved] Small UI changes in the admin view
+
+= 6.4.18 =
+Release Date: April 30th, 2025
+
+* [Improved] Strip HTML for HPOS Order columns
+* [Improved] Smart Filter with 'isset' operator could give a wrong display format
+* [Improved] Events Calendar add-on: The Venue Website now display the full URL instead of a pre-defined label
+* [Fixed] MetaBox editing fix for unserialize() errors
+* [Fixed] Editing for MetaBox Taxonomy columns with custom table did not work correct
+* [Fixed] Multiple 'Doing it wrong' warnings
+* [Updated] Admin Columns Core to version 4.7.14
+
 = 6.4.17 =
 Release Date: March 19th, 2025
 

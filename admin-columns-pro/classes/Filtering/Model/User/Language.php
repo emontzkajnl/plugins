@@ -6,7 +6,7 @@ use ACP\Column;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class Language extends Search\Comparison\User\Languages
 {

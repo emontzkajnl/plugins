@@ -28,6 +28,10 @@ class Field extends AC\Column\Meta
      */
     public function get_value($id)
     {
+        if ( ! function_exists('tribe_get_custom_fields')) {
+            return '';
+        }
+
         $fields = tribe_get_custom_fields($id);
 
         if ( ! is_array($fields)) {

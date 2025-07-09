@@ -8,7 +8,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: Admin Columns <info@admincolumns.com>\n"
 "Last-Translator: Codepress <info@codepress.nl\n"
-"POT-Creation-Date: 2025-03-19 12:15+0000\n"
+"POT-Creation-Date: 2025-06-16 10:42+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -294,7 +294,7 @@ msgstr ""
 msgid "Any %s"
 msgstr ""
 
-#: admin-columns-pro/classes/Migrate/ImportHandler.php:64
+#: admin-columns-pro/classes/Migrate/ImportHandler.php:69
 msgid "copy"
 msgstr ""
 
@@ -539,7 +539,7 @@ msgstr ""
 msgid "current"
 msgstr ""
 
-#: admin-columns-pro/classes/Admin/ScriptFactory/SettingsFactory.php:70, admin-columns-pro/classes/Column/NetworkSite/Name.php:9, admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:32, admin-columns-pro/classes/Migrate/Admin/Table/Export.php:187, admin-columns-pro/classes/Search/Asset/Script/Table.php:133
+#: admin-columns-pro/classes/Admin/ScriptFactory/SettingsFactory.php:70, admin-columns-pro/classes/Column/NetworkSite/Name.php:9, admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:35, admin-columns-pro/classes/Migrate/Admin/Table/Export.php:187, admin-columns-pro/classes/Search/Asset/Script/Table.php:133
 msgid "Name"
 msgstr ""
 
@@ -1345,7 +1345,7 @@ msgstr ""
 msgid "Past Events"
 msgstr ""
 
-#: admin-columns-pro/addons/events-calendar/classes/Settings/OrganizerDisplay.php:85, admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:31, admin-columns-pro/addons/events-calendar/classes/Column/Organizer/Phone.php:19, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Phone.php:18
+#: admin-columns-pro/addons/events-calendar/classes/Settings/OrganizerDisplay.php:85, admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:34, admin-columns-pro/addons/events-calendar/classes/Column/Organizer/Phone.php:19, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Phone.php:18
 msgid "Phone"
 msgstr ""
 
@@ -1353,7 +1353,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: admin-columns-pro/addons/events-calendar/classes/Settings/OrganizerDisplay.php:87, admin-columns-pro/addons/events-calendar/classes/Settings/OrganizerLink.php:10, admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:33, admin-columns-pro/addons/events-calendar/classes/Column/Organizer/Website.php:20, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Website.php:19
+#: admin-columns-pro/addons/events-calendar/classes/Settings/OrganizerDisplay.php:87, admin-columns-pro/addons/events-calendar/classes/Settings/OrganizerLink.php:10, admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:36, admin-columns-pro/addons/events-calendar/classes/Column/Organizer/Website.php:20, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Website.php:19
 msgid "Website"
 msgstr ""
 
@@ -1373,19 +1373,19 @@ msgstr ""
 msgid "Enabling this option to create a link to the filtered overview of the related post type "
 msgstr ""
 
-#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:28, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Address.php:18
+#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:31, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Address.php:18
 msgid "Address"
 msgstr ""
 
-#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:29, admin-columns-pro/addons/events-calendar/classes/Column/Venue/City.php:18
+#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:32, admin-columns-pro/addons/events-calendar/classes/Column/Venue/City.php:18
 msgid "City"
 msgstr ""
 
-#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:30, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Country.php:22
+#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:33, admin-columns-pro/addons/events-calendar/classes/Column/Venue/Country.php:22
 msgid "Country"
 msgstr ""
 
-#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:34
+#: admin-columns-pro/addons/events-calendar/classes/Settings/Venue.php:37
 msgid "ZIP"
 msgstr ""
 

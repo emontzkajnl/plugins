@@ -6,7 +6,7 @@ use AC\Column;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class Email extends Search\Comparison\User\Email
 {

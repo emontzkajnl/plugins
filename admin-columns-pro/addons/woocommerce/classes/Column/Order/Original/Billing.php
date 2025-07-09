@@ -6,7 +6,7 @@ use AC;
 use ACA\WC;
 use ACP;
 
-class Billing extends AC\Column implements ACP\Search\Searchable
+class Billing extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable
 {
 
     public function __construct()
@@ -20,6 +20,11 @@ class Billing extends AC\Column implements ACP\Search\Searchable
         return new WC\Search\Order\Address\FullAddress(
             new WC\Type\AddressType(WC\Type\AddressType::BILLING)
         );
+    }
+
+    public function export()
+    {
+        return new WC\Export\Order\Billing();
     }
 
 }

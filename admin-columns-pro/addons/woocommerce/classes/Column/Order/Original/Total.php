@@ -6,7 +6,7 @@ use AC;
 use ACA\WC;
 use ACP;
 
-class Total extends AC\Column implements ACP\Search\Searchable
+class Total extends AC\Column implements ACP\Search\Searchable, ACP\Export\Exportable
 {
 
     public function __construct()
@@ -18,6 +18,11 @@ class Total extends AC\Column implements ACP\Search\Searchable
     public function search()
     {
         return new WC\Search\Order\Total();
+    }
+
+    public function export()
+    {
+        return new WC\Export\Order\Total();
     }
 
 }

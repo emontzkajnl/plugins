@@ -5,7 +5,7 @@ namespace ACP\Filtering\Model\Post;
 use ACP\Search;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class ID extends Search\Comparison\Post\ID
 {

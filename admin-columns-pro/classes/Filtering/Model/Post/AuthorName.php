@@ -6,7 +6,7 @@ use AC\Column;
 use ACP\Search\Comparison;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 class AuthorName extends Comparison\Post\Author
 {

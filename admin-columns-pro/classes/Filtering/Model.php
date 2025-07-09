@@ -9,7 +9,7 @@ use ACP\Search\Operators;
 use ACP\Search\Value;
 
 /**
- * @deprecated NEWVERSION
+ * @deprecated 6.4
  */
 abstract class Model extends ACP\Search\Comparison
 {
