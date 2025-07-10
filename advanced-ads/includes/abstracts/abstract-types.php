@@ -9,7 +9,6 @@
 
 namespace AdvancedAds\Abstracts;
 
-use AdvancedAds\Framework\Utilities\Str;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
 
 defined( 'ABSPATH' ) || exit;
@@ -48,37 +47,12 @@ abstract class Types implements Integration_Interface {
 	protected $type_interface = '';
 
 	/**
-	 * Check if has premium types.
-	 *
-	 * @var bool
-	 */
-	private $has_premium = null;
-
-	/**
 	 * Hook into WordPress.
 	 *
 	 * @return void
 	 */
 	public function hooks(): void {
-		add_action( 'init', [ $this, 'register_types' ], 25 );
-	}
-
-	/**
-	 * Create missing type
-	 *
-	 * @param string $type Missing type.
-	 *
-	 * @return mixed
-	 */
-	public function create_missing( $type ) {
-		$this->types[ $type ] = new $this->type_unknown(
-			[
-				'id'    => $type,
-				'title' => Str::capitalize( $type ),
-			]
-		);
-
-		return $this->types[ $type ];
+		$this->register_types();
 	}
 
 	/**
@@ -100,12 +74,11 @@ abstract class Types implements Integration_Interface {
 	 */
 	public function register_types(): void {
 		$this->register_default_types();
+
 		/**
 		 * Developers can add new types using this filter
-		 */
-		do_action( $this->hook . '-manager', $this );
+		*/
 		$this->types = apply_filters( $this->hook, $this->types );
-
 		$this->validate_types();
 	}
 
@@ -116,7 +89,7 @@ abstract class Types implements Integration_Interface {
 	 *
 	 * @return bool
 	 */
-	public function has_type( $type ): bool {
+	public function has_type( $type ) {
 		return array_key_exists( $type, $this->types );
 	}
 
@@ -125,7 +98,7 @@ abstract class Types implements Integration_Interface {
 	 *
 	 * @param string $type Type to get.
 	 *
-	 * @return mixed|bool
+	 * @return mixed
 	 */
 	public function get_type( $type ) {
 		return $this->types[ $type ] ?? false;
@@ -134,34 +107,10 @@ abstract class Types implements Integration_Interface {
 	/**
 	 * Get the registered types.
 	 *
-	 * @param bool $with_unknown Include unknown type placements.
-	 *
 	 * @return array
 	 */
-	public function get_types( $with_unknown = true ): array {
-		return $with_unknown ? $this->types : array_filter( $this->types, fn( $type ) => ! is_a( $type, $this->type_unknown ) );
-	}
-
-	/**
-	 * Check if has premium types.
-	 *
-	 * @return bool
-	 */
-	public function has_premium(): bool {
-		if ( null !== $this->has_premium ) {
-			return $this->has_premium;
-		}
-
-		$this->has_premium = false;
-
-		foreach ( $this->get_types() as $type ) {
-			if ( $type->is_premium() ) {
-				$this->has_premium = true;
-				break;
-			}
-		}
-
-		return $this->has_premium;
+	public function get_types(): array {
+		return $this->types;
 	}
 
 	/**
@@ -169,7 +118,8 @@ abstract class Types implements Integration_Interface {
 	 *
 	 * @return void
 	 */
-	abstract protected function register_default_types(): void;
+	protected function register_default_types(): void {
+	}
 
 	/**
 	 * Validate types by type interface
@@ -183,7 +133,7 @@ abstract class Types implements Integration_Interface {
 		}
 
 		foreach ( $this->types as $slug => $type ) {
-			if ( ! is_array( $type ) || is_a( $type, $this->type_interface ) ) {
+			if ( is_a( $type, $this->type_interface ) ) {
 				continue;
 			}
 

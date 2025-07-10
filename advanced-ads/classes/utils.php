@@ -1,4 +1,4 @@
-<?php // phpcs:ignoreFilename
+<?php
 /**
  * Class Advanced_Ads_Utils
  */
@@ -58,9 +58,9 @@ class Advanced_Ads_Utils {
 				$_style_values_string = '';
 				foreach ( $_values as $_style_attr => $_style_values ) {
 					if ( is_array( $_style_values ) ) {
-						$_style_values_string .= $_style_attr . ': ' . implode( ' ', array_filter( $_style_values ) ) . ';';
+						$_style_values_string .= $_style_attr . ': ' . implode( ' ', array_filter( $_style_values ) ) . '; ';
 					} else {
-						$_style_values_string .= $_style_attr . ': ' . $_style_values . ';';
+						$_style_values_string .= $_style_attr . ': ' . $_style_values . '; ';
 					}
 				}
 				$result .= " style=\"$_style_values_string\"";
@@ -70,12 +70,11 @@ class Advanced_Ads_Utils {
 				} else {
 					$_values_string = esc_attr( $_values );
 				}
-				if ( '' !== $_values_string ) {
+				if ( $_values_string !== '' ) {
 					$result .= " $_html_attr=\"$_values_string\"";
 				}
 			}
 		}
-
 		return $result;
 	}
 
@@ -104,45 +103,35 @@ class Advanced_Ads_Utils {
 	 *
 	 * @param string $id Id.
 	 * @param string $type Type (placement, ad or group).
-	 *
-	 * @return array of Ad objects.
+	 * @return array of Advanced_Ads_Ad objects.
 	 */
 	public static function get_nested_ads( $id, $type ) {
 		$result = [];
-		$id     = absint( $id );
-
-		// Early bail!!
-		if ( $id < 1 ) {
-			return $result;
-		}
 
 		switch ( $type ) {
-			// No idea if this is intentional fall through
 			case 'placement':
-				$placements = wp_advads_get_placements();
-				$item       = $placements[ $id ]->get_item();
-				if ( ! empty( $item ) ) {
-					$item = explode( '_', $item );
+				$placements = Advanced_Ads::get_ad_placements_array();
+				if ( isset( $placements[ $id ]['item'] ) ) {
+					$item = explode( '_', $placements[ $id ]['item'] );
 					if ( isset( $item[1] ) ) {
 						return self::get_nested_ads( $item[1], $item[0] );
 					}
 				}
 			case 'ad':
-				$ad       = wp_advads_get_ad( $id );
+				$ad       = \Advanced_Ads\Ad_Repository::get( $id );
 				$result[] = $ad;
-				if ( $ad->is_type( 'group' ) && ! empty( $ad->get_prop( 'group_id' ) ) ) {
-					$result = array_merge( $result, self::get_nested_ads( $ad->get_prop( 'group_id' ), 'group' ) );
+				if ( 'group' === $ad->type && ! empty( $ad->output['group_id'] ) ) {
+					$result = array_merge( $result, self::get_nested_ads( $ad->output['group_id'], 'group' ) );
 				}
 				break;
 			case 'group':
-				$group = wp_advads_get_group( $id );
-				$ads   = $group->get_ads();
+				$group = new Advanced_Ads_Group( $id );
+				$ads   = $group->get_all_ads();
 				foreach ( $ads as $ad ) {
-					$result = array_merge( $result, self::get_nested_ads( $ad->get_id(), 'ad' ) );
+					$result = array_merge( $result, self::get_nested_ads( $ad->ID, 'ad' ) );
 				}
 				break;
 		}
-
 		return $result;
 	}
 
@@ -231,7 +220,7 @@ class Advanced_Ads_Utils {
 						}
 					}
 				}
-			} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+			} catch ( Exception $e ) {
 				// not much we can do here.
 			}
 		}
@@ -278,7 +267,7 @@ class Advanced_Ads_Utils {
 	 */
 	public static function get_timezone_name() {
 		$time_zone = self::get_wp_timezone()->getName();
-		if ( 'UTC' === $time_zone ) {
+		if ( $time_zone === 'UTC' ) {
 			return 'UTC+0';
 		}
 
@@ -286,7 +275,7 @@ class Advanced_Ads_Utils {
 			return 'UTC' . $time_zone;
 		}
 
-		/* translators: timezone name */
+		// translators: time zone name.
 		return sprintf( __( 'time of %s', 'advanced-ads' ), $time_zone );
 	}
 }

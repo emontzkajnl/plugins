@@ -9,25 +9,17 @@
 
 namespace AdvancedAds\Admin\Pages;
 
-use AdvancedAds\Abstracts\Screen;
+use Advanced_Ads;
+use Advanced_Ads_Overview_Widgets_Callbacks;
+use AdvancedAds\Interfaces\Screen_Interface;
 use AdvancedAds\Utilities\WordPress;
-use AdvancedAds\Utilities\Conditional;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Dashboard.
  */
-class Dashboard extends Screen {
-
-	/**
-	 * Screen unique id.
-	 *
-	 * @return string
-	 */
-	public function get_id(): string {
-		return 'dashboard';
-	}
+class Dashboard implements Screen_Interface {
 
 	/**
 	 * Register screen into WordPress admin area.
@@ -35,38 +27,26 @@ class Dashboard extends Screen {
 	 * @return void
 	 */
 	public function register_screen(): void {
-		$has_ads = WordPress::get_count_ads();
+		$has_ads = Advanced_Ads::get_number_of_ads( [ 'any', 'trash' ] );
 
 		add_menu_page(
 			__( 'Dashboard', 'advanced-ads' ),
 			'Advanced Ads',
-			Conditional::user_cap( 'advanced_ads_see_interface' ),
+			WordPress::user_cap( 'advanced_ads_see_interface' ),
 			ADVADS_SLUG,
 			[ $this, 'display' ],
 			$this->get_icon_svg(),
 			'58.74'
 		);
 
-		$hook = add_submenu_page(
+		add_submenu_page(
 			ADVADS_SLUG,
 			__( 'Dashboard', 'advanced-ads' ),
 			__( 'Dashboard', 'advanced-ads' ),
-			Conditional::user_cap( $has_ads ? 'advanced_ads_edit_ads' : 'advanced_ads_see_interface' ),
+			WordPress::user_cap( $has_ads ? 'advanced_ads_edit_ads' : 'advanced_ads_see_interface' ),
 			ADVADS_SLUG,
 			$has_ads ? '' : [ $this, 'display' ]
 		);
-
-		$this->set_hook( $hook );
-	}
-
-	/**
-	 * Enqueue assets
-	 *
-	 * @return void
-	 */
-	public function enqueue_assets(): void {
-		wp_advads()->registry->enqueue_style( 'screen-dashboard' );
-		wp_advads()->registry->enqueue_script( 'screen-dashboard' );
 	}
 
 	/**

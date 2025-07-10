@@ -10,7 +10,6 @@
 namespace AdvancedAds\Admin;
 
 use AdvancedAds\Entities;
-use AdvancedAds\Constants;
 use AdvancedAds\Utilities\Conditional;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
 
@@ -32,10 +31,8 @@ class Header implements Integration_Interface {
 
 	/**
 	 * Add an Advanced Ads branded header to plugin pages
-	 *
-	 * @return void
 	 */
-	public function render(): void {
+	public function render() {
 		// Early bail!!
 		if ( ! Conditional::is_screen_advanced_ads() ) {
 			return;
@@ -65,7 +62,7 @@ class Header implements Integration_Interface {
 				$new_button_href     = admin_url( 'post-new.php?post_type=advanced_ads' );
 				$manual_url          = 'https://wpadvancedads.com/manual/first-ad/';
 				$show_filter_button  = ! Conditional::has_filter_or_search();
-				$reset_href          = ! $show_filter_button ? esc_url( admin_url( 'edit.php?post_type=' . Constants::POST_TYPE_AD ) ) : '';
+				$reset_href          = ! $show_filter_button ? esc_url( admin_url( 'edit.php?post_type=' . Entities::POST_TYPE_AD ) ) : '';
 				$show_screen_options = true;
 				break;
 			case 'advanced-ads_page_advanced-ads-groups':
@@ -76,8 +73,8 @@ class Header implements Integration_Interface {
 				$manual_url          = 'https://wpadvancedads.com/manual/ad-groups/';
 				$show_filter_button  = ! Conditional::has_filter_or_search();
 				$reset_href          = ! $show_filter_button ? esc_url( admin_url( 'admin.php?page=advanced-ads-groups' ) ) : '';
-				$show_screen_options = true;
 				$tooltip             = Entities::get_group_description();
+				$show_screen_options = true;
 				break;
 			case 'advanced-ads_page_advanced-ads-placements':
 				$title              = __( 'Your Placements', 'advanced-ads' );
@@ -86,16 +83,6 @@ class Header implements Integration_Interface {
 				$manual_url         = 'https://wpadvancedads.com/manual/placements/';
 				$show_filter_button = true;
 				$tooltip            = Entities::get_placement_description();
-				break;
-			case 'edit-advanced_ads_plcmnt':
-				$title               = __( 'Your Placements', 'advanced-ads' );
-				$new_button_label    = __( 'New Placement', 'advanced-ads' );
-				$new_button_href     = '#modal-placement-new';
-				$manual_url          = 'https://wpadvancedads.com/manual/placements/';
-				$show_filter_button  = ! Conditional::has_filter_or_search();
-				$reset_href          = ! $show_filter_button ? esc_url( admin_url( 'edit.php?post_type=' . Constants::POST_TYPE_PLACEMENT ) ) : '';
-				$show_screen_options = true;
-				$tooltip             = Entities::get_placement_description();
 				break;
 			case 'advanced-ads_page_advanced-ads-settings':
 				$title = __( 'Advanced Ads Settings', 'advanced-ads' );

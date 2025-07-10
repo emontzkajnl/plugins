@@ -18,8 +18,6 @@ interface Integration_Interface {
 
 	/**
 	 * Hook into WordPress.
-	 *
-	 * @return void
 	 */
-	public function hooks(): void;
+	public function hooks();
 }

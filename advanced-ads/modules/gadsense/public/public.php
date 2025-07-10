@@ -1,6 +1,4 @@
-<?php // phpcs:ignore WordPress.Files.FileName
-
-use AdvancedAds\Utilities\Conditional;
+<?php
 
 /**
  * Class Advanced_Ads_AdSense_Public.
@@ -27,7 +25,7 @@ class Advanced_Ads_AdSense_Public {
 	private function __construct() {
 		$this->data = Advanced_Ads_AdSense_Data::get_instance();
 		add_action( 'wp_head', [ $this, 'inject_header' ], 20 );
-		// Fires before cache-busting frontend is initialized and tracking method is set.
+		// Fires before cache-busting frontend is initialized and tracking method is set
 		add_action( 'wp', [ $this, 'inject_amp_code' ], 20 );
 	}
 
@@ -56,14 +54,14 @@ class Advanced_Ads_AdSense_Public {
 			echo '<style>ins.adsbygoogle { background-color: transparent; padding: 0; }</style>';
 		}
 
-		if ( Conditional::is_ad_disabled() || Conditional::is_amp() ) {
+		if ( defined( 'ADVADS_ADS_DISABLED' ) || advads_is_amp() ) {
 			return;
 		}
 
 		$privacy         = Advanced_Ads_Privacy::get_instance();
 		$privacy_options = $privacy->options();
 		$privacy_enabled = $privacy->get_state() !== 'not_needed';
-		$npa_enabled     = ( ! empty( $privacy_options['enabled'] ) && 'custom' === $privacy_options['consent-method'] ) && ! empty( $privacy_options['show-non-personalized-adsense'] );
+		$npa_enabled     = ( ! empty( $privacy_options['enabled'] ) && $privacy_options['consent-method'] === 'custom' ) && ! empty( $privacy_options['show-non-personalized-adsense'] );
 
 		// Show non-personalized Adsense ads if non-personalized ads are enabled and consent was not given.
 		if ( $privacy_enabled && $npa_enabled ) {
@@ -105,10 +103,9 @@ class Advanced_Ads_AdSense_Public {
 			 * @param boolean
 			 */
 			$add_publisher_id = apply_filters( 'advanced-ads-adsense-publisher-id', true );
-			$script_src       = add_query_arg(
-				[ 'client' => $add_publisher_id ? esc_attr( $client_id ) : false ],
-				'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
-			);
+			$script_src       = add_query_arg( [
+				'client' => $add_publisher_id ? esc_attr( $client_id ) : false,
+			], 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js' );
 
 			/**
 			 * Allows to override the page-level code.
@@ -147,12 +144,13 @@ class Advanced_Ads_AdSense_Public {
 	 */
 	public function inject_amp_code() {
 		// for non-AMP pages we do this on the `template_redirect` hook, this has not fired yet.
-		wp_advads()->frontend->run_checks();
+		Advanced_Ads::get_instance()->set_disabled_constant();
 
 		if (
-			Conditional::is_ad_disabled()
+			// check if ads are disabled.
+			( defined( 'ADVADS_ADS_DISABLED' ) && ADVADS_ADS_DISABLED )
 			// check if this an AMP page, we're inside `wp` action so it's safe to use.
-			|| ! Conditional::is_amp()
+			|| ( ! function_exists( 'advads_is_amp' ) || ! advads_is_amp() )
 		) {
 			return;
 		}
@@ -161,11 +159,9 @@ class Advanced_Ads_AdSense_Public {
 			$adsense_data    = Advanced_Ads_AdSense_Data::get_instance();
 			$adsense_options = $adsense_data->get_options();
 
-			// AMP Auto ads was removed from Responsive add-on version 1.10.0.
-			if (
-				( defined( 'AAR_VERSION' ) && 1 === version_compare( '1.10.0', AAR_VERSION ) ) ||
-				empty( $adsense_options['amp']['auto_ads_enabled'] )
-			) {
+			// AMP Auto ads was removed from Responsive add-on version 1.10.0
+			if ( defined( 'AAR_VERSION' ) && 1 === version_compare( '1.10.0', AAR_VERSION )
+				|| empty( $adsense_options['amp']['auto_ads_enabled'] ) ) {
 				return;
 			}
 

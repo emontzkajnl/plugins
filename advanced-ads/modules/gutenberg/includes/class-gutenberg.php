@@ -87,14 +87,16 @@ class Advanced_Ads_Gutenberg {
 			false
 		);
 
-		$all_ads    = wp_advads_ad_query(
+		$model = Advanced_Ads::get_instance()->get_model();
+
+		$all_ads    = Advanced_Ads::get_ads(
 			[
 				'post_status' => [ 'publish' ],
 				'orderby'     => 'title',
 				'order'       => 'ASC',
 			]
-		)->posts;
-		$all_groups = wp_advads_get_all_groups();
+		);
+		$all_groups = $model->get_ad_groups();
 
 		$ads        = [];
 		$groups     = [];
@@ -107,18 +109,18 @@ class Advanced_Ads_Gutenberg {
 			];
 		}
 
-		foreach ( $all_groups as $group ) {
+		foreach ( $all_groups as $gr ) {
 			$groups[] = [
-				'id'   => $group->get_id(),
-				'name' => $group->get_name(),
+				'id'   => $gr->term_id,
+				'name' => $gr->name,
 			];
 		}
 
-		foreach ( wp_advads_get_all_placements() as $placement ) {
-			if ( $placement->is_type( [ 'sidebar_widget', 'default' ] ) ) {
+		foreach ( Advanced_Ads::get_instance()->get_model()->get_ad_placements_array() as $key => $value ) {
+			if ( in_array( $value['type'], [ 'sidebar_widget', 'default' ], true ) ) {
 				$placements[] = [
-					'id'   => $placement->get_id(),
-					'name' => $placement->get_title(),
+					'id'   => $key,
+					'name' => $value['name'],
 				];
 			}
 		}
@@ -227,12 +229,12 @@ class Advanced_Ads_Gutenberg {
 		}
 
 		$align           = esc_attr( $attr['align'] ?? 'default' );
-		$after_ad_filter = function( $output ) {
+		$after_ad_filter = function( $output, $ad ) {
 			return $output . '<br style="clear: both; display: block; float: none;">';
 		};
 
 		if ( 0 === strpos( $align, 'block' ) ) {
-			add_filter( 'advanced-ads-ad-output', $after_ad_filter );
+			add_filter( 'advanced-ads-ad-output', $after_ad_filter, 10, 2 );
 		}
 
 		switch ( $align ) {
@@ -254,12 +256,11 @@ class Advanced_Ads_Gutenberg {
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- we can't escape ad output without potentially breaking ads
 		if ( 0 === strpos( $attr['itemID'], 'ad_' ) ) {
-			echo get_the_ad( absint( substr( $attr['itemID'], 3 ) ), '', $output );
+			echo get_ad( absint( substr( $attr['itemID'], 3 ) ), $output );
 		} elseif ( 0 === strpos( $attr['itemID'], 'group_' ) ) {
-			echo get_the_group( substr( $attr['itemID'], 6 ), '', $output );
+			echo get_ad_group( substr( $attr['itemID'], 6 ), $output );
 		} elseif ( 0 === strpos( $attr['itemID'], 'place_' ) ) {
-			$id = substr( $attr['itemID'], 6 );
-			echo get_the_placement( is_numeric( $id ) ? (int) $id : $id, '', $output );
+			echo get_ad_placement( substr( $attr['itemID'], 6 ), $output );
 		}
 
 		// phpcs:enable

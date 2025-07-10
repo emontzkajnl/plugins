@@ -1,7 +1,4 @@
-<?php // phpcs:ignore WordPress.Files.FileName
-
-use AdvancedAds\Framework\Utilities\Params;
-
+<?php
 /**
  * Display the 'ads.txt' file.
  */
@@ -16,9 +13,7 @@ class Advanced_Ads_Ads_Txt_Public {
 	private $strategy;
 
 	/**
-	 * The Constructor.
-	 *
-	 * @param Advanced_Ads_Ads_Txt_Strategy $strategy Ads.txt data management class.
+	 * Constructor.
 	 */
 	public function __construct( $strategy ) {
 		$this->strategy = $strategy;
@@ -29,8 +24,7 @@ class Advanced_Ads_Ads_Txt_Public {
 	 * Display the 'ads.txt' file on the frontend.
 	 */
 	public function display() {
-		$request_uri = filter_var( $_SERVER['REQUEST_URI'] ?? '', FILTER_SANITIZE_URL );
-		if ( '/ads.txt' === esc_url_raw( $request_uri ) ) {
+		if ( '/ads.txt' === esc_url_raw( $_SERVER['REQUEST_URI'] ) ) {
 			$content = $this->prepare_frontend_output();
 			if ( $content ) {
 				header( 'Content-Type: text/plain; charset=utf-8' );
@@ -48,16 +42,21 @@ class Advanced_Ads_Ads_Txt_Public {
 	 * @return string
 	 */
 	public function prepare_frontend_output() {
-		if (
-			Advanced_Ads_Ads_Txt_Utils::is_subdir() ||
-			! $this->strategy->is_enabled()
-		) {
+		if ( Advanced_Ads_Ads_Txt_Utils::is_subdir() ) {
+			return;
+		}
+		if ( ! $this->strategy->is_enabled() ) {
 			return;
 		}
 
 		$content = $this->get_frontend_output();
-		$content = $content ? self::TOP . "\n" . $content : '';
-		return $content;
+
+		if ( $content ) {
+			$content = self::TOP . "\n" . $content;
+			return $content;
+		}
+
+		return '';
 	}
 
 	/**
@@ -84,18 +83,15 @@ class Advanced_Ads_Ads_Txt_Public {
 	 */
 	public function prepare_multisite( $domain = null ) {
 		global $current_blog, $wpdb;
-
-		$domain                   = $domain ? $domain : $current_blog->domain;
+		$domain = $domain ? $domain : $current_blog->domain;
 		$need_file_on_root_domain = Advanced_Ads_Ads_Txt_Utils::need_file_on_root_domain();
 
 		// Get all sites that include the current domain as part of their domains.
-		$sites = get_sites(
-			[
-				'search'         => $domain,
-				'search_columns' => [ 'domain' ],
-				'meta_key'       => Advanced_Ads_Ads_Txt_Strategy::OPTION, // phpcs:ignore
-			]
-		);
+		$sites = get_sites( [
+			'search' => $domain,
+			'search_columns' => [ 'domain' ],
+			'meta_key' => Advanced_Ads_Ads_Txt_Strategy::OPTION,
+		] );
 
 		// Uses `subdomain=` variable.
 		$referrals = [];
@@ -103,7 +99,7 @@ class Advanced_Ads_Ads_Txt_Public {
 		$not_refferals = [];
 
 		foreach ( $sites as $site ) {
-			if ( get_current_blog_id() === (int) $site->blog_id ) {
+			if ( (int) $site->blog_id === get_current_blog_id() ) {
 				// Current domain, no need to refer.
 				$not_refferals[] = $site->blog_id;
 				continue;
@@ -127,13 +123,11 @@ class Advanced_Ads_Ads_Txt_Public {
 		$o = '';
 
 		if ( $not_refferals ) {
-			$results = $wpdb->get_results( // phpcs:ignore
-				sprintf(
-					"SELECT blog_id, meta_value FROM $wpdb->blogmeta WHERE meta_key='%s' AND blog_id IN (%s)",
-					Advanced_Ads_Ads_Txt_Strategy::OPTION, // phpcs:ignore
-					join( ',', array_map( 'absint', $not_refferals ) ) // phpcs:ignore
-				)
-			);
+			$results = $wpdb->get_results( sprintf(
+				"SELECT blog_id, meta_value FROM $wpdb->blogmeta WHERE meta_key='%s' AND blog_id IN (%s)",
+				Advanced_Ads_Ads_Txt_Strategy::OPTION,
+				join( ',', array_map( function($value) { return (int)$value; }, $not_refferals ) )
+			) );
 
 			$blog_data = [];
 			foreach ( $results as $result ) {
@@ -154,7 +148,7 @@ class Advanced_Ads_Ads_Txt_Public {
 					$content = "# blog_id: $blog_id\n" . $content;
 				}
 
-				if ( get_current_blog_id() === $blog_id ) {
+				if ( $blog_id === get_current_blog_id() ) {
 					// Refer to other subdomains.
 					foreach ( $referrals  as $blog_id => $referral ) {
 						$content .= "# refer to blog_id: $blog_id\nsubdomain=" . $referral . "\n";
@@ -162,11 +156,12 @@ class Advanced_Ads_Ads_Txt_Public {
 				}
 
 				$content = apply_filters( 'advanced-ads-ads-txt-content', $content, $blog_id );
-
 				$o .= $content . "\n";
 			}
-		}
 
+
+		}
 		return $o;
 	}
+
 }

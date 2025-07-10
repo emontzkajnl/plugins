@@ -11,7 +11,6 @@ namespace AdvancedAds\Importers;
 
 use WP_Error;
 use AdvancedAds\Utilities\WordPress;
-use AdvancedAds\Utilities\Conditional;
 use AdvancedAds\Framework\Utilities\Params;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
 
@@ -69,10 +68,6 @@ class Manager implements Integration_Interface {
 	 */
 	public function handle_action(): void {
 		// Early bail!!
-		if ( ! Conditional::user_cap( 'advanced_ads_edit_ads' ) ) {
-			return;
-		}
-
 		$action = WordPress::current_action();
 
 		if ( 'advads_import' === $action && check_admin_referer( 'advads_import' ) ) {

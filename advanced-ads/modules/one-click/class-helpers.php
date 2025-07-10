@@ -9,6 +9,7 @@
 
 namespace AdvancedAds\Modules\OneClick;
 
+use AdvancedAds\Constants;
 use AdvancedAds\Utilities\WordPress;
 use AdvancedAds\Framework\Utilities\Str;
 
@@ -111,6 +112,19 @@ class Helpers {
 	}
 
 	/**
+	 * Start auto ad creation
+	 *
+	 * @return void
+	 */
+	public static function start_auto_ad_creation(): void {
+		$ads = self::get_ads_from_config();
+
+		if ( $ads && ! wp_next_scheduled( Constants::CRON_API_ADS_CREATION ) ) {
+			wp_schedule_single_event( current_datetime()->getTimestamp() + 5, Constants::CRON_API_ADS_CREATION );
+		}
+	}
+
+	/**
 	 * Get ads from saved config.
 	 *
 	 * In this order
@@ -129,12 +143,10 @@ class Helpers {
 		}
 
 		$pubguru_config_ads = false;
-		// 1. Get ads from auto_created = true or name contains auto_created
+
+		// 1. Get ads from auto_created = true
 		foreach ( $config['configs'] as $config ) {
-			if (
-				( isset( $config['auto_created'] ) && $config['auto_created'] ) ||
-				Str::contains( 'auto_created', $config['name'] )
-			) {
+			if ( isset( $config['auto_created'] ) && $config['auto_created'] ) {
 				$pubguru_config_ads = $config['ad_units'];
 				return $pubguru_config_ads;
 			}
@@ -148,46 +160,37 @@ class Helpers {
 			$domain             = WordPress::get_site_domain();
 			$pubguru_config_ads = [
 				$domain . '_leaderboard'  => [
-					'ad_unit'            => $domain . '_leaderboard',
-					'slot'               => $domain . '_leaderboard',
-					'device'             => 'all',
-					'advanced_placement' => [
-						'placement'     => 'beforeContent',
-						'inContentRule' => [
-							'position'        => 'before',
-							'positionCount'   => 1,
-							'positionElement' => 'paragraph',
-							'positionRepeat'  => false,
-						],
-					],
+					'ad_unit'              => $domain . '_leaderboard',
+					'slot'                 => $domain . '_leaderboard',
+					'device'               => 'All',
+					'placement'            => 'Before Content',
+					'placement_conditions' => 'All',
+					'in_content_position'  => 'Before',
+					'in_content_count'     => 1,
+					'in_content_element'   => 'p',
+					'in_content_repeat'    => false,
 				],
 				$domain . '_in_content_1' => [
-					'ad_unit'            => $domain . '_in_content_1',
-					'slot'               => $domain . '_in_content_1',
-					'device'             => 'all',
-					'advanced_placement' => [
-						'placement'     => 'beforeContent',
-						'inContentRule' => [
-							'position'        => 'before',
-							'positionCount'   => 1,
-							'positionElement' => 'paragraph',
-							'positionRepeat'  => false,
-						],
-					],
+					'ad_unit'              => $domain . '_in_content_1',
+					'slot'                 => $domain . '_in_content_1',
+					'device'               => 'All',
+					'placement'            => 'Before Content',
+					'placement_conditions' => 'All',
+					'in_content_position'  => 'Before',
+					'in_content_count'     => 1,
+					'in_content_element'   => 'p',
+					'in_content_repeat'    => false,
 				],
 				$domain . '_in_content_2' => [
-					'ad_unit'            => $domain . '_in_content_2',
-					'slot'               => $domain . '_in_content_2',
-					'device'             => 'all',
-					'advanced_placement' => [
-						'placement'     => 'inContent',
-						'inContentRule' => [
-							'position'        => 'after',
-							'positionCount'   => 3,
-							'positionElement' => 'paragraph',
-							'positionRepeat'  => true,
-						],
-					],
+					'ad_unit'              => $domain . '_in_content_2',
+					'slot'                 => $domain . '_in_content_2',
+					'device'               => 'All',
+					'placement'            => 'After Content',
+					'placement_conditions' => 'All',
+					'in_content_position'  => 'Aefore',
+					'in_content_count'     => 3,
+					'in_content_element'   => 'p',
+					'in_content_repeat'    => true,
 				],
 			];
 		}

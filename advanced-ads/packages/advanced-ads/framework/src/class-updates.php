@@ -16,43 +16,54 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Updates class
  */
-abstract class Updates {
+class Updates {
 
 	/**
-	 * Get updates that need to run.
+	 * Updates that need to be run.
+	 *
+	 * @var array
+	 */
+	private $updates = [];
+
+	/**
+	 * Folder path.
+	 *
+	 * @var string
+	 */
+	private $folder = null;
+
+	/**
+	 * Plugin version.
+	 *
+	 * @var string
+	 */
+	private $version = null;
+
+	/**
+	 * Option name.
+	 *
+	 * @var string
+	 */
+	private $option_name = null;
+
+	/**
+	 * Retrieve main instance.
+	 *
+	 * Ensure only one instance is loaded or can be loaded.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array
+	 * @return Updates
 	 */
-	abstract public function get_updates(): array;
+	public static function get() {
+		static $instance;
 
-	/**
-	 * Get folder path
-	 *
-	 * @since  1.0.0
-	 *
-	 * @return string
-	 */
-	abstract public function get_folder(): string;
+		if ( null === $instance && ! ( $instance instanceof Updates ) ) {
+			$instance = new Updates();
+		}
 
-	/**
-	 * Get plugin version number
-	 *
-	 * @since  1.0.0
-	 *
-	 * @return string
-	 */
-	abstract public function get_version(): string;
-
-	/**
-	 * Get plugin option name.
-	 *
-	 * @since  1.0.0
-	 *
-	 * @return string
-	 */
-	abstract public function get_option_name(): string;
+		return $instance;
+	}
 
 	/**
 	 * Bind all hooks.
@@ -63,33 +74,80 @@ abstract class Updates {
 	 * @throws InvalidArgumentException When version not defined.
 	 * @throws InvalidArgumentException When option name not defined.
 	 *
-	 * @return void
+	 * @return Updates
 	 */
-	public function hooks(): void {
-		if ( empty( $this->get_folder() ) ) {
+	public function hooks() {
+		if ( empty( $this->folder ) ) {
 			throw new InvalidArgumentException( 'Please set the folder path for update files.' );
 		}
 
-		if ( empty( $this->get_version() ) ) {
+		if ( empty( $this->version ) ) {
 			throw new InvalidArgumentException( 'Please set the plugin version number.' );
 		}
 
-		if ( empty( $this->get_option_name() ) ) {
+		if ( empty( $this->option_name ) ) {
 			throw new InvalidArgumentException( 'Please set option name to save version in database.' );
 		}
 
 		add_action( 'admin_init', [ $this, 'do_updates' ] );
+
+		return $this;
 	}
 
 	/**
-	 * Get installed version number
+	 * Set folder path
 	 *
-	 * @since 1.0.0
+	 * @since  1.0.0
 	 *
-	 * @return string
+	 * @param  string $folder Folder path to look for updates.
+	 * @return Updates
 	 */
-	public function get_installed_version(): string {
-		return get_option( $this->get_option_name(), '0' );
+	public function set_folder( $folder ) {
+		$this->folder = trailingslashit( $folder );
+
+		return $this;
+	}
+
+	/**
+	 * Set plugin version number
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  string $version Plugin version.
+	 * @return Updates
+	 */
+	public function set_version( $version ) {
+		$this->version = $version;
+
+		return $this;
+	}
+
+	/**
+	 * Set plugin option name.
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  string $name Plugin option name.
+	 * @return Updates
+	 */
+	public function set_option_name( $name ) {
+		$this->option_name = $name;
+
+		return $this;
+	}
+
+	/**
+	 * Add updates database.
+	 *
+	 * @since  1.0.0
+	 *
+	 * @param  array $updates Array of updates to be run.
+	 * @return Updates
+	 */
+	public function add_updates( array $updates ) {
+		$this->updates = $updates;
+
+		return $this;
 	}
 
 	/**
@@ -102,7 +160,7 @@ abstract class Updates {
 			return;
 		}
 
-		$installed_version = $this->get_installed_version();
+		$installed_version = get_option( $this->option_name );
 
 		// Maybe it's the first install.
 		if ( ! $installed_version ) {
@@ -110,7 +168,7 @@ abstract class Updates {
 			return false;
 		}
 
-		if ( version_compare( $installed_version, $this->get_version(), '<' ) ) {
+		if ( version_compare( $installed_version, $this->version, '<' ) ) {
 			$this->perform_updates();
 		}
 	}
@@ -121,11 +179,11 @@ abstract class Updates {
 	 * @since 1.0.0
 	 */
 	public function perform_updates() {
-		$installed_version = $this->get_installed_version();
+		$installed_version = get_option( $this->option_name );
 
-		foreach ( $this->get_updates() as $version => $path ) {
+		foreach ( $this->updates as $version => $path ) {
 			if ( version_compare( $installed_version, $version, '<' ) ) {
-				require_once $this->get_folder() . $path;
+				include $this->folder . $path;
 				$this->save_version( $version );
 			}
 		}
@@ -142,9 +200,9 @@ abstract class Updates {
 	 */
 	private function save_version( $version = false ) {
 		if ( empty( $version ) ) {
-			$version = $this->get_version();
+			$version = $this->version;
 		}
 
-		update_option( $this->get_option_name(), $this->get_version() );
+		update_option( $this->option_name, $this->version );
 	}
 }

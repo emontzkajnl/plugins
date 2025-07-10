@@ -54,9 +54,13 @@
 		 */
 		registerBlockType('advads/gblock', {
 			apiVersion: 2,
+
 			title: i18n.advads,
+
 			icon: advadsIconEl,
+
 			category: 'common',
+
 			attributes: {
 				className: {
 					type: 'string',
@@ -79,8 +83,10 @@
 					default: 'default',
 				},
 			},
+
 			// todo: make the keywords translatable
 			keywords: ['advert', 'adsense', 'banner'],
+
 			edit: (props) => {
 				const itemID = props.attributes.itemID;
 
@@ -197,7 +203,7 @@
 				args.push({
 					value: props.attributes.itemID,
 					onChange: setID,
-					key: 'advads-select-item',
+					key: 'select',
 				});
 				args.push(el('option', { key: 'empty' }, i18n['--empty--']));
 
@@ -283,7 +289,7 @@
 						'div',
 						{
 							className: 'components-placeholder__label',
-							key: 'advads-block-title',
+							key: 'components-placeholder__label',
 						},
 						advadsIconEl,
 						el(
@@ -312,7 +318,7 @@
 							'div',
 							{
 								className: 'components-placeholder__fieldset',
-								key: 'advads-select-wrap',
+								key: 'components-placeholder__fieldset',
 							},
 							// then add the <select /> input with its own children
 							el.apply(null, args),
@@ -323,7 +329,6 @@
 								},
 								href: url,
 								target: '_blank',
-								key: 'advads-item-link',
 							})
 						)
 					);
@@ -351,18 +356,18 @@
 							'div',
 							{
 								className: 'components-placeholder__label',
-								key: 'advads-first-ad',
+								key: 'components-placeholder__label',
 							},
 							'',
 							el(
 								'a',
 								{
 									href: window.advadsglobal.create_ad_url,
-									className: 'button',
+									class: 'button',
 									target: '_blank',
 									style: {
 										display: 'block',
-										marginTop: '10px',
+										'margin-top': '10px',
 									},
 								},
 								window.advadsglobal.create_your_first_ad

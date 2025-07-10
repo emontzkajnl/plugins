@@ -1,9 +1,5 @@
 <?php // phpcs:ignoreFile
-
-use AdvancedAds\Framework\Utilities\Arr;
-use AdvancedAds\Framework\Utilities\Params;
 use AdvancedAds\Utilities\Conditional;
-use AdvancedAds\Utilities\WordPress;
 
 /**
  * Container class for Ad Health notice handling
@@ -15,11 +11,18 @@ use AdvancedAds\Utilities\WordPress;
  * related scripts / functions
  *
  * advads_push_notice() function to push notifications using AJAX in admin/assets/js/admin-global.js
- * push_ad_health_notice() in AdvancedAds\Admin\Ajax to push notifications sent via AJAX
+ * push_ad_health_notice() in Advanced_Ads_Ad_Ajax_Callbacks to push notifications sent via AJAX
  * Advanced_Ads_Checks – for the various checks
  * list of notification texts in admin/includes/ad-health-notices.php
  */
 class Advanced_Ads_Ad_Health_Notices {
+
+	/**
+	 * Instance of this class.
+	 *
+	 * @var      object
+	 */
+	protected static $instance = null;
 
 	/**
 	 * Options
@@ -77,25 +80,17 @@ class Advanced_Ads_Ad_Health_Notices {
 	const DAILY_CHECK_TRANSIENT_NAME = 'advanced-ads-daily-ad-health-check-ran';
 
 	/**
-	 * Return an instance of this class.
+	 * Plugin class
 	 *
-	 * @return    object    A single instance of this class.
+	 * @var string
 	 */
-	public static function get_instance() {
-		static $instance;
-
-		// If the single instance hasn't been set, set it now.
-		if ( null === $instance ) {
-			$instance = new self();
-		}
-
-		return $instance;
-	}
+	private $plugin;
 
 	/**
 	 * Advanced_Ads_Ad_Health_Notices constructor.
 	 */
 	public function __construct() {
+
 		// failsafe for there were some reports of 502 errors.
 		if ( 1 < did_action( 'plugins_loaded' ) ) {
 			return;
@@ -106,8 +101,14 @@ class Advanced_Ads_Ad_Health_Notices {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'load_default_notices' ] );
-		add_action( 'init', [ $this, 'load_notices' ] );
+		// load default notices.
+		if ( [] === $this->default_notices ) {
+			include ADVADS_ABSPATH . '/admin/includes/ad-health-notices.php';
+			$this->default_notices = $advanced_ads_ad_health_notices;
+		}
+
+		// fills the class arrays.
+		$this->load_notices();
 
 		/**
 		 * Run checks
@@ -117,7 +118,7 @@ class Advanced_Ads_Ad_Health_Notices {
 		add_action( 'current_screen', [ $this, 'run_checks' ], 20 );
 
 		// add notification when an ad expires.
-		add_action( 'advanced-ads-ad-expired', [ $this, 'ad_expired' ] );
+		add_action( 'advanced-ads-ad-expired', [ $this, 'ad_expired' ], 10, 2 );
 	}
 
 	/**
@@ -131,12 +132,19 @@ class Advanced_Ads_Ad_Health_Notices {
 		return empty( $options['disable-notices'] );
 	}
 
-	public function load_default_notices() {
-		// load default notices.
-		if ( [] === $this->default_notices ) {
-			include ADVADS_ABSPATH . '/admin/includes/ad-health-notices.php';
-			$this->default_notices = $advanced_ads_ad_health_notices;
+	/**
+	 * Return an instance of this class.
+	 *
+	 * @return    object    A single instance of this class.
+	 */
+	public static function get_instance() {
+
+		// If the single instance hasn't been set, set it now.
+		if ( null === self::$instance ) {
+			self::$instance = new self();
 		}
+
+		return self::$instance;
 	}
 
 	/**
@@ -147,7 +155,7 @@ class Advanced_Ads_Ad_Health_Notices {
 		$options = $this->options();
 
 		// load notices from "notices".
-		$this->notices = $options['notices'] ?? [];
+		$this->notices = isset( $options['notices'] ) ? $options['notices'] : [];
 
 		/**
 		 * Cleanup notices
@@ -156,7 +164,7 @@ class Advanced_Ads_Ad_Health_Notices {
 			// without valid key caused by an issue prior to 1.13.3.
 			if ( empty( $_key ) ) {
 				unset( $this->notices[ $_key ] );
-			}
+			};
 
 			$time         = current_time( 'timestamp', 0 );
 			$notice_array = $this->get_notice_array_for_key( $_key );
@@ -180,11 +188,8 @@ class Advanced_Ads_Ad_Health_Notices {
 		}
 
 		// unignore notices if `show-hidden=true` is set in the URL.
-		$nonce = Params::get( 'advads_nonce' );
-		if (
-			$nonce && wp_verify_nonce( wp_unslash( $nonce ), 'advanced-ads-show-hidden-notices' )
-			&& true === Params::get( 'advads-show-hidden-notices', false, FILTER_VALIDATE_BOOLEAN )
-		) {
+		if ( isset( $_GET['advads_nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['advads_nonce'] ), 'advanced-ads-show-hidden-notices' )
+			&& isset( $_GET['advads-show-hidden-notices'] ) && 'true' === $_GET['advads-show-hidden-notices'] ) {
 			$this->unignore();
 			// remove the argument from the URL.
 			add_filter( 'removable_query_args', [ $this, 'remove_query_vars_after_notice_update' ] );
@@ -221,7 +226,7 @@ class Advanced_Ads_Ad_Health_Notices {
 	public function run_checks() {
 
 		// run in WP Admin only and if there are any ads.
-		if ( ! is_admin() || ! WordPress::get_count_ads() ) {
+		if ( ! is_admin() || ! Advanced_Ads::get_number_of_ads() ) {
 			return;
 		}
 
@@ -243,50 +248,75 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * General checks done on each Advanced Ads-related page or once per day
 	 */
 	public function checks() {
-		$checks = [
-			'old_php'                       => ! Advanced_Ads_Checks::php_version_minimum(),
-			'conflicting_plugins'           => count( Advanced_Ads_Checks::conflicting_plugins() ),
-			'php_extensions_missing'        => count( Advanced_Ads_Checks::php_extensions() ),
-			'ads_disabled'                  => Advanced_Ads_Checks::ads_disabled(),
-			'constants_enabled'             => Advanced_Ads_Checks::get_defined_constants(),
-			'assets_expired'                => Advanced_Ads_Checks::assets_expired(),
-			'license_invalid'               => Advanced_Ads_Checks::licenses_invalid(),
-			'buddypress_no_pro'             => class_exists( 'BuddyPress', false ) && ! defined( 'BP_PLATFORM_VERSION' ) && ! defined( 'AAP_VERSION' ),
-			'buddyboss_no_pro'              => defined( 'BP_PLATFORM_VERSION' ) && ! defined( 'AAP_VERSION' ),
-			'gamipress_no_pro'              => class_exists( 'GamiPress', false ) && ! defined( 'AAP_VERSION' ),
-			'pmp_no_pro'                    => defined( 'PMPRO_VERSION' ) && ! defined( 'AAP_VERSION' ),
-			'members_no_pro'                => function_exists( 'members_plugin' ) && ! defined( 'AAP_VERSION' ),
-			'translatepress_no_pro'         => function_exists( 'trp_enable_translatepress' ) && ! defined( 'AAP_VERSION' ),
-			'weglot_no_pro'                 => defined( 'WEGLOT_VERSION' ) && ! defined( 'AAP_VERSION' ),
-			'learndash'                     => defined( 'LEARNDASH_VERSION' ),
-			'aawp'                          => defined( 'AAWP_PLUGIN_FILE' ),
-			'polylang'                      => defined( 'POLYLANG_VERSION' ),
-			'mailpoet'                      => function_exists( 'mailpoet_check_requirements' ),
-			'wp_rocket'                     => Advanced_Ads_Checks::active_wp_rocket(),
-			'quiz_plugins_no_pro'           => Advanced_Ads_Checks::active_quiz_plugins(),
-			'elementor'                     => defined( 'ELEMENTOR_VERSION' ),
-			'siteorigin'                    => defined( 'SITEORIGIN_PANELS_VERSION' ),
-			'divi_no_pro'                   => function_exists( 'et_setup_theme' ) || defined( 'ET_BUILDER_PLUGIN_VERSION' ),
-			'beaver_builder'                => class_exists( 'FLBuilderLoader' ),
-			'pagelayer'                     => defined( 'PAGELAYER_FILE' ),
-			'wpb'                           => defined( 'WPB_VC_VERSION' ),
-			'newspaper'                     => defined( 'TAGDIV_ROOT' ),
-			'bbpress_no_pro'                => class_exists( 'bbPress', false ) && ! defined( 'AAP_VERSION' ),
-			'WPML_active'                   => defined( 'ICL_SITEPRESS_VERSION' ),
-			'AMP_active'                    => Advanced_Ads_Checks::active_amp_plugin(),
-			'wpengine'                      => Advanced_Ads_Checks::wp_engine_hosting(),// do not remove
-			'ads_txt_plugins_enabled'       => count( Advanced_Ads_Checks::ads_txt_plugins() ),
-			'header_footer_plugins_enabled' => count( Advanced_Ads_Checks::header_footer_plugins() ),
-		];
 
-		foreach ( $checks as $key => $check ) {
-			if ( $check ) {
-				$this->add( $key );
-			} elseif ( 'wpengine' !== $key ) {
-				$this->remove( $key );
-			}
+		if ( ! Advanced_Ads_Checks::php_version_minimum() ) {
+			$this->add( 'old_php' );
+		} else {
+			$this->remove( 'old_php' );
 		}
-
+		if ( count( Advanced_Ads_Checks::conflicting_plugins() ) ) {
+			$this->add( 'conflicting_plugins' );
+		} else {
+			$this->remove( 'conflicting_plugins' );
+		}
+		if ( count( Advanced_Ads_Checks::php_extensions() ) ) {
+			$this->add( 'php_extensions_missing' );
+		} else {
+			$this->remove( 'php_extensions_missing' );
+		}
+		if ( Advanced_Ads_Checks::ads_disabled() ) {
+			$this->add( 'ads_disabled' );
+		} else {
+			$this->remove( 'ads_disabled' );
+		}
+		if ( Advanced_Ads_Checks::get_defined_constants() ) {
+			$this->add( 'constants_enabled' );
+		} else {
+			$this->remove( 'constants_enabled' );
+		}
+		if ( Advanced_Ads_Checks::assets_expired() ) {
+			$this->add( 'assets_expired' );
+		} else {
+			$this->remove( 'assets_expired' );
+		}
+		if ( Advanced_Ads_Checks::licenses_invalid() ) {
+			$this->add( 'license_invalid' );
+		} else {
+			$this->remove( 'license_invalid' );
+		}
+		if ( class_exists( 'BuddyPress', false ) && ! defined( 'AAP_VERSION' ) ) {
+			$this->add( 'buddypress_no_pro' );
+		} else {
+			$this->remove( 'buddypress_no_pro' );
+		}
+		if ( class_exists( 'bbPress', false ) && ! defined( 'AAP_VERSION' ) ) {
+			$this->add( 'bbpress_no_pro' );
+		} else {
+			$this->remove( 'bbpress_no_pro' );
+		}
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+			$this->add( 'WPML_active' );
+		} else {
+			$this->remove( 'WPML_active' );
+		}
+		if ( Advanced_Ads_Checks::active_amp_plugin() ) {
+			$this->add( 'AMP_active' );
+		} else {
+			$this->remove( 'AMP_active' );
+		}
+		if ( Advanced_Ads_Checks::wp_engine_hosting() ) {
+			$this->add( 'wpengine' );
+		}
+		if ( count( Advanced_Ads_Checks::ads_txt_plugins() ) ) {
+			$this->add( 'ads_txt_plugins_enabled' );
+		} else {
+			$this->remove( 'ads_txt_plugins_enabled' );
+		}
+		if ( count( Advanced_Ads_Checks::header_footer_plugins() ) ) {
+			$this->add( 'header_footer_plugins_enabled' );
+		} else {
+			$this->remove( 'header_footer_plugins_enabled' );
+		}
 
 		set_transient( self::DAILY_CHECK_TRANSIENT_NAME, true, DAY_IN_SECONDS );
 	}
@@ -303,7 +333,8 @@ class Advanced_Ads_Ad_Health_Notices {
 	 *  - ad_id        ID of an ad, attaches the link to the ad edit page to the message
 	 */
 	public function add( $notice_key, $atts = [] ) {
-		// Early bail!!
+
+		// stop here if notices are disabled.
 		if ( empty( $notice_key ) || ! self::notices_enabled() ) {
 			return;
 		}
@@ -314,11 +345,11 @@ class Advanced_Ads_Ad_Health_Notices {
 			$notice_key     .= $atts['append_key'];
 		}
 
-		$options    = $this->options();
-		$notice_key = sanitize_key( $notice_key );
+		$notice_key     = esc_attr( $notice_key );
+		$options_before = $options = $this->options();
 
 		// load notices from "queue".
-		$notices = $options['notices'] ?? [];
+		$notices = isset( $options['notices'] ) ? $options['notices'] : [];
 
 		// check if notice_key was already saved, this prevents the same notice from showing up in different forms.
 		if ( isset( $notices[ $notice_key ] ) ) {
@@ -336,9 +367,9 @@ class Advanced_Ads_Ad_Health_Notices {
 		// attach link to ad, if given.
 		if ( ! empty( $atts['ad_id'] ) ) {
 			$id = absint( $atts['ad_id'] );
-			$ad = wp_advads_get_ad( $id );
-			if ( $id && '' !== $ad->get_title() ) {
-				$edit_link                             = ' <a href="' . admin_url( 'post.php?post=' . $id . '&action=edit' ) . '">' . $ad->get_title() . '</a>';
+			$ad = \Advanced_Ads\Ad_Repository::get( $id );
+			if ( $id && isset( $ad->title ) && '' !== $ad->title ) {
+				$edit_link                             = ' <a href="' . get_edit_post_link( $id ) . '">' . $ad->title . '</a>';
 				$notices[ $notice_key ]['append_text'] = isset( $notices[ $notice_key ]['append_text'] ) ? $notices[ $notice_key ]['append_text'] . $edit_link : $edit_link;
 			}
 		}
@@ -358,7 +389,14 @@ class Advanced_Ads_Ad_Health_Notices {
 
 		$this->last_saved_notice_key = $notice_key;
 
-		$this->update_notices( $notices );
+		$options['notices'] = $notices;
+		// update db if changed.
+		if ( $options_before !== $options ) {
+			$this->update_options( $options );
+
+			// update already registered notices.
+			$this->load_notices();
+		}
 	}
 
 	/**
@@ -371,14 +409,16 @@ class Advanced_Ads_Ad_Health_Notices {
 	 *  - append_text – text added to the default message
 	 */
 	public function update( $notice_key, $atts = [] ) {
-		// Early bail!!
+
+		// stop here if notices are disabled.
 		if ( empty( $notice_key ) || ! self::notices_enabled() ) {
 			return;
 		}
 
 		// check if the notice already exists.
-		$notice_key = esc_attr( $notice_key );
-		$options    = $this->options();
+		$notice_key     = esc_attr( $notice_key );
+		$options        = $this->options();
+		$options_before = $options;
 
 		// load notices from "queue".
 		$notices = isset( $options['notices'] ) ? $options['notices'] : [];
@@ -403,7 +443,16 @@ class Advanced_Ads_Ad_Health_Notices {
 		}
 
 		// update db.
-		$this->update_notices( $notices );
+		$options['notices'] = $notices;
+
+		// update db if changed.
+		if ( $options_before !== $options ) {
+			$this->update_options( $options );
+
+			// update already registered notices.
+			$this->load_notices();
+		}
+
 	}
 
 	/**
@@ -429,10 +478,10 @@ class Advanced_Ads_Ad_Health_Notices {
 
 		if ( isset( $notice_array['hide'] ) && false === $notice_array['hide'] ) {
 			// remove item.
-			$this->remove( $notice_key );
+			self::get_instance()->remove( $notice_key );
 		} else {
 			// hide item.
-			$this->ignore( $notice_key );
+			self::get_instance()->ignore( $notice_key );
 		}
 
 	}
@@ -445,23 +494,30 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * @param string $notice_key notice key to be removed.
 	 */
 	public function remove( $notice_key ) {
-		// Early bail!!
+
+		// stop here if notices are disabled.
 		if ( empty( $notice_key ) || ! self::notices_enabled() ) {
 			return;
 		}
 
-		$options = $this->options();
-		if (
-			! isset( $options['notices'] )
+		// get notices from options.
+		$options        = $this->options();
+		$options_before = $options;
+		if ( ! isset( $options['notices'] )
 			|| ! is_array( $options['notices'] )
-			|| ! isset( $options['notices'][ $notice_key ] )
-		) {
+			|| ! isset( $options['notices'][ $notice_key ] ) ) {
 			return;
 		}
 
 		unset( $options['notices'][ $notice_key ] );
 
-		$this->update_notices( $options['notices'] );
+		// only update if changed.
+		if ( $options_before !== $options ) {
+			$this->update_options( $options );
+
+			// update already registered notices.
+			$this->load_notices();
+		}
 	}
 
 	/**
@@ -472,13 +528,16 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * @param string $notice_key key of the notice to be ignored.
 	 */
 	public function ignore( $notice_key ) {
-		// Early bail!!
+
+		// stop here if notices are disabled.
 		if ( empty( $notice_key ) || ! self::notices_enabled() ) {
 			return;
 		}
 
-		$options = $this->options();
-		$ignored = isset( $options['ignore'] ) && is_array( $options['ignore'] ) ? $options['ignore'] : [];
+		// get options.
+		$options        = $this->options();
+		$options_before = $options;
+		$ignored        = isset( $options['ignore'] ) && is_array( $options['ignore'] ) ? $options['ignore'] : [];
 
 		// adds notice key to ignore array if it doesn’t exist already.
 		if ( false === array_search( $notice_key, $ignored, true ) ) {
@@ -486,134 +545,117 @@ class Advanced_Ads_Ad_Health_Notices {
 		}
 
 		// update db.
-		$this->update_ignore( $ignored );
+		$options['ignore'] = $ignored;
+
+		// only update if changed.
+		if ( $options_before !== $options ) {
+			$this->update_options( $options );
+
+			// update already registered notices.
+			$this->load_notices();
+		}
 	}
 
 	/**
 	 * Clear all "ignore" messages
 	 */
 	public function unignore() {
-		$this->update_ignore();
-	}
 
-	/**
-	 * Update ignored notices if there is any change
-	 *
-	 * @param string[] $ignore_list list of ignored keys.
-	 *
-	 * @return void
-	 */
-	public function update_ignore( $ignore_list = [] ) {
-		$options = $this->options();
-		$before  = Arr::get( $options, 'ignore', [] );
+		// get options.
+		$options        = $this->options();
+		$options_before = $options;
 
-		if ( $ignore_list === $before ) {
-			return;
+		// empty ignore value.
+		$options['ignore'] = [];
+
+		// only update if changed.
+		if ( $options_before !== $options ) {
+			$this->update_options( $options );
+
+			// update already registered notices.
+			$this->load_notices();
 		}
-
-		$options['ignore'] = $ignore_list;
-		$this->update_options( $options );
-	}
-
-	/**
-	 * Update notices list if there is any change
-	 *
-	 * @param array $notices New options.
-	 *
-	 * @return void
-	 */
-	public function update_notices( $notices ): void {
-		$options = $this->options();
-
-		if ( Arr::get( $options, 'notices', [] ) === $notices ) {
-			return;
-		}
-
-		$options['notices'] = $notices;
-		$this->update_options( $options );
-		$this->load_notices();
 	}
 
 	/**
 	 * Render notice widget on overview page
 	 */
 	public function render_widget() {
-		$ignored_count = count( $this->ignore );
 
-		include ADVADS_ABSPATH . 'views/admin/widgets/aa-dashboard/overview-notices.php';
+		$ignored_count = count( $this->ignore );
+		$has_problems  = $this->has_notices_by_type( 'problem' );
+		$has_notices   = $this->has_notices_by_type( 'notice' );
+
+		// only render, if there are notices.
+		if ( $this->has_notices() ) {
+			include ADVADS_ABSPATH . 'admin/views/overview-notices.php';
+		}
 	}
 
 	/**
 	 * Display notices in a list
 	 *
 	 * @param string $type which type of notice to show; default: 'problem'.
-	 *
-	 * @return void
 	 */
 	public function display( $type = 'problem' ) {
-		// Early baill!!
-		if ( ! is_array( $this->notices ) ) {
-			return;
-		}
 
-		foreach ( $this->notices as $_notice_key => $_notice ) {
-			$notice_array = $this->get_notice_array_for_key( $_notice_key );
+		// iterate through notices.
+		?>
+		<ul class="advads-ad-health-notices advads-ad-health-notices-<?php echo esc_attr( $type ); ?>">
+																				<?php
 
-			// remove the notice if key doesn’t exist anymore.
-			if ( [] === $notice_array ) {
-				$this->remove( $_notice_key );
-			}
+																				// failsafe in case this is not an array.
+																				if ( ! is_array( $this->notices ) ) {
+																					return;
+																				}
 
-			$notice_type = isset( $notice_array['type'] ) ? $notice_array['type'] : 'problem';
+																				foreach ( $this->notices as $_notice_key => $_notice ) {
 
-			// skip if type is not correct.
-			if ( $notice_type !== $type ) {
-				continue;
-			}
+																					$notice_array = $this->get_notice_array_for_key( $_notice_key );
 
-			if ( ! empty( $_notice['text'] ) ) {
-				$text = $_notice['text'];
-			} elseif ( isset( $notice_array['text'] ) ) {
-				$text = $notice_array['text'];
-			} else {
-				continue;
-			}
+																					// remove the notice if key doesn’t exist anymore.
+																					if ( [] === $notice_array ) {
+																						$this->remove( $_notice_key );
+																					}
 
-			// attach "append_text".
-			if ( ! empty( $_notice['append_text'] ) ) {
-				$text .= $_notice['append_text'];
-			}
+																					$notice_type = isset( $notice_array['type'] ) ? $notice_array['type'] : 'problem';
 
-			// attach "get help" link.
-			if ( ! empty( $_notice['get_help_link'] ) ) {
-				$text .= $this->get_help_link( $_notice['get_help_link'] );
-			} elseif ( isset( $notice_array['get_help_link'] ) ) {
-				$text .= $this->get_help_link( $notice_array['get_help_link'] );
-			}
+																					// skip if type is not correct.
+																					if ( $notice_type !== $type ) {
+																						continue;
+																					}
 
-			$can_hide  = ( ! isset( $notice_array['can_hide'] ) || true === $notice_array['can_hide'] ) ? true : false;
-			$hide      = ( ! isset( $notice_array['hide'] ) || true === $notice_array['hide'] ) ? true : false;
-			$is_hidden = in_array( $_notice_key, $this->ignore, true ) ? true : false;
-			$date      = isset( $_notice['time'] ) ? date_i18n( get_option( 'date_format' ), $_notice['time'] ) : false;
-			$dashicon = 'dashicons-warning';
+																					if ( ! empty( $_notice['text'] ) ) {
+																						$text = $_notice['text'];
+																					} elseif ( isset( $notice_array['text'] ) ) {
+																						$text = $notice_array['text'];
+																					} else {
+																						continue;
+																					}
 
-			if ( 'notice' === $type ) {
-				$dashicon = 'dashicons-info';
-			} elseif ( 'pitch' === $type ) {
-				$dashicon = 'dashicons-lightbulb';
-			}
+																					// attach "append_text".
+																					if ( ! empty( $_notice['append_text'] ) ) {
+																						$text .= $_notice['append_text'];
+																					}
 
-			include ADVADS_ABSPATH . '/admin/views/overview-notice-row.php';
-		}
-	}
+																					// attach "get help" link.
+																					if ( ! empty( $_notice['get_help_link'] ) ) {
+																						$text .= $this->get_help_link( $_notice['get_help_link'] );
+																					} elseif ( isset( $notice_array['get_help_link'] ) ) {
+																						$text .= $this->get_help_link( $notice_array['get_help_link'] );
+																					}
 
-	/**
-	 * Display plugins and themes pitches
-	 *
-	 * @return void
-	 */
-	public function display_pitches() {
-		$this->display( 'pitch' );
+																					$can_hide  = ( ! isset( $notice_array['can_hide'] ) || true === $notice_array['can_hide'] ) ? true : false;
+																					$hide      = ( ! isset( $notice_array['hide'] ) || true === $notice_array['hide'] ) ? true : false;
+																					$is_hidden = in_array( $_notice_key, $this->ignore, true ) ? true : false;
+																					$date      = isset( $_notice['time'] ) ? date_i18n( get_option( 'date_format' ), $_notice['time'] ) : false;
+
+																					include ADVADS_ABSPATH . '/admin/views/overview-notice-row.php';
+																				}
+
+																				?>
+		</ul>
+		<?php
 	}
 
 	/**
@@ -639,7 +681,6 @@ class Advanced_Ads_Ad_Health_Notices {
 		if ( ! isset( $this->options ) ) {
 			$this->options = get_option( ADVADS_SLUG . '-ad-health-notices', [] );
 		}
-
 		if ( ! is_array( $this->options ) ) {
 			$this->options = [];
 		}
@@ -679,18 +720,22 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * also updates ignored array, if needed
 	 */
 	public function get_valid_ignored() {
-		$options       = $this->options();
-		$ignore_before = $options['ignore'] ?? [];
+
+		$options        = $this->options();
+		$options_before = $options;
+
+		$ignore_before = isset( $options['ignore'] ) ? $options['ignore'] : [];
 
 		// get keys from notices.
 		$notice_keys = array_keys( $this->notices );
 
 		// get the errors that are in ignore AND notices and reset the keys.
-		$ignore = array_values( array_intersect( $ignore_before, $notice_keys ) );
+		$ignore            = array_values( array_intersect( $ignore_before, $notice_keys ) );
+		$options['ignore'] = $ignore;
 
 		// only update if changed.
-		if ( $ignore !== $ignore_before ) {
-			$this->update_ignore( $ignore );
+		if ( $options_before !== $options ) {
+			$this->update_options( $options );
 		}
 
 		return $ignore;
@@ -718,6 +763,8 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * @return  array
 	 */
 	public function get_visible_notices_by_type( $type = 'problem' ) {
+
+		// get all notices with a given type.
 		$notices_by_type = [];
 
 		foreach ( $this->notices as $_key => $_notice ) {
@@ -738,7 +785,10 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * @return  bool    true if there are notices, false if not
 	 */
 	public function has_notices() {
+
+		// get all notices.
 		return isset( $this->notices ) && is_array( $this->notices ) && count( $this->notices );
+
 	}
 
 	/**
@@ -749,6 +799,8 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * @return  integer
 	 */
 	public function has_notices_by_type( $type = 'problem' ) {
+
+		// get all notices with a given type.
 		$notices = $this->get_visible_notices_by_type( $type );
 
 		if ( ! is_array( $notices ) ) {
@@ -767,6 +819,7 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * @return  array    type
 	 */
 	public function get_notice_array_for_key( $notice_key ) {
+
 		// check if there is an original key.
 		$orig_key = isset( $this->notices[ $notice_key ]['orig_key'] ) ? $this->notices[ $notice_key ]['orig_key'] : $notice_key;
 
@@ -777,10 +830,9 @@ class Advanced_Ads_Ad_Health_Notices {
 	 * Add notification when an ad expires based on the expiry date
 	 *
 	 * @param integer $ad_id ID of the ad.
-	 *
-	 * @return void
+	 * @param object  $ad ad object.
 	 */
-	public function ad_expired( $ad_id ): void {
+	public function ad_expired( $ad_id, $ad ) {
 		$id = ! empty( $ad_id ) ? absint( $ad_id ) : 0;
 		$this->update(
 			'ad_expired',
@@ -810,7 +862,7 @@ class Advanced_Ads_Ad_Health_Notices {
 
 		// is a copy of Advanced_Ads_AdSense_MAPI::get_adsense_error_link().
 		return sprintf(
-			/* translators: %1$s is an anchor (link) opening tag, %2$s is the closing tag. */
+		// translators: %1$s is an anchor (link) opening tag, %2$s is the closing tag.
 			esc_attr__( 'Learn more about AdSense account issues %1$shere%2$s.', 'advanced-ads' ),
 			'<a href="https://wpadvancedads.com/adsense-errors/?utm_source=advanced-ads&utm_medium=link&utm_campaign=adsense-error' . $code . '" target="_blank">',
 			'</a>'
@@ -834,4 +886,6 @@ class Advanced_Ads_Ad_Health_Notices {
 
 		return '&nbsp;<a href="' . $link . '" target="_blank">' . __( 'Get help', 'advanced.ads' ) . '</a>';
 	}
+
+
 }

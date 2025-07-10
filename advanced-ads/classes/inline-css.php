@@ -1,6 +1,4 @@
-<?php // phpcs:ignore WordPress.Files.FileName
-
-use AdvancedAds\Abstracts\Ad;
+<?php
 
 /**
  * Handles Advanced Ads Inline CSS settings.
@@ -45,7 +43,7 @@ class Advanced_Ads_Inline_Css {
 	 * @return array
 	 */
 	public function add_css( $wrapper, $css, $global_output ) {
-		$this->add_inline_css = $this->add_inline_css && false !== $global_output;
+		$this->add_inline_css = $this->add_inline_css && $global_output !== false;
 		if ( ! $this->add_inline_css ) {
 			return $wrapper;
 		}
@@ -60,16 +58,16 @@ class Advanced_Ads_Inline_Css {
 	/**
 	 * Extend TCF output with a container containing inline css.
 	 *
-	 * @param string $output The output string.
-	 * @param Ad     $ad     Ad instance.
+	 * @param string          $output The output string.
+	 * @param Advanced_Ads_Ad $ad     The ad object.
 	 *
 	 * @return string
 	 */
-	public function add_tcf_container( $output, Ad $ad ) {
-		$inline_css = $ad->get_prop( 'inline-css' );
+	public function add_tcf_container( $output, Advanced_Ads_Ad $ad ) {
+		$inline_css = $ad->options( 'inline-css' );
 
 		if (
-			! $ad->get_prop( 'ad_args.global_output' )
+			! $ad->global_output
 			|| empty( $inline_css )
 			|| strpos( $output, '<div class="tcf-container"' ) === 0
 		) {
@@ -89,14 +87,11 @@ class Advanced_Ads_Inline_Css {
 	 *
 	 * @return array
 	 */
-	private function get_styles_by_string( string $string ): array { // phpcs:ignore
+	private function get_styles_by_string( string $string ): array {
 		$chunks = array_chunk( preg_split( '/[:;]/', $string ), 2 );
-		array_walk_recursive(
-			$chunks,
-			function ( &$value ) {
-				$value = trim( $value );
-			}
-		);
+		array_walk_recursive( $chunks, function( &$value ) {
+			$value = trim( $value );
+		} );
 
 		$keys   = array_filter( array_column( $chunks, 0 ) );
 		$values = array_filter( array_column( $chunks, 1 ) );
@@ -111,11 +106,11 @@ class Advanced_Ads_Inline_Css {
 	 */
 	private function check_tcf_option() {
 		static $privacy_options;
-		if ( null === $privacy_options ) {
+		if ( $privacy_options === null ) {
 			$privacy_options = Advanced_Ads_Privacy::get_instance()->options();
 		}
 
-		if ( ! empty( $privacy_options['enabled'] ) && 'on' === $privacy_options['enabled'] && 'iab_tcf_20' === $privacy_options['consent-method'] ) {
+		if ( ! empty( $privacy_options['enabled'] ) && $privacy_options['enabled'] === 'on' && $privacy_options['consent-method'] === 'iab_tcf_20' ) {
 			add_filter( 'advanced-ads-output-final', [ $this, 'add_tcf_container' ], 20, 2 );
 			$this->add_inline_css = false;
 		}

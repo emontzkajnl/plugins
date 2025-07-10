@@ -1,8 +1,4 @@
-<?php // phpcs:ignoreFile
-
-use AdvancedAds\Constants;
-use AdvancedAds\Utilities\Conditional;
-use AdvancedAds\Utilities\Data;
+<?php
 
 /**
  * Checks for various things
@@ -16,17 +12,6 @@ class Advanced_Ads_Checks {
 	 */
 	const MINIMUM_PHP_VERSION = '5.6.20';
 
-	/**
-	 * A Quiz plugin is active
-	 *
-	 * @return bool true if any quiz plugin is active.
-	 */
-	public static function active_quiz_plugins() {
-		return defined( 'AYS_QUIZ_VERSION' )
-		       || defined( 'FORMINATOR_PLUGIN_BASENAME' )
-		       || defined( 'QSM_PLUGIN_PATH' )
-		       || class_exists( 'GFForms', false );
-	}
 
 	/**
 	 * Show the list of potential issues
@@ -52,13 +37,21 @@ class Advanced_Ads_Checks {
 	/**
 	 * Caching used
 	 *
-	 * @deprecated 1.48.0
-	 *
 	 * @return bool true if active
 	 */
 	public static function cache() {
-		_deprecated_function( __METHOD__, '1.48.0', '\AdvancedAds\Utilities\Conditional::has_cache_plugins()' );
-		return Conditional::has_cache_plugins();
+		if ( ( defined( 'WP_CACHE' ) && WP_CACHE ) // general cache constant.
+			|| defined( 'W3TC' ) // W3 Total Cache.
+			|| function_exists( 'wp_super_cache_text_domain' ) // WP SUper Cache.
+			|| defined( 'WP_ROCKET_SLUG' ) // WP Rocket.
+			|| defined( 'WPFC_WP_CONTENT_DIR' ) // WP Fastest Cache.
+			|| class_exists( 'HyperCache', false ) // Hyper Cache.
+			|| defined( 'CE_CACHE_DIR' ) // Cache Enabler.
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -82,11 +75,13 @@ class Advanced_Ads_Checks {
 	 * Check if license keys are missing or invalid or expired
 	 *
 	 * @since 1.6.6
+	 * @update 1.6.9 moved from Advanced_Ads_Plugin
 	 * @update 1.8.21 also check for expired licenses
 	 * @return true if there are missing licenses
 	 */
 	public static function licenses_invalid() {
-		$add_ons = Data::get_addons();
+
+		$add_ons = apply_filters( 'advanced-ads-add-ons', [] );
 
 		if ( [] === $add_ons ) {
 			Advanced_Ads_Ad_Health_Notices::get_instance()->remove( 'license_invalid' );
@@ -324,10 +319,10 @@ class Advanced_Ads_Checks {
 	 * Notice for Adblocker module if assets have expired
 	 */
 	public static function assets_expired() {
-		$plugin_options    = Advanced_Ads::get_instance()->get_adblocker_options();
+		$plugin_options    = Advanced_Ads_Plugin::get_instance()->options();
 		$adblocker_options = Advanced_Ads_Ad_Blocker::get_instance()->options();
 
-		return ! empty( $plugin_options['use-adblocker'] ) && empty( $adblocker_options['module_can_work'] );
+		return ( ! empty( $plugin_options['use-adblocker'] ) && empty( $adblocker_options['module_can_work'] ) );
 	}
 
 	/**
@@ -381,17 +376,5 @@ class Advanced_Ads_Checks {
 		}
 
 		return $plugins;
-	}
-
-	/**
-	 * Check if monetize wizard has been completed or notice dismissed
-	 *
-	 * @return bool
-	 */
-	public static function can_launch_wizard(): bool {
-		$wizard_done = get_option( Constants::OPTION_WIZARD_COMPLETED, false );
-		$notice_dismissed = get_user_meta( get_current_user_id(), Constants::USER_WIZARD_DISMISS, true );
-
-		return ! $wizard_done && ! $notice_dismissed;
 	}
 }

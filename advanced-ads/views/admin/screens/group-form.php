@@ -6,13 +6,10 @@
  * @author  Advanced Ads <info@wpadvancedads.com>
  */
 
-use AdvancedAds\Admin\Upgrades;
-
-$group_types = wp_advads_get_group_types();
+$group_types = wp_advads()->group_manager->get_types();
 
 ?>
-<form method="post" name="new-group" class="advads-group-new-form advads-form" id="advads-group-new-form">
-	<input type="hidden" name="nonce" value="<?php echo esc_attr( wp_create_nonce( 'advads-create-group' ) ); ?>">
+<form method="post" class="advads-group-new-form advads-form" id="advads-group-new-form">
 	<h3>1. <?php esc_html_e( 'Choose the type', 'advanced-ads' ); ?></h3>
 	<div class="advads-form-types advads-buttonset">
 		<?php
@@ -33,7 +30,7 @@ $group_types = wp_advads_get_group_types();
 			</div>
 		<?php endforeach; ?>
 	</div>
-	<?php if ( wp_advads_get_group_type_manager()->has_premium() ) : ?>
+	<?php if ( wp_advads()->group_manager->has_premium() ) : ?>
 		<div class="advads-form-types">
 			<?php
 			foreach ( $group_types as $group_type ) :
@@ -55,7 +52,7 @@ $group_types = wp_advads_get_group_types();
 		</div>
 		<div class="clear"></div>
 		<h4>
-			<?php Upgrades::upgrade_link( __( 'Get all group types with All Access', 'advanced-ads' ), 'https://wpadvancedads.com/add-ons/all-access/', 'upgrades-pro-groups' ); ?>
+			<?php Advanced_Ads_Admin_Upgrades::upgrade_link( __( 'Get all group types with All Access', 'advanced-ads' ), 'https://wpadvancedads.com/add-ons/all-access/', 'upgrades-pro-groups' ); ?>
 		</h4>
 	<?php endif; ?>
 	<div class="clear"></div>
@@ -64,4 +61,5 @@ $group_types = wp_advads_get_group_types();
 	<h3>2. <?php esc_html_e( 'Choose a name', 'advanced-ads' ); ?></h3>
 	<input type="text" name="advads-group-name" class="advads-form-name" placeholder="<?php esc_attr_e( 'Group title', 'advanced-ads' ); ?>"/>
 	<p class="advads-notice-inline advads-error advads-form-name-error"><?php esc_html_e( 'Please enter a name.', 'advanced-ads' ); ?></p>
+	<?php wp_nonce_field( 'add-advads-groups', 'advads-group-add-nonce' ); ?>
 </form>

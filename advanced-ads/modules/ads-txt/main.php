@@ -5,12 +5,9 @@
  * @package Advanced_Ads_Ads_Txt
  */
 
-/**
- * Initializes the ads.txt module for Advanced Ads plugin.
- *
- * @return void
- */
-function advanced_ads_ads_txt_init(): void {
+class_exists( 'Advanced_Ads', false ) || exit();
+
+function advanced_ads_ads_txt_init() {
 	if (
 		! is_multisite()
 		|| ( function_exists( 'is_site_meta_supported' ) && is_site_meta_supported() )
@@ -27,3 +24,4 @@ function advanced_ads_ads_txt_init(): void {
 }
 
 add_action( 'advanced-ads-plugin-loaded', 'advanced_ads_ads_txt_init' );
+

@@ -1,5 +1,4 @@
 import jQuery from 'jquery';
-import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Get disabled ads status
@@ -7,12 +6,19 @@ import apiFetch from '@wordpress/api-fetch';
  * @param {number} id
  */
 function getPostData(id) {
-	apiFetch({
-		path: `/advanced-ads/v1/page_quick_edit?id=${id}&nonce=${window.advancedAds.page_quick_edit.nonce}`,
-		method: 'GET',
-	}).then(function (data) {
-		setQuickEditValues(id, data);
-	});
+	jQuery
+		.ajax({
+			url: ajaxurl,
+			method: 'post',
+			data: {
+				action: 'advads_get_disabled_ads',
+				id,
+				nonce: window.advancedAds.page_quick_edit.nonce,
+			},
+		})
+		.then(function (data) {
+			setQuickEditValues(id, data.data);
+		});
 }
 
 /**

@@ -50,11 +50,4 @@ interface Group_Type {
 	 * @return string The upgrade URL for the group type.
 	 */
 	public function get_image(): string;
-
-	/**
-	 * Get the class name of the object as a string.
-	 *
-	 * @return string
-	 */
-	public function get_classname(): string;
 }

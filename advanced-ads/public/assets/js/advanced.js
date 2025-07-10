@@ -368,26 +368,29 @@ advads = {
 	find_wrapper: function ( element, offset ) {
 		// first margin: auto element after body
 		var returnValue;
-
-		jQuery( 'body' ).children().not('script, .screen-reader-text, .skip-link, ' + element).each( function ( key, value ) {
-			// check offset value
-			var checkedelement = jQuery( value );
-			// check if there is space left or right of the element
-			if ( (
-						offset === 'right' && (
-							checkedelement.offset().left + jQuery( checkedelement ).width() < jQuery( window ).width()
-						)
-					) ||
-					(
-						offset === 'left' && checkedelement.offset().left > 0
-					) ) {
-				// fix element
-				if ( checkedelement.css( 'position' ) === 'static' || checkedelement.css( 'position' ) === '' ) {
-					checkedelement.css( 'position', 'relative' );
+		jQuery( 'body' ).children().each( function ( key, value ) {
+			// exclude current element
+			// TODO exclude <script>
+			if ( value.id !== element.substring( 1 ) ) {
+				// check offset value
+				var checkedelement = jQuery( value );
+				// check if there is space left or right of the element
+				if ( (
+						 offset === 'right' && (
+							 checkedelement.offset().left + jQuery( checkedelement ).width() < jQuery( window ).width()
+						 )
+					 ) ||
+					 (
+						 offset === 'left' && checkedelement.offset().left > 0
+					 ) ) {
+					// fix element
+					if ( checkedelement.css( 'position' ) === 'static' || checkedelement.css( 'position' ) === '' ) {
+						checkedelement.css( 'position', 'relative' );
+					}
+					// set return value
+					returnValue = value;
+					return false;
 				}
-				// set return value
-				returnValue = value;
-				return false;
 			}
 		} );
 		return returnValue;
@@ -514,11 +517,11 @@ advads = {
 					// make sure this only gets executed once.
 					advads.privacy.state_executed = true;
 
-					// Run this in an interval (every 0.3s) just in case we are still waiting for consent
+					// Run this in an interval (every 0.1s) just in case we are still waiting for consent
 					var cnt                = 0,
 						consentSetInterval = setInterval( function () {
 							// Bail if we have not gotten a consent response after 60 seconds.
-							if ( ++ cnt === 181 ) {
+							if ( ++ cnt === 600 ) {
 								clearInterval( consentSetInterval );
 							}
 							switch ( window.advads_options.privacy['consent-method'] ) {
@@ -577,7 +580,7 @@ advads = {
 									);
 									break;
 							}
-						}, 333 );
+						}, 100 );
 
 					return advads.privacy.state;
 				}

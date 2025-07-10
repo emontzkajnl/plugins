@@ -1,11 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-	content: ['./assets/src/oneclick/**/*.jsx'],
+module.exports = {
+	content: ['./includes/**/*.php', './views/**/*.php'],
 	theme: {
 		extend: {
 			colors: {
-				wordpress: '#2271b1',
-				primary: '#0074a2',
+				primary: '#0474A2',
 			},
 		},
 	},

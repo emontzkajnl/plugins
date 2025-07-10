@@ -26,15 +26,6 @@ abstract class Importer {
 	private $is_detected = null;
 
 	/**
-	 * Show import button or not.
-	 *
-	 * @return bool
-	 */
-	public function show_button(): bool {
-		return true;
-	}
-
-	/**
 	 * Is importer detected
 	 *
 	 * @return bool

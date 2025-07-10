@@ -10,7 +10,7 @@
 namespace AdvancedAds\Admin;
 
 use WP_User;
-use Advanced_Ads;
+use Advanced_Ads_Plugin;
 use AdvancedAds\Utilities\Conditional;
 use AdvancedAds\Framework\Utilities\Params;
 use AdvancedAds\Framework\Interfaces\Integration_Interface;
@@ -32,6 +32,7 @@ class Action_Links implements Integration_Interface {
 		add_filter( 'admin_footer', [ $this, 'add_deactivation_popup' ] );
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ], 100 );
 		add_action( 'wp_ajax_advads_send_feedback', [ $this, 'send_feedback' ] );
+		add_action( 'admin_notices', [ $this, 'show_rollback_notice' ] );
 	}
 
 	/**
@@ -111,10 +112,8 @@ class Action_Links implements Integration_Interface {
 	 * Send feedback via email
 	 *
 	 * @since 1.7.14
-	 *
-	 * @return void
 	 */
-	public function send_feedback(): void {
+	public function send_feedback() {
 		$data = Params::post( 'formdata' );
 		if ( ! $data ) {
 			wp_die();
@@ -133,7 +132,7 @@ class Action_Links implements Integration_Interface {
 
 		$text      = '';
 		$headers   = [];
-		$options   = Advanced_Ads::get_instance()->internal_options();
+		$options   = Advanced_Ads_Plugin::get_instance()->internal_options();
 		$installed = isset( $options['installed'] ) ? gmdate( 'd.m.Y', $options['installed'] ) : '–';
 		$from      = $form['advanced_ads_disable_from'] ?? '';
 		$subject   = ( $form['advanced_ads_disable_reason'] ?? '(no reason given)' ) . ' (Advanced Ads)';
@@ -171,5 +170,36 @@ class Action_Links implements Integration_Interface {
 
 		wp_mail( 'improve@wpadvancedads.com', $subject, $text, $headers );
 		die();
+	}
+
+
+	/**
+	 * Show notice to roll back to a previous version.
+	 *
+	 * @return void
+	 */
+	public function show_rollback_notice(): void {
+		// show only on plugins page.
+		if ( 'plugins' !== get_current_screen()->id ) {
+			return;
+		}
+
+		$rollback = filter_input( INPUT_GET, 'rollback', FILTER_VALIDATE_BOOLEAN );
+		if ( ! $rollback ) {
+			return;
+		}
+
+		$rollback_notification = defined( 'ADVADS_VERSION' )
+			/* translators: %s: version number */
+			? sprintf( esc_html__( 'You have successfully rolled back to Advanced Ads %s', 'advanced-ads' ), ADVADS_VERSION )
+			: esc_html__( 'You have successfully rolled back to a previous version of Advanced Ads.', 'advanced-ads' );
+
+		?>
+		<div class="notice notice-success is-dismissible">
+			<p>
+				<?php echo esc_html( $rollback_notification ); ?>
+			</p>
+		</div>
+		<?php
 	}
 }

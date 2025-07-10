@@ -2,14 +2,9 @@
 /**
  * Template for a promotional banner
  *
- * @package AdvancedAds
- *
  * @var string $text    content of the notice.
  * @var string $_notice internal key of the notice.
  */
-
-use AdvancedAds\Framework\Utilities\Params;
-
 ?>
 <div class="notice notice-promo advads-notice advads-admin-notice message is-dismissible"
 	data-notice="<?php echo esc_attr( $_notice ); ?>">
@@ -18,9 +13,9 @@ use AdvancedAds\Framework\Utilities\Params;
 		echo wp_kses(
 			$text,
 			[
-				'a'    => [
-					'href'   => [],
-					'class'  => [],
+				'a' => [
+					'href' => [],
+					'class' => [],
 					'target' => [],
 				],
 				'span' => [
@@ -37,7 +32,7 @@ use AdvancedAds\Framework\Utilities\Params;
 			'action'   => 'advads-close-notice',
 			'notice'   => $_notice,
 			'nonce'    => wp_create_nonce( 'advanced-ads-admin-ajax-nonce' ),
-			'redirect' => Params::server( 'REQUEST_URI' ),
+			'redirect' => $_SERVER['REQUEST_URI'],
 		],
 		admin_url( 'admin-ajax.php' )
 	);

@@ -2,11 +2,9 @@
 /**
  * Render ad label option for placements.
  *
- * @deprecated
- *
  * @var string $_placement_slug slug of the current placement.
  * @var string $_label value of the label option.
- * @package AdvancedAds
+ * @package Advanced_Ads_Admin
  */
 
 ?>

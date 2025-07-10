@@ -9,7 +9,6 @@
 
 namespace AdvancedAds\Groups\Types;
 
-use AdvancedAds\Groups\Group_Standard;
 use AdvancedAds\Interfaces\Group_Type;
 
 defined( 'ABSPATH' ) || exit;
@@ -44,15 +43,6 @@ class Unknown implements Group_Type {
 	}
 
 	/**
-	 * Get the class name of the object as a string.
-	 *
-	 * @return string
-	 */
-	public function get_classname(): string {
-		return $this->data['classname'] ?? Group_Standard::class;
-	}
-
-	/**
 	 * Get the title or name of the group type.
 	 *
 	 * @return string The title of the group type.
@@ -76,7 +66,7 @@ class Unknown implements Group_Type {
 	 * @return bool True if premium is required; otherwise, false.
 	 */
 	public function is_premium(): bool {
-		return boolval( $this->data['is_premium'] ?? true );
+		return false;
 	}
 
 	/**
@@ -85,8 +75,12 @@ class Unknown implements Group_Type {
 	 * @return string The upgrade URL for the group type.
 	 */
 	public function get_image(): string {
-		$fallback = ADVADS_BASE_URL . 'admin/assets/img/placements/manual.png';
+		$fallback = [
+			'grid'    => ADVADS_BASE_URL . 'admin/assets/img/groups/grid.svg',
+			'slider'  => ADVADS_BASE_URL . 'admin/assets/img/groups/slider.svg',
+			'default' => ADVADS_BASE_URL . 'admin/assets/img/groups/random.svg',
+		];
 
-		return $this->data['image'] ?? $fallback;
+		return $this->data['image'] ?? $fallback[ $this->get_id() ] ?? $fallback['default'];
 	}
 }

@@ -6,23 +6,19 @@
  * @author    Advanced Ads <support@wpadvancedads.com>
  * @license   GPL-2.0+
  * @link      https://wpadvancedads.com
- * @copyright since 2013 Advanced Ads GmbH
+ * @copyright since 2013 Thomas Maier, Advanced Ads GmbH
  *
  * @wordpress-plugin
  * Plugin Name:       Advanced Ads
- * Version:           2.0.9
- * Description:       Manage and optimize your ads in WordPress
  * Plugin URI:        https://wpadvancedads.com
+ * Description:       Manage and optimize your ads in WordPress
+ * Version:           1.56.4
  * Author:            Advanced Ads
  * Author URI:        https://wpadvancedads.com
  * Text Domain:       advanced-ads
  * Domain Path:       /languages
  * License:           GPL-2.0+
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.txt
- *
- * @requires
- * Requires at least: 5.7
- * Requires PHP:      7.4
  */
 
 // Early bail!!
@@ -37,30 +33,21 @@ if ( defined( 'ADVADS_FILE' ) ) {
 }
 
 define( 'ADVADS_FILE', __FILE__ );
-define( 'ADVADS_VERSION', '2.0.9' );
+define( 'ADVADS_VERSION', '1.56.4' );
 
 // Load the autoloader.
 require_once __DIR__ . '/includes/class-autoloader.php';
 \AdvancedAds\Autoloader::get()->initialize();
 
 /**
- * Compatibility check for addons for 2.0.0 release.
+ * Returns the main instance of Advanced Ads.
+ *
+ * @since 1.46.0
+ * @return \AdvancedAds\Plugin
  */
-if ( version_compare( ADVADS_VERSION, '2.0.0', '>=' ) ) {
-	( new \AdvancedAds\Installation\Compatibility() )->hooks();
+function wp_advads() {
+	return \AdvancedAds\Plugin::get();
 }
 
-if ( ! function_exists( 'wp_advads' ) ) {
-	/**
-	 * Returns the main instance of Advanced Ads.
-	 *
-	 * @since 1.46.0
-	 * @return \AdvancedAds\Plugin
-	 */
-	function wp_advads() {
-		return \AdvancedAds\Plugin::get();
-	}
-
-	// Start it.
-	wp_advads();
-}
+// Start it.
+wp_advads();

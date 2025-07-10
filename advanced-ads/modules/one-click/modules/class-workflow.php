@@ -9,6 +9,8 @@
 
 namespace AdvancedAds\Modules\OneClick;
 
+use AdvancedAds\Constants;
+use AdvancedAds\Importers\Api_Ads;
 use AdvancedAds\Modules\OneClick\Helpers;
 use AdvancedAds\Modules\OneClick\Options;
 use AdvancedAds\Framework\Utilities\Params;
@@ -39,6 +41,7 @@ class Workflow implements Integration_Interface {
 	public function hooks(): void {
 		add_action( 'init', [ $this, 'flush_rewrite_rules' ], 999 );
 		add_filter( 'pubguru_module_status_changed', [ $this, 'module_status_changed' ], 10, 3 );
+		add_action( Constants::CRON_API_ADS_CREATION, [ $this, 'auto_ad_creation' ], 10, 0 );
 
 		if ( false !== Options::pubguru_config() && ! is_admin() ) {
 			add_action( 'wp', [ $this, 'init' ] );
@@ -75,15 +78,7 @@ class Workflow implements Integration_Interface {
 		Page_Parser::get_instance();
 
 		if ( $is_debugging || Options::module( 'header_bidding' ) ) {
-			$config           = Options::pubguru_config();
-			$config['method'] = $config['method'] ?? 'page';
-
-			if ( 'page' === $config['method'] && isset( $config['page'] ) && is_page( absint( $config['page'] ) ) ) {
-				( new Header_Bidding() )->hooks();
-			}
-			if ( 'final' === $config['method'] ) {
-				( new Header_Bidding() )->hooks();
-			}
+			( new Header_Bidding() )->hooks();
 		}
 
 		if ( $is_debugging || Options::module( 'tag_conversion' ) ) {
@@ -112,15 +107,12 @@ class Workflow implements Integration_Interface {
 		if ( 'ads_txt' === $module ) {
 			$detector = new Detector();
 			if ( $status && $detector->detect_files() ) {
-				$data['notice'] = join(
-					'',
-					[
-						'<strong>' . esc_html__( 'File alert!', 'advanced-ads' ) . '</strong>',
-						' ',
-						esc_html__( 'Physical ads.txt found. In order to use PubGuru service you need to delete it or back it up.', 'advanced-ads' ),
-					]
-				);
-				$data['action'] = esc_html__( 'Backup the File', 'advanced-ads' );
+				ob_start();
+				$detector->show_notice();
+				$notice = ob_get_clean();
+				if ( $notice ) {
+					$data['notice'] = $notice;
+				}
 			}
 
 			if ( ! $status && $detector->detect_files( 'ads.txt.bak' ) ) {
@@ -143,6 +135,15 @@ class Workflow implements Integration_Interface {
 			flush_rewrite_rules();
 			delete_option( self::FLUSH_KEY );
 		}
+	}
+
+	/**
+	 * Start auto ad creation process
+	 *
+	 * @return void
+	 */
+	public function auto_ad_creation(): void {
+		( new Api_Ads() )->import();
 	}
 
 	/**
