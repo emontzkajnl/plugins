@@ -1,6 +1,14 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+/**
+ * Duplicate ads in admin class
+ *
+ * @package     AdvancedAds\Pro
+ * @author      Advanced Ads <info@wpadvancedads.com>
+ */
 
-use AdvancedAds\Utilities\WordPress;
+use AdvancedAds\Constants;
+use AdvancedAds\Framework\Utilities\Params;
+use AdvancedAds\Utilities\Conditional;
 
 /**
  * Class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin
@@ -14,19 +22,16 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	public function __construct() {
 		add_action( 'admin_init', [ $this, 'admin_init' ] );
 		add_action( 'admin_action_advanced_ads_duplicate_ad', [ $this, 'duplicate_ad' ] );
-
 	}
 
 	/**
 	 * On admin init
 	 */
 	public function admin_init() {
-
 		// add Duplicate link to ad overview list.
 		add_filter( 'post_row_actions', [ $this, 'render_duplicate_link' ], 10, 2 );
 		// add Duplicate link to post submit box.
 		add_action( 'post_submitbox_start', [ $this, 'render_duplicate_link_in_submit_box' ] );
-
 	}
 
 	/**
@@ -38,18 +43,11 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	 * @return array with actions.
 	 */
 	public function render_duplicate_link( $actions, $post ) {
-
-		$cap = 'manage_options';
-
-		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
-			$cap = WordPress::user_cap( 'advanced_ads_edit_ads' );
-		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
-			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' );
-		}
-
-		if ( isset( $post->post_type )
-			 && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
-			 && current_user_can( $cap ) ) {
+		if (
+			isset( $post->post_type ) &&
+			Constants::POST_TYPE_AD === $post->post_type &&
+			Conditional::user_can( 'advanced_ads_edit_ads' )
+		) {
 			$actions['copy-ad'] = self::get_duplicate_link( $post->ID );
 		}
 
@@ -62,23 +60,14 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	public function render_duplicate_link_in_submit_box() {
 		global $post;
 
-		$cap = 'manage_options';
-
-		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
-			$cap = WordPress::user_cap( 'advanced_ads_edit_ads' );
-		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
-			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' );
-		}
-
-		if ( isset( $post->post_type )
-			 && 'edit' === $post->filter // only for already saved ads.
-			 && Advanced_Ads::POST_TYPE_SLUG === $post->post_type
-			 && current_user_can( $cap ) ) {
+		if (
+			isset( $post->post_type ) &&
+			'edit' === $post->filter &&
+			Constants::POST_TYPE_AD === $post->post_type &&
+			Conditional::user_can( 'advanced_ads_edit_ads' ) ) {
 			?>
 			<div>
-				<?php
-				echo self::get_duplicate_link( $post->ID );
-				?>
+				<?php echo self::get_duplicate_link( $post->ID ); // phpcs:ignore ?>
 			</div>
 			<?php
 		}
@@ -103,27 +92,18 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	 * Save a copy of an ad using the same status as the original ad.
 	 */
 	public function duplicate_ad() {
-
-		$cap = 'manage_options';
-
-		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
-			$cap = WordPress::user_cap( 'advanced_ads_edit_ads' );
-		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
-			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' );
-		}
-
+		$action = Params::get( 'action' );
+		$ad_id  = Params::get( 'ad_id', 0, FILTER_VALIDATE_INT );
 		if (
-			! isset( $_GET['action'] )
-			|| 'advanced_ads_duplicate_ad' !== $_GET['action']
-			|| ! isset( $_GET['ad_id'] )
-			|| ! current_user_can( $cap )
+			! $action
+			|| 'advanced_ads_duplicate_ad' !== $action
+			|| ! $ad_id
+			|| ! Conditional::user_can( 'advanced_ads_edit_ads' )
 		) {
 			return;
 		}
 
-		check_admin_referer( 'duplicate-ad-' . absint( wp_unslash( $_GET['ad_id'] ) ) );
-
-		$ad_id = absint( wp_unslash( $_GET['ad_id'] ) );
+		check_admin_referer( 'duplicate-ad-' . $ad_id );
 
 		$ad = get_post( $ad_id );
 
@@ -147,7 +127,7 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 	public function create_copy( $ad ) {
 
 		// return original ad ID if we are not using the correct post type.
-		if ( empty( $ad->post_type ) || Advanced_Ads::POST_TYPE_SLUG !== $ad->post_type ) {
+		if ( empty( $ad->post_type ) || Constants::POST_TYPE_AD !== $ad->post_type ) {
 			return $ad->ID;
 		}
 
@@ -155,10 +135,8 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 
 		$new_ad['post_type']   = $ad->post_type;
 		$new_ad['post_status'] = isset( $ad->post_status ) ? $ad->post_status : 'draft';
-
-		// create a new title by adding "(copy)".
-		$copy_suffix          = ' (' . _x( 'copy', 'noun', 'advanced-ads-pro' ) . ')';
-		$new_ad['post_title'] = isset( $ad->post_title ) ? $ad->post_title . $copy_suffix : $copy_suffix;
+		$copy_suffix           = ' (' . _x( 'copy', 'noun', 'advanced-ads-pro' ) . ' at ' . current_time( 'Y-m-d H:i:s' ) . ')';
+		$new_ad['post_title']  = isset( $ad->post_title ) ? $ad->post_title . $copy_suffix : $copy_suffix;
 
 		// use current user as author – not really needed though.
 		$new_ad_author         = wp_get_current_user();
@@ -216,6 +194,4 @@ class Advanced_Ads_Pro_Module_Duplicate_Ads_Admin {
 
 		return $new_ad_id;
 	}
-
 }
-

@@ -12,4 +12,4 @@
 	<?php esc_html_e( 'Activate module.', 'advanced-ads-pro' ); ?>
 </label>
 
-<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/rest-api/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-rest-api-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
+<a href="https://wpadvancedads.com/manual/rest-api/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-rest-api-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>

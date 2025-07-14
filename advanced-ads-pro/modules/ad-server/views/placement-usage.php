@@ -2,8 +2,10 @@
 /**
  * Show examples on how to use the ad server placement.
  *
+ * @package AdvancedAds\Pro
+ *
  * @var string $url URL where the ad placement can be accessed directly.
- * @var string $_placement_slug placement ID.
+ * @var string $placement_slug placement ID.
  * @var string $public_slug public name of the placement.
  */
 

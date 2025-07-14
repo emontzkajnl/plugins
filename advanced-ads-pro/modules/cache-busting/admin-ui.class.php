@@ -1,7 +1,10 @@
-<?php
+<?php // phpcs:ignoreFile
 
+use AdvancedAds\Abstracts\Ad;
+use AdvancedAds\Abstracts\Group;
 use AdvancedAds\Utilities\WordPress;
 use AdvancedAds\Utilities\Conditional;
+use AdvancedAds\Framework\Utilities\Params;
 
 /**
  * Cache Busting admin user interface.
@@ -18,10 +21,9 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 			return;
 		}
 
-		add_action( 'advanced-ads-placement-options-after', [ $this, 'admin_placement_options' ], 10, 2 );
+		add_action( 'advanced-ads-placement-options-before-advanced', [ $this, 'admin_placement_options' ], 10, 2 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
-		add_action( 'advanced-ads-ad-params-after', [ $this, 'check_ad' ], 9, 2 );
-		//add_filter( 'advanced-ads-save-options', array( $this, 'save_options' ), 10, 2 );
+		add_action( 'advanced-ads-ad-params-after', [ $this, 'check_ad' ], 9 );
 		add_filter( 'advanced-ads-ad-notices', [$this, 'ad_notices'], 10, 3 );
 		add_action( 'wp_ajax_advads-reset-vc-cache', [ $this, 'reset_vc_cache' ] );
 		add_action( 'wp_ajax_advads-placement-activate-cb', [ $this, 'ads_activate_placement_cb' ] );
@@ -30,26 +32,19 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	/**
 	 * Activate placement cache busting
 	 */
-	public function ads_activate_placement_cb(){
+	public function ads_activate_placement_cb() {
 		check_ajax_referer( 'advanced-ads-admin-ajax-nonce', 'nonce' );
 
-		$cap = 'manage_options';
-
-		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
-			$cap = WordPress::user_cap( 'advanced_ads_manage_options' );
-		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
-			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
-		}
-
-		if ( ! current_user_can( $cap ) && ! filter_has_var( INPUT_POST, 'placement' ) ) {
+		if ( ! Conditional::user_can( 'advanced_ads_manage_options' ) && ! filter_has_var( INPUT_POST, 'placement' ) ) {
 			wp_send_json_error( esc_html__( 'You are not allowed to do this.', 'advanced-ads-pro' ), 400 );
 		}
-		$placement_slug = sanitize_text_field( $_POST['placement'] );
-		$placements = Advanced_Ads::get_ad_placements_array();
 
-		if ( isset( $placements[$placement_slug] ) ) {
-			$placements[$placement_slug]['options']['cache-busting'] = 'auto';
-			Advanced_Ads::get_instance()->get_model()->update_ad_placements_array( $placements );
+		$placement_slug = sanitize_text_field( Params::post( 'placement' ) );
+		$placement = wp_advads_get_placement_by_slug( $placement_slug );
+
+		if ( $placement ) {
+			$placement->set_prop( 'cache-busting', Advanced_Ads_Pro_Module_Cache_Busting::OPTION_AUTO );
+			$placement->save();
 			wp_send_json_success( esc_html__( 'Cache busting has been successfully enabled for the assigned placement.', 'advanced-ads-pro' ) );
 		}
 
@@ -59,17 +54,8 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	/**
 	 * Update visitor consitions cache.
 	 */
-	public function reset_vc_cache(){
-
-		$cap = 'manage_options';
-
-		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
-			$cap = WordPress::user_cap( 'advanced_ads_manage_options' );
-		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
-			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_manage_options' );
-		}
-
-		if ( ! current_user_can( $cap ) ) {
+	public function reset_vc_cache() {
+		if ( ! Conditional::user_can( 'advanced_ads_manage_options' ) ) {
 			return;
 		}
 
@@ -86,12 +72,12 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	/**
 	 * add placement options on placement page
 	 *
-	 * @param string $placement_slug
-	 * @param array  $placement
+	 * @param string    $placement_slug Placement id.
+	 * @param Placement $placement      Placement instance.
 	 */
 	public function admin_placement_options( $placement_slug, $placement ) {
-		$placement_types = Advanced_Ads_Placements::get_placement_types();
-		if ( isset( $placement_types[ $placement['type'] ]['options']['placement-cache-busting'] ) && ! $placement_types[ $placement['type'] ]['options']['placement-cache-busting'] ) {
+		$type_options = $placement->get_type_object()->get_options();
+		if ( isset( $type_options['placement-cache-busting'] ) && ! $type_options['placement-cache-busting'] ) {
 			return;
 		}
 
@@ -103,24 +89,23 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 		];
 
 		// options
-		$value = isset( $placement['options']['cache-busting'] ) ? $placement['options']['cache-busting'] : null;
-		$value = $value === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_ON ? Advanced_Ads_Pro_Module_Cache_Busting::OPTION_ON : ( $value === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF ? Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF : Advanced_Ads_Pro_Module_Cache_Busting::OPTION_AUTO );
+		$value = $placement->get_prop( 'cache-busting' );
+		$value = $value === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_ON
+			? Advanced_Ads_Pro_Module_Cache_Busting::OPTION_ON
+			: ( $value === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF ? Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF : Advanced_Ads_Pro_Module_Cache_Busting::OPTION_AUTO );
 
 		ob_start();
 		foreach ( $values as $k => $l ) {
 			$selected = checked( $value, $k, false );
-			echo '<label><input' . $selected . ' type="radio" name="advads[placements]['.
-				$placement_slug.'][options][cache-busting]" value="'.$k.'" id="advads-placement-'.
+			echo '<label><input' . $selected . ' type="radio" name="advads[placements][options][cache-busting]" value="'.$k.'" id="advads-placement-'.
 				$placement_slug.'-cache-busting-'.$k.'"/>'.$l.'</label>';
 		}
 		$option_content = ob_get_clean();
 
-		if( class_exists( 'Advanced_Ads_Admin_Options' ) ){
-			Advanced_Ads_Admin_Options::render_option(
-				'placement-cache-busting',
-				_x( 'Cache-busting', 'placement admin label', 'advanced-ads-pro' ),
-				$option_content );
-		}
+		WordPress::render_option(
+			'placement-cache-busting',
+			_x( 'Cache-busting', 'placement admin label', 'advanced-ads-pro' ),
+			$option_content );
 	}
 
 	/**
@@ -129,16 +114,11 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	public function enqueue_admin_scripts() {
 		$screen     = get_current_screen();
 		$uriRelPath = plugin_dir_url( __FILE__ );
-		$is_screen  = false;
-		if ( method_exists( 'AdvancedAds\Utilities\Conditional', 'is_screen_advanced_ads' ) ) {
-			$is_screen = Conditional::is_screen_advanced_ads();
-		} elseif ( method_exists( 'Advanced_Ads_Admin', 'screen_belongs_to_advanced_ads' ) ) {
-			$is_screen = Advanced_Ads_Admin::screen_belongs_to_advanced_ads();
-		}
+
 		if ( isset( $screen->id ) && $screen->id === 'advanced_ads' ) { //ad edit page
 			wp_register_script( 'krux/prescribe', $uriRelPath . 'inc/prescribe.js', [ 'jquery' ], '1.1.3' );
 			wp_enqueue_script( 'advanced-ads-pro/cache-busting-admin', $uriRelPath . 'inc/admin.js', [ 'krux/prescribe' ], AAP_VERSION );
-		} elseif ( $is_screen ) {
+		} elseif ( Conditional::is_screen_advanced_ads() ) {
 			wp_enqueue_script( 'advanced-ads-pro/cache-busting-admin', $uriRelPath . 'inc/admin.js', [], AAP_VERSION );
 		}
 	}
@@ -146,62 +126,50 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 	/**
 	 * add validation for cache-busting
 	 *
-	 * @param obj $ad ad object
-	 * @param arr $types ad types
+	 * @param Ad $ad Ad instance.
 	 */
-	public function check_ad( $ad, $types = []  ) {
-		$options = $ad->options();
+	public function check_ad( $ad ) {
 		include dirname( __FILE__ ) . '/views/settings_check_ad.php';
 	}
-
-	// public function save_options( $options = array(), $ad = 0 ) {
-	// 	if ( isset( $_POST['advanced_ad']['cache-busting']['possible'] ) ) {
-	// 		$options['cache-busting']['possible'] = ('true' === $_POST['advanced_ad']['cache-busting']['possible'] ) ? true : false;
-	// 	}
-	// 	return $options;
-	// }
 
 	/**
 	 * show cache-busting specific ad notices
 	 *
 	 * @since 1.13.1
+	 *
+	 * @param array $notices Notices.
+	 * @param array $box     Current meta box.
+	 * @param Ad    $ad      Ad instance.
+	 *
+	 * @return array
 	 */
-	public function ad_notices( $notices, $box, $post ){
-
-	    $ad = new Advanced_Ads_Ad( $post->ID );
-
-	    // $content = json_decode( stripslashes( $ad->content ) );
-
-	    switch ($box['id']){
-		case 'ad-parameters-box' :
-			// show hint that for ad-group ad type, cache-busting method will only be AJAX or off
-			if( 'group' === $ad->type ){
-			    $notices[] = [
-				    'text' => __( 'The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not passive cache-busting.', 'advanced-ads-pro' ),
-				    // 'class' => 'advads-ad-notice-pro-ad-group-cache-busting',
-			    ];
-			}
-		    break;
+	public function ad_notices( $notices, $box, $ad ): array {
+		// Show hint that for ad-group ad type, cache-busting method will only be AJAX or off
+		if ( 'ad-parameters-box' === $box['id'] && $ad->is_type( 'group' ) ) {
+			$notices[] = [
+				'text' => __( 'The <em>Ad Group</em> ad type can only use AJAX or no cache-busting, but not passive cache-busting.', 'advanced-ads-pro' ),
+				// 'class' => 'advads-ad-notice-pro-ad-group-cache-busting',
+			];
 	    }
 
-
-	    return $notices;
+		return $notices;
 	}
 
 	/**
 	 * Get group hints.
 	 *
-	 * @param string[]           $hints Group hints (escaped strings).
-	 * @param Advanced_Ads_Group $group The group object.
+	 * @param string[] $hints Group hints (escaped strings).
+	 * @param Group    $group The group object.
+	 *
 	 * @return string[]
 	 */
-	public function get_group_hints( $hints, Advanced_Ads_Group $group ) {
+	public function get_group_hints( $hints, Group $group ) {
 
 		// Pro is installed but cache busting is disabled.
 		if ( empty( Advanced_Ads_Pro::get_instance()->get_options()['cache-busting']['enabled'] ) ) {
 			$hints[] = sprintf(
 				wp_kses(
-					// translators: %s is an URL.
+					/* translators: %s is a URL. */
 					__( 'It seems that a caching plugin is activated. Your ads might not rotate properly while cache busting is disabled. <a href="%s" target="_blank">Activate cache busting.</a>', 'advanced-ads-pro' ),
 					[
 						'a' => [
@@ -215,7 +183,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 			return $hints;
 		}
 
-		$placements = Advanced_Ads_Placements::get_placements_by( 'group', $group->id );
+		$placements = wp_advads_placements_by_item_id( 'group_' . $group->get_id() );
 
 		// The group doesn't use a placement.
 		if (
@@ -224,7 +192,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 		) {
 			$hints[] = sprintf(
 				wp_kses(
-					// translators: %s is an URL.
+					/* translators: %s is a URL. */
 					__( 'You need a placement to deliver this group using cache busting. <a href="%s" target="_blank">Create a placement now.</a>', 'advanced-ads-pro' ),
 					[
 						'a' => [
@@ -240,12 +208,13 @@ class Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI {
 
 		// The Group uses a placement where cache busting is disabled.
 		foreach ( $placements as $slug => $placement ) {
-			if ( isset( $placement['options']['cache-busting'] )
-				&& $placement['options']['cache-busting'] === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF
+			$placement_data = $placement->get_data();
+			if ( isset( $placement_data['cache-busting'] )
+				&& $placement_data['cache-busting'] === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF
 			) {
 				$hints[] = sprintf(
 					wp_kses(
-						// translators: %s is an URL.
+						/* translators: %s is a URL. */
 						__( 'It seems that a caching plugin is activated. Your ads might not rotate properly, while cache busting is disabled for the placement your group is using. <a href="#" data-placement="%s" class="js-placement-activate-cb">Activate cache busting for this placement.</a>', 'advanced-ads-pro' ),
 						[
 							'a' => [

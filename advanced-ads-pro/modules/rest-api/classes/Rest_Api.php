@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 
 namespace Advanced_Ads_Pro\Rest_Api;
 
@@ -109,7 +109,7 @@ class Rest_Api {
 
 	/**
 	 * Get single ad callback.
-	 * If the passed id is not an Advanced_Ads_Ad, return a WP_Error.
+	 * If the passed id is not an Ad, return a WP_Error.
 	 *
 	 * @param \WP_REST_Request $request The current request object.
 	 *
@@ -119,7 +119,7 @@ class Rest_Api {
 		$id = (int) $request->get_param( 'id' );
 
 		try {
-			$ad = new Advanced_Ads_Ad( $id );
+			$ad = new Ad( $id );
 		} catch ( Rest_Exception $e ) {
 			return unserialize( $e->getMessage() );
 		}
@@ -127,7 +127,7 @@ class Rest_Api {
 		/**
 		 * Trigger an action when a single ad is requested via the API.
 		 *
-		 * @var Advanced_Ads_Ad $ad The requested ad.
+		 * @var Ad $ad The requested ad.
 		 */
 		do_action( 'advanced-ads-rest-ad-request', $ad );
 
@@ -180,7 +180,7 @@ class Rest_Api {
 
 	/**
 	 * Get single group callback.
-	 * Return WP_Error if passed id is not an Advanced_Ads_Group.
+	 * Return WP_Error if passed id is not an Group.
 	 *
 	 * @param \WP_REST_Request $request The current request object.
 	 *
@@ -189,7 +189,7 @@ class Rest_Api {
 	public function get_group( \WP_REST_Request $request ) {
 		try {
 			return new \WP_REST_Response(
-				( new Advanced_Ads_Group( $request->get_param( 'id' ) ) )->get_rest_response()
+				( new Group( $request->get_param( 'id' ) ) )->get_rest_response()
 			);
 		} catch ( Rest_Exception $e ) {
 			return unserialize( $e->getMessage() );

@@ -16,7 +16,7 @@ if ( ! advanced_ads_pro_admin_bar ) {
 		 * @param {object} event Cache Busting event.
 		 */
 		observe: function ( event ) {
-			var ad, that = advanced_ads_pro_admin_bar, ref;
+			var that = advanced_ads_pro_admin_bar;
 			if ( event.event === 'hasAd' && event.ad && event.ad.title && event.ad.cb_type !== 'off' ) {
 				if ( ! that.adminBar ) {
 					// No admin-bar yet: buffer.
@@ -55,7 +55,19 @@ if ( ! advanced_ads_pro_admin_bar ) {
 				jQuery( '#wp-admin-bar-advads_no_ads_found' ).remove();
 			}
 
-			that.adminBar.append( '<li id="wp-admin-bar-advads_current_ad_' + that.offset + '"><div class="ab-item ab-empty-item">' + ad.title + ' (' + ad.type + ')</div></li>' );
+			const count              = ad.count ?? 1;
+			const countString        = 1 === count ? '' : `(${count}) `;
+			const internalId         = ad.id ? `${ad.type}_${ad.id}` : `${ad.type}_${ad.title}`;
+			const previousOccurrence = that.adminBar.find( `[data-aditem="${internalId}"]` );
+
+			if ( previousOccurrence.length ) {
+				const countSpan = previousOccurrence.find( '.occurence-count' );
+				countSpan.attr( 'data-count', parseInt( countSpan.attr( 'data-count' ), 10 ) + 1 ).text( `(${countSpan.data( 'count' )}) ` );
+			} else {
+				that.adminBar.append( '<li id="wp-admin-bar-advads_current_ad_' + that.offset + '"><div class="ab-item ab-empty-item" data-aditem="' + `${internalId}` + '">' +
+					`<span class="occurence-count" data-count="${count}">` + countString + '</span>' + ad.title + ' (' + ad.type + ')</div></li>' );
+			}
+
 			that.offset += 1;
 		}
 	};

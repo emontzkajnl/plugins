@@ -1,31 +1,24 @@
-<?php
+<?php // phpcs:ignoreFile
 
 namespace Advanced_Ads_Pro\Rest_Api;
 
 /**
- * REST API extension of the \Advanced_Ads_Ad class.
+ * REST API extension of the Ad class.
  */
-class Advanced_Ads_Ad extends \Advanced_Ads_Ad {
+class Ad {
+
+	private $ad = null;
+
 	/**
-	 * Constructor.
-	 *
-	 * @param int $id The Post ID.
+	 * Get the ad if ID is passed, otherwise the ad is new and empty.
 	 *
 	 * @throws Rest_Exception Throw an exception if the provided id is not an ad.
+	 *
+	 * @param Ad|WP_Post|int $ad Ad to init.
 	 */
-	public function __construct( $id ) {
-		parent::__construct( $id, [] );
-
+	public function __construct( $ad = 0 ) {
+		$this->ad = wp_advads_get_ad( $ad );
 		add_filter( 'advanced-ads-tracking-link-attributes', [ $this, 'filter_tracking_attributes' ], 10, 2 );
-
-		// throw an exception if this is not an ad. I.e., if an ID of another or inexistent object is passed.
-		if ( ! $this->is_ad ) {
-			throw new Rest_Exception( serialize( new \WP_Error(
-				'rest_post_invalid_id',
-				__( 'Invalid ad ID.', 'advanced-ads-pro' ),
-				[ 'status' => 404 ]
-			) ) );
-		}
 	}
 
 	/**
@@ -35,11 +28,11 @@ class Advanced_Ads_Ad extends \Advanced_Ads_Ad {
 	 */
 	public function get_rest_response() {
 		return [
-			'ID'              => $this->id,
-			'title'           => $this->title,
-			'type'            => $this->type,
-			'start_date'      => get_post_datetime( $this->id )->getTimestamp(),
-			'expiration_date' => $this->expiry_date,
+			'ID'              => $this->ad->get_id(),
+			'title'           => $this->ad->get_title(),
+			'type'            => $this->ad->get_type(),
+			'start_date'      => get_post_datetime( $this->ad->get_id() )->getTimestamp(),
+			'expiration_date' => $this->ad->get_expiry_date(),
 			'content'         => $this->prepare_rest_output(),
 		];
 	}
@@ -50,26 +43,26 @@ class Advanced_Ads_Ad extends \Advanced_Ads_Ad {
 	 * @return string
 	 */
 	private function prepare_rest_output() {
-		$user_supplied_content = $this->options( 'change-ad.content', false );
+		$user_supplied_content = $this->ad->get_prop( 'change-ad.content', false );
 		if ( $user_supplied_content ) {
 			// output was provided by the user.
 			return $user_supplied_content;
 		}
 
 		// load ad type specific content filter.
-		$output = $this->type_obj->prepare_output( $this );
+		$output = $this->ad->prepare_output();
 
-		// remove superfluous whitespace
+		// Remove superfluous whitespace
 		$output = str_replace( [ "\n", "\r", "\t" ], ' ', $output );
 		$output = preg_replace( '/\s+/', ' ', $output );
 
 		/**
 		 * Allow filtering of the API ad markup.
 		 *
-		 * @var string           $output The ad content.
-		 * @var \Advanced_Ads_Ad $this   The current ad object.
+		 * @var string $output The ad content.
+		 * @var AD     $this   The current ad object.
 		 */
-		$output = (string) apply_filters( 'advanced-ads-rest-ad-content', $output, $this );
+		$output = (string) apply_filters( 'advanced-ads-rest-ad-content', $output, $this->ad );
 
 		return $output;
 	}
@@ -77,13 +70,13 @@ class Advanced_Ads_Ad extends \Advanced_Ads_Ad {
 	/**
 	 * If tracking is active, filter the attributes to remove tracking-specific frontend attributes.
 	 *
-	 * @param array            $attributes Keys are attribute names, values their respective values.
-	 * @param \Advanced_Ads_Ad $ad         The ad object. Check if it's the same as the current one.
+	 * @param array $attributes Keys are attribute names, values their respective values.
+	 * @param Ad    $ad         Ad instance.
 	 *
 	 * @return array
 	 */
-	public function filter_tracking_attributes( array $attributes, \Advanced_Ads_Ad $ad ) {
-		if ( $this->id !== $ad->id ) {
+	public function filter_tracking_attributes( array $attributes, Ad $ad ) {
+		if ( $this->ad->get_id() !== $ad->get_id() ) {
 			return $attributes;
 		}
 

@@ -1,15 +1,17 @@
-# Translation of Sticky Ads in Vietnamese
-# This file is distributed under the same license as the Sticky Ads package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-02-10 12:19:40+0000\n"
+"Project-Id-Version: Sticky Ads\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-12-17T06:29:13+00:00\n"
+"PO-Revision-Date: 2022-02-10 12:19:40+0000\n"
+"Language: vi_VN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: GlotPress/2.3.1\n"
-"Language: vi_VN\n"
-"Project-Id-Version: Sticky Ads\n"
 
 #. Author of the plugin
 msgid "Thomas Maier, Advanced Ads GmbH"
@@ -167,11 +169,13 @@ msgstr "đóng quáng cáo ..."
 msgid "enable timeout"
 msgstr "bật thời gian hết hạn"
 
-#: admin/views/close-button.php:21 admin/views/metabox.php:42
+#: admin/views/close-button.php:21
+#: admin/views/metabox.php:42
 msgid "right"
 msgstr "phải"
 
-#: admin/views/close-button.php:20 admin/views/metabox.php:40
+#: admin/views/close-button.php:20
+#: admin/views/metabox.php:40
 msgid "left"
 msgstr "trái"
 
@@ -203,27 +207,38 @@ msgstr "Sử dụng <a href=\"https://api.jquery.com/category/selectors/\" targe
 msgid "select position"
 msgstr "chọn vị trí"
 
-#: admin/admin.php:422 admin/admin.php:500 admin/views/close-button.php:16
+#: admin/admin.php:422
+#: admin/admin.php:500
+#: admin/views/close-button.php:16
 msgid "Position"
 msgstr "Vị trí"
 
-#: admin/admin.php:416 admin/admin.php:494
+#: admin/admin.php:416
+#: admin/admin.php:494
 msgid "fix to window position"
 msgstr "vị trí cố định trên trang"
 
-#: admin/admin.php:383 admin/admin.php:460 admin/admin.php:523
+#: admin/admin.php:383
+#: admin/admin.php:460
+#: admin/admin.php:523
 msgid "size"
 msgstr "kích thước"
 
-#: admin/admin.php:370 admin/admin.php:447 admin/admin.php:510
+#: admin/admin.php:370
+#: admin/admin.php:447
+#: admin/admin.php:510
 msgid "close button"
 msgstr "nút đóng"
 
-#: admin/admin.php:360 admin/admin.php:409 admin/admin.php:487
+#: admin/admin.php:360
+#: admin/admin.php:409
+#: admin/admin.php:487
 msgid "effect"
 msgstr "hiệu ứng"
 
-#: admin/admin.php:350 admin/admin.php:399 admin/admin.php:477
+#: admin/admin.php:350
+#: admin/admin.php:399
+#: admin/admin.php:477
 msgid "show the ad"
 msgstr "hiện quảng cáo"
 

@@ -1,6 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+
+use AdvancedAds\Framework\Utilities\Params;
 
 /**
+ * Class Advanced_Ads_Geo_Visitor_Profile
+ *
  * @property-read bool   $has_visitor_profile
  * @property-read string $city
  * @property-read string $region
@@ -16,47 +20,56 @@ class Advanced_Ads_Geo_Visitor_Profile {
 
 	/**
 	 * Whether there is a saved profile.
+	 *
 	 * @var bool
 	 */
 	private $has_visitor_profile = false;
+
 	/**
 	 * The visitor's city.
+	 *
 	 * @var string
 	 */
 	private $city;
 
 	/**
 	 * The visitor's region.
+	 *
 	 * @var string
 	 */
 	private $region;
 
 	/**
 	 * The visitor's country code, ISO-3166-1 alpha-2.
+	 *
 	 * @var string
 	 */
 	private $country_code;
 
 	/**
 	 * The visitor's continent code, cf. https://www.php.net/manual/en/function.geoip-continent-code-by-name.php.
+	 *
 	 * @var string
 	 */
 	private $continent_code;
 
 	/**
 	 * Whether the visitor is in the EU.
+	 *
 	 * @var bool
 	 */
 	private $is_eu_state;
 
 	/**
 	 * The visitor's geolocation latitude.
+	 *
 	 * @var float
 	 */
 	private $lat;
 
 	/**
 	 * The visitor's geolocation longitude.
+	 *
 	 * @var float
 	 */
 	private $lon;
@@ -66,7 +79,7 @@ class Advanced_Ads_Geo_Visitor_Profile {
 	 * If not, return early.
 	 */
 	public function __construct() {
-		if ( ! isset( $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ] ) ) {
+		if ( ! Params::cookie( self::VISITOR_INFO_COOKIE_NAME ) ) {
 			return;
 		}
 		try {
@@ -93,10 +106,10 @@ class Advanced_Ads_Geo_Visitor_Profile {
 	 * @throws RuntimeException If cookie has unexpected values.
 	 */
 	private function parse_raw_cookie() {
-		$value = json_decode( wp_unslash( $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ] ), true );
+		$value = json_decode( wp_unslash( Params::cookie( self::VISITOR_INFO_COOKIE_NAME ) ), true );
 
 		if ( array_key_exists( 'conditions', $value ) && array_key_exists( 'geo_targeting', $value['conditions'] ) ) {
-			// get the random key inside geo_targeting
+			// Get the random key inside geo_targeting.
 			$value = reset( $value['conditions']['geo_targeting'] );
 			if ( is_array( $value ) && array_key_exists( 'data', $value ) ) {
 				return $value['data'];
@@ -108,8 +121,10 @@ class Advanced_Ads_Geo_Visitor_Profile {
 
 	/**
 	 * Get all values readonly.
+	 *
+	 * @param string $name Name of the property.
+	 *
 	 * @return mixed
-	 * @noinspection MagicMethodsValidityInspection
 	 */
 	public function __get( $name ) {
 		return $this->{$name};

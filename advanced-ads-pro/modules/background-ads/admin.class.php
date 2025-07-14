@@ -1,4 +1,6 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * Background ads placement module.
@@ -9,49 +11,28 @@ class Advanced_Ads_Pro_Module_Background_Ads_Admin {
 	 * Constructor. Register relevant hooks.
 	 */
 	public function __construct() {
-
-		// add background ads placement
-		add_action( 'advanced-ads-placement-types', [ $this, 'add_placement' ] );
-		// content of background ads placement
 		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'placement_options' ], 10, 2 );
-
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
-		add_action( 'advanced-ads-placements-list-after', [ $this, 'placements_list_after' ] );
+		add_action( 'admin_footer', [ $this, 'inline_script' ] );
 	}
 
 	/**
-	 * Add the placement definition to the placement's repository.
+	 * Render placement option.
 	 *
-	 * @param array $types Existing placement definitions.
-	 *
-	 * @return array
+	 * @param string    $placement_slug Placement id.
+	 * @param Placement $placement      Placement instance.
 	 */
-	public function add_placement( $types ) {
-		$types['background'] = [
-			'title'       => __( 'Background Ad', 'advanced-ads-pro' ),
-			'description' => __( 'Background of the website behind the main wrapper.', 'advanced-ads-pro' ),
-			'image'       => AAP_BASE_URL . 'modules/background-ads/assets/img/background.png',
-			'order'       => 70,
-			'options'     => [
-				'allowed_ad_types' => [ 'image', 'plain' ],
-			],
-		];
-
-		return $types;
-	}
-
-	public function placement_options( $placement_slug = '', $placement = [] ){
-	    if( 'background' === $placement['type'] ){
-		    $bg_color = ( isset($placement['options']['bg_color']) ) ? $placement['options']['bg_color'] : '';
-		    $option_content = '<input type="text" value="'. $bg_color .'" class="advads-bg-color-field" name="advads[placements]['. $placement_slug . '][options][bg_color]"/>';
+	public function placement_options( $placement_slug, $placement ){
+	    if ( $placement->is_type( 'background' ) ) {
+			$data = $placement->get_data();
+		    $bg_color = ( isset($data['bg_color']) ) ? $data['bg_color'] : '';
+		    $option_content = '<input type="text" value="'. $bg_color .'" class="advads-bg-color-field" name="advads[placements][options][bg_color]"/>';
 		    $description = __( 'Select a background color in case the background image is not high enough to cover the whole screen.', 'advanced-ads-pro' );
-		    if( class_exists( 'Advanced_Ads_Admin_Options' ) ){
-			Advanced_Ads_Admin_Options::render_option(
+			WordPress::render_option(
 				'placement-background-color',
 				__( 'background', 'advanced-ads-pro' ),
 				$option_content,
 				$description );
-		    }
 	    }
 
 	}
@@ -61,34 +42,31 @@ class Advanced_Ads_Pro_Module_Background_Ads_Admin {
 	 *
 	 * @since 1.8
 	 */
-	function admin_scripts( ) {
+	function admin_scripts() {
+		$screen = get_current_screen();
 
-	    if( ! class_exists( 'Advanced_Ads_Admin' ) ) {
-		    return;
-	    };
+		if ( ! function_exists( 'wp_advads' ) || 'edit-advanced_ads_plcmnt' !== $screen->id ) {
+			return;
+		};
 
-	    $screen = get_current_screen();
-	    if ( 'advanced-ads_page_advanced-ads-placements' === $screen->id ){
-		    // add color picker script
-		    wp_enqueue_style( 'wp-color-picker' );
-		    wp_enqueue_script( 'wp-color-picker' );
-	    }
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_script( 'wp-color-picker' );
 	}
 
 	/**
-	 * render content after the placements list
-	 *  activate color picker fields
-	 *
-	 * @param array $placements array with placements
+	 * Add footer script on the placement screen
 	 *
 	 * @since 1.8
 	 */
-	public function placements_list_after( $placements = [] ) {
+	public function inline_script() {
+		if ( ! $this->is_placement_screen() ) {
+			return;
+		}
 		?>
 		<script>
 			jQuery( $ => {
 				for ( const modal of document.getElementsByClassName( 'advads-modal' ) ) {
-					modal.addEventListener( 'advads-modal-opened', e => {
+					modal.addEventListener( 'advads-modal-opened', (e) => {
 						jQuery( e.target ).find( '.advads-bg-color-field' ).wpColorPicker( {
 							change: ( e, ui ) => {
 								e.target.value = ui.color.toString();
@@ -106,5 +84,24 @@ class Advanced_Ads_Pro_Module_Background_Ads_Admin {
 				}
 			} );
 		</script><?php
+	}
+
+	/**
+	 * Whether we are on placement screen
+	 *
+	 * @return bool
+	 */
+	private function is_placement_screen() {
+		static $is_placement_screen;
+
+		if ( null === $is_placement_screen ) {
+			$screen = get_current_screen();
+			if ( ! $screen ) {
+				return false;
+			}
+			$is_placement_screen = 'edit-advanced_ads_plcmnt' === $screen->id;
+		}
+
+		return $is_placement_screen;
 	}
 }

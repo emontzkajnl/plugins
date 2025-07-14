@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignoreFile
 
 /**
  * Manage backend-facing logic for GamiPress integration
@@ -12,7 +12,7 @@ class Advanced_Ads_Pro_Module_GamiPress_Admin {
 	private $conditions;
 
 	/**
-	 * Advanced_Ads_Pro_Module_BuddyPress_Admin constructor.
+	 * constructor.
 	 */
 	public function __construct() {
 		add_filter( 'advanced-ads-visitor-conditions', [ $this, 'visitor_conditions' ] );

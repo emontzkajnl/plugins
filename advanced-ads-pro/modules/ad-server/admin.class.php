@@ -1,4 +1,6 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * Allow serving ads on external URLs.
@@ -13,7 +15,7 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 	public function __construct() {
 
 		// Add settings section to allow module enabling.
-		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ], 10, 1 );
+		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ] );
 
 		// Check if the module was enabled.
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
@@ -21,10 +23,6 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 			return;
 		}
 
-		// Add server placement.
-		add_action( 'advanced-ads-placement-types', [ $this, 'add_placement' ] );
-		// Content of server placement.
-		add_action( 'advanced-ads-placement-options-after', [ $this, 'placement_options' ], 10, 2 );
 		// Show usage information under "show all options".
 		add_filter( 'advanced-ads-placement-options-after-advanced', [ $this, 'add_placement_setting' ], 10, 2 );
 	}
@@ -57,60 +55,25 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 	}
 
 	/**
-	 * Register the placement in Advanced Ads
-	 *
-	 * @param array $types existing placement types.
-	 *
-	 * @return mixed
-	 */
-	public function add_placement( $types ) {
-		$types['server'] = [
-			'title'       => __( 'Ad Server', 'advanced-ads-pro' ),
-			'description' => __( 'Display ads on external websites.', 'advanced-ads-pro' ),
-			'image'       => AAP_BASE_URL . 'modules/ad-server/assets/img/server.png',
-			'options'     => [
-				'placement-cache-busting'      => false,
-				'placement-display-conditions' => false,
-				'placement-visitor-conditions' => false,
-				'placement-item-alternative'   => false,
-				'placement-tests'              => false,
-			],
-		];
-		return $types;
-	}
-
-	/**
-	 * Register placement options.
-	 *
-	 * @param string $placement_slug placement ID.
-	 * @param array  $placement placement options.
-	 */
-	public function placement_options( $placement_slug = '', $placement = [] ) {
-		if ( 'server' !== $placement['type'] ) {
-			return;
-		}
-	}
-
-	/**
 	 * Show usage information for the ad server
 	 *
-	 * @param string $_placement_slug placement ID.
-	 * @param array  $_placement placement options.
+	 * @param string    $placement_slug Placement id.
+	 * @param Placement $placement      Placement instance.
 	 */
-	public function add_placement_setting( $_placement_slug, $_placement ) {
-
-		if ( 'server' !== $_placement['type'] ) {
+	public function add_placement_setting( $placement_slug, $placement ) {
+		if ( ! $placement->is_type( 'server' ) ) {
 			return;
 		}
 
 		// Publically visible name of the placement. Defaults to the placement slug.
-		$public_slug = ! empty( $_placement['options']['ad-server-slug'] ) ? sanitize_title( $_placement['options']['ad-server-slug'] ) : $_placement_slug;
+		$placement_options = $placement->get_data();
+		$public_slug = ! empty( $placement_options['ad-server-slug'] ) ? sanitize_title( $placement_options['ad-server-slug'] ) : $placement_slug;
 
 		ob_start();
 		include dirname( __FILE__ ) . '/views/placement-settings.php';
 		$slug_content = ob_get_clean();
 
-		Advanced_Ads_Admin_Options::render_option(
+		WordPress::render_option(
 			'ad-server-usage',
 			__( 'Public string', 'advanced-ads-pro' ),
 			$slug_content
@@ -124,7 +87,7 @@ class Advanced_Ads_Pro_Module_Ad_Server_Admin {
 		include dirname( __FILE__ ) . '/views/placement-usage.php';
 		$usage_content = ob_get_clean();
 
-		Advanced_Ads_Admin_Options::render_option(
+		WordPress::render_option(
 			'ad-server-usage',
 			__( 'Usage', 'advanced-ads-pro' ),
 			$usage_content

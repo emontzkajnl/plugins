@@ -1,8 +1,30 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+
 /**
  * Calculates new offsets based on amount of words between ads.
  */
 class Advanced_Ads_Pro_Offset_Shifter {
+	/**
+	 * Hold dom.
+	 *
+	 * @var DOMDocument
+	 */
+	private $dom = null;
+
+	/**
+	 * Hold xpath.
+	 *
+	 * @var DOMXPath
+	 */
+	private $xpath = null;
+
+	/**
+	 * Hold options.
+	 *
+	 * @var array
+	 */
+	private $options = null;
+
 	/**
 	 * Default options.
 	 *
@@ -145,13 +167,9 @@ class Advanced_Ads_Pro_Offset_Shifter {
 				}
 				$prev_text  = [];
 				$prev_is_ad = true;
-				$doing_ad++;
-				continue;
+				++$doing_ad;
 			} elseif ( self::END_EXISTING_AD === $part ) {
-				$doing_ad--;
-				continue;
-			} elseif ( $doing_ad ) {
-				continue;
+				--$doing_ad;
 			} elseif ( self::INSERTION_POINT === $part ) {
 				if ( $prev_ip ) {
 					$r       = $this->add_after_insertion_point( $r, $prev_text );
@@ -272,6 +290,7 @@ class Advanced_Ads_Pro_Offset_Shifter {
 	 * Calculate offset.
 	 *
 	 * @param int $offset Offset.
+	 *
 	 * @return int/false New shifted offset or false.
 	 */
 	private function calc_offset( $offset ) {
@@ -421,15 +440,14 @@ class Advanced_Ads_Pro_Offset_Shifter {
 		$expr = [
 			// The assumption is that a `div` that has a class starting with the frontend prefix is ad.
 			"//div[@class and contains(concat(' ', normalize-space(@class), ' '), ' %s')]",
-			// Waiting for consent ads (Privacy module): `<script type="text/plain" data-tcf="waiting-for-consent" data-id="..." data-bid="..."`
-			"//comment()[contains(.,'data-tcf=\"waiting-for-consent')]"
+			// Waiting for consent ads (Privacy module): `<script type="text/plain" data-tcf="waiting-for-consent" data-id="..." data-bid="..."`.
+			"//comment()[contains(.,'data-tcf=\"waiting-for-consent')]",
 		];
 
 		return sprintf(
 			implode( ' | ', $expr ),
-			sanitize_html_class( Advanced_Ads_Plugin::get_instance()->get_frontend_prefix() )
+			sanitize_html_class( wp_advads()->get_frontend_prefix() )
 		);
-
 	}
 
 	/**
@@ -518,7 +536,7 @@ class Advanced_Ads_Pro_Offset_Shifter {
 		$existing = iterator_to_array( $existing );
 
 		if ( $existing ) {
-			$last  = end( $existing );
+			$last = end( $existing );
 			// Select all text before the first ad.
 			$texts = $this->xpath->query( './/following::text()[not(parent::script or parent::style)]', $last );
 			$texts = iterator_to_array( $texts );
@@ -537,6 +555,4 @@ class Advanced_Ads_Pro_Offset_Shifter {
 		}
 		return $l >= $this->options['words_between_repeats'];
 	}
-
 }
-

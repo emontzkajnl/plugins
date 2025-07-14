@@ -1,6 +1,8 @@
-<?php
+<?php // phpcs:ignoreFile
 
 namespace Advanced_Ads_Pro\Rest_Api;
+
+use AdvancedAds\Constants;
 
 /**
  * Extend the WP_Query to get ads suitable for REST API request.
@@ -15,7 +17,7 @@ class Rest_Ads_Query extends \WP_Query {
 		parent::__construct( array_filter( array_merge(
 			Rest_Query_Params_Helper::setup_query_params( $query_params ),
 			[
-				'post_type' => \Advanced_Ads::POST_TYPE_SLUG,
+				'post_type' => Constants::POST_TYPE_AD,
 				'fields'    => 'ids',
 			]
 		) ) );
@@ -48,13 +50,16 @@ class Rest_Ads_Query extends \WP_Query {
 	}
 
 	/**
-	 * Map array of ad ids into array of \Advanced_Ads_Pro\Rest_Api\Advanced_Ads_Ad arrays.
+	 * Map array of ad ids into array of \Advanced_Ads_Pro\Rest_Api\Ad arrays.
 	 *
 	 * @return array[]
 	 */
 	public function get_ads() {
-		return array_map( static function( $ad_id ) {
-			return ( new Advanced_Ads_Ad( $ad_id ) )->get_rest_response();
-		}, $this->posts );
+		return array_map(
+			function ( $ad_id ) {
+				return ( new Ad( $ad_id ) )->get_rest_response();
+			},
+			$this->posts
+		);
 	}
 }

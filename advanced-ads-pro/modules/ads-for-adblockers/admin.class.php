@@ -1,75 +1,95 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+/**
+ * Admin class for the Ads for Adblockers module.
+ *
+ * @package AdvancedAds\Pro
+ * @author  Advanced Ads <info@wpadvancedads.com>
+ * @since   2.26.0
+ */
 
+use AdvancedAds\Options;
+use AdvancedAds\Constants;
+use AdvancedAds\Abstracts\Placement;
+use AdvancedAds\Utilities\WordPress;
+use AdvancedAds\Importers\XML_Importer;
+
+/**
+ * Admin class
+ */
 class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
-		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init'], 10, 1 );
+		add_action( 'advanced-ads-settings-init', [ $this, 'settings_init' ] );
 
-		$options = Advanced_Ads_Pro::get_instance()->get_options();
-		if ( empty( $options['ads-for-adblockers']['enabled'] ) ) {
+		if ( ! Options::instance()->get( 'adblocker.ads-for-adblockers.enabled' ) ) {
 			return;
 		}
 
-		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'add_placement_setting' ], 10, 2 );
 		add_filter( 'advanced-ads-import-placement', [ $this, 'import_placement' ], 10, 2 );
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'add_placement_setting' ], 10, 2 );
 	}
 
-	public function settings_init($hook) {
-		$admin = Advanced_Ads_Admin::get_instance();
-		$hook  = $admin->plugin_screen_hook_suffix;
-
-		// add new section
+	/**
+	 * Initializes the settings
+	 *
+	 * @return void
+	 */
+	public function settings_init(): void {
 		add_settings_field(
 			'module-ads-for-adblockers',
 			__( 'Ads for ad blockers', 'advanced-ads-pro' ),
 			[ $this, 'render_settings' ],
-			Advanced_Ads_Pro::OPTION_KEY . '-settings',
-			Advanced_Ads_Pro::OPTION_KEY . '_modules-enable'
+			ADVADS_SETTINGS_ADBLOCKER,
+			'advanced_ads_adblocker_setting_section'
 		);
 	}
 
-	public function render_settings() {
-		$options           = Advanced_Ads_Pro::get_instance()->get_options();
-		$module_enabled    = isset( $options['ads-for-adblockers']['enabled'] ) && $options['ads-for-adblockers']['enabled'];
-		$cb_dashicon_class = ! empty( $options['cache-busting']['enabled'] ) ? 'dashicons-yes advads-color-green' : 'dashicons-no color-red';
-		$ab_dashicon_class = ! empty( Advanced_Ads::get_instance()->options()['use-adblocker'] ) ? 'dashicons-yes advads-color-green' : 'dashicons-no color-red';
-		include_once dirname( __FILE__ ) . '/views/settings.php';
+	/**
+	 * Render 'Ads For Adblocker' settings
+	 *
+	 * @return void
+	 */
+	public function render_settings(): void {
+		$module_enabled    = Options::instance()->get( 'adblocker.ads-for-adblockers.enabled' );
+		$cb_dashicon_class = ! empty( Advanced_Ads_Pro::get_instance()->get_options()['cache-busting']['enabled'] ) ? 'dashicons-yes advads-color-green' : 'dashicons-no color-red';
+		$ab_dashicon_class = Options::instance()->get( 'adblocker.use-adblocker' ) ? 'dashicons-yes advads-color-green' : 'dashicons-no color-red';
+
+		include_once __DIR__ . '/views/settings.php';
 	}
 
 	/**
 	 * Render alternative item option.
 	 *
-	 * @param string $_placement_slug
-	 * @param array $_placement
+	 * @param string    $placement_slug Placement id.
+	 * @param Placement $placement      Placement instance.
 	 */
-	public function add_placement_setting( $_placement_slug, $_placement ) {
-		$placement_types = Advanced_Ads_Placements::get_placement_types();
-		if ( isset( $placement_types[ $_placement['type'] ]['options']['placement-item-alternative'] ) && ! $placement_types[ $_placement['type'] ]['options']['placement-item-alternative'] ) {
+	public function add_placement_setting( $placement_slug, $placement ) {
+		$type_option = $placement->get_type_object()->get_options();
+		if ( isset( $type_option['placement-item-alternative'] ) && ! $type_option['placement-item-alternative'] ) {
 			return;
 		}
 
-		$options = Advanced_Ads_Pro::get_instance()->get_options();
-		$items = $this->items_for_select();
-		$messages = $this->get_messages( $_placement );
-		$cb_off = empty( $options['cache-busting']['enabled'] ) || ( isset( $_placement['options']['cache-busting'] ) && $_placement['options']['cache-busting'] === Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF );
+		$options        = Advanced_Ads_Pro::get_instance()->get_options();
+		$items          = $this->items_for_select();
+		$messages       = $this->get_messages( $placement );
+		$placement_data = $placement->get_data();
+		$cb_off         = empty( $options['cache-busting']['enabled'] ) || ( isset( $placement_data['cache-busting'] ) && Advanced_Ads_Pro_Module_Cache_Busting::OPTION_OFF === $placement_data['cache-busting'] );
 
 		ob_start();
-		include dirname( __FILE__ ) . '/views/placement-item.php';
+		include __DIR__ . '/views/placement-item.php';
 		$item_option_content = ob_get_clean();
-
-		if ( ! class_exists( 'Advanced_Ads_Admin_Options' ) ){
-			echo esc_html__('Please update to Advanced Ads 1.8', 'advanced-ads-pro');
-			return;
-		}
 
 		$ad_blocker_description = sprintf(
 			'%1s. %2s (<a href="%3s" target="_blank">%4s</a>)',
 			__( 'Displayed to visitors with an ad blocker', 'advanced-ads-pro' ),
-			__( 'Cache Busting and Ad blocker fix need to be enabled', 'advanced-ads-pro' ),
-			esc_url( get_admin_url('/','admin.php?page=advanced-ads-settings#top#pro') ),
+			__( 'Cache Busting and Ad blocker disguise need to be enabled', 'advanced-ads-pro' ),
+			esc_url( get_admin_url( '/', 'admin.php?page=advanced-ads-settings#top#pro' ) ),
 			__( 'Settings', 'advanced-ads-pro' )
 		);
 
-		Advanced_Ads_Admin_Options::render_option(
+		WordPress::render_option(
 			'placement-item-alternative',
 			__( 'Ad blocker item', 'advanced-ads-pro' ),
 			$item_option_content,
@@ -86,19 +106,23 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 		static $select = null;
 
 		// Check if result was cached.
-		if ( $select !== null ) {
+		if ( null !== $select ) {
 			return $select;
 		}
 
 		$select = [];
-		$model = Advanced_Ads::get_instance()->get_model();
-
 		// Load all ads.
-		$ads = $model->get_ads( [ 'orderby' => 'title', 'order' => 'ASC'] );
+		$ads = wp_advads_ad_query(
+			[
+				'order'   => 'ASC',
+				'orderby' => 'title',
+			]
+		)->posts;
+
 		foreach ( $ads as $_ad ) {
-			$ad = new Advanced_Ads_Ad( $_ad->ID );
-			if ( in_array( $ad->type, [ 'plain', 'content', 'image' ] ) ) {
-				$select['ads']['id_' . $_ad->ID] = $_ad->post_title;
+			$ad = wp_advads_get_ad( $_ad->ID );
+			if ( $ad->is_type( [ 'plain', 'content', 'image' ] ) ) {
+				$select['ads'][ Constants::ENTITY_AD . '_' . $_ad->ID ] = $_ad->post_title;
 			}
 		}
 
@@ -108,16 +132,17 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 	/**
 	 * Get messages related to selected alternative item.
 	 *
-	 * @param array $_placement
+	 * @param Placement $placement Placement instance.
+	 *
 	 * @return array $messages Array of strings.
 	 */
-	private function get_messages( $_placement ) {
+	private function get_messages( $placement ) {
 		$messages = [];
 
-		if ( ! empty( $_placement['options'] ) ) {
-			$ad = Advanced_Ads_Pro_Module_Ads_For_Adblockers::get_ad_for_adblocker( $_placement['options'] );
+		if ( $placement ) {
+			$ad = Advanced_Ads_Pro_Module_Ads_For_Adblockers::get_item_for_adblocker( $placement );
 			if ( $ad ) {
-				$content = $ad->prepare_frontend_output();
+				$content = $ad->output();
 
 				if ( preg_match( '/<script[^>]+src=[\'"]/is', $content ) ) {
 					$messages[] .= __( 'The chosen ad contains a reference to an external .js file', 'advanced-ads-pro' );
@@ -131,16 +156,17 @@ class Advanced_Ads_Pro_Module_Ads_For_Adblockers_Admin {
 	/**
 	 * Set an ad for adblocker during the import of a placement.
 	 *
-	 * @param array $placement
-	 * @param obj Advanced_Ads_Import
+	 * @param array        $placement Placement data.
+	 * @param XML_Importer $import    Import instance.
+	 *
 	 * @return array $placement
 	 */
-	public function import_placement( $placement, Advanced_Ads_Import $import ) {
-		if ( ! empty ( $placement['options']['item_adblocker'] ) ) {
+	public function import_placement( $placement, XML_Importer $import ) {
+		if ( ! empty( $placement['options']['item_adblocker'] ) ) {
 			$_item = explode( '_', $placement['options']['item_adblocker'] );
 			if ( ! empty( $_item[1] ) ) {
-				$found = $import->search_item( $_item[1], 'id' );
-				$placement['options']['item_adblocker'] = $found ? 'id_' . $found : '';
+				$found                                  = $import->search_item( $_item[1], $_item[0] );
+				$placement['options']['item_adblocker'] = $found ? $_item[0] . '_' . $found : '';
 			}
 		}
 		return $placement;

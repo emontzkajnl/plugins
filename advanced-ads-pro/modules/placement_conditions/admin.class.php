@@ -1,8 +1,14 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Placement conditions administration.
  */
 class Advanced_Ads_Pro_Module_Placement_Conditions_Admin {
+	/**
+	 * The Constructor.
+	 */
 	public function __construct() {
 		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'render_conditions_for_placements' ], 10, 2 );
 	}
@@ -10,30 +16,30 @@ class Advanced_Ads_Pro_Module_Placement_Conditions_Admin {
 	/**
 	 * Render display and visitor condition for placement.
 	 *
-	 * @param string $placement_slug Slug of the placement.
-	 * @param array $placement Placement data.
+	 * @param string    $placement_slug Placement id.
+	 * @param Placement $placement      Placement instance.
 	 */
-	function render_conditions_for_placements( $placement_slug, $placement ) {
-		if ( ! class_exists( 'Advanced_Ads_Admin_Options' )
-			|| ! method_exists( 'Advanced_Ads_Display_Conditions', 'render_condition_list' )
+	public function render_conditions_for_placements( $placement_slug, $placement ) {
+		if (
+			! method_exists( 'Advanced_Ads_Display_Conditions', 'render_condition_list' )
 			|| ! method_exists( 'Advanced_Ads_Visitor_Conditions', 'render_condition_list' )
 		) {
 			return;
 		}
 
-		$placement_types = Advanced_Ads_Placements::get_placement_types();
+		$type_options = $placement->get_type_object()->get_options();
 
-		if ( ! isset( $placement_types[ $placement['type'] ]['options']['placement-display-conditions'] ) || $placement_types[ $placement['type'] ]['options']['placement-display-conditions'] ) {
-			$set_conditions = isset( $placement['options']['placement_conditions']['display'] ) ? $placement['options']['placement_conditions']['display'] : [];
+		if ( ! isset( $type_options['placement-display-conditions'] ) || $type_options['placement-display-conditions'] ) {
+			$set_conditions = $placement->get_display_conditions();
 
 			$list_target = 'advads-placement-condition-list-' . $placement_slug;
-			$form_name   = 'advads[placements][' . $placement_slug . '][options][placement_conditions][display]';
+			$form_name   = 'advads[placements][options][display]';
 
 			ob_start();
 
-			if ( ! empty( $placement_types[ $placement['type'] ]['options']['placement-display-conditions'] ) ) {
+			if ( ! empty( $type_options['placement-display-conditions'] ) ) {
 				// Render only specific conditions.
-				$options['in'] = $placement_types[ $placement['type'] ]['options']['placement-display-conditions'];
+				$options['in'] = $type_options['placement-display-conditions'];
 			} else {
 				$options['in'] = 'global';
 			}
@@ -41,33 +47,29 @@ class Advanced_Ads_Pro_Module_Placement_Conditions_Admin {
 			Advanced_Ads_Display_Conditions::render_condition_list( $set_conditions, $list_target, $form_name, $options );
 			$conditions = ob_get_clean();
 
-			Advanced_Ads_Admin_Options::render_option(
+			WordPress::render_option(
 				'placement-display-conditions',
-				__( 'Display Conditions', 'advanced-ads' ),
+				__( 'Display Conditions', 'advanced-ads-pro' ),
 				$conditions
 			);
 		}
 
+		if ( ! isset( $type_options['placement-visitor-conditions'] ) || $type_options['placement-visitor-conditions'] ) {
 
+			$set_conditions = $placement->get_visitor_conditions();
 
-		if ( ! isset( $placement_types[ $placement['type'] ]['options']['placement-visitor-conditions'] ) || $placement_types[ $placement['type'] ]['options']['placement-visitor-conditions'] ) {
-
-			$set_conditions = isset( $placement['options']['placement_conditions']['visitors'] ) ? $placement['options']['placement_conditions']['visitors'] : [];
-
-			$list_target = 'advads-placement-condition-list-visitor' . $placement_slug;
-			$form_name = 'advads[placements][' . $placement_slug . '][options][placement_conditions][visitors]';
+			$list_target = 'advads-placement-condition-list-visitor-' . $placement_slug;
+			$form_name   = 'advads[placements][options][visitors]';
 
 			ob_start();
 			Advanced_Ads_Visitor_Conditions::render_condition_list( $set_conditions, $list_target, $form_name );
 			$conditions = ob_get_clean();
 
-			Advanced_Ads_Admin_Options::render_option(
+			WordPress::render_option(
 				'placement-visitor-conditions',
-				__( 'Visitor Conditions', 'advanced-ads' ),
+				__( 'Visitor Conditions', 'advanced-ads-pro' ),
 				$conditions
 			);
 		}
 	}
-
-
 }

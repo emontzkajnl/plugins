@@ -1,5 +1,10 @@
 <?php
 /**
+ * View for the MaxMind license key setting.
+ *
+ * @package AdvancedAds\Pro\Modules\Geo
+ * @author  Advanced Ads <info@wpadvancedads.com>
+ *
  * @var string $license_key
  * @var bool   $use_filters
  */
@@ -11,6 +16,7 @@ printf(
 	esc_attr( $license_key )
 );
 ?>
+
 <p class="description">
 	<a target="_blank" class="advads-external-link" rel="noopener" href="https://support.maxmind.com/hc/en-us/articles/4407111582235-Generate-a-License-Key">
 		<?php esc_attr_e( 'Manual', 'advanced-ads-pro' ); ?>

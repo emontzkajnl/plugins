@@ -2,9 +2,12 @@
 /**
  * Template to show the ad.
  *
+ * @package Advanced_Ads_Pro
+ *
  * @var string $placement_content content of the placement.
  * @var string $public_slug public slug or placement ID send as $_GET['p'] to allow placement-specific usage of the hooks.
  */
+
 ?>
 <!DOCTYPE html>
 <html>

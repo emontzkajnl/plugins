@@ -1,4 +1,4 @@
-<?php
+<?php //phpcs:ignoreFile
 
 /**
  * Parallax class.
@@ -29,24 +29,46 @@ class Advanced_Ads_Pro_Module_Parallax {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_filter( 'advanced-ads-placement-types', [ $this, 'show_options_on_placement' ] );
+		add_action( 'init', [ $this, 'set_show_options_on_placement' ] );
+		add_action( 'init', [ $this, 'start_module' ], 30 );
+	}
+
+	public function start_module() {
+		if ( ! $this->enabled_placement_exists() ) {
+			return;
+		}
+
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			new Advanced_Ads_Pro_Module_Parallax_Admin_UI( $this );
+
+			return;
+		}
+
+		new Advanced_Ads_Pro_Module_Parallax_Frontend( $this );
 	}
 
 	/**
-	 * Iterate all placement types and add parallax options to allowed placements.
+	 * Add filter to set placement option for parallax
 	 *
-	 * @param iterable $placement_types Array of placement types array.
-	 *
-	 * @return iterable
+	 * @return void
 	 */
-	public function show_options_on_placement( iterable $placement_types ): iterable {
-		foreach ( $this->get_allowed_placement_types() as $placement_type ) {
-			if ( array_key_exists( $placement_type, $placement_types ) ) {
-				$placement_types[ $placement_type ]['options']['show_parallax'] = true;
-			}
+	public function set_show_options_on_placement() {
+		foreach ( $this->get_allowed_placement_types() as $type_id ) {
+			add_filter( 'advanced-ads-placement-' . $type_id . '-options', [ $this, 'set_show_parallax_option' ] );
 		}
+	}
 
-		return $placement_types;
+	/**
+	 * Add parallax options to allowed placements.
+	 *
+	 * @param array $options Array of placement options.
+	 *
+	 * @return array
+	 */
+	public function set_show_parallax_option( $options ): array {
+		$options['show_parallax'] = true;
+
+		return $options;
 	}
 
 	/**
@@ -56,8 +78,8 @@ class Advanced_Ads_Pro_Module_Parallax {
 	 * @return bool
 	 */
 	public function enabled_placement_exists(): bool {
-		foreach ( Advanced_Ads::get_instance()->get_model()->get_ad_placements_array() as $placement ) {
-			if ( in_array( $placement['type'], $this->get_allowed_placement_types(), true ) ) {
+		foreach ( wp_advads_get_placements() as $placement ) {
+			if ( $placement->is_type( $this->get_allowed_placement_types() ) ) {
 				return true;
 			}
 		}
@@ -90,7 +112,7 @@ class Advanced_Ads_Pro_Module_Parallax {
 	 *
 	 * @return array
 	 */
-	private function get_allowed_placement_types(): array {
+	public function get_allowed_placement_types(): array {
 		if ( ! isset( $this->allowed_placement_types ) ) {
 			$allowed_placement_types = [
 				'post_content',

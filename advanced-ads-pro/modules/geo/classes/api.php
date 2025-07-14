@@ -1,75 +1,87 @@
 <?php
-
-use AdvancedAdsPro\GeoIp2\Database\Reader;
-use AdvancedAdsPro\GeoIp2\Exception\AddressNotFoundException;
-
 /**
  * API for geo location based functions
  *
- * @package     Advanced Ads Geo
- * @subpackage  Functions
- * @copyright   Copyright (c) 2015, Thomas Maier, webgilde GmbH
- * @since       1.0
+ * @package AdvancedAds\Pro\Modules\Geo
+ * @author  Advanced Ads <info@wpadvancedads.com>
+ */
+
+use GeoIp2\Database\Reader;
+use AdvancedAds\Framework\Utilities\Params;
+use GeoIp2\Exception\AddressNotFoundException;
+
+/**
+ * Class Advanced_Ads_Geo_Api
  */
 class Advanced_Ads_Geo_Api {
 
 	/**
-	 *
-	 * @var Advanced_Ads_Geo_Api
-	 */
-	protected static $instance;
-
-	/**
 	 * Save if the city reader was used already
+	 *
+	 * @var bool
 	 */
 	public $used_city_reader = false;
 
 	/**
 	 * Save ip of current visitor
+	 *
+	 * @var string
 	 */
 	protected $current_ip;
 
 	/**
 	 * Current visitor continent
+	 *
+	 * @var string
 	 */
 	public $current_continent;
 
 	/**
 	 * Current visitor country
+	 *
+	 * @var string
 	 */
 	public $current_country;
 
 	/**
 	 * Current visitor state/region
+	 *
+	 * @var string
 	 */
 	public $current_region;
 
 	/**
 	 * Current visitor city
+	 *
+	 * @var string
 	 */
 	public $current_city;
 
 	/**
 	 * Current visitor latitude
+	 *
+	 * @var float
 	 */
 	public $current_lat;
 
 	/**
 	 * Current visitor longitude
+	 *
+	 * @var float
 	 */
 	public $current_lon;
 
-
-
 	/**
-	 * @var Array of GST states
-	 * @since 1.0.0
+	 * GST states
+	 *
+	 * @var array
 	 */
 	public static $gst_countries = [ 'AU', 'NZ', 'CA', 'CN' ];
 
 	/**
-	 * @var Array of languages used in the MaxMind database
-	 * @since 1.1
+	 * Languages used in the MaxMind database
+	 *
+	 * @var array
 	 */
 	public static $locales = [
 		'en'    => 'English',
@@ -83,38 +95,32 @@ class Advanced_Ads_Geo_Api {
 	];
 
 	/**
-	 * @var array of EU states
-	 * @since 1.0
+	 * EU states
+	 *
+	 * @var array
 	 */
 	public static $eu_states = [ 'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GB', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE' ];
 
 	/**
+	 * Get the instance of this class
 	 *
 	 * @return Advanced_Ads_Geo_Api
 	 */
 	public static function get_instance() {
-		// If the single instance hasn't been set, set it now.
-		if ( null === self::$instance ) {
-			self::$instance = new self();
+		static $instance;
+
+		if ( null === $instance ) {
+			$instance = new self();
 		}
 
-		return self::$instance;
-	}
-
-	/**
-	 Get default country
-	 *
-	 * @since 1.0.0
-	 * @return string $country two letter country code for default country
-	 */
-	static function default_country() {
-		return $country = null;
+		return $instance;
 	}
 
 	/**
 	 * Get country list
 	 *
 	 * @since 1.0.0
+	 *
 	 * @return array $countries list of the available countries
 	 */
 	public static function get_countries() {
@@ -215,7 +221,6 @@ class Advanced_Ads_Geo_Api {
 			'GA'      => __( 'Gabon', 'advanced-ads-pro' ),
 			'GM'      => __( 'Gambia', 'advanced-ads-pro' ),
 			'GE'      => __( 'Georgia', 'advanced-ads-pro' ),
-			'DE'      => __( 'Germany', 'advanced-ads-pro' ),
 			'GR'      => __( 'Greece', 'advanced-ads-pro' ),
 			'GH'      => __( 'Ghana', 'advanced-ads-pro' ),
 			'GI'      => __( 'Gibraltar', 'advanced-ads-pro' ),
@@ -384,8 +389,7 @@ class Advanced_Ads_Geo_Api {
 			'ZW'      => __( 'Zimbabwe', 'advanced-ads-pro' ),
 		];
 
-		// remove continents, if Sucuri method is used
-		// todo: needs more dynamic approach
+		// Remove continents, if Sucuri method is used.
 		if ( 'sucuri' === Advanced_Ads_Geo_Plugin::get_current_targeting_method() ) {
 			unset( $countries['CONT_NA'], $countries['CONT_SA'], $countries['CONT_EU'], $countries['CONT_AF'], $countries['CONT_AS'], $countries['CONT_AU'] );
 		}
@@ -398,7 +402,7 @@ class Advanced_Ads_Geo_Api {
 	 *
 	 * @return false|string
 	 */
-	public function get_GeoLite_country_filename() {
+	public function get_geo_lite_country_filename() {
 		$custom_file = '';
 		/**
 		 * Allow experienced users to choose an existing MaxMind country database file
@@ -407,11 +411,12 @@ class Advanced_Ads_Geo_Api {
 		 */
 		$custom_file = apply_filters( 'advanced-ads-geo-maxmind-geolite2-country-db-filepath', $custom_file );
 
-		if ( is_string( $custom_file ) && $custom_file !== '' && file_exists( $custom_file ) ) {
+		if ( is_string( $custom_file ) && '' !== $custom_file && file_exists( $custom_file ) ) {
 			return $custom_file;
 		}
 
-		if ( ! $upload_full = Advanced_Ads_Geo_Plugin::get_instance()->get_upload_full() ) {
+		$upload_full = Advanced_Ads_Geo_Plugin::get_instance()->get_upload_full();
+		if ( ! $upload_full ) {
 			return false;
 		}
 
@@ -436,7 +441,7 @@ class Advanced_Ads_Geo_Api {
 	 *
 	 * @return false|string
 	 */
-	public function get_GeoLite_city_filename() {
+	public function get_geo_lite_city_filename() {
 		$custom_file = '';
 		/**
 		 * Allow experienced users to choose an existing MaxMind city database file
@@ -445,11 +450,12 @@ class Advanced_Ads_Geo_Api {
 		 */
 		$custom_file = apply_filters( 'advanced-ads-geo-maxmind-geolite2-city-db-filepath', $custom_file );
 
-		if ( is_string( $custom_file ) && $custom_file !== '' && file_exists( $custom_file ) ) {
+		if ( is_string( $custom_file ) && '' !== $custom_file && file_exists( $custom_file ) ) {
 			return $custom_file;
 		}
 
-		if ( ! $upload_full = Advanced_Ads_Geo_Plugin::get_instance()->get_upload_full() ) {
+		$upload_full = Advanced_Ads_Geo_Plugin::get_instance()->get_upload_full();
+		if ( ! $upload_full ) {
 			return false;
 		}
 
@@ -469,21 +475,31 @@ class Advanced_Ads_Geo_Api {
 		return false;
 	}
 
-	public function get_GeoIP2Country_code( $ip_address ) {
+	/**
+	 * Get the country code for a given IP address using the MaxMind GeoIP2 database.
+	 *
+	 * @param string $ip_address The IP address to look up.
+	 * @return string|false The ISO country code if found, or false on failure.
+	 *
+	 * @throws \InvalidArgumentException If the IP address is invalid.
+	 * @throws AddressNotFoundException If the IP address is not found in the database.
+	 * @throws Exception For any other errors.
+	 */
+	public function get_geo_ip2_country_code( $ip_address ) {
 		// Now get the location information from the MaxMind database.
 		try {
-			$reader = $this->get_GeoIP2Country_reader();
+			$reader = $this->get_geo_ip2_country_reader();
 
-			// todo: return default country
+			// todo: return default country.
 
-			// Look up the IP address
+			// Look up the IP address.
 			$record = $reader->country( $ip_address );
 
 			// Get the location.
 			$location = $record->country->isoCode;
 
 			// MaxMind returns a blank for location if it can't find it, but we want to use get shop country to replace it.
-			// todo: return default country
+			// todo: return default country.
 			return $location;
 		} catch ( \InvalidArgumentException $e ) {
 			error_log( 'InvalidArgumentException: ' . $e->getMessage() );
@@ -496,11 +512,21 @@ class Advanced_Ads_Geo_Api {
 		}
 	}
 
-	public function get_GeoIP2_city_reader() {
+	/**
+	 * Retrieves the GeoIP2 City Reader instance.
+	 *
+	 * This function attempts to create a new Reader instance for the MaxMind GeoLite2 City database.
+	 * It first retrieves the filename of the GeoLite2 City database using the `get_geo_lite_city_filename` method.
+	 * If the filename is valid, it creates and returns a new Reader instance pointing to the database.
+	 * If an exception occurs or the filename is invalid, it returns false.
+	 *
+	 * @return Reader|false The Reader instance if successful, or false on failure.
+	 */
+	public function get_geo_ip2_city_reader() {
 		// Now get the location information from the MaxMind database.
 		try {
-			$filename = $this->get_GeoLite_city_filename();
-			if ( $filename === false ) {
+			$filename = $this->get_geo_lite_city_filename();
+			if ( false === $filename ) {
 				return false;
 			}
 
@@ -511,16 +537,26 @@ class Advanced_Ads_Geo_Api {
 		}
 	}
 
-	public function get_GeoIP2_country_reader() {
+	/**
+	 * Retrieves the GeoIP2 country reader.
+	 *
+	 * This function attempts to get the location information from the MaxMind database.
+	 * It first retrieves the filename of the GeoLite country database. If the filename
+	 * is not found, it returns false. Otherwise, it creates a new Reader instance
+	 * pointing to the database file.
+	 *
+	 * @return Reader|false Returns a Reader instance if successful, or false on failure.
+	 */
+	public function get_geo_ip2_country_reader() {
 		// get the location information from the MaxMind database.
 		try {
-			$filename = $this->get_GeoLite_country_filename();
-			if ( $filename === false ) {
+			$filename = $this->get_geo_lite_country_filename();
+			if ( false === $filename ) {
 				return false;
 			}
 
-				// Create a new Reader and point it to the database.
-				return new Reader( $filename );
+			// Create a new Reader and point it to the database.
+			return new Reader( $filename );
 		} catch ( Exception $e ) {
 			return false;
 		}
@@ -530,7 +566,7 @@ class Advanced_Ads_Geo_Api {
 	 * Try to find a valid IP address.
 	 *
 	 * If ADVANCED_ADS_GEO_TEST_IP is defined use this.
-	 * Otherwise @see self::get_raw_IP_address().
+	 * Otherwise @see self::get_raw_ip_address().
 	 *
 	 * If there are multiple IP addresses found, split the string and remove potential ports from IPv4 addresses.
 	 * Validate them using the built-in filter_var() function.
@@ -539,25 +575,31 @@ class Advanced_Ads_Geo_Api {
 	 *
 	 * @return string
 	 */
-	public function get_real_IP_address() {
+	public function get_real_ip_address() {
 		if ( isset( $this->current_ip ) ) {
 			return $this->current_ip;
 		}
 
-		$ip = defined( 'ADVANCED_ADS_GEO_TEST_IP' ) ? ADVANCED_ADS_GEO_TEST_IP : $this->get_raw_IP_address();
+		$ip = defined( 'ADVANCED_ADS_GEO_TEST_IP' ) ? ADVANCED_ADS_GEO_TEST_IP : $this->get_raw_ip_address();
 
-		$ip_array = array_map( function( $ip ) {
-			$ip = trim( $ip );
-			if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
-				return $ip;
+		$ip_array = array_map(
+			function ( $ip ) {
+				$ip = trim( $ip );
+				if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+					return $ip;
+				}
+
+				return preg_replace( '/([^:]+):\d+/', "$1", $ip );
+			},
+			explode( ',', $ip )
+		);
+
+		$ip_array = array_filter(
+			$ip_array,
+			function ( $ip ) {
+				return filter_var( $ip, FILTER_VALIDATE_IP );
 			}
-
-			return preg_replace( '/([^:]+):\d+/', "$1", $ip );
-		}, explode( ',', $ip ) );
-
-		$ip_array = array_filter( $ip_array, function( $ip ) {
-			return filter_var( $ip, FILTER_VALIDATE_IP );
-		} );
+		);
 
 		$ip = reset( $ip_array );
 
@@ -566,7 +608,9 @@ class Advanced_Ads_Geo_Api {
 		 *
 		 * @param string $ip The last found IP address.
 		 */
-		return $this->current_ip = (string) apply_filters( 'get-ip-address', $ip );
+		$this->current_ip = (string) apply_filters( 'get-ip-address', $ip );
+
+		return $this->current_ip;
 	}
 
 	/**
@@ -574,28 +618,31 @@ class Advanced_Ads_Geo_Api {
 	 *
 	 * @return string
 	 */
-	public function get_raw_IP_address() {
-		if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {  // cloudflare proxy, see https://support.cloudflare.com/hc/en-us/articles/200170876-I-can-t-install-mod-cloudflare-and-there-s-no-plugin-to-restore-original-visitor-IP-What-should-I-do-
-			$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
-		} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {  // IP from proxy
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		} elseif ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {   // IP from shared internet
-			$ip = $_SERVER['HTTP_CLIENT_IP'];
-		} else {
-			$ip = $_SERVER['REMOTE_ADDR'];
+	public function get_raw_ip_address() {
+		$keys = [
+			'HTTP_CF_CONNECTING_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_CLIENT_IP',
+		];
+
+		foreach ( $keys as $key ) {
+			$ip = Params::server( $key );
+			if ( ! empty( $ip ) ) {
+				return $ip;
+			}
 		}
 
-		return $ip;
+		return Params::server( 'REMOTE_ADDR' );
 	}
 
 	/**
 	 * Check if the given country code belongs to an EU state
 	 *
-	 * @param str $country two letter country code
+	 * @param string $country Two letter country code.
+	 *
 	 * @return bool true if is EU member state
 	 */
 	public function is_eu_state( $country = '' ) {
-		return in_array( $country, self::$eu_states );
+		return in_array( $country, self::$eu_states, true );
 	}
-
 }

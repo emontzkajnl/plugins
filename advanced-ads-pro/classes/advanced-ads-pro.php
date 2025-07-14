@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Abstracts\Ad;
+use AdvancedAds\Frontend\Stats;
+use AdvancedAds\Utilities\Conditional;
+
 /**
  * Class Advanced_Ads_Pro
  */
@@ -22,6 +27,8 @@ class Advanced_Ads_Pro {
 	 * Option name shared by child modules.
 	 *
 	 * @var string
+	 *
+	 * @deprecated AdvancedAds\Pro\Constants::OPTION_KEY
 	 */
 	const OPTION_KEY = 'advanced-ads-pro';
 
@@ -64,17 +71,8 @@ class Advanced_Ads_Pro {
 	 * Must not be called before `plugins_loaded` hook.
 	 */
 	public function init() {
-
-		if ( ! class_exists( 'Advanced_Ads', false ) ) {
-			add_action( 'admin_notices', [ $this, 'missing_plugin_notice' ] );
-			return;
-		}
-
 		// TODO: Update routines will be handled by the Advanced Ads Framework. Move this function then accordingly.
 		$this->plugin_updates();
-
-		// Load gettext domain.
-		$this->load_textdomain();
 
 		// Load config and modules.
 		$options = $this->get_options();
@@ -84,11 +82,10 @@ class Advanced_Ads_Pro {
 		if ( is_admin() ) {
 			new Advanced_Ads_Pro_Admin();
 			// Run after the internal Advanced Ads version has been updated by the `Advanced_Ads_Upgrades`, because.
-			// The `Advanced_Ads_Admin_Notices` can update this version, and the `Advanced_Ads_Upgrades` will not be called.
+			// The `Admin_Notices` can update this version, and the `Advanced_Ads_Upgrades` will not be called.
 			add_action( 'init', [ $this, 'maybe_update_capabilities' ] );
 
 			add_filter( 'advanced-ads-notices', [ $this, 'add_notices' ] );
-			add_filter( 'advanced-ads-add-ons', [ $this, 'register_auto_updater' ], 10 );
 		} else {
 			// Force advanced js file to be attached.
 			add_filter( 'advanced-ads-activate-advanced-js', '__return_true' );
@@ -99,234 +96,10 @@ class Advanced_Ads_Pro {
 		}
 		new Advanced_Ads_Pro_Compatibility();
 
-		// Override shortcodes.
-		remove_shortcode( 'the_ad' );
-		remove_shortcode( 'the_ad_group' );
-		remove_shortcode( 'the_ad_placement' );
-		add_shortcode( 'the_ad', [ $this, 'shortcode_display_ad' ] );
-		add_shortcode( 'the_ad_group', [ $this, 'shortcode_display_ad_group' ] );
-		add_shortcode( 'the_ad_placement', [ $this, 'shortcode_display_ad_placement' ] );
-
-		add_filter( 'advanced-ads-can-display', [ $this, 'can_display_by_display_limit' ], 10, 3 );
+		add_filter( 'advanced-ads-can-display-ad', [ $this, 'can_display_by_display_limit' ], 10, 3 );
 		add_filter( 'advanced-ads-ad-output', [ $this, 'add_custom_code' ], 30, 2 );
-		add_filter( 'advanced-ads-output-final', [ $this, 'encode_ad_custom_code' ], 20, 2 );
+		add_filter( 'advanced-ads-ad-output', [ $this, 'encode_ad_custom_code' ], 20, 2 );
 		add_filter( 'advanced-ads-placement-content-offsets', [ $this, 'placement_content_offsets' ], 10, 6 );
-
-		add_action( 'wp_head', [ $this, 'wp_head' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'wp_enqueue_scripts' ] );
-	}
-
-	/**
-	 * Enqueue front end script.
-	 */
-	public function wp_enqueue_scripts() {
-
-		// Do not enqueue on AMP pages.
-		if ( function_exists( 'advads_is_amp' ) && advads_is_amp() ) {
-			return;
-		}
-
-		wp_enqueue_script(
-			self::FRONTEND_SCRIPT_HANDLE,
-			sprintf( '%sassets/js/advanced-ads-pro%s.js', AAP_BASE_URL, defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min' ),
-			[ 'jquery', ADVADS_SLUG . '-advanced-js' ],
-			AAP_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			self::FRONTEND_SCRIPT_HANDLE,
-			'advanced_ads_cookies',
-			[
-				'cookie_path'      => COOKIEPATH,
-				'cookie_domain'    => COOKIE_DOMAIN,
-			]
-		);
-	}
-
-	/**
-	 * Front end header script.
-	 */
-	public function wp_head() {
-		// Do not enqueue on AMP pages.
-		if ( function_exists( 'advads_is_amp' ) && advads_is_amp() ) {
-			return;
-		}
-
-		?><script type="text/javascript">
-		var advadsCfpQueue = [];
-		var advadsCfpAd = function( adID ){
-			if ( 'undefined' == typeof advadsProCfp ) { advadsCfpQueue.push( adID ) } else { advadsProCfp.addElement( adID ) }
-		};
-		</script>
-		<?php
-
-	}
-
-	/**
-	 * Fired when the plugin is activated.boolean $network_wide True if WPMU superadmin uses"Network Activate" action, false ifWPMU is disabled or plugin isactivated on an individual blog.
-	 *
-	 * @param    boolean $network_wide    True if WPMU superadmin uses
-	 *                                    "Network Activate" action, false if
-	 *                                    WPMU is disabled or plugin is
-	 *                                    activated on an individual blog.
-	 *
-	 * @since    1.2.5
-	 */
-	public static function activate( $network_wide ) {
-		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-
-			if ( $network_wide ) {
-				// Get all blog ids.
-				global $wpdb;
-				$blog_ids         = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
-				$original_blog_id = $wpdb->blogid;
-
-				foreach ( $blog_ids as $blog_id ) {
-					switch_to_blog( $blog_id );
-					self::single_activate();
-				}
-
-				switch_to_blog( $original_blog_id );
-			} else {
-				self::single_activate();
-			}
-		} else {
-			self::single_activate();
-		}
-	}
-
-	/**
-	 * Fired when the plugin is deactivated.boolean $network_wide True if WPMU superadmin uses"Network Activate" action, false ifWPMU is disabled or plugin isactivated on an individual blog.
-	 *
-	 * @param    boolean $network_wide    True if WPMU superadmin uses
-	 *                                    "Network Activate" action, false if
-	 *                                    WPMU is disabled or plugin is
-	 *                                    activated on an individual blog.
-	 *
-	 * @since    1.2.5
-	 */
-	public static function deactivate( $network_wide ) {
-		if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-
-			if ( $network_wide ) {
-				// Get all blog ids.
-				global $wpdb;
-				$blog_ids         = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}" );
-				$original_blog_id = $wpdb->blogid;
-
-				foreach ( $blog_ids as $blog_id ) {
-					switch_to_blog( $blog_id );
-					self::single_deactivate();
-				}
-
-				switch_to_blog( $original_blog_id );
-			} else {
-				self::single_deactivate();
-			}
-		} else {
-			self::single_deactivate();
-		}
-	}
-
-	/**
-	 * Fired when a new site is activated with a WPMU environment.
-	 *
-	 * @param int $blog_id ID of the new blog.
-	 */
-	public static function activate_new_site( $blog_id ) {
-		if ( 1 !== did_action( 'wpmu_new_blog' ) ) {
-			return;
-		}
-
-		switch_to_blog( $blog_id );
-		self::single_activate();
-		restore_current_blog();
-	}
-
-	/**
-	 * Perform when Advanced Ads Pro is enabled on a single site
-	 */
-	public static function single_activate() {
-		// Create new user roles.
-		add_role(
-			'advanced_ads_admin',
-			__( 'Ad Admin', 'advanced-ads-pro' ),
-			[
-				'read'                           => true,
-				'advanced_ads_manage_options'    => true,
-				'advanced_ads_see_interface'     => true,
-				'advanced_ads_edit_ads'          => true,
-				'advanced_ads_manage_placements' => true,
-				'advanced_ads_place_ads'         => true,
-				'upload_files'                   => true,
-				'unfiltered_html'                => true,
-			]
-		);
-		add_role(
-			'advanced_ads_manager',
-			__( 'Ad Manager', 'advanced-ads-pro' ),
-			[
-				'read'                           => true,
-				'advanced_ads_see_interface'     => true,
-				'advanced_ads_edit_ads'          => true,
-				'advanced_ads_manage_placements' => true,
-				'advanced_ads_place_ads'         => true,
-				'upload_files'                   => true,
-				'unfiltered_html'                => true,
-			]
-		);
-		add_role(
-			'advanced_ads_user',
-			__( 'Ad User', 'advanced-ads-pro' ),
-			[
-				'read'                   => true,
-				'advanced_ads_place_ads' => true,
-			]
-		);
-
-		self::enable_placement_test_emails();
-	}
-
-	/**
-	 * Perform when Advanced Ads Pro is deactivated on a single site.
-	 */
-	public static function single_deactivate() {
-		// Remove user roles.
-		remove_role( 'advanced_ads_admin' );
-		remove_role( 'advanced_ads_manager' );
-		remove_role( 'advanced_ads_user' );
-
-		self::disable_placement_test_emails();
-	}
-
-	/**
-	 * Show warning if Advanced Ads js is not activated
-	 */
-	public function missing_plugin_notice() {
-		echo '
-		<div class="error">
-		  <p>' . sprintf(
-			wp_kses(
-				// Translators: %s is the plugin’s name.
-				__( '<strong>%s</strong> requires the <strong><a href="https://wpadvancedads.com" target="_blank">Advanced Ads</a></strong> plugin to be installed and activated on your site.', 'advanced-ads-pro' ),
-				[
-					'strong' => [],
-					'a'      => [
-						'href'   => [],
-						'target' => [],
-					],
-				]
-			),
-			'Advanced Ads Pro'
-		) . '&nbsp;';
-		$plugins = get_plugins();
-		if ( isset( $plugins['advanced-ads/advanced-ads.php'] ) ) { // Is installed, but not active.
-			echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( 'plugins.php?action=activate&amp;plugin=advanced-ads/advanced-ads.php&amp', 'activate-plugin_advanced-ads/advanced-ads.php' ) ) . '">' . esc_html__( 'Activate Now', 'advanced-ads-pro' ) . '</a>';
-		} else {
-			echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=advanced-ads' ), 'install-plugin_advanced-ads' ) ) . '">' . esc_html__( 'Install Now', 'advanced-ads-pro' ) . '</a>';
-		}
-		echo '</p></div>';
 	}
 
 	/**
@@ -382,34 +155,10 @@ class Advanced_Ads_Pro {
 	}
 
 	/**
-	 * Load the plugin’s text domain.
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain( AAP_SLUG, false, AAP_BASE_DIR . '/languages' );
-	}
-
-	/**
-	 * Register plugin for the auto updater in the base plugin
-	 *
-	 * @param array $plugins plugin that are already registered for auto updates.
-	 * @return array $plugins
-	 */
-	public function register_auto_updater( array $plugins = [] ) {
-
-		$plugins['pro'] = [
-			'name'         => AAP_PLUGIN_NAME,
-			'version'      => AAP_VERSION,
-			'path'         => AAP_BASE_PATH . 'advanced-ads-pro.php',
-			'options_slug' => self::OPTION_KEY,
-		];
-		return $plugins;
-	}
-
-	/**
 	 * Add autoptimize support
 	 *
 	 * @param string          $ad_content ad content.
-     * @return string output that should not be changed by Autoptimize.
+	 * @return string output that should not be changed by Autoptimize.
 	 */
 	public function autoptimize_support( $ad_content = '' ) {
 		return '<!--noptimize-->' . $ad_content . '<!--/noptimize-->';
@@ -423,14 +172,14 @@ class Advanced_Ads_Pro {
 	 */
 	public function internal_options( $set_defaults = true ) {
 		if ( ! $set_defaults ) {
-			return get_option( AAP_PLUGIN_NAME . '-internal', [] );
+			return get_option( 'Advanced Ads Pro' . '-internal', [] );
 		}
 
 		if ( ! isset( $this->internal_options ) ) {
 			$defaults               = [
 				'version' => AAP_VERSION,
 			];
-			$this->internal_options = get_option( AAP_PLUGIN_NAME . '-internal', [] );
+			$this->internal_options = get_option( 'Advanced Ads Pro' . '-internal', [] );
 			// Save defaults.
 			if ( $this->internal_options === [] ) {
 				$this->internal_options = $defaults;
@@ -448,7 +197,7 @@ class Advanced_Ads_Pro {
 	 */
 	public function update_internal_options( array $options ) {
 		$this->internal_options = $options;
-		update_option( AAP_PLUGIN_NAME . '-internal', $options );
+		update_option( 'Advanced Ads Pro' . '-internal', $options );
 	}
 
 	/**
@@ -532,23 +281,20 @@ class Advanced_Ads_Pro {
 	/**
 	 * Check if the ad can be displayed based on display limit
 	 *
-	 * @param bool            $can_display existing value.
-	 * @param Advanced_Ads_Ad $ad Advanced_Ads_Ad object.
-	 * @param array           $check_options tbd.
+	 * @param bool  $can_display   Existing value.
+	 * @param Ad    $ad            Ad instance.
+	 * @param array $check_options Options to check.
+	 *
 	 * @return bool true if limit is not reached, false otherwise
 	 */
-	public function can_display_by_display_limit( $can_display, Advanced_Ads_Ad $ad, $check_options ) {
+	public function can_display_by_display_limit( $can_display, Ad $ad, $check_options ) {
 		if ( ! $can_display ) {
 			return false;
 		}
 
-		$output_options = $ad->options( 'output' );
-
-		if ( empty( $check_options['passive_cache_busting'] ) && ! empty( $output_options['once_per_page'] ) ) {
-			$current_ads = Advanced_Ads::get_instance()->current_ads;
-
-			foreach ( $current_ads as $item ) {
-				if ( $item['type'] === 'ad' && absint( $item['id'] ) === $ad->id ) {
+		if ( empty( $check_options['passive_cache_busting'] ) && $ad->get_prop( 'once_per_page' ) ) {
+			foreach ( Stats::get()->entities as $item ) {
+				if ( $item['type'] === 'ad' && absint( $item['id'] ) === $ad->get_id() ) {
 					return false;
 				}
 			}
@@ -619,37 +365,57 @@ class Advanced_Ads_Pro {
 	 * Note: this won’t work for the Background ad placement. There is a custom solution for that in Advanced_Ads_Pro_Module_Background_Ads:ad_output
 	 *
 	 * @param string          $ad_content Ad content.
-	 * @param Advanced_Ads_Ad $ad ad object.
+	 * @param Ad $ad Ad instance.
 	 * @return string $ad_content Ad content.
 	 */
-	public function add_custom_code( $ad_content, Advanced_Ads_Ad $ad ) {
+	public function add_custom_code( $ad_content, Ad $ad ) {
 		$custom_code = $this->get_custom_code($ad);
 
-		if ( ! empty( $custom_code ) ) {
-			return $ad_content . $custom_code;
+		if ( empty( $custom_code ) ) {
+			return $ad_content;
 		}
-		return $ad_content;
+
+		$privacy = Advanced_Ads_Privacy::get_instance();
+
+		if ( $privacy->is_ad_output_encoded( $ad_content ) ) {
+			// If the ad_content is already encoded, do not append the custom code in plain text after it.
+			return $privacy->encode_ad( $this->decode_output( trim( $ad_content ) ) . $custom_code, $ad );
+		}
+
+		return $ad_content . $custom_code;
+	}
+
+	/**
+	 * Retrieve the original ad content from an encoded script tag
+	 *
+	 * @param string $output the encoded output.
+	 *
+	 * @return string
+	 */
+	private function decode_output( $output ) {
+		// Strips the <script ...> and the </script> then base64_decode the remaining characters.
+		return base64_decode( substr( $output, strpos( $output, '>' ) + 1, -9 ) );
 	}
 
 	/**
 	 * If this ad has custom code, encode the output.
 	 *
 	 * @param string          $output The output string.
-	 * @param Advanced_Ads_Ad $ad     The ad object.
+	 * @param Ad $ad     The ad object.
 	 *
 	 * @return string
 	 */
-	public function encode_ad_custom_code( $output, Advanced_Ads_Ad $ad ) {
+	public function encode_ad_custom_code( $output, Ad $ad ) {
 		$privacy = Advanced_Ads_Privacy::get_instance();
 		if (
 			// don't encode if AMP.
-			( function_exists( 'advads_is_amp' ) && advads_is_amp() )
+			Conditional::is_amp()
 			// privacy module is either not enabled, or shows all ads without consent.
 			|| ( empty( $privacy->options()['enabled'] ) )
 			// Ad is already encoded.
 			|| ( ! method_exists( $privacy, 'is_ad_output_encoded' ) || $privacy->is_ad_output_encoded( $output ) )
 			// Consent is overridden, and this is not an AdSense ad, don't encode it.
-			|| ( $ad->type !== 'adsense' && isset( $ad->options()['privacy']['ignore-consent'] ) )
+			|| ( ! $ad->is_type( 'adsense' ) && $ad->get_prop( 'privacy.ignore-consent' ) )
 		) {
 			return $output;
 		}
@@ -665,13 +431,12 @@ class Advanced_Ads_Pro {
 	/**
 	 * Get the custom code for this ad.
 	 *
-	 * @param Advanced_Ads_Ad $ad The ad object.
+	 * @param Ad $ad The ad object.
 	 *
 	 * @return string
 	 */
-	public function get_custom_code( Advanced_Ads_Ad $ad ) {
-		$options     = $ad->options( 'output' );
-		$custom_code = isset( $options['custom-code'] ) ? $options['custom-code'] : '';
+	public function get_custom_code( Ad $ad ) {
+		$custom_code = $ad->get_prop( 'custom-code' ) ?? '';
 
 		return (string) apply_filters( 'advanced_ads_pro_output_custom_code', $custom_code, $ad );
 	}
@@ -695,69 +460,6 @@ class Advanced_Ads_Pro {
 	 */
 	public static function disable_placement_test_emails() {
 		wp_clear_scheduled_hook( 'advanced-ads-placement-tests-emails' );
-	}
-
-	/**
-	 * Shortcode to include ad in frontend
-	 *
-	 * @param array $atts shortcode attributes.
-	 * @return string content as generated by the shortcode.
-	 */
-	public function shortcode_display_ad( $atts ) {
-		return $this->do_shortcode( $atts, 'shortcode_display_ad' );
-	}
-
-	/**
-	 * Shortcode to include ad from an ad group in frontend
-	 *
-	 * @param array $atts shortcode attributes.
-	 * @return string content as generated by the shortcode.
-	 */
-	public function shortcode_display_ad_group( $atts ) {
-		return $this->do_shortcode( $atts, 'shortcode_display_ad_group' );
-	}
-
-	/**
-	 * Shortcode to display content of an ad placement in frontend
-	 *
-	 * @param array $atts shortcode attributes.
-	 * @return string content as generated by the shortcode.
-	 */
-	public function shortcode_display_ad_placement( $atts ) {
-		return $this->do_shortcode( $atts, 'shortcode_display_ad_placement' );
-	}
-
-	/**
-	 * Create shortcode output.
-	 *
-	 * @param array  $atts shortcode attributes.
-	 * @param string $function_name function to be executed by the shortcode.
-	 *
-	 * @return string content as generated by the shortcode.
-	 */
-	private function do_shortcode( $atts, $function_name ) {
-		$blog_id = isset( $atts['blog_id'] ) ? absint( $atts['blog_id'] ) : 0;
-
-		if ( $blog_id && $blog_id !== get_current_blog_id() && is_multisite() ) {
-			// Prevent database error.
-			if ( ! Advanced_Ads_Pro_Utils::blog_exists( $blog_id ) ) {
-				return ''; }
-
-			if ( method_exists( Advanced_Ads::get_instance(), 'switch_to_blog' ) ) {
-				Advanced_Ads::get_instance()->switch_to_blog( $blog_id );
-			}
-
-			// Use the public available function here.
-			$result = call_user_func( [ Advanced_Ads_Plugin::get_instance(), $function_name ], $atts );
-
-			if ( method_exists( Advanced_Ads::get_instance(), 'restore_current_blog' ) ) {
-				Advanced_Ads::get_instance()->restore_current_blog();
-			}
-			return $result;
-		}
-
-		// Use the public available function here.
-		return call_user_func( [ Advanced_Ads_Plugin::get_instance(), $function_name ], $atts );
 	}
 
 	/**

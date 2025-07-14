@@ -10,6 +10,7 @@
 namespace Advanced_Ads_Pro\Module\Responsive_Ads;
 
 use Advanced_Ads_Pro;
+use AdvancedAds\Utilities\Conditional;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +22,7 @@ class Frontend {
 	/**
 	 * Hook into WordPress.
 	 */
-	public function hooks() {
+	public function hooks(): void {
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
 
 		if ( isset( $options['responsive-ads']['force-responsive-images'] ) && $options['responsive-ads']['force-responsive-images'] ) {
@@ -48,14 +49,13 @@ class Frontend {
 	 * @return void
 	 */
 	public function register_scripts() {
-		if ( function_exists( 'advads_is_amp' ) && advads_is_amp() ) {
+		if ( Conditional::is_amp() ) {
 			return;
 		}
 
 		if ( ! defined( 'ADVADS_SLUG' ) || defined( 'ADVANCED_ADS_RESPONSIVE_DISABLE_BROWSER_WIDTH' ) ) {
 			return;
 		}
-
 
 		$options = Advanced_Ads_Pro::get_instance()->get_options();
 

@@ -1,6 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+/**
+ * Admin bar class
+ *
+ * @package     AdvancedAds\Pro
+ * @author      Advanced Ads <info@wpadvancedads.com>
+ */
 
-use AdvancedAds\Utilities\WordPress;
+use AdvancedAds\Utilities\Conditional;
 
 /**
  * Admin bar functionality.
@@ -14,8 +20,8 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 			return;
 		}
 
-		// TODO load options
-		// add admin bar item with current ads
+		// TODO: load options
+		// Add admin bar item with current ads.
 		if ( ! is_admin() ) {
 			add_action( 'admin_bar_menu', [ $this, 'admin_bar_current_ads' ], 999 );
 		}
@@ -31,16 +37,8 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 	 * @param WP_Admin_Bar $wp_admin_bar Admin bar class.
 	 */
 	public function admin_bar_current_ads( $wp_admin_bar ) {
-
-		$cap = 'manage_options';
-
-		if ( method_exists( 'AdvancedAds\Utilities\WordPress', 'user_cap' ) ) {
-			$cap = WordPress::user_cap( 'advanced_ads_edit_ads' );
-		} elseif ( method_exists( 'Advanced_Ads_Plugin', 'user_cap' ) ) {
-			$cap = Advanced_Ads_Plugin::user_cap( 'advanced_ads_edit_ads' );
-		}
-
-		if ( ! current_user_can( $cap ) ) {
+		// Early bail!!
+		if ( ! Conditional::user_can( 'advanced_ads_edit_ads' ) || ! Advanced_Ads_Ad_Health_Notices::notices_enabled() ) {
 			return;
 		}
 
@@ -78,22 +76,22 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 
 		wp_enqueue_script( 'advanced-ads-pro/cache_busting_admin_bar', $uri_rel_path . 'admin_bar.js', $deps, AAP_VERSION, true );
 
-		// scrollable ads listing when ads long then windows height
+		// Scrollable ads listing when ads long then windows height.
 		$custom_inline_style = '#wp-admin-bar-advads_current_ads-default { overflow-y: auto; max-height:calc(100vh - 50px); } ';
-		wp_add_inline_style('admin-bar', $custom_inline_style );
+		wp_add_inline_style( 'admin-bar', $custom_inline_style );
 	}
 
 	/**
 	 * Output items that do not use cache-busting.
 	 */
 	public function output_items() {
-		// Add item for each ad
-		$ads   = Advanced_Ads::get_instance()->current_ads;
+		// Add item for each ad.
+		$ads   = \AdvancedAds\Frontend\Stats::get()->entities ?? [];
 		$nodes = [];
 
-		foreach ( $ads as $_key => $_ad ) {
-			// TODO $type not used .
-			// TODO types are extendable through Advanced_Ads_Select.
+		foreach ( $ads as $_ad ) {
+			// TODO: $type not used .
+			// TODO: types are extendable through Advanced_Ads_Select.
 			$type = '';
 			switch ( $_ad['type'] ) {
 				case 'ad':
@@ -110,6 +108,7 @@ class Advanced_Ads_Pro_Module_Admin_Bar {
 			$nodes[] = [
 				'title' => esc_html( $_ad['title'] ),
 				'type'  => $type,
+				'count' => $_ad['count'],
 			];
 		}
 

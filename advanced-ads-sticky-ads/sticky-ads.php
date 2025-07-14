@@ -2,47 +2,60 @@
 /**
  * Advanced Ads – Sticky Ads
  *
+ * @package   AdvancedAds
+ * @author    Advanced Ads <support@wpadvancedads.com>
+ * @license   GPL-2.0+
+ * @link      https://wpadvancedads.com
+ * @copyright since 2013 Advanced Ads
+ *
  * @wordpress-plugin
  * Plugin Name:       Advanced Ads – Sticky Ads
- * Plugin URI:        http://wpadvancedads.com/add-ons/sticky-ads/
+ * Version:           2.0.2
  * Description:       Advanced ad positioning.
- * Version:           1.8.6
- * Author:            Advanced Ads GmbH
- * Author URI:        http://wpadvancedads.com
+ * Plugin URI:        http://wpadvancedads.com/add-ons/sticky-ads/
+ * Author:            Advanced Ads
+ * Author URI:        https://wpadvancedads.com
  * Text Domain:       advanced-ads-sticky
  * Domain Path:       /languages
+ * License:           GPL-2.0+
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.txt
+ *
+ * @requires
+ * Requires at least: 5.7
+ * Requires PHP:      7.4
+ * Requires Plugins:  advanced-ads
  */
 
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+// Early bail!!
+if ( ! function_exists( 'add_filter' ) ) {
+	header( 'Status: 403 Forbidden' );
+	header( 'HTTP/1.1 403 Forbidden' );
+	exit();
 }
 
-// only load if not already existing (maybe within another plugin I created)
-if ( ! class_exists( 'Sticky_Ads' ) ) {
+if ( defined( 'AA_STICKY_ADS_FILE' ) ) {
+	return;
+}
 
-	// load basic path and url to the plugin
-	define( 'AASADS_BASE_PATH', plugin_dir_path( __FILE__ ) );
-	define( 'AASADS_BASE_DIR', dirname( plugin_basename( __FILE__ ) ) );
-	define( 'AASADS_BASE_URL', plugin_dir_url( __FILE__ ) );
-	define( 'AASADS_SLUG', 'advanced-ads-sticky-ads' );
+define( 'AA_STICKY_ADS_FILE', __FILE__ );
+define( 'AA_STICKY_ADS_VERSION', '2.0.2' );
 
-	define( 'AASADS_VERSION', '1.8.6' );
-	define( 'AASADS_PLUGIN_URL', 'https://wpadvancedads.com' );
-	define( 'AASADS_PLUGIN_NAME', 'Sticky Ads' );
+// Load the autoloader.
+require_once __DIR__ . '/includes/class-autoloader.php';
+\AdvancedAds\StickyAds\Autoloader::get()->initialize();
 
-	include_once( plugin_dir_path( __FILE__ ) . 'classes/plugin.php' );
-	require_once( plugin_dir_path( __FILE__ ) . 'public/public.php' );
-
-	$is_admin = is_admin();
-	$is_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
-
-	new Advanced_Ads_Sticky( $is_admin, $is_ajax );
-
-	// -TODO this basically renders for admin and for ajax (and is not needed for the latter)
-	if ( $is_admin ) {
-	    require_once( plugin_dir_path( __FILE__ ) . 'admin/admin.php' );
-	    new Advanced_Ads_Sticky_Admin();
+if ( ! function_exists( 'wp_advads_stickyads' ) ) {
+	/**
+	 * Returns the main instance of the plugin.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @return \AdvancedAds\StickyAds\Plugin
+	 */
+	function wp_advads_stickyads() {
+		return \AdvancedAds\StickyAds\Plugin::get();
 	}
 }
+
+\AdvancedAds\StickyAds\Bootstrap::get()->start();
 

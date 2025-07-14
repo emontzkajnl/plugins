@@ -1,11 +1,14 @@
-<?php
+<?php // phpcs:ignoreFile
 
 namespace Advanced_Ads_Pro\Rest_Api;
+
+use WP_Term_Query;
+use AdvancedAds\Constants;
 
 /**
  * Extend \WP_Term_Query for REST API.
  */
-class Rest_Groups_Query extends \WP_Term_Query {
+class Rest_Groups_Query extends WP_Term_Query {
 	/**
 	 * The amount of terms found for the current request.
 	 *
@@ -32,7 +35,7 @@ class Rest_Groups_Query extends \WP_Term_Query {
 		$query_params = array_merge(
 			Rest_Query_Params_Helper::setup_query_params( $query_params ),
 			[
-				'taxonomy'     => \Advanced_Ads::AD_GROUP_TAXONOMY,
+				'taxonomy'     => Constants::TAXONOMY_GROUP,
 				'hide_empty'   => false,
 				'hierarchical' => false,
 			]
@@ -43,16 +46,9 @@ class Rest_Groups_Query extends \WP_Term_Query {
 			$query_params['offset'] = ( $query_params['paged'] - 1 ) * $query_params['posts_per_page'];
 		}
 
-		// set up the parent first to populate default query vars
 		parent::__construct();
-
-		// run the count query without limits
 		$this->found_terms = $this->get_count( $query_params );
-
-		// run the actual terms query
 		$this->query( $query_params );
-
-		// after the initial request is resolved, calculate the maximum number of pages.
 		$this->max_num_pages = (int) ceil( $this->found_terms / $this->query_vars['number'] );
 	}
 
@@ -90,13 +86,16 @@ class Rest_Groups_Query extends \WP_Term_Query {
 	}
 
 	/**
-	 * Map array of group ids into array of \Advanced_Ads_Pro\Rest_Api\Advanced_Ads_Group response arrays.
+	 * Map array of group ids into array of \Advanced_Ads_Pro\Rest_Api\Group response arrays.
 	 *
 	 * @return array[]
 	 */
 	public function get_groups() {
-		return array_map( static function( $group_id ) {
-			return ( new Advanced_Ads_Group( $group_id ) )->get_rest_response();
-		}, $this->terms !== null ? $this->terms : [] );
+		return array_map(
+			function ( $group_id ) {
+				return ( new Group( $group_id ) )->get_rest_response();
+			},
+			null !== $this->terms ? $this->terms : []
+		);
 	}
 }

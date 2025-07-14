@@ -1,4 +1,7 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+
+use AdvancedAds\Abstracts\Placement;
+use AdvancedAds\Utilities\WordPress;
 
 /**
  * Admin UI for the parallax option.
@@ -36,21 +39,20 @@ class Advanced_Ads_Pro_Module_Parallax_Admin_UI {
 	/**
 	 * Render parallax option in modal.
 	 *
-	 * @param string $placement_slug Placement ID.
-	 * @param array  $placement      Placement array.
+	 * @param string    $placement_slug Placement ID.
+	 * @param Placement $placement      Placement array.
 	 */
-	public function render_option( string $placement_slug, iterable $placement ): void {
-		$placement_types = Advanced_Ads_Placements::get_placement_types();
-		if ( empty( $placement_types[ $placement['type'] ]['options']['show_parallax'] ) ) {
+	public function render_option( string $placement_slug, $placement ): void {
+		if ( empty( $placement->get_type_object()->get_options()['show_parallax'] ) ) {
 			return;
 		}
 
-		// options are not defined on a new placement
+		// Options are not defined on a new placement.
 		$parallax_options    = wp_parse_args(
-			$placement['options']['parallax'] ?? [],
+			$placement->get_prop( 'parallax' ) ?? [],
 			$this->parallax->get_default_option_values()
 		);
-		$option_prefix       = 'advads[placements][' . $placement_slug . '][options][parallax]';
+		$option_prefix       = 'advads[placements][options][parallax]';
 		$parallax_enabled    = isset( $parallax_options['enabled'] );
 		$parallax_enabled_id = 'advads-option-placement-parallax-enabled-' . $placement_slug;
 		$height_value        = $parallax_options['height']['value'];
@@ -64,7 +66,7 @@ class Advanced_Ads_Pro_Module_Parallax_Admin_UI {
 		require __DIR__ . '/../views/placement-options-after.php';
 		$option_content = ob_get_clean();
 
-		Advanced_Ads_Admin_Options::render_option(
+		WordPress::render_option(
 			'placement-parallax',
 			__( 'Parallax Ads', 'advanced-ads-pro' ),
 			$option_content

@@ -1,4 +1,8 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Abstracts\Ad;
+use AdvancedAds\Abstracts\Group;
+use AdvancedAds\Framework\Utilities\Params;
 
 /**
  * Frontend output of the parallax option.
@@ -10,13 +14,6 @@ class Advanced_Ads_Pro_Module_Parallax_Frontend {
 	 * @var Advanced_Ads_Pro_Module_Parallax
 	 */
 	private $parallax;
-
-	/**
-	 * The generated frontend prefix.
-	 *
-	 * @var string
-	 */
-	private $frontend_prefix;
 
 	/**
 	 * Check if we have already generated the style.
@@ -64,7 +61,6 @@ class Advanced_Ads_Pro_Module_Parallax_Frontend {
 	 */
 	public function __construct( Advanced_Ads_Pro_Module_Parallax $parallax ) {
 		$this->parallax        = $parallax;
-		$this->frontend_prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
 		$this->script_debug    = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		add_filter( 'advanced-ads-output-wrapper-options', [ $this, 'add_ad_wrapper' ], 10, 2 );
@@ -76,34 +72,38 @@ class Advanced_Ads_Pro_Module_Parallax_Frontend {
 	 * If the ad is in a parallax placement, add another wrapper.
 	 *
 	 * @param iterable        $wrapper_options Array with the current wrapper options.
-	 * @param Advanced_Ads_Ad $ad              The ad object to be rendered.
+	 * @param Ad $ad              The ad object to be rendered.
 	 *
 	 * @return iterable
 	 */
-	public function add_ad_wrapper( iterable $wrapper_options, Advanced_Ads_Ad $ad ): iterable {
+	public function add_ad_wrapper( iterable $wrapper_options, Ad $ad ): iterable {
+		$placement = $ad->get_root_placement();
 		if (
-			! isset( $ad->args['placement_type'], $ad->args['parallax']['enabled'] )
-			|| ! $this->parallax->allowed_on_placement( $ad->args['placement_type'] )
-			|| ! $this->ad_has_image( $ad )
+			! $placement ||
+			! ( $placement->get_prop( 'parallax.enabled' ) ) ||
+			! $this->parallax->allowed_on_placement( $placement->get_type() ) ||
+			! $this->ad_has_image( $ad )
 		) {
 			return $wrapper_options;
 		}
 
 		if ( empty( $wrapper_options['id'] ) ) {
-			$wrapper_options['id'] = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix() . wp_rand();
+			$wrapper_options['id'] = wp_advads()->get_frontend_prefix() . wp_rand();
 		}
 
 		$id = $wrapper_options['id'];
 
 		// if we have already wrapped the ad, change the id. Otherwise, register it.
-		if ( array_key_exists( $ad->id, self::$wrapped_output ) ) {
+		if ( array_key_exists( $ad->get_id(), self::$wrapped_output ) ) {
 			$id .= random_int( 1, 100 );
 		} else {
-			self::$wrapped_output[ $ad->id ] = null;
+			self::$wrapped_output[ $ad->get_id() ] = null;
 		}
 
-		$wrapper_options['class'][] = $this->frontend_prefix . 'parallax-content';
-		$parallax_options           = $ad->args['parallax'];
+		$frontend_prefix = wp_advads()->get_frontend_prefix();
+
+		$wrapper_options['class'][] = $frontend_prefix . 'parallax-content';
+		$parallax_options           = $placement->get_prop( 'parallax' );
 		$this->placements[ $id ]    = $parallax_options;
 		$global_style               = $this->generate_global_style();
 		$placement_style            = $this->generate_placement_style( $id, $parallax_options );
@@ -111,7 +111,7 @@ class Advanced_Ads_Pro_Module_Parallax_Frontend {
 
 		// this is a cache-busting AJAX call.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- we're only comparing strings, no security implications.
-		if ( wp_doing_ajax() && $_POST['action'] === 'advads_ad_select' ) {
+		if ( wp_doing_ajax() && Params::post( 'action' ) === 'advads_ad_select' ) {
 			$script_url            = plugins_url( 'assets/js/parallax-ads' . $this->script_debug . '.js', __DIR__ );
 			$localized_object_name = self::LOCALIZE_OBJECT_NAME;
 			$localized_data        = wp_json_encode( $this->get_localized_script_data() );
@@ -120,11 +120,11 @@ class Advanced_Ads_Pro_Module_Parallax_Frontend {
 	(()=>{
 		window.{$localized_object_name} = window.{$localized_object_name} || {$localized_data};
 
-		if (document.getElementById('{$this->frontend_prefix}'+'parallax-acb-script') !== null) {
+		if (document.getElementById('{$frontend_prefix}'+'parallax-acb-script') !== null) {
 			return;
 		}
 		const script = document.createElement('script');
-		script.id = '{$this->frontend_prefix}'+'parallax-acb-script';
+		script.id = '{$frontend_prefix}'+'parallax-acb-script';
 		script.src = '{$script_url}';
 		document.head.appendChild(script);
 
@@ -163,14 +163,15 @@ A_CB_SCRIPT;
 		}
 
 		$this->style_generated = true;
+		$frontend_prefix = wp_advads()->get_frontend_prefix();
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- frontend prefix is already escaped
 		return <<<CSS
-.{$this->frontend_prefix}parallax-container {
+.{$frontend_prefix}parallax-container {
 	position: relative;
 }
 
-.{$this->frontend_prefix}parallax-clip {
+.{$frontend_prefix}parallax-clip {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -181,7 +182,7 @@ A_CB_SCRIPT;
 	overflow: hidden;
 }
 
-.{$this->frontend_prefix}parallax-inner {
+.{$frontend_prefix}parallax-inner {
 	position: fixed;
 	visibility: hidden;
 	width: 100%;
@@ -192,21 +193,18 @@ A_CB_SCRIPT;
 	transform: translateX(-50%);
 }
 
-.{$this->frontend_prefix}parallax-content {
+.{$frontend_prefix}parallax-content {
 	height: 100%;
-}
-.{$this->frontend_prefix}parallax-content * {
-	height: 100%;
-}
-
-.{$this->frontend_prefix}parallax-content {
 	overflow: hidden;
 }
+.{$frontend_prefix}parallax-content * {
+	height: 100%;
+}
 
-.{$this->frontend_prefix}parallax-content img,
-.{$this->frontend_prefix}parallax-content iframe,
-.{$this->frontend_prefix}parallax-content video,
-.{$this->frontend_prefix}parallax-content embed
+.{$frontend_prefix}parallax-content img,
+.{$frontend_prefix}parallax-content iframe,
+.{$frontend_prefix}parallax-content video,
+.{$frontend_prefix}parallax-content embed
  {
 	object-fit: cover;
 	object-position: center;
@@ -225,10 +223,11 @@ CSS;
 	 * @return string
 	 */
 	private function generate_placement_style( string $id, iterable $parallax_options ): string {
-		$parallax_container_id = $this->frontend_prefix . 'parallax-container-' . $id;
+		$frontend_prefix = wp_advads()->get_frontend_prefix();
+		$parallax_container_id = $frontend_prefix . 'parallax-container-' . $id;
 		$css_selectors         = [
 			'container' => '#' . $parallax_container_id,
-			'inner'     => sprintf( '#%s .%sparallax-inner', $parallax_container_id, $this->frontend_prefix ),
+			'inner'     => sprintf( '#%s .%sparallax-inner', $parallax_container_id, $frontend_prefix ),
 			'content'   => '#' . $id,
 		];
 
@@ -290,37 +289,39 @@ CSS;
 	/**
 	 * Filter the ad output by adding parallax-specific wrappers.
 	 *
-	 * @param Advanced_Ads_Ad $ad                The ad object passed from the placement.
+	 * @param Ad $ad                The ad object passed from the placement.
 	 * @param string          $wrapper_id        The ID for this placement wrapper.
 	 * @param string          $additional_output String (script/style) to add after placement.
 	 *
 	 * @return void
 	 */
-	private function filter_output( Advanced_Ads_Ad $ad, string $wrapper_id, string $additional_output ): void {
+	private function filter_output( Ad $ad, string $wrapper_id, string $additional_output ): void {
 		$additional_output = preg_replace( '/\s+/', ' ', $additional_output );
 		/**
 		 * Add a wrapper for the parallax effect around the existing ad wrapper.
 		 *
 		 * @param string          $output   The current ad output string.
-		 * @param Advanced_Ads_Ad $inner_ad The ad object to compare against the ad from the placement.
+		 * @param Ad $inner_ad The ad object to compare against the ad from the placement.
 		 *
 		 * @return string
 		 */
-		add_filter( 'advanced-ads-ad-output', function( $output, Advanced_Ads_Ad $inner_ad ) use ( $ad, $additional_output, $wrapper_id ) {
-			if ( $ad->id !== $inner_ad->id ) {
+		add_filter( 'advanced-ads-ad-output', function( $output, Ad $inner_ad ) use ( $ad, $additional_output, $wrapper_id ) {
+			if ( $ad->get_id() !== $inner_ad->get_id() || ! in_array( $inner_ad->get_root_placement()->get_type(), $this->parallax->get_allowed_placement_types(), true ) ) {
 				return $output;
 			}
 
 			// save the raw output, to re-use it, if the same ad is added in two different parallax placements.
-			if ( self::$wrapped_output[ $ad->id ] === null ) {
-				self::$wrapped_output[ $ad->id ] = $output;
+			if ( self::$wrapped_output[ $ad->get_id() ] === null ) {
+				self::$wrapped_output[ $ad->get_id() ] = $output;
 			}
-			$output = self::$wrapped_output[ $ad->id ];
+			$output = self::$wrapped_output[ $ad->get_id() ];
+
+			$frontend_prefix = wp_advads()->get_frontend_prefix();
 
 			return <<<OUTPUT
-<div class="{$this->frontend_prefix}parallax-container" id="{$this->frontend_prefix}parallax-container-{$wrapper_id}">
-	<div class="{$this->frontend_prefix}parallax-clip">
-		<div class="{$this->frontend_prefix}parallax-inner">
+<div class="{$frontend_prefix}parallax-container" id="{$frontend_prefix}parallax-container-{$wrapper_id}">
+	<div class="{$frontend_prefix}parallax-clip">
+		<div class="{$frontend_prefix}parallax-inner">
 			$output
 		</div>
 	</div>
@@ -338,7 +339,7 @@ OUTPUT;
 	private function get_localized_script_data(): array {
 		return [
 			'classes'    => [
-				'prefix'    => $this->frontend_prefix,
+				'prefix'    => wp_advads()->get_frontend_prefix(),
 				'container' => 'parallax-container-',
 				'clip'      => 'parallax-clip',
 				'inner'     => 'parallax-inner',
@@ -352,29 +353,30 @@ OUTPUT;
 	 * This should also match valid <picture> tags, since they include on `<img>` tag, cf. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
 	 *
 	 *
-	 * @param Advanced_Ads_Ad $ad The current ad object.
+	 * @param Ad $ad The current ad object.
 	 *
 	 * @return bool
 	 */
-	private function ad_has_image( Advanced_Ads_Ad $ad ): bool {
-		if ( $ad->type === 'image' ) {
+	private function ad_has_image( Ad $ad ): bool {
+		if ( $ad->is_type( 'image' ) ) {
 			return true;
 		}
 
 		// Match an opening "<img" tag followed by exactly one whitespace character and see if there is a "src" attribute before the closing ">"
-		return (bool) preg_match( '/<img\s[^>]+?src=/i', $ad->content );
+		return (bool) preg_match( '/<img\s[^>]+?src=/i', $ad->get_content() );
 	}
 
 	/**
 	 * Disable the group refresh if parallax is enabled.
 	 *
-	 * @param bool               $enabled Whether the group refresh is enabled.
-	 * @param Advanced_Ads_Group $group   The current group object.
+	 * @param bool  $enabled Whether the group refresh is enabled.
+	 * @param Group $group   Group instance.
 	 *
 	 * @return bool
 	 */
-	public function disable_group_refresh( bool $enabled, Advanced_Ads_Group $group ): bool {
-		if ( ! $enabled || ! isset( $group->ad_args['placement_type'], $group->ad_args['parallax']['enabled'] ) ) {
+	public function disable_group_refresh( bool $enabled, Group $group ): bool {
+
+		if ( ! $enabled || ! ( $group->is_parent_placement() && $group->get_prop( 'parallax.enabled' ) ) ) {
 			return $enabled;
 		}
 

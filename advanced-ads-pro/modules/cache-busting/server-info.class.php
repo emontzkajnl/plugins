@@ -1,4 +1,8 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Abstracts\Ad;
+use AdvancedAds\Framework\Utilities\Params;
+
 /**
  * Reduce the number of AJAX calls: during the first AJAX call, save the data (in cookies),
  * that cannot be checked using only JS. Later, the passive cache-busting can check that data.
@@ -6,7 +10,7 @@
  * There are 2 ways to update the data array:
  * 1. Define the 'ADVANCED_ADS_PRO_USER_COOKIE_MAX_AGE' constant (in seconds).
  * An ajax requests will be initiated from time to time to update the expired conditions of the ads on the page.
- * 2. Use the "Update visitor conditions cache in the user&#8217;s browsers" option (Settings > Pro > Cache Busting ) and update the page cache.
+ * 2. Use the "Update visitor conditions cache in the user's browsers" option (Settings > Pro > Cache Busting ) and update the page cache.
  * An ajax request will be initiated to update all the conditions of the ads on the page.
  */
 class Advanced_Ads_Pro_Cache_Busting_Server_Info {
@@ -66,9 +70,10 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 	/**
 	 * Get ajax request that will be used in case required cookies do not exist.
 	 *
-	 * @param array $ads An array of Advanced_Ads_Ad objects.
-	 * @param array $args Ad arguments
-	 * @return null/string $elementid Id of the html wrapper.
+	 * @param array $ads  An array of Ad objects.
+	 * @param array $args Ad arguments.
+	 *
+	 * @return void|array
 	 */
 	public function get_ajax_for_passive_placement( $ads, $args, $elementid ) {
 		if ( ! $this->server_info_duration ) {
@@ -105,12 +110,12 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 	/**
 	 * Get server conditions of the ad.
 	 *
-	 * @param $ad Advanced_Ads_Ad
+	 * @param $ad Ad
 	 * @return array
 	 */
-	private function get_server_conditions( Advanced_Ads_Ad $ad ) {
-		$ad_options = $ad->options();
-		$visitors = ( ! empty( $ad_options['visitors'] ) && is_array( $ad_options['visitors'] ) ) ? array_values( $ad_options['visitors'] ) : [];
+	private function get_server_conditions( Ad $ad ) {
+		$visitors = $ad->get_visitor_conditions();
+		$visitors =  ! empty( $visitors ) && is_array( $visitors ) ? array_values( $visitors ) : [];
 		$result = [];
 		foreach ( $visitors as $k => $visitor ) {
 			if ( $info = $this->get_server_condition_info( $visitor ) ) {
@@ -126,7 +131,7 @@ class Advanced_Ads_Pro_Cache_Busting_Server_Info {
 	 * Get info about the server condition.
 	 *
 	 * @param array $visitor Visitor condition.
-	 * @return array/null info about server condition.
+	 * @return array|void info about server condition.
 	 */
 	public function get_server_condition_info( $visitor ) {
 		if ( ! isset( $visitor['type'] ) ) {
@@ -196,13 +201,13 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 		if ( ! $this->can_set_cookie() ) {
 			// Remove cookie.
 			if ( $this->parse_existing_cookies() ) {
-				$this->set_cookie( '' );
+				$this->set_cookie( false );
 			}
 			return;
 		}
 
 		if ( $this->server_info->is_ajax ) {
-			add_action( 'init', [ $this, 'add_server_info' ] );
+			add_action( 'init', [ $this, 'add_server_info' ], 50 );
 		}
 
 		if ( ! empty( $this->server_info->options['vc_cache_reset_actions']['login'] ) ) {
@@ -215,22 +220,23 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 	 * Create cookies during AJAX requests.
 	 */
 	public function add_server_info() {
-		if ( ! isset( $_REQUEST['deferedAds'] ) ) {
+		$request = Params::request( 'deferedAds', [], FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+
+		if ( empty( $request ) ) {
 			return;
 		}
 
 		$e_cookie = $n_cookie = $this->parse_existing_cookies();
 
 		// Parse ajax request.
-		foreach ( (array) $_REQUEST['deferedAds'] as $ajax_query ) {
-			if ( ! isset( $ajax_query['ad_method'] ) || $ajax_query['ad_method'] !== 'placement'
-				|| empty( $ajax_query['server_conditions'] ) ) {
+		foreach ( $request as $query ) {
+			if ( ! isset( $query['ad_method'] ) || $query['ad_method'] !== 'placement' || empty( $query['server_conditions'] ) ) {
 				// The query does not have server conditions.
 				continue;
 			}
 
 			// Prepare new cookies to save.
-			$n_cookie = $this->prepare_new_cookies( $ajax_query['server_conditions'], $n_cookie );
+			$n_cookie = $this->prepare_new_cookies( $query['server_conditions'], $n_cookie );
 		}
 
 		$n_cookie['vc_cache_reset'] = $this->server_info->vc_cache_reset;
@@ -246,9 +252,9 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 	private function parse_existing_cookies() {
 		$n_cookie = [];
 
-		if ( isset( $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ] ) ) {
+		if ( Params::cookie( self::VISITOR_INFO_COOKIE_NAME ) ) {
 			$n_cookie['vc_cache_reset'] = $this->server_info->vc_cache_reset;
-			$e_cookie                   = $_COOKIE[ self::VISITOR_INFO_COOKIE_NAME ];
+			$e_cookie                   = Params::cookie( self::VISITOR_INFO_COOKIE_NAME );
 			$e_cookie                   = wp_unslash( $e_cookie );
 			$e_cookie                   = json_decode( $e_cookie, true );
 
@@ -281,6 +287,7 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 	 *
 	 * @param array $visitors New visitor conditions to add to cookie.
 	 * @param array $n_cookie Existing visitor conditions from cookie.
+	 *
 	 * @return array $n_cookie New cookie.
 	 */
 	public function prepare_new_cookies( $visitors, $n_cookie = [] ) {
@@ -301,22 +308,13 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 	 * Check if the cookie can be set.
 	 */
 	public function can_set_cookie() {
-		$has_duration = $this->server_info->server_info_duration;
-
-		//$consent_given = ! class_exists( 'Advanced_Ads_Privacy' )
-			//|| ! method_exists( Advanced_Ads_Privacy::get_instance(), 'can_set_cookie' )
-			//|| Advanced_Ads_Privacy::get_instance()->can_set_cookie();
-
-
-		//return $has_duration && $consent_given;
-		return $has_duration;
-
+		return $this->server_info->server_info_duration;
 	}
 
 	/**
 	 * Set cookie.
 	 *
-	 * @param string $cookie Cookie.
+	 * @param array|bool $cookie Cookie.
 	 */
 	public function set_cookie( $cookie ) {
 		if ( ! $cookie ) {
@@ -354,5 +352,4 @@ class Advanced_Ads_Pro_Cache_Busting_Visitor_Info_Cookie {
 
 		$this->set_cookie( $n_cookie );
 	}
-
 }

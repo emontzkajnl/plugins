@@ -1,4 +1,17 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Abstracts\Ad;
+use AdvancedAds\Abstracts\Group;
+use AdvancedAds\Abstracts\Placement;
+use AdvancedAds\Compatibility\Compatibility;
+use AdvancedAds\Constants;
+use AdvancedAds\Framework\Utilities\Params;
+use AdvancedAds\Frontend\Stats;
+use AdvancedAds\Slider\Frontend\Frontend;
+use AdvancedAds\Tracking\Utilities\Data;
+use AdvancedAds\Utilities\Conditional;
+use AdvancedAds\Utilities\WordPress;
+
 /**
  * Cache Busting class.
  *
@@ -177,44 +190,82 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 * Constructor
 	 */
     private function __construct() {
-        // Load options (and only execute when enabled).
-        $options = Advanced_Ads_Pro::get_instance()->get_options();
-
-        if ( isset( $options['cache-busting'] ) ) {
-            $this->options = $options['cache-busting'];
-        }
-
 		if ( is_admin() ) {
 			new Advanced_Ads_Pro_Module_Cache_Busting_Admin_UI();
 		}
+		add_action( 'init', [ $this, 'init' ], 30 );
+    }
 
-        $this->is_enabled = $this->options['enabled'] ?? false;
+	/**
+	 * Cache busting initialization
+	 *
+	 * @return void
+	 */
+	public function init() {
+		$options = Advanced_Ads_Pro::get_instance()->get_options();
+
+		if ( isset( $options['cache-busting'] ) ) {
+			$this->options = $options['cache-busting'];
+		}
+
+		$this->is_enabled = $this->options['enabled'] ?? false;
+
 		if ( ! $this->should_init_cb() ) {
-			add_action('wp_enqueue_scripts', [$this, 'check_for_tcf_privacy']);
+			// CB not needed, abort.
+			add_action( 'wp_enqueue_scripts', [ $this, 'check_for_tcf_privacy' ] );
+
 			return;
 		}
 
 		$this->lazy_load_enabled = $options['lazy-load']['enabled'] ?? false;
-		$this->lazy_load_offset = absint( $options['lazy-load']['offset'] ?? 0 );
+		$this->lazy_load_offset  = absint( $options['lazy-load']['offset'] ?? 0 );
 
-        $this->is_ajax = ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-            // An AJAX request but not to `/admin-ajax.php`.
-            || ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'] );
+		// An AJAX request but not necessarily to `/admin-ajax.php`.
+		$this->is_ajax = wp_doing_ajax() || 'XMLHttpRequest' === Params::server( 'HTTP_X_REQUESTED_WITH' );
 
+		if ( ! $this->is_ajax && ! is_admin() ) {
+			add_action( 'wp', [ $this, 'init_frontend' ] );
+			// Load Advads Tracking header scripts.
+			add_filter( 'advanced-ads-tracking-load-header-scripts', [ $this, 'load_tracking_scripts' ], 10, 1 );
+		}
 
-        if ( ! $this->is_ajax && ! is_admin() ) {
-            add_action( 'wp', [ $this, 'init_fronend' ] );
-            // load Advads Tracking header scripts
-            add_filter( 'advanced-ads-tracking-load-header-scripts', [ $this, 'load_tracking_scripts' ], 10, 1 );
-        }
-        $this->fallback_method = ( ! isset( $this->options['default_fallback_method'] ) || $this->options['default_fallback_method'] === 'ajax' ) ? 'ajax' : 'off';
-        if ( 'ajax' === $this->fallback_method ) {
-            $this->server_info = new Advanced_Ads_Pro_Cache_Busting_Server_Info( $this, $this->options );
-        }
+		$this->fallback_method = ( ! isset( $this->options['default_fallback_method'] ) || $this->options['default_fallback_method'] === 'ajax' ) ? 'ajax' : 'off';
 
-        add_filter( 'advanced-ads-ad-output-debug-content', [ $this, 'add_debug_content' ], 10, 2 );
+		if ( 'ajax' === $this->fallback_method ) {
+			$this->server_info = new Advanced_Ads_Pro_Cache_Busting_Server_Info( $this, $this->options );
+		}
+
+		add_filter( 'advanced-ads-ad-output-debug-content', [ $this, 'add_debug_content' ], 10, 2 );
 		add_filter( 'advanced-ads-ajax-ad-select-arguments', [ $this, 'add_default_ajax_arguments' ], 10, 2 );
-    }
+		add_action( 'advanced-ads-placement-options-after-advanced', [ $this, 'placement_options' ], 10, 2 );
+	}
+
+	/**
+	 * Append empty cache busting options to placement advanced options list
+	 *
+	 * @param string    $slug      current placement slug.
+	 * @param Placement $placement current placement data.
+	 *
+	 * @return void
+	 */
+	public function placement_options( $slug, $placement ) {
+		WordPress::render_option(
+			'placement-empty-cache-busting',
+			__( 'Hide when empty', 'advanced-ads-pro' ),
+			sprintf(
+				'<label><input type="hidden" name="advads[placements][options][cache_busting_empty]" value="0"/><input type="checkbox" name="advads[placements][options][cache_busting_empty]" value="1" %s/>%s</label>',
+				checked( $placement->get_prop( 'cache_busting_empty' ) ? true : false, true, false ),
+				esc_html__( 'Remove the placeholder if unfilled.', 'advanced-ads-pro' )
+			),
+			sprintf(
+				'%s %s%s%s',
+				__( 'Deleting an empty placement might lead to a layout shift.', 'advanced-ads-pro' ),
+				'<a href="https://wpadvancedads.com/cumulative-layout-shift-cls-and-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=ad-modal-placements-cb" target="_blank" class="advads-manual-link">',
+				__( 'Manual', 'advanced-ads-pro' ),
+				'</a>'
+			)
+		);
+	}
 
 	/**
 	 * Check if cache-busting should be initialized.
@@ -225,22 +276,21 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 *
 	 * @see self::add_simple_js_item
 	 */
-	private function should_init_cb() {
+	public function should_init_cb() {
 		if ( $this->is_enabled ) {
 			return true;
 		}
 
-		$placements = Advanced_Ads::get_ad_placements_array();
-		foreach ( $placements as $placement ) {
+		foreach ( wp_advads_get_placements() as $placement ) {
 			if (
-				isset( $placement['type'] )
-				&& $placement['type'] === 'custom_position'
-				&& ! empty( $placement['item'] )
+				$placement->is_type( 'custom_position' )
+				&& ! empty( $placement->get_item() )
 				&& Advanced_Ads_Pro::get_instance()->get_options()['placement-positioning'] !== 'php'
 			) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -262,45 +312,40 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      *  Init cache-busting frontend after the `parse_query` hook.
      *  Not ajax, not admin.
      */
-    public function init_fronend() {
+    public function init_frontend() {
         global $wp_the_query;
 
-        if ( apply_filters( 'advanced-ads-pro-cb-frontend-disable', false )
-            // Disable cache-busting on AMP pages.
-            || ( function_exists( 'advads_is_amp' ) && advads_is_amp() )
+        if (
+			apply_filters( 'advanced-ads-pro-cb-frontend-disable', false )
+            || Conditional::is_amp()
             || $wp_the_query->is_feed()
-        ) { return; }
-
+        ) {
+			return;
+		}
 
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
         add_action( 'wp_head', [ $this, 'watch_wp_head'], PHP_INT_MAX );
         add_filter( 'advanced-ads-ad-output', [ $this, 'watch_ad_output' ], 100, 2 );
         add_filter( 'advanced-ads-group-output', [ $this, 'watch_group_output' ], 100, 2 );
-        // override output based on the Advanced_Ads_Ad object conditions
         add_filter( 'advanced-ads-ad-select-override-by-ad', [ $this, 'override_ad_select_by_ad' ], 10, 3 );
-        // override output based on the Advanced_Ads_Group object conditions
         add_filter( 'advanced-ads-ad-select-override-by-group', [ $this, 'override_ad_select_by_group' ], 10, 4 );
         add_action( 'wp_footer', [ $this, 'passive_cache_busting_output' ], 21 );
-        add_filter( 'advanced-ads-can-display', [ $this, 'can_display_by_display_limit' ], 10, 3 );
+        add_filter( 'advanced-ads-can-display-ad', [ $this, 'can_display_by_display_limit' ], 10, 3 );
 
-		if ( ! $this->is_enabled ) {
-			return;
-		}
+        if ( ! $this->is_enabled ) {
+            return;
+        }
 
-		add_filter( 'advanced-ads-ad-select-args', [ $this, 'override_ad_select' ], 100 );
-		add_filter( 'advanced-ads-ad-select-args', [ $this, 'disable_global_output' ], 101 );
-		add_action( 'advanced-ads-can-display-placement', [ $this, 'placement_can_display' ], 12, 2 );
-	}
+        add_filter( 'advanced-ads-ad-select-args', [ $this, 'override_ad_select' ], 100 );
+        add_filter( 'advanced-ads-ad-select-args', [ $this, 'disable_global_output' ], 101 );
+        add_action( 'advanced-ads-can-display-placement', [ $this, 'placement_can_display' ], 12, 2 );
+    }
 
     /**
      * Output passive cache-busting array
      */
     public function passive_cache_busting_output() {
-        // if ( true === WP_DEBUG ) {
-        //     echo '<pre>' . htmlentities( print_r( $this->passive_cache_busting_placements, true ) ) . '</pre>';
-        // }
-
-        $arrays = [
+		$arrays = [
             'window.advads_placement_tests' => Advanced_Ads_Pro_Placement_Tests::get_instance()->get_placement_tests_js( false ),
             'window.advads_passive_ads' => $this->passive_cache_busting_ads,
             'window.advads_passive_groups' => $this->passive_cache_busting_groups,
@@ -311,7 +356,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             'window.advads_ajax_queries_args' => $this->ajax_queries_args,
         ];
 
-        $content = '';
+		$content = '';
         foreach ( $arrays as $name => $array ) {
             if ( $array ) {
                 $has_data = true;
@@ -344,22 +389,17 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 * @return void
 	 */
     public function enqueue_scripts() {
-	    // Include in footer to prevent conflict when Autoptimize and NextGen Gallery are used at the same time.
-	    $uri_rel_path = AAP_BASE_URL . 'assets/js/';
-	    $dependencies = [ 'jquery' ];
+	    wp_advads()->json->add( [ 'frontendPrefix' => wp_advads()->get_frontend_prefix() ] );
+		wp_enqueue_script( 'advanced-ads-pro/postscribe', AA_PRO_BASE_URL . 'assets/js/postscribe.js', [], AAP_VERSION, true );
+	    $dependencies = [ 'advanced-ads-pro/postscribe', 'jquery' ];
 
 	    // If the privacy module is active, add advanced-js as a dependency.
 	    if ( ! empty( Advanced_Ads_Privacy::get_instance()->options()['enabled'] ) ) {
 		    $dependencies[] = ADVADS_SLUG . '-advanced-js';
 	    }
 
-        if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-            wp_register_script( 'krux/postscribe', $uri_rel_path . 'postscribe.js', [], '2.0.8', true );
-            wp_register_script( 'advanced-ads-pro/cache_busting', $uri_rel_path . 'base.js', array_merge( $dependencies, [ 'krux/postscribe' ] ), AAP_VERSION, true );
-        } else {
-            // minified
-            wp_register_script( 'advanced-ads-pro/cache_busting', $uri_rel_path . 'base.min.js', $dependencies, AAP_VERSION, true );
-		}
+		// Include in footer to prevent conflict when Autoptimize and NextGen Gallery are used at the same time.
+		wp_register_script( 'advanced-ads-pro/cache_busting', AA_PRO_BASE_URL . 'assets/dist/front.js', $dependencies, AAP_VERSION, true );
 
 		$info = [
 			'ajax_url'                 => admin_url( 'admin-ajax.php' ),
@@ -373,6 +413,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 			'the_id'                   => get_the_ID(),
 			'is_singular'              => is_singular(),
 		];
+
         if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
             $current_lang = apply_filters( 'wpml_current_language', null );
             $info['ajax_url'] = add_query_arg( 'wpml_lang', $current_lang, $info['ajax_url'] );
@@ -387,18 +428,18 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      * Provide current_ad propery to client.
      *
      * @param string          $content
-     * @param Advanced_Ads_Ad $ad
+     * @param Ad $ad
      *
      * @return string
      */
     public function watch_ad_output( $content, $ad = null ) {
-        if ( isset( $ad ) && $ad instanceof Advanced_Ads_Ad ) {
+        if ( isset( $ad ) && is_an_ad( $ad ) ) {
             // build content (arguments are: id, method, title)
-            if ( ! empty( $ad->global_output ) ) {
-                $this->has_ads[] = [ "$ad->id", 'ad', $ad->title, 'off' ];
+            if ( ! empty( $ad->get_prop( 'ad_args.global_output' ) ) ) {
+                $this->has_ads[] = [ "{$ad->get_id()}", 'ad', $ad->get_title(), 'off' ];
             }
             if ( $this->collecting_js_items ) {
-                $this->has_js_items[] = [ 'id' => $ad->id, 'type' => 'ad', 'title' => $ad->title, 'blog_id' => get_current_blog_id() ];
+                $this->has_js_items[] = [ 'id' => $ad->get_id(), 'type' => 'ad', 'title' => $ad->get_title(), 'blog_id' => get_current_blog_id() ];
             }
         }
 
@@ -409,13 +450,13 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      * Provide current group propery to client.
      *
      * @param string $content
-     * @param Advanced_Ads_Group $group
+     * @param Group $group
      *
      * @return string
      */
-    public function watch_group_output( $content, Advanced_Ads_Group $group ) {
+    public function watch_group_output( $content, Group $group ) {
         if ( $this->collecting_js_items ) {
-            $this->has_js_items[] = [ 'id' => $group->id, 'type' => 'group', 'title' => $group->id ];
+            $this->has_js_items[] = [ 'id' => $group->get_id(), 'type' => 'group', 'title' => $group->get_id() ];
         }
 
         return $content;
@@ -438,16 +479,21 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
     public function override_ad_select( $arguments ) {
         // placements and not Feed only
         $not_feed = empty( $arguments['wp_the_query']['is_feed'] );
-        if ( $arguments['method'] === Advanced_Ads_Select::PLACEMENT && $not_feed ) {
-            $placements = Advanced_Ads::get_ad_placements_array();
-            if ( empty( $placements[ $arguments['id'] ]['item'] ) || ! isset( $placements[ $arguments['id'] ]['type'] ) ) {
+        if ( $arguments['method'] === Constants::ENTITY_PLACEMENT && $not_feed ) {
+			$placement = wp_advads_get_placement( $arguments['id'] );
+
+			if ( empty( $placement) ) {
+				return $arguments;
+			}
+
+            if ( empty( $placement->get_item() ) ) {
                 // placement was created but no item was selected in dropdown
                 unset( $arguments['override'] );
                 return $arguments;
             }
 
-            $arguments['placement_type'] = $placements[ $arguments['id'] ]['type'];
-            $options =  isset( $placements[ $arguments['id'] ]['options'] ) ? (array) $placements[ $arguments['id'] ]['options'] : [];
+            $arguments['placement_type'] = $placement->get_type();
+            $options = $placement->get_data();
 
             foreach ( $options as $_k => $_v ) {
                 if ( ! isset( $arguments[ $_k ] ) ) {
@@ -502,65 +548,81 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 * Return ad, prepared for js handler if the conditions are met.
 	 *
 	 * @param bool|string     $overriden_ad Ad content to override.
-	 * @param Advanced_Ads_Ad $ad Ad object.
+	 * @param Ad $ad Ad object.
 	 * @param array           $args Arguments passed to ads and groups from top level placements/ads/groups.
 	 * @return bool|string Ad content prepared for js handler if the conditions are met.
 	 */
-	public function override_ad_select_by_ad( $overriden_ad, Advanced_Ads_Ad $ad, $args ) {
-        if ( ! $this->can_override_passive( $args ) ) {
-            return $overriden_ad;
-        }
+	public function override_ad_select_by_ad( $overriden_ad, Ad $ad, $args ) {
+		if ( ! $this->can_override_passive( $args ) ) {
+			return $overriden_ad;
+		}
 
-        if ( $this->is_enabled ) {
-            // Cache busting 'auto'.
-            $overriden_ad = $this->cache_busting_auto_for_ad( $overriden_ad, $ad, $args );
-        }
+		if ( $this->is_enabled ) {
+			// Cache busting 'auto'.
+			$overriden_ad = $this->cache_busting_auto_for_ad( $overriden_ad, $ad, $args );
+		}
 
-        if ( false === $overriden_ad ) {
-            // The cache-busting module is disabled or the 'off' fallback has been aplied.
-            $overriden_ad = $this->get_simple_js_ad( $overriden_ad, $ad, $args );
-        }
+		if ( false === $overriden_ad ) {
+			// The cache-busting module is disabled or the 'off' fallback has been aplied.
+			$overriden_ad = $this->get_simple_js_ad( $overriden_ad, $ad, $args );
+		}
 
-        return $overriden_ad;
+		return $overriden_ad;
     }
 
     /**
      * return group, prepared for js handler if the conditions are met
      *
      * @param string $overriden_group group content to override
-     * @param obj $adgroup Advanced_Ads_Group
+     * @param obj $group Group
      * @param array/null $ordered_ad_ids ordered ids of the ads that belong to the group
      * @param array $args argument passed to the 'get_ad_by_group' function
      * @return string/false group content prepared for js handler if the conditions are met
      */
-    public function override_ad_select_by_group( $overriden_group, Advanced_Ads_Group $adgroup, $ordered_ad_ids, $args ) {
+    public function override_ad_select_by_group( $overriden_group, Group $group, $ordered_ad_ids, $args ) {
         if ( ! $this->can_override_passive( $args ) ) {
             return $overriden_group;
         }
 
         if ( $this->is_enabled ) {
             // Cache busting 'auto'.
-            $overriden_group = $this->cache_busting_auto_for_group( $overriden_group, $adgroup, $ordered_ad_ids, $args );
+            $overriden_group = $this->cache_busting_auto_for_group( $overriden_group, $group, $ordered_ad_ids, $args );
         }
 
         if ( false === $overriden_group ) {
             // The cache-busting module is disabled or the 'off' fallback has been aplied.
-            $overriden_group = $this->get_simple_js_group( $overriden_group, $adgroup, $ordered_ad_ids, $args );
+            $overriden_group = $this->get_simple_js_group( $overriden_group, $group, $ordered_ad_ids, $args );
         }
 
         return $overriden_group;
     }
 
 	/**
+	 * Prevents serverside check of visitor conditions for passive ads
+	 *
+	 * @param array $check_options can display check options.
+	 *
+	 * @return array
+	 */
+	public function bypass_can_display_check( array $check_options ) {
+		return array_merge(
+			$check_options,
+			[
+				'passive_cache_busting' => true
+			]
+		);
+	}
+
+	/**
 	 * Return passive ad, prepared for js handler if the conditions are met.
 	 *
 	 * @param bool|string     $overriden_ad Ad content to override.
-	 * @param Advanced_Ads_Ad $ad Ad object.
+	 * @param Ad $ad Ad object.
 	 * @param array           $args Arguments passed to ads and groups from top level placements/ads/groups.
 	 * @return bool|string
 	 */
-    public function cache_busting_auto_for_ad( $overriden_ad, Advanced_Ads_Ad $ad, $args ) {
-        //if it was requested by placement; if cache-busting option does not exists yet, or exist and = 'auto'
+    public function cache_busting_auto_for_ad( $overriden_ad, Ad $ad, $args ) {
+        // If it was requested by placement; if cache-busting option does not exist yet, or exist and = 'auto'.
         $cache_busting_auto = isset( $args['placement_type'] ) && ( ! isset( $args['cache-busting'] ) || $args['cache-busting'] === self::OPTION_AUTO );
         $cache_busting_off = isset( $args['cache-busting'] ) && $args['cache-busting'] === self::OPTION_OFF;
         $prev_is_placement = isset( $args['previous_method'] ) && $args['previous_method'] === 'placement' && isset( $args['previous_id'] );
@@ -572,8 +634,17 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             if ( isset( $args['previous_method'] ) && $args['previous_method'] === 'group' && isset( $args['previous_id'] ) ) {
                 return $ad;
             }
-            $ad->args['cache-busting'] = self::OPTION_ON;
-            $ad->args['cache-busting-orig'] = self::OPTION_AUTO;
+			$ad_args = $ad->get_prop( 'ad_args' );
+			$ad->set_prop_temp(
+				'ad_args',
+				array_merge(
+					$ad_args,
+					[
+						'cache-busting'      => self::OPTION_ON,
+						'cache-busting-orig' => self::OPTION_AUTO,
+					]
+				)
+			);
             $overriden_ad = $this->get_overridden_ajax_ad( $ad, $args );
 
             if ( false === $overriden_ad ) {
@@ -583,12 +654,12 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             return $overriden_ad;
         }
         elseif ( ! $cache_busting_off && ( $cache_busting_auto || $is_passive_all ) ) { // passive method
-            // ad was requested by group `placement->group->ad` or `group->ad`
+            // Ad was requested by group `placement->group->ad` or `group->ad`.
             if ( isset( $args['previous_method'] ) && $args['previous_method'] === 'group' && isset( $args['previous_id'] ) ) {
                 return $ad;
             }
 
-            $needs_backend = $this->ad_needs_backend_request( $ad );
+		    $needs_backend = $this->ad_needs_backend_request( $ad );
 
             // ad was requested by placement `placement->ad` or `ad`
             // check if ad can be delivered without any cache-busting
@@ -608,8 +679,8 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
                 }
 
                 if ( $is_ajax_fallbback && $cache_busting_auto ) {
-                    $ad->args['cache-busting'] = self::OPTION_ON;
-                    $ad->args['cache-busting-orig'] = self::OPTION_AUTO;
+					$ad->set_prop( 'cache-busting', self::OPTION_ON );
+					$ad->set_prop( 'cache-busting-orig', self::OPTION_AUTO );
                     return $this->get_overridden_ajax_ad( $ad, $args );
                 }
 
@@ -650,27 +721,35 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 * Return ad with cache-busting "off" when it is not needed.
 	 *
 	 * @param bool|string     $overriden_ad Ad content to override.
-	 * @param Advanced_Ads_Ad $ad           Ad object.
+	 * @param Ad $ad           Ad object.
 	 * @param array           $args         Arguments passed to ads and groups from top level placements/ads/groups.
 	 *
 	 * @return bool|string
 	 */
-	private function return_ad_with_cb_off( $overriden_ad, Advanced_Ads_Ad $ad, $args ) {
-		$ad->args['cache-busting']      = self::OPTION_OFF;
-		$ad->args['cache-busting-orig'] = self::OPTION_AUTO;
-		$ad->args['global_output']      = true;
-		$ad->global_output              = true;
+	private function return_ad_with_cb_off( $overriden_ad, Ad $ad, $args ) {
+		$ad_args = $ad->get_prop( 'ad_args' );
+		$ad->set_prop_temp(
+			'ad_args',
+			array_merge(
+				$ad_args,
+				[
+					'cache-busting'      => self::OPTION_OFF,
+					'cache-busting-orig' => self::OPTION_AUTO,
+					'global_output'      => true,
+				]
+			)
+		);
+
 		if ( isset( $args['output']['placement_id'] ) ) {
 			if ( ! $this->placement_can_display_not_passive( $args['output']['placement_id'] ) ) {
 				return '';
 			}
-			$this->add_placement_to_current_ads( $args['output']['placement_id'] );
 		}
 
 		return $overriden_ad;
 	}
 
-    public function cache_busting_auto_for_group( $overriden_group, Advanced_Ads_Group $adgroup, $ordered_ad_ids, $args ) {
+    public function cache_busting_auto_for_group( $overriden_group, Group $group, $ordered_ad_ids, $args ) {
         $prev_is_placement = isset( $args['previous_method'] ) && $args['previous_method'] === 'placement' && isset( $args['previous_id'] );
         $cache_busting_auto = isset( $args['placement_type'] ) && ( ! isset( $args['cache-busting'] ) || $args['cache-busting'] === self::OPTION_AUTO );
         $test_id = isset( $args['test_id'] ) ? $args['test_id'] : null;
@@ -678,23 +757,40 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         $cache_busting_off = isset( $args['cache-busting'] ) && $args['cache-busting'] === self::OPTION_OFF;
 
         if ( $cache_busting_auto && ! $this->is_passive_method_used() ) { // ajax method
-            $group_ads = $this->request_passive_ads_of_group( $adgroup, $ordered_ad_ids, $args );
-            if ( $test_id || ! $this->group_ads_static( $group_ads, $adgroup ) ) {
-                $adgroup->ad_args['cache-busting'] = self::OPTION_ON;
-                $adgroup->ad_args['cache-busting-orig'] = self::OPTION_AUTO;
-                $query = self::build_js_query( $args);
-                $overriden_group = $this->get_override_content( $query );
+	        $group_ads = $this->request_passive_ads_of_group( $group, $ordered_ad_ids, $args );
+	        $ad_args   = $group->get_prop( 'ad_args' );
+            if ( $test_id || ! $this->group_ads_static( $group_ads, $group ) ) {
+	            $group->set_prop_temp(
+		            'ad_args',
+		            array_merge(
+			            $ad_args,
+			            [
+				            'cache-busting'      => self::OPTION_ON,
+				            'cache-busting-orig' => self::OPTION_AUTO,
+			            ]
+		            )
+	            );
+	            $query           = self::build_js_query( $args );
+	            $overriden_group = $this->get_override_content( $query );
             }
 
             if ( false === $overriden_group ) {
                 // Static and does not belong to a test.
-                $adgroup->ad_args['cache-busting'] = self::OPTION_OFF;
-                $adgroup->ad_args['cache-busting-orig'] = self::OPTION_AUTO;
-                unset( $adgroup->ad_args['cache_busting_elementid'], $args['cache_busting_elementid'] );
-                $adgroup->ad_args['global_output'] = true;
+				unset( $ad_args['cache_busting_elementid'] );
+				$group->set_prop_temp(
+					'ad_args',
+					array_merge(
+						$ad_args,
+						[
+							'cache-busting'      => self::OPTION_OFF,
+							'cache-busting-orig' => self::OPTION_AUTO,
+							'global_output'      => true,
+						]
+					)
+				);
+				unset( $args['cache_busting_elementid'] );
                 if ( isset( $args['output']['placement_id'] ) ) {
                     if ( ! $this->placement_can_display_not_passive( $args['output']['placement_id'] ) ) { return ''; }
-                    $this->add_placement_to_current_ads( $args['output']['placement_id'] );
                 }
             }
             return $overriden_group;
@@ -704,7 +800,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
                 // add info about the group to the passive cache-busting array
                 $uniq_key = ++self::$adOffset;
 
-                $group_ads = $this->request_passive_ads_of_group( $adgroup, $ordered_ad_ids, $args );
+                $group_ads = $this->request_passive_ads_of_group( $group, $ordered_ad_ids, $args );
 
                 foreach ( $group_ads as $ad ) {
                     $needs_backend = $this->ad_needs_backend_request( $ad );
@@ -713,7 +809,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
                         $is_ajax_fallbback = 'ajax' === $needs_backend;
 
                         // delete info from the passive cache-busting array
-                        $this->delete_passive_group( $adgroup, $args, $uniq_key );
+                        $this->delete_passive_group( $group, $args, $uniq_key );
 
                         if ( isset( $args['output']['placement_id'] ) && ! $this->placement_can_display_not_passive( $args['output']['placement_id'] ) ) {
                             // prevent selection of this placement using JavaScript
@@ -724,8 +820,8 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
                         }
 
                         if ( $is_ajax_fallbback && $cache_busting_auto ) {
-                            $adgroup->ad_args['cache-busting'] = self::OPTION_ON;
-                            $adgroup->ad_args['cache-busting-orig'] = self::OPTION_AUTO;
+                            $group->set_prop( 'cache-busting', self::OPTION_ON );
+                            $group->set_prop( 'cache-busting-orig', self::OPTION_AUTO );
                             $query = self::build_js_query( $args);
                             return $this->get_override_content( $query );
                         } else {
@@ -740,13 +836,23 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
                                 }
                             }
 
-                            $adgroup->ad_args['cache-busting'] = self::OPTION_OFF;
-                            $adgroup->ad_args['cache-busting-orig'] = self::OPTION_AUTO;
-                            unset( $adgroup->ad_args['cache_busting_elementid'], $args['cache_busting_elementid'] );
-                            $adgroup->ad_args['global_output'] = true;
+							$ad_args = $group->get_prop( 'ad_args' );
+							unset( $ad_args['cache_busting_elementid'] );
+							$group->set_prop_temp(
+								'ad_args',
+								array_merge(
+									$ad_args,
+									[
+										'cache-busting'      => self::OPTION_OFF,
+										'cache-busting-orig' => self::OPTION_AUTO,
+										'global_output'      => true,
+									]
+								)
+							);
+
+                            unset( $args['cache_busting_elementid'] );
                             if ( isset( $args['output']['placement_id'] ) ) {
                                 if ( ! $this->placement_can_display_not_passive( $args['output']['placement_id'] ) ) { return ''; }
-                                $this->add_placement_to_current_ads( $args['output']['placement_id'] );
                             }
 
                             return $overriden_group;
@@ -754,19 +860,28 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
                     }
                 }
 
-                if ( $this->group_ads_static( $group_ads, $adgroup ) && ! $is_passive_all && ! $test_id ) {
-                    $adgroup->ad_args['cache-busting'] = self::OPTION_OFF;
-                    $adgroup->ad_args['cache-busting-orig'] = self::OPTION_AUTO;
-                    unset( $adgroup->ad_args['cache_busting_elementid'], $args['cache_busting_elementid'] );
-                    $adgroup->ad_args['global_output'] = true;
+                if ( $this->group_ads_static( $group_ads, $group ) && ! $is_passive_all && ! $test_id ) {
+					$ad_args = $group->get_prop( 'ad_args' );
+					unset( $ad_args['cache_busting_elementid'] );
+					$group->set_prop(
+						'ad_args',
+						array_merge(
+							$ad_args,
+							[
+								'cache-busting'      => self::OPTION_OFF,
+								'cache-busting-orig' => self::OPTION_AUTO,
+								'global_output'      => true,
+							]
+						)
+					);
+                    unset( $args['cache_busting_elementid'] );
                     if ( isset( $args['output']['placement_id'] ) ) {
                         if ( ! $this->placement_can_display_not_passive( $args['output']['placement_id'] ) ) { return ''; }
-                        $this->add_placement_to_current_ads( $args['output']['placement_id'] );
                     }
                     return $overriden_group;
                 }
 
-                $output_string = $this->get_passive_overriden_group( $adgroup, $ordered_ad_ids, $args, $uniq_key, $group_ads );
+                $output_string = $this->get_passive_overriden_group( $group, $ordered_ad_ids, $args, $uniq_key, $group_ads );
                 $overriden_group = $output_string;
             }
         }
@@ -782,33 +897,34 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	/**
 	 * Request passive ads of a group.
 	 *
-	 * @param obj $adgroup Advanced_Ads_Group
-	 * @param array/null $ordered_ad_ids ordered ids of the ads that belong to the group
-	 * @param array $args argument passed to the 'get_ad_by_group' function
+	 * @param Group      $group          Group
+	 * @param array|null $ordered_ad_ids ordered ids of the ads that belong to the group
+	 * @param array      $args           argument passed to the 'get_ad_by_group' function
 	 */
-	private function request_passive_ads_of_group( $adgroup, $ordered_ad_ids, $args ) {
+	private function request_passive_ads_of_group( $group, $ordered_ad_ids, $args ) {
 		$args['global_output'] = false;
 		$args['is_top_level'] = false;
 		$args['ad_label'] = 'disabled';
 		$args['group_info'] =  [
-			'passive_cb' => true,
-			'id' => $adgroup->id,
-			'name' => $adgroup->name,
-			'type' => $adgroup->type,
-			'refresh_enabled' => Advanced_Ads_Pro_Group_Refresh::is_enabled( $adgroup ),
+			'passive_cb'      => true,
+			'id'              => $group->get_id(),
+			'name'            => $group->get_title(),
+			'type'            => $group->get_type(),
+			'refresh_enabled' => Advanced_Ads_Pro_Group_Refresh::is_enabled( $group ),
 		];
 
 		$ordered_ad_ids = is_array( $ordered_ad_ids ) ? $ordered_ad_ids : [];
 		$group_ads = [];
 		foreach ( $ordered_ad_ids as $_ad_id ) {
 			// get result from the 'override_ad_select_by_ad' method
-			$ad = Advanced_Ads_Select::get_instance()->get_ad_by_method( $_ad_id, Advanced_Ads_Select::AD, $args );
+			$ad = get_the_ad( $_ad_id, '', $args );
 
 			// Ignore ads that are hidden for all users.
-			if ( ! $ad instanceof Advanced_Ads_Ad || ! $ad->can_display( [ 'passive_cache_busting' => true ] ) ) {
+			if ( ! is_an_ad( $ad ) || ! $ad->can_display( [ 'passive_cache_busting' => true ] ) ) {
 				continue;
 			}
 
+			$ad->set_parent( $group );
 			$group_ads[] = $ad;
 		}
 		return $group_ads;
@@ -819,11 +935,11 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      * Conditions are not checked for every visitor of a cached page.
 	 *
 	 * @param bool|string     $overriden_ad Ad content to override.
-	 * @param Advanced_Ads_Ad $ad Ad object.
+	 * @param Ad $ad Ad object.
 	 * @param array           $args Arguments passed to ads and groups from top level placements/ads/groups.
 	 * @return string         Ad content prepared for js handler if the conditions are met
      */
-    public function get_simple_js_ad( $overriden_ad, Advanced_Ads_Ad $ad, $args ) {
+    public function get_simple_js_ad( $overriden_ad, Ad $ad, $args ) {
         $cp_placement = isset( $args['placement_type'] ) && $args['placement_type'] === 'custom_position';
 
         if (
@@ -837,19 +953,22 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
         $this->collecting_js_items = true;
         $elementid = $this->generate_elementid();
-        $args['cache_busting_elementid'] = $ad->args['cache_busting_elementid'] = $elementid;
+        $args['cache_busting_elementid'] = $elementid;
+		$ad->set_prop( 'cache_busting_elementid', $elementid );
         $overriden_ad = '';
 
         if ( $ad->can_display() ) {
             // Disable global output because the ads will be tracked using an AJAX request.
-            $ad->args['global_output'] = false;
-            $ad->global_output = false;
+			$ad_args = $ad->get_prop( 'ad_args' );
+			$ad_args['global_output'] = false;
+            $ad->set_prop_temp( 'ad_args', $ad_args );
 
             $l = count( $this->has_js_items );
             $overriden_ad = $this->add_simple_js_item( $elementid, $ad->output(), $l, $args );
 
-            $ad->args['global_output'] = true;
-            $ad->global_output = true;
+			$ad_args = $ad->get_prop( 'ad_args' );
+			$ad_args['global_output'] = true;
+			$ad->set_prop_temp( 'ad_args', $ad_args );
         }
 
         $this->collecting_js_items = false;
@@ -861,12 +980,12 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      * Conditions are not checked for every visitor of a cached page.
 	 *
 	 * @param bool|string        $overriden_group Group content to override.
-	 * @param Advanced_Ads_Group $adgroup Group object.
+	 * @param Group $group Group object.
 	 * @param int[]              $ordered_ad_ids ids of the ads that belong to the group ordered by their injection order.
 	 * @param array              $args Arguments passed to ads and groups from top level placements/ads/groups.
 	 * @return bool|string       $overriden_group Overriden group content if conditions are met.
      */
-    public function get_simple_js_group( $overriden_group, Advanced_Ads_Group $adgroup, $ordered_ad_ids, $args ) {
+    public function get_simple_js_group( $overriden_group, Group $group, $ordered_ad_ids, $args ) {
         $cp_placement = isset( $args['placement_type'] ) && $args['placement_type'] === 'custom_position';
 
         if ( ! $cp_placement
@@ -879,15 +998,21 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
         $this->collecting_js_items = true;
         $elementid = $this->generate_elementid();
-        $args['cache_busting_elementid'] = $adgroup->ad_args['cache_busting_elementid'] = $elementid;
+        $args['cache_busting_elementid'] = $elementid;
 
-        // Disable global output because the ads will be tracked using an AJAX request.
-        $adgroup->ad_args['global_output'] = false;
+		$ad_args = $group->get_prop( 'ad_args' );
+		// Disable global output because the ads will be tracked using an AJAX request.
+		$ad_args['global_output']           = false;
+		$ad_args['cache_busting_elementid'] = $elementid;
+		$group->set_prop_temp( 'ad_args', $ad_args );
 
         $l = count( $this->has_js_items );
-        $overriden_group = $this->add_simple_js_item( $elementid, $adgroup->output( $ordered_ad_ids ), $l, $args );
+        $overriden_group = $this->add_simple_js_item( $elementid, $group->output( $ordered_ad_ids ), $l, $args );
 
-        $adgroup->ad_args['global_output'] = true;
+		$ad_args                  = $group->get_prop( 'ad_args' );
+		$ad_args['global_output'] = true;
+		$group->set_prop_temp( 'ad_args', $ad_args );
+
         $this->collecting_js_items = false;
 
         return $overriden_group;
@@ -904,14 +1029,12 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      */
     function add_simple_js_item( $elementid, $output, $l, $args ) {
 		if ( isset( $args['output']["placement_id"] ) ) {
-			$placements = Advanced_Ads::get_ad_placements_array();
-			if ( isset( $placements[ $args['output']["placement_id"] ] ) )
-				$placement = $placements[ $args['output']["placement_id"] ];
+			$placement = wp_advads_get_placement( $args['output']['placement_id'] );
 
 			$this->has_js_items[] = [
 				'id' => $args['output']["placement_id"],
 				'type' => 'placement',
-				'title' => ! empty( $placement['name'] ) ? $placement['name'] : '',
+				'title' => $placement->get_title() ?? '',
 				'blog_id' => get_current_blog_id()
 			];
 		}
@@ -938,9 +1061,8 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         /**
          * Collect blog data before `restore_current_blog` is called.
          */
-        if ( class_exists( 'Advanced_Ads_Tracking_Util', false ) && method_exists( 'Advanced_Ads_Tracking_Util', 'collect_blog_data' ) ) {
-            $tracking_utils = Advanced_Ads_Tracking_Util::get_instance();
-            $tracking_utils->collect_blog_data();
+        if ( class_exists( Data::class, false ) ) {
+            Data::collect_blog_data();
         }
 
         $placement_id = ! empty( $args['output']['placement_id'] ) ? $args['output']['placement_id'] : '';
@@ -951,11 +1073,11 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
     /**
      * add data related to ad and ad placement to js array
      *
-     * @param obj $ad Advanced_Ads_Ad
+     * @param obj $ad Ad
      * @param array $args argument passed to the 'get_ad_by_id' function
      * @return string
      */
-    private function get_passive_overriden_ad( Advanced_Ads_Ad $ad, $args ) {
+    private function get_passive_overriden_ad( Ad $ad, $args ) {
         $cache_busting_auto = isset( $args['placement_type'] ) && ( ! isset( $args['cache-busting'] ) || $args['cache-busting'] === self::OPTION_AUTO );
 
         if ( $cache_busting_auto ) {
@@ -969,28 +1091,45 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
 		$not_head                        = ! $this->isHead || ( isset( $args['placement_type'] ) && $args['placement_type'] !== 'header' );
 		$elementid                       = $not_head ? $this->generate_elementid() : null;
-		$args['cache_busting_elementid'] = $ad->args['cache_busting_elementid'] = $elementid;
+		$args['cache_busting_elementid'] = $elementid;
+		$ad->set_prop( 'cache_busting_elementid', $elementid );
 		$placement_id                    = ! empty( $args['output']['placement_id'] ) ? $args['output']['placement_id'] : '';
 		$output_string                   = $not_head ? $this->create_wrapper( $elementid, $placement_id, $args ) : '';
 
         $js_array[ $uniq_key ] = [
             'elementid' => [ $elementid ],
-            'ads' => [ $ad->id => $this->get_passive_cb_for_ad( $ad ) ], // only 1 ad
+            'ads' => [ $ad->get_id() => $this->get_passive_cb_for_ad( $ad ) ], // only 1 ad
         ];
 
 
         if ( $cache_busting_auto ) {
-            $placements = Advanced_Ads::get_ad_placements_array();
             $test_id = isset( $args['test_id'] ) ? $args['test_id'] : null;
 
             $js_array[ $uniq_key ]['type'] = 'ad';
-            $js_array[ $uniq_key ]['id'] = $ad->id;
+            $js_array[ $uniq_key ]['id'] = $ad->get_id();
             $js_array[ $uniq_key ]['placement_info']  = $this->get_placement_info( $id );
             $js_array[ $uniq_key ]['test_id'] = $test_id;
+			$item_for_ab = Advanced_Ads_Pro_Module_Ads_For_Adblockers::get_item_for_adblocker( $ad );
 
-            if ( $ad_for_adblocker = Advanced_Ads_Pro_Module_Ads_For_Adblockers::get_ad_for_adblocker( $args ) ) {
-                $js_array[ $uniq_key ]['ads_for_ab'] = [ $ad_for_adblocker->id => $this->get_passive_cb_for_ad( $ad_for_adblocker ) ];
+            if ( is_an_ad( $item_for_ab ) ) {
+                $js_array[ $uniq_key ]['ads_for_ab'] = [ $item_for_ab->get_id() => $this->get_passive_cb_for_ad( $item_for_ab ) ];
             }
+
+			if ( is_a_group( $item_for_ab ) ) {
+				$js_array[ $uniq_key ]['groups_for_ab'] = [
+					'id'             => $item_for_ab->get_id(),
+					'name'           => $item_for_ab->get_title(),
+					'weights'        => $item_for_ab->get_ad_weights(),
+					'type'           => $item_for_ab->get_type(),
+					'ordered_ad_ids' => $item_for_ab->get_ordered_ad_ids(),
+					'ad_count'       => $item_for_ab->get_ad_count(),
+				];
+				$ads_for_ab                             = $item_for_ab->get_ads();
+				$js_array[ $uniq_key ]['groups_for_ab']['ads']    = [];
+				foreach ( $ads_for_ab as $item ) {
+					$js_array[ $uniq_key ]['groups_for_ab']['ads'][ $item->get_id() ] = $this->get_passive_cb_for_ad( $item );
+				}
+			}
 
             if ( 'ajax' === $this->fallback_method ) {
                 $ajax_info = $this->server_info->get_ajax_for_passive_placement( $ad, $args, $elementid );
@@ -1012,17 +1151,18 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         return $output_string;
     }
 
-    /**
-     * add data related to group and group placement to js array
-     *
-     * @param obj $adgroup Advanced_Ads_Group
-     * @param array/null $ordered_ad_ids ordered ids of the ads that belong to the group
-     * @param array $args argument passed to the 'get_ad_by_group' function
-     * @param str $uniq_key Property name in JS array.
-     * @param array $group_ads Group ads.
-     * @return string
-     */
-    private function get_passive_overriden_group( Advanced_Ads_Group $adgroup, $ordered_ad_ids, $args, $uniq_key, $group_ads ) {
+	/**
+	 * Add data related to group and group placement to js array
+	 *
+	 * @param Group      $group          the group.
+	 * @param array|null $ordered_ad_ids ordered ids of the ads that belong to the group.
+	 * @param array      $args           argument passed to the 'get_ad_by_group' function.
+	 * @param string     $uniq_key       Property name in JS array.
+	 * @param array      $group_ads      Group ads.
+	 *
+	 * @return string
+	 */
+    private function get_passive_overriden_group( Group $group, $ordered_ad_ids, $args, $uniq_key, $group_ads ) {
         $cache_busting_auto = isset( $args['placement_type'] ) && ( ! isset( $args['cache-busting'] ) || $args['cache-busting'] === self::OPTION_AUTO );
 
         if ( $cache_busting_auto ) {
@@ -1036,64 +1176,84 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
 		$not_head                        = ! $this->isHead || ( isset( $args['placement_type'] ) && $args['placement_type'] !== 'header' );
 		$elementid                       = $not_head ? $this->generate_elementid() : null;
-		$args['cache_busting_elementid'] = $adgroup->ad_args['cache_busting_elementid'] = $elementid;
+		$args['cache_busting_elementid'] = $elementid;
+		$group->set_prop( 'cache_busting_elementid', $elementid );
 		$placement_id                    = ! empty( $args['output']['placement_id'] ) ? $args['output']['placement_id'] : '';
 		$output_string                   = $not_head ? $this->create_wrapper( $elementid, $placement_id, $args ) : '';
 
-        if ( ( $ad_count = apply_filters( 'advanced-ads-group-ad-count', $adgroup->ad_count, $adgroup ) ) === 'all' ) {
+        if ( ( $ad_count = apply_filters( 'advanced-ads-group-ad-count', $group->get_ad_count(), $group ) ) === 'all' ) {
             $ad_count = 999;
         }
 
         $passive_ads = [];
         foreach ( $group_ads as $group_ad ) {
-            $passive_ads[ $group_ad->id ] = $this->get_passive_cb_for_ad( $group_ad );
+            $passive_ads[ $group_ad->get_id() ] = $this->get_passive_cb_for_ad( $group_ad );
         }
 
         $js_array[ $uniq_key ] =  [
             'type'=> 'group',
-            'id' => $adgroup->id,
+            'id' => $group->get_id(),
             'elementid' => [ $elementid ],
             'ads' => $passive_ads,
             'group_info' => [
-                'id' => $adgroup->id,
-                'name' => $adgroup->name,
-				'weights' => $adgroup->get_ad_weights( $ordered_ad_ids ),
-                'type' => $adgroup->type,
+                'id' => $group->get_id(),
+                'name' => $group->get_title(),
+				'weights' => $group->get_ad_weights( $ordered_ad_ids ),
+                'type' => $group->get_type(),
                 'ordered_ad_ids' => $ordered_ad_ids,
                 'ad_count' => $ad_count,
             ],
         ];
 
         // deprecated after Advaned Ads Slider > 1.3.1
-        if ( 'slider' === $adgroup->type && defined( 'AAS_VERSION' ) && version_compare( AAS_VERSION, '1.3.1', '<=' ) ) {
-            $slider_options = Advanced_Ads_Slider::get_slider_options( $adgroup );
+        if ( $group->is_type( 'slider' ) && defined( 'AAS_VERSION' ) && version_compare( AAS_VERSION, '1.3.1', '<=' ) ) {
+            $slider_options = Frontend::get_slider_options( $group );
             $js_array[ $uniq_key ]['group_info']['slider_options'] = $slider_options;
         }
 
 
 
-        if ( Advanced_Ads_Pro_Group_Refresh::is_enabled( $adgroup ) ) {
+        if ( Advanced_Ads_Pro_Group_Refresh::is_enabled( $group ) ) {
             $js_array[ $uniq_key ]['group_info']['refresh_enabled'] = true;
-            $js_array[ $uniq_key ]['group_info']['refresh_interval_for_ads'] = Advanced_Ads_Pro_Group_Refresh::get_ad_intervals( $adgroup );
+            $js_array[ $uniq_key ]['group_info']['refresh_interval_for_ads'] = Advanced_Ads_Pro_Group_Refresh::get_ad_intervals( $group );
         }
 
-        $advads_plugin = Advanced_Ads::get_instance();
         $label = '';
-        if ( method_exists( $advads_plugin, 'get_label' ) ) {
+        if ( method_exists( Advanced_Ads::get_instance(), 'get_label' ) ) {
             $placement_state = isset( $args['ad_label'] ) ? $args['ad_label'] : 'default';
-            $label = Advanced_Ads::get_instance()->get_label( $placement_state );
+            $label = Advanced_Ads::get_instance()->get_label( $group, $placement_state );
         }
 
         if ( $cache_busting_auto ) {
-            $placements = Advanced_Ads::get_ad_placements_array();
-            $js_array[ $uniq_key ]['placement_info']  = $this->get_placement_info( $id );
-            $js_array[ $uniq_key ]['test_id'] = isset( $args['test_id'] ) ? $args['test_id'] : null;
+			$js_array[ $uniq_key ]['placement_info'] = $this->get_placement_info( $id );
+			$js_array[ $uniq_key ]['test_id']        = isset( $args['test_id'] ) ? $args['test_id'] : null;
+			$placement                               = $group->get_root_placement();
+			$item_for_ab                             = false;
 
-            if ( $ad_for_adblocker = Advanced_Ads_Pro_Module_Ads_For_Adblockers::get_ad_for_adblocker(
-                array_diff_key( $args, [ 'ad_label' => false ] )
-            ) ) {
-                $js_array[ $uniq_key ]['ads_for_ab'] = [ $ad_for_adblocker->id => $this->get_passive_cb_for_ad( $ad_for_adblocker ) ];
-            }
+			if ( $placement ) {
+				$placement->set_prop_temp( 'ad_label', false );
+				$item_for_ab = Advanced_Ads_Pro_Module_Ads_For_Adblockers::get_item_for_adblocker( $placement );
+			}
+
+			if ( is_an_ad( $item_for_ab ) ) {
+				$js_array[ $uniq_key ]['ads_for_ab'] = [ $item_for_ab->get_id() => $this->get_passive_cb_for_ad( $item_for_ab ) ];
+			}
+
+			if ( is_a_group( $item_for_ab ) ) {
+				$js_array[ $uniq_key ]['groups_for_ab'] = [
+					'id'             => $item_for_ab->get_id(),
+					'name'           => $item_for_ab->get_title(),
+					'weights'        => $item_for_ab->get_ad_weights(),
+					'type'           => $item_for_ab->get_type(),
+					'ordered_ad_ids' => $item_for_ab->get_ordered_ad_ids(),
+					'ad_count'       => $item_for_ab->get_ad_count(),
+				];
+				$ads_for_ab                             = $item_for_ab->get_ads();
+				$js_array[ $uniq_key ]['groups_for_ab']['ads']    = [];
+				foreach ( $ads_for_ab as $item ) {
+					$js_array[ $uniq_key ]['groups_for_ab']['ads'][ $item->get_id() ] = $this->get_passive_cb_for_ad( $item );
+				}
+			}
 
             if ( 'ajax' === $this->fallback_method ) {
                 $ajax_info = $this->server_info->get_ajax_for_passive_placement( $group_ads, $args, $elementid );
@@ -1103,20 +1263,21 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             }
         }
 
-        $js_array[ $uniq_key ] = apply_filters( 'advanced-ads-pro-passive-cb-group-data', $js_array[ $uniq_key ], $adgroup, $elementid );
+        $js_array[ $uniq_key ] = apply_filters( 'advanced-ads-pro-passive-cb-group-data', $js_array[ $uniq_key ], $group, $elementid );
 
         // Add wrapper around group.
-        if ( ( ! empty( $adgroup->wrapper ) || $label )
-            && is_array( $adgroup->wrapper )
+		$wrapper = $group->create_wrapper();
+        if ( ( ! empty( $wrapper ) || $label )
+            && is_array( $wrapper )
             && class_exists( 'Advanced_Ads_Utils' ) && method_exists( 'Advanced_Ads_Utils' , 'build_html_attributes' )
         ) {
-			$before = '<div' . Advanced_Ads_Utils::build_html_attributes( $adgroup->wrapper ) . '>'
+			$before = '<div' . Advanced_Ads_Utils::build_html_attributes( $wrapper ) . '>'
                 . $label
-                . apply_filters( 'advanced-ads-output-wrapper-before-content-group', '', $adgroup );
+                . apply_filters( 'advanced-ads-output-wrapper-before-content-group', '', $group );
 
-            $after = apply_filters( 'advanced-ads-output-wrapper-after-content-group', '', $adgroup )
+            $after = apply_filters( 'advanced-ads-output-wrapper-after-content-group', '', $group )
                 . '</div>';
-            if ( ! empty( $adgroup->ad_args['placement_clearfix'] ) ) {
+            if ( ! empty( $group->get_prop( 'placement_clearfix' ) ) ) {
                 $after .= '<br style="clear: both; display: block; float: none; "/>';
             }
 
@@ -1142,15 +1303,18 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 * Get placement information
 	 *
 	 * @param string $id Placement id.
-	 * @param array $placement_info Placement information.
 	 */
 	private function get_placement_info( $id ) {
 		// The information which passive cache-busting (`base.js`) can read.
 		// When a new placement option is added and passive cache-busting needs to access it, it should be added to the array.
-		$allowed_keys = [ 'id', 'lazy_load', 'test_id', 'layer_placement', 'close', 'inject_by', 'placement_position', 'pro_custom_element', 'container_id' ];
+		$allowed_keys = [ 'id', 'lazy_load', 'test_id', 'layer_placement', 'close', 'inject_by', 'placement_position', 'pro_custom_element', 'container_id', 'cache_busting_empty' ];
 
-		$placements = Advanced_Ads::get_ad_placements_array();
-		$placement_info = $placements[ $id ];
+		$placement_info = wp_advads_get_placement( $id );
+		if ( ! $placement_info ) {
+			return [];
+		}
+
+		$placement_info = $placement_info->get_data();
 		$placement_info['id'] = (string) $id;
 
 		if ( ! empty( $placement_info['options'] ) && is_array( $placement_info['options'] ) ) {
@@ -1160,36 +1324,37 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 				}
 			}
 		}
+
 		return $placement_info;
 	}
 
     /**
      * add new passive ad to passive cb js array
      *
-     * @param obj $ad Advanced_Ads_Ad
+     * @param obj $ad Ad
      * @param array $args argument passed to the 'get_ad_by_id' function
      * @param str $uniq_key Property name in JS array.
      */
-    private function add_passive_ad_to_group( Advanced_Ads_Ad $ad, $args, $uniq_key ) {
+    private function add_passive_ad_to_group( Ad $ad, $args, $uniq_key ) {
         $cache_busting_auto = isset( $args['placement_type'] ) && ( ! isset( $args['cache-busting'] ) || $args['cache-busting'] === self::OPTION_AUTO );
 
         if ( $cache_busting_auto ) {
             $uniq_key = $args['previous_id'] . '_' . $uniq_key;
-            $this->passive_cache_busting_placements[ $uniq_key ]['ads'][ $ad->id ] = $this->get_passive_cb_for_ad( $ad );
+            $this->passive_cache_busting_placements[ $uniq_key ]['ads'][ $ad->get_id() ] = $this->get_passive_cb_for_ad( $ad );
         } else {
             $uniq_key = $args['id'] . '_' . $uniq_key;
-            $this->passive_cache_busting_groups[ $uniq_key ]['ads'][ $ad->id ] = $this->get_passive_cb_for_ad( $ad );
+            $this->passive_cache_busting_groups[ $uniq_key ]['ads'][ $ad->get_id() ] = $this->get_passive_cb_for_ad( $ad );
         }
     }
 
     /**
      * delete an ad from passive cb js array
      *
-     * @param $adgroup Advanced_Ads_Group
+     * @param $group Group
      * @param array $args argument passed to the 'get_ad_by_id' function
      * @param str $uniq_key Property name in JS array.
      */
-    private function delete_passive_group( Advanced_Ads_Group $adgroup, $args, $uniq_key ) {
+    private function delete_passive_group( Group $group, $args, $uniq_key ) {
         $cache_busting_auto = isset( $args['placement_type'] ) && ( ! isset( $args['cache-busting'] ) || $args['cache-busting'] === self::OPTION_AUTO );
 
         if ( $cache_busting_auto ) {
@@ -1204,25 +1369,32 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
     /**
      * get ad info for passive cache-busting
      *
-	 * @param Advanced_Ads_Ad $ad ad object.
+	 * @param Ad $ad ad object.
      * @return array
      */
-    public function get_passive_cb_for_ad( Advanced_Ads_Ad $ad ) {
-        $ad_options = $ad->options();
-		$ad->args['cache-busting'] = self::OPTION_AUTO;
+    public function get_passive_cb_for_ad( Ad $ad ) {
+		$ad_options               = $ad->get_data();
+		$ad_args                  = $ad->get_prop( 'ad_args' );
+		$ad_args['cache-busting'] = self::OPTION_AUTO;
+		$ad_args['global_output'] = false;
+		$ad->set_prop_temp( 'ad_args', $ad_args );
 
-        $passive_cb_for_ad = apply_filters( 'advanced-ads-pro-passive-cb-for-ad', [
-            'id' => $ad->id,
-            'title' => $ad->title,
-            'expiry_date' => (int) $ad->expiry_date,
-			'visitors' => array_values( $ad->options( 'visitors', [] ) ),
-            'content' => $ad->output( [ 'global_output' => false ] ),
-            'once_per_page' => ( ! empty( $ad_options['output']['once_per_page'] ) ) ? 1 : 0,
-            'debugmode' => isset( $ad->output['debugmode'] ),
-			'blog_id' => get_current_blog_id(),
-			'type' => $ad->type,
-			'position' => isset( $ad->output['position'] ) ? $ad->output['position'] : '',
-        ], $ad );
+		add_filter( 'advanced-ads-can-display-ad-check-options', [ $this, 'bypass_can_display_check' ] );
+
+		$passive_cb_for_ad = apply_filters( 'advanced-ads-pro-passive-cb-for-ad', [
+			'id'            => $ad->get_id(),
+			'title'         => $ad->get_title(),
+			'expiry_date'   => $ad->get_expiry_date(),
+			'visitors'      => array_values( $ad->get_visitor_conditions() ),
+			'content'       => $ad->output(),
+			'once_per_page' => $ad->get_prop( 'once_per_page' ) ? 1 : 0,
+			'debugmode'     => $ad->is_debug_mode(),
+			'blog_id'       => get_current_blog_id(),
+			'type'          => $ad->get_type(),
+			'position'      => $ad->get_position(),
+		], $ad );
+
+		remove_filter( 'advanced-ads-can-display-ad-check-options', [ $this, 'bypass_can_display_check' ] );
 
 		// Consent overridden for this ad.
 		$passive_cb_for_ad['privacy']['ignore'] = ! empty( $ad_options['privacy']['ignore-consent'] );
@@ -1232,10 +1404,9 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 		/**
 		 * Collect blog data before `restore_current_blog` is called.
 		 */
-		if ( class_exists( 'Advanced_Ads_Tracking_Util', false ) && method_exists( 'Advanced_Ads_Tracking_Util', 'collect_blog_data' ) ) {
-			$tracking_utils = Advanced_Ads_Tracking_Util::get_instance();
-			$tracking_utils->collect_blog_data();
-		}
+		if ( class_exists( Data::class, false ) ) {
+            Data::collect_blog_data();
+        }
 
         return $passive_cb_for_ad;
     }
@@ -1243,7 +1414,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
     /**
      * return wrapper and js code to load the ad
      *
-     * @param obj $ad Advanced_Ads_Ad
+     * @param Ad $ad Ad
      * @param array $args argument passed to the 'get_ad_by_id' function
      * @return string/bool $overridden_ad
      */
@@ -1263,28 +1434,32 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	/**
 	 * Determine if backend request is needed.
 	 *
-	 * @param Advanced_Ads_Ad $ad Ad object.
+	 * @param Ad $ad Ad object.
 	 * @return string
 	 *     'static'   Do not use cache-busting. There are no dynamic conditions, all users will see the same.
 	 *     'off'      Do not use cache-busting (fallback).
 	 *     'ajax'     Use AJAX request (fallback).
 	 *     'passive'  Use passive cache-busting.
 	 */
-    public function ad_needs_backend_request( Advanced_Ads_Ad $ad ) {
-        $ad_options = $ad->options();
-		$visitors = $ad->options( 'visitors', [] );
+    public function ad_needs_backend_request( Ad $ad ) {
+        $ad_options = $ad->get_data();
+		$visitors = $ad->get_visitor_conditions();
 
 		// code is evaluated as php if setting was never saved or php is allowed
-        $allow_php = ( 'plain' === $ad->type && ( ! isset( $ad->output['allow_php'] ) || $ad->output['allow_php'] ) );
+        $allow_php = ( $ad->is_type( 'plain' ) && $ad->is_php_allowed() );
         // if there is at least one visitor condition (check old "visitor" and new "visitors" conditions)
 		$is_visitor_conditions = ! empty( $visitors );
-        $is_group = 'group' === $ad->type;
+        $is_group = $ad->is_type( 'group' );
         $has_shortcode = ! empty( $ad_options['output']['has_shortcode'] )
             // The Rich Content ad type saved long time ago.
-            || ( ! isset( $ad_options['output']['has_shortcode'] ) && $ad->type === 'content' );
-        $is_lazy_load = $this->lazy_load_enabled && 'enabled' === ( $ad_options['lazy_load'] ?? '' );
+            || ( ! isset( $ad_options['output']['has_shortcode'] ) && $ad->is_type( 'content' ) );
+
+		$placement    = $ad->get_root_placement();
+		$is_lazy_load = $this->lazy_load_enabled && $placement && 'enabled' === $placement->get_prop( 'lazy_load' );
+
         // Check if there is conditions that need backend request.
         $has_not_js_conditions = false;
+
 		if ( ! empty( $visitors ) ) {
             // Conditions that can be checked using js.
             $js_visitor_conditions = [
@@ -1299,11 +1474,10 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
                 'new_visitor',
                 'device_width',
                 'tablet',
+                'adblocker'
             ];
 
-			if ( $this->fallback_method === 'ajax'
-				&& isset( $ad_options['placement_type'] )
-			) {
+			if ( $this->fallback_method === 'ajax' && $ad->get_root_placement() ) {
                 // Conditions that can be checked by passive cache-busting only if cookies exist.
                 // If not, ajax cache-busting will not be used.
                 $all_server_conditions = $this->server_info->get_all_server_conditions();
@@ -1314,7 +1488,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             $js_visitor_conditions = apply_filters( 'advanced-ads-js-visitor-conditions', $js_visitor_conditions );
 
             foreach ( $visitors as $visitor ) {
-                if ( ! in_array( $visitor['type'], $js_visitor_conditions ) ) {
+                if ( ! in_array( $visitor['type'], $js_visitor_conditions ) && 'unknown' !== $visitor['type'] ) {
                     // Use AJAX cache-busting, or disable cache-busting.
                     $has_not_js_conditions = true;
                 }
@@ -1322,7 +1496,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         }
 
         $has_tracking = false;
-        if ( class_exists( 'Advanced_Ads_Tracking', false ) &&
+        if ( function_exists( 'wp_advads_tracking' ) &&
             ( ( isset( $ad_options['tracking']['impression_limit'] ) && $ad_options['tracking']['impression_limit'] ) ||
             ( isset( $ad_options['tracking']['click_limit'] ) && $ad_options['tracking']['click_limit'] ) )
         ) {
@@ -1330,39 +1504,41 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             $has_tracking = true;
         }
 
-        $has_test = ! empty( $ad_options['test_id'] );
-
         $hidden_without_consent = false;
-        if ( empty( $ad_options['privacy']['ignore-consent'] )
-            && class_exists( 'Advanced_Ads_Privacy' ) ) {
-            $privacy_options = Advanced_Ads_Privacy::get_instance()->options();
-            $npa_adsense = $ad->type === 'adsense' &&  ! empty( $privacy_options['show-non-personalized-adsense'] );
-            // Check if the ad is invisible until consent is given.
-            if ( ! empty( $privacy_options['enabled'] )
-                // If the content method is 'cookie'.
-                && ! empty( $privacy_options['consent-method'] ) // && empty( $privacy_options['show-without-consent'] )
-                // Non-personalized Adsense are visible even without consent.
-                && ! $npa_adsense
-            ) {
-                $hidden_without_consent = true;
-            }
-        }
-        $specific_days = ! empty( $ad_options['weekdays']['enabled'] );
-        $checks_placement_cookies = ( ! empty( $ad_options['layer_placement']['close']['enabled'] )
-            && ! empty( $ad_options['layer_placement']['close']['timeout_enabled'] ) )
-        || ( ! empty( $ad_options['close']['enabled'] )
-            && ! empty( $ad_options['close']['timeout_enabled'] ) );
+
+		if ( empty( $ad_options['privacy']['ignore-consent'] ) && class_exists( 'Advanced_Ads_Privacy' ) ) {
+			$privacy_options = Advanced_Ads_Privacy::get_instance()->options();
+
+			if (
+				// Cookie method enabled.
+				! empty( $privacy_options['enabled'] ) && 'custom' === $privacy_options['consent-method']
+				// Do not show non-personalized AdSense ads until consent (i.e. do not show AdSense ads at all until consent).
+				&& empty( $privacy_options['show-non-personalized-adsense'] ) && $ad->is_type( 'adsense' )
+			) {
+				$hidden_without_consent = true;
+			}
+		}
+
+		$specific_days            = $ad->has_weekdays();
+		$placement                = $ad->get_root_placement();
+		$close                    = $placement ? $placement->get_prop( 'close' ) : false;
+
+		if ( $placement && $placement->get_prop( 'layer_placement' ) ) {
+			$close = $placement->get_prop( 'layer_placement.close' ) ?? false;
+		}
+
+		$random_paragraph         = $placement && $placement->is_type( 'post_content_random' );
+		$checks_placement_cookies = $close && isset( $close['enabled'], $close['timeout_enabled'] );
 
         if ( $allow_php || $is_group || $has_shortcode || $has_not_js_conditions || $has_tracking ) {
             // Use AJAX cache-busting, or disable cache-busting.
             $return = $this->fallback_method;
-		} elseif ( $is_visitor_conditions || $is_lazy_load || $hidden_without_consent || $specific_days || $checks_placement_cookies ) {
+		} elseif ( $is_visitor_conditions || $is_lazy_load || $hidden_without_consent || $specific_days || $checks_placement_cookies || $random_paragraph ) {
             // Passive cache-busting.
             $return = 'passive';
         } else {
             $return = 'static';
         }
-
 
         $return = apply_filters( 'advanced-ads-pro-ad-needs-backend-request', $return, $ad, $this->fallback_method );
         return $return;
@@ -1371,16 +1547,22 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
     /**
      * Determine if all ads of a group are static.
      *
-     * @param Advanced_Ads_Ad[] $group_ads An array of ad objects.
-     * @param Advanced_Ads_Group $adgroup Group object.
+     * @param Ad[] $group_ads An array of ad objects.
+     * @param Group $group Group object.
      * @return bool
      */
-    private function group_ads_static( $group_ads, $adgroup ) {
+    private function group_ads_static( $group_ads, $group ) {
         if ( 0 === count( $group_ads )  ) {
             return true;
         }
         if ( 1 === count( $group_ads ) ) {
-            return 'static' === $this->ad_needs_backend_request( $group_ads[0] );
+			$cb_method =  $this->ad_needs_backend_request( $group_ads[0] );
+			if ( 'static' === $cb_method ) {
+				$ad_args                  = $group->get_prop( 'ad_args' );
+				$ad_args['global_output'] = true;
+				$group->set_prop_temp( 'ad_args', $ad_args );
+			}
+            return 'static' === $cb_method;
         }
 
         return false;
@@ -1395,7 +1577,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	public static function build_js_query( $arguments ) {
 		// base query (required keys)
 		$query = [
-			'id' => (string) $arguments['id'],
+			'id' => (int) $arguments['id'],
 			'method' => (string) $arguments['method'],
 		];
 		$arguments['global_output'] = true;
@@ -1421,10 +1603,10 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
         // allow disable cache-busting according to placement settings
         if ( $query['method'] === 'placement' && ! isset( $params['cache-busting'] ) ) {
-            $placement_options = Advanced_Ads::get_ad_placements_array();
+			$placement = wp_advads_get_placement( intval( $query['id'] ) );
 
-            if ( isset( $placement_options[ $query['id'] ]['options']['cache-busting'] ) ) {
-                $params['cache-busting'] = $placement_options[ $query['id'] ]['options']['cache-busting'];
+            if ( $placement && null !== $placement->get_prop( 'cache-busting' ) ) {
+                $params['cache-busting'] = $placement->get_prop( 'cache-busting' );
             }
         }
 
@@ -1492,8 +1674,6 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
         $query = $this->get_ajax_query( $query );
         self::$ajax_queries[] = $query;
-
-
         return $content;
     }
 
@@ -1515,9 +1695,8 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
         /**
          * Collect blog data before `restore_current_blog` is called.
          */
-        if ( class_exists( 'Advanced_Ads_Tracking_Util', false ) && method_exists( 'Advanced_Ads_Tracking_Util', 'collect_blog_data' ) ) {
-            $tracking_utils = Advanced_Ads_Tracking_Util::get_instance();
-            $tracking_utils->collect_blog_data();
+		if ( class_exists( Data::class, false ) ) {
+            Data::collect_blog_data();
         }
 
         // Check if the `advanced-ads-ajax-ad-select-arguments` filter exists.
@@ -1619,10 +1798,11 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 	 * @return string Cache-busting wrapper.
 	 */
 	private function create_wrapper( $element_id, $placement_id = '', $args = [] ) {
-		$class = $element_id;
-		if ( $placement_id ) {
-			$prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
-			$class .= ' ' . $prefix . $placement_id;
+		$class     = $element_id;
+		$placement = wp_advads_get_placement( is_numeric( $placement_id ) ? (int) $placement_id : $placement_id );
+		if ( $placement ) {
+			$prefix = wp_advads()->get_frontend_prefix();
+			$class .= ' ' . $prefix . $placement->get_slug();
 		}
 		$style           = ! empty( $args['inline-css'] ) ? 'style="' . $args['inline-css'] . '"' : '';
 		$wrapper_element = ! empty( $args['inline_wrapper_element'] ) ? 'span' : 'div';
@@ -1640,7 +1820,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      * @return string
      */
     public function generate_elementid() {
-        $prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
+        $prefix = wp_advads()->get_frontend_prefix();
         return $prefix . md5( 'advanced-ads-pro-ad-' . uniqid( ++self::$adOffset, true ) );
     }
 
@@ -1671,10 +1851,9 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             return $return;
         }
 
-        // get all placements
-        $placements = Advanced_Ads::get_ad_placements_array();
+		$options = wp_advads_get_placement( $id )->get_data();
 
-        $cache_busting_auto = ! isset( $placements[ $id ]['options']['cache-busting'] ) || $placements[ $id ]['options']['cache-busting'] === self::OPTION_AUTO;
+        $cache_busting_auto = ! isset( $options['cache-busting'] ) || $options['cache-busting'] === self::OPTION_AUTO;
 
         if ( $cache_busting_auto && $this->is_passive_method_used() ) {
             $checked_passive[] = $id;
@@ -1708,10 +1887,10 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      * Add ad debug content
      *
      * @param arr $content
-     * @param obj $ad Advanced_Ads_Ad
+     * @param obj $ad Ad
      * @return arr $content
      */
-    public function add_debug_content( $content, Advanced_Ads_Ad $ad ) {
+    public function add_debug_content( $content, Ad $ad ) {
         $needs_backend = $this->ad_needs_backend_request( $ad );
         if ( 'off' === $needs_backend || 'ajax' === $needs_backend ) {
             $info = __( 'The ad can not work with passive cache-busting', 'advanced-ads-pro' );
@@ -1721,7 +1900,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 
         if ( $this->is_ajax ) {
             $name = _x( 'ajax', 'setting label', 'advanced-ads-pro' );
-        } elseif ( isset( $ad->args['cache-busting'] ) && $ad->args['cache-busting'] === self::OPTION_AUTO ) {
+        } elseif ( self::OPTION_AUTO === $ad->get_prop( 'ad_args.cache-busting' ) ) {
             $name =  __( 'passive', 'advanced-ads-pro' );
             $info .= '<br />##advanced_ads_passive_cb_debug##'
             . sprintf( '<div class="advads-passive-cb-debug" style="display:none;" data-displayed="%s" data-hidden="%s"></div>',
@@ -1739,38 +1918,15 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
     }
 
     /**
-     * Add placement to current ads.
-     *
-     * @param string $id Placement id.
-     */
-    private function add_placement_to_current_ads( $id ) {
-        $placements = Advanced_Ads::get_ad_placements_array();
-        $name = ! empty( $placements[ $id ]['name'] ) ? $placements[ $id ]['name'] : $id;
-        Advanced_Ads::get_instance()->current_ads[] = ['type' => 'placement', 'id' => $id, 'title' => $name ];
-    }
-
-	/**
-	 * Get visitor conditions.
-	 *
-	 * @param Advanced_Ads_Ad $ad Ad object.
-	 *
-	 * @return void
-	 * @deprecated
-	 *
-	 */
-	public function get_visitors( Advanced_Ads_Ad $ad ) {
-	}
-
-    /**
      * Check if the ad can be displayed based on display limit.
      * Handle "Custom position" placements that have cache-busting disabled.
      *
      * @param bool $can_display Existing value.
-     * @param obj $ad Advanced_Ads_Ad object
+     * @param obj $ad Ad object
      * @param array $check_options
      * @return bool true if limit is not reached, false otherwise
      */
-    public function can_display_by_display_limit( $can_display, Advanced_Ads_Ad $ad, $check_options ) {
+    public function can_display_by_display_limit( $can_display, Ad $ad, $check_options ) {
         if ( ! $can_display ) {
             return false;
         }
@@ -1779,12 +1935,9 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
             return $can_display;
         }
 
-        $output_options = $ad->options( 'output' );
-
-        if ( ! empty( $output_options['once_per_page'] ) ) {
-
+        if ( $ad->get_prop( 'once_per_page' ) ) {
             foreach ( $this->has_js_items as $item ) {
-                if ( $item['type'] === 'ad' && absint( $item['id'] ) === $ad->id ) {
+                if ( $item['type'] === 'ad' && absint( $item['id'] ) === $ad->get_id() ) {
                     return false;
                 }
             }
@@ -1806,9 +1959,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
      * Check if placements of type other than `header` can be injected during `wp_head` action.
      */
     private function can_inject_during_wp_head() {
-        return class_exists( 'Advanced_Ads_Compatibility' )
-            && method_exists( 'Advanced_Ads_Compatibility', 'can_inject_during_wp_head' )
-            && Advanced_Ads_Compatibility::can_inject_during_wp_head();
+        return Compatibility::can_inject_during_wp_head();
     }
 
 	/**
@@ -1824,7 +1975,7 @@ class Advanced_Ads_Pro_Module_Cache_Busting {
 		wp_enqueue_script(
 			// we need the same handle as with cache-busting so tracking still works.
 			'advanced-ads-pro/cache_busting',
-			AAP_BASE_URL . 'assets/js/privacy' . ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min' ) . '.js',
+			AAP_BASE_URL . 'assets/dist/privacy.js',
 			[ ADVADS_SLUG . '-advanced-js', 'jquery'],
 			AAP_VERSION,
 			true

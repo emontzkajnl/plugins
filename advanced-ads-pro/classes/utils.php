@@ -1,26 +1,29 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName
+
+use AdvancedAds\Framework\Utilities\Params;
 
 /**
- * Container for utility functions
+ * Utils class for Advanced Ads Pro.
  */
 class Advanced_Ads_Pro_Utils {
 	/**
-	 * generate unique wrapper id
+	 * Generate unique wrapper id
 	 *
 	 * @return string
 	 */
 	public static function generate_wrapper_id() {
 		static $count = 0;
-		$prefix = Advanced_Ads_Plugin::get_instance()->get_frontend_prefix();
-		return $prefix . ++$count . mt_rand();
+		return wp_advads()->get_frontend_prefix() . ( ++$count ) . wp_rand();
 	}
 
 	/**
 	 * Checks if a blog exists and is not marked as deleted.
 	 *
-	 * @link   http://wordpress.stackexchange.com/q/138300/73
-	 * @param  int $blog_id
-	 * @param  int $site_id
+	 * @link http://wordpress.stackexchange.com/q/138300/73
+	 *
+	 * @param int $blog_id Blog ID.
+	 * @param int $site_id Site ID.
+	 *
 	 * @return bool
 	 */
 	public static function blog_exists( $blog_id, $site_id = 0 ) {
@@ -33,30 +36,29 @@ class Advanced_Ads_Pro_Utils {
 			$site_id = get_current_site()->id;
 		}
 
-		if ( empty ( $cache[ $site_id ] ) ) {
-
-			if ( wp_is_large_network() ) // we do not test large sites.
+		if ( empty( $cache[ $site_id ] ) ) {
+			// we do not test large sites.
+			if ( wp_is_large_network() ) {
 				return true;
+			}
 
 			$query  = $wpdb->prepare( "SELECT `blog_id` FROM $wpdb->blogs WHERE site_id = %d AND deleted = 0", $site_id );
-			$result = $wpdb->get_col( $query );
+			$result = $wpdb->get_col( $query ); // phpcs:ignore
 
 			// Make sure the array is always filled with something.
-			if ( empty ( $result ) )
-				$cache[ $site_id ] = [ 'checked' ];
-			else
-				$cache[ $site_id ] = $result;
+			$cache[ $site_id ] = empty( $result ) ? [ 'checked' ] : $result;
 		}
 
-		return in_array( $blog_id, $cache[ $site_id ] );
+		return in_array( (string) $blog_id, $cache[ $site_id ], true );
 	}
 
 	/**
 	 * Convert a value to non-negative integer.
 	 *
 	 * @param mixed $maybeint Data you wish to have converted to a non-negative integer.
-	 * @param int $min A minimum.
-	 * @param int $max A maximum.
+	 * @param int   $min      A minimum.
+	 * @param int   $max      A maximum.
+	 *
 	 * @return int A non-negative integer.
 	 */
 	public static function absint( $maybeint, $min = null, $max = null ) {
@@ -81,13 +83,14 @@ class Advanced_Ads_Pro_Utils {
 	public static function get_post() {
 		$post_object = get_post();
 
-		if ( ! $post_object
-			 && wp_doing_ajax()
-			 && isset( $_REQUEST['action'], $_REQUEST['theId'], $_REQUEST['isSingular'] )
-			 && sanitize_key( $_REQUEST['action'] ) === 'advads_ad_select'
-			 && $_REQUEST['isSingular']
+		if (
+			! $post_object
+			&& wp_doing_ajax()
+			&& isset( $_REQUEST['action'], $_REQUEST['theId'], $_REQUEST['isSingular'] )
+			&& Params::request( 'action' ) === 'advads_ad_select'
+			&& Params::request( 'isSingular' )
 		) {
-			$post_object = get_post( (int) $_REQUEST['theId'] );
+			$post_object = get_post( Params::request( 'theId', 0, FILTER_VALIDATE_INT ) );
 		}
 
 		return $post_object;

@@ -1,9 +1,14 @@
-<?php
+<?php // phpcs:ignoreFile
+
+use AdvancedAds\Abstracts\Ad;
+use AdvancedAds\Abstracts\Group;
+use AdvancedAds\Framework\Utilities\Params;
+use AdvancedAds\Utilities\Conditional;
+
 /**
  * Click Fraud Protection class.
  */
-class Advanced_Ads_Pro_Module_CFP
-{
+class Advanced_Ads_Pro_Module_CFP {
 
 	public $module_enabled = false;
 
@@ -19,7 +24,7 @@ class Advanced_Ads_Pro_Module_CFP
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'add_frontend_script_data' ], 11 );
 
-		add_filter( 'advanced-ads-can-display', [ $this, 'can_display' ], 10, 3 );
+		add_filter( 'advanced-ads-can-display-ad', [ $this, 'can_display' ], 10, 3 );
 
 		// add visitor conditions
 		add_filter( 'advanced-ads-visitor-conditions', [ $this, 'add_visitor_conditions' ] );
@@ -47,7 +52,8 @@ class Advanced_Ads_Pro_Module_CFP
 		$domain = '';
 
 		// get host name form server first before getting client side value
-		$host_name = !empty( $_SERVER['SERVER_NAME'] )? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
+		$server_name = Params::server( 'SERVER_NAME' );
+		$host_name = ! empty( $server_name ) ? $server_name : Params::server( 'HTTP_HOST' );
 
 		if ( empty( $host_name ) ) {
 			return [
@@ -74,15 +80,18 @@ class Advanced_Ads_Pro_Module_CFP
 		];
 	}
 
-	private function get_conditions_options( $ad ) {
-		$options = $ad->options();
-		if ( !isset( $options['visitors'] ) ) return [];
+	private function get_conditions_options( Ad $ad ) {
+		if ( empty( $ad->get_visitor_conditions() ) ) {
+			return [];
+		}
+
 		$results = [];
-		foreach( $options['visitors'] as $cond ) {
+		foreach( $ad->get_visitor_conditions() as $cond ) {
 			if ( isset( $cond['type'] ) && 'ad_clicks' == $cond['type'] ) {
 				$results[] = $cond;
 			}
 		}
+
 		return $results;
 	}
 
@@ -129,7 +138,9 @@ class Advanced_Ads_Pro_Module_CFP
 		$limit      = isset( $options['limit'] ) ? Advanced_Ads_Pro_Utils::absint( $options['limit'], 1 ) : 1;
 		$expiration = isset( $options['expiration'] ) ? Advanced_Ads_Pro_Utils::absint( $options['expiration'], 1 ) : 1;
 
-		?><input type="number" name="<?php echo esc_attr( $name ); ?>[limit]" value="<?php echo esc_attr( $limit ); ?>" required="required" min="1" step="1" />
+		?>
+		<input type="hidden" name="<?php echo esc_attr( $name ); ?>[value]" value="1"/>
+		<input type="number" name="<?php echo esc_attr( $name ); ?>[limit]" value="<?php echo esc_attr( $limit ); ?>" required="required" min="1" step="1" />
 		<?php _e( 'within', 'advanced-ads-pro' ); ?>
 		<input type="number" name="<?php echo $name; ?>[expiration]" value="<?php echo $expiration; ?>" required="required" min="1" step="1" />
 		<?php _e( 'hours', 'advanced-ads-pro' ); ?>
@@ -144,7 +155,7 @@ class Advanced_Ads_Pro_Module_CFP
 		<label class="advads-conditions-table-width-100">
 			<input type="checkbox" name="<?php echo esc_attr( $name ); ?>[exclude-from-global]" value="1" <?php checked( ! empty( $options['exclude-from-global'] ) ); ?> />
 			<?php esc_html_e( 'Ignore global Click Fraud Protection', 'advanced-ads-pro' ); ?>
-			<a href="<?php echo esc_url( ADVADS_URL ) . 'manual/click-fraud-protection/#utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-cfp-manual'; ?>" target="_blank" class="advads-manual-link">
+			<a href="https://wpadvancedads.com/manual/click-fraud-protection/#utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-cfp-manual'; ?>" target="_blank" class="advads-manual-link">
 				<?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?>
 			</a>
 		</label>
@@ -155,7 +166,7 @@ class Advanced_Ads_Pro_Module_CFP
 	 *  delete ban cookie
 	 */
 	public function delete_ban_cookie() {
-		if ( !$this->module_enabled && isset( $_COOKIE['advads_pro_cfp_ban'] ) && !headers_sent() ) {
+		if ( !$this->module_enabled && Params::cookie( 'advads_pro_cfp_ban' ) && !headers_sent() ) {
 			$pnd = $this->get_path_and_domain();
 			$path = '' != $pnd['path'] ? $pnd['path'] : '/';
 			if ( '' != $pnd['domain'] ) {
@@ -170,11 +181,12 @@ class Advanced_Ads_Pro_Module_CFP
 	 * front end check for the visitor condition
 	 *
 	 * @param array           $options Options of the condition.
-	 * @param Advanced_Ads_Ad $ad      Ad object.
+	 * @param Ad $ad      Ad object.
 	 */
 	public function visitor_conditions_check( $options = [], $ad = false ) {
-		if ( isset( $_COOKIE['advanced_ads_ad_clicks_' . $ad->id] ) ) {
-			$cval = json_decode( stripslashes( $_COOKIE['advanced_ads_ad_clicks_' . $ad->id] ), true );
+		$ad_click = Params::cookie( 'advanced_ads_ad_clicks_' . $ad->get_id() );
+		if ( $ad_click ) {
+			$cval = json_decode( stripslashes( $ad_click ), true );
 
 			$update_cookie = false;
 
@@ -203,7 +215,7 @@ class Advanced_Ads_Pro_Module_CFP
 	 *  determine if ads should be hidden
 	 *
 	 * @param bool            $can_display Whether the current ad can be displayed.
-	 * @param Advanced_Ads_Ad $ad The ad object.
+	 * @param Ad $ad The ad object.
 	 * @param array           $check_options Check options.
 	 * @return bool
 	 */
@@ -220,7 +232,7 @@ class Advanced_Ads_Pro_Module_CFP
 		}
 
 		// Check if the user is banned
-		return empty( $_COOKIE['advads_pro_cfp_ban'] );
+		return empty( Params::cookie( 'advads_pro_cfp_ban' ) );
 	}
 
 	/**
@@ -228,7 +240,7 @@ class Advanced_Ads_Pro_Module_CFP
 	 */
 	public function add_frontend_script_data() {
 		// Do not enqueue on AMP pages.
-		if ( function_exists( 'advads_is_amp' ) && advads_is_amp() ) {
+		if ( Conditional::is_amp() ) {
 			return;
 		}
 
@@ -241,6 +253,7 @@ class Advanced_Ads_Pro_Module_CFP
 			'cfpBan'        => isset( $options['cfp']['ban_duration'] ) ? $options['cfp']['ban_duration'] : 7,
 			'cfpPath'       => $pnd['path'],
 			'cfpDomain'     => $pnd['domain'],
+			'cfpEnabled'    => isset( $options['cfp']['enabled'] ),
 		] );
 	}
 
@@ -248,17 +261,17 @@ class Advanced_Ads_Pro_Module_CFP
 	 * Add the JS that adds this ad to the list of CFP.
 	 *
 	 * @param string          $output Ad output.
-	 * @param Advanced_Ads_Ad $ad Ad object.
+	 * @param Ad $ad Ad object.
 	 * @return string
 	 */
 	public function ad_output( $output, $ad ) {
 		// Do not enqueue on AMP pages.
-		if ( function_exists( 'advads_is_amp' ) && advads_is_amp() ) {
+		if ( Conditional::is_amp() ) {
 			return $output;
 		}
 		$cond = $this->get_conditions_options( $ad );
 		if ( !empty( $cond ) || $this->module_enabled ) {
-			$output .= '<script type="text/javascript">;new advadsCfpAd( ' . $ad->id . ' );</script>';
+			$output .= '<script type="text/javascript">;new advadsCfpAd( ' . $ad->get_id() . ' );</script>';
 		}
 		return $output;
 	}
@@ -267,15 +280,15 @@ class Advanced_Ads_Pro_Module_CFP
 	 * add the HTML attribute for front end JS
 	 *
 	 * @param array           $wrapper Wrapper options.
-	 * @param Advanced_Ads_Ad $ad      The ad object.
+	 * @param Ad $ad      The ad object.
 	 */
 	public function add_wrapper( $wrapper, $ad ) {
 		$cond = $this->get_conditions_options( $ad );
 		if ( !empty( $cond ) || $this->module_enabled ) {
 			// Iframe or `a` tag of the ad
-			$wrapper['data-cfpa'] = $ad->id;
+			$wrapper['data-cfpa'] = $ad->get_id();
 			// Ad wrapper.
-			$wrapper['data-cfpw'] = $ad->id;
+			$wrapper['data-cfpw'] = $ad->get_id();
 
 			// print all expiration hours
 			if ( !empty( $cond ) ) {
@@ -301,7 +314,7 @@ class Advanced_Ads_Pro_Module_CFP
 	 * @return bool array $nodes.
 	 */
 	public function add_ad_health_node( $nodes ) {
-		if ( isset( $_COOKIE['advads_pro_cfp_ban'] ) ) {
+		if ( Params::cookie( 'advads_pro_cfp_ban' ) ) {
 			$nodes[] = [ 'type' => 1, 'data' => [
 				'parent' => 'advanced_ads_ad_health',
 				'id'    => 'advanced_ads_ad_health_cfp_enabled',
@@ -320,12 +333,12 @@ class Advanced_Ads_Pro_Module_CFP
 	 * Add the data attribute to the top level wrapper when it is an ad wrapper.
 	 *
 	 * @param array           $options Wrapper options.
-	 * @param Advanced_Ads_Ad $ad Ad object.
+	 * @param Ad $ad Ad object.
 	 *
 	 * @return array
 	 */
-	public function add_wrapper_options( $options, Advanced_Ads_Ad $ad ) {
-		if ( ! empty( $ad->args['is_top_level'] ) ) {
+	public function add_wrapper_options( $options, Ad $ad ) {
+		if ( ! empty( $ad->get_prop( 'is_top_level' ) ) ) {
 			$options['data-cfptl'] = true;
 		}
 		return $options;
@@ -334,29 +347,31 @@ class Advanced_Ads_Pro_Module_CFP
 	/**
 	 * Add the data attribute to the top level wrapper when it is a group wrapper.
 	 *
-	 * @param array              $options Wrapper options.
-	 * @param Advanced_Ads_Group $group   group object.
+	 * @param array $options Wrapper options.
+	 * @param Group $group   group object.
 	 *
 	 * @return array
 	 */
-	public function add_wrapper_options_group( $options, Advanced_Ads_Group $group ) {
-		if ( ! empty( $group->ad_args['is_top_level'] ) ) {
+	public function add_wrapper_options_group( $options, Group $group ) {
+		if ( ! empty( $group->get_prop( 'ad_args.is_top_level' ) ) ) {
 			$options['data-cfptl'] = true;
 		}
+
 		return $options;
 	}
 
 	/**
 	 * Enable cache-busting if the module is enabled.
 	 *
-	 * @param string  $return What cache-busting type is needed.
-	 * @return string $return What cache-busting type is needed.
+	 * @param string $check What cache-busting type is needed.
+	 *
+	 * @return string $check What cache-busting type is needed.
 	 */
-	public function ad_needs_backend_request( $return ) {
-		if ( 'static' === $return ) {
+	public function ad_needs_backend_request( $check ) {
+		if ( 'static' === $check ) {
 			return 'passive';
 		}
 
-		return $return;
+		return $check;
 	}
 }

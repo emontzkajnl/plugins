@@ -10,6 +10,7 @@
 namespace Advanced_Ads_Pro\Module\Responsive_Ads;
 
 use Advanced_Ads_Pro;
+use AdvancedAds\Framework\Utilities\Params;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +22,7 @@ class Common {
 	/**
 	 * Hook into WordPress.
 	 */
-	public function hooks() {
+	public function hooks(): void {
 		add_filter( 'advanced-ads-visitor-conditions', [ $this, 'visitor_conditions' ] );
 	}
 
@@ -62,8 +63,9 @@ class Common {
 		}
 
 		$browser_width = 0;
-		if ( ! empty( $_COOKIE['advanced_ads_visitor'] ) ) {
-			$browser_width = json_decode( stripslashes( $_COOKIE['advanced_ads_visitor'] ), true );
+		$ads_visitor   = Params::cookie( 'advanced_ads_visitor' );
+		if ( ! empty( $ads_visitor ) ) {
+			$browser_width = json_decode( stripslashes( $ads_visitor ), true ); // phpcs:ignore
 			$browser_width = $browser_width['browser_width'] ?? 0;
 		} else {
 			$responsive_options = Advanced_Ads_Pro::get_instance()->get_options();
@@ -74,9 +76,9 @@ class Common {
 
 		$operator  = $options['operator'];
 		$operators = [
-			'is_equal' => $value === $browser_width,
+			'is_equal'  => $value === $browser_width,
 			'is_higher' => $value <= $browser_width,
-			'is_lower' => $value >= $browser_width,
+			'is_lower'  => $value >= $browser_width,
 		];
 
 		return $operators[ $operator ] ?? true;

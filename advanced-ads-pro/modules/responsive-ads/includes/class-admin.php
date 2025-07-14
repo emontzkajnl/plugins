@@ -21,8 +21,8 @@ class Admin {
 	/**
 	 * Hook into WordPress.
 	 */
-	public function hooks() {
-		add_action( 'advanced-ads-settings-init', [ $this, 'add_settings' ], 10, 0 );
+	public function hooks(): void {
+		add_action( 'advanced-ads-settings-init', [ $this, 'add_settings' ] );
 	}
 
 	/**
@@ -113,15 +113,17 @@ class Admin {
 	 * @return bool
 	 */
 	public function is_responsive_active(): bool {
-		$active_by_string = ( ! empty( array_filter(
+		$plugins = array_filter(
 			apply_filters( 'active_plugins', get_option( 'active_plugins' ) ),
-			static function( $plugin ) {
+			static function ( $plugin ) {
 				$needle = 'responsive-ads.php';
 				$len    = strlen( $needle );
 
 				return substr_compare( $plugin, $needle, -$len, $len ) === 0;
 			}
-		) ) );
+		);
+
+		$active_by_string = ! empty( $plugins );
 
 		return defined( 'AAR_BASE_PATH' ) || $active_by_string;
 	}

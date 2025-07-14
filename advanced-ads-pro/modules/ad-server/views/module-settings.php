@@ -12,7 +12,7 @@
 <label for="advanced-ads-pro-ad-server-enabled" class="description">
 	<?php esc_html_e( 'Activate module.', 'advanced-ads-pro' ); ?>
 </label>
-<a href="<?php echo esc_url( ADVADS_URL ) . 'ad-server-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-ad-server-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
+<a href="https://wpadvancedads.com/ad-server-wordpress/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-ad-server-manual'; ?>" target="_blank" class="advads-manual-link"><?php esc_html_e( 'Manual', 'advanced-ads-pro' ); ?></a>
 
 <div class="advads-sub-settings">
 	<p class="description"><?php esc_html_e( 'Top level domains on which the ads will be loaded.', 'advanced-ads-pro' ); ?> <?php esc_html_e( 'Separate multiple values with a comma.', 'advanced-ads-pro' ); ?></p>

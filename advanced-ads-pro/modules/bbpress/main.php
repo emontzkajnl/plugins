@@ -1,4 +1,14 @@
 <?php
+/**
+ * Module main file
+ *
+ * @package AdvancedAds\Pro
+ * @author  Advanced Ads <info@wpadvancedads.com>
+ */
 
-new Advanced_Ads_Pro_Module_bbPress;
+// Stop if bbPress isn't activated.
+if ( ! class_exists( 'bbPress', false ) ) {
+	return;
+}
 
+( new AdvancedAds\Pro\Modules\bbPress\BBPress() )->hooks();

@@ -1,6 +1,6 @@
-<?php
+<?php //phpcs:ignore WordPress.Files.FileName.NotHyphenatedLowercase, WordPress.Files.FileName.InvalidClassFileName
 
-use AdvancedAdsPro\Symfony\Component\CssSelector\CssSelectorConverter;
+use Symfony\Component\CssSelector\CssSelectorConverter;
 
 /**
  * Injects ads using an output buffer.
@@ -13,7 +13,7 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 	 * Constructor.
 	 */
 	public function __construct() {
-		if ( Advanced_Ads_Pro::get_instance()->get_options()['placement-positioning'] !== 'php' ) {
+		if ( 'php' !== Advanced_Ads_Pro::get_instance()->get_options()['placement-positioning'] ) {
 			return;
 		}
 
@@ -48,26 +48,23 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 			return $content;
 		}
 
-		$placements = Advanced_Ads::get_instance()->get_model()->get_ad_placements_array();
-
-		foreach ( $placements as $placement_id => $placement ) {
-			if ( empty( $placement['item'] )
-				|| ! isset( $placement['type'] )
-				|| ! in_array( $placement['type'], [ 'custom_position', 'post_above_headline' ], true )
+		foreach ( wp_advads_get_placements() as $placement_id => $placement ) {
+			if (
+				empty( $placement->get_item() ) || ! $placement->is_type( [ 'custom_position', 'post_above_headline' ] )
 			) {
 				continue;
 			}
 
-			$placement_options = isset( $placement['options'] ) ? $placement['options'] : [];
+			$placement_options = $placement->get_data();
 
-			if ( $placement['type'] === 'custom_position' ) {
+			if ( $placement->is_type( 'custom_position' ) ) {
 				$xpath_options = $this->get_custom_position_xpath_options( $placement_options );
 				if ( ! $xpath_options ) {
 					continue;
 				}
 			}
 
-			if ( $placement['type'] === 'post_above_headline' ) {
+			if ( $placement->is_type( 'post_above_headline' ) ) {
 				$xpath_options = [
 					'tag'      => 'custom',
 					'xpath'    => '//h1',
@@ -99,12 +96,7 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 	 * @return array|bool XPath options or False on failure.
 	 */
 	private function get_custom_position_xpath_options( $placement_options ) {
-		if (
-			( ! isset( $placement_options['inject_by'] )
-			|| $placement_options['inject_by'] === 'pro_custom_element'
-			)
-			&& isset( $placement_options['pro_custom_element'] )
-		) {
+		if ( ( ! isset( $placement_options['inject_by'] ) || 'pro_custom_element' === $placement_options['inject_by'] ) && isset( $placement_options['pro_custom_element'] ) ) {
 			// By CSS selector.
 			$xpath = $this->css_to_xpath( $placement_options['pro_custom_element'] );
 			if ( ! $xpath ) {
@@ -164,10 +156,16 @@ class Advanced_Ads_Pro_Module_Inject_Content_Custom_Position {
 
 		// Remove the unique tag and implement the functionality of the `:eq` selector.
 		do {
-			$query = preg_replace_callback( '/(.*?)\/advads_eq_selector(\d+)/', static function( $matches ) {
-				return sprintf( '(%s)[%s]', $matches[1], $matches[2] + 1 );
-			}, $query, 1, $count );
-		} while ( $count === 1 );
+			$query = preg_replace_callback(
+				'/(.*?)\/advads_eq_selector(\d+)/',
+				static function ( $matches ) {
+					return sprintf( '(%s)[%s]', $matches[1], $matches[2] + 1 );
+				},
+				$query,
+				1,
+				$count
+			);
+		} while ( 1 === $count );
 
 		return $query;
 	}

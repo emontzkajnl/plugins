@@ -1,8 +1,8 @@
 === Advanced Ads – Tracking ===
-Requires at least: 4.9
-Tested up to: 6.1
-Stable tag: 2.8.1
-Requires PHP: 7.2
+Requires at least: 5.7
+Tested up to: 6.8
+Stable tag: 3.0.4
+Requires PHP: 7.4
 
 Track ad impressions and clicks.
 
@@ -62,16 +62,35 @@ The Tracking add-on is based on the Advanced Ads plugin, a simple and powerful a
 
 == Changelog ==
 
-= 2.8.1 (August 12, 2024) =
+= 3.0.4 (June 25, 2025) =
 
-- Fix: address 'undefined index' notice when inserting ads via Gutenberg or shortcode
+- Improvement: add undefined translations
+- Improvement: type safety in class-ad-limiter.php
+- Improvement: Test plugin compatibility with WordPress 6.8.
+- Fix: source URL tracking for cloaked links in debug logs
+- Fix: add safety check in data handling
+- Fix: the_ad_clicks shortcode render as plain text
 
-= 2.8.0 (August 6, 2024) =
+= 3.0.3 (April 9, 2025) =
 
-- Improvement: update Slovenian translations
-- Improvement: add a shareable statistic link of each ad to the ad overview page
-- Fix: correct the links to groups on the statistic page
-- Fix: allow impression and click tracking with PeepSo Stream placement
-- Fix: ensure group filter appears on statistics page with only one group
+- Improvement: public report url rewriting with backward compatibility
+- Fix: removed all license-related code from the addons as license management has been moved to the free version.
+- Fix: quick edit for ads ignores tracking options and overwrites content
 
-Build: 2024-10-956fc661
+= 3.0.2 (March 18, 2025) =
+
+- Improvement: update Arabic translations
+- Fix: prevent fatal error on ad page
+
+= 3.0.1 (March 12, 2025) =
+
+- Fix: resolve PHP warnings during the update process
+- Fix: correct an error in the loading of the language files
+- Fix: display ad names in public reports and shareable links again
+
+= 3.0.0 (March 10, 2025) =
+
+- Feature: add best performing ads widget
+- Improvement: add quick & bulk edit for tracking options
+
+Build: 2025-07-063bd18a

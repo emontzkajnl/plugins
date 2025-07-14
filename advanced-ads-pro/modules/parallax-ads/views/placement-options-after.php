@@ -21,7 +21,7 @@
 
 	<?php
 	/* translators: Link to parallax manual */
-	printf( esc_html__( 'Optimized for image ads. %s', 'advanced-ads-pro' ), '<a href="' . esc_url( ADVADS_URL ) . 'parallax-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-parallax-manual" target="_blank" class="advads-manual-link">' . esc_html__( 'Manual', 'advanced-ads-pro' ) . '</a>' );
+	printf( esc_html__( 'Optimized for image ads. %s', 'advanced-ads-pro' ), '<a href="https://wpadvancedads.com/parallax-ads/?utm_source=advanced-ads&utm_medium=link&utm_campaign=pro-parallax-manual" target="_blank" class="advads-manual-link">' . esc_html__( 'Manual', 'advanced-ads-pro' ) . '</a>' );
 	?>
 </label>
 <br>
