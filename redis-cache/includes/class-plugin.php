@@ -839,7 +839,7 @@ class Plugin {
                     color: #fff;
                 }
             </style>
-HTML; // phpcs:enable
+HTML;
     }
 
     /**
@@ -852,7 +852,6 @@ HTML; // phpcs:enable
         $ajaxurl = esc_url( admin_url( 'admin-ajax.php' ) );
         $flushMessage = __( 'Flushing cache...', 'redis-cache' );
 
-        // phpcs:disable Squiz.PHP.Heredoc.NotAllowed
         return <<<HTML
             <script id="redis-cache-admin-bar">
                 (function (element) {
@@ -897,7 +896,7 @@ HTML; // phpcs:enable
                     document.querySelector('#wp-admin-bar-redis-cache-flush > a')
                 );
             </script>
-HTML; // phpcs:enable
+HTML;
     }
 
     /**
