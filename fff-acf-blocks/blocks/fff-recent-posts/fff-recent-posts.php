@@ -42,7 +42,9 @@ if ($recent_query->have_posts()):
             </div>
             <div class="fff-recent__text-container">
             <p class="fff-category"><?php echo '<a class="unstyle-link" href="'.$cat_link.'">'.$cat_name.'</a>'; ?></p>
+            
             <h2 class="fff-recent__title"><a class="unstyle-link" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h2>
+            <p><?php echo get_the_excerpt(  );  ?></p>
             </div>
         </div> <!-- container -->
         
