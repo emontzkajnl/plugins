@@ -16,7 +16,7 @@ $fa_four = get_field('article_four');
 $primary_cat = get_post_meta($fa_one,'_yoast_wpseo_primary_category', TRUE );
 $cats = get_the_category( $fa_one);
 $cat_id = $primary_cat ? $primary_cat :  $cats[0]->term_id ; 
-$cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;
+$cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cats[0]->name;
 ?>
 <div class="tan-bkgrnd">
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
@@ -40,7 +40,7 @@ $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;
         $primary_cat = get_post_meta($value,'_yoast_wpseo_primary_category', TRUE );
         $cats = get_the_category( $value);
         $cat_id = $primary_cat ? $primary_cat :  $cats[0]->term_id ; 
-        $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cat[0]->name;
+        $cat_name = $primary_cat ? get_the_category_by_ID($primary_cat) : $cats[0]->name;
         // echo 'primary is '.get_the_category_by_ID($primary_cat); ?>
         <div class="col-12 m-col-4">
         <div class="thf-featured__sub-item">
