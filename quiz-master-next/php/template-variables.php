@@ -1086,6 +1086,7 @@ function qsm_questions_answers_shortcode_to_text( $mlw_quiz_array, $qmn_question
 			}
 		}
 	}
+	$user_answer_class = 11 != $answer['question_type'] ? $user_answer_class : '';
 	$open_span_tag                 = '<span class="' . $user_answer_class . '">';
 	$mlw_question_answer_display   = htmlspecialchars_decode( $qmn_question_answer_template, ENT_QUOTES );
 	$disable_description_on_result = $mlwQuizMasterNext->pluginHelper->get_section_setting( 'quiz_options', 'disable_description_on_result' );
@@ -1149,7 +1150,7 @@ function qsm_questions_answers_shortcode_to_text( $mlw_quiz_array, $qmn_question
 			if ( ! empty( $_POST['quiz_answer_random_ids'] ) ) {
 				$answers_random = array();
 				$quiz_answer_random_ids = sanitize_text_field( wp_unslash( $_POST['quiz_answer_random_ids'] ) );
-				$quiz_answer_random_ids = maybe_unserialize( $quiz_answer_random_ids );
+				$quiz_answer_random_ids = qsm_safe_unserialize( $quiz_answer_random_ids );
 				if ( ! empty( $quiz_answer_random_ids[ $answer['id'] ] ) && is_array( $quiz_answer_random_ids[ $answer['id'] ] ) ) {
 					foreach ( $quiz_answer_random_ids[ $answer['id'] ] as $key ) {
 						$answers_random[ $key ] = $total_answers[ $key ];
@@ -1434,7 +1435,7 @@ function qsm_questions_answers_shortcode_to_text( $mlw_quiz_array, $qmn_question
 			$mlw_question_answer_display = str_replace( '%USER_ANSWER%', "$open_span_tag" . do_shortcode( $user_answer_new ) . $close_span_with_br, $mlw_question_answer_display );
 		}
 }
-	$answer_2 = ! empty( $answer[2] ) ? $mlwQuizMasterNext->pluginHelper->qsm_language_support( $answer[2], 'answer-' . $answer[2], 'QSM Answers' ) : 'NA';
+	$answer_2 = isset( $answer[2] ) && '' !== $answer[2] ? $mlwQuizMasterNext->pluginHelper->qsm_language_support( $answer[2], 'answer-' . $answer[2], 'QSM Answers' ) : 'NA';
 	if ( in_array( $answer['question_type'], $use_custom_correct_answer_template, true ) ) {
 		$result_page_user_answer_template  = "";
 		$result_page_user_answer_template .= apply_filters( 'qsm_result_page_custom_correct_answer_template', $result_page_user_answer_template, $questions, $answer );
@@ -1478,7 +1479,7 @@ function qsm_questions_answers_shortcode_to_text( $mlw_quiz_array, $qmn_question
 	$mlw_question_answer_display = apply_filters( 'qsm_question_answers_template_variable', $mlw_question_answer_display, $mlw_quiz_array, $answer );
 	$question_obj                = ( isset( $questions[ $answer['id'] ] ) ? $questions[ $answer['id'] ] : null );
 	$display                     = "<div class='qmn_question_answer $extra_border_bottom_class $question_answer_class'>" . apply_filters( 'qmn_variable_question_answers', $mlw_question_answer_display, $mlw_quiz_array, $question_obj ) . '</div>';
-
+	$display = apply_filters( 'qsm_question_answers_template_variable_display_before', $display, $mlw_quiz_array, $qmn_question_answer_template, $questions, $qmn_questions, $answer, $qsm_question_cnt, $total_question_cnt );
 	return wp_kses_post( $display );
 }
 
@@ -1652,6 +1653,47 @@ function qmn_sanitize_input_data( $data, $strip = false ) {
 		$data = stripslashes( $data );
 	}
 	return maybe_unserialize( $data );
+}
+
+/**
+ * Safely unserialize a value while blocking objects/resources and nested serialized payloads.
+ *
+ * @param mixed $value Serialized string or any other value.
+ * @return mixed|null  Unserialized value on success, original value if not serialized, or null if rejected.
+ */
+function qsm_safe_unserialize( $value ) {
+	$result = $value;
+
+	// If it's not a serialized string, keep original value
+	if ( is_string( $value ) && is_serialized( $value ) ) {
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize, WordPress.PHP.NoSilencedErrors.Discouraged
+		$unserialized_value = unserialize( $value, [ 'allowed_classes' => false ] );
+
+		$is_invalid_blob = ( false === $unserialized_value && 'b:0;' !== $value );
+		$is_disallowed_type = is_object( $unserialized_value ) || is_resource( $unserialized_value );
+
+		if ( $is_invalid_blob || $is_disallowed_type ) {
+			$result = null;
+		} else {
+			$contains_nested_serialization = false;
+
+			$scan_for_nested = static function ( $item ) use ( &$contains_nested_serialization ) {
+				if ( is_string( $item ) && ( is_serialized( $item ) || preg_match( '/(^|[;:{])(?:[OC]):\d+:"/i', $item ) ) ) {
+					$contains_nested_serialization = true;
+				}
+			};
+
+			if ( is_array( $unserialized_value ) ) {
+				array_walk_recursive( $unserialized_value, $scan_for_nested );
+			} else {
+				$scan_for_nested( $unserialized_value );
+			}
+
+			$result = $contains_nested_serialization ? null : $unserialized_value;
+		}
+	}
+
+	return $result;
 }
 
 /**

@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AdvancedAds\\Pro\\Admin\\Ad_List_Table' => $baseDir . '/includes/admin/class-ad-list-table.php',
+    'AdvancedAds\\Pro\\Admin\\Admin' => $baseDir . '/includes/admin/class-admin.php',
     'AdvancedAds\\Pro\\Admin\\Adsense' => $baseDir . '/includes/admin/class-adsense.php',
     'AdvancedAds\\Pro\\Admin\\Duplicate_Placement' => $baseDir . '/includes/admin/class-duplicate-placement.php',
     'AdvancedAds\\Pro\\Admin\\Group_Duplication' => $baseDir . '/includes/admin/class-group-duplication.php',

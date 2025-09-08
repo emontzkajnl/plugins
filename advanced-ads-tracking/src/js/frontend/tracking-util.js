@@ -1,13 +1,15 @@
-var AdvAdsTrackingUtils = {
+/* eslint-disable camelcase, no-console, no-undef */
+
+const AdvAdsTrackingUtils = {
 	/**
 	 * Check if there are ads.
 	 *
-	 * @param {object} data
-	 * @return {boolean}
+	 * @param {Object} data
+	 * @return {boolean} true if there are ads, false otherwise.
 	 */
-	hasAd: function (data) {
-		for (var i in data) {
-			if (Array.isArray(data[i]) && data[i].length) {
+	hasAd( data ) {
+		for ( const i in data ) {
+			if ( Array.isArray( data[ i ] ) && data[ i ].length ) {
 				return true;
 			}
 		}
@@ -17,48 +19,48 @@ var AdvAdsTrackingUtils = {
 	/**
 	 * Custom implementation of jQuery.param.
 	 *
-	 * @param {object} data
-	 * @return {string}
+	 * @param {Object} data
+	 * @return {string} Query string
 	 */
-	param: function (data) {
-		return Object.keys(data)
-			.map(function (k) {
-				if (Array.isArray(data[k])) {
-					return Object.keys(data[k])
-						.map(function (m) {
+	param( data ) {
+		return Object.keys( data )
+			.map( function ( k ) {
+				if ( Array.isArray( data[ k ] ) ) {
+					return Object.keys( data[ k ] )
+						.map( function ( m ) {
 							return (
-								encodeURIComponent(k) +
+								encodeURIComponent( k ) +
 								'[]=' +
-								encodeURIComponent(data[k][m])
+								encodeURIComponent( data[ k ][ m ] )
 							);
-						})
-						.join('&');
+						} )
+						.join( '&' );
 				}
 				return (
-					encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
+					encodeURIComponent( k ) +
+					'=' +
+					encodeURIComponent( data[ k ] )
 				);
-			})
-			.join('&')
-			.replace(/%20/g, '+');
+			} )
+			.join( '&' )
+			.replace( /%20/g, '+' );
 	},
 
 	/**
 	 * Concat two arrays.
 	 *
-	 * @return {{}}
+	 * @return {{}} Object with concatenated arrays.
 	 */
-	concat: function () {
-		var args = Array.prototype.slice.call(arguments),
+	concat() {
+		const args = Array.prototype.slice.call( arguments ),
 			result = {};
 
-		for (var i in args) {
-			for (var j in args[i]) {
-				if ('undefined' == typeof result[j]) {
-					result[j] = args[i][j];
-				} else {
-					if ('function' == typeof result[j].concat) {
-						result[j] = result[j].concat(args[i][j]);
-					}
+		for ( const i in args ) {
+			for ( const j in args[ i ] ) {
+				if ( 'undefined' === typeof result[ j ] ) {
+					result[ j ] = args[ i ][ j ];
+				} else if ( 'function' === typeof result[ j ].concat ) {
+					result[ j ] = result[ j ].concat( args[ i ][ j ] );
 				}
 			}
 		}
@@ -68,14 +70,14 @@ var AdvAdsTrackingUtils = {
 	/**
 	 * Get the ads for the gived blog id.
 	 *
-	 * @param {object} ads
-	 * @param {integer} bid
-	 * @return {object}
+	 * @param {Object} ads
+	 * @param {number} bid
+	 * @return {Object} Object with ads for the given blog id.
 	 */
-	adsByBlog: function (ads, bid) {
-		var result = {};
-		if (typeof ads[bid] !== 'undefined') {
-			result[bid] = ads[bid];
+	adsByBlog( ads, bid ) {
+		const result = {};
+		if ( typeof ads[ bid ] !== 'undefined' ) {
+			result[ bid ] = ads[ bid ];
 		}
 		return result;
 	},
@@ -84,9 +86,9 @@ var AdvAdsTrackingUtils = {
 	 * Add the frontend prefix to requested data-attributes.
 	 *
 	 * @param {string} name
-	 * @returns {string}
+	 * @return {string} Prefixed attribute name.
 	 */
-	getPrefixedAttribute: function (name) {
+	getPrefixedAttribute( name ) {
 		return '' + window.advadsTracking.frontendPrefix + name;
 	},
 
@@ -95,28 +97,28 @@ var AdvAdsTrackingUtils = {
 	 * These need to be camelCased.
 	 *
 	 * @param {string} name
-	 * @returns {string}
+	 * @return {string} Prefixed attribute name.
 	 */
-	getPrefixedDataSetAttribute: function (name) {
-		return this.getPrefixedAttribute(name)
+	getPrefixedDataSetAttribute( name ) {
+		return this.getPrefixedAttribute( name )
 			.toLowerCase()
-			.replace('data-', '')
-			.replace(/-([a-z]?)/g, (m, g) => g.toUpperCase());
+			.replace( 'data-', '' )
+			.replace( /-([a-z]?)/g, ( m, g ) => g.toUpperCase() );
 	},
 
 	/**
 	 * Replacement for jQuery.extend.
 	 *
-	 * @return {object}
+	 * @return {Object} Extended object with all properties from the arguments.
 	 */
-	extend: function () {
-		var extended = {};
+	extend() {
+		const extended = {};
 
-		for (var key in arguments) {
-			var argument = arguments[key];
-			for (var prop in argument) {
-				if (Object.prototype.hasOwnProperty.call(argument, prop)) {
-					extended[prop] = argument[prop];
+		for ( const key in arguments ) {
+			const argument = arguments[ key ];
+			for ( const prop in argument ) {
+				if ( Object.prototype.hasOwnProperty.call( argument, prop ) ) {
+					extended[ prop ] = argument[ prop ];
 				}
 			}
 		}
@@ -127,108 +129,111 @@ var AdvAdsTrackingUtils = {
 	/**
 	 * InArray polyfill.
 	 *
-	 * @param {(string|int)} needle
-	 * @param {Array} haystack
-	 * @return {boolean}
+	 * @param {(string|number)} needle
+	 * @param {Array}           haystack
+	 * @return {boolean} True if needle is in haystack, false otherwise.
 	 */
-	inArray: function (needle, haystack) {
-		return haystack.indexOf(needle) > -1;
+	inArray( needle, haystack ) {
+		return haystack.indexOf( needle ) > -1;
 	},
 
 	/**
 	 * Find parent element with specific classname
 	 *
 	 * @param {Element} el
-	 * @param {string} className
+	 * @param {string}  className
 	 */
-	findParentByClassName: function (el, className) {
-		while ((el = el.parentElement) && !el.classList.contains(className)) {}
+	findParentByClassName( el, className ) {
+		while (
+			( el = el.parentElement ) &&
+			! el.classList.contains( className )
+		) {}
 		return el;
 	},
 
 	/**
 	 * Create current timestamp
 	 *
-	 * @return {number}
+	 * @return {number} Current timestamp in seconds.
 	 */
-	getTimestamp: function () {
-		if (!Date.now) {
+	getTimestamp() {
+		if ( ! Date.now ) {
 			Date.now = function () {
 				return new Date().getTime();
 			};
 		}
-		return Math.floor(Date.now() / 1000);
+		return Math.floor( Date.now() / 1000 );
 	},
 
 	/**
 	 * Extend array with unique function.
 	 *
-	 * @param value
+	 * @param {string} value
 	 * @param {number} index
-	 * @param {Array} self
-	 * @returns {*[]} unique array.
+	 * @param {Array}  self
+	 * @return {*[]} unique array.
 	 */
-	arrayUnique: function (value, index, self) {
-		return self.indexOf(value) === index;
+	arrayUnique( value, index, self ) {
+		return self.indexOf( value ) === index;
 	},
 
 	/**
 	 * Check if the current blog uses GA tracking (setting or parallel) and UID is set.
 	 *
 	 * @param {number} bid
-	 * @return {boolean}
+	 * @return {boolean} True if the blog uses GA tracking, false otherwise.
 	 */
-	blogUseGA: function (bid) {
+	blogUseGA( bid ) {
 		// phpcs:ignore WordPress.WhiteSpace.OperatorSpacing
 		return (
-			(advads_tracking_methods[bid] === 'ga' ||
-				advads_tracking_parallel[bid]) &&
-			!!advads_gatracking_uids[bid]
+			( advads_tracking_methods[ bid ] === 'ga' ||
+				advads_tracking_parallel[ bid ] ) &&
+			!! advads_gatracking_uids[ bid ]
 		);
 	},
 
 	/**
 	 * POST XHR, replaces jQuery.post
 	 *
-	 * @param {string} url
+	 * @param {string}          url
 	 * @param {(object|string)} data
-	 * @param {boolean} [async=true]
-	 * @return {Promise}
+	 * @param {boolean}         [async=true]
+	 * @return {Promise} Promise that resolves with the response or rejects with an error.
 	 */
-	post: function (url, data, async) {
-		var xhr = new XMLHttpRequest();
+	post( url, data, async ) {
+		const xhr = new XMLHttpRequest();
 
-		if (false !== async) {
+		if ( false !== async ) {
 			xhr.timeout = 5000;
 		}
 
 		// Return it as a Promise
-		return new Promise(function (resolve, reject) {
+		return new Promise( function ( resolve, reject ) {
 			xhr.onreadystatechange = function () {
 				// Wait for request to complete.
-				if (xhr.readyState !== XMLHttpRequest.DONE) {
+				if ( xhr.readyState !== XMLHttpRequest.DONE ) {
 					return;
 				}
 
 				// Resolve if 2xx status, reject otherwise.
 				if (
 					xhr.status === 0 ||
-					(xhr.status >= 200 && xhr.status < 300)
+					( xhr.status >= 200 && xhr.status < 300 )
 				) {
-					resolve(xhr);
+					resolve( xhr );
 				} else {
-					reject({
+					reject( {
 						status: xhr.status,
 						statusText: xhr.statusText,
-					});
+					} );
 				}
 			};
 
-			if ('undefined' === typeof async) {
+			if ( 'undefined' === typeof async ) {
 				async = true;
 			}
 
-			xhr.open('POST', url, async);
+			xhr.open( 'POST', url, async );
 			xhr.setRequestHeader(
 				'Content-Type',
 				'application/x-www-form-urlencoded; charset=UTF-8'
@@ -236,9 +241,9 @@ var AdvAdsTrackingUtils = {
 			xhr.send(
 				typeof data === 'string'
 					? data
-					: AdvAdsTrackingUtils.param(data)
+					: AdvAdsTrackingUtils.param( data )
 			);
-		});
+		} );
 	},
 };
 window.AdvAdsTrackingUtils = AdvAdsTrackingUtils;

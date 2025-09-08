@@ -199,7 +199,7 @@ class Tracking {
 
 		$the_ad = wp_advads_get_ad( $ad_id );
 		// Do not track expired ads click.
-		if ( $the_ad->is_expired() ) {
+		if ( ! is_an_ad( $the_ad ) || $the_ad->is_expired() ) {
 			return false;
 		}
 

@@ -78,6 +78,7 @@ class ComposerStaticInit_advanced_ads_pro
 
     public static $classMap = array (
         'AdvancedAds\\Pro\\Admin\\Ad_List_Table' => __DIR__ . '/../..' . '/includes/admin/class-ad-list-table.php',
+        'AdvancedAds\\Pro\\Admin\\Admin' => __DIR__ . '/../..' . '/includes/admin/class-admin.php',
         'AdvancedAds\\Pro\\Admin\\Adsense' => __DIR__ . '/../..' . '/includes/admin/class-adsense.php',
         'AdvancedAds\\Pro\\Admin\\Duplicate_Placement' => __DIR__ . '/../..' . '/includes/admin/class-duplicate-placement.php',
         'AdvancedAds\\Pro\\Admin\\Group_Duplication' => __DIR__ . '/../..' . '/includes/admin/class-group-duplication.php',

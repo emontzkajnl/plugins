@@ -158,14 +158,15 @@ function qsm_register_rest_routes() {
  */
 function qsm_rest_get_bank_questions( WP_REST_Request $request ) {
 	if ( is_user_logged_in() ) {
+		$parameters = $request->get_params();
 		global $wpdb;
 		$quiz_filter = '%%';
-		if ( ! empty( $_REQUEST['quizID'] ) ) {
-			$quiz_filter = sanitize_text_field( wp_unslash( $_REQUEST['quizID'] ) );
+		if ( ! empty( $parameters['quizID'] ) ) {
+			$quiz_filter = sanitize_text_field( wp_unslash( $parameters['quizID'] ) );
 		}
-		$category = isset( $_REQUEST['category'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['category'] ) ) : '';
-		$search   = isset( $_REQUEST['search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['search'] ) ) : '';
-		$que_type = isset( $_REQUEST['type'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['type'] ) ) : '';
+		$category = isset( $parameters['category'] ) ? sanitize_text_field( wp_unslash( $parameters['category'] ) ) : '';
+		$search   = isset( $parameters['search'] ) ? sanitize_text_field( wp_unslash( $parameters['search'] ) ) : '';
+		$que_type = isset( $parameters['type'] ) ? sanitize_text_field( wp_unslash( $parameters['type'] ) ) : '';
 		$enabled  = get_option( 'qsm_multiple_category_enabled' );
 		$migrated = false;
 		if ( $enabled && 'cancelled' !== $enabled ) {
@@ -174,7 +175,11 @@ function qsm_rest_get_bank_questions( WP_REST_Request $request ) {
 
 		$search_sql = '';
 		if ( ! empty( $search ) ) {
-			$search_sql .= " AND (question_settings LIKE '%$search%' OR question_name LIKE '%$search%')";
+			$search_sql .= $wpdb->prepare(
+				" AND (question_settings LIKE %s OR question_name LIKE %s)",
+				'%' . $wpdb->esc_like( $search ) . '%',
+				'%' . $wpdb->esc_like( $search ) . '%'
+			);
 		}
 		if ( ! empty( $que_type ) ) {
 			$search_sql .= $wpdb->prepare( " AND question_type_new = %s", $que_type );
@@ -207,9 +212,9 @@ function qsm_rest_get_bank_questions( WP_REST_Request $request ) {
 		}
 		$limit = empty( $limit ) ? 20 : $limit;
 		$total_pages = ceil( $total_count / $limit );
-		$pageno = isset( $_REQUEST['page'] ) ? intval( $_REQUEST['page'] ) : 1;
+		$pageno = isset( $parameters['page'] ) ? intval( $parameters['page'] ) : 1;
 		$offset = ( $pageno - 1 ) * $limit;
-
+		$questions = [];
 		if ( ! empty( $category ) ) {
 			if ( $migrated && is_numeric( $category ) ) {
 				$query_result = array();
@@ -279,8 +284,8 @@ function qsm_rest_get_bank_questions( WP_REST_Request $request ) {
 				'case-sensitive'          => isset( $question['settings']['case-sensitive'] ) ? $question['settings']['case-sensitive'] : 0,
 				'limit_text'              => isset( $question['settings']['limit_text'] ) ? $question['settings']['limit_text'] : 0,
 				'limit_multiple_response' => isset( $question['settings']['limit_multiple_response'] ) ? $question['settings']['limit_multiple_response'] : 0,
-				'file_upload_limit'       => isset( $question['settings']['file_upload_limit'] ) ? $question['settings']['file_upload_limit'] : 0,
-				'file_upload_type'        => isset( $question['settings']['file_upload_type'] ) ? $question['settings']['file_upload_type'] : '',
+				'file_upload_limit'       => isset( $question['settings']['file_upload_limit'] ) ? $question['settings']['file_upload_limit'] : 4,
+				'file_upload_type'        => isset( $question['settings']['file_upload_type'] ) ? $question['settings']['file_upload_type'] : 'image,application/pdf',
 				'quiz_name'               => isset( $quiz_name['quiz_name'] ) ? $quiz_name['quiz_name'] : '',
 				'question_title'          => isset( $question['settings']['question_title'] ) ? $question['settings']['question_title'] : '',
 				'linked_question'         => array_filter( isset( $question['linked_question'] ) ? explode(',', $question['linked_question']) : array() ),
@@ -625,8 +630,8 @@ function qsm_rest_get_questions( WP_REST_Request $request ) {
 					'case_sensitive'          => isset( $question['settings']['case_sensitive'] ) ? $question['settings']['case_sensitive'] : 0,
 					'limit_text'              => isset( $question['settings']['limit_text'] ) ? $question['settings']['limit_text'] : 0,
 					'limit_multiple_response' => isset( $question['settings']['limit_multiple_response'] ) ? $question['settings']['limit_multiple_response'] : 0,
-					'file_upload_limit'       => isset( $question['settings']['file_upload_limit'] ) ? $question['settings']['file_upload_limit'] : 0,
-					'file_upload_type'        => isset( $question['settings']['file_upload_type'] ) ? $question['settings']['file_upload_type'] : '',
+					'file_upload_limit'       => isset( $question['settings']['file_upload_limit'] ) ? $question['settings']['file_upload_limit'] : 4,
+					'file_upload_type'        => isset( $question['settings']['file_upload_type'] ) ? $question['settings']['file_upload_type'] : 'image,application/pdf',
 					'quiz_name'               => $quiz_name,
 					'question_title'          => isset( $question['settings']['question_title'] ) ? $question['settings']['question_title'] : '',
 					'featureImageID'          => isset( $question['settings']['featureImageID'] ) ? $question['settings']['featureImageID'] : '',

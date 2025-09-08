@@ -15,11 +15,12 @@ use AdvancedAds\Framework\Utilities\Params;
 if ( ! isset( $ad_id ) ) {
 	die;
 }
-$period  = Params::get( 'period', 'last30days' );
-$from    = Params::get( 'from', null );
-$to      = Params::get( 'to', null );
-$ad      = wp_advads_get_ad( $ad_id );
-$ad_name = $ad->get_prop( 'tracking.public-name' ) ?: $ad->get_title();
+$period      = Params::get( 'period', 'last30days' );
+$from        = Params::get( 'from', null );
+$to          = Params::get( 'to', null );
+$ad          = wp_advads_get_ad( $ad_id );
+$public_name = $ad->get_prop( 'tracking.public-name' );
+$ad_name     = empty( $public_name ) ? $ad->get_title() : $public_name;
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -43,7 +44,7 @@ $ad_name = $ad->get_prop( 'tracking.public-name' ) ?: $ad->get_title();
 					<h3 id="ad-title">
 						<?php
 						/* translators: %s: ad name */
-						printf( esc_html__( 'Statistics for %s', 'advanced-ads-tracking' ), $ad_name );
+						echo esc_html( sprintf( __( 'Statistics for %s', 'advanced-ads-tracking' ), $ad_name ) );
 						?>
 					</h3>
 				</td>

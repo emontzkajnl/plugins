@@ -2,6 +2,8 @@
 
 namespace Advanced_Ads_Pro\Rest_Api;
 
+use AdvancedAds\Abstracts\Ad as AbstractsAd;
+
 /**
  * REST API extension of the Ad class.
  */
@@ -71,11 +73,11 @@ class Ad {
 	 * If tracking is active, filter the attributes to remove tracking-specific frontend attributes.
 	 *
 	 * @param array $attributes Keys are attribute names, values their respective values.
-	 * @param Ad    $ad         Ad instance.
+	 * @param AbstractsAd    $ad         Ad instance.
 	 *
 	 * @return array
 	 */
-	public function filter_tracking_attributes( array $attributes, Ad $ad ) {
+	public function filter_tracking_attributes( array $attributes, AbstractsAd $ad ) {
 		if ( $this->ad->get_id() !== $ad->get_id() ) {
 			return $attributes;
 		}

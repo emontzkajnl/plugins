@@ -103,7 +103,6 @@ class Ad_Limiter {
 	 * @return void
 	 */
 	public function update_ad_limit_on_save( $post_id, $post, $update ): void {
-		// get the ad start date.
 		$start = $this->parse_start_date( $post );
 
 		// refresh options.
@@ -207,8 +206,10 @@ class Ad_Limiter {
 		if ( empty( $pace ) ) {
 			$pace = [];
 		}
+
 		if ( ! array_key_exists( 'start', $pace ) ) {
-			$this->set_pace( date_create( get_post( $this->ad->get_id() )->post_date_gmt )->getTimestamp() );
+			$start = $this->parse_start_date( get_post( $this->ad->get_id() ) );
+			$this->set_pace( $start );
 			if ( array_key_exists( 'count', $pace ) ) {
 				foreach ( $pace['count'] as $hour => $count ) {
 					$this->pace['sums'][ $hour ] = $count;
@@ -684,14 +685,19 @@ class Ad_Limiter {
 	 * @return int
 	 */
 	private function parse_start_date( WP_Post $post ) {
-		$date_gmt = '0000-00-00 00:00:00' === $post->post_date_gmt
-			? get_gmt_from_date( $post->post_date )
-			: $post->post_date_gmt;
+		// Try modified date first.
+		$timestamp = get_post_timestamp( $post, 'modified' );
 
-		if ( '0000-00-00 00:00:00' === $date_gmt ) {
-			$date_gmt = current_time( 'mysql' );
+		// If modified is invalid or empty, try published date.
+		if ( ! $timestamp ) {
+			$timestamp = get_post_timestamp( $post, 'date' );
 		}
 
-		return date_create( $date_gmt )->getTimestamp();
+		// Fallback to current site datetime if still invalid.
+		if ( ! $timestamp || $timestamp > PHP_INT_MAX ) {
+			$timestamp = current_datetime()->getTimestamp(); // site-local time.
+		}
+
+		return $timestamp;
 	}
 }

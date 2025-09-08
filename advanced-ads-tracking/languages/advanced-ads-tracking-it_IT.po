@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Ad Tracking package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-08-13 10:42:16+0000\n"
+"PO-Revision-Date: 2025-07-01 20:03:52+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,11 +14,11 @@ msgstr ""
 #. Author of the plugin
 #: tracking.php
 msgid "Advanced Ads"
-msgstr ""
+msgstr "Advanced Ads"
 
 #: views/admin/ads/bulk-edit.php:10
 msgid "— No Change —"
-msgstr ""
+msgstr "—Nessun cambiamento —"
 
 #. translators: %s: Plugin name
 #: includes/class-bootstrap.php:155
@@ -66,12 +66,12 @@ msgstr ""
 #: views/admin/widgets/wordpress-dashboard/performing-ads.php:41
 msgid "Impression"
 msgid_plural "Impressions"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Impressione"
+msgstr[1] "Impressioni"
 
 #: includes/class-bootstrap.php:129 includes/class-bootstrap.php:152
 msgid "Important Notice"
-msgstr ""
+msgstr "Avviso importante"
 
 #: includes/installation/class-tracking-installer.php:371
 msgid "Error message:"
@@ -1165,7 +1165,7 @@ msgstr "Link base per i rapporti pubblici"
 
 #: views/admin/ads/bulk-edit.php:59 views/admin/ads/quick-edit.php:45
 msgid "Add \"nofollow\""
-msgstr ""
+msgstr "Aggiungi \"nofollow\""
 
 #: includes/admin/class-settings.php:306
 msgid "Click-link base"

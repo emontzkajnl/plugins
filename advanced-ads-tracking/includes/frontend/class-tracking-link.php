@@ -277,7 +277,7 @@ class Tracking_Link implements Integration_Interface {
 		}
 		$libxml_previous_state = libxml_use_internal_errors( true );
 		$dom                   = new DOMDocument( '1.0', 'utf-8' );
-		$dom->loadHTML( '<!DOCTYPE html><html><body>' . mb_convert_encoding( $input, 'HTML-ENTITIES', 'UTF-8' ) . '</body></html>' );
+		$dom->loadHTML( '<!DOCTYPE html><html><body>' . htmlentities( $input, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false ) . '</body></html>' );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
 

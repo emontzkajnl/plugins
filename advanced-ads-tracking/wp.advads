@@ -2,7 +2,7 @@
   "wp": {
     "name": "Advanced Ads – Tracking",
     "description": "Track ad impressions and clicks.",
-    "version": "3.0.4",
+    "version": "3.0.7",
     "requireWP": "5.7",
     "requirePHP": "7.4",
     "textDomain": "advanced-ads-tracking",

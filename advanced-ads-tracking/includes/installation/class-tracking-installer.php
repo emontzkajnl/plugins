@@ -9,9 +9,7 @@
 
 namespace AdvancedAds\Tracking\Installation;
 
-use ReflectionClass;
 use RuntimeException;
-use ReflectionException;
 use AdvancedAds\Utilities\Data;
 use AdvancedAds\Tracking\Helpers;
 use AdvancedAds\Tracking\Debugger;
@@ -47,7 +45,7 @@ class Tracking_Installer {
 	 *
 	 * @var string
 	 */
-	private $ajax_dropin_version = '2.0.0-alpha.3';
+	private $ajax_dropin_version = '2.1.0';
 
 	/**
 	 * The destination directory for the ajax-handler.php file.
@@ -94,7 +92,7 @@ class Tracking_Installer {
 		// Delete ajax handler if not needed. Keep it on multisite installations.
 		if (
 			( defined( 'ADVANCED_ADS_TRACKING_LEGACY_AJAX' ) && ADVANCED_ADS_TRACKING_LEGACY_AJAX )
-			|| ( isset( $options['method'] ) && 'ga' == $options['method'] && ! is_multisite() )
+			|| ( isset( $options['method'] ) && 'ga' === $options['method'] && ! is_multisite() )
 		) {
 			$this->uninstall();
 		}
@@ -156,6 +154,47 @@ class Tracking_Installer {
 	}
 
 	/**
+	 * Install the custom ajax handler if environment permits it.
+	 * Override if installed version is too old.
+	 *
+	 * @return void
+	 */
+	public function install(): void {
+		if ( ! is_admin() || wp_doing_ajax() || ! class_exists( 'Advanced_Ads', false ) ) {
+			return;
+		}
+
+		$options = wp_advads_tracking()->options->get_all();
+
+		if (
+			( ! Helpers::is_tracking_method( 'ga' ) || is_multisite() )
+			&& ! Helpers::is_legacy_ajax()
+			&& ( ! $this->handler_exists() || $this->needs_update( $options ) )
+		) {
+			if ( $this->write_handler() && $this->needs_update( $options ) ) {
+				$options[ self::VERSION_OPTION ] = $this->generate_version_hash();
+				wp_advads_tracking()->options->update( $options );
+			}
+		}
+	}
+
+	/**
+	 * Remove the installed ajax handler.
+	 * Return early if the file does not exist.
+	 */
+	public function uninstall() {
+		if ( ! $this->handler_exists() ) {
+			return;
+		}
+
+		try {
+			$this->get_filesystem()->delete( $this->dest_file );
+		} catch ( RuntimeException $e ) { // phpcs:ignore
+			// if we don't have a filesystem and can't delete the file, just ignore this.
+		}
+	}
+
+	/**
 	 * Try to write the ajax handler to wp-content dir
 	 *
 	 * @return bool Whether the dropin file was written.
@@ -202,47 +241,6 @@ class Tracking_Installer {
 	}
 
 	/**
-	 * Install the custom ajax handler if environment permits it.
-	 * Override if installed version is too old.
-	 *
-	 * @return void
-	 */
-	public function install(): void {
-		if ( ! is_admin() || wp_doing_ajax() || ! class_exists( 'Advanced_Ads', false ) ) {
-			return;
-		}
-
-		$options = wp_advads_tracking()->options->get_all();
-
-		if (
-			( ! Helpers::is_tracking_method( 'ga' ) || is_multisite() )
-			&& ! Helpers::is_legacy_ajax()
-			&& ( ! $this->handler_exists() || $this->needs_update( $options ) )
-		) {
-			if ( $this->write_handler() && $this->needs_update( $options ) ) {
-				$options[ self::VERSION_OPTION ] = $this->generate_version_hash();
-				wp_advads_tracking()->options->update( $options );
-			}
-		}
-	}
-
-	/**
-	 * Remove the installed ajax handler.
-	 * Return early if the file does not exist.
-	 */
-	public function uninstall() {
-		if ( ! $this->handler_exists() ) {
-			return;
-		}
-
-		try {
-			$this->get_filesystem()->delete( $this->dest_file );
-		} catch ( RuntimeException $e ) { // phpcs:ignore
-			// if we don't have a filesystem and can't delete the file, just ignore this.
-		}
-	}
-
-	/**
 	 * Check if the installed ajax handler needs an update.
 	 *
 	 * @param array $options Options for add-on.
@@ -251,15 +249,6 @@ class Tracking_Installer {
 	 */
 	private function needs_update( $options ): bool {
 		return ! isset( $options[ self::VERSION_OPTION ] ) || $options[ self::VERSION_OPTION ] !== $this->generate_version_hash();
-	}
-
-	/**
-	 * Add the full path to the Debugger Class.
-	 *
-	 * @return string
-	 */
-	private function get_debugger_file(): string {
-		return dirname( __FILE__, 3 ) . '/packages/autoload.php'; // phpcs:ignore
 	}
 
 	/**
@@ -305,33 +294,20 @@ class Tracking_Installer {
 	 * @return array
 	 */
 	private function gather_variables(): array {
-		global $wpdb;
 		static $vars;
 
 		if ( ! is_null( $vars ) ) {
 			return $vars;
 		}
 
-		// see wp-includes/wp-db.php for documentation.
-		list( $host, $port, $socket, $is_ipv6 ) = $wpdb->parse_db_host( $wpdb->dbhost );
-		if ( $is_ipv6 && extension_loaded( 'mysqlnd' ) ) {
-			$host = "[$host]";
-		}
-
 		$vars = [
-			'db_host'       => $host, // 1
-			'db_user'       => $wpdb->dbuser, // 2
-			'db_password'   => $wpdb->dbpassword, // 3
-			'db_name'       => $wpdb->dbname, // 4
-			'db_port'       => $port, // 5
-			'db_socket'     => $socket, // 6
-			'table_prefix'  => $wpdb->get_blog_prefix( 1 ), // 7
-			'debug_file'    => Debugger::get_debug_file_path(), // 8
-			'debug_enabled' => Debugger::debugging_enabled() ? 'true' : 'false', // 9
-			'debug_id'      => get_option( Debugger::DEBUG_OPT, [ 'id' => 0 ] )['id'], // 10
-			'debug_handler' => $this->get_debugger_file(), // 11
-			'bots'          => $this->get_bots(), // 12
-			'timezone'      => wp_timezone_string(), // 13
+			'debug_file'    => Debugger::get_debug_file_path(),
+			'debug_enabled' => Debugger::debugging_enabled() ? 'true' : 'false',
+			'debug_id'      => get_option( Debugger::DEBUG_OPT, [ 'id' => 0 ] )['id'],
+			'abs_path'      => ABSPATH,
+			'plugin_path'   => AA_TRACKING_ABSPATH . 'packages/autoload.php',
+			'bots'          => $this->get_bots(),
+			'timezone'      => wp_timezone_string(),
 		];
 
 		return $vars;
@@ -381,29 +357,25 @@ class Tracking_Installer {
 	/**
 	 * Check for the WP_Filesystem and error if no credentials.
 	 *
+	 * @throws RuntimeException If we can't find a Filesystem (e.g. not in admin), throw a RuntimeException.
+	 *
 	 * @return WP_Filesystem_Base
-	 * @throws \RuntimeException If we can't find a Filesystem (e.g. not in admin), throw a RuntimeException.
 	 */
 	private function get_filesystem() {
-		static $filesystem;
+		global $wp_filesystem;
 
-		if ( null !== $filesystem ) {
-			return $filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
 		}
 
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
+		if (
+			null === $wp_filesystem ||
+			( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->has_errors()) ) {
 			throw new RuntimeException( 'Can\'t instantiate WP_Filesystem' );
 		}
 
-		// try setting up the wp_filesystem global.
-		WP_Filesystem();
-
-		$filesystem = $GLOBALS['wp_filesystem'];
-		if ( null === $filesystem || is_wp_error( $filesystem->errors ) ) {
-			throw new RuntimeException( 'Can\'t instantiate WP_Filesystem' );
-		}
-
-		return $filesystem;
+		return $wp_filesystem;
 	}
 
 	/**

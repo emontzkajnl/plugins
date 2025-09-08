@@ -46,7 +46,9 @@ class Assets_Manager extends Assets_Registry {
 	 *
 	 * @return void
 	 */
-	public function register_styles(): void {}
+	public function register_styles(): void {
+		$this->register_style( 'admin-styles', 'assets/admin.css' );
+	}
 
 	/**
 	 * Register scripts

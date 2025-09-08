@@ -74,7 +74,7 @@ class Assets_Registry extends Framework\Assets_Registry {
 	 */
 	public function register_scripts(): void {
 		// Frontend.
-		$src  = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? 'src/js/frontend/public-stats.js' : 'assets/dist/public-stats.js' );
+		$src  = 'assets/dist/public-stats.js';
 		$deps = [
 			'jquery',
 			'jquery-ui-datepicker',

@@ -2,7 +2,7 @@
   "wp": {
     "name": "Advanced Ads – Sticky Ads",
     "description": "Advanced ad positioning.",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "requireWP": "5.7",
     "requirePHP": "7.4",
     "textDomain": "advanced-ads-sticky",

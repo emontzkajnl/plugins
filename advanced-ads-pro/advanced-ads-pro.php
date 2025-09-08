@@ -10,7 +10,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Advanced Ads Pro
- * Version:           3.0.5
+ * Version:           3.0.7
  * Description:       Advanced features to boost your ad revenue.
  * Plugin URI:        https://wpadvancedads.com/add-ons/advanced-ads-pro/
  * Author:            Advanced Ads
@@ -37,7 +37,7 @@ if ( defined( 'AAP_FILE' ) ) {
 }
 
 define( 'AAP_FILE', __FILE__ );
-define( 'AAP_VERSION', '3.0.5' );
+define( 'AAP_VERSION', '3.0.7' );
 
 // Load the autoloader.
 require_once __DIR__ . '/includes/class-autoloader.php';

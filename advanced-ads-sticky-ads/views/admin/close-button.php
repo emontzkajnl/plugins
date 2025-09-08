@@ -6,9 +6,10 @@
  * @author  Advanced Ads <info@wpadvancedads.com>
  * @since   1.9.0
  *
- * @var array  $data        Placement data.
- * @var array  $options     Placement sticky options.
- * @var string $option_name Option name.
+ * @var Placement $placement   Placement object.
+ * @var array     $data        Placement data.
+ * @var array     $options     Placement sticky options.
+ * @var string    $option_name Option name.
  */
 
 use AdvancedAds\Utilities\WordPress;
@@ -21,14 +22,33 @@ $close_timeout_enabled = $options['timeout_enabled'] ?? false;
 $close_timeout         = $options['timeout'] ?? 0;
 $option_name           = 'advads[placements][options][close]';
 
+$has_refresh_group = false;
+if ( 'group' === $placement->get_item_type() ) {
+	$group = $placement->get_item_object();
+	if ( $group && $group->get_prop( 'options.refresh.enabled' ) ) {
+		$has_refresh_group = true;
+	}
+}
+
 ob_start();
 ?>
 <p>
 	<label>
-		<input type="checkbox" name="<?php echo esc_attr( $option_name ); ?>[enabled]" value="1"<?php checked( $close_enabled, 1 ); ?> onclick="advads_toggle_box(this, '#advads-close-button-<?php echo esc_attr( $placement_slug ); ?>');"/>
+		<input type="checkbox" name="<?php echo esc_attr( $option_name ); ?>[enabled]" value="1"<?php checked( $close_enabled, 1 ); ?> onclick="advads_toggle_box(this, '#advads-close-button-<?php echo esc_attr( $placement_slug ); ?>');" <?php disabled( $has_refresh_group ); ?>/>
 		<?php esc_html_e( 'add close button', 'advanced-ads-sticky' ); ?>
 	</label>
 </p>
+
+<?php
+if ( $has_refresh_group ) {
+	?>
+	<p class="description">
+		<?php esc_html_e( 'Note: The close button is disabled as this placement contains an ad group with a refresh interval enabled.', 'advanced-ads-sticky' ); ?>
+	</p>
+		<?php
+}
+?>
+
 <div id="advads-close-button-<?php echo esc_attr( $placement_slug ); ?>"<?php echo ! $close_enabled ? ' style="display:none;"' : ''; ?>>
 	<p>
 		<?php esc_html_e( 'Position', 'advanced-ads-sticky' ); ?>

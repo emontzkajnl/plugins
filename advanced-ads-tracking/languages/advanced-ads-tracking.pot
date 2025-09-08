@@ -2,16 +2,16 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Advanced Ads – Tracking 3.0.3\n"
+"Project-Id-Version: Advanced Ads – Tracking 3.0.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/advanced-ads-tracking\n"
 "Last-Translator: Shakeeb Ahmed <me@shakeebahmed.com>\n"
 "Language-Team: Advanced Ads <support@wpadvancedads.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-06-25T11:01:28+00:00\n"
+"POT-Creation-Date: 2025-09-01T06:31:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: advanced-ads-tracking\n"
 
 #. Plugin Name of the plugin
@@ -90,11 +90,13 @@ msgstr ""
 
 #. Translators: 1: opening a-tag with link to settings page 2: closing a-tag
 #: includes/admin/class-admin.php:268
+#, php-format
 msgid "You have selected to track ads with Google Analytics but not provided a tracking ID. Please add the Google Analytics UID %1$shere%2$s"
 msgstr ""
 
 #. translators: 1: opening a-tag with link to manual 2: closing a-tag
 #: includes/admin/class-admin.php:286
+#, php-format
 msgid "With the latest update, we adjusted the event names used by Google Analytics to track ad clicks and impressions. This change aims to reduce confusion and enhance the clarity of reports. \"Clicks\" and \"Impressions\" will now be referred to as \"advanced-ads-click\" and \"advanced-ads-impression\". If you prefer the original names or wish to customize them further, use a filter. %1$sManual%2$s"
 msgstr ""
 
@@ -341,6 +343,7 @@ msgstr ""
 #. translators: %b: month, %#d: day
 #: includes/class-ajax.php:416
 #: includes/class-ajax.php:817
+#, php-format
 msgctxt "format for week group in stats table"
 msgid "from %b&nbsp;%#d"
 msgstr ""
@@ -365,16 +368,17 @@ msgstr ""
 #: views/admin/page-stats.php:241
 #: views/emails/email-report-body.php:53
 #: views/emails/email-report-body.php:118
-#: views/frontend/public-stats.php:202
-#: views/frontend/public-stats.php:240
-#: views/frontend/public-stats.php:246
-#: views/frontend/public-stats.php:266
-#: views/frontend/public-stats.php:274
+#: views/frontend/public-stats.php:203
+#: views/frontend/public-stats.php:241
+#: views/frontend/public-stats.php:247
+#: views/frontend/public-stats.php:267
+#: views/frontend/public-stats.php:275
 msgid "clicks"
 msgstr ""
 
 #. translators: %s: ad name
 #: includes/class-assets-registry.php:161
+#, php-format
 msgid "clicks for \"%s\""
 msgstr ""
 
@@ -386,16 +390,17 @@ msgstr ""
 #: views/admin/page-stats.php:236
 #: views/emails/email-report-body.php:52
 #: views/emails/email-report-body.php:117
-#: views/frontend/public-stats.php:196
-#: views/frontend/public-stats.php:230
-#: views/frontend/public-stats.php:235
-#: views/frontend/public-stats.php:262
-#: views/frontend/public-stats.php:273
+#: views/frontend/public-stats.php:197
+#: views/frontend/public-stats.php:231
+#: views/frontend/public-stats.php:236
+#: views/frontend/public-stats.php:263
+#: views/frontend/public-stats.php:274
 msgid "impressions"
 msgstr ""
 
 #. translators: %s: ad name
 #: includes/class-assets-registry.php:165
+#, php-format
 msgid "impressions for \"%s\""
 msgstr ""
 
@@ -428,27 +433,32 @@ msgstr ""
 #. translators: %d: number of days
 #: includes/class-assets-registry.php:174
 #: includes/class-assets-registry.php:288
+#, php-format
 msgid "previous %d days"
 msgstr ""
 
 #. translators: %d: number of days
 #: includes/class-assets-registry.php:176
 #: includes/class-assets-registry.php:290
+#, php-format
 msgid "next %d days"
 msgstr ""
 
 #. translators: %1$s: from date, %2$s: to date
 #: includes/class-assets-registry.php:178
+#, php-format
 msgid "clicks from %1$s to %2$s"
 msgstr ""
 
 #. translators: %1$s: from date, %2$s: to date
 #: includes/class-assets-registry.php:180
+#, php-format
 msgid "impressions from %1$s to %2$s"
 msgstr ""
 
 #. translators: %1$s: from date, %2$s: to date
 #: includes/class-assets-registry.php:182
+#, php-format
 msgid "There is no data for %1$s to %2$s"
 msgstr ""
 
@@ -462,12 +472,13 @@ msgstr ""
 
 #: includes/class-assets-registry.php:186
 #: views/emails/email-report-body.php:51
-#: views/frontend/public-stats.php:272
+#: views/frontend/public-stats.php:273
 msgid "date"
 msgstr ""
 
 #. translators: %1$s: from date, %2$s: to date
 #: includes/class-assets-registry.php:188
+#, php-format
 msgid "%1$s to %2$s"
 msgstr ""
 
@@ -569,6 +580,7 @@ msgstr ""
 
 #. translators: %1$s: from date, %2$s: to date
 #: includes/class-assets-registry.php:284
+#, php-format
 msgid "stats from %1$s to %2$s"
 msgstr ""
 
@@ -618,11 +630,13 @@ msgstr ""
 
 #. translators: 1: is a link to a support document. 2: closing link
 #: includes/class-autoloader.php:113
+#, php-format
 msgid "Your installation of Advanced Ads is incomplete. If you installed Advanced Ads from GitHub, %1$s please refer to this document%2$s to set up your development environment."
 msgstr ""
 
 #. translators: %s: WP_ENVIRONMENT_TYPES
 #: includes/class-autoloader.php:157
+#, php-format
 msgid "The %s constant is no longer supported."
 msgstr ""
 
@@ -632,6 +646,7 @@ msgstr ""
 
 #. translators: %s: Plugin name
 #: includes/class-bootstrap.php:109
+#, php-format
 msgid "Your version of <strong>Advanced Ads – Tracking</strong> is incompatible with <strong>Advanced Ads %s</strong> and has been deactivated. Please update the plugin to the latest version."
 msgstr ""
 
@@ -646,6 +661,7 @@ msgstr ""
 
 #. translators: %s: Plugin name
 #: includes/class-bootstrap.php:155
+#, php-format
 msgid "Your versions of the Advanced Ads addons listed below are incompatible with <strong>Advanced Ads %s</strong> and have been deactivated. Please update the plugin to the latest version."
 msgstr ""
 
@@ -673,6 +689,7 @@ msgstr ""
 #. translators: %s is the path to WP_CONTENT_DIR
 #: includes/class-db-operations.php:103
 #: views/admin/page-database/db-operations.php:158
+#, php-format
 msgid " Please make sure the directory %s is writable"
 msgstr ""
 
@@ -690,11 +707,13 @@ msgstr ""
 
 #. Translators: %d is the ad_id
 #: includes/class-db-operations.php:167
+#, php-format
 msgid "No stats for ad ID %d removed."
 msgstr ""
 
 #. Translators: %d is the ad_id
 #: includes/class-db-operations.php:174
+#, php-format
 msgid "Impressions and clicks for ad ID %d removed."
 msgstr ""
 
@@ -713,7 +732,7 @@ msgstr ""
 #: includes/crons/class-reporting-emails.php:220
 #: views/admin/metaboxes/metabox-ad.php:119
 #: views/admin/settings/setting-email-report-stats-period.php:16
-#: views/frontend/public-stats.php:56
+#: views/frontend/public-stats.php:57
 msgid "last 12 months"
 msgstr ""
 
@@ -731,31 +750,32 @@ msgstr ""
 
 #: includes/class-db-operations.php:744
 #: includes/utilities/class-data.php:205
-#: views/frontend/public-stats.php:57
+#: views/frontend/public-stats.php:58
 msgid "custom"
 msgstr ""
 
 #: includes/class-db-operations.php:747
 #: views/admin/page-stats.php:131
-#: views/frontend/public-stats.php:66
+#: views/frontend/public-stats.php:67
 msgid "from"
 msgstr ""
 
 #: includes/class-db-operations.php:748
 #: views/admin/page-stats.php:132
-#: views/frontend/public-stats.php:67
+#: views/frontend/public-stats.php:68
 msgid "to"
 msgstr ""
 
 #. translators: 1. statistics period 2. ad name
 #: includes/crons/class-reporting-emails.php:127
+#, php-format
 msgid "Ad statistics for %1$s for %2$s"
 msgstr ""
 
 #: includes/crons/class-reporting-emails.php:218
 #: views/admin/metaboxes/metabox-ad.php:117
 #: views/admin/settings/setting-email-report-stats-period.php:14
-#: views/frontend/public-stats.php:54
+#: views/frontend/public-stats.php:55
 msgid "last 30 days"
 msgstr ""
 
@@ -764,16 +784,18 @@ msgid "the last month"
 msgstr ""
 
 #. translators: 1: WP_CONTENT_DIR 2: <code>wp-config.php</code> 3: <code>define( 'ADVANCED_ADS_TRACKING_LEGACY_AJAX', true )</code>
-#: includes/installation/class-tracking-installer.php:178
+#: includes/installation/class-tracking-installer.php:217
+#, php-format
 msgid "Please make sure the directory %1$s is writable or add the following to your %2$s: %3$s."
 msgstr ""
 
 #. translators: 1: <code>wp-content/ajax-handler.php</code> 2: <code>wp-admin/admin-ajax.php</code> 3: <a> 4: </a> 5: <code>ajax-handler.php</code>
-#: includes/installation/class-tracking-installer.php:362
+#: includes/installation/class-tracking-installer.php:338
+#, php-format
 msgid "The frontend tracking uses a swift AJAX call to %1$s for fetching ad IDs after page load. The creation of this Advanced Ads AJAX drop-in caused an issue and the file was removed. Now, the plugin employs %2$s as a reliable alternative. Please %3$scheck the documentation%4$s for more information on resolving your issue with %5$s and the fallback method."
 msgstr ""
 
-#: includes/installation/class-tracking-installer.php:371
+#: includes/installation/class-tracking-installer.php:347
 msgid "Error message:"
 msgstr ""
 
@@ -796,7 +818,7 @@ msgstr ""
 #: includes/utilities/class-data.php:201
 #: views/admin/metaboxes/metabox-ad.php:118
 #: views/admin/settings/setting-email-report-stats-period.php:15
-#: views/frontend/public-stats.php:55
+#: views/frontend/public-stats.php:56
 msgid "last month"
 msgstr ""
 
@@ -841,6 +863,7 @@ msgstr ""
 
 #. translators: %s is an inline code snippet
 #: views/admin/ads/ad-tracking-params.php:53
+#, php-format
 msgid "If you enable the link cloaking option, please replace the links you want to track in the ad code with the tracking placeholder (%s). Otherwise, Advanced Ads will not record clicks on this ad."
 msgstr ""
 
@@ -854,16 +877,19 @@ msgstr ""
 
 #. translators: %s is the HTML tags displayed in the frontend.
 #: views/admin/ads/ad-tracking-params.php:82
+#, php-format
 msgid "Use the %1$s parameter in your editor, or remove %2$s from Target URL."
 msgstr ""
 
 #. translators: %s is the URL displayed in the frontend, wrapped in <code> tags.
 #: views/admin/ads/ad-tracking-params.php:95
+#, php-format
 msgid "Cloak your link. The link will be displayed as %s."
 msgstr ""
 
 #. translators: %s is the filter name wrapped in <code> tags.
 #: views/admin/ads/ad-tracking-params.php:108
+#, php-format
 msgid "The value for link cloaking is defined for all ads by the %s filter."
 msgstr ""
 
@@ -891,6 +917,7 @@ msgstr ""
 
 #. translators: %s is the default value ("new window" or "same window")
 #: views/admin/ads/ad-tracking-params.php:135
+#, php-format
 msgid "It is \"%s\" by default. You can change this in the General settings."
 msgstr ""
 
@@ -923,11 +950,13 @@ msgstr ""
 #. translators: %1$s is the default value ("yes" or "no")
 #: views/admin/ads/ad-tracking-params.php:169
 #: views/admin/ads/ad-tracking-params.php:205
+#, php-format
 msgid "It is \"%1$s\" by default. You can change this in the Tracking settings."
 msgstr ""
 
 #. translators: %s <code>rel="sponsored"</code>
 #: views/admin/ads/ad-tracking-params.php:199
+#, php-format
 msgid "Add %s to tracking links."
 msgstr ""
 
@@ -1014,11 +1043,13 @@ msgstr ""
 
 #. Translators: impressions, clicks, or impressions or clicks
 #: views/admin/metaboxes/metabox-ad-limiter.php:108
+#, php-format
 msgid "The ad %s will be delivered as soon as possible."
 msgstr ""
 
 #. Translators: ADVANCED_ADS_TRACKING_NO_HOURLY_LIMIT constant name in <code> tag
 #: views/admin/metaboxes/metabox-ad-limiter.php:117
+#, php-format
 msgid "The constant %s is set to true."
 msgstr ""
 
@@ -1041,11 +1072,13 @@ msgstr ""
 
 #. Translators: 1: "impressions" or "clicks", 2: the remaining time string 3: the current pace
 #: views/admin/metaboxes/metabox-ad-limiter.php:155
+#, php-format
 msgid "The %1$s are spread equally through %2$s currently with a limit of %3$d %1$s per hour."
 msgstr ""
 
 #. Translators: 1: "impressions and clicks", 2: the remaining time string 3: the current impression pace, 4: the current click pace
 #: views/admin/metaboxes/metabox-ad-limiter.php:163
+#, php-format
 msgid "The %1$s are spread equally through %2$s currently with a limit of %3$s impressions or %4$s clicks per hour."
 msgstr ""
 
@@ -1137,6 +1170,7 @@ msgstr ""
 
 #. translators: %s is a URL
 #: views/admin/page-database/db-operations-time.php:21
+#, php-format
 msgid "If you notice a shift between your own time and stats, please check if the highlighted time is your local time. If not, please check if your <a href=\"%s\">time zone</a> is set correctly."
 msgstr ""
 
@@ -1216,21 +1250,25 @@ msgstr ""
 
 #. translators: %s represents the string
 #: views/admin/page-database/db-operations.php:122
+#, php-format
 msgid "Debugging is prohibited through the constant %s"
 msgstr ""
 
 #. translators: %s is name of the ad.
 #: views/admin/page-database/db-operations.php:145
+#, php-format
 msgid "<code>ADVANCED_ADS_TRACKING_DEBUG</code> constant is set: Debugging %s."
 msgstr ""
 
 #. translators: 1: name of the add (or all ads), 2: amount of hours, 3: amount of minutes
 #: views/admin/page-database/db-operations.php:166
+#, php-format
 msgid "Debugging %1$s for another %2$s and %3$s."
 msgstr ""
 
 #. translators: %d is a number for hours
 #: views/admin/page-database/db-operations.php:169
+#, php-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
@@ -1238,6 +1276,7 @@ msgstr[1] ""
 
 #. translators: %d is a number for minutes
 #: views/admin/page-database/db-operations.php:171
+#, php-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
@@ -1253,6 +1292,7 @@ msgstr ""
 
 #. translators: %d is the number of hours
 #: views/admin/page-database/db-operations.php:193
+#, php-format
 msgid "Logs more information about tracked data for %d hours starting now."
 msgstr ""
 
@@ -1262,6 +1302,7 @@ msgstr ""
 
 #. translators: %1$s is a beginning HTML tag, %2$s is the closing one.
 #: views/admin/page-database/db-operations.php:217
+#, php-format
 msgid "View the tracking %1$sdebug log file%2$s"
 msgstr ""
 
@@ -1275,6 +1316,7 @@ msgstr ""
 
 #. translators: %1$s is the opening link tag, %2$s is the closing link tag.
 #: views/admin/page-stats.php:90
+#, php-format
 msgid "You are currently tracking ads with Google Analytics. The statistics can be viewed only within your %1$sAnalytics account%2$s."
 msgstr ""
 
@@ -1287,7 +1329,7 @@ msgid "Database management"
 msgstr ""
 
 #: views/admin/page-stats.php:109
-#: views/frontend/public-stats.php:52
+#: views/frontend/public-stats.php:53
 msgid "Period"
 msgstr ""
 
@@ -1383,6 +1425,7 @@ msgstr ""
 
 #. Translators: 1: cron job schedule (e.g. 'daily'), 2: current timezone
 #: views/admin/settings/setting-email-test-email.php:21
+#, php-format
 msgid "Email will be sent %1$s at 00:15 %2$s"
 msgstr ""
 
@@ -1408,6 +1451,7 @@ msgstr ""
 
 #. translators: 1: is an example id for Universal Analytics <code>UA-123456-1</code>, 2: is an example id for GA4 '<code>G-A12BC3D456</code>'
 #: views/admin/settings/setting-ga.php:24
+#, php-format
 msgid "%1$s for Universal Analytics or %2$s for Google Analytics 4."
 msgstr ""
 
@@ -1455,6 +1499,7 @@ msgstr ""
 #. translators: %s is <code>rel="sponsored"</code>
 #: views/admin/settings/setting-nofollow.php:18
 #: views/admin/settings/setting-sponsored.php:18
+#, php-format
 msgid "Add %s to programatically created links."
 msgstr ""
 
@@ -1484,11 +1529,13 @@ msgstr[1] ""
 
 #. translators: 1. ad title. 2. period for statistic calculation
 #: views/emails/email-report-body.php:34
+#, php-format
 msgid "%1$s statistics for %2$s"
 msgstr ""
 
 #. translators: %s is a period string.
 #: views/emails/email-report-body.php:42
+#, php-format
 msgid "Ads statistics for %s"
 msgstr ""
 
@@ -1502,7 +1549,7 @@ msgid "click through rate"
 msgstr ""
 
 #: views/emails/email-report-body.php:99
-#: views/frontend/public-stats.php:322
+#: views/frontend/public-stats.php:323
 msgid "Total"
 msgstr ""
 
@@ -1512,6 +1559,7 @@ msgstr ""
 
 #. translators: %s is a period string.
 #: views/emails/email-report-body.php:112
+#, php-format
 msgid "Statistics per ad for %s"
 msgstr ""
 
@@ -1519,19 +1567,20 @@ msgstr ""
 msgid "Ad"
 msgstr ""
 
-#: views/frontend/public-stats.php:28
+#: views/frontend/public-stats.php:29
 msgid "Ad Statistics"
 msgstr ""
 
 #. translators: %s: ad name
-#: views/frontend/public-stats.php:46
+#: views/frontend/public-stats.php:47
+#, php-format
 msgid "Statistics for %s"
 msgstr ""
 
-#: views/frontend/public-stats.php:68
+#: views/frontend/public-stats.php:69
 msgid "Load"
 msgstr ""
 
-#: views/frontend/public-stats.php:275
+#: views/frontend/public-stats.php:276
 msgid "ctr"
 msgstr ""

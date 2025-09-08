@@ -1,22 +1,24 @@
+/* eslint-disable camelcase, no-console, no-undef */
+
 window.AdvAdsImpressionTracker = {
 	ajaxAds: {},
 	passiveAds: {},
 	initialAds: {},
-	removeDelayedAds: function (ids) {
-		var trackIds = document.querySelectorAll(
+	removeDelayedAds( ids ) {
+		const trackIds = document.querySelectorAll(
 				'[data-' +
-					AdvAdsTrackingUtils.getPrefixedAttribute('trackid') +
+					AdvAdsTrackingUtils.getPrefixedAttribute( 'trackid' ) +
 					'][data-delayed="1"]'
 			),
 			trackIdsLength = trackIds.length;
 
-		if (!trackIdsLength) {
+		if ( ! trackIdsLength ) {
 			return ids;
 		}
 
-		for (var i = 0; i < trackIdsLength; i++) {
-			var id = parseInt(
-					trackIds[i].dataset[
+		for ( let i = 0; i < trackIdsLength; i++ ) {
+			const id = parseInt(
+					trackIds[ i ].dataset[
 						AdvAdsTrackingUtils.getPrefixedDataSetAttribute(
 							'trackid'
 						)
@@ -24,7 +26,7 @@ window.AdvAdsImpressionTracker = {
 					10
 				),
 				bid = parseInt(
-					trackIds[i].dataset[
+					trackIds[ i ].dataset[
 						AdvAdsTrackingUtils.getPrefixedDataSetAttribute(
 							'trackbid'
 						)
@@ -33,51 +35,53 @@ window.AdvAdsImpressionTracker = {
 				);
 
 			if (
-				AdvAdsTrackingUtils.hasAd(ids) &&
-				typeof ids[bid] !== 'undefined'
+				AdvAdsTrackingUtils.hasAd( ids ) &&
+				typeof ids[ bid ] !== 'undefined'
 			) {
-				var index = ids[bid].indexOf(id);
-				if (index > -1) {
-					ids[bid].splice(index, 1);
+				const index = ids[ bid ].indexOf( id );
+				if ( index > -1 ) {
+					ids[ bid ].splice( index, 1 );
 				}
 			}
 		}
 
 		return ids;
 	},
-	track: function (ids, server) {
+	track( ids, server ) {
 		server = server ? server : 'all';
-		if (!AdvAdsTrackingUtils.hasAd(ids)) {
+		if ( ! AdvAdsTrackingUtils.hasAd( ids ) ) {
 			return;
 		} // do not send empty array
 
-		for (var bid in ids) {
-			if (AdvAdsTrackingUtils.blogUseGA(bid)) {
+		for ( const bid in ids ) {
+			if ( AdvAdsTrackingUtils.blogUseGA( bid ) ) {
 				// ad IDs already collected and will be sent automatically once the Analytics tracker is ready
 				advadsGATracking.deferedAds = AdvAdsTrackingUtils.concat(
 					advadsGATracking.deferedAds,
-					AdvAdsTrackingUtils.adsByBlog(ids, bid)
+					AdvAdsTrackingUtils.adsByBlog( ids, bid )
 				);
 
-				if (server === 'delayed') {
+				if ( server === 'delayed' ) {
 					// "Delayed" tracking. Explicitly defined for placements that initially hide ads (timeout/scroll)
-					this.triggerEvent('advadsGADelayedTrack');
+					this.triggerEvent( 'advadsGADelayedTrack' );
 				} else {
 					// the "usual" deferred tracking (once the GA tracker is ready)
-					this.triggerEvent('advadsGADeferedTrack');
+					this.triggerEvent( 'advadsGADeferedTrack' );
 				}
 
 				if (
 					server === 'ajax' &&
 					AdvAdsTrackingUtils.hasAd(
-						AdvAdsTrackingUtils.adsByBlog(this.ajaxAds, bid)
+						AdvAdsTrackingUtils.adsByBlog( this.ajaxAds, bid )
 					)
 				) {
 					// remove all tracked ajax ads
-					for (var i in this.ajaxAds[bid]) {
-						var index = ids[bid].indexOf(this.ajaxAds[bid][i]);
-						if (index > -1) {
-							this.ajaxAds[bid].splice(i, 1);
+					for ( const i in this.ajaxAds[ bid ] ) {
+						const index = ids[ bid ].indexOf(
+							this.ajaxAds[ bid ][ i ]
+						);
+						if ( index > -1 ) {
+							this.ajaxAds[ bid ].splice( i, 1 );
 						}
 					}
 				}
@@ -85,36 +89,36 @@ window.AdvAdsImpressionTracker = {
 
 			if (
 				server !== 'ajax' && // ads already tracked through AJAX cache-busting
-				(advads_tracking_methods[bid] === 'frontend' || // default AJAX handler
-					advads_tracking_methods[bid] === 'onrequest') // also track locally if delayed ads
+				( advads_tracking_methods[ bid ] === 'frontend' || // default AJAX handler
+					advads_tracking_methods[ bid ] === 'onrequest' ) // also track locally if delayed ads
 			) {
 				// send tracking data to the server.
-				this.sendTrack(bid, ids[bid]);
+				this.sendTrack( bid, ids[ bid ] );
 			}
 
 			this.ajaxAds = {};
 		}
 	},
-	triggerEvent: function (name) {
-		var event = new CustomEvent(name);
-		document.dispatchEvent(event);
+	triggerEvent( name ) {
+		const event = new CustomEvent( name );
+		document.dispatchEvent( event );
 	},
-	sendTrack: function (bid, ads) {
-		if (!ads.length) {
+	sendTrack( bid, ads ) {
+		if ( ! ads.length ) {
 			return;
 		}
-		AdvAdsTrackingUtils.post(advads_tracking_urls[bid], {
-			ads: ads,
+		AdvAdsTrackingUtils.post( advads_tracking_urls[ bid ], {
+			ads,
 			action: window.advadsTracking.impressionActionName,
 			referrer: window.location.pathname + window.location.search,
-			bid: bid,
-		});
+			bid,
+		} );
 	},
 };
 
-(function () {
-	var localTracker = function () {
-		if (typeof advads_tracking_ads === 'undefined') {
+( function () {
+	const localTracker = function () {
+		if ( typeof advads_tracking_ads === 'undefined' ) {
 			return;
 		}
 
@@ -122,12 +126,12 @@ window.AdvAdsImpressionTracker = {
 			window.AdvAdsImpressionTracker.removeDelayedAds(
 				advads_tracking_ads
 			);
-		if (!AdvAdsTrackingUtils.hasAd(advads_tracking_ads)) {
+		if ( ! AdvAdsTrackingUtils.hasAd( advads_tracking_ads ) ) {
 			return;
 		}
 
-		for (var bid in advads_tracking_ads) {
-			if (advads_tracking_methods[bid] !== 'frontend') {
+		for ( const bid in advads_tracking_ads ) {
+			if ( advads_tracking_methods[ bid ] !== 'frontend' ) {
 				continue;
 			}
 
@@ -136,13 +140,13 @@ window.AdvAdsImpressionTracker = {
 				typeof advads.privacy.is_ad_decoded !== 'undefined'
 			) {
 				// remove ads that have not been decoded.
-				advads_tracking_ads[bid] = advads_tracking_ads[bid].filter(
+				advads_tracking_ads[ bid ] = advads_tracking_ads[ bid ].filter(
 					advads.privacy.is_ad_decoded
 				);
 			}
 
 			// cache-busting: off
-			window.AdvAdsImpressionTracker.track(advads_tracking_ads);
+			window.AdvAdsImpressionTracker.track( advads_tracking_ads );
 			// clean cache-busting: off
 			advads_tracking_ads = { 1: [] };
 		}
@@ -151,34 +155,42 @@ window.AdvAdsImpressionTracker = {
 	/**
 	 * Add a single ad into an ad list object
 	 *
-	 * @param {object} list the ad list.
-	 * @param {int} bid blog ID.
-	 * @param {int} ad ad ID.
-	 * @returns {object}
+	 * @param {Object} list the ad list.
+	 * @param {number} bid  blog ID.
+	 * @param {number} ad   ad ID.
+	 * @return {Object} the updated ad list.
 	 */
 	function addSingleAd( list, bid, ad ) {
-		if ( 'undefined' === typeof list[bid] ) {
-			list[bid] = [];
+		if ( 'undefined' === typeof list[ bid ] ) {
+			list[ bid ] = [];
 		}
-		list[bid].push( ad );
+		list[ bid ].push( ad );
 		return list;
 	}
 	/**
 	 * Whether privacy policy allows us to track
 	 *
-	 * @returns {boolean}
+	 * @return {boolean} true if privacy policy is unknown, false otherwise.
 	 */
 	function privacyRedLight() {
-		return typeof advads !== 'undefined' && advads.privacy.get_state() === 'unknown';
+		return (
+			typeof advads !== 'undefined' &&
+			advads.privacy.get_state() === 'unknown'
+		);
 	}
 	document.addEventListener( 'advads_track_async', function ( ev ) {
-		const bid = ev.detail.bid, ad = ev.detail.ad;
-		switch ( advads_tracking_methods[bid] ) {
+		const bid = ev.detail.bid,
+			ad = ev.detail.ad;
+		switch ( advads_tracking_methods[ bid ] ) {
 			case 'frontend':
 				if ( 'undefined' === typeof advads_tracking_ads ) {
 					advads_tracking_ads = {};
 				}
-				advads_tracking_ads = addSingleAd( advads_tracking_ads, bid, ad );
+				advads_tracking_ads = addSingleAd(
+					advads_tracking_ads,
+					bid,
+					ad
+				);
 				if ( ! privacyRedLight() ) {
 					// If red light, tracker will be called on approval.
 					localTracker();
@@ -188,22 +200,32 @@ window.AdvAdsImpressionTracker = {
 				if ( 'undefined' === typeof advadsGATracking.delayedAds ) {
 					advadsGATracking.delayedAds = {};
 				}
-				advadsGATracking.delayedAds = addSingleAd( advadsGATracking.delayedAds, bid, ad );
+				advadsGATracking.delayedAds = addSingleAd(
+					advadsGATracking.delayedAds,
+					bid,
+					ad
+				);
 				if ( ! privacyRedLight() ) {
 					// If red light, delayed ad list is up to date and GA tracker will be instantiated on approval.
-					AdvAdsImpressionTracker.triggerEvent( 'advadsGADelayedTrack' );
+					AdvAdsImpressionTracker.triggerEvent(
+						'advadsGADelayedTrack'
+					);
 				}
 				break;
 			default:
 		}
 	} );
 	if ( privacyRedLight() ) {
-		document.addEventListener('advanced_ads_privacy', function (event) {
-			if ( ['not_needed','rejected','accepted'].includes(event.detail.state) ) {
+		document.addEventListener( 'advanced_ads_privacy', function ( event ) {
+			if (
+				[ 'not_needed', 'rejected', 'accepted' ].includes(
+					event.detail.state
+				)
+			) {
 				localTracker();
 			}
-		});
+		} );
 	} else {
-		advanced_ads_ready(localTracker, 'interactive');
+		advanced_ads_ready( localTracker, 'interactive' );
 	}
-})();
+} )();

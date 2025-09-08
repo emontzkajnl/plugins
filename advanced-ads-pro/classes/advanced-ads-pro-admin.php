@@ -34,6 +34,7 @@ class Advanced_Ads_Pro_Admin {
 		add_action( 'advanced-ads-visitor-conditions-after', [ $this, 'show_condition_notice' ], 10, 0 );
 		// Display "once per page" field.
 		add_action( 'advanced-ads-output-metabox-after', [ $this, 'render_ad_output_options' ] );
+
 		// Render repeat option for Content placement.
 		add_action( 'advanced-ads-placement-post-content-position', [ $this, 'render_placement_repeat_option' ], 10, 2 );
 		add_filter( 'pre_update_option_advanced-ads', [ $this, 'pre_update_advanced_ads_options' ], 10, 2 );
@@ -228,13 +229,6 @@ class Advanced_Ads_Pro_Admin {
 		}
 
 		return $settings;
-	}
-
-	/**
-	 * Register and enqueue admin-specific style sheet.
-	 */
-	public function enqueue_admin_styles() {
-		wp_enqueue_style( AAP_SLUG . '-admin-styles', AAP_BASE_URL . 'assets/admin.css', [], AAP_VERSION );
 	}
 
 	/**

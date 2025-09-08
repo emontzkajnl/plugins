@@ -161,6 +161,7 @@ class Plugin extends Framework\Loader {
 			return;
 		}
 
+		$this->register_integration( Admin\Admin::class );
 		$this->register_initializer( Upgrades::class, 'upgrades' );
 		$this->register_integration( Admin\Adsense::class );
 		$this->register_integration( Admin\Ad_List_Table::class );

@@ -1,18 +1,20 @@
 <?php
 /**
- * AJAX Drop-in to track ads.
+ * Fast AJAX endpoint for Advanced Ads Tracking.
  *
  * @package AdvancedAds\Tracking
  * @author  Advanced Ads <info@wpadvancedads.com>
- * @since   1.x.x
+ * @since   2.6.0
  *
- * This method speeds up ad tracking by a factor of 100 compared to wp-admin/admin-ajax.php
  * If you wish not to use this tracking method, please set the constant ADVANCED_ADS_TRACKING_LEGACY_AJAX,
  * i.e. define( 'ADVANCED_ADS_TRACKING_LEGACY_AJAX', true ) in your wp-config.php
  */
 
-// 10: autoloader file path
-require_once '%11$s';
+define( 'SHORTINIT', true );
+
+// Load minimal WordPress environment.
+require_once '%4$swp-load.php';
+require_once '%5$s';
 
 use AdvancedAds\Tracking\Constants;
 use AdvancedAds\Tracking\Debugger;
@@ -21,164 +23,216 @@ use AdvancedAds\Tracking\Debugger;
 // phpcs:disable WordPress.Security.NonceVerification
 // phpcs:disable WordPress.DateTime.RestrictedFunctions
 // phpcs:disable WordPress.PHP.NoSilencedErrors.Discouraged
+// phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found
 
-$start_time = microtime( true );
+/**
+ * Class AdvancedAdsTracker
+ *
+ * Lightweight, high-performance tracker for ad impressions and clicks.
+ * Optimized for use with SHORTINIT in WordPress to minimize overhead.
+ */
+class AdvancedAds_Fast_Tracker {
 
-// Set some headers to avoid caching.
-$headers = [
-	'X-Content-Type-Options: nosniff',
-	'Cache-Control: no-cache, must-revalidate, max-age=0, smax-age=0',
-	'Expires: Sat, 26 Jul 1997 05:00:00 GMT',
-	'X-Accel-Expires: 0',
-	'X-Robots-Tag: noindex',
-];
+	/**
+	 * Start time of the request in microseconds.
+	 *
+	 * @var int
+	 */
+	private $start_time;
 
-foreach ( $headers as $header ) {
-	@header( $header );
-}
+	/**
+	 * Data received from the request.
+	 *
+	 * @var array
+	 */
+	private $data = [];
 
-header_remove( 'Last-Modified' );
+	/**
+	 * Regex pattern to detect bots by user agent.
+	 *
+	 * @var string $bots
+	 */
+	private $bots = '%6$s';
 
-// Ensure headers are send.
-flush();
-
-// Do not stop when user ended the connection.
-@ignore_user_abort( true );
-
-$data = strtolower( $_SERVER['REQUEST_METHOD'] ) === 'get' ? $_GET : $_POST; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-
-if ( empty( $data ) ) {
-	$data = json_decode( file_get_contents( 'php://input' ), true );
-	if ( is_array( $data ) ) {
-		// Add data back to global request vars.
-		$_POST    = array_merge( $_POST, $data );
-		$_REQUEST = array_merge( $_REQUEST, $data );
-	}
-}
-
-if ( empty( $data['ads'] ) || ! is_array( $data['ads'] ) ) {
-	die( 'no ads' );
-}
-
-if ( empty( $data['action'] ) || ! in_array( $data['action'], [ Constants::TRACK_IMPRESSION, Constants::TRACK_CLICK ], true ) ) {
-	die( 'nothing to do' );
-}
-
-// 12: regex string to match bots. Empty if tracking bots.
-$bots = '%12$s';
-if ( ! empty( $bots ) ) {
-	// Check user agent if is bot.
-	$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? stripslashes( $_SERVER['HTTP_USER_AGENT'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-	if ( empty( $user_agent ) ) {
-		die( 'not tracking bots' );
+	/**
+	 * The Constructor.
+	 */
+	public function __construct() {
+		$this->start_time = microtime( true );
+		$this->set_headers();
+		$this->load_input();
+		$this->prevent_bots();
+		$this->process_tracking();
 	}
 
-	// Create regex as variable.
-	if ( preg_match( '/' . $bots . '/i', $user_agent ) ) {
-		die( 'not tracking bots' );
+	/**
+	 * Sets HTTP headers to avoid caching and enhance privacy.
+	 *
+	 * @return void
+	 */
+	private function set_headers(): void {
+		nocache_headers();
+		header( 'X-Content-Type-Options: nosniff' );
+		header( 'X-Accel-Expires: 0' );
+		header( 'X-Robots-Tag: noindex' );
+		header_remove( 'Last-Modified' );
+		flush();
+		@ignore_user_abort( true );
 	}
-}
 
-@date_default_timezone_set( 'UTC' );
+	/**
+	 * Retrieves and validates input from GET, POST, or JSON.
+	 *
+	 * @return void
+	 */
+	private function load_input(): void {
+		$method     = strtolower( $_SERVER['REQUEST_METHOD'] );
+		$this->data = 'get' === $method ? $_GET : $_POST;
+		$this->data = is_array( $this->data ) ? wp_unslash( $this->data ) : [];
 
-// open db connection
-// 1: host, 2: user, 3: password, 4: db name, 5: port, 6: socket.
-$mysqli = @mysqli_connect( '%1$s', '%2$s', '%3$s', '%4$s', '%5$d', '%6$s' );
-if ( ! $mysqli ) {
-	die( 'Could not connect to database' );
-}
+		// Fallback: check for JSON body.
+		if ( empty( $this->data ) ) {
+			$json   = file_get_contents( 'php://input' );
+			$parsed = json_decode( $json, true );
+			if ( is_array( $parsed ) ) {
+				$this->data = array_merge( $this->data, $parsed );
+			}
+		}
 
-// 7: table prefix.
-$prefix = $data['bid'] > 1 ? '%7$s' . $data['bid'] . '_' : '%7$s';
-$table  = 'aatrack-records' === $data['action']
-	? 'advads_impressions' : 'advads_clicks';
+		if ( ! isset( $this->data['ads'] ) || ! is_array( $this->data['ads'] ) ) {
+			die( 'no ads' );
+		}
 
-$ads = array_count_values(
-	array_filter(
-		array_map(
-			function ( $value ) {
-				return (int) $value;
-			},
-			$data['ads']
-		)
-	)
-);
+		$this->data['ads'] = array_filter(
+			array_map( 'intval', $this->data['ads'] )
+		);
 
-foreach ( $ads as $ad_id => $count ) {
-	$error_msg = adt_track( $ad_id, $mysqli, $prefix, $table, $count );
+		if ( empty( $this->data['ads'] ) ) {
+			die( 'no ads' );
+		}
 
-	// 9: debugging active, 10: ad_id to debug.
-	if ( '%9$s' === 'true' || (int) '%10$d' === $ad_id ) {
-		while ( $count-- ) {
-			Debugger::log(
-				(int) $ad_id,
-				$prefix . $table,
-				empty( $error_msg ) ? round( ( microtime( true ) - $start_time ) * 1000 ) : -1,
-				'Frontend on AMP' === $data['handler'] ? 'Frontend on AMP' : 'Frontend',
-				$error_msg,
-				'%8$s' // 8: debug file.
-			);
+		if (
+			empty( $this->data['action'] )
+			|| ! in_array( $this->data['action'], [ Constants::TRACK_IMPRESSION, Constants::TRACK_CLICK ], true )
+		) {
+			die( 'nothing to do' );
 		}
 	}
+
+	/**
+	 * Checks the user agent to block bot requests based on regex.
+	 *
+	 * @return void
+	 */
+	private function prevent_bots(): void {
+		if ( empty( $this->bots ) ) {
+			return;
+		}
+
+		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? stripslashes( $_SERVER['HTTP_USER_AGENT'] ) : '';
+		if ( empty( $user_agent ) || preg_match( '/' . $this->bots . '/i', $user_agent ) ) {
+			die( 'not tracking bots' );
+		}
+	}
+
+	/**
+	 * Processes each ad and inserts/updates tracking data.
+	 *
+	 * @return void
+	 */
+	private function process_tracking(): void {
+		global $wpdb;
+
+		@date_default_timezone_set( 'UTC' );
+
+		$bid    = isset( $this->data['bid'] ) ? (int) $this->data['bid'] : 0;
+		$prefix = $bid > 1 ? $wpdb->prefix . $bid . '_' : $wpdb->prefix;
+		$table  = Constants::TRACK_IMPRESSION === $this->data['action'] ? Constants::TABLE_IMPRESSIONS : Constants::TABLE_CLICKS;
+		$table  = $prefix . $table;
+
+		$ads = array_count_values( $this->data['ads'] );
+
+		foreach ( $ads as $ad_id => $count ) {
+			$error_msg = $this->track_ad( $ad_id, $table, absint( $count ) );
+
+			// 2: debugging active, 3: ad_id to debug.
+			if ( '%2$s' === 'true' || (int) '%3$d' === $ad_id ) {
+				while ( $count-- ) {
+					Debugger::log(
+						$ad_id,
+						$table,
+						empty( $error_msg ) ? round( ( microtime( true ) - $this->start_time ) * 1000 ) : -1,
+						'Frontend on AMP' === $this->data['handler'] ? 'Frontend on AMP' : 'Frontend',
+						$error_msg,
+						'%1$s' // 1: debug file.
+					);
+				}
+			}
+		}
+
+		die( 'OK' );
+	}
+
+	/**
+	 * Inserts or updates tracking stats for a given ad ID.
+	 *
+	 * @param int    $ad_id      The ad ID to track.
+	 * @param string $table_name Table name (clicks or impressions).
+	 * @param int    $count      Number of counts to insert.
+	 *
+	 * @return string Error message or empty string on success.
+	 */
+	private function track_ad( int $ad_id, string $table_name, int $count ): string {
+		global $wpdb;
+
+		$timestamp = $this->generate_timestamp();
+
+		// Use of %% is to avoid vsprintf to convert it to 0.
+		$sql = $wpdb->prepare(
+			"INSERT INTO $table_name (ad_id, timestamp, count) VALUES (%%d, %%d, %%d)
+			ON DUPLICATE KEY UPDATE count = count + %%d",
+			$ad_id,
+			$timestamp,
+			$count,
+			$count
+		);
+
+		$result = $wpdb->query( $sql ); // phpcs:ignore
+		return false !== $result ? '' : $wpdb->last_error;
+	}
+
+	/**
+	 * Generates a tracking timestamp string in the expected format.
+	 *
+	 * @return string
+	 */
+	private function generate_timestamp(): string {
+		static $timestamp;
+		if ( ! is_null( $timestamp ) ) {
+			return $timestamp;
+		}
+
+		$timezone = '%7$s';
+		if ( preg_match( '/^\d/', $timezone ) ) {
+			$timezone = '+' . $timezone;
+		}
+		$time = new DateTime( 'now', new DateTimeZone( $timezone ) );
+
+		// Default timestamp.
+		$timestamp = $time->format( 'ymWd06' );
+
+		// Check for week/month inconsistencies.
+		$week  = absint( $time->format( 'W' ) );
+		$month = absint( $time->format( 'm' ) );
+
+		if ( 52 <= $week && 1 === $month ) { // Still week 52 but already in January.
+			$timestamp = $time->format( 'ym01d06' );
+		} elseif ( 12 === $month && $week > 52 ) { // Still in December but week 53.
+			$timestamp = $time->format( 'ym52d06' );
+		}
+
+		return $timestamp;
+	}
 }
 
-mysqli_close( $mysqli );
-
-/**
- * Write impression to database.
- *
- * @param int    $ad_id  The ID of the ad to track.
- * @param mysqli $mysqli DB instance.
- * @param string $prefix Table prefix to track into.
- * @param string $table  Table to track click|impression.
- * @param int    $count  Number of impressions.
- *
- * @return string Error message, or empty string on success.
- */
-function adt_track( $ad_id, $mysqli, $prefix, $table, $count ) {
-	$ts    = advads_timestamp();
-	$count = (int) $count;
-	// 7: table prefix.
-	$success = mysqli_query( $mysqli, "INSERT INTO `{$prefix}{$table}` (`ad_id`, `timestamp`, `count`) VALUES ({$ad_id}, {$ts}, {$count}) ON DUPLICATE KEY UPDATE `count` = `count`+ {$count}" );
-
-	if ( $success ) {
-		return '';
-	}
-
-	return mysqli_error( $mysqli );
-}
-
-/**
- * Get timestamp string; only do this once per request.
- *
- * @return string
- */
-function advads_timestamp() {
-	static $ts;
-	if ( ! is_null( $ts ) ) {
-		return $ts;
-	}
-	$timezone = '%13$s';
-	if ( preg_match( '/^\d/', $timezone ) ) {
-		$timezone = '+' . $timezone;
-	}
-	$time = new DateTime( 'now', new DateTimeZone( $timezone ) );
-	// Default timestamp.
-	$ts = $time->format( 'ymWd06' );
-
-	// Check for week/month inconsistencies.
-	$week  = abs( $time->format( 'W' ) );
-	$month = abs( $time->format( 'm' ) );
-
-	if ( 52 <= $week && 1 === $month ) {
-		// Still week 52 but already in January.
-		$ts = $time->format( 'ym01d06' );
-	} elseif ( 12 === $month && $week > 52 ) {
-		// Still in December but week 53.
-		$ts = $time->format( 'ym52d06' );
-	}
-
-	return $ts;
-}
-
-die( 'ok' );
+( new AdvancedAds_Fast_Tracker() );

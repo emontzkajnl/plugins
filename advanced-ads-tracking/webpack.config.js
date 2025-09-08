@@ -19,6 +19,7 @@ module.exports = {
 		...defaultConfig.externals,
 		window: 'window',
 		jquery: 'jQuery',
+		'@tracking/utils': 'advancedAds.tracking.utils',
 	},
 	entry: {
 		...getWebpackEntryPoints(),
@@ -28,6 +29,7 @@ module.exports = {
 		'filesystem-form': path.join( basePath, '/scss/filesystem-form.js' ),
 
 		// JavaScript
+		// Backend
 		'wp-dashboard': path.join(
 			basePath,
 			'/js/admin/wp-dashboard/index.js'
@@ -36,6 +38,8 @@ module.exports = {
 			basePath,
 			'/js/admin/screen-ads-listing/index.js'
 		),
+
+		// Frontend
 		tracking: path.join( basePath, '/js/frontend/tracking.js' ),
 		'ga-tracking': path.join( basePath, '/js/frontend/ga-tracking.js' ),
 		'public-stats': path.join( basePath, '/js/frontend/public-stats.js' ),

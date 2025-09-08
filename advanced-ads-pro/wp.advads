@@ -2,7 +2,7 @@
   "wp": {
     "name": "Advanced Ads Pro",
     "description": "Advanced features to boost your ad revenue.",
-    "version": "3.0.5",
+    "version": "3.0.7",
     "requireWP": "5.7",
     "requirePHP": "7.4",
     "textDomain": "advanced-ads-pro",

@@ -1,10 +1,10 @@
 === External Links in New Window / New Tab ===
 Contributors: WebFactory
-Tags: links, external links, target blank, new window, new tab, target new, blank window, blank tab, tabs, SEO
+Tags: links, external links, target blank, new window, new tab
 Requires at least: 4.0
 Requires PHP: 5.2
-Tested up to: 6.1
-Stable tag: 1.44
+Tested up to: 6.8
+Stable tag: 1.45
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,11 +42,27 @@ Kristian Risager Larsen - <a href="http://kezze.dk">kezze.dk</a>
 1. Activate the plugin.
 1. Eventually, change the settings in Settings->External Links.
 
+== Frequently Asked Questions ==
+
+= How to disable this plugin? =
+
+Just use standard Plugin overview page in WordPress admin section and deactivate it or rename plugin folder /wp-content/plugins/open-external-links-in-a-new-window over FTP access.
+
+
+= How can I report security bugs? =
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/open-external-links-in-a-new-window)
+
+
 == Screenshots ==
 1. External links settings
 
 
 == Changelog ==
+= 1.45 =
+* 2025-08-04
+* minor code fixes
+
 = 1.44 =
 * 2022-11-22
 * minor security fixes

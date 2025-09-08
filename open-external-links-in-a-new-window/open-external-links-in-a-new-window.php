@@ -3,16 +3,16 @@
   Plugin Name: Open External Links in a New Window
   Plugin URI: https://wordpress.org/extend/plugins/open-external-links-in-a-new-window/
   Description: Opens all external links in a new window. XHTML Strict compliant and search engine optimized (SEO).
-  Version: 1.44
+  Version: 1.45
   Author: WebFactory Ltd
   Author URI: https://www.webfactoryltd.com/
   Text Domain: open-external-links-in-a-new-window
   Requires at least: 4.0
   Requires PHP: 5.2
-  Tested up to: 6.1
+  Tested up to: 6.8
   License: GPL2
 
-  Copyright 2015 - 2022  WebFactory Ltd (email: support@webfactoryltd.com)
+  Copyright 2015 - 2025  WebFactory Ltd (email: support@webfactoryltd.com)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as
@@ -129,6 +129,12 @@ function external_links_in_new_windows_admin_menu() {
   add_options_page(__('Open external links in a new window', "open-external-links-in-a-new-window"), __('External Links',"open-external-links-in-a-new-window"), 'manage_options', 'external_links_in_new_windows', 'external_links_in_new_windows_admin_options_page');
 }
 
+function external_links_in_new_windows_register_settings() {
+    register_setting('external_links_in_new_windows_settings_group', 'external_links_in_new_windows_force', ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('external_links_in_new_windows_settings_group', 'external_links_in_new_windows_ignore', ['sanitize_callback' => 'sanitize_text_field']);
+}
+add_action('admin_init', 'external_links_in_new_windows_register_settings');
+
 function external_links_in_new_windows_admin_options_page() {
 ?>
   <div class="wrap">
@@ -152,8 +158,7 @@ function external_links_in_new_windows_admin_options_page() {
 <p>Like the plugin? <a href="https://wordpress.org/support/plugin/open-external-links-in-a-new-window/reviews/#new-post" target="_blank">Please rate it ★★★★★.</a> Thank you!</p>
 </p>
 
-  <input type="hidden" name="action" value="update" />
-  <input type="hidden" name="page_options" value="external_links_in_new_windows_force,external_links_in_new_windows_ignore" />
+<?php settings_fields('external_links_in_new_windows_settings_group'); ?>
   <p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes"></p>
   
     

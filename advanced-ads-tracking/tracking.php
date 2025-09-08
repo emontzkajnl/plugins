@@ -10,7 +10,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Advanced Ads – Tracking
- * Version:           3.0.4
+ * Version:           3.0.7
  * Description:       Track ad impressions and clicks.
  * Plugin URI:        https://wpadvancedads.com/add-ons/tracking/
  * Author:            Advanced Ads
@@ -37,7 +37,7 @@ if ( defined( 'AAT_FILE' ) ) {
 }
 
 define( 'AAT_FILE', __FILE__ );
-define( 'AAT_VERSION', '3.0.4' );
+define( 'AAT_VERSION', '3.0.7' );
 
 // Load the autoloader.
 require_once __DIR__ . '/includes/class-autoloader.php';
