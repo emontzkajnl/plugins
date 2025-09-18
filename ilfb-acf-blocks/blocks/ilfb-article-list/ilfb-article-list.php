@@ -34,7 +34,7 @@ if( !empty($block['className']) ) {
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <?php if ($articles->have_posts()):
     echo '<div class="align-center"><button class="background__primary font__serif">Most '.$filter.'</button></div>';
-    echo '<div class="row ilfb-article-list__container">';
+    echo '<div class="row ilfb-article-list__'.$filter.'-container">';
         while ($articles->have_posts()): $articles->the_post(); ?>
 
         <div class="<?php echo $layout_grid_class ?>" >
