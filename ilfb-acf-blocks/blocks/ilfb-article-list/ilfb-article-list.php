@@ -22,7 +22,7 @@ if ($filter == 'popular') {
 }
 
 $articles = new WP_Query($args);
-
+$max_pages = $articles->max_num_pages;
 
 $id = 'ilfb-article-list-' . $block['id'];
 $className = 'ilfb-article-list '. $layout;
@@ -34,7 +34,7 @@ if( !empty($block['className']) ) {
 <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?>">
 <?php if ($articles->have_posts()):
     echo '<div class="align-center"><button class="background__primary font__serif">Most '.$filter.'</button></div>';
-    echo '<div class="row">';
+    echo '<div class="row ilfb-article-list__container">';
         while ($articles->have_posts()): $articles->the_post(); ?>
 
         <div class="<?php echo $layout_grid_class ?>" >
@@ -53,6 +53,9 @@ if( !empty($block['className']) ) {
         </div>
         <?php endwhile;
         echo '</div>';
+        if ($max_pages > 1) {
+        echo '<div class="align-center"><button class="ilfb-article-list__load-more" data-max="'.$max_pages.'" data-filter="'.$filter.'" data-layout="'.$layout.'">Load More</button></div>';
+        }
     endif;
 
 ?>
